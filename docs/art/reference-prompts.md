@@ -80,7 +80,7 @@
 
 Use **Frames to Video** with the listed Codex image as the start frame, 8 seconds, 16:9. For these tests, keep audio as ambience only.
 
-> **Flow rules learned from RV-01 v1 (approved 2026-10-21):** (1) start frames must already be 16:9 (for example 1536×864, or a 16:9 crop of a 3:2 image), otherwise Flow letterboxes and crops the frame; (2) state where people may walk ("villagers walk only on the bridge and riverbank paths; nobody steps into the water"), because Flow otherwise invents physically odd motion.
+> **Flow rules learned from RV-01 v1 (approved 2026-10-21):** (1) start frames must already be 16:9 (for example 1536×864, or a 16:9 crop of a 3:2 image), otherwise Flow letterboxes and crops the frame; (2) state where people may walk ("villagers walk only on the bridge and riverbank paths; nobody steps into the water"), because Flow otherwise invents physically odd motion. (3) prompts must be short and positively phrased; the long negative list made RV-02 fail three times, and the shorter version worked first time; (4) from RV-03 v1: with five characters and several props, Flow loses object continuity (a duplicated hammer, a stake that grows into a pole, an extra worker appearing, a shield vanishing), so production shots keep to at most 2–3 moving characters with one clear action each; (5) Codex start stills often come back in other aspect ratios (RV-03: 2.5:1), so every start frame is checked and cropped to 16:9 before it goes into Flow.
 
 ### RV-01 · Village ambience (style and motion test)
 - **Start frame:** R-01
