@@ -6,7 +6,7 @@
 
 **Architecture:** A pnpm monorepo. `packages/sim` is a framework-free deterministic core (integer fixed-point maths, seeded RNG, canonical encoding and hashing, fixed-step world update). `packages/platform` converts browser keyboard events into abstract actions. `apps/game` is a Vite + Phaser + Preact client that only renders snapshots of the simulation.
 
-**Tech Stack:** Node.js 22 LTS, pnpm 10, TypeScript 5 (strict), Vite, Phaser (latest stable), Preact + @preact/signals, Vitest, Playwright (Chromium locally; Chromium, Firefox and WebKit in CI), ESLint (flat config) + Prettier, GitHub Actions.
+**Tech Stack:** Node.js 24, pnpm 10, TypeScript 5 (strict), Vite, Phaser (latest stable), Preact + @preact/signals, Vitest, Playwright (Chromium locally; Chromium, Firefox and WebKit in CI), ESLint (flat config) + Prettier, GitHub Actions.
 
 **Spec:** `2026-10-18-fight-for-peace-game-specification.md` §6, §18.1; `Features_Decisions.md` §4 (fixed simulation), §5, §10.1, §11 Module 20, §13; `docs/review/02-technical-evaluation.md` §2–§4.
 
@@ -41,7 +41,7 @@ pnpm-workspace.yaml
 tsconfig.base.json
 eslint.config.js                 includes sim determinism rules
 .prettierrc
-.nvmrc                           22
+.nvmrc                           24
 .github/workflows/ci.yml
 README.md                        Windows setup and run instructions
 packages/sim/
@@ -92,7 +92,7 @@ test('simulation rate is 60 Hz', () => { expect(SIM_HZ).toBe(60); });
 ```
 
 - [ ] **Step 2: Run** `pnpm test`. Expected: FAIL (no workspace or `SIM_HZ` missing).
-- [ ] **Step 3: Create the scaffold.** Root `package.json` with `"packageManager": "pnpm@10"`, `"engines": {"node": ">=22"}`, scripts `test: vitest run`, `lint: eslint .`, `typecheck: tsc -b`. Export `export const SIM_HZ = 60;` from `packages/sim/src/index.ts`. Vitest globals enabled.
+- [ ] **Step 3: Create the scaffold.** Root `package.json` with `"packageManager": "pnpm@10"`, `"engines": {"node": ">=24"}`, scripts `test: vitest run`, `lint: eslint .`, `typecheck: tsc -b`. Export `export const SIM_HZ = 60;` from `packages/sim/src/index.ts`. Vitest globals enabled.
 - [ ] **Step 4: Run** `pnpm install && pnpm test && pnpm typecheck && pnpm lint`. Expected: all pass.
 - [ ] **Step 5: Commit** `chore: scaffold pnpm monorepo with sim and platform packages`.
 
@@ -330,7 +330,7 @@ test('greybox body moves right while D is held', async ({ page }) => {
 
 - [ ] **Step 1: Write the failing test** `determinism.spec.ts`: load the page, call `window.__ffp.runReplay(log)` with the golden log, and expect it to equal `log.expectedHash`. Playwright config projects: `chromium` (always), plus `firefox` and `webkit` when `CI=true`.
 - [ ] **Step 2: Run** `pnpm e2e`. Expected: FAIL (`runReplay` is not exposed).
-- [ ] **Step 3: Implement.** Expose `runReplay` in `debug.ts`. The CI workflow runs on push and PR with Node 22 and pnpm 10, in this order: `pnpm install --frozen-lockfile`, `typecheck`, `lint`, `test`, `npx playwright install --with-deps`, `e2e`, then uploads `test-results/**/*.png` as an artifact. The README covers installing Node.js 22 LTS on Windows (`winget install OpenJS.NodeJS.LTS`), `corepack enable`, `pnpm install`, `pnpm dev`, and opening `http://localhost:5173`, then lists the M0 test checklist.
+- [ ] **Step 3: Implement.** Expose `runReplay` in `debug.ts`. The CI workflow runs on push and PR with Node 24 and pnpm 10, in this order: `pnpm install --frozen-lockfile`, `typecheck`, `lint`, `test`, `npx playwright install --with-deps`, `e2e`, then uploads `test-results/**/*.png` as an artifact. The README covers Windows setup (Node.js 24 and pnpm, both already on the creator's machine), `pnpm install`, `pnpm dev`, and opening `http://localhost:5173`, then lists the M0 test checklist.
 - [ ] **Step 4: Run** `pnpm e2e` locally (Chromium). Expected: PASS. Then push and confirm CI is green on all three browsers.
 - [ ] **Step 5: Commit** `ci: cross-browser determinism and screenshot artifacts`.
 
