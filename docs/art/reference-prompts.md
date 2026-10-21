@@ -2,11 +2,11 @@
 
 **Status:** For creator generation and review. These are **references only**: they fix the look of the game before the full numbered prompt lists are written. Nothing generated from them is final art.
 
-**Order:** generate R-01 first. If you like its style, reuse it as a style reference image for every later prompt. Generate R-02 (elder) and R-03/R-04 (heroes) next, because later prompts attach those images.
+**Order:** generate R-01 first. R-01 (approved 2026-10-21) is the **environment** style reference: attach it to background prompts (R-07, R-08). Do **not** attach it to character prompts, because its painterly look would pull characters away from the cel-shaded style; characters rely on the shared style block instead. Generate R-02 (elder) and R-03/R-04 (heroes) next, because later prompts attach those images.
 
 ## Shared style block (paste at the end of every Codex prompt)
 
-> Style: cel-shaded 2D game illustration, clean confident ink outlines of even weight, flat colour fills with two to three hard-edged shade tones, no gradients on characters, no photorealism, no 3D render look. Setting: a fictional Chinese-inspired rural river village in a timeless pre-industrial era. Warm, hopeful, handcrafted mood. Absolutely no text, letters, numbers, calligraphy, logos, signatures, watermarks, symbols on clothing or banners, or writing of any kind.
+> Style: cel-shaded 2D game illustration, bold clean ink outlines of even weight, flat colour fills with two to three hard-edged shade tones, no gradients on characters, no photorealism, no 3D render look. Setting: a fictional Chinese-inspired rural river village in a timeless pre-industrial era. Warm, hopeful, handcrafted mood. Absolutely no text, letters, numbers, calligraphy, logos, signatures, watermarks, symbols on clothing or banners, or writing of any kind.
 
 ## Shared negative clause (paste into every Google Flow prompt)
 
@@ -25,21 +25,21 @@
 
 ### R-02 · The elder: model sheet (based on GuoPhoto.jpg)
 - **Size:** 1536×1024
-- **Attach:** `GuoPhoto.jpg`, R-01 as style reference
+- **Attach:** `GuoPhoto.jpg` only
 - **Prompt:**
   > Character model sheet of a wise village elder, about 68 years old, age-progressed from the attached photo: keep the same face shape, eye shape, nose and mouth, and the same thin metal-frame rectangular glasses. Grey hair combed back, a short neat grey beard and moustache, gentle thoughtful expression, slightly stooped but dignified posture. Clothing: a long dark-blue cotton scholar's robe with a lighter inner collar, a simple cloth sash, cloth shoes, holding a plain wooden walking staff. Show three full-body views side by side (front, three-quarter, side) on a plain light-grey background, plus three head close-ups (calm, concerned, encouraging smile). Consistent proportions across all views. [Shared style block]
 - **What I check:** recognizably you, aged plausibly; glasses kept; robe has no patterns that look like characters.
 
 ### R-03 · Mountain Guardian (山神): model sheet
 - **Size:** 1536×1024
-- **Attach:** R-01 as style reference
+- **Attach:** nothing
 - **Prompt:**
   > Character model sheet of a calm, sturdy village craftsman and waterworks keeper, man about 38 years old, broad shoulders, strong forearms, short black hair tied in a small top knot, short stubble, steady kind eyes. Practical work clothes: a sleeveless earth-brown jacket over a rolled-sleeve off-white shirt, a thick leather work apron cut short at the thighs, leather bracers, dark trousers wrapped at the shins, straw-soled sandals. Grounded wide stance, open palms, protective rather than aggressive. Show front, three-quarter, side and back full-body views on a plain light-grey background, plus a small colour palette strip with five flat swatches and no labels. Identical proportions in every view. [Shared style block]
 - **What I check:** silhouette reads "grounded power" at small size; distinct from R-04 at a glance.
 
 ### R-04 · River Scout (河神): model sheet
 - **Size:** 1536×1024
-- **Attach:** R-01 as style reference
+- **Attach:** nothing
 - **Prompt:**
   > Character model sheet of a warm, alert village messenger and river-path guide, woman about 22 years old, lean and agile build, long black hair tied in a high ponytail with a teal cloth band, bright confident expression. Clothing: a short fitted teal-and-white jacket with crossed collar, a cloth belt with a small pouch, knee-length split shorts over leggings, shins wrapped in white cloth, light sandals. Light, springy ready stance on the balls of her feet. Show front, three-quarter, side and back full-body views on a plain light-grey background, plus a small colour palette strip with five flat swatches and no labels. Identical proportions in every view. [Shared style block]
 - **What I check:** silhouette reads "mobility"; readable next to R-03 at gameplay scale.
@@ -53,7 +53,7 @@
 
 ### R-06 · Stage 1 enemy lineup
 - **Size:** 1536×1024
-- **Attach:** R-01 as style reference, R-05 for scale
+- **Attach:** R-05 for scale and style
 - **Prompt:**
   > Lineup of seven antagonists from a faction occupying a river gate, standing in a row at the same scale as the attached heroes, plain light-grey background, full body, three-quarter view. From left to right: (1) a thin, nervous young recruit in ill-fitting rust-brown padded vest holding a wooden club, frightened expression; (2) a stocky shield bearer with a large round wooden shield banded with iron; (3) an agile runner in a short sleeveless tunic with wrapped legs, crouched to sprint; (4) a broad overseer with a coiled rope and hook over one shoulder, sneering; (5) a lookout with a leather sling and a pouch of stones, wearing a wide straw hat; (6) a towering enforcer in blackened iron plate armour of a foreign, more industrial design, riveted, with a heavy iron gauntlet, face hidden by a plain visor; (7) the commander, tall and proud, in a dark ochre long coat over lamellar armour, a sash, with a confident arrogant posture. The faction uses rust, black iron and muddy ochre colours, clearly different from the heroes. Distinct silhouettes for each. No emblems or symbols. [Shared style block]
 - **What I check:** each role is readable by silhouette alone; the enforcer looks "foreign tech"; no symbols.
