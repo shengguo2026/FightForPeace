@@ -59,6 +59,8 @@
 - **What I check:** each role is readable by silhouette alone; the enforcer looks "foreign tech"; no symbols.
 
 ### R-07 · Stage 1 background: the occupied bridge (layered)
+
+> **Camera rule for all stage backgrounds (learned from R-07 v1):** the camera stands on the walkable surface at a slightly elevated side angle (about 20° down); the walkable floor fills the bottom 35–40% of the image and visibly recedes in depth; no front railing or foreground wall along the bottom edge. See the R-07 v2 prompt in the review thread.
 - **Size:** 1536×1024
 - **Attach:** R-01
 - **Prompt:**
