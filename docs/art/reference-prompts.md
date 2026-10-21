@@ -80,6 +80,8 @@
 
 Use **Frames to Video** with the listed Codex image as the start frame, 8 seconds, 16:9. For these tests, keep audio as ambience only.
 
+> **Flow rules learned from RV-01 v1 (approved 2026-10-21):** (1) start frames must already be 16:9 (for example 1536×864, or a 16:9 crop of a 3:2 image), otherwise Flow letterboxes and crops the frame; (2) state where people may walk ("villagers walk only on the bridge and riverbank paths; nobody steps into the water"), because Flow otherwise invents physically odd motion.
+
 ### RV-01 · Village ambience (style and motion test)
 - **Start frame:** R-01
 - **Prompt:**
