@@ -122,3 +122,7 @@ A distinct composition at ≈129 BPM, the same tempo grid as 06C and 06B v2, so 
 
 ### 05 Protect the Living System v2 — keep v1 instead
 This cue was not on the regeneration list; the optional prompt was for **Cue 4**. The new version measures ≈96 BPM in G minor, further from the 116 BPM target than v1 (≈117 BPM). Keep **v1** as Cue 5. The layering mismatch is still in Cue 4 (≈81/161 BPM): regenerate Cue 4 with prompt 5 if you want Cue 5 layered on top of it.
+
+## Decision 2026-10-25: final music selection
+
+Creator decision: keep **06B v1** and **05 v1** (and Cue 4 v1). The boss family is therefore 06A v1, 06B v1, 06C v1 and 06D v2. Phase changes between states with different tempos or keys use authored transition stingers, as the decision log §14 allows. Cue 5 plays as an alternate loop switched at phrase boundaries, not as a layer on top of Cue 4. Remaining visual work: P03 clip (required) and optionally P05, after the Google Flow daily reset.
