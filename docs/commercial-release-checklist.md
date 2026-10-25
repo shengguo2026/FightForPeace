@@ -24,7 +24,7 @@
 | 2.4 | **Fonts** | The Chinese and Latin UI fonts must allow embedding in a commercial game (for example Noto Sans SC under the SIL OFL). Keep the licence files. | Open |
 | 2.5 | **Third-party code licences** | Audit all npm dependencies (Phaser, Preact and others) for licence compatibility and add the required notices to the credits/legal screen. | Open |
 | 2.6 | ⚖️ **Elder likeness consent** | The elder is based on the creator's own photo. Keep a short written record of the creator's consent and that the likeness may be used commercially and in marketing. | Open |
-| 2.7 | ⚖️ **Name and trademark check** | Search whether *Fight for Peace* (and the Chinese title) is already a registered trademark for games in the target markets; consider registering it. Also secure a domain and store page name. | Open |
+| 2.7 | ⚖️ **Name and trademark check** | Search whether *Fight For Peace* (and the Chinese title *和平之战*) is already a registered trademark for games in the target markets; consider registering it. Also secure a domain and store page name. | Open |
 
 ## 3. Selling, payment and distribution
 
