@@ -4,7 +4,7 @@
 **Date:** 2026-10-24  
 **Stage title (working):** *Prosperity Under Siege*  
 **Decision source:** `stage2_feature_story_line.md`  
-**Shared-system source:** `docs/superpowers/specs/2026-10-18-fight-for-peace-game-specification.md`
+**Shared-system source:** `2026-10-18-fight-for-peace-game-specification.md` and the review decisions in `Features_Decisions.md` §13
 
 ## 1. Status and interpretation
 
