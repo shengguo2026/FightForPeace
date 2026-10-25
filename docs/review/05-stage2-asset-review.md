@@ -98,3 +98,13 @@ Findings:
 | 3 (optional) | Boss 06B, 06D | Only for seamless boss transitions: anchor to 06A/06C motif, tempo and key |
 
 Since the twins' sheets feed every later start frame (P07–P12, all Roadside Deception and later chapters), regenerate them **before** generating any start frame that shows the twins.
+
+## Update 2026-10-25: Wind Sentinel v2 — approved
+
+`wind-sentinel-default-model-sheet-v2.png` fixes all required points. Swatches: slate blue-grey `rgb(68,79,95)`, cloud grey `rgb(143,147,154)`, charcoal, silver-cyan `rgb(140,172,187)` and a small yellow. At 25 % size next to River Scout the two are now instantly distinguishable (`stage2-asset-evidence/river-scout-vs-wind-sentinel-v2.jpg`). The style now matches R-03/R-04: clean ink outlines, flat shading and simplified faces. She has a braid instead of a ponytail, a fitted zipped jacket, tapered trousers without cargo pockets, shin guards, and an emblem made only of simple shapes.
+
+Minor notes, none needing regeneration:
+- The shin guards read heavier and more "armoured" than the spec's "lightweight guards". Keep them, but keep them slim when drawing poses.
+- In the head close-ups the hair is gathered higher than in the full-body back view. Use the full-body back view (braid from the crown to the shoulder blades) as canonical.
+- Her palette is mostly grey. Check her contrast against metal greenhouse frames in the first Stage 2 gameplay mockup.
+- Please confirm the likeness to the original photo; the cel-shaded simplification changes the face more than v1 did.
