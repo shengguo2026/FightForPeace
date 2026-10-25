@@ -8,7 +8,7 @@
 
 **Tech Stack:** Node.js 24, pnpm 10, TypeScript 5 (strict), Vite, Phaser (latest stable), Preact + @preact/signals, Vitest, Playwright (Chromium locally; Chromium, Firefox and WebKit in CI), ESLint (flat config) + Prettier, GitHub Actions.
 
-**Spec:** `2026-10-18-fight-for-peace-game-specification.md` §6, §18.1; `Features_Decisions.md` §4 (fixed simulation), §5, §10.1, §11 Module 20, §13; `docs/review/02-technical-evaluation.md` §2–§4.
+**Spec:** `2026-10-18-fight-for-peace-game-specification.md` §6, §18.1; `2026-10-24-fight-for-peace-stage-2-specification.md` §17 (versioned state); `Features_Decisions.md` §4 (fixed simulation), §5, §10.1, §11 Module 20, §13; `docs/review/02-technical-evaluation.md` §2–§4.
 
 ## Global Constraints
 
@@ -20,6 +20,8 @@
 - Keyboard direction ties favour the **most recently pressed** direction on each axis.
 - Movement uses one consistent walking speed with **normalized diagonals**.
 - `favicon.svg` is used only as the browser-tab icon.
+- The browser tab title is **Fight For Peace** (English and German); the Simplified Chinese title **和平之战** is used once localization arrives in M10.
+- Replays and state encodings carry explicit format and rules versions from day one, because Stage 2 requires content, rules and cheat-registry versions in every checkpoint, replay and network snapshot (Stage 2 spec §17).
 - The game runs on `localhost`; no hosting configuration.
 - TypeScript `strict: true`, `noUncheckedIndexedAccess: true`.
 
@@ -60,7 +62,7 @@ packages/platform/
   src/index.ts
   test/*.test.ts
 apps/game/
-  index.html                     links /favicon.svg
+  index.html                     links /favicon.svg, <title>Fight For Peace</title>
   public/favicon.svg             copy of repo-root favicon.svg
   src/main.ts                    boots Phaser + Preact overlay, owns the loop
   src/scenes/StageScene.ts       draws greybox floor + body rectangles from snapshots
@@ -229,7 +231,7 @@ expect(acc.advance(1000 / 60).steps).toBe(1);      // debt was dropped, not carr
 ```
 
 - [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement.** The accumulator stores the remainder in milliseconds (presentation side, not in the simulation state); after hitting `maxSteps` it resets the remainder to 0. `alpha = remainder / stepMs` for render interpolation. `encodeWorld` writes `frame`, the 4 RNG words, the body count, then each body's fields in ascending `id` order.
+- [ ] **Step 3: Implement.** The accumulator stores the remainder in milliseconds (presentation side, not in the simulation state); after hitting `maxSteps` it resets the remainder to 0. `alpha = remainder / stepMs` for render interpolation. `encodeWorld` writes a leading format-version byte (`STATE_FORMAT = 1`), then `frame`, the 4 RNG words, the body count, then each body's fields in ascending `id` order.
 - [ ] **Step 4: Run.** Expected: PASS.
 - [ ] **Step 5: Commit** `feat(sim): world model, normalized belt movement and fixed-step accumulator`.
 
@@ -278,7 +280,7 @@ expect(g.sample().pressed).toBe(0);
 - Create: `packages/sim/src/replay.ts`, `tests/replays/walk-square.json`, `tests/replays/replay.test.ts`
 
 **Interfaces:**
-- Produces: `interface ReplayLog { version: 1; seed: number; frames: FrameInput[][] }`; `runReplay(log: ReplayLog): number` (final `hashWorld`).
+- Produces: `interface ReplayLog { version: 1; rulesVersion: string; seed: number; frames: FrameInput[][]; expectedHash: number }`; `RULES_VERSION` (string constant in `@ffp/sim`, for example `'m0.1'`); `runReplay(log: ReplayLog): number` (final `hashWorld`). `runReplay` throws if `log.rulesVersion !== RULES_VERSION`, so a stale golden replay fails loudly instead of silently producing a different hash.
 
 - [ ] **Step 1: Write the failing test.** `walk-square.json` holds 240 frames: 60 right, 60 up, 60 left, 60 down for player 0, with `expectedHash` filled in from the first run of Step 3. The test asserts `runReplay(log) === log.expectedHash`. It also asserts that running the same log through `createAccumulator` with simulated render intervals of 1000/144 ms and 1000/30 ms reaches the same hash once 240 steps have run (Review Focus 5).
 - [ ] **Step 2: Run.** Expected: FAIL (`runReplay` is missing).
@@ -302,6 +304,7 @@ expect(g.sample().pressed).toBe(0);
 test('greybox body moves right while D is held', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('link[rel="icon"]')).toHaveAttribute('href', '/favicon.svg');
+  await expect(page).toHaveTitle('Fight For Peace');
   await page.waitForFunction(() => window.__ffp?.frame() > 10);
   const x0 = await page.evaluate(() => window.__ffp.body(1)!.x);
   await page.keyboard.down('KeyD');
@@ -316,7 +319,7 @@ test('greybox body moves right while D is held', async ({ page }) => {
 ```
 
 - [ ] **Step 2: Run** `pnpm e2e`. Expected: FAIL.
-- [ ] **Step 3: Implement.** Phaser `Scale.FIT` at 1920×1080 with letterboxing. The floor band covers z ∈ [620, 1000] px. Each body is drawn as a 90×300 rectangle anchored bottom-centre at `(x, z − y)`, sorted by `z`, with a facing notch. The render position interpolates between the previous and current snapshot using `alpha`. The loop runs in `requestAnimationFrame` and steps the simulation via the accumulator. Window `blur` and `visibilitychange` call `KeyboardState.blur()`. The overlay (`data-testid` `lab-frame`, `lab-hash`, `lab-fps`, `lab-input`) is a Preact component toggled with `F1`. `index.html` links `/favicon.svg`, and the copy in `public/` is byte-identical to the repo root `favicon.svg`.
+- [ ] **Step 3: Implement.** Phaser `Scale.FIT` at 1920×1080 with letterboxing. The floor band covers z ∈ [620, 1000] px. Each body is drawn as a 90×300 rectangle anchored bottom-centre at `(x, z − y)`, sorted by `z`, with a facing notch. The render position interpolates between the previous and current snapshot using `alpha`. The loop runs in `requestAnimationFrame` and steps the simulation via the accumulator. Window `blur` and `visibilitychange` call `KeyboardState.blur()`. The overlay (`data-testid` `lab-frame`, `lab-hash`, `lab-fps`, `lab-input`) is a Preact component toggled with `F1`. `index.html` links `/favicon.svg` and sets `<title>Fight For Peace</title>`, and the copy in `public/` is byte-identical to the repo root `favicon.svg`.
 - [ ] **Step 4: Run** `pnpm e2e && pnpm build`. Expected: PASS; the screenshot exists.
 - [ ] **Step 5: Commit** `feat(game): Phaser greybox stage with Lab overlay`.
 
@@ -336,7 +339,7 @@ test('greybox body moves right while D is held', async ({ page }) => {
 
 ## M0 creator test checklist (posted with the PR)
 
-1. `pnpm dev`, open `http://localhost:5173`: the tab shows your favicon, and a grey floor band shows one box.
+1. `pnpm dev`, open `http://localhost:5173`: the tab shows your favicon and the title "Fight For Peace", and a grey floor band shows one box.
 2. W/A/S/D move the box. Diagonals are not faster than straight lines, and the box stops at the stage edges.
 3. On a German keyboard nothing changes for movement. (Jump has no visible effect until M1.)
 4. Press F1: the overlay shows a climbing frame counter, an 8-character state hash and the frame rate.
