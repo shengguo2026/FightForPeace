@@ -108,3 +108,17 @@ Minor notes, none needing regeneration:
 - In the head close-ups the hair is gathered higher than in the full-body back view. Use the full-body back view (braid from the crown to the shoulder blades) as canonical.
 - Her palette is mostly grey. Check her contrast against metal greenhouse frames in the first Stage 2 gameplay mockup.
 - Please confirm the likeness to the original photo; the cel-shaded simplification changes the face more than v1 did.
+
+## Update 2026-10-25 (2): Fire Warden v2 and music v2
+
+### Fire Warden v2 — approved
+`fire-warden-default-model-sheet-v2.png` matches the approved Wind Sentinel v2 and the Stage 1 cel-shaded style. Palette: ember red, charcoal, ash grey, dark bronze and amber, as specified. He has a high collar, compact shoulder reinforcement, charcoal side panels, asymmetric forearm guards (left longer) that agree across views, grappling gloves, tapered trousers with one small thigh pocket, articulated knee guards, bronze-rimmed full shin guards and sturdy boots. He shares the emblem and seam language with his sister. He is broader and more grounded than her but still reads as 18. His lower body now differs from hers through the bronze rims and heavier guard shapes, though both twins still wear tall shin guards. That is acceptable.
+
+### 06B Armed command v2 — reject (it is a copy of 06C)
+Its metadata title is "Predator Unbound Extended" (4:00). Waveform comparison with `06C_Predator Unbound.mp3` shows the first ~3:00 is the same recording (normalized cross-correlation up to 0.94; level about 7 % lower), followed by about one extra minute. It is an extension of 06C, not a new armed-command state. Either keep 06B v1 and join the states with stingers, or regenerate as a **new** generation, not "extend" (use "remix" or a reference track if Flow Music offers it, otherwise the plain text prompt).
+
+### 06D Scorched Claim and surrender v2 — keep (with a key check)
+A distinct composition at ≈129 BPM, the same tempo grid as 06C and 06B v2, so phase changes can cut on bar lines. The automatic key estimate centres on **E minor**, a semitone below the F minor anchor, with low confidence. If your ear agrees, shift it up one semitone in editing, which is inaudible on this material, or bridge with a stinger. Please confirm by ear that both endings (surrender release and forced capture) are present.
+
+### 05 Protect the Living System v2 — keep v1 instead
+This cue was not on the regeneration list; the optional prompt was for **Cue 4**. The new version measures ≈96 BPM in G minor, further from the 116 BPM target than v1 (≈117 BPM). Keep **v1** as Cue 5. The layering mismatch is still in Cue 4 (≈81/161 BPM): regenerate Cue 4 with prompt 5 if you want Cue 5 layered on top of it.
