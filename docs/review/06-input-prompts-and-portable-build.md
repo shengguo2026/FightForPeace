@@ -92,9 +92,9 @@ Menu navigation (confirm/back) uses separate abstract menu actions, so gameplay 
 | Guard | `G` | `Num 1` |
 | Ultimate | `H` | `Num 2` |
 | Grab / Interact | `J` | `Num 3` |
-| Team Attack | `B` | `Num 0` (proposed) |
+| Team Attack | `B` | `Num 0` |
 
-Bindings use physical codes (`Numpad4`), so they work whether Num Lock is on or off. Open points for the M1 plan: confirm `Num 0` for Team Attack; the live tester's ghosting check for this exact set; and a laptop preset for keyboards without a numpad. D7's `IJKL` idea clashes with Player 1's `U`, `H` and `J`, so the M1 plan will propose a different laptop set.
+Bindings use physical codes (`Numpad4`), so they work whether Num Lock is on or off. Open points for the M1 plan (agreed 2026-10-29): the live tester's ghosting check for this exact set; and a laptop preset for keyboards without a numpad. D7's `IJKL` idea clashes with Player 1's `U`, `H` and `J`, so the M1 plan will propose a different laptop set.
 
 ### 1.5 Where it goes in the plan
 
