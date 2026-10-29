@@ -1,7 +1,7 @@
 # Fight For Peace — Binding-Aware Button Prompts and a Portable Build
 
 **Date:** 2026-10-29
-**Status:** Proposal for creator review, before M0 starts. Nothing here is implemented.
+**Status:** Confirmed by the creator on 2026-10-29 (topic 2 revised the same day). Nothing here is implemented yet.
 **Checked against:** game spec §5.2, §14.2, §16 (Guide: "Input examples render the current profile/device bindings"); `Features_Decisions.md` input section, §10.3 Player Academy, D6, D7, D11; `docs/review/03-network-play-and-licensing.md`; `docs/commercial-release-checklist.md`; roadmap and M0 plan of 2026-10-21.
 
 ## Summary
@@ -64,7 +64,7 @@ The browser Gamepad API reports buttons by position (the "standard" mapping) and
 
 **Glyph art:** Kenney's *Input Prompts* pack is CC0 (free for commercial use, no attribution needed), covers keyboard, Xbox, PlayStation, Nintendo Switch, Steam Deck and generic pads, and fits the placeholder-first policy: it can be restyled later under the same logical asset IDs (`ui.prompt.pad.xbox.west`). Brand button shapes on a commercial release are a small trademark question; it goes on the commercial checklist, and the generic set is always available.
 
-**Gamepad defaults (proposed, needs your approval):** the spec only fixes Team Attack on a shoulder button (D11). A common layout for brawlers:
+**Gamepad defaults (confirmed 2026-10-29):** the spec only fixes Team Attack on a shoulder button (D11). A common layout for brawlers:
 
 | Action | Keyboard P1 (confirmed) | Gamepad (proposed) |
 |---|---|---|
@@ -138,7 +138,7 @@ If the PC is offline on first start and has no Node.js, the script says so clear
 
 Browsers keep IndexedDB per address, and the port is part of the address. If 6006 is busy one day and the game starts on 6007, browser-stored saves would seem to vanish. Moving the folder to another PC would also leave the saves behind in the old browser.
 
-**Proposal:** in the portable build, profiles are saved **by the local server into a `saves/` folder inside the game folder**, through the save adapter the spec already requires (`Features_Decisions.md` §11: saves behind a platform adapter). The same versioned, checksummed transactional format and snapshots are used; only the storage location changes. That makes saves independent of the port and the browser, and copying the game folder copies the saves. The pure browser build (`pnpm dev`) keeps IndexedDB, and `.ffpsave` export and import still move profiles between the two. This changes "IndexedDB is the canonical local store" for the portable build only, so it needs your approval.
+**Proposal:** in the portable build, profiles are saved **by the local server into a `saves/` folder inside the game folder**, through the save adapter the spec already requires (`Features_Decisions.md` §11: saves behind a platform adapter). The same versioned, checksummed transactional format and snapshots are used; only the storage location changes. That makes saves independent of the port and the browser, and copying the game folder copies the saves. The pure browser build (`pnpm dev`) keeps IndexedDB, and `.ffpsave` export and import still move profiles between the two. This changes "IndexedDB is the canonical local store" for the portable build only (confirmed 2026-10-29).
 
 ### 2.5 Operating systems
 
@@ -177,7 +177,7 @@ release/FightForPeace-0.9.0.zip
 | M0 | Guardrails only: the game never assumes a fixed origin or port (no `localhost:5173` literals), and assets load through origin-relative URLs. `release/` is in `.gitignore`. |
 | M4 (first playable Combat Lab) | **Proof of concept** (about 2 days): `start.bat`, `start.sh`, `start.command`, `server.mjs` with port search from 6006, Node check and download, `pnpm release`, zip in `release/`. You try it on a second PC early. |
 | M9 (Stage 1 playable start to end) | **Portable build v1** (about 2 days): README, licence notices, version display in game and console, the CI smoke test, GitHub Release on tag. Every later milestone ships a zip. |
-| M10 | Server-backed save adapter writing to `saves/` (if approved), with the same snapshots, backups and export/import as the IndexedDB adapter. |
+| M10 | Server-backed save adapter writing to `saves/`, with the same snapshots, backups and export/import as the IndexedDB adapter. |
 | M12 | The same server hosts the LAN room listener. The second PC only needs the zip. |
 | M14 | The portable zip is in the test matrix: a PC that never had dev tools, offline first start, port 6006 busy, Windows and Linux. |
 
@@ -185,8 +185,10 @@ Cost: about 4–5 days in total, spread over M4, M9 and M10, plus a few hours in
 
 ---
 
-## Decisions needed from you
+## Decisions (confirmed by the creator on 2026-10-29)
 
-1. **Saves in the portable build:** stored by the local server in `saves/` inside the game folder (recommended, section 2.4), or kept in the browser.
-2. **Gamepad default layout:** approve the table in §1.4 or change it.
-3. **Glyph style:** Kenney CC0 placeholder glyphs now, restyled later through logical asset IDs, as proposed.
+1. **Saves in the portable build:** stored by the local server in `saves/` inside the game folder (section 2.4).
+2. **Gamepad default layout:** the table in §1.4.
+3. **Glyph style:** Kenney CC0 placeholder glyphs now, restyled later through logical asset IDs.
+
+All three are recorded in `Features_Decisions.md` §13.
