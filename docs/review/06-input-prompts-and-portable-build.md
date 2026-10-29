@@ -81,7 +81,20 @@ The browser Gamepad API reports buttons by position (the "standard" mapping) and
 
 Menu navigation (confirm/back) uses separate abstract menu actions, so gameplay remapping never breaks menus.
 
-The **split-keyboard Player 2 defaults** (D7: arrows plus numpad, with an `IJKL` laptop preset) also need exact keys. I will propose them in the M1 plan, since they depend on keyboard-ghosting checks.
+**Split-keyboard Player 2 defaults (confirmed by the creator on 2026-10-29).** They mirror Player 1: the top row `T Z U` becomes `Num 4 5 6` and the row below, `G H J`, becomes `Num 1 2 3`.
+
+| Action | Player 1 (left cluster) | Player 2 (split keyboard) |
+|---|---|---|
+| Move | `W A S D` | Arrow keys |
+| Attack | `T` | `Num 4` |
+| Jump | `Z` (physical `KeyY`) | `Num 5` |
+| Special | `U` | `Num 6` |
+| Guard | `G` | `Num 1` |
+| Ultimate | `H` | `Num 2` |
+| Grab / Interact | `J` | `Num 3` |
+| Team Attack | `B` | `Num 0` (proposed) |
+
+Bindings use physical codes (`Numpad4`), so they work whether Num Lock is on or off. Open points for the M1 plan: confirm `Num 0` for Team Attack; the live tester's ghosting check for this exact set; and a laptop preset for keyboards without a numpad. D7's `IJKL` idea clashes with Player 1's `U`, `H` and `J`, so the M1 plan will propose a different laptop set.
 
 ### 1.5 Where it goes in the plan
 
