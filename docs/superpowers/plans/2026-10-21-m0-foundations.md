@@ -22,7 +22,8 @@
 - `favicon.svg` is used only as the browser-tab icon.
 - The browser tab title is **Fight For Peace** (English and German); the Simplified Chinese title **和平之战** is used once localization arrives in M10.
 - Replays and state encodings carry explicit format and rules versions from day one, because Stage 2 requires content, rules and cheat-registry versions in every checkpoint, replay and network snapshot (Stage 2 spec §17).
-- The game runs on `localhost`; no hosting configuration.
+- The game runs on `localhost`; no hosting configuration. Code never assumes a fixed origin or port (no `http://localhost:5173` literals), so the same build later runs inside the portable desktop wrapper (review 06 §2).
+- Bindings are data, not code: a binding set has a device kind and a list of physical codes per action, and every on-screen key label goes through `describeBinding()`, so the M1 prompt system (review 06 §1) can replace it without touching callers.
 - TypeScript `strict: true`, `noUncheckedIndexedAccess: true`.
 
 ## Review Focus
@@ -244,8 +245,10 @@ expect(acc.advance(1000 / 60).steps).toBe(1);      // debt was dropped, not carr
 - Consumes: `FrameInput` from `@ffp/sim`.
 - Produces:
   - `enum Action { Attack = 1, Jump = 2, Special = 4, Guard = 8, Ultimate = 16, Interact = 32, TeamAttack = 64 }`
-  - `type Bindings = { up: string; down: string; left: string; right: string } & Record<keyof typeof Action, string>`
-  - `DEFAULT_KEYBOARD_P1: Bindings` (codes from Global Constraints)
+  - `type BindableInput = 'up' | 'down' | 'left' | 'right' | keyof typeof Action`
+  - `interface Bindings { device: 'keyboard'; codes: Record<BindableInput, string[]> }` (several codes may trigger one input; M1 adds `'gamepad'`)
+  - `DEFAULT_KEYBOARD_P1: Bindings` (codes from Global Constraints, one per input)
+  - `describeBinding(b: Bindings, input: BindableInput): string` (M0: the US-QWERTY label of the first code, for example `'T'`; M1 replaces it with layout-aware labels)
   - `class KeyboardState { constructor(b: Bindings); keyDown(code: string): void; keyUp(code: string): void; blur(): void; sample(): FrameInput }`. `sample()` returns the current directions and clears the newly-pressed bitmask. Auto-repeat `keyDown` events for an already-held key are ignored.
 
 - [ ] **Step 1: Write failing tests:**
@@ -267,10 +270,19 @@ expect(g.sample().pressed & Action.Jump).toBeTruthy();
 expect(g.sample().pressed).toBe(0);       // pressed is edge-triggered
 g.keyDown('KeyY');                        // auto-repeat while held
 expect(g.sample().pressed).toBe(0);
+
+const custom: Bindings = { ...DEFAULT_KEYBOARD_P1, codes: { ...DEFAULT_KEYBOARD_P1.codes, Attack: ['KeyK'] } };
+const c = new KeyboardState(custom);
+c.keyDown('KeyT');
+expect(c.sample().pressed & Action.Attack).toBe(0);   // old default no longer attacks
+c.keyDown('KeyK');
+expect(c.sample().pressed & Action.Attack).toBeTruthy();
+expect(describeBinding(custom, 'Attack')).toBe('K');
+expect(describeBinding(DEFAULT_KEYBOARD_P1, 'Attack')).toBe('T');
 ```
 
 - [ ] **Step 2: Run.** Expected: FAIL.
-- [ ] **Step 3: Implement** with a per-axis press-order stack.
+- [ ] **Step 3: Implement** with a per-axis press-order stack and a code → input lookup built from the `Bindings` data.
 - [ ] **Step 4: Run.** Expected: PASS.
 - [ ] **Step 5: Commit** `feat(platform): keyboard adapter with physical-key defaults`.
 
@@ -319,7 +331,7 @@ test('greybox body moves right while D is held', async ({ page }) => {
 ```
 
 - [ ] **Step 2: Run** `pnpm e2e`. Expected: FAIL.
-- [ ] **Step 3: Implement.** Phaser `Scale.FIT` at 1920×1080 with letterboxing. The floor band covers z ∈ [620, 1000] px. Each body is drawn as a 90×300 rectangle anchored bottom-centre at `(x, z − y)`, sorted by `z`, with a facing notch. The render position interpolates between the previous and current snapshot using `alpha`. The loop runs in `requestAnimationFrame` and steps the simulation via the accumulator. Window `blur` and `visibilitychange` call `KeyboardState.blur()`. The overlay (`data-testid` `lab-frame`, `lab-hash`, `lab-fps`, `lab-input`) is a Preact component toggled with `F1`. `index.html` links `/favicon.svg` and sets `<title>Fight For Peace</title>`, and the copy in `public/` is byte-identical to the repo root `favicon.svg`.
+- [ ] **Step 3: Implement.** Phaser `Scale.FIT` at 1920×1080 with letterboxing. The floor band covers z ∈ [620, 1000] px. Each body is drawn as a 90×300 rectangle anchored bottom-centre at `(x, z − y)`, sorted by `z`, with a facing notch. The render position interpolates between the previous and current snapshot using `alpha`. The loop runs in `requestAnimationFrame` and steps the simulation via the accumulator. Window `blur` and `visibilitychange` call `KeyboardState.blur()`. The overlay (`data-testid` `lab-frame`, `lab-hash`, `lab-fps`, `lab-input`) is a Preact component toggled with `F1`; `lab-input` shows key labels through `describeBinding()`. `index.html` links `/favicon.svg` and sets `<title>Fight For Peace</title>`, and the copy in `public/` is byte-identical to the repo root `favicon.svg`.
 - [ ] **Step 4: Run** `pnpm e2e && pnpm build`. Expected: PASS; the screenshot exists.
 - [ ] **Step 5: Commit** `feat(game): Phaser greybox stage with Lab overlay`.
 
