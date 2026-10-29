@@ -9,7 +9,7 @@
 | Topic | Finding | Proposal |
 |---|---|---|
 | 1. Academy shows the player's own buttons | The spec already wants this in spirit (Guide input examples use current bindings; HUD prompts use action icons, not assumed keys; mounted cards honour current key labels; D6 shows the printed character). Nothing says *how*, and **no gamepad default layout exists** yet. | One shared **input prompt system**: every lesson, Guide page, Move List, HUD hint and control card names an *abstract action* (`Attack`), and the game draws that player's current key or button for it at display time. Built in M1, used everywhere from then on, acceptance-tested in M11. |
-| 2. Portable zip for other PCs | The built game is a web page. Opening `index.html` from an unzipped folder does not work in browsers, so a zip needs a small program that runs it. M12 (LAN co-op) also needs the game on a *second* PC, so the portable build solves a real need there. | ★ **Desktop wrapper (Electron), packaged as a zip** for Windows x64: unzip, double-click `FightForPeace.exe`, play. Saves stay inside the folder. Proof of concept at M4, full portable build at M9, used by M12. |
+| 2. Portable zip for other PCs | The built game is a web page. Opening `index.html` from an unzipped folder does not work in browsers, so it needs a small local server. M12 (LAN co-op) also needs the game on a *second* PC. | `release/FightForPeace-<version>.zip` with `start.bat` / `start.sh`: they check for Node.js (downloading a portable copy into the folder if missing), start a local server on port 6006 or the next free port, and open the browser. Saves stay in the game folder. Proof of concept at M4, v1 at M9. |
 
 ---
 
@@ -49,7 +49,7 @@ Rules:
 ### 1.3 Keyboard labels
 
 - Bindings are stored as physical codes (`KeyT`), as already planned.
-- The label comes from `navigator.keyboard.getLayoutMap()` where the browser supports it (Chrome, Edge, and the desktop wrapper from Topic 2). Firefox and Safari do not support it, so the game uses the character from the first real key press of that code, and the first-launch layout picker (QWERTY / QWERTZ / AZERTY) until then. This is the D6 decision, unchanged.
+- The label comes from `navigator.keyboard.getLayoutMap()` where the browser supports it (Chrome and Edge). Firefox and Safari do not support it, so the game uses the character from the first real key press of that code, and the first-launch layout picker (QWERTY / QWERTZ / AZERTY) until then. This is the D6 decision, unchanged.
 - Keys without a printed character get localized names: `Space` / `Leertaste` / `空格`, `Num 4`, `←`, `Shift`, `Enter`.
 - Keycaps are drawn by the UI (a rounded box with the label) rather than one image per key, so any character in any language works.
 
@@ -98,70 +98,95 @@ Cost: about 3–4 days inside M1 and about 1–2 days inside M11. It replaces wo
 
 ---
 
-## Topic 2 — A portable zip that runs on another PC
+## Topic 2 — A portable zip with start scripts
 
-### 2.1 Why not just zip the web build
+**Revised 2026-10-29 after creator feedback:** no desktop app. The portable build is the normal browser game plus `start.bat` / `start.sh`, packed into `release/FightForPeace-<version>.zip`.
 
-`pnpm build` produces a folder of HTML, JavaScript and assets. Double-clicking `index.html` opens it from `file://`, where browsers block JavaScript modules and asset loading, store saves unreliably (Firefox gives each file its own storage), and disable features the game needs. So a portable build has to include something that serves or hosts the game.
+### 2.1 What the player does
 
-### 2.2 Options
+1. Copy `FightForPeace-0.9.0.zip` to any PC or folder and unzip it.
+2. Double-click `start.bat` (Windows) or `start.sh` (Linux; `start.command` on macOS, see 2.5).
+3. The script checks that the required runtime is there and downloads it the first time if it is missing. It then starts the game's small local server on port **6006**, or on the next free port if 6006 is taken, and opens the game in the default browser.
+4. Close the console window (or press `Ctrl+C`) to stop the game.
 
-| | **A ★ Desktop wrapper (Electron), zipped** | B Small launcher + the player's browser | C Tauri wrapper |
-|---|---|---|---|
-| What the zip contains | `FightForPeace.exe`, a bundled Chromium, the game files | `FightForPeace.exe` (a tiny local web server), the game files | `FightForPeace.exe`, the game files; uses Windows' built-in Edge WebView2 |
-| How it runs | Opens its own game window, fullscreen-capable, no browser bars | Starts `http://localhost:<port>` and opens the default browser | Opens its own window |
-| Same browser engine on every PC | Yes (one engine to test) | No; depends on what is installed | Mostly (Edge engine on Windows) |
-| Saves | Inside the unzipped folder (`Data\`), so copying the folder or a USB stick moves the saves too | In that PC's browser, tied to the port; moved by profile export and import | In the user profile folder |
-| LAN co-op host (M12) | The room server runs inside the app; Windows Firewall asks about *Fight For Peace* | The launcher can run the room server | Room server would need rewriting in Rust or a bundled Node |
-| Size (zip) | About 120 MB plus game media | About 40–90 MB plus game media | About 10 MB plus game media |
-| Later Steam build | Same wrapper (commercial checklist 3.2) | Needs a wrapper anyway | Possible |
-| Extra tools to build | None beyond Node and pnpm | None (Node single-executable) | Rust toolchain |
+Why a script and a server are needed at all: double-clicking `index.html` opens it from `file://`, where browsers block JavaScript modules and asset loading and keep saves unreliably. A tiny local server on `http://localhost:<port>` avoids all of that, and `localhost` counts as a secure context, so gamepads, keyboard layout labels, crypto and Web Locks all work.
 
-**Recommendation: A.** It gives one consistent engine (gamepad behaviour, keyboard layout labels via `getLayoutMap`, video codecs), portable saves, the LAN room server, and it is the same wrapper a Steam release needs. B stays possible if size matters more than consistency.
+### 2.2 What "required libs" means here
 
-### 2.3 What the portable build looks like (option A)
+| Needed at runtime | Where it comes from |
+|---|---|
+| The game itself (Phaser, Preact and our code) | Already compiled into `game/` at build time. Nothing to download. |
+| The local web server (and later the LAN room server) | One prebuilt file, `server/server.mjs`. It uses only Node's built-in modules, and anything else (for example the WebSocket library for M12) is bundled into it at build time, so the player never runs `npm install`. |
+| **Node.js runtime** | The only thing the start script checks. If `node` version 24 or newer is installed, it is used. Otherwise the script downloads the official portable Node.js archive for this OS and CPU (about 30 MB) from `nodejs.org` into `runtime/` inside the game folder, checks its SHA-256 against the value pinned in the release, and unpacks it. Next time it starts offline from `runtime/`. Nothing is installed system-wide and no admin rights are needed. |
+| A browser | Any Tier-1 browser already on the PC (Chrome, Edge, Firefox, Safari). |
+
+If the PC is offline on first start and has no Node.js, the script says so clearly. An optional **offline zip** variant can ship with the Windows Node runtime already in `runtime/` (about 30 MB larger), built by the same release command with `--with-runtime win-x64`.
+
+### 2.3 Start-script behaviour
+
+1. Change to the script's own folder, so it works from any directory and from paths with spaces.
+2. Use `runtime/node` if present, else a system `node` of version 24 or newer, else download as in 2.2 (Windows: built-in PowerShell `Invoke-WebRequest` and `tar`; Linux and macOS: `curl` or `wget`, `tar`, and `sha256sum` or `shasum`).
+3. Run `node server/server.mjs`. The server:
+   - tries port **6006**, then 6007, 6008 … up to 6105, binding only to `127.0.0.1` so single-player never triggers a firewall prompt and nobody else on the network can reach it;
+   - also accepts `start.bat --port 7000` (and the `FFP_PORT` environment variable) to force a port;
+   - serves `game/` with correct MIME types and no caching surprises, prints `Fight For Peace 0.9.0 running at http://localhost:6007`, and opens that address in the default browser (`start`, `open` or `xdg-open`);
+   - writes the chosen port to `logs/last-port.txt` and logs to `logs/server.log`;
+   - if a Fight For Peace server from the same folder is already running, it just opens the browser on that port instead of starting a second one.
+4. When hosting LAN co-op (M12), the in-game lobby asks this same server to open the room listener on port 7350 (next free if taken) on the LAN interface. Only then does Windows Firewall ask once; allow *private networks*.
+
+### 2.4 Saves and the changing port
+
+Browsers keep IndexedDB per address, and the port is part of the address. If 6006 is busy one day and the game starts on 6007, browser-stored saves would seem to vanish. Moving the folder to another PC would also leave the saves behind in the old browser.
+
+**Proposal:** in the portable build, profiles are saved **by the local server into a `saves/` folder inside the game folder**, through the save adapter the spec already requires (`Features_Decisions.md` §11: saves behind a platform adapter). The same versioned, checksummed transactional format and snapshots are used; only the storage location changes. That makes saves independent of the port and the browser, and copying the game folder copies the saves. The pure browser build (`pnpm dev`) keeps IndexedDB, and `.ffpsave` export and import still move profiles between the two. This changes "IndexedDB is the canonical local store" for the portable build only, so it needs your approval.
+
+### 2.5 Operating systems
+
+| OS | Start file | Notes |
+|---|---|---|
+| Windows 10 / 11 | `start.bat` | Works by double-click. No SmartScreen warning, because there is no unsigned `.exe`. |
+| Linux | `start.sh` | Stored executable in the zip. Some file managers ask "Run or display?"; otherwise run `./start.sh` in a terminal. |
+| macOS | `start.command` (a copy of `start.sh`) | macOS opens `.sh` files in a text editor on double-click, but runs `.command` files in Terminal. The first time, Gatekeeper may need right-click → *Open*. |
+
+### 2.6 What goes in the zip and how it is built
 
 ```
-FightForPeace-0.9.0-win-x64.zip
-└─ FightForPeace\
-   ├─ FightForPeace.exe        double-click to play
-   ├─ resources\app.asar       the built game (same code as the browser build)
-   ├─ Data\                    created on first run: profiles, settings, logs
-   ├─ README.txt               requirements, controls, firewall note, how to move saves
-   └─ LICENSES.*               third-party notices (Chromium, Electron, Phaser, …)
+release/FightForPeace-0.9.0.zip
+└─ FightForPeace-0.9.0/
+   ├─ start.bat
+   ├─ start.sh
+   ├─ start.command
+   ├─ server/server.mjs        local server, bundled, no node_modules
+   ├─ game/                    built game (index.html, JS, assets, media)
+   ├─ runtime.json             required Node version, download URLs and SHA-256 per OS/CPU
+   ├─ VERSION                  0.9.0
+   ├─ README.txt               how to start, ports, firewall note, where saves are, how to update
+   └─ LICENSES.txt             third-party notices (Phaser, Preact, bundled libraries, Kenney CC0)
+   (created on first run: runtime/, saves/, logs/)
 ```
 
-- **Target PC:** Windows 10 or 11, 64-bit, a graphics card with WebGL 2. Nothing to install: no Node.js, no pnpm, no browser.
-- **First start:** the build is not code-signed until commercial release (checklist 3.6), so Windows SmartScreen shows "Windows protected your PC" → *More info* → *Run anyway*. README explains it. When hosting LAN co-op, Windows Firewall asks once; allow *private networks*.
-- **Saves:** stored in `Data\` next to the exe. If the folder is read-only (for example under `Program Files`), the game falls back to `%LOCALAPPDATA%\FightForPeace` and says so. Updating to a new version: unzip the new version and copy the old `Data\` folder over, or use profile export and import.
-- **Versions:** the zip name and the title screen show the version. The LAN lobby already refuses mismatched game or rules versions, so both PCs must use the same zip.
-- **Security hygiene:** the game page gets no Node access (`contextIsolation`, `sandbox`); a small preload exposes only what the game needs (start or stop LAN room, list LAN addresses, fullscreen, open the saves folder). The game is served from a private `app://` scheme, never from a web server.
-- **The browser build stays.** `pnpm dev` and `pnpm build && pnpm preview` remain the development path and the Tier-1 browser targets. The desktop app is one more platform adapter (`DesktopHost`) behind the interfaces the spec already requires.
+- Root command **`pnpm release`**: runs the production build, bundles `server.mjs` with esbuild, assembles exactly the files above (no sources, tests, `node_modules` or dev tools), writes the version from the root `package.json`, and zips it to **`release/FightForPeace-<version>.zip`**. Unix file permissions are kept, so `start.sh` stays executable.
+- `release/` is listed in `.gitignore`: zips are build output, not source. CI builds the zip on milestone PRs as a downloadable artifact, and a version tag publishes it as a GitHub Release.
+- **CI smoke test:** unzip the release into a temporary folder whose path contains a space, block port 6006 with a dummy listener, run the start script without a system Node (so it downloads into `runtime/`), check that the game is served on 6007, and run the M0 movement test against it with Playwright. This runs on Windows and Linux.
+- **Updating:** unzip the new version next to the old one and copy the old `saves/` folder across (README explains). The LAN lobby already rejects mismatched game or rules versions, so both PCs must use the same zip.
 
-### 2.4 How it is built
-
-- New workspace package `apps/desktop` (Electron main process, preload, room-server host) and root script `pnpm package:win`, which builds the game and produces the zip with electron-builder's `zip` target.
-- CI: a `windows-latest` job builds the zip on milestone PRs and uploads it as a downloadable artifact; a version tag publishes it as a GitHub Release. A smoke test launches the packaged exe with Playwright's Electron support and runs the same M0 movement test, so a broken package fails CI.
-- macOS and Linux zips are possible later with the same setup (macOS needs notarization or a right-click *Open* the first time).
-
-### 2.5 Where it goes in the plan
+### 2.7 Where it goes in the plan
 
 | Milestone | Addition |
 |---|---|
-| M0 | Guardrail only: the game must not assume a fixed origin or port (no `http://localhost:5173` in code), and all assets load through the manifest with origin-relative URLs. No packaging work. |
-| M4 (first playable Combat Lab) | **Proof of concept** (about 2 days): `apps/desktop`, `pnpm package:win`, CI artifact. You unzip it on a second PC and check window, keyboard, gamepad and performance early, while fixing things is cheap. |
-| M9 (Stage 1 playable start to end) | **Portable build v1** (about 3 days): saves in `Data\` with fallback, README, licence notices, version display, Playwright smoke test of the packaged exe, GitHub Release on tag. Every later milestone ships a zip next to the PR. |
-| M10 | Profile export and import also works from the desktop app (native save dialog), so saves can move between the browser and desktop versions. |
-| M12 | The second PC runs the portable zip, so the guest needs no Node.js or pnpm. The room server starts from the in-game lobby, hosted by the desktop app. (The browser path from review 03 option A still works for development.) |
-| M13 | Check that the cinematic and music formats play in the packaged app (part of the media integration test). |
-| M14 | The portable zip is in the hardware matrix (low-end laptop, a PC that never had the dev tools). |
+| M0 | Guardrails only: the game never assumes a fixed origin or port (no `localhost:5173` literals), and assets load through origin-relative URLs. `release/` is in `.gitignore`. |
+| M4 (first playable Combat Lab) | **Proof of concept** (about 2 days): `start.bat`, `start.sh`, `start.command`, `server.mjs` with port search from 6006, Node check and download, `pnpm release`, zip in `release/`. You try it on a second PC early. |
+| M9 (Stage 1 playable start to end) | **Portable build v1** (about 2 days): README, licence notices, version display in game and console, the CI smoke test, GitHub Release on tag. Every later milestone ships a zip. |
+| M10 | Server-backed save adapter writing to `saves/` (if approved), with the same snapshots, backups and export/import as the IndexedDB adapter. |
+| M12 | The same server hosts the LAN room listener. The second PC only needs the zip. |
+| M14 | The portable zip is in the test matrix: a PC that never had dev tools, offline first start, port 6006 busy, Windows and Linux. |
 
-Cost: about 1 week in total, spread over M4 and M9, plus a few hours in M12.
+Cost: about 4–5 days in total, spread over M4, M9 and M10, plus a few hours in M12.
 
 ---
 
 ## Decisions needed from you
 
-1. **Portable build approach:** A (Electron zip, recommended), B (launcher plus browser) or C (Tauri).
+1. **Saves in the portable build:** stored by the local server in `saves/` inside the game folder (recommended, section 2.4), or kept in the browser.
 2. **Gamepad default layout:** approve the table in §1.4 or change it.
 3. **Glyph style:** Kenney CC0 placeholder glyphs now, restyled later through logical asset IDs, as proposed.

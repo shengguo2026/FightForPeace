@@ -22,7 +22,7 @@
 - `favicon.svg` is used only as the browser-tab icon.
 - The browser tab title is **Fight For Peace** (English and German); the Simplified Chinese title **和平之战** is used once localization arrives in M10.
 - Replays and state encodings carry explicit format and rules versions from day one, because Stage 2 requires content, rules and cheat-registry versions in every checkpoint, replay and network snapshot (Stage 2 spec §17).
-- The game runs on `localhost`; no hosting configuration. Code never assumes a fixed origin or port (no `http://localhost:5173` literals), so the same build later runs inside the portable desktop wrapper (review 06 §2).
+- The game runs on `localhost`; no hosting configuration. Code never assumes a fixed origin or port (no `http://localhost:5173` literals), so the same build later runs from the portable zip on whatever port its start script picks (review 06 §2). `.gitignore` includes `release/`.
 - Bindings are data, not code: a binding set has a device kind and a list of physical codes per action, and every on-screen key label goes through `describeBinding()`, so the M1 prompt system (review 06 §1) can replace it without touching callers.
 - TypeScript `strict: true`, `noUncheckedIndexedAccess: true`.
 
