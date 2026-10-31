@@ -6,7 +6,8 @@ const forbiddenMath = ['sin', 'cos', 'tan', 'pow', 'exp', 'log', 'sqrt', 'random
   (property) => ({
     object: 'Math',
     property,
-    message: 'Non-deterministic or platform-dependent maths is forbidden in @ffp/sim. Use math/fixed.ts or math/rng.ts.',
+    message:
+      'Non-deterministic or platform-dependent maths is forbidden in @ffp/sim. Use math/fixed.ts or math/rng.ts.',
   }),
 );
 
