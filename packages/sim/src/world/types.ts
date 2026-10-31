@@ -45,6 +45,13 @@ export const MoveState = {
   Dash: 2,
   Air: 3,
   Attack: 4,
+  /** Reaction states (targets). */
+  Hitstun: 5,
+  Launched: 6,
+  Down: 7,
+  GetUp: 8,
+  /** Landing recovery after an aerial attack. */
+  Landing: 9,
 } as const;
 export type MoveState = (typeof MoveState)[keyof typeof MoveState];
 
@@ -80,6 +87,83 @@ export interface Fighter extends Body {
   pinFrames: number;
   /** Set by the anti-trap rule: enemies are soft for this hero until they stop overlapping. */
   passEnemies: boolean;
+
+  // --- M2 combat ---------------------------------------------------------------------
+  /** Roster index of the hero definition; -1 for dummies. */
+  hero: number;
+  /** Index of the running action in the hero's action table; -1 for none or a stub. */
+  action: number;
+  /** Most recently pressed cardinal direction (DirBit), for diagonal tie-breaks. */
+  lastCardinal: number;
+  /** Action frame of the first contact of the running action, -1 before any contact. */
+  contactAt: number;
+  /** Targets this action has hit, and the damage scale locked for each of them. */
+  contactIds: number[];
+  contactScales: number[];
+  /** Active segment index for which hitIds are recorded, and the targets hit in it. */
+  hitSeg: number;
+  hitIds: number[];
+  /** Actions used in the current string (bit per action index). */
+  chainUsed: number;
+  /** An aerial starter was used during this jump. */
+  airUsed: boolean;
+  /** The current dash came from the premium dash bridge. */
+  bridged: boolean;
+  /** Enemy collision is soft during this action (passThrough tag). */
+  ghost: boolean;
+  /** Attack meter, 0–100 %. */
+  meter: number;
+  /** Queued cancel: index of the link in the running action (-1 none) and its press frame. */
+  reqLink: number;
+  reqFrame: number;
+  /** Last cancel verdict for the Lab: destination code, Reject code, world frame. */
+  verdictTo: number;
+  verdictReject: number;
+  verdictFrame: number;
+  /** Frames the current reaction or landing recovery lasts. */
+  stun: number;
+  /** A launched target lands on its feet (forced separation) instead of going down. */
+  airRecover: boolean;
+  /** Health (dummies: 1000). */
+  health: number;
+  maxHealth: number;
+  /** Combo context owned by this fighter as a defender. */
+  ctx: ComboContext;
+}
+
+/** Ground-route tag recorded by the last knockdown (shown in the Lab; used from M3). */
+export const GroundTag = { None: 0, Opens: 1, Terminal: 2 } as const;
+
+/**
+ * Target-owned combo context. Opens on the first confirmed hit, closes when the target
+ * is actionable again. Shared by every attacker hitting this target.
+ */
+export interface ComboContext {
+  open: boolean;
+  /** Offensive actions that connected (the opener is action 1). */
+  actions: number;
+  /** Individual hits (multi-hit moves count each hit). */
+  hits: number;
+  damage: number;
+  /** Damage scale in percent for the next action. */
+  scale: number;
+  stunBudget: number;
+  /** Stored for M3; not enforced in M2. */
+  juggleBudget: number;
+  /** Attack meter that can still be earned from this combo. */
+  meterBudget: number;
+  bridgeUsed: boolean;
+  exhausted: boolean;
+  groundTag: number;
+  /** Damage dealt by the most recent hit, for the hit pop-up. */
+  lastDamage: number;
+}
+
+export interface DummySettings {
+  /** Treat every hit as a counter-hit (dummies do not attack yet). */
+  counterHit: boolean;
+  /** Restore full health whenever a combo context closes. */
+  refill: boolean;
 }
 
 export interface World {
@@ -91,4 +175,9 @@ export interface World {
   dummiesChase: boolean;
   /** Facing mode chosen by each player slot (applies to the hero when it spawns). */
   playerFacing: FacingMode[];
+  /** Roster index chosen by each player slot. */
+  playerHero: number[];
+  dummy: DummySettings;
+  /** Lab switch: premium cancels cost nothing and the meter shows full. */
+  infiniteMeter: boolean;
 }
