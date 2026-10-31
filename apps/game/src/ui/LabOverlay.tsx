@@ -1,93 +1,259 @@
-import { type Signal, signal } from '@preact/signals';
-import {
-  type BindableInput,
-  type Bindings,
-  ACTION_NAMES,
-  Action,
-  describeBinding,
-} from '@ffp/platform';
-import type { FrameInput } from '@ffp/sim';
+import type { FacingMode } from '@ffp/sim';
+import type { KeyboardP2Preset, LayoutName } from '@ffp/platform';
+import { TEXT } from '../text/en';
+import { InputPrompt, PLAYER_COLORS, PromptText } from './InputPrompt';
+import type { LabState, PlayerView, PromptStyle } from './labState';
 
-export interface InputEntry {
-  frame: number;
-  label: string;
-}
-
-export interface LabState {
-  visible: Signal<boolean>;
-  frame: Signal<number>;
-  hash: Signal<string>;
-  fps: Signal<number>;
-  inputs: Signal<InputEntry[]>;
-}
-
-export function createLabState(visible: boolean): LabState {
-  return {
-    visible: signal(visible),
-    frame: signal(0),
-    hash: signal('00000000'),
-    fps: signal(0),
-    inputs: signal([]),
-  };
-}
-
-const HISTORY_LENGTH = 12;
-
-/** Key labels for one frame's input, always through describeBinding(). */
-export function labelInput(b: Bindings, input: FrameInput): string {
-  const parts: string[] = [];
-  const dir = (d: BindableInput) => parts.push(describeBinding(b, d));
-  if (input.moveZ === -1) dir('up');
-  if (input.moveZ === 1) dir('down');
-  if (input.moveX === -1) dir('left');
-  if (input.moveX === 1) dir('right');
-  for (const name of ACTION_NAMES) {
-    if (input.pressed & Action[name]) parts.push(describeBinding(b, name));
-  }
-  return parts.length === 0 ? '·' : parts.join('+');
-}
-
-/** Records an input in the history when it differs from the newest entry. */
-export function pushInput(state: LabState, frame: number, label: string): void {
-  const history = state.inputs.value;
-  if (history[0]?.label === label) return;
-  state.inputs.value = [{ frame, label }, ...history].slice(0, HISTORY_LENGTH);
+export interface LabActions {
+  setFacing(slot: number, mode: FacingMode): void;
+  setPromptStyle(style: PromptStyle): void;
+  setLayout(layout: LayoutName): void;
+  setP2Preset(preset: KeyboardP2Preset): void;
+  rebindAttack(): void;
+  resetBindings(): void;
+  setDummiesChase(on: boolean): void;
+  setShowCollision(on: boolean): void;
 }
 
 const panel = {
-  position: 'absolute',
-  top: '8px',
-  left: '8px',
   padding: '8px 12px',
   font: '13px/1.5 ui-monospace, Consolas, monospace',
   color: '#e8e8e8',
-  background: 'rgba(0, 0, 0, 0.7)',
+  background: 'rgba(0, 0, 0, 0.72)',
   borderRadius: '4px',
-  pointerEvents: 'none',
-  minWidth: '180px',
+  minWidth: '200px',
 } as const;
 
-export function LabOverlay({ state }: { state: LabState }) {
-  if (!state.visible.value) return null;
+function PlayerPanel({ p }: { p: PlayerView }) {
+  const color = PLAYER_COLORS[p.slot];
+  if (!p.joined) {
+    return (
+      <div
+        style={{ ...panel, borderLeft: `4px solid ${color}` }}
+        data-testid={`lab-p${p.slot + 1}`}
+      >
+        <div style={{ color }}>Player {p.slot + 1} · not joined</div>
+        <div>
+          <PromptText text={TEXT.joinKeyboard} ctx={p.ctx} color={color} />
+        </div>
+        <div>or Start on a second gamepad</div>
+      </div>
+    );
+  }
   return (
-    <div style={panel} data-testid="lab-overlay">
-      <div>Lab · F1 to hide</div>
-      <div>
-        frame <span data-testid="lab-frame">{state.frame.value}</span>
+    <div style={{ ...panel, borderLeft: `4px solid ${color}` }} data-testid={`lab-p${p.slot + 1}`}>
+      <div style={{ color }}>
+        Player {p.slot + 1} · <span data-testid={`lab-p${p.slot + 1}-device`}>{p.device}</span>
       </div>
       <div>
-        hash <span data-testid="lab-hash">{state.hash.value}</span>
+        state <span data-testid={`lab-p${p.slot + 1}-state`}>{p.state}</span> · facing {p.facing} (
+        {p.facingMode})
       </div>
+      <div>speed {p.speed}</div>
       <div>
-        fps <span data-testid="lab-fps">{state.fps.value}</span>
+        buffered <span data-testid={`lab-p${p.slot + 1}-buffer`}>{p.buffered}</span> · target{' '}
+        {p.target}
       </div>
-      <div data-testid="lab-input" style={{ whiteSpace: 'pre' }}>
-        {state.inputs.value.map((e) => (
+      <div
+        data-testid={p.slot === 0 ? 'lab-input' : 'lab-input-p2'}
+        style={{ whiteSpace: 'pre', marginTop: '4px' }}
+      >
+        {p.history.map((e) => (
           <div key={e.frame}>
-            {String(e.frame).padStart(6, ' ')} {e.label}
+            {String(e.frame).padStart(6, ' ')}{' '}
+            {e.prompts.length === 0
+              ? '·'
+              : e.prompts.map((pr) => <InputPrompt prompt={pr} color={color} />)}
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function Select<T extends string>(props: {
+  label: string;
+  value: T;
+  options: readonly T[];
+  onChange: (v: T) => void;
+  testId: string;
+}) {
+  return (
+    <label style={{ display: 'block', margin: '2px 0' }}>
+      {props.label}{' '}
+      <select
+        data-testid={props.testId}
+        value={props.value}
+        onChange={(e) => {
+          const el = e.target as HTMLSelectElement;
+          props.onChange(el.value as T);
+          el.blur(); // keep game keys away from the focused control
+        }}
+      >
+        {props.options.map((o) => (
+          <option value={o}>{o}</option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function Settings({ state, actions }: { state: LabState; actions: LabActions }) {
+  const players = state.players.value;
+  return (
+    <div style={{ ...panel, pointerEvents: 'auto' }} data-testid="lab-settings">
+      <div>Lab settings · F2 to close</div>
+      {[0, 1].map((slot) => (
+        <Select
+          label={`Player ${slot + 1} facing`}
+          value={players[slot]?.facingMode ?? 'manual'}
+          options={['manual', 'assisted'] as const}
+          onChange={(v) => actions.setFacing(slot, v)}
+          testId={`set-facing-p${slot + 1}`}
+        />
+      ))}
+      <Select
+        label="Button prompt style"
+        value={state.promptStyle.value}
+        options={['auto', 'xbox', 'playstation', 'nintendo', 'generic'] as const}
+        onChange={actions.setPromptStyle}
+        testId="set-prompt-style"
+      />
+      <Select
+        label="Keyboard layout"
+        value={state.layout.value}
+        options={['qwerty', 'qwertz', 'azerty'] as const}
+        onChange={actions.setLayout}
+        testId="set-layout"
+      />
+      <Select
+        label="Player 2 keyboard"
+        value={state.p2Preset.value}
+        options={['numpad', 'laptop'] as const}
+        onChange={actions.setP2Preset}
+        testId="set-p2-preset"
+      />
+      <div style={{ margin: '4px 0' }}>
+        <button
+          data-testid="rebind-attack"
+          onClick={(e) => {
+            (e.target as HTMLElement).blur();
+            actions.rebindAttack();
+          }}
+        >
+          {state.rebinding.value ? 'Press a key…' : 'Rebind P1 Attack'}
+        </button>{' '}
+        <button
+          data-testid="reset-bindings"
+          onClick={(e) => {
+            (e.target as HTMLElement).blur();
+            actions.resetBindings();
+          }}
+        >
+          Reset P1 keys
+        </button>
+      </div>
+      <label style={{ display: 'block' }}>
+        <input
+          type="checkbox"
+          data-testid="set-chase"
+          checked={state.dummiesChase.value}
+          onChange={(e) => actions.setDummiesChase((e.target as HTMLInputElement).checked)}
+        />{' '}
+        Dummies chase (F4)
+      </label>
+      <label style={{ display: 'block' }}>
+        <input
+          type="checkbox"
+          data-testid="set-collision"
+          checked={state.showCollision.value}
+          onChange={(e) => actions.setShowCollision((e.target as HTMLInputElement).checked)}
+        />{' '}
+        Collision shapes (F3)
+      </label>
+    </div>
+  );
+}
+
+export function LabOverlay({ state, actions }: { state: LabState; actions: LabActions }) {
+  const players = state.players.value;
+  return (
+    <>
+      {state.visible.value ? (
+        <div
+          style={{
+            position: 'absolute',
+            top: '8px',
+            left: '8px',
+            display: 'flex',
+            gap: '8px',
+            alignItems: 'flex-start',
+            pointerEvents: 'none',
+          }}
+          data-testid="lab-overlay"
+        >
+          <div style={panel}>
+            <div>Lab · F1 hide · F2 settings</div>
+            <div>
+              frame <span data-testid="lab-frame">{state.frame.value}</span>
+              {state.paused.value ? ' (paused)' : ''}
+            </div>
+            <div>
+              hash <span data-testid="lab-hash">{state.hash.value}</span>
+            </div>
+            <div>
+              fps <span data-testid="lab-fps">{state.fps.value}</span>
+            </div>
+            <div data-testid="lab-held">held {state.heldKeys.value.join(' ') || '—'}</div>
+          </div>
+          {players.map((p) => (
+            <PlayerPanel p={p} />
+          ))}
+          {state.settingsOpen.value ? <Settings state={state} actions={actions} /> : null}
+        </div>
+      ) : null}
+      <HintBar players={players} />
+    </>
+  );
+}
+
+/** Bottom-of-screen control hints, drawn from each player's own bindings. */
+function HintBar({ players }: { players: PlayerView[] }) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        bottom: '8px',
+        left: '8px',
+        right: '8px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        pointerEvents: 'none',
+        font: '14px/1.6 system-ui, sans-serif',
+        color: '#e8e8e8',
+      }}
+    >
+      {players
+        .filter((p) => p.joined)
+        .map((p) => {
+          const color = PLAYER_COLORS[p.slot];
+          return (
+            <div style={{ ...panel, font: 'inherit' }} data-testid={`hint-p${p.slot + 1}`}>
+              <span style={{ color }}>P{p.slot + 1}</span>{' '}
+              {[
+                TEXT.hintMove,
+                TEXT.hintDash,
+                TEXT.hintJump,
+                TEXT.hintAttack,
+                TEXT.hintLowAttack,
+              ].map((t) => (
+                <span style={{ marginRight: '12px' }}>
+                  <PromptText text={t} ctx={p.ctx} color={color} />
+                </span>
+              ))}
+            </div>
+          );
+        })}
     </div>
   );
 }
