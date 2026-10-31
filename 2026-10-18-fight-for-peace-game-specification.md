@@ -480,7 +480,7 @@ The host owns frame order, accepted actions, random seed, spawn decisions, and c
 
 Pairing uses short-lived room/QR signaling when available and two-way QR or copy/paste WebRTC packages as an offline fallback. Before readiness, peers validate game version, protocol version, deterministic-rules hash, content manifest, cheat-registry hash, and canonical session-wide cheat configuration. A mismatch blocks readiness rather than silently changing either player's state.
 
-Interruption handling uses short recovery grace, restricted survival proxy, rejoin snapshot, and host migration. Unrecoverable sessions preserve the last confirmed checkpoint instead of guessing progress.
+Interruption handling uses short recovery grace, restricted survival proxy, rejoin snapshot, and host migration. Unrecoverable sessions keep only already confirmed statistics and checkpoint credit instead of guessing progress. Continuing from a checkpoint is available only in solo and same-device co-op; local-Wi-Fi co-op has no continuable save (decision log, 2026-10-31).
 
 ### 18.3 Performance and loading
 
