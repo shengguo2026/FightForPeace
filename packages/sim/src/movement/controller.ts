@@ -2,6 +2,22 @@ import { fxMul } from '../math/fixed';
 import { ActionBit, DirBit, OFFENSIVE_MASK } from '../input/bits';
 import { type Axis, type Fighter, type FrameInput, MoveState, type World } from '../world/types';
 import { bufferPress, takeBuffered } from '../combat/buffer';
+import {
+  VerdictTo,
+  actionOf,
+  applyActionMovement,
+  cancelPresses,
+  commitLink,
+  framesLeft,
+  noteCardinal,
+  pressDuringAction,
+  queuedLink,
+  resolveDir,
+  selectAction,
+  startAction,
+} from '../combat/actions';
+import { activeSpan, totalFrames } from '../combat/roster';
+import { type ActionDef, Dir, Reject } from '../combat/types';
 import type { MovementProfile } from './profile';
 
 /** "No unconsumed press" marker for Fighter.lastTap. */
@@ -77,11 +93,11 @@ function actionable(f: Fighter): boolean {
   return f.state === MoveState.Idle || f.state === MoveState.Walk || f.state === MoveState.Dash;
 }
 
-/** Advances one hero by one frame. Collision runs afterwards, for all fighters at once. */
+/** Advances one hero by one frame. Collision and hits run afterwards, for everyone at once. */
 export function stepHero(world: World, f: Fighter, input: FrameInput, p: MovementProfile): void {
   const frame = world.frame;
+  noteCardinal(f, input.dirPressed);
   const tap = detectDoubleTap(f, input.dirPressed, frame, p.doubleTapFrames);
-  bufferPress(f, input.pressed & OFFENSIVE_MASK, frame, p.bufferFrames);
   const dashPressed = (input.pressed & ActionBit.Dash) !== 0;
   const guardPressed = (input.pressed & ActionBit.Guard) !== 0;
   if (guardPressed) f.lastGuardFrame = frame;
@@ -89,22 +105,26 @@ export function stepHero(world: World, f: Fighter, input: FrameInput, p: Movemen
   // 1. Advance the current state; it may become actionable this frame.
   let chained = false;
   let moved = false;
+  if (f.state === MoveState.Attack && f.action >= 0) {
+    if (stepRunningAction(world, f, input, tap, dashPressed, guardPressed, p)) return;
+    chained = true;
+  } else {
+    bufferPress(f, input.pressed & OFFENSIVE_MASK, frame, p.bufferFrames);
+  }
   switch (f.state) {
     case MoveState.Attack:
+      // Special and Ultimate stubs (M5): a fixed pose with no hitbox.
       f.stateFrame += 1;
-      // Guard arriving just after Attack out of a dash turns it into the low attack. In this
-      // chord Guard is only a modifier: it never guards.
-      if (
-        guardPressed &&
-        f.attackFromDash &&
-        f.attackKind === ActionBit.Attack &&
-        f.stateFrame <= p.chordFrames
-      ) {
-        f.attackKind = ActionBit.LowAttack;
-      }
       if (f.stateFrame >= p.attackFrames) {
         f.state = MoveState.Idle;
         f.attackKind = 0;
+        chained = true;
+      }
+      break;
+    case MoveState.Landing:
+      f.stateFrame += 1;
+      if (f.stateFrame >= f.stun) {
+        toIdle(f);
         chained = true;
       }
       break;
@@ -113,6 +133,7 @@ export function stepHero(world: World, f: Fighter, input: FrameInput, p: Movemen
       if (f.stateFrame >= p.dashFrames) toIdle(f);
       break;
     case MoveState.Air:
+      if (tryAerial(f, input, p)) return;
       airStep(f, input, p);
       moved = true;
       break;
@@ -122,8 +143,18 @@ export function stepHero(world: World, f: Fighter, input: FrameInput, p: Movemen
 
   // 2. Start a new action if allowed. Buffered offensive actions win over a dash.
   if (actionable(f)) {
+    if (f.state !== MoveState.Dash) {
+      // Back in neutral on the ground: the previous string is over.
+      f.chainUsed = 0;
+      f.bridged = false;
+    }
     const action = takeBuffered(f, frame, p.bufferFrames);
-    if (action === ActionBit.Jump) {
+    if (action === ActionBit.Jump && f.bridged) {
+      // A bridged dash only leads into the hero's authored dash follow-ups.
+      f.verdictTo = VerdictTo.Jump;
+      f.verdictReject = Reject.Unlinked;
+      f.verdictFrame = frame;
+    } else if (action === ActionBit.Jump) {
       startJump(f, input, p);
     } else if (action !== 0) {
       startAttack(world, f, input, action, chained, p);
@@ -156,9 +187,137 @@ export function stepHero(world: World, f: Fighter, input: FrameInput, p: Movemen
     case MoveState.Air:
       airStep(f, input, p);
       break;
+    case MoveState.Attack: {
+      // An action that started this frame moves on its first frame.
+      const a = actionOf(f);
+      if (a) applyActionMovement(f, a, 1, input, p);
+      break;
+    }
     default:
-      break; // Attack: rooted in place.
+      break;
   }
+}
+
+/** Attack pressed in the air: the hero's aerial for that direction, once per jump. */
+function tryAerial(f: Fighter, input: FrameInput, p: MovementProfile): boolean {
+  const attack = (input.pressed & (ActionBit.Attack | ActionBit.LowAttack)) !== 0;
+  if (!attack || f.airUsed || f.hero < 0) return false;
+  const index = selectAction(f, 'air', resolveDir(f, input));
+  if (index < 0) return false;
+  f.bufAction = 0;
+  f.bufFrame = 0;
+  startAction(f, index);
+  runActionFrame(f, actionOf(f)!, 1, input, p);
+  return true;
+}
+
+/**
+ * One frame of a data-driven action: low-attack chord, cancel presses, queued cancel,
+ * movement, aerial landing and the end of the action. Returns false when the action
+ * ended this frame and the hero is actionable again.
+ */
+function stepRunningAction(
+  world: World,
+  f: Fighter,
+  input: FrameInput,
+  tap: DashRequest | null,
+  dashPressed: boolean,
+  guardPressed: boolean,
+  p: MovementProfile,
+): boolean {
+  const frame = world.frame;
+  f.stateFrame += 1;
+  let a = actionOf(f)!;
+  let n = f.stateFrame + 1;
+
+  // Guard arriving just after Attack out of a dash turns the dash attack into the low
+  // attack. In this chord Guard is only a modifier: it never guards.
+  if (guardPressed && a.context === 'dash' && f.stateFrame <= p.chordFrames) {
+    const low = selectAction(f, 'dashLow', Dir.Neutral);
+    if (low >= 0) {
+      const kept = f.stateFrame;
+      f.chainUsed &= ~(1 << f.action);
+      startAction(f, low);
+      f.stateFrame = kept;
+      a = actionOf(f)!;
+      n = f.stateFrame + 1;
+    }
+  }
+
+  bufferPress(f, 0, frame, p.bufferFrames);
+  if (!a.landing && n > totalFrames(a)) {
+    // The action is over: this frame belongs to whatever comes next.
+    endAction(f);
+    bufferPress(f, input.pressed & OFFENSIVE_MASK, frame, p.bufferFrames);
+    return false;
+  }
+  const dir = resolveDir(f, input);
+  const dashRequested = dashPressed || (tap !== null && tap.dx === f.facing && tap.dz === 0);
+  const activeEnd = a.startup + activeSpan(a);
+  for (const press of cancelPresses(input, dashRequested, dir)) {
+    const outcome = pressDuringAction(world, f, a, press);
+    if (outcome !== 'unlinked' || press.kind === 'dash') continue;
+    // No link: a press near the end still starts a fresh action afterwards (one-slot
+    // buffer); anything earlier is discarded, never a delayed standalone attack.
+    const nearEnd = a.landing ? n > activeEnd : framesLeft(a, n) < p.bufferFrames;
+    if (!nearEnd) continue;
+    f.verdictTo = VerdictTo.None;
+    f.verdictReject = Reject.None;
+    bufferPress(f, input.pressed & OFFENSIVE_MASK, frame, p.bufferFrames);
+  }
+
+  const link = queuedLink(world, f, a);
+  if (link) {
+    commitLink(world, f, link);
+    if (link.kind === 'action') {
+      startAction(f, link.to);
+      runActionFrame(f, actionOf(f)!, 1, input, p);
+    } else if (link.kind === 'jump') {
+      f.action = -1;
+      f.ghost = false;
+      startJump(f, input, p);
+      airStep(f, input, p);
+    } else if (link.kind === 'dash') {
+      f.action = -1;
+      f.ghost = false;
+      startDash(f, f.facing, 0, p);
+      f.bridged = true;
+      f.x += f.vx;
+      f.z += f.vz;
+    }
+    return true;
+  }
+
+  runActionFrame(f, a, n, input, p);
+  return true;
+}
+
+/** Movement and landing for one action frame. Returns false if the hero landed. */
+function runActionFrame(
+  f: Fighter,
+  a: ActionDef,
+  n: number,
+  input: FrameInput,
+  p: MovementProfile,
+): boolean {
+  applyActionMovement(f, a, n, input, p);
+  if (a.category !== 'aerial' || f.y > 0) return true;
+  // Touching down ends an aerial at once and applies its landing recovery.
+  endAction(f);
+  f.y = 0;
+  f.state = MoveState.Landing;
+  f.stateFrame = 0;
+  f.stun = a.recovery;
+  f.airUsed = false;
+  return false;
+}
+
+function endAction(f: Fighter): void {
+  toIdle(f);
+  f.action = -1;
+  f.attackKind = 0;
+  f.ghost = false;
+  f.reqLink = -1;
 }
 
 function toIdle(f: Fighter): void {
@@ -169,6 +328,7 @@ function toIdle(f: Fighter): void {
   f.vy = 0;
   f.dirX = 0;
   f.dirZ = 0;
+  f.airUsed = false;
 }
 
 function startDash(f: Fighter, dx: Axis, dz: Axis, p: MovementProfile): void {
@@ -178,6 +338,7 @@ function startDash(f: Fighter, dx: Axis, dz: Axis, p: MovementProfile): void {
   f.dirZ = dz;
   [f.vx, f.vz] = directed(dx, dz, p.dashX, p.dashZ, p.diagonal);
   if (dx !== 0) f.facing = dx;
+  f.bridged = false;
 }
 
 function startJump(f: Fighter, input: FrameInput, p: MovementProfile): void {
@@ -234,33 +395,37 @@ function startAttack(
   p: MovementProfile,
 ): void {
   const fromDash = f.state === MoveState.Dash;
-  // Guard pressed just before Attack out of a dash: the low attack.
-  const kind =
-    action === ActionBit.Attack && fromDash && frame(world) - f.lastGuardFrame <= p.chordFrames
-      ? ActionBit.LowAttack
-      : action;
-  f.state = MoveState.Attack;
-  f.stateFrame = 0;
-  f.attackKind = kind;
+  const stub = action === ActionBit.Special || action === ActionBit.Ultimate || f.hero < 0;
   f.attackFromDash = fromDash;
-  f.vx = 0;
-  f.vz = 0;
-  f.dirX = 0;
-  f.dirZ = 0;
+  // Explicit left/right never turns the hero: it selects Forward or Backward (spec §5.3).
   if (input.moveX !== 0) {
-    // An explicit left/right input always decides, in both facing modes.
-    f.facing = input.moveX;
     f.targetId = 0;
+  } else if (f.facingMode === 'assisted' && !stub && !fromDash) {
+    const kept = chained && f.targetId !== 0 ? world.bodies.find((b) => b.id === f.targetId) : null;
+    const target = kept ?? nearestEnemy(world, f, p);
+    f.targetId = target ? target.id : 0;
+    if (target && target.x !== f.x) f.facing = target.x > f.x ? 1 : -1;
+  } else {
+    f.targetId = 0;
+  }
+  if (stub) {
+    f.state = MoveState.Attack;
+    f.stateFrame = 0;
+    f.action = -1;
+    f.attackKind = action;
+    f.vx = 0;
+    f.vz = 0;
+    f.dirX = 0;
+    f.dirZ = 0;
     return;
   }
-  if (f.facingMode !== 'assisted' || kind === ActionBit.Special || kind === ActionBit.Ultimate) {
-    f.targetId = 0;
-    return;
-  }
-  const kept = chained && f.targetId !== 0 ? world.bodies.find((b) => b.id === f.targetId) : null;
-  const target = kept ?? nearestEnemy(world, f, p);
-  f.targetId = target ? target.id : 0;
-  if (target && target.x !== f.x) f.facing = target.x > f.x ? 1 : -1;
+  // Guard pressed just before Attack out of a dash, or the Low Attack binding: the low attack.
+  const low =
+    action === ActionBit.LowAttack ||
+    (fromDash && frame(world) - f.lastGuardFrame <= p.chordFrames);
+  const context = low ? 'dashLow' : fromDash ? 'dash' : 'neutral';
+  const index = selectAction(f, context, low || fromDash ? Dir.Neutral : resolveDir(f, input));
+  if (index >= 0) startAction(f, index);
 }
 
 function frame(world: World): number {

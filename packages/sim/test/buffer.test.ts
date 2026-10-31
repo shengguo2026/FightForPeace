@@ -2,31 +2,32 @@ import { ActionBit } from '../src/input/bits';
 import { ON_FOOT } from '../src/movement/profile';
 import { MoveState } from '../src/world/types';
 import { setFacingMode } from '../src/world/world';
+import { HEROES } from '../src/combat/roster';
 import { hero, idle, inp, press, repeat, run, world } from './helpers';
 
 const P = ON_FOOT;
 
-test('Attack starts an attack stub that roots the hero', () => {
+// Special and Ultimate keep the M1 attack stub until M5; the buffer rules are tested on it.
+test('Special starts an attack stub that roots the hero', () => {
   const w = world();
   const x0 = hero(w).x;
-  run(w, [press('Attack'), ...repeat(inp({ moveX: 1 }), 5)]);
+  run(w, [press('Special'), ...repeat(inp({ moveX: 1 }), 5)]);
   expect(hero(w).state).toBe(MoveState.Attack);
-  expect(hero(w).attackKind).toBe(ActionBit.Attack);
+  expect(hero(w).attackKind).toBe(ActionBit.Special);
   expect(hero(w).x).toBe(x0);
 });
 
 test('the stub ends after attackFrames and the hero can walk again', () => {
   const w = world();
-  run(w, [press('Attack'), ...repeat(idle, P.attackFrames - 1)]);
+  run(w, [press('Special'), ...repeat(idle, P.attackFrames - 1)]);
   expect(hero(w).state).toBe(MoveState.Attack);
   run(w, [inp({ moveX: 1 })]);
   expect(hero(w).state).toBe(MoveState.Walk);
 });
 
-test('Jump then Attack in the last 9 frames performs Attack only (Review Focus 4)', () => {
+test('Jump then Special in the last 9 frames performs Special only (Review Focus 4)', () => {
   const w = world();
-  run(w, [press('Attack'), ...repeat(idle, P.attackFrames - 6), press('Jump'), press('Attack')]);
-  // The first stub ends within the next frames; the buffered Attack follows immediately.
+  run(w, [press('Special'), ...repeat(idle, P.attackFrames - 6), press('Jump'), press('Special')]);
   run(w, repeat(idle, 4));
   expect(hero(w).state).toBe(MoveState.Attack);
   expect(hero(w).y).toBe(0);
@@ -36,8 +37,7 @@ test('Jump then Attack in the last 9 frames performs Attack only (Review Focus 4
 
 test('a press exactly bufferFrames before the stub ends is kept', () => {
   const w = world();
-  // Stub starts at frame 0 (stateFrame 0) and is actionable again at frame attackFrames.
-  run(w, [press('Attack'), ...repeat(idle, P.attackFrames - P.bufferFrames - 1), press('Jump')]);
+  run(w, [press('Special'), ...repeat(idle, P.attackFrames - P.bufferFrames - 1), press('Jump')]);
   run(w, repeat(idle, P.bufferFrames - 1));
   expect(hero(w).state).toBe(MoveState.Attack);
   run(w, [idle]);
@@ -46,14 +46,14 @@ test('a press exactly bufferFrames before the stub ends is kept', () => {
 
 test('a press one frame earlier than the window is dropped', () => {
   const w = world();
-  run(w, [press('Attack'), ...repeat(idle, P.attackFrames - P.bufferFrames - 2), press('Jump')]);
+  run(w, [press('Special'), ...repeat(idle, P.attackFrames - P.bufferFrames - 2), press('Jump')]);
   run(w, repeat(idle, P.bufferFrames + 1));
   expect(hero(w).state).toBe(MoveState.Idle);
 });
 
 test('movement during the stub is ignored, not buffered', () => {
   const w = world();
-  run(w, [press('Attack'), ...repeat(press('Dash', { moveX: 1 }), P.attackFrames - 1)]);
+  run(w, [press('Special'), ...repeat(press('Dash', { moveX: 1 }), P.attackFrames - 1)]);
   run(w, [idle]);
   expect(hero(w).state).toBe(MoveState.Idle);
 });
@@ -64,11 +64,12 @@ test('Guard is never buffered', () => {
   expect(hero(w).bufAction).toBe(0);
 });
 
-test('Manual Facing: Attack with Left held turns left first', () => {
+test('Backward + Attack keeps facing and selects the Backward move (spec §5.3)', () => {
   const w = world();
   expect(hero(w).facing).toBe(1);
   run(w, [press('Attack', { moveX: -1 })]);
-  expect(hero(w).facing).toBe(-1);
+  expect(hero(w).facing).toBe(1);
+  expect(HEROES[hero(w).hero]!.actions[hero(w).action]!.id).toBe('anchor-hook');
 });
 
 test('Manual Facing: a neutral Attack keeps facing even with a dummy behind', () => {
@@ -106,16 +107,18 @@ test('Assisted Facing: an explicit Right overrides the target', () => {
 
 test('Assisted Facing keeps its target during a chain', () => {
   const w = world({ dummies: 2, facing: ['assisted'] });
-  // Stand between two dummies: 101 at x 1100, 102 at x 1300.
+  // Stand between two dummies, right next to 101 (x 1100); 102 is at x 1300.
   const h = hero(w);
   h.x = 1180 * 256;
-  h.z = 820 * 256;
+  h.z = 760 * 256;
   run(w, [press('Attack')]);
   expect(hero(w).targetId).toBe(101);
-  w.bodies.find((b) => b.id === 101)!.x = 1000 * 256; // target steps away, 102 is now nearer
-  run(w, [...repeat(idle, P.attackFrames - 3), press('Attack'), idle, idle]);
-  expect(hero(w).state).toBe(MoveState.Attack);
-  expect(hero(w).stateFrame).toBeLessThan(3);
+  expect(hero(w).facing).toBe(-1);
+  run(w, repeat(idle, 7)); // Mason's Touch hits 101
+  w.bodies.find((b) => b.id === 101)!.x = 1080 * 256;
+  run(w, [press('Attack'), ...repeat(idle, 3)]);
+  expect(HEROES[hero(w).hero]!.actions[hero(w).action]!.id).toBe('brace-elbow');
+  expect(hero(w).facing).toBe(-1);
   expect(hero(w).targetId).toBe(101);
 });
 

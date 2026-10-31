@@ -63,7 +63,7 @@ function resolvePair(a: Fighter, b: Fighter, touchingEnemy: Set<number>): void {
   }
   const hero = a.team === 'hero' ? a : b;
   touchingEnemy.add(hero.id);
-  if (hero.passEnemies) return;
+  if (hero.passEnemies || hero.ghost) return;
   const enemyShare = Math.trunc((pen * ENEMY_YIELD_QUARTERS) / 4);
   const heroShare = pen - enemyShare;
   const heroSign = hero === a ? -s : s;

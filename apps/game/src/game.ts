@@ -8,6 +8,7 @@ import {
   createWorld,
   hashWorld,
   setFacingMode,
+  setHero,
   step,
 } from '@ffp/sim';
 import {
@@ -86,11 +87,22 @@ export class GameSession {
     setFacingMode(this.world, slot, mode);
   }
 
+  setHero(slot: number, heroId: string): void {
+    setHero(this.world, slot, heroId);
+  }
+
   setKeyboardP2Preset(preset: KeyboardP2Preset): void {
     this.devices.keyboardP2.setBindings(keyboardP2(preset));
   }
 }
 
 function cloneFighters(bodies: readonly Fighter[]): Fighter[] {
-  return bodies.map((b) => ({ ...b, lastTap: [...b.lastTap] as Fighter['lastTap'] }));
+  return bodies.map((b) => ({
+    ...b,
+    lastTap: [...b.lastTap] as Fighter['lastTap'],
+    contactIds: [...b.contactIds],
+    contactScales: [...b.contactScales],
+    hitIds: [...b.hitIds],
+    ctx: { ...b.ctx },
+  }));
 }

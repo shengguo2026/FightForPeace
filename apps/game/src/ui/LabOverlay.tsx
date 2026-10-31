@@ -1,8 +1,8 @@
-import type { FacingMode } from '@ffp/sim';
+import { CANCEL_TIMING, type FacingMode, HEROES, type HeroDef } from '@ffp/sim';
 import type { KeyboardP2Preset, LayoutName } from '@ffp/platform';
-import { TEXT } from '../text/en';
+import { LINK_TEXT, TEXT, moveInputText } from '../text/en';
 import { InputPrompt, PLAYER_COLORS, PromptText } from './InputPrompt';
-import type { LabState, PlayerView, PromptStyle } from './labState';
+import type { LabState, PlayerView, PromptStyle, TargetView } from './labState';
 
 export interface LabActions {
   setFacing(slot: number, mode: FacingMode): void;
@@ -13,6 +13,10 @@ export interface LabActions {
   resetBindings(): void;
   setDummiesChase(on: boolean): void;
   setShowCollision(on: boolean): void;
+  setHero(slot: number, heroId: string): void;
+  setInfiniteMeter(on: boolean): void;
+  setCounterHit(on: boolean): void;
+  setRefill(on: boolean): void;
 }
 
 const panel = {
@@ -48,6 +52,16 @@ function PlayerPanel({ p }: { p: PlayerView }) {
       <div>
         state <span data-testid={`lab-p${p.slot + 1}-state`}>{p.state}</span> · facing {p.facing} (
         {p.facingMode})
+      </div>
+      <div>
+        hero <span data-testid={`lab-p${p.slot + 1}-hero`}>{p.hero}</span>
+      </div>
+      <div>
+        move <span data-testid={`lab-p${p.slot + 1}-action`}>{p.action}</span> · {p.phase}
+      </div>
+      <div data-testid={`lab-p${p.slot + 1}-verdict`}>cancel {p.verdict}</div>
+      <div>
+        meter <span data-testid={`lab-p${p.slot + 1}-meter`}>{p.meter}</span>% · {p.bridge}
       </div>
       <div>speed {p.speed}</div>
       <div>
@@ -103,6 +117,15 @@ function Settings({ state, actions }: { state: LabState; actions: LabActions }) 
   return (
     <div style={{ ...panel, pointerEvents: 'auto' }} data-testid="lab-settings">
       <div>Lab settings · F2 to close</div>
+      {[0, 1].map((slot) => (
+        <Select
+          label={`Player ${slot + 1} hero`}
+          value={players[slot]?.heroId ?? 'mountain'}
+          options={HEROES.map((h) => h.id)}
+          onChange={(v) => actions.setHero(slot, v)}
+          testId={`set-hero-p${slot + 1}`}
+        />
+      ))}
       {[0, 1].map((slot) => (
         <Select
           label={`Player ${slot + 1} facing`}
@@ -169,8 +192,142 @@ function Settings({ state, actions }: { state: LabState; actions: LabActions }) 
           checked={state.showCollision.value}
           onChange={(e) => actions.setShowCollision((e.target as HTMLInputElement).checked)}
         />{' '}
-        Collision shapes (F3)
+        Hitboxes and collision (F3)
       </label>
+      <Check
+        label="Infinite attack meter"
+        checked={state.infiniteMeter.value}
+        onChange={actions.setInfiniteMeter}
+        testId="set-meter"
+      />
+      <Check
+        label="Counter-hit dummies (every hit is a counter-hit)"
+        checked={state.counterHit.value}
+        onChange={actions.setCounterHit}
+        testId="set-counter"
+      />
+      <Check
+        label="Dummies refill health when a combo ends"
+        checked={state.refill.value}
+        onChange={actions.setRefill}
+        testId="set-refill"
+      />
+    </div>
+  );
+}
+
+function Check(props: {
+  label: string;
+  checked: boolean;
+  onChange: (on: boolean) => void;
+  testId: string;
+}) {
+  return (
+    <label style={{ display: 'block' }}>
+      <input
+        type="checkbox"
+        data-testid={props.testId}
+        checked={props.checked}
+        onChange={(e) => {
+          const el = e.target as HTMLInputElement;
+          props.onChange(el.checked);
+          el.blur();
+        }}
+      />{' '}
+      {props.label}
+    </label>
+  );
+}
+
+function TargetPanel({ t }: { t: TargetView | null }) {
+  if (!t) {
+    return (
+      <div style={panel} data-testid="lab-target">
+        <div>Target · hit a dummy</div>
+      </div>
+    );
+  }
+  return (
+    <div style={{ ...panel, borderLeft: '4px solid #9a9ea6' }} data-testid="lab-target">
+      <div>
+        {t.name} · {t.open ? 'combo' : 'combo ended'}
+      </div>
+      <div>health {t.health}</div>
+      <div>
+        hits <span data-testid="lab-target-hits">{t.hits}</span> · damage{' '}
+        <span data-testid="lab-target-damage">{t.damage}</span>
+      </div>
+      <div>
+        damage scale <span data-testid="lab-target-scale">{t.scale}</span>%
+      </div>
+      <div>
+        hit-stun budget {t.stunBudget} ({t.stunBand}%){t.exhausted ? ' · exhausted' : ''}
+      </div>
+      <div>meter-gain budget {t.meterBudget}%</div>
+      <div>juggle budget {t.juggleBudget} (M3)</div>
+      <div>dash bridge {t.bridge ? 'used' : 'available'}</div>
+      <div>
+        state {t.reaction} · ground {t.ground}
+      </div>
+    </div>
+  );
+}
+
+function linkLabel(hero: HeroDef, l: HeroDef['actions'][number]['links'][number]) {
+  const when = [l.onHit ? 'hit' : '', l.onGuard ? 'guard' : '', l.onWhiff ? 'whiff' : '']
+    .filter(Boolean)
+    .join('/');
+  const t = CANCEL_TIMING[l.category];
+  const timing = `${t.buffer}f before, ${t.window}f after contact`;
+  const cost = l.premium > 0 ? `, ${l.premium}% meter` : '';
+  const later = l.kind === 'special' || l.kind === 'ultimate' ? ' — M5' : '';
+  const text = l.kind === 'action' ? hero.actions[l.to]!.name : LINK_TEXT[l.kind];
+  return { text, note: `(${when}; ${timing}${cost})${later}` };
+}
+
+/** F5: every action of each joined hero, with input, frame data, damage and cancels. */
+function MoveList({ players }: { players: PlayerView[] }) {
+  return (
+    <div
+      style={{ ...panel, maxHeight: '86vh', overflowY: 'auto', pointerEvents: 'auto' }}
+      data-testid="lab-movelist"
+    >
+      <div>Move list · F5 to close</div>
+      {players
+        .filter((p) => p.joined)
+        .map((p) => {
+          const hero = HEROES.find((h) => h.id === p.heroId)!;
+          const color = PLAYER_COLORS[p.slot];
+          return (
+            <div style={{ marginTop: '6px' }} data-testid={`movelist-p${p.slot + 1}`}>
+              <div style={{ color }}>
+                P{p.slot + 1} · {hero.name}
+              </div>
+              {hero.actions.map((a) => (
+                <div style={{ margin: '3px 0', opacity: a.context === 'groundFocus' ? 0.6 : 1 }}>
+                  <b>{a.name}</b> [{a.category}]{' '}
+                  <PromptText text={moveInputText(a.context, a.dir)} ctx={p.ctx} color={color} /> ·{' '}
+                  {a.startup}/{a.active.join('+')}/{a.recovery}
+                  {a.landing ? ' landing' : ''} · {a.damage} dmg
+                  {a.links.map((l) => {
+                    const { text, note } = linkLabel(hero, l);
+                    return (
+                      <div style={{ paddingLeft: '16px' }}>
+                        →{' '}
+                        {l.kind === 'action' ? (
+                          text
+                        ) : (
+                          <PromptText text={text} ctx={p.ctx} color={color} />
+                        )}{' '}
+                        {note}
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          );
+        })}
     </div>
   );
 }
@@ -194,6 +351,7 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
         >
           <div style={panel}>
             <div>Lab · F1 hide · F2 settings</div>
+            <div>F3 hitboxes · F5 moves · F6 slow{state.slowMotion.value ? ' (on)' : ''}</div>
             <div>
               frame <span data-testid="lab-frame">{state.frame.value}</span>
               {state.paused.value ? ' (paused)' : ''}
@@ -209,7 +367,9 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
           {players.map((p) => (
             <PlayerPanel p={p} />
           ))}
+          <TargetPanel t={state.target.value} />
           {state.settingsOpen.value ? <Settings state={state} actions={actions} /> : null}
+          {state.moveListOpen.value ? <MoveList players={players} /> : null}
         </div>
       ) : null}
       <HintBar players={players} />
@@ -245,6 +405,7 @@ function HintBar({ players }: { players: PlayerView[] }) {
                 TEXT.hintDash,
                 TEXT.hintJump,
                 TEXT.hintAttack,
+                TEXT.hintAirAttack,
                 TEXT.hintLowAttack,
               ].map((t) => (
                 <span style={{ marginRight: '12px' }}>
