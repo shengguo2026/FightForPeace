@@ -1,9 +1,13 @@
 import * as Phaser from 'phaser';
 import { render, h } from 'preact';
-import { DEFAULT_KEYBOARD_P1 } from '@ffp/platform';
+import { DEFAULT_KEYBOARD_P1, rebind } from '@ffp/platform';
 import { GameSession } from './game';
 import { StageScene, VIEW_HEIGHT, VIEW_WIDTH } from './scenes/StageScene';
-import { LabOverlay, createLabState, labelInput, pushInput } from './ui/LabOverlay';
+import { LabOverlay, type LabActions } from './ui/LabOverlay';
+import { PauseOverlay } from './ui/PauseOverlay';
+import { createLabState } from './ui/labState';
+import { heldKeys, refreshPlayers } from './ui/views';
+import { captureNextKey, installKeyboard, readPads } from './input/browserInput';
 import { installDebugHook } from './debug';
 
 const devBuild = import.meta.env.DEV || import.meta.env.MODE === 'e2e';
@@ -17,33 +21,56 @@ new Phaser.Game({
   height: VIEW_HEIGHT,
   backgroundColor: '#000000',
   scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-  // Keyboard input is read by our own KeyboardState from window events.
-  input: { keyboard: false },
+  // Keyboard and gamepad input are read by @ffp/platform, not by Phaser.
+  input: { keyboard: false, gamepad: false },
   banner: false,
-  scene: new StageScene(() => session.snapshot()),
+  scene: new StageScene({
+    getSnapshot: () => session.snapshot(),
+    showCollision: () => lab.showCollision.value,
+  }),
 });
 
-render(h(LabOverlay, { state: lab }), document.getElementById('lab')!);
+const actions: LabActions = {
+  setFacing: (slot, mode) => session.setFacingMode(slot, mode),
+  setPromptStyle: (style) => (lab.promptStyle.value = style),
+  setLayout: (layout) => {
+    lab.layout.value = layout;
+    session.labels.setPickedLayout(layout);
+  },
+  setP2Preset: (preset) => {
+    lab.p2Preset.value = preset;
+    session.setKeyboardP2Preset(preset);
+  },
+  rebindAttack: () => {
+    lab.rebinding.value = true;
+    captureNextKey((code) => {
+      lab.rebinding.value = false;
+      const kb = session.devices.keyboardP1;
+      kb.setBindings(rebind(kb.bindings, 'Attack', [code]));
+    });
+  },
+  resetBindings: () => session.devices.keyboardP1.setBindings(DEFAULT_KEYBOARD_P1),
+  setDummiesChase: (on) => {
+    lab.dummiesChase.value = on;
+    session.world.dummiesChase = on;
+  },
+  setShowCollision: (on) => (lab.showCollision.value = on),
+};
 
-const boundCodes = new Set(Object.values(DEFAULT_KEYBOARD_P1.codes).flat());
+const root = document.getElementById('lab')!;
+render(
+  h('div', null, h(LabOverlay, { state: lab, actions }), h(PauseOverlay, { state: lab })),
+  root,
+);
 
-window.addEventListener('keydown', (e) => {
-  if (e.code === 'F1') {
-    e.preventDefault();
-    if (!e.repeat) lab.visible.value = !lab.visible.value;
-    return;
-  }
-  if (boundCodes.has(e.code)) e.preventDefault();
-  session.keyboard.keyDown(e.code);
+installKeyboard(session, (code) => {
+  if (code === 'F1') lab.visible.value = !lab.visible.value;
+  if (code === 'F2') lab.settingsOpen.value = !lab.settingsOpen.value;
+  if (code === 'F3') actions.setShowCollision(!lab.showCollision.value);
+  if (code === 'F4') actions.setDummiesChase(!lab.dummiesChase.value);
 });
-window.addEventListener('keyup', (e) => session.keyboard.keyUp(e.code));
-// Lost focus means lost keyup events: release everything so nothing stays held.
-window.addEventListener('blur', () => session.keyboard.blur());
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) session.keyboard.blur();
-});
 
-if (devBuild) installDebugHook(session);
+if (devBuild) installDebugHook(session, lab);
 
 let last: number | undefined;
 let fpsFrames = 0;
@@ -52,14 +79,19 @@ let fpsSince = 0;
 function tick(now: number): void {
   const elapsed = last === undefined ? 0 : now - last;
   last = now;
+  session.devices.pollPads(readPads());
   const report = session.advance(elapsed);
 
   lab.frame.value = report.frame;
   lab.hash.value = report.hash.toString(16).padStart(8, '0');
-  report.inputs.forEach((input, i) => {
-    const frame = report.frame - report.inputs.length + i + 1;
-    pushInput(lab, frame, labelInput(DEFAULT_KEYBOARD_P1, input));
-  });
+  lab.paused.value = report.paused;
+  const waiting = session.devices.waitingSlots();
+  if (waiting.join() !== lab.waiting.value.join()) lab.waiting.value = waiting;
+  // Reading the label version here makes layout changes re-render the prompts.
+  void session.labels.version;
+  refreshPlayers(session, lab, report.inputs);
+  const held = heldKeys(session);
+  if (held.join(' ') !== lab.heldKeys.value.join(' ')) lab.heldKeys.value = held;
 
   fpsFrames += 1;
   if (now - fpsSince >= 500) {

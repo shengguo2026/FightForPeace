@@ -1,20 +1,22 @@
 import type { FrameInput } from './world/types';
-import { createWorld, hashWorld, step } from './world/world';
+import { type WorldOptions, createWorld, hashWorld, step } from './world/world';
 
-/** Version of the replay file layout. */
-export const REPLAY_FORMAT = 1;
+/** Version of the replay file layout. 2: FrameInput v2 (held, dirPressed) and world options. */
+export const REPLAY_FORMAT = 2;
 
 /**
  * Version of the gameplay rules. Bump whenever a change alters simulation results, and
  * re-record the golden replays in the same commit.
  */
-export const RULES_VERSION = 'm0.1';
+export const RULES_VERSION = 'm1.1';
 
 export interface ReplayLog {
-  version: 1;
+  version: 2;
   rulesVersion: string;
   seed: number;
-  /** frames[f][slot] = input of player `slot` on frame f. */
+  /** Stage setup (dummies, facing modes, Lab switches). */
+  options?: WorldOptions;
+  /** frames[f][slot] = input of player `slot` on frame f; a slot appears when that player joins. */
   frames: FrameInput[][];
   /** hashWorld after the last frame. */
   expectedHash: number;
@@ -32,7 +34,7 @@ export function runReplay(log: ReplayLog): number {
       `Replay was recorded with rules version ${log.rulesVersion}, current rules version is ${RULES_VERSION}`,
     );
   }
-  const world = createWorld(log.seed);
+  const world = createWorld(log.seed, log.options);
   for (const inputs of log.frames) step(world, inputs);
   return hashWorld(world);
 }
