@@ -1,0 +1,10 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "../dist-types/tests",
+    "types": ["vitest/globals"]
+  },
+  "include": ["**/*.ts", "replays/*.json"],
+  "references": [{ "path": "../packages/sim" }]
+}
