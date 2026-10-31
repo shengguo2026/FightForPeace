@@ -8,3 +8,4 @@ export * from './state/hash';
 export type * from './world/types';
 export * from './world/world';
 export * from './loop/fixedStep';
+export * from './replay';
