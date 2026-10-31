@@ -118,3 +118,44 @@ test('Assisted Facing keeps its target during a chain', () => {
   expect(hero(w).stateFrame).toBeLessThan(3);
   expect(hero(w).targetId).toBe(101);
 });
+
+describe('low attack (Dash + Attack + Guard chord, or the bound action)', () => {
+  const dashThen = (...frames: ReturnType<typeof inp>[]) => {
+    const w = world();
+    run(w, [press('Dash', { moveX: 1 }), idle, idle, ...frames]);
+    return w;
+  };
+
+  test('Attack then Guard one frame later during a dash is a low attack', () => {
+    const w = dashThen(press('Attack'), press('Guard'));
+    expect(hero(w).state).toBe(MoveState.Attack);
+    expect(hero(w).attackKind).toBe(ActionBit.LowAttack);
+  });
+
+  test('Guard then Attack within the chord window is a low attack', () => {
+    const w = dashThen(press('Guard'), idle, press('Attack'));
+    expect(hero(w).attackKind).toBe(ActionBit.LowAttack);
+  });
+
+  test('Attack and Guard on the same frame is a low attack', () => {
+    const w = dashThen(inp({ pressed: ActionBit.Attack | ActionBit.Guard }));
+    expect(hero(w).attackKind).toBe(ActionBit.LowAttack);
+  });
+
+  test('Guard too late stays an ordinary attack', () => {
+    const w = dashThen(press('Attack'), idle, idle, idle, press('Guard'));
+    expect(hero(w).attackKind).toBe(ActionBit.Attack);
+  });
+
+  test('without a dash, Attack + Guard is an ordinary attack', () => {
+    const w = world();
+    run(w, [press('Attack'), press('Guard')]);
+    expect(hero(w).attackKind).toBe(ActionBit.Attack);
+  });
+
+  test('a bound Low Attack key works on its own', () => {
+    const w = world();
+    run(w, [press('LowAttack')]);
+    expect(hero(w).attackKind).toBe(ActionBit.LowAttack);
+  });
+});

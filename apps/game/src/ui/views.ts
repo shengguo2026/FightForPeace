@@ -9,6 +9,14 @@ import {
 import type { GameSession } from '../game';
 import { HISTORY_LENGTH, type HistoryEntry, type LabState, type PlayerView } from './labState';
 
+function stateName(state: number, attackKind: number): string {
+  if (state !== MoveState.Attack) return STATE_NAMES[state] ?? '?';
+  if (attackKind === ActionBit.LowAttack) return 'low attack';
+  if (attackKind === ActionBit.Special) return 'special (stub)';
+  if (attackKind === ActionBit.Ultimate) return 'ultimate (stub)';
+  return 'attack';
+}
+
 const STATE_NAMES: Record<number, string> = {
   [MoveState.Idle]: 'idle',
   [MoveState.Walk]: 'walk',
@@ -88,7 +96,7 @@ export function refreshPlayers(session: GameSession, lab: LabState, steps: Frame
       device: deviceLabel(session, slot),
       waiting: slotState.waiting,
       state: hero
-        ? `${STATE_NAMES[hero.state]} ${hero.state === MoveState.Idle || hero.state === MoveState.Walk ? '' : hero.stateFrame}`.trim()
+        ? `${stateName(hero.state, hero.attackKind)} ${hero.state === MoveState.Idle || hero.state === MoveState.Walk ? '' : hero.stateFrame}`.trim()
         : '—',
       speed: hero ? speed(hero.vx, hero.vz, hero.vy) : '—',
       facing: hero ? (hero.facing === 1 ? 'right' : 'left') : '—',

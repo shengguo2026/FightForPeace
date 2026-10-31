@@ -7,6 +7,7 @@ export interface DebugBody {
   y: number;
   state: number;
   facing: number;
+  attackKind: number;
 }
 
 /** Test hook, installed in dev and e2e builds only (see debug.ts). */

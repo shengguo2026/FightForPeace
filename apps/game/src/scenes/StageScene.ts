@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { BODY_HALF_D, BODY_HALF_W, type Fighter, MoveState, fxToPixels } from '@ffp/sim';
+import { ActionBit, BODY_HALF_D, BODY_HALF_W, type Fighter, MoveState, fxToPixels } from '@ffp/sim';
 import type { RenderSnapshot } from '../game';
 
 export const VIEW_WIDTH = 1920;
@@ -61,16 +61,24 @@ export class StageScene extends Phaser.Scene {
         const hd = fxToPixels(BODY_HALF_D);
         g.strokeRect(b.x - hw, b.z - hd, hw * 2, hd * 2);
       }
+      const low = b.state === MoveState.Attack && b.attackKind === ActionBit.LowAttack;
+      // The low attack crouches: a shorter body and a sweep along the floor.
+      const height = low ? BODY_H * 0.6 : BODY_H;
       const left = b.x - BODY_W / 2;
-      const top = b.z - b.y - BODY_H;
+      const top = b.z - b.y - height;
       const color = b.team === 'hero' ? (HERO_COLORS[b.slot] ?? 0xd8d8d8) : DUMMY_COLOR;
       g.fillStyle(color, b.state === MoveState.Dash ? 0.7 : 1);
-      g.fillRect(left, top, BODY_W, BODY_H);
+      g.fillRect(left, top, BODY_W, height);
       // Facing notch.
       g.fillStyle(0xe0503c, 1);
       const notchX = b.facing === 1 ? left + BODY_W - NOTCH : left;
       g.fillRect(notchX, top + 40, NOTCH, NOTCH);
-      if (b.state === MoveState.Attack) {
+      if (low) {
+        // Placeholder low attack: a long cyan sweep at ankle height (no hitbox in M1).
+        g.fillStyle(0x5ef2e6, 1);
+        const sweepX = b.facing === 1 ? left + BODY_W - 10 : left - 120;
+        g.fillRect(sweepX, b.z - b.y - 34, 130, 26);
+      } else if (b.state === MoveState.Attack) {
         // Placeholder attack pose: an arm out in the facing direction (no hitbox in M1).
         g.fillStyle(0xfff2a8, 1);
         const armX = b.facing === 1 ? left + BODY_W : left - 70;
@@ -98,6 +106,7 @@ interface DrawnBody {
   team: Fighter['team'];
   slot: number;
   state: number;
+  attackKind: number;
   passEnemies: boolean;
   x: number;
   z: number;
@@ -112,6 +121,7 @@ function interpolate(a: Fighter, b: Fighter, alpha: number): DrawnBody {
     team: b.team,
     slot: b.slot,
     state: b.state,
+    attackKind: b.attackKind,
     passEnemies: b.passEnemies,
     x: lerp(a.x, b.x),
     z: lerp(a.z, b.z),

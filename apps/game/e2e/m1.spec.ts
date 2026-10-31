@@ -164,3 +164,18 @@ test('Esc pauses and resumes', async ({ page }) => {
   await page.keyboard.press('Escape');
   await expect(page.getByTestId('pause-overlay')).toBeHidden();
 });
+
+test('Dash, then T and G together, performs the low attack', async ({ page }) => {
+  await ready(page);
+  await page.keyboard.press('KeyD');
+  await page.waitForTimeout(30);
+  await page.keyboard.down('KeyD');
+  await page.waitForFunction(() => window.__ffp!.hero(0)!.state === 2);
+  await page.keyboard.down('KeyT');
+  await page.keyboard.down('KeyG');
+  await page.keyboard.up('KeyD');
+  await page.waitForFunction(() => window.__ffp!.hero(0)!.state === 4);
+  expect(await page.evaluate(() => window.__ffp!.hero(0)!.attackKind)).toBe(256);
+  await page.keyboard.up('KeyT');
+  await page.keyboard.up('KeyG');
+});

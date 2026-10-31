@@ -2,7 +2,13 @@ import { ActionBit } from '../input/bits';
 import type { Fighter } from '../world/types';
 
 /** Within one frame, the action kept when several offensive buttons arrive together. */
-const PRIORITY = [ActionBit.Attack, ActionBit.Special, ActionBit.Ultimate, ActionBit.Jump];
+const PRIORITY = [
+  ActionBit.LowAttack,
+  ActionBit.Attack,
+  ActionBit.Special,
+  ActionBit.Ultimate,
+  ActionBit.Jump,
+];
 
 /**
  * One-slot offensive input buffer. Every offensive press replaces the slot (the newest

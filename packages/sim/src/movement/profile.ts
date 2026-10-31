@@ -27,6 +27,11 @@ export interface MovementProfile {
   airNeutralZ: number;
   /** Attack stub length (stands in for M2's real attacks). */
   attackFrames: number;
+  /**
+   * Low-attack chord tolerance: during a dash, Attack and Guard pressed within this many
+   * frames of each other (either order) make a low attack instead of the dash attack.
+   */
+  chordFrames: number;
   /** Offensive input buffer window. */
   bufferFrames: number;
   /** Assisted Facing search box around the hero. */
@@ -50,6 +55,7 @@ export const ON_FOOT: MovementProfile = {
   airNeutralX: 384,
   airNeutralZ: 256,
   attackFrames: 18,
+  chordFrames: 3,
   bufferFrames: 9,
   assistRangeX: fx(480),
   assistRangeZ: fx(160),

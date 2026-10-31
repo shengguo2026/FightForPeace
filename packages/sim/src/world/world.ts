@@ -22,7 +22,7 @@ import {
 } from './types';
 
 /** Version of the byte layout written by encodeWorld. Bump on any layout change. */
-export const STATE_FORMAT = 2;
+export const STATE_FORMAT = 3;
 
 /** Walking speeds (fixed point per frame), kept as exports for existing callers. */
 export const WALK_SPEED_X = ON_FOOT.walkX;
@@ -80,6 +80,8 @@ export function createFighter(
     bufAction: 0,
     bufFrame: 0,
     attackKind: 0,
+    attackFromDash: false,
+    lastGuardFrame: NO_TAP,
     targetId: 0,
     pinFrames: 0,
     passEnemies: false,
@@ -232,6 +234,8 @@ export function encodeWorld(world: World): Uint8Array {
     w.u32(b.bufAction);
     w.u32(b.bufFrame);
     w.u32(b.attackKind);
+    w.u8(b.attackFromDash ? 1 : 0);
+    w.i32(b.lastGuardFrame);
     w.u32(b.targetId);
     w.u32(b.pinFrames);
     w.u8(b.passEnemies ? 1 : 0);

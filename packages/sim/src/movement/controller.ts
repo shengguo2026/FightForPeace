@@ -83,6 +83,8 @@ export function stepHero(world: World, f: Fighter, input: FrameInput, p: Movemen
   const tap = detectDoubleTap(f, input.dirPressed, frame, p.doubleTapFrames);
   bufferPress(f, input.pressed & OFFENSIVE_MASK, frame, p.bufferFrames);
   const dashPressed = (input.pressed & ActionBit.Dash) !== 0;
+  const guardPressed = (input.pressed & ActionBit.Guard) !== 0;
+  if (guardPressed) f.lastGuardFrame = frame;
 
   // 1. Advance the current state; it may become actionable this frame.
   let chained = false;
@@ -90,6 +92,16 @@ export function stepHero(world: World, f: Fighter, input: FrameInput, p: Movemen
   switch (f.state) {
     case MoveState.Attack:
       f.stateFrame += 1;
+      // Guard arriving just after Attack out of a dash turns it into the low attack. In this
+      // chord Guard is only a modifier: it never guards.
+      if (
+        guardPressed &&
+        f.attackFromDash &&
+        f.attackKind === ActionBit.Attack &&
+        f.stateFrame <= p.chordFrames
+      ) {
+        f.attackKind = ActionBit.LowAttack;
+      }
       if (f.stateFrame >= p.attackFrames) {
         f.state = MoveState.Idle;
         f.attackKind = 0;
@@ -221,9 +233,16 @@ function startAttack(
   chained: boolean,
   p: MovementProfile,
 ): void {
+  const fromDash = f.state === MoveState.Dash;
+  // Guard pressed just before Attack out of a dash: the low attack.
+  const kind =
+    action === ActionBit.Attack && fromDash && frame(world) - f.lastGuardFrame <= p.chordFrames
+      ? ActionBit.LowAttack
+      : action;
   f.state = MoveState.Attack;
   f.stateFrame = 0;
-  f.attackKind = action;
+  f.attackKind = kind;
+  f.attackFromDash = fromDash;
   f.vx = 0;
   f.vz = 0;
   f.dirX = 0;
@@ -234,7 +253,7 @@ function startAttack(
     f.targetId = 0;
     return;
   }
-  if (f.facingMode !== 'assisted' || action !== ActionBit.Attack) {
+  if (f.facingMode !== 'assisted' || kind === ActionBit.Special || kind === ActionBit.Ultimate) {
     f.targetId = 0;
     return;
   }
@@ -242,6 +261,10 @@ function startAttack(
   const target = kept ?? nearestEnemy(world, f, p);
   f.targetId = target ? target.id : 0;
   if (target && target.x !== f.x) f.facing = target.x > f.x ? 1 : -1;
+}
+
+function frame(world: World): number {
+  return world.frame;
 }
 
 /** Nearest enemy inside the Assisted Facing box; ties go to the lower id. */

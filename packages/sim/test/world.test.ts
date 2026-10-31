@@ -93,7 +93,7 @@ test('facing mode is per player and applies to a later spawn', () => {
 });
 
 test('encoding starts with the state format version', () => {
-  expect(STATE_FORMAT).toBe(2);
+  expect(STATE_FORMAT).toBe(3);
   expect(encodeWorld(createWorld(1))[0]).toBe(STATE_FORMAT);
 });
 

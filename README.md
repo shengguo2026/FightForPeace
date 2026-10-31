@@ -84,7 +84,7 @@ When a change alters simulation results on purpose, bump `RULES_VERSION` in `pac
 1. Walk with W/A/S/D: unchanged from M0. Diagonals are not faster.
 2. Double-tap D: a short dash to the right. Also try A, W, S, and holding W while double-tapping D (diagonal). Tapping D, A, D quickly does not dash.
 3. Press Jump (the key printed `Z` on a German keyboard): a neutral jump. Hold D and jump: you travel right. Holding A in the air only slows you down; it cannot turn the jump around.
-4. Press T: a short attack pose. Press T again, or Jump, just before it ends: the next action comes out without a gap.
+4. Press T: a short attack pose (yellow arm). Press T again, or Jump, just before it ends: the next action comes out without a gap. Dash, then press T and G together (within 3 frames, either order): the low attack, where the hero crouches and a cyan sweep runs along the floor.
 5. Walk into a grey dummy: you slide around it, and walking straight in pushes it slowly. F4 makes the dummies chase you; you can always walk out.
 6. Press Num 4: Player 2 joins and walks with the arrow keys. Walk through each other: you separate gently.
 7. Plug in a gamepad while playing alone and press A: it controls Player 1 at once, and the hints at the bottom show its buttons.

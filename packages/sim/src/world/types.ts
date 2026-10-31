@@ -70,6 +70,10 @@ export interface Fighter extends Body {
   bufFrame: number;
   /** Action of the current attack stub (ActionBit), 0 when not attacking. */
   attackKind: number;
+  /** The current attack started out of a dash (the low-attack chord only works then). */
+  attackFromDash: boolean;
+  /** World frame of the last Guard press, for the Dash + Attack + Guard chord. */
+  lastGuardFrame: number;
   /** Assisted Facing target kept during an attack chain (0 = none). */
   targetId: number;
   /** Consecutive frames this hero tried to move but was held by enemy collision. */

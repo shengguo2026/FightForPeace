@@ -88,6 +88,10 @@ function dashJumpTrack(): Track {
   // Attack chain with buffered follow-ups, then a buffered jump that loses to Attack.
   t.press('Attack').idle(12).press('Attack').idle(12).press('Jump').press('Attack').idle(30);
   t.press('Attack', ['left']).idle(30);
+  // Low attack: Attack then Guard one frame later during a dash, then Guard first.
+  t.press('Dash', ['right']).idle(3).press('Attack').press('Guard').idle(30);
+  t.press('Dash', ['left']).idle(3).press('Guard').idle(1).press('Attack').idle(30);
+  t.press('LowAttack').idle(30);
   return t;
 }
 

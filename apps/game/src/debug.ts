@@ -9,11 +9,15 @@ export function installDebugHook(session: GameSession, lab: LabState): void {
     frame: () => session.world.frame,
     body: (id) => {
       const b = session.world.bodies.find((x) => x.id === id);
-      return b ? { x: b.x, z: b.z, y: b.y, state: b.state, facing: b.facing } : undefined;
+      return b
+        ? { x: b.x, z: b.z, y: b.y, state: b.state, facing: b.facing, attackKind: b.attackKind }
+        : undefined;
     },
     hero: (slot) => {
       const b = heroOf(session.world, slot);
-      return b ? { x: b.x, z: b.z, y: b.y, state: b.state, facing: b.facing } : undefined;
+      return b
+        ? { x: b.x, z: b.z, y: b.y, state: b.state, facing: b.facing, attackKind: b.attackKind }
+        : undefined;
     },
     hash: () => hashWorld(session.world),
     runReplay: (log) => runReplay(log),
