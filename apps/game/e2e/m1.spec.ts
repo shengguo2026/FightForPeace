@@ -167,15 +167,41 @@ test('Esc pauses and resumes', async ({ page }) => {
 
 test('Dash, then T and G together, performs the low attack', async ({ page }) => {
   await ready(page);
-  await page.keyboard.press('KeyD');
-  await page.waitForTimeout(30);
-  await page.keyboard.down('KeyD');
-  await page.waitForFunction(() => window.__ffp!.hero(0)!.state === 2);
-  await page.keyboard.down('KeyT');
-  await page.keyboard.down('KeyG');
-  await page.keyboard.up('KeyD');
-  await page.waitForFunction(() => window.__ffp!.hero(0)!.state === 4);
-  expect(await page.evaluate(() => window.__ffp!.hero(0)!.attackKind)).toBe(256);
-  await page.keyboard.up('KeyT');
-  await page.keyboard.up('KeyG');
+  // Real key events, sent from inside the page the moment the dash is seen, so the chord
+  // lands within the 14-frame dash even when a slow CI browser renders at a low rate.
+  const key = (type: 'keydown' | 'keyup', code: string, key: string) =>
+    page.evaluate(
+      ([t, c, k]) => window.dispatchEvent(new KeyboardEvent(t!, { code: c, key: k })),
+      [type, code, key],
+    );
+  await key('keydown', 'KeyD', 'd');
+  await key('keyup', 'KeyD', 'd');
+  await page.waitForTimeout(40);
+  await key('keydown', 'KeyD', 'd');
+  const kind = await page.evaluate(
+    () =>
+      new Promise<number>((resolve) => {
+        const send = (code: string, k: string) =>
+          window.dispatchEvent(new KeyboardEvent('keydown', { code, key: k }));
+        const waitDash = () => {
+          if (window.__ffp!.hero(0)!.state !== 2) return requestAnimationFrame(waitDash);
+          send('KeyT', 't');
+          send('KeyG', 'g');
+          const waitAttack = () => {
+            const h = window.__ffp!.hero(0)!;
+            if (h.state !== 4) return requestAnimationFrame(waitAttack);
+            resolve(h.attackKind);
+          };
+          waitAttack();
+        };
+        waitDash();
+      }),
+  );
+  for (const [c, k] of [
+    ['KeyD', 'd'],
+    ['KeyT', 't'],
+    ['KeyG', 'g'],
+  ] as const)
+    await key('keyup', c, k);
+  expect(kind).toBe(256);
 });

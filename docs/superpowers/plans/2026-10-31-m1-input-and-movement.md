@@ -206,3 +206,7 @@ tests/lint/prompt-text.test.ts
 7. Plug in a gamepad (single-player): it controls Player 1 at once and the Lab shows its buttons (Xbox letters, PlayStation shapes).
 8. With two players joined, unplug the pad: the game pauses and asks for the controller; plug it back to continue.
 9. F2 settings: switch the layout to QWERTY and see Jump become `Y`; rebind Attack to K and see the hint change; switch Facing to Assisted and attack near a dummy.
+
+## Carried forward from the M1 review (2026-10-31)
+
+- **Creator request:** aerial attacks get their own pose, visibly different from the standing attack and the low attack (low attack: crouch plus floor sweep, added in M1). In M1, Attack pressed in the air is only buffered for landing; the aerial attack stub and its pose arrive with the aerial suites (`Air T`, `Forward + T`, `Up/Down + T`), at the latest in M2/M3.
