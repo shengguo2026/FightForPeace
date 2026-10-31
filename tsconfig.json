@@ -1,4 +1,17 @@
 {
   "files": [],
-  "references": [{ "path": "packages/sim" }, { "path": "packages/platform" }, { "path": "tests" }]
+  "references": [
+    {
+      "path": "packages/sim"
+    },
+    {
+      "path": "packages/platform"
+    },
+    {
+      "path": "tests"
+    },
+    {
+      "path": "apps/game"
+    }
+  ]
 }

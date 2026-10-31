@@ -10,7 +10,11 @@
     "test": "vitest run",
     "lint": "eslint .",
     "typecheck": "tsc -b",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "dev": "pnpm --filter @ffp/game dev",
+    "build": "pnpm --filter @ffp/game build",
+    "preview": "pnpm --filter @ffp/game preview",
+    "e2e": "pnpm --filter @ffp/game e2e"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
