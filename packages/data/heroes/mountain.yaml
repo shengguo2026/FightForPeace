@@ -4,7 +4,7 @@
 # Hitbox x/w run forward from the hero's centre; y/h run up from the hero's feet.
 id: mountain
 name: Mountain Guardian
-bodyWidth: 110
+bodyWidth: 84
 actions:
   - id: masons-touch
     name: Mason's Touch
@@ -46,7 +46,7 @@ actions:
     frames: { startup: 11, active: 4, recovery: 19 }
     hitbox: { x: 20, w: 115, y: 120, h: 140, depth: 36 }
     damage: 70
-    reaction: { kind: knockback, hitstun: 26, push: 9 }
+    reaction: { kind: knockback, hitstun: 26, push: 12 }
     costs: { stun: 18, scale: 15 }
     meter: 6
     moves:

@@ -101,7 +101,7 @@ Every action names a logical pose asset ID, `hero.<hero>.pose.<category>.<action
 | **Aerial** | tucked body (70 % height, knees drawn up), magenta strike limb angled **diagonally downward**, drawn above the floor shadow |
 | Ground (M3) | kneeling body, strike pointing at the floor |
 
-The limb is short and dim during startup, full and bright during the active frames, and grey while recovering, so frame phases are readable without the Lab. Each hero has its own silhouette width (Mountain 110 px, River 80 px) and the floating label reads "P1 · Mountain" / "P2 · River".
+The limb is short and dim during startup, full and bright during the active frames, and grey while recovering, so frame phases are readable without the Lab. Each hero has its own silhouette width (Mountain 84 px, River 60 px) and the floating label reads "P1 · Mountain" / "P2 · River".
 
 ## Review Focus
 

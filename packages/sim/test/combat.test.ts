@@ -7,7 +7,7 @@ import { DirBit } from '../src/input/bits';
 import { fx } from '../src/math/fixed';
 import { type FrameInput, GroundTag, MoveState, type World } from '../src/world/types';
 import { type WorldOptions, createWorld, step } from '../src/world/world';
-import { hero, idle, inp, press, repeat, run } from './helpers';
+import { hero, idle, inp, press, repeat, run, tapDir } from './helpers';
 
 /** Hero 1 stands 80 px left of dummy 101, same depth, facing right. */
 function duel(heroId: string, options: WorldOptions = {}): World {
@@ -251,6 +251,15 @@ describe('premium dash bridge (Review Focus 4)', () => {
     expect(dummy(w).ctx.bridgeUsed).toBe(true);
     run(w, [idle, press('Attack')]);
     expect(actionId(w)).toBe('rampart-charge');
+  });
+
+  test('double-tapping Forward also takes the bridge', () => {
+    const w = duel('mountain');
+    toGatepostRecovery(w);
+    hero(w).meter = 25;
+    run(w, [tapDir('right'), idle, tapDir('right')]);
+    expect(hero(w).bridged).toBe(true);
+    expect(hero(w).meter).toBe(0);
   });
 
   test('not enough meter rejects the bridge and spends nothing', () => {

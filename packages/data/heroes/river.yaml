@@ -4,7 +4,7 @@
 # Hitbox x/w run forward from the hero's centre; y/h run up from the hero's feet.
 id: river
 name: River Scout
-bodyWidth: 80
+bodyWidth: 60
 actions:
   - id: reed-tap
     name: Reed Tap
@@ -46,7 +46,7 @@ actions:
     frames: { startup: 9, active: 4, recovery: 16 }
     hitbox: { x: 15, w: 125, y: 110, h: 140, depth: 34 }
     damage: 60
-    reaction: { kind: knockback, hitstun: 24, push: 9 }
+    reaction: { kind: knockback, hitstun: 24, push: 12 }
     costs: { stun: 16, scale: 15 }
     meter: 6
     moves:

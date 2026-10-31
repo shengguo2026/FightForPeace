@@ -1,4 +1,17 @@
-import { ActionBit, type FrameInput, MoveState, fxToPixels, heroOf } from '@ffp/sim';
+import {
+  ActionBit,
+  type Fighter,
+  type FrameInput,
+  HEROES,
+  MoveState,
+  REJECT_TEXT,
+  Reject,
+  VerdictTo,
+  fxToPixels,
+  heroOf,
+  phaseOf,
+  stunBand,
+} from '@ffp/sim';
 import {
   ACTION_NAMES,
   type Prompt,
@@ -7,10 +20,17 @@ import {
   resolvePrompt,
 } from '@ffp/platform';
 import type { GameSession } from '../game';
-import { HISTORY_LENGTH, type HistoryEntry, type LabState, type PlayerView } from './labState';
+import {
+  HISTORY_LENGTH,
+  type HistoryEntry,
+  type LabState,
+  type PlayerView,
+  type TargetView,
+} from './labState';
 
-function stateName(state: number, attackKind: number): string {
+function stateName(state: number, attackKind: number, action = -1): string {
   if (state !== MoveState.Attack) return STATE_NAMES[state] ?? '?';
+  if (action >= 0) return 'action';
   if (attackKind === ActionBit.LowAttack) return 'low attack';
   if (attackKind === ActionBit.Special) return 'special (stub)';
   if (attackKind === ActionBit.Ultimate) return 'ultimate (stub)';
@@ -23,7 +43,37 @@ const STATE_NAMES: Record<number, string> = {
   [MoveState.Dash]: 'dash',
   [MoveState.Air]: 'air',
   [MoveState.Attack]: 'attack',
+  [MoveState.Hitstun]: 'hit-stun',
+  [MoveState.Launched]: 'airborne',
+  [MoveState.Down]: 'down',
+  [MoveState.GetUp]: 'getting up',
+  [MoveState.Landing]: 'landing recovery',
 };
+
+/** Name of a cancel destination code (action index or VerdictTo). */
+function destName(f: Fighter, to: number): string {
+  if (to >= 0) return HEROES[f.hero]?.actions[to]?.name ?? '?';
+  if (to === VerdictTo.Jump) return 'jump';
+  if (to === VerdictTo.Dash) return 'dash bridge';
+  if (to === VerdictTo.Special) return 'Special';
+  if (to === VerdictTo.Ultimate) return 'Ultimate';
+  return 'press';
+}
+
+function verdictText(f: Fighter): string {
+  if (f.verdictFrame === 0 && f.verdictTo === VerdictTo.None) return '—';
+  const what = destName(f, f.verdictTo);
+  return f.verdictReject === Reject.None
+    ? `✓ ${what} (frame ${f.verdictFrame})`
+    : `✗ ${what}: ${REJECT_TEXT[f.verdictReject]} (frame ${f.verdictFrame})`;
+}
+
+function phaseText(f: Fighter): string {
+  const a = f.action >= 0 ? HEROES[f.hero]?.actions[f.action] : undefined;
+  if (!a || f.state !== MoveState.Attack) return '—';
+  const ph = phaseOf(a, f.stateFrame + 1);
+  return `${ph.phase} ${ph.at}/${ph.of}`;
+}
 
 const ACTION_BY_BIT = new Map<number, string>(
   Object.entries(ActionBit).map(([name, bit]) => [bit, name]),
@@ -96,8 +146,16 @@ export function refreshPlayers(session: GameSession, lab: LabState, steps: Frame
       device: deviceLabel(session, slot),
       waiting: slotState.waiting,
       state: hero
-        ? `${stateName(hero.state, hero.attackKind)} ${hero.state === MoveState.Idle || hero.state === MoveState.Walk ? '' : hero.stateFrame}`.trim()
+        ? `${stateName(hero.state, hero.attackKind, hero.action)} ${hero.state === MoveState.Idle || hero.state === MoveState.Walk ? '' : hero.stateFrame}`.trim()
         : '—',
+      hero: HEROES[session.world.playerHero[slot] ?? 0]?.name ?? '—',
+      heroId: HEROES[session.world.playerHero[slot] ?? 0]?.id ?? 'mountain',
+      action:
+        hero && hero.action >= 0 ? (HEROES[hero.hero]?.actions[hero.action]?.name ?? '—') : '—',
+      phase: hero ? phaseText(hero) : '—',
+      verdict: hero ? verdictText(hero) : '—',
+      meter: hero ? hero.meter : 0,
+      bridge: hero ? (hero.bridged ? 'bridged dash' : '—') : '—',
       speed: hero ? speed(hero.vx, hero.vz, hero.vy) : '—',
       facing: hero ? (hero.facing === 1 ? 'right' : 'left') : '—',
       facingMode: session.world.playerFacing[slot] ?? 'manual',
@@ -131,4 +189,54 @@ export function heldKeys(session: GameSession): string[] {
   for (const pad of hub.pads.values())
     out.push(...pad.heldButtons().map((b) => `pad${pad.index}:${b}`));
   return out;
+}
+
+let followed = 0;
+let lastTargetSig = '';
+
+/** Follows the last dummy that was hit and publishes its combo context. */
+export function refreshTarget(session: GameSession, lab: LabState): void {
+  const dummies = session.world.bodies.filter((b) => b.team === 'enemy');
+  const hitNow = dummies.find((d) => d.ctx.open && d.ctx.hits > 0 && d.id !== followed);
+  const current = dummies.find((d) => d.id === followed);
+  if (hitNow && !(current && current.ctx.open)) followed = hitNow.id;
+  const d = dummies.find((x) => x.id === followed);
+  if (!d) return;
+  const prev = lab.target.value;
+  const c = d.ctx;
+  // When the combo ends, keep showing its final numbers until the next hit.
+  const view: TargetView =
+    !c.open && prev && prev.name === `Dummy ${d.id - 100}`
+      ? {
+          ...prev,
+          open: false,
+          health: `${d.health}/${d.maxHealth}`,
+          reaction: stateName(d.state, 0),
+        }
+      : {
+          name: `Dummy ${d.id - 100}`,
+          open: c.open,
+          health: `${d.health}/${d.maxHealth}`,
+          hits: c.hits,
+          damage: c.damage,
+          scale: c.scale,
+          stunBudget: c.stunBudget,
+          stunBand: stunBand(c.stunBudget),
+          meterBudget: c.meterBudget,
+          juggleBudget: c.juggleBudget,
+          bridge: c.bridgeUsed,
+          exhausted: c.exhausted,
+          reaction: stateName(d.state, 0),
+          ground:
+            c.groundTag === 1
+              ? 'opens ground window'
+              : c.groundTag === 2
+                ? 'terminal knockdown'
+                : '—',
+        };
+  const sig = JSON.stringify(view);
+  if (sig !== lastTargetSig) {
+    lastTargetSig = sig;
+    lab.target.value = view;
+  }
 }

@@ -12,7 +12,9 @@ export function heroIndex(id: string, roster: readonly HeroDef[] = HEROES): numb
 
 /** True when a data direction (which may be Vertical) matches an input direction. */
 export function dirMatches(dataDir: number, input: number): boolean {
-  return dataDir === input || (dataDir === Dir.Vertical && (input === Dir.Up || input === Dir.Down));
+  return (
+    dataDir === input || (dataDir === Dir.Vertical && (input === Dir.Up || input === Dir.Down))
+  );
 }
 
 /**

@@ -6,7 +6,7 @@ export const HERO_DATA: readonly HeroDef[] = [
   {
     "id": "mountain",
     "name": "Mountain Guardian",
-    "bodyWidth": 110,
+    "bodyWidth": 84,
     "actions": [
       {
         "id": "masons-touch",
@@ -191,7 +191,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "reaction": {
           "kind": "knockback",
           "hitstun": 26,
-          "push": 2304,
+          "push": 3072,
           "lift": 0,
           "airPop": 0,
           "counterTrip": false
@@ -937,7 +937,7 @@ export const HERO_DATA: readonly HeroDef[] = [
   {
     "id": "river",
     "name": "River Scout",
-    "bodyWidth": 80,
+    "bodyWidth": 60,
     "actions": [
       {
         "id": "reed-tap",
@@ -1122,7 +1122,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "reaction": {
           "kind": "knockback",
           "hitstun": 24,
-          "push": 2304,
+          "push": 3072,
           "lift": 0,
           "airPop": 0,
           "counterTrip": false

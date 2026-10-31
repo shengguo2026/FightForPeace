@@ -401,8 +401,7 @@ function startAttack(
   if (input.moveX !== 0) {
     f.targetId = 0;
   } else if (f.facingMode === 'assisted' && !stub && !fromDash) {
-    const kept =
-      chained && f.targetId !== 0 ? world.bodies.find((b) => b.id === f.targetId) : null;
+    const kept = chained && f.targetId !== 0 ? world.bodies.find((b) => b.id === f.targetId) : null;
     const target = kept ?? nearestEnemy(world, f, p);
     f.targetId = target ? target.id : 0;
     if (target && target.x !== f.x) f.facing = target.x > f.x ? 1 : -1;
