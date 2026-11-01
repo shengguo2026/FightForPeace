@@ -175,7 +175,11 @@ export function stepHero(world: World, f: Fighter, input: FrameInput, p: Movemen
       f.vx = vx;
       f.vz = vz;
       f.state = vx !== 0 || vz !== 0 ? MoveState.Walk : MoveState.Idle;
-      if (input.moveX !== 0) f.facing = input.moveX;
+      if (input.moveX !== 0 && input.moveX !== f.facing) {
+        f.turnFrom = f.facing;
+        f.turnFrame = frame;
+        f.facing = input.moveX;
+      }
       f.x += vx;
       f.z += vz;
       break;
@@ -398,8 +402,18 @@ function startAttack(
   const stub = action === ActionBit.Special || action === ActionBit.Ultimate || f.hero < 0;
   f.attackFromDash = fromDash;
   // Explicit left/right never turns the hero: it selects Forward or Backward (spec §5.3).
+  // Turn grace: a walk turn toward the held direction only a few frames before Attack
+  // (Left held a moment before the press) is undone, so the press still reads Backward.
   if (input.moveX !== 0) {
     f.targetId = 0;
+    if (
+      !fromDash &&
+      input.moveX === f.facing &&
+      f.turnFrom === -f.facing &&
+      frame(world) - f.turnFrame <= p.turnGraceFrames
+    ) {
+      f.facing = f.facing === 1 ? -1 : 1;
+    }
   } else if (f.facingMode === 'assisted' && !stub && !fromDash) {
     const kept = chained && f.targetId !== 0 ? world.bodies.find((b) => b.id === f.targetId) : null;
     const target = kept ?? nearestEnemy(world, f, p);

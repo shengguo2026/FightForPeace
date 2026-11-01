@@ -32,6 +32,8 @@ export interface MovementProfile {
    * frames of each other (either order) make a low attack instead of the dash attack.
    */
   chordFrames: number;
+  /** Frames after a walk turn in which Attack + that direction still reads as Backward. */
+  turnGraceFrames: number;
   /** Offensive input buffer window. */
   bufferFrames: number;
   /** Assisted Facing search box around the hero. */
@@ -56,6 +58,7 @@ export const ON_FOOT: MovementProfile = {
   airNeutralZ: 256,
   attackFrames: 18,
   chordFrames: 3,
+  turnGraceFrames: 8,
   bufferFrames: 9,
   assistRangeX: fx(480),
   assistRangeZ: fx(160),

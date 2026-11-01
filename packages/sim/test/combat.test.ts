@@ -153,6 +153,20 @@ describe('direction at acceptance (Review Focus 2)', () => {
     expect(hero(w).facing).toBe(1);
   });
 
+  test.each(['mountain', 'river'])(
+    '%s: Left pressed a moment before Attack still lands the Backward move on the dummy',
+    (id) => {
+      const w = duel(id, { refill: false });
+      const d = dummy(w);
+      const before = d.health;
+      run(w, [inp({ moveX: -1 }), inp({ moveX: -1 }), press('Attack', { moveX: -1 })]);
+      expect(hero(w).facing).toBe(1);
+      expect(HEROES[hero(w).hero]!.actions[hero(w).action]!.dir).toBe(Dir.Backward);
+      run(w, repeat(inp({ moveX: -1 }), 30));
+      expect(d.health).toBeLessThan(before);
+    },
+  );
+
   test('a diagonal resolves to the most recently pressed direction', () => {
     const w = createWorld(1);
     const h = hero(w);

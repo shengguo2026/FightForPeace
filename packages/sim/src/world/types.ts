@@ -95,6 +95,9 @@ export interface Fighter extends Body {
   action: number;
   /** Most recently pressed cardinal direction (DirBit), for diagonal tie-breaks. */
   lastCardinal: number;
+  /** Frame of the last walk turn and the facing before it (turn grace). */
+  turnFrame: number;
+  turnFrom: number;
   /** Action frame of the first contact of the running action, -1 before any contact. */
   contactAt: number;
   /** Targets this action has hit, and the damage scale locked for each of them. */

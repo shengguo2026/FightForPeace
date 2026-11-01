@@ -1,10 +1,23 @@
 import { readFileSync, mkdtempSync, writeFileSync, copyFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { GENERATED_PATH, HeroDataError, compileHero, generate, heroFiles, loadHero } from '../src/generate';
+import {
+  GENERATED_PATH,
+  HeroDataError,
+  compileHero,
+  generate,
+  heroFiles,
+  loadHero,
+} from '../src/generate';
 
 const files = heroFiles();
-const load = (name: string) => loadHero(readFileSync(files.find((f) => f.endsWith(name))!, 'utf8'));
+const load = (name: string) =>
+  loadHero(
+    readFileSync(
+      files.find((f) => f.endsWith(name))!,
+      'utf8',
+    ),
+  );
 
 test('the committed heroes.gen.ts is up to date (run pnpm gen:heroes)', () => {
   expect(readFileSync(GENERATED_PATH, 'utf8')).toBe(generate());
@@ -15,16 +28,36 @@ test('roster order puts the founders first', () => {
 });
 
 const SAR: Record<string, [number, number | number[], number]> = {
-  'masons-touch': [5, 3, 9], 'brace-elbow': [7, 3, 12], 'gatepost-hammer': [11, 4, 19],
-  'stone-shoulder': [12, 5, 18], 'anchor-hook': [8, 3, 14], 'high-bank-lift': [10, 4, 20],
-  'low-bank-sweep': [9, 4, 17], 'rafter-palm': [5, 4, 8], 'stonefall-knee': [9, 6, 14],
-  'cornerstone-sweep': [8, 5, 12], 'settling-palm': [8, 4, 15], 'lockgate-press': [10, [6, 1, 5, 1, 5], 20],
-  'foundation-rise': [12, 5, 23], 'rampart-charge': [9, 5, 18], 'faultline-reap': [8, 5, 22],
-  'reed-tap': [4, 3, 8], 'turning-current': [6, 3, 10], 'open-channel-kick': [9, 4, 16],
-  'rapids-step': [7, 4, 13], 'ebb-heel': [8, 3, 15], 'northbank-arc': [8, 4, 16],
-  'southbank-slide': [9, 6, 18], 'reedwing-tap': [4, 4, 7], 'current-chase': [7, 5, 10],
-  'bank-switch-arc': [8, 6, 12], 'ebbturn-heel': [6, 4, 9], 'skipping-current': [6, 4, 12],
-  'rising-eddy': [9, 5, 20], 'rapid-crossing': [6, 5, 15], 'undertow-slide': [6, 7, 24],
+  'masons-touch': [5, 3, 9],
+  'brace-elbow': [7, 3, 12],
+  'gatepost-hammer': [11, 4, 19],
+  'stone-shoulder': [12, 5, 18],
+  'anchor-hook': [8, 3, 14],
+  'high-bank-lift': [10, 4, 20],
+  'low-bank-sweep': [9, 4, 17],
+  'rafter-palm': [5, 4, 8],
+  'stonefall-knee': [9, 6, 14],
+  'cornerstone-sweep': [8, 5, 12],
+  'settling-palm': [8, 4, 15],
+  'lockgate-press': [10, [6, 1, 5, 1, 5], 20],
+  'foundation-rise': [12, 5, 23],
+  'rampart-charge': [9, 5, 18],
+  'faultline-reap': [8, 5, 22],
+  'reed-tap': [4, 3, 8],
+  'turning-current': [6, 3, 10],
+  'open-channel-kick': [9, 4, 16],
+  'rapids-step': [7, 4, 13],
+  'ebb-heel': [8, 3, 15],
+  'northbank-arc': [8, 4, 16],
+  'southbank-slide': [9, 6, 18],
+  'reedwing-tap': [4, 4, 7],
+  'current-chase': [7, 5, 10],
+  'bank-switch-arc': [8, 6, 12],
+  'ebbturn-heel': [6, 4, 9],
+  'skipping-current': [6, 4, 12],
+  'rising-eddy': [9, 5, 20],
+  'rapid-crossing': [6, 5, 15],
+  'undertow-slide': [6, 7, 24],
 };
 
 test.each([
@@ -50,7 +83,10 @@ test('a missing link target fails with a readable message', () => {
 });
 
 test('two actions on one input slot fail', () => {
-  const bad = base.replace('input: { context: neutral, dir: backward }', 'input: { context: neutral, dir: forward }');
+  const bad = base.replace(
+    'input: { context: neutral, dir: backward }',
+    'input: { context: neutral, dir: forward }',
+  );
   expect(() => loadHero(bad)).toThrow(HeroDataError);
   expect(() => loadHero(bad)).toThrow(/both use input neutral\/forward/);
 });

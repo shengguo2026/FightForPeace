@@ -3,6 +3,7 @@ import { ON_FOOT } from '../src/movement/profile';
 import { MoveState } from '../src/world/types';
 import { setFacingMode } from '../src/world/world';
 import { HEROES } from '../src/combat/roster';
+import { Dir } from '../src/combat/types';
 import { hero, idle, inp, press, repeat, run, world } from './helpers';
 
 const P = ON_FOOT;
@@ -72,6 +73,25 @@ test('Backward + Attack keeps facing and selects the Backward move (spec §5.3)'
   expect(HEROES[hero(w).hero]!.actions[hero(w).action]!.id).toBe('anchor-hook');
 });
 
+test('Turn grace: Left held a moment before Attack still selects the Backward move', () => {
+  for (const early of [1, 2, 8]) {
+    const w = world();
+    run(w, repeat(inp({ moveX: -1 }), early)); // the walk turns the hero left
+    expect(hero(w).facing).toBe(-1);
+    run(w, [press('Attack', { moveX: -1 })]);
+    expect(hero(w).facing).toBe(1);
+    expect(HEROES[hero(w).hero]!.actions[hero(w).action]!.id).toBe('anchor-hook');
+  }
+});
+
+test('Turn grace ends: after walking left for a while, Left + Attack is a Forward move', () => {
+  const w = world();
+  run(w, repeat(inp({ moveX: -1 }), 20));
+  run(w, [press('Attack', { moveX: -1 })]);
+  expect(hero(w).facing).toBe(-1);
+  expect(HEROES[hero(w).hero]!.actions[hero(w).action]!.dir).toBe(Dir.Forward);
+});
+
 test('Manual Facing: a neutral Attack keeps facing even with a dummy behind', () => {
   const w = world({ dummies: 1 });
   run(w, repeat(inp({ moveX: 1 }), 150)); // walk past the dummy at x 1100
@@ -87,6 +107,7 @@ function assistedPastDummy() {
   run(w, repeat(inp({ moveX: 1 }), 300));
   run(w, repeat(inp({ moveX: -1 }), 1));
   run(w, repeat(inp({ moveX: 1 }), 1));
+  run(w, repeat(idle, 10)); // past the turn grace window
   return w;
 }
 
