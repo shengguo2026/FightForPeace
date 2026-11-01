@@ -11,12 +11,14 @@ import {
 import walkSquareJson from './walk-square.json';
 import dashJumpJson from './dash-jump.json';
 import crowdJson from './crowd.json';
+import comboRoutesJson from './combo-routes.json';
 import { SCRIPTS } from './scripts';
 
 const LOGS: [string, ReplayLog][] = [
   ['walk-square', walkSquareJson as ReplayLog],
   ['dash-jump', dashJumpJson as ReplayLog],
   ['crowd', crowdJson as ReplayLog],
+  ['combo-routes', comboRoutesJson as ReplayLog],
 ];
 
 test.each(LOGS)('golden replay %s reproduces its recorded hash', (name, log) => {
@@ -41,6 +43,17 @@ test('the crowd replay has Player 2 join on frame 30', () => {
   const log = crowdJson as ReplayLog;
   expect(log.frames[29]).toHaveLength(1);
   expect(log.frames[30]).toHaveLength(2);
+});
+
+test('the combo-routes replay lands a three-action combo for both heroes', () => {
+  const log = comboRoutesJson as ReplayLog;
+  const world = createWorld(log.seed, log.options);
+  let best = 0;
+  for (const f of log.frames) {
+    step(world, f);
+    for (const d of world.bodies) if (d.team === 'enemy') best = Math.max(best, d.ctx.actions);
+  }
+  expect(best).toBeGreaterThanOrEqual(3);
 });
 
 describe.each(LOGS)('%s: render rate does not change the result', (_name, log) => {

@@ -14,7 +14,8 @@
     "dev": "pnpm --filter @ffp/game dev",
     "build": "pnpm --filter @ffp/game build",
     "preview": "pnpm --filter @ffp/game preview",
-    "e2e": "pnpm --filter @ffp/game e2e"
+    "e2e": "pnpm --filter @ffp/game e2e",
+    "gen:heroes": "node --experimental-strip-types packages/data/src/generate.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -1,0 +1,241 @@
+# River Scout: Representative Vertical Slice normal actions.
+# Frame data: spec Appendix B.2 (Combat Lab Candidate 0.2). Every other number is an
+# M2 candidate for Combat Lab tuning. Units: frames at 60 Hz, pixels, pixels per frame.
+# Hitbox x/w run forward from the hero's centre; y/h run up from the hero's feet.
+id: river
+name: River Scout
+bodyWidth: 60
+actions:
+  - id: reed-tap
+    name: Reed Tap
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 4, active: 3, recovery: 8 }
+    hitbox: { x: 15, w: 100, y: 160, h: 80, depth: 30 }
+    damage: 25
+    reaction: { kind: stagger, hitstun: 16, push: 1.5 }
+    costs: { stun: 9, scale: 10, starter: 20 }
+    meter: 3
+    links:
+      - { to: turning-current, category: chain, on: [hit, guard] }
+      - { to: rapids-step, category: chain, on: [hit, guard] }
+      - { to: northbank-arc, category: chain, on: [hit, guard] }
+      - { to: southbank-slide, category: chain, on: [hit, guard] }
+
+  - id: turning-current
+    name: Turning Current
+    category: standing
+    input: { context: chain, dir: neutral }
+    frames: { startup: 6, active: 3, recovery: 10 }
+    hitbox: { x: 15, w: 105, y: 140, h: 100, depth: 32 }
+    damage: 35
+    reaction: { kind: stagger, hitstun: 18, push: 2 }
+    costs: { stun: 10, scale: 10 }
+    meter: 3
+    moves:
+      - { from: 1, to: 6, forward: 1.5 }
+    links:
+      - { to: open-channel-kick, category: chain, on: [hit, guard] }
+      - { to: northbank-arc, category: chain, on: [hit, guard] }
+      - { to: special, input: neutral, category: special, on: [hit, guard] }
+
+  - id: open-channel-kick
+    name: Open Channel Kick
+    category: standing
+    input: { context: chain, dir: neutral }
+    frames: { startup: 9, active: 4, recovery: 16 }
+    hitbox: { x: 15, w: 125, y: 110, h: 140, depth: 34 }
+    damage: 60
+    reaction: { kind: knockback, hitstun: 24, push: 12 }
+    costs: { stun: 16, scale: 15 }
+    meter: 6
+    moves:
+      - { from: 1, to: 9, forward: 1.5 }
+    links:
+      - { to: ultimate, input: neutral, category: ultimate, on: [hit] }
+      - { to: dash, input: forward, category: dashBridge, on: [hit], premium: 25 }
+
+  - id: rapids-step
+    name: Rapids Step
+    category: standing
+    input: { context: neutral, dir: forward }
+    frames: { startup: 7, active: 4, recovery: 13 }
+    hitbox: { x: 15, w: 105, y: 120, h: 130, depth: 32 }
+    damage: 45
+    reaction: { kind: stagger, hitstun: 20, push: 5 }
+    costs: { stun: 12, scale: 12 }
+    meter: 4
+    tags: [carry]
+    moves:
+      - { from: 1, to: 11, forward: 6 }
+    links:
+      - { to: open-channel-kick, category: chain, on: [hit, guard] }
+      - { to: special, input: forward, category: special, on: [hit, guard] }
+
+  - id: ebb-heel
+    name: Ebb Heel
+    category: standing
+    input: { context: neutral, dir: backward }
+    frames: { startup: 8, active: 3, recovery: 15 }
+    hitbox: { x: 10, w: 120, y: 130, h: 110, depth: 30 }
+    damage: 40
+    reaction: { kind: stagger, hitstun: 20, push: 2 }
+    costs: { stun: 10, scale: 10, starter: 10 }
+    meter: 3
+    tags: [whiffPunish]
+    moves:
+      - { from: 1, to: 7, forward: -4 }
+    links:
+      - { to: reed-tap, category: chain, on: [hit] }
+
+  - id: northbank-arc
+    name: Northbank Arc
+    category: standing
+    input: { context: neutral, dir: up }
+    frames: { startup: 8, active: 4, recovery: 16 }
+    hitbox: { x: 15, w: 105, y: 120, h: 180, depth: 40 }
+    damage: 45
+    reaction: { kind: launch, hitstun: 30, push: 1.5, lift: 14 }
+    costs: { stun: 14, scale: 12, juggle: 30 }
+    meter: 5
+    moves:
+      - { from: 1, to: 8, depth: -3, depthFrom: fixed }
+    links:
+      - { to: jump, input: neutral, category: jumpChase, on: [hit] }
+
+  - id: southbank-slide
+    name: Southbank Slide
+    category: standing
+    input: { context: neutral, dir: down }
+    frames: { startup: 9, active: 6, recovery: 18 }
+    hitbox: { x: -20, w: 130, y: 0, h: 160, depth: 44 }
+    damage: 40
+    reaction: { kind: stagger, hitstun: 20, push: 1 }
+    costs: { stun: 12, scale: 10 }
+    meter: 4
+    tags: [passThrough]
+    moves:
+      - { from: 1, to: 15, forward: 3, depth: 3, depthFrom: fixed }
+    links:
+      - { to: ebb-heel, category: chain, on: [hit] }
+      - { to: special, input: neutral, category: special, on: [hit] }
+
+  - id: reedwing-tap
+    name: Reedwing Tap
+    category: aerial
+    input: { context: air, dir: neutral }
+    frames: { startup: 4, active: 4, recovery: 7, landing: true }
+    hitbox: { x: 10, w: 105, y: -20, h: 130, depth: 34 }
+    damage: 30
+    reaction: { kind: stagger, hitstun: 16, push: 2, airPop: 7 }
+    costs: { stun: 9, scale: 10, juggle: 10 }
+    meter: 3
+    links:
+      - { to: current-chase, category: air, on: [hit] }
+      - { to: bank-switch-arc, category: air, on: [hit] }
+      - { to: ebbturn-heel, category: air, on: [hit] }
+
+  - id: current-chase
+    name: Current Chase
+    category: aerial
+    input: { context: air, dir: forward }
+    frames: { startup: 7, active: 5, recovery: 10, landing: true }
+    hitbox: { x: 10, w: 115, y: -40, h: 130, depth: 34 }
+    damage: 50
+    reaction: { kind: knockback, hitstun: 24, push: 6, lift: 3, airPop: 5 }
+    costs: { stun: 15, scale: 12, juggle: 20 }
+    meter: 5
+    tags: [carry]
+    moves:
+      - { from: 1, to: 12, forward: 5 }
+    links:
+      - { to: ultimate, input: neutral, category: ultimate, on: [hit] }
+
+  - id: bank-switch-arc
+    name: Bank-Switch Arc
+    category: aerial
+    input: { context: air, dir: vertical }
+    frames: { startup: 8, active: 6, recovery: 12, landing: true }
+    hitbox: { x: -20, w: 145, y: -40, h: 140, depth: 64 }
+    damage: 40
+    reaction: { kind: stagger, hitstun: 20, push: 2, airPop: 6 }
+    costs: { stun: 12, scale: 10, juggle: 15 }
+    meter: 4
+    moves:
+      - { from: 1, to: 14, depth: 5, depthFrom: input }
+    links:
+      - { to: current-chase, category: air, on: [hit] }
+
+  - id: ebbturn-heel
+    name: Ebbturn Heel
+    category: aerial
+    input: { context: air, dir: backward }
+    frames: { startup: 6, active: 4, recovery: 9, landing: true }
+    hitbox: { x: 0, w: 115, y: -20, h: 130, depth: 34 }
+    damage: 35
+    reaction: { kind: knockback, hitstun: 20, push: 6, airPop: 4 }
+    costs: { stun: 10, scale: 10, juggle: 10 }
+    meter: 3
+    moves:
+      - { from: 1, to: 10, forward: -2 }
+    links:
+      - { to: reedwing-tap, category: air, on: [hit] }
+
+  - id: skipping-current
+    name: Skipping Current
+    category: ground
+    input: { context: groundFocus, dir: neutral }
+    frames: { startup: 6, active: 4, recovery: 12 }
+    hitbox: { x: 10, w: 110, y: 0, h: 70, depth: 34 }
+    damage: 30
+    reaction: { kind: stagger, hitstun: 18 }
+    costs: { stun: 10, scale: 10 }
+    meter: 3
+    note: Needs Ground-Opportunity Focus (M3).
+    links:
+      - { to: rising-eddy, category: chain, on: [hit] }
+
+  - id: rising-eddy
+    name: Rising Eddy
+    category: ground
+    input: { context: groundFocus, dir: forward }
+    frames: { startup: 9, active: 5, recovery: 20 }
+    hitbox: { x: 10, w: 110, y: 0, h: 120, depth: 34 }
+    damage: 50
+    reaction: { kind: launch, hitstun: 30, lift: 12 }
+    costs: { stun: 18, scale: 15, juggle: 35 }
+    meter: 5
+    tags: [relaunch, closesGroundRoute, sideSwitch]
+    note: Needs Ground-Opportunity Focus (M3).
+
+  - id: rapid-crossing
+    name: Rapid Crossing
+    category: dash
+    input: { context: dash, dir: neutral }
+    frames: { startup: 6, active: 5, recovery: 15 }
+    hitbox: { x: -40, w: 160, y: 100, h: 170, depth: 36 }
+    damage: 45
+    reaction: { kind: stagger, hitstun: 20, push: 2 }
+    costs: { stun: 12, scale: 12 }
+    meter: 4
+    tags: [passThrough, sideSwitch]
+    moves:
+      - { from: 1, to: 11, forward: 8 }
+    links:
+      - { to: special, input: forward, category: special, on: [hit] }
+
+  - id: undertow-slide
+    name: Undertow Slide
+    category: low
+    input: { context: dashLow, dir: neutral }
+    frames: { startup: 6, active: 7, recovery: 24 }
+    hitbox: { x: 0, w: 135, y: 0, h: 55, depth: 30 }
+    hurtbox: low
+    damage: 35
+    reaction: { kind: stagger, hitstun: 20, push: 2, lift: 4, counterTrip: true }
+    costs: { stun: 14, scale: 12 }
+    meter: 4
+    tags: [opensGroundWindow]
+    moves:
+      - { from: 1, to: 13, forward: 7 }
+      - { from: 14, to: 20, forward: 3 }

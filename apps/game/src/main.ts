@@ -6,7 +6,7 @@ import { StageScene, VIEW_HEIGHT, VIEW_WIDTH } from './scenes/StageScene';
 import { LabOverlay, type LabActions } from './ui/LabOverlay';
 import { PauseOverlay } from './ui/PauseOverlay';
 import { createLabState } from './ui/labState';
-import { heldKeys, refreshPlayers } from './ui/views';
+import { heldKeys, refreshPlayers, refreshTarget } from './ui/views';
 import { captureNextKey, installKeyboard, readPads } from './input/browserInput';
 import { installDebugHook } from './debug';
 
@@ -27,6 +27,7 @@ new Phaser.Game({
   scene: new StageScene({
     getSnapshot: () => session.snapshot(),
     showCollision: () => lab.showCollision.value,
+    showLabels: () => lab.visible.value,
   }),
 });
 
@@ -55,6 +56,19 @@ const actions: LabActions = {
     session.world.dummiesChase = on;
   },
   setShowCollision: (on) => (lab.showCollision.value = on),
+  setHero: (slot, heroId) => session.setHero(slot, heroId),
+  setInfiniteMeter: (on) => {
+    lab.infiniteMeter.value = on;
+    session.world.infiniteMeter = on;
+  },
+  setCounterHit: (on) => {
+    lab.counterHit.value = on;
+    session.world.dummy.counterHit = on;
+  },
+  setRefill: (on) => {
+    lab.refill.value = on;
+    session.world.dummy.refill = on;
+  },
 };
 
 const root = document.getElementById('lab')!;
@@ -68,6 +82,8 @@ installKeyboard(session, (code) => {
   if (code === 'F2') lab.settingsOpen.value = !lab.settingsOpen.value;
   if (code === 'F3') actions.setShowCollision(!lab.showCollision.value);
   if (code === 'F4') actions.setDummiesChase(!lab.dummiesChase.value);
+  if (code === 'F5') lab.moveListOpen.value = !lab.moveListOpen.value;
+  if (code === 'F6') lab.slowMotion.value = !lab.slowMotion.value;
 });
 
 if (devBuild) installDebugHook(session, lab);
@@ -80,7 +96,8 @@ function tick(now: number): void {
   const elapsed = last === undefined ? 0 : now - last;
   last = now;
   session.devices.pollPads(readPads());
-  const report = session.advance(elapsed);
+  // Slow motion is render-side only: the simulation still steps 1/60 s at a time.
+  const report = session.advance(lab.slowMotion.value ? elapsed / 4 : elapsed);
 
   lab.frame.value = report.frame;
   lab.hash.value = report.hash.toString(16).padStart(8, '0');
@@ -90,6 +107,7 @@ function tick(now: number): void {
   // Reading the label version here makes layout changes re-render the prompts.
   void session.labels.version;
   refreshPlayers(session, lab, report.inputs);
+  refreshTarget(session, lab);
   const held = heldKeys(session);
   if (held.join(' ') !== lab.heldKeys.value.join(' ')) lab.heldKeys.value = held;
 

@@ -1,0 +1,236 @@
+# Mountain Guardian: Representative Vertical Slice normal actions.
+# Frame data: spec Appendix B.1 (Combat Lab Candidate 0.2). Every other number is an
+# M2 candidate for Combat Lab tuning. Units: frames at 60 Hz, pixels, pixels per frame.
+# Hitbox x/w run forward from the hero's centre; y/h run up from the hero's feet.
+id: mountain
+name: Mountain Guardian
+bodyWidth: 84
+actions:
+  - id: masons-touch
+    name: Mason's Touch
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 5, active: 3, recovery: 9 }
+    hitbox: { x: 20, w: 100, y: 150, h: 90, depth: 32 }
+    damage: 30
+    reaction: { kind: stagger, hitstun: 18, push: 2 }
+    costs: { stun: 10, scale: 10, starter: 15 }
+    meter: 3
+    links:
+      - { to: brace-elbow, category: chain, on: [hit, guard] }
+      - { to: stone-shoulder, category: chain, on: [hit, guard] }
+      - { to: high-bank-lift, category: chain, on: [hit, guard] }
+      - { to: low-bank-sweep, category: chain, on: [hit, guard] }
+
+  - id: brace-elbow
+    name: Brace Elbow
+    category: standing
+    input: { context: chain, dir: neutral }
+    frames: { startup: 7, active: 3, recovery: 12 }
+    hitbox: { x: 20, w: 100, y: 140, h: 100, depth: 34 }
+    damage: 40
+    reaction: { kind: stagger, hitstun: 20, push: 2 }
+    costs: { stun: 12, scale: 10 }
+    meter: 4
+    moves:
+      - { from: 1, to: 7, forward: 1.5 }
+    links:
+      - { to: gatepost-hammer, category: chain, on: [hit, guard] }
+      - { to: high-bank-lift, category: chain, on: [hit, guard] }
+      - { to: special, input: neutral, category: special, on: [hit, guard] }
+
+  - id: gatepost-hammer
+    name: Gatepost Hammer
+    category: standing
+    input: { context: chain, dir: neutral }
+    frames: { startup: 11, active: 4, recovery: 19 }
+    hitbox: { x: 20, w: 115, y: 120, h: 140, depth: 36 }
+    damage: 70
+    reaction: { kind: knockback, hitstun: 26, push: 12 }
+    costs: { stun: 18, scale: 15 }
+    meter: 6
+    moves:
+      - { from: 1, to: 11, forward: 1 }
+    links:
+      - { to: ultimate, input: neutral, category: ultimate, on: [hit] }
+      - { to: dash, input: forward, category: dashBridge, on: [hit], premium: 25 }
+
+  - id: stone-shoulder
+    name: Stone Shoulder
+    category: standing
+    input: { context: neutral, dir: forward }
+    frames: { startup: 12, active: 5, recovery: 18 }
+    hitbox: { x: 15, w: 105, y: 100, h: 160, depth: 36 }
+    damage: 55
+    reaction: { kind: knockback, hitstun: 24, push: 8 }
+    costs: { stun: 15, scale: 12 }
+    meter: 5
+    tags: [guardPressure]
+    moves:
+      - { from: 1, to: 17, forward: 5 }
+    links:
+      - { to: gatepost-hammer, category: chain, on: [hit, guard] }
+      - { to: special, input: forward, category: special, on: [hit, guard] }
+
+  - id: anchor-hook
+    name: Anchor Hook
+    category: standing
+    input: { context: neutral, dir: backward }
+    frames: { startup: 8, active: 3, recovery: 14 }
+    hitbox: { x: 10, w: 110, y: 150, h: 90, depth: 32 }
+    damage: 35
+    reaction: { kind: stagger, hitstun: 20, push: 1 }
+    costs: { stun: 10, scale: 10, starter: 10 }
+    meter: 3
+    moves:
+      - { from: 1, to: 11, forward: -3 }
+    links:
+      - { to: masons-touch, category: chain, on: [hit] }
+
+  - id: high-bank-lift
+    name: High Bank Lift
+    category: standing
+    input: { context: neutral, dir: up }
+    frames: { startup: 10, active: 4, recovery: 20 }
+    hitbox: { x: 15, w: 100, y: 120, h: 180, depth: 40 }
+    damage: 50
+    reaction: { kind: launch, hitstun: 30, push: 1.5, lift: 15 }
+    costs: { stun: 15, scale: 12, juggle: 30 }
+    meter: 5
+    moves:
+      - { from: 1, to: 10, depth: -2, depthFrom: fixed }
+    links:
+      - { to: jump, input: neutral, category: jumpChase, on: [hit] }
+      - { to: special, input: backward, category: special, on: [hit, guard] }
+
+  - id: low-bank-sweep
+    name: Low Bank Sweep
+    category: standing
+    input: { context: neutral, dir: down }
+    frames: { startup: 9, active: 4, recovery: 17 }
+    hitbox: { x: 15, w: 115, y: 0, h: 90, depth: 40 }
+    damage: 45
+    reaction: { kind: knockdown, hitstun: 30, push: 3, lift: 5 }
+    costs: { stun: 20, scale: 12 }
+    meter: 5
+    tags: [opensGroundWindow]
+    moves:
+      - { from: 1, to: 9, depth: 2, depthFrom: fixed }
+
+  - id: rafter-palm
+    name: Rafter Palm
+    category: aerial
+    input: { context: air, dir: neutral }
+    frames: { startup: 5, active: 4, recovery: 8, landing: true }
+    hitbox: { x: 10, w: 105, y: -20, h: 140, depth: 36 }
+    damage: 35
+    reaction: { kind: stagger, hitstun: 18, push: 2, airPop: 7 }
+    costs: { stun: 10, scale: 10, juggle: 10 }
+    meter: 3
+    links:
+      - { to: stonefall-knee, category: air, on: [hit] }
+      - { to: cornerstone-sweep, category: air, on: [hit] }
+
+  - id: stonefall-knee
+    name: Stonefall Knee
+    category: aerial
+    input: { context: air, dir: forward }
+    frames: { startup: 9, active: 6, recovery: 14, landing: true }
+    hitbox: { x: 10, w: 100, y: -60, h: 140, depth: 36 }
+    damage: 60
+    reaction: { kind: knockback, hitstun: 26, push: 7, lift: 4, airPop: -8 }
+    costs: { stun: 18, scale: 15, juggle: 25 }
+    meter: 5
+    tags: [terminalKnockdown]
+    moves:
+      - { from: 10, to: 15, forward: 4, vy: -6 }
+    links:
+      - { to: ultimate, input: neutral, category: ultimate, on: [hit] }
+
+  - id: cornerstone-sweep
+    name: Cornerstone Sweep
+    category: aerial
+    input: { context: air, dir: vertical }
+    frames: { startup: 8, active: 5, recovery: 12, landing: true }
+    hitbox: { x: -30, w: 160, y: -40, h: 140, depth: 70 }
+    damage: 45
+    reaction: { kind: stagger, hitstun: 20, push: 3, airPop: 6 }
+    costs: { stun: 12, scale: 10, juggle: 15 }
+    meter: 4
+    moves:
+      - { from: 1, to: 13, depth: 4, depthFrom: input }
+    links:
+      - { to: stonefall-knee, category: air, on: [hit] }
+
+  - id: settling-palm
+    name: Settling Palm
+    category: ground
+    input: { context: groundFocus, dir: neutral }
+    frames: { startup: 8, active: 4, recovery: 15 }
+    hitbox: { x: 10, w: 110, y: 0, h: 70, depth: 36 }
+    damage: 30
+    reaction: { kind: stagger, hitstun: 20 }
+    costs: { stun: 10, scale: 10 }
+    meter: 3
+    note: Needs Ground-Opportunity Focus (M3).
+    links:
+      - { to: lockgate-press, category: chain, on: [hit] }
+      - { to: foundation-rise, category: chain, on: [hit] }
+
+  - id: lockgate-press
+    name: Lockgate Press
+    category: ground
+    input: { context: groundFocus, dir: forward }
+    frames: { startup: 10, active: [6, 1, 5, 1, 5], recovery: 20 }
+    hitbox: { x: 10, w: 110, y: 0, h: 70, depth: 36 }
+    damage: 60
+    reaction: { kind: knockdown, hitstun: 30 }
+    costs: { stun: 20, scale: 15 }
+    meter: 5
+    tags: [terminalKnockdown, closesGroundRoute]
+    note: Needs Ground-Opportunity Focus (M3).
+
+  - id: foundation-rise
+    name: Foundation Rise
+    category: ground
+    input: { context: groundFocus, dir: backward }
+    frames: { startup: 12, active: 5, recovery: 23 }
+    hitbox: { x: 10, w: 110, y: 0, h: 120, depth: 36 }
+    damage: 50
+    reaction: { kind: launch, hitstun: 30, lift: 13 }
+    costs: { stun: 20, scale: 15, juggle: 35 }
+    meter: 5
+    tags: [relaunch, closesGroundRoute]
+    note: Needs Ground-Opportunity Focus (M3).
+
+  - id: rampart-charge
+    name: Rampart Charge
+    category: dash
+    input: { context: dash, dir: neutral }
+    frames: { startup: 9, active: 5, recovery: 18 }
+    hitbox: { x: 15, w: 110, y: 100, h: 170, depth: 38 }
+    damage: 55
+    reaction: { kind: knockback, hitstun: 24, push: 8 }
+    costs: { stun: 15, scale: 12 }
+    meter: 5
+    tags: [guardPressure]
+    moves:
+      - { from: 1, to: 9, forward: 6 }
+      - { from: 10, to: 14, forward: 3 }
+    links:
+      - { to: special, input: forward, category: special, on: [hit] }
+
+  - id: faultline-reap
+    name: Faultline Reap
+    category: low
+    input: { context: dashLow, dir: neutral }
+    frames: { startup: 8, active: 5, recovery: 22 }
+    hitbox: { x: 0, w: 150, y: 0, h: 60, depth: 50 }
+    hurtbox: low
+    damage: 45
+    reaction: { kind: stagger, hitstun: 22, push: 2, lift: 4, counterTrip: true }
+    costs: { stun: 15, scale: 12 }
+    meter: 5
+    tags: [opensGroundWindow]
+    moves:
+      - { from: 1, to: 8, forward: 3 }

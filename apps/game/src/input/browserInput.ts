@@ -2,7 +2,7 @@ import type { PadSnapshot } from '@ffp/platform';
 import type { GameSession } from '../game';
 
 /** Keys the Lab uses itself; they never reach gameplay. */
-export const LAB_KEYS = new Set(['F1', 'F2', 'F3', 'F4']);
+export const LAB_KEYS = new Set(['F1', 'F2', 'F3', 'F4', 'F5', 'F6']);
 
 let fakePads: (PadSnapshot | null)[] = [];
 
@@ -42,7 +42,7 @@ export function captureNextKey(cb: (code: string) => void): void {
 
 /**
  * Wires window keyboard events to both keyboard binding sets and the label source.
- * `onLabKey` receives F1–F4.
+ * `onLabKey` receives F1–F6.
  */
 export function installKeyboard(session: GameSession, onLabKey: (code: string) => void): void {
   const { keyboardP1, keyboardP2 } = session.devices;

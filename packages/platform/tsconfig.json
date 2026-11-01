@@ -5,6 +5,6 @@
     "outDir": "dist-types",
     "types": ["vitest/globals"]
   },
-  "include": ["src", "test"],
+  "include": ["src", "src/**/*.json", "test"],
   "references": [{ "path": "../sim" }]
 }

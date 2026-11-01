@@ -138,6 +138,54 @@ export const crowd: ReplayScript = {
   })(),
 };
 
-export const SCRIPTS = [walkSquare, dashJump, crowd];
+/** Taps Attack every third frame for n frames (a player mashing the button). */
+function mash(t: Track, n: number, dirs: Dir[] = []): Track {
+  for (let i = 0; i < n; i += 1) {
+    if (i % 3 === 0) t.press('Attack', i === 0 ? dirs : []);
+    else t.idle(1);
+  }
+  return t;
+}
+
+function comboP1(): Track {
+  const t = new Track().hold(['right'], 207).hold(['up'], 20).idle(10);
+  mash(t, 45).idle(70); // Mason's Touch → Brace Elbow → Gatepost Hammer
+  t.hold(['right'], 10).idle(10);
+  mash(t, 3).idle(2).press('Attack', ['right']).idle(60); // Mason → Stone Shoulder
+  t.hold(['right'], 20).idle(10);
+  t.press('Attack', ['up']).idle(14).press('Jump').idle(6).press('Attack').idle(8);
+  t.press('Attack', ['right']).idle(80); // High Bank Lift → jump chase → Rafter Palm → Stonefall Knee
+  t.hold(['left'], 30).hold(['right'], 1).idle(5);
+  t.press('Dash', ['right']).idle(3).press('Attack').press('Guard').idle(70); // Faultline Reap
+  t.hold(['left'], 30).hold(['right'], 1).idle(5);
+  t.press('Dash', ['right']).idle(3).press('Attack').idle(70); // Rampart Charge
+  t.hold(['right'], 15).idle(5);
+  mash(t, 40);
+  t.press('Dash').idle(2).press('Attack').idle(80); // string into the premium dash bridge
+  t.press('Attack', ['left']).idle(40); // Anchor Hook
+  return t;
+}
+
+function comboP2(): Track {
+  // River Scout walks to the dummy's right side and joins in.
+  const t = new Track().hold(['right'], 300).hold(['up'], 50).hold(['left'], 1).idle(200);
+  mash(t, 45).idle(60);
+  t.press('Attack', ['down']).idle(5).press('Attack', ['right']).idle(60); // Southbank Slide → Ebb Heel
+  t.press('Jump').idle(4).press('Attack', ['up']).idle(60); // Bank-Switch Arc
+  return t;
+}
+
+export const comboRoutes: ReplayScript = {
+  name: 'combo-routes',
+  seed: 11,
+  options: { dummies: 1, infiniteMeter: true, counterHit: true },
+  frames: (() => {
+    const p1 = comboP1().frames;
+    const p2 = comboP2().frames;
+    return p1.map((f, i) => (i >= 20 && p2[i - 20] ? [f, p2[i - 20]!] : [f]));
+  })(),
+};
+
+export const SCRIPTS = [walkSquare, dashJump, crowd, comboRoutes];
 
 export type { ReplayLog };

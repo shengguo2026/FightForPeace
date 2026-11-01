@@ -8,6 +8,13 @@ export interface DebugBody {
   state: number;
   facing: number;
   attackKind: number;
+  action: string | null;
+  category: string | null;
+  stateFrame: number;
+  hero: string | null;
+  meter: number;
+  health: number;
+  combo: { open: boolean; hits: number; damage: number; scale: number };
 }
 
 /** Test hook, installed in dev and e2e builds only (see debug.ts). */
@@ -15,6 +22,8 @@ export interface FfpDebugHook {
   frame(): number;
   body(id: number): DebugBody | undefined;
   hero(slot: number): DebugBody | undefined;
+  /** Puts a player's hero next to the first dummy (offsets in pixels) and faces it. */
+  place(slot: number, dx: number, dz: number): void;
   hash(): number;
   runReplay(log: ReplayLog): number;
   /** Replaces real gamepads with these virtual ones from now on. */

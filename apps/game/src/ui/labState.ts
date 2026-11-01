@@ -22,8 +22,33 @@ export interface PlayerView {
   facingMode: FacingMode;
   target: string;
   buffered: string;
+  hero: string;
+  heroId: string;
+  action: string;
+  phase: string;
+  verdict: string;
+  meter: number;
+  bridge: string;
   ctx: PromptContext;
   history: HistoryEntry[];
+}
+
+/** The training dummy the Lab follows: the last one that was hit. */
+export interface TargetView {
+  name: string;
+  open: boolean;
+  health: string;
+  hits: number;
+  damage: number;
+  scale: number;
+  stunBudget: number;
+  stunBand: number;
+  meterBudget: number;
+  juggleBudget: number;
+  bridge: boolean;
+  exhausted: boolean;
+  reaction: string;
+  ground: string;
 }
 
 export interface LabState {
@@ -42,6 +67,12 @@ export interface LabState {
   p2Preset: Signal<KeyboardP2Preset>;
   dummiesChase: Signal<boolean>;
   rebinding: Signal<boolean>;
+  target: Signal<TargetView | null>;
+  moveListOpen: Signal<boolean>;
+  slowMotion: Signal<boolean>;
+  infiniteMeter: Signal<boolean>;
+  counterHit: Signal<boolean>;
+  refill: Signal<boolean>;
 }
 
 export function createLabState(visible: boolean): LabState {
@@ -61,6 +92,12 @@ export function createLabState(visible: boolean): LabState {
     p2Preset: signal('numpad'),
     dummiesChase: signal(false),
     rebinding: signal(false),
+    target: signal(null),
+    moveListOpen: signal(false),
+    slowMotion: signal(false),
+    infiniteMeter: signal(false),
+    counterHit: signal(false),
+    refill: signal(true),
   };
 }
 

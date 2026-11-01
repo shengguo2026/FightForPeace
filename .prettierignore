@@ -2,3 +2,4 @@ pnpm-lock.yaml
 *.md
 docs/
 tests/replays/*.json
+packages/sim/src/combat/heroes.gen.ts

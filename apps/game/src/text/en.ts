@@ -9,6 +9,7 @@ export const TEXT = {
   hintJump: 'Jump {action:Jump}',
   hintAttack: 'Attack {action:Attack}',
   hintLowAttack: 'Low attack {action:LowAttack}',
+  hintAirAttack: 'Air attack {action:Jump} then {action:Attack}',
   joinKeyboard: 'Player 2: press {action:Attack} on the split keyboard to join',
   paused: 'Paused. Press {action:Pause} to continue.',
   controllerLost: 'Player {player} lost their controller.',
@@ -17,6 +18,44 @@ export const TEXT = {
 } as const;
 
 export type TextKey = keyof typeof TEXT;
+
+/** Move-list input notation per input context and direction code (Dir: 0 neutral … 5 up/down). */
+const DIR_PREFIX = [
+  '',
+  '{dir:Forward}+',
+  '{dir:Backward}+',
+  '{dir:Up}+',
+  '{dir:Down}+',
+  '{dir:Up}/{dir:Down}+',
+];
+
+export function moveInputText(context: string, dir: number): string {
+  const d = DIR_PREFIX[dir] ?? '';
+  switch (context) {
+    case 'neutral':
+      return `${d}{action:Attack}`;
+    case 'chain':
+      return 'repeat {action:Attack}';
+    case 'air':
+      return `in the air: ${d}{action:Attack}`;
+    case 'dash':
+      return 'dashing: {action:Attack}';
+    case 'dashLow':
+      return 'dashing: {action:Attack}+{action:Guard}, or {action:LowAttack}';
+    case 'groundFocus':
+      return `downed target (M3): ${d}{action:Attack}`;
+    default:
+      return '';
+  }
+}
+
+/** Move-list notation for a cancel link to something other than an attack. */
+export const LINK_TEXT = {
+  jump: '{action:Jump}',
+  dash: '{action:Dash} or {dir:Forward}{dir:Forward}',
+  special: 'Special {action:Special}',
+  ultimate: 'Ultimate {action:Ultimate}',
+} as const;
 
 export type TextPart =
   { kind: 'text'; text: string } | { kind: 'action'; name: string } | { kind: 'dir'; name: string };
