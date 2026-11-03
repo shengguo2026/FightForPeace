@@ -7,7 +7,12 @@ async function ready(page: Page) {
   await page.waitForFunction(() => (window.__ffp?.frame() ?? 0) > 10);
 }
 
-/** One scripted press: when `when` (an expression over h = hero 1, d = dummy 1) holds. */
+/**
+ * One scripted press: when `when` holds. It is an expression over h = hero 1, d = dummy 1
+ * and since = simulation frames since the previous cue fired (rAF and simulation frames
+ * do not line up, above all in slow motion, so taps that must land on different frames
+ * wait on `since`).
+ */
 interface Cue {
   when: string;
   keys: string[];
@@ -26,11 +31,14 @@ async function play(page: Page, cues: Cue[]) {
           window.dispatchEvent(new KeyboardEvent(type, { code, key: code }));
         let i = 0;
         let frames = 0;
+        let last = window.__ffp!.frame();
         const tick = () => {
           const h = window.__ffp!.hero(0)!;
           const d = window.__ffp!.body(101)!;
           const c = list[i]!;
-          if (new Function('h', 'd', `return ${c.when}`)(h, d)) {
+          const since = window.__ffp!.frame() - last;
+          if (new Function('h', 'd', 'since', `return ${c.when}`)(h, d, since)) {
+            last = window.__ffp!.frame();
             const held = c.hold ?? [];
             for (const k of held) key('keydown', k);
             for (const k of c.keys) key('keydown', k);
@@ -96,8 +104,7 @@ test('low to ground: counter-trip, ground window marker, extension and finisher'
   // Dash with a double tap, then Attack + Guard together: Faultline Reap.
   await play(page, [
     { when: 'h.state === 0', keys: ['KeyD'] },
-    { when: 'true', keys: [] },
-    { when: 'true', keys: ['KeyD'] },
+    { when: 'since >= 2', keys: ['KeyD'] },
     { when: 'h.state === 2', keys: ['KeyT', 'KeyG'] },
     { when: 'd.state === 7 && d.groundWindow > 0 && h.action === null', keys: [] },
   ]);
