@@ -1,4 +1,5 @@
 import {
+  DefEvent,
   HEROES,
   RULES_VERSION,
   type ReplayLog,
@@ -15,6 +16,7 @@ import dashJumpJson from './dash-jump.json';
 import crowdJson from './crowd.json';
 import comboRoutesJson from './combo-routes.json';
 import academyRecipesJson from './academy-recipes.json';
+import defenseDrillsJson from './defense-drills.json';
 import { SCRIPTS } from './scripts';
 
 const LOGS: [string, ReplayLog][] = [
@@ -23,7 +25,33 @@ const LOGS: [string, ReplayLog][] = [
   ['crowd', crowdJson as ReplayLog],
   ['combo-routes', comboRoutesJson as ReplayLog],
   ['academy-recipes', academyRecipesJson as ReplayLog],
+  ['defense-drills', defenseDrillsJson as ReplayLog],
 ];
+
+test('defense-drills performs exact block, guard, counter and breaker against the trainer', () => {
+  const log = defenseDrillsJson as ReplayLog;
+  const world = createWorld(log.seed, log.options);
+  const events: number[] = [];
+  let last = -1;
+  for (const f of log.frames) {
+    step(world, f);
+    const h = world.bodies.find((b) => b.team === 'hero')!;
+    if (h.defEvent !== DefEvent.None && h.defFrame !== last) {
+      last = h.defFrame;
+      events.push(h.defEvent);
+    }
+  }
+  expect(events).toEqual(
+    expect.arrayContaining([
+      DefEvent.Exact,
+      DefEvent.ExactEarly,
+      DefEvent.Counter,
+      DefEvent.Breaker,
+    ]),
+  );
+  // The bell hammer (true unblockable) was dodged: the last event is the breaker.
+  expect(events.at(-1)).toBe(DefEvent.Breaker);
+});
 
 test('academy-recipes performs every §8.3 recipe of both founders and a shared co-op juggle', () => {
   const log = academyRecipesJson as ReplayLog;

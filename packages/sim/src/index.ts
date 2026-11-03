@@ -18,6 +18,8 @@ export * from './combat/reactions';
 export * from './combat/actions';
 export * from './combat/ground';
 export * from './combat/recipes';
+export * from './combat/defense';
+export * from './combat/trainer';
 export * from './collision/collide';
 export * from './world/world';
 export * from './loop/fixedStep';

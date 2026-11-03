@@ -1,7 +1,7 @@
 import { ActionBit, DirBit } from '../input/bits';
 import type { MovementProfile } from '../movement/profile';
 import { type Fighter, type FrameInput, MoveState, Protect, type World } from '../world/types';
-import { HEROES, activeSpan, dirMatches, findAction } from './roster';
+import { activeSpan, dirMatches, findAction, kitOf } from './roster';
 import {
   type ActionDef,
   CANCEL_TIMING,
@@ -44,13 +44,13 @@ export function resolveDir(f: Fighter, input: FrameInput): number {
 }
 
 export function actionOf(f: Fighter, index = f.action): ActionDef | undefined {
-  return index >= 0 && f.hero >= 0 ? HEROES[f.hero]?.actions[index] : undefined;
+  return index >= 0 ? kitOf(f)?.actions[index] : undefined;
 }
 
 /** Selects the action for a fresh press in a context, or -1. */
 export function selectAction(f: Fighter, context: InputContext, dir: number): number {
-  const hero = HEROES[f.hero];
-  return hero ? findAction(hero, context, dir) : -1;
+  const kit = kitOf(f);
+  return kit ? findAction(kit, context, dir) : -1;
 }
 
 /** Starts an action. Aerial actions keep the current momentum; ground actions root the hero. */
@@ -67,6 +67,7 @@ export function startAction(f: Fighter, index: number): void {
   f.hitIds = [];
   f.reqLink = -1;
   f.reqFrame = 0;
+  f.rewardIds = [];
   f.chainUsed |= 1 << index;
   f.ghost = a.tags.includes('passThrough');
   if (a.category === 'aerial') {

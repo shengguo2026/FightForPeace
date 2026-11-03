@@ -54,6 +54,21 @@ export const MoveState = {
   Landing: 9,
   /** Protected landing after air recovery (targets). */
   Recover: 10,
+  // --- M4 defense ---
+  /** Holding Guard: committed directional guard (or an exact-block attempt at 0 Defense). */
+  Guard: 11,
+  /** Reaction to a normally guarded contact. */
+  Blockstun: 12,
+  /** Controlled Guard Crush stagger. */
+  GuardCrush: 13,
+  /** Directional Predictive Counter attempt (its 3-frame window). */
+  Counter: 14,
+  /** Vulnerable recovery after a counter that met no counterable contact. */
+  CounterMiss: 15,
+  /** Combo Breaker: protected separation. */
+  Breaker: 16,
+  /** An attacker's recoil after being exact-blocked, countered or pushed by a breaker. */
+  Recoil: 17,
 } as const;
 export type MoveState = (typeof MoveState)[keyof typeof MoveState];
 
@@ -144,7 +159,84 @@ export interface Fighter extends Body {
   heavyFall: boolean;
   /** Frames left in the open ground window while downed (0 = closed). */
   groundWindow: number;
+
+  // --- M4 defense ---------------------------------------------------------------------
+  /** Defense meter, 0–100 %. */
+  defense: number;
+  /** Frames actionable without guarding, attacking or taking damage (passive recovery). */
+  defIdle: number;
+  /** Defensive facing in the belt plane (8-way), used while guarding. */
+  guardX: Axis;
+  guardZ: Axis;
+  /** Guard was raised with no direction (a direction inside the chord tolerance makes a counter). */
+  guardNeutral: boolean;
+  /** Pending guard pivot: direction and the frame it takes effect (NO_TAP = none). */
+  pivotX: Axis;
+  pivotZ: Axis;
+  pivotAt: number;
+  /** Press frame of the open exact-block attempt (NO_TAP = none). */
+  exactFrame: number;
+  /** No new exact-block attempt before this frame (precision cooldown). */
+  precisionUntil: number;
+  /** Frame the counter chord completed, and its direction (NO_TAP = none). */
+  counterFrame: number;
+  counterX: Axis;
+  counterZ: Axis;
+  /** World frames of the last fresh direction press and Ultimate press (chords). */
+  lastDirFrame: number;
+  lastUltFrame: number;
+  /** Attacker: defenders already rewarded for exact-blocking the running action. */
+  rewardIds: number[];
+  /** Last defensive outcome for the Lab (DefEvent), its timing offset, frame and attack. */
+  defEvent: number;
+  defOffset: number;
+  defFrame: number;
+  /** Route code of the incoming action of the last defensive outcome (-1 = none). */
+  defAction: number;
+  /** Training enemy: frames until the next attack, and the step of its attack cycle. */
+  aiTimer: number;
+  aiStep: number;
 }
+
+/**
+ * Defensive outcomes, for the Lab's timing readouts. Numbers are encoded; never renumber.
+ * Offsets: contact frame minus press frame (≥ 0), or press minus contact for Late.
+ */
+export const DefEvent = {
+  None: 0,
+  /** Normal guard (Guard held from earlier). */
+  Guard: 1,
+  /** Exact Block: offset frames before contact. */
+  Exact: 2,
+  /** Exact Block of a sequence-breaking contact. */
+  ExactBreak: 3,
+  GuardCrush: 4,
+  /** Successful counter: offset frames before contact. */
+  Counter: 5,
+  /** The counter window passed with no contact. */
+  CounterMiss: 6,
+  /** A contact reached a counter attempt from outside its direction (connected). */
+  CounterWrongDir: 7,
+  /** Guarded, but the fresh press came too early for an exact block (offset before contact). */
+  ExactEarly: 8,
+  /** Guard pressed after an unguarded contact (offset after contact). */
+  Late: 9,
+  /** A guard-piercing attack beat the held guard. */
+  Pierced: 10,
+  /** A true unblockable attack connected. */
+  Unblockable: 11,
+  /** The contact came from outside the guard arc. */
+  Behind: 12,
+  Breaker: 13,
+  /** Breaker chord refused: offset 1 = under 75 % Defense, 2 = not trapped, 3 = already used. */
+  BreakerDenied: 14,
+  /** A contact reached a counter attempt but the action is not counterable (connected). */
+  CounterUncounterable: 15,
+  /** A contact with no defense. */
+  Hit: 16,
+  /** Guarded inside the exact window, but the press was in the precision cooldown. */
+  Cooldown: 17,
+} as const;
 
 /** Bounce bits armed on a target by tagged hits. */
 export const Bounce = { Wall: 1, Ground: 2 } as const;
@@ -185,8 +277,10 @@ export interface ComboContext {
   groundFinUsed: boolean;
   /** How the combo ended (Protect code), 0 while open or ended by plain recovery. */
   ended: number;
-  /** Actions that connected, in order: hero roster index × 64 + action index. */
+  /** Actions that connected, in order: kit code × 64 + action index (see routeCode). */
   route: number[];
+  /** The defender used its one Combo Breaker against this combo. */
+  breakerUsed: boolean;
 }
 
 /** Why a target entered protected recovery (for the Lab). Numbers are encoded. */
@@ -196,6 +290,8 @@ export const Protect = {
   AirRecovery: 2,
   SoftReset: 3,
   MissedWindow: 4,
+  /** The defender broke the combo with a Combo Breaker. */
+  Breaker: 5,
 } as const;
 
 /** Route log cap per context. */
@@ -204,8 +300,20 @@ export const ROUTE_CAP = 32;
 export interface DummySettings {
   /** Treat every hit as a counter-hit (dummies do not attack yet). */
   counterHit: boolean;
-  /** Restore full health whenever a combo context closes. */
+  /** Restore full health whenever a combo context closes (dummies and heroes). */
   refill: boolean;
+}
+
+/** Lab: the training enemy's script (deterministic, no RNG). */
+export interface TrainerSettings {
+  /** 0 = dummies never attack, 1 = Dummy 1 attacks, 2 = every dummy attacks. */
+  attackers: number;
+  /** Index of the attack in the training kit, or -1 to cycle through all of them. */
+  pattern: number;
+  /** Frames between attacks once in range. */
+  interval: number;
+  /** Walk into range of the nearest hero before attacking. */
+  approach: boolean;
 }
 
 export interface World {
@@ -222,4 +330,7 @@ export interface World {
   dummy: DummySettings;
   /** Lab switch: premium cancels cost nothing and the meter shows full. */
   infiniteMeter: boolean;
+  /** Lab switch: heroes' Defense meter stays full. */
+  infiniteDefense: boolean;
+  trainer: TrainerSettings;
 }

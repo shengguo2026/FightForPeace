@@ -30,6 +30,7 @@ export function emptyContext(): ComboContext {
     groundFinUsed: false,
     ended: Protect.None,
     route: [],
+    breakerUsed: false,
   };
 }
 
@@ -46,11 +47,6 @@ export function juggleBand(budget: number): number {
 /** An upward speed scaled by a juggle band; downward speeds are never scaled. */
 export function bandLift(v: number, band: number): number {
   return v > 0 ? Math.trunc((v * band) / 100) : v;
-}
-
-/** Route log entry for an action that connected. */
-export function routeCode(hero: number, action: number): number {
-  return hero * 64 + action;
 }
 
 /** Hit-stun multiplier (percent) for the budget remaining before an action. */

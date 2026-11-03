@@ -2,7 +2,16 @@ import defaultManifest from './manifest.json';
 
 /** Placeholder families: how a missing asset is drawn until approved art arrives. */
 export type PlaceholderFamily =
-  'standing' | 'aerial' | 'low' | 'ground' | 'dash' | 'idle' | 'panel' | 'sound' | 'unknown';
+  | 'standing'
+  | 'aerial'
+  | 'low'
+  | 'ground'
+  | 'dash'
+  | 'counter'
+  | 'idle'
+  | 'panel'
+  | 'sound'
+  | 'unknown';
 
 export type ResolvedAsset =
   | { kind: 'approved'; id: string; url: string }
@@ -13,7 +22,14 @@ export interface AssetManifest {
   assets: Record<string, { url: string; status?: 'candidate' | 'approved' }>;
 }
 
-const POSE_FAMILIES: readonly PlaceholderFamily[] = ['standing', 'aerial', 'low', 'ground', 'dash'];
+const POSE_FAMILIES: readonly PlaceholderFamily[] = [
+  'standing',
+  'aerial',
+  'low',
+  'ground',
+  'dash',
+  'counter',
+];
 
 /** The placeholder family a logical asset ID falls into. */
 export function familyOf(id: string): PlaceholderFamily {
