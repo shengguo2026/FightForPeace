@@ -22,7 +22,9 @@ Working move names and hero archetype titles may change during final naming and 
 
 *Fight for Peace* is a browser-based 2D belt-scrolling action game inspired by classic arcade brawlers and distinguished by fighting-game depth. Its heroes value peace and use force only to protect their village, loved ones, and community from specific threats. Each stage provides its own conflict, locations, enemies, boss, weapons, conclusion, and reason to fight.
 
-The combat engine is persistent across the game. New stages are data-defined content packages that add narrative, environments, encounters, enemies, bosses, items, weapons, patterns, endings, and eventually additional unique heroes.
+The combat engine is persistent and immutable as a product model across the game and its downloadable content. New stages and canon-compatible side stories are data-defined content packages that may add narrative, environments, encounters, enemies, bosses, items, weapons, mounts, patterns, endings, and additional unique heroes without forking or redesigning the universal combat rules.
+
+This permanent **Combat Constitution** includes standing, aerial, low and ground combat; defense and Combo Breakers; Health, Defense, and Attack resources; cancels; target-owned combo context; scaling and anti-infinite limits; weapon and environmental eligibility; co-op legality; abstract input; and deterministic resolution. Content that cannot fit these rules must be redesigned as authored data using existing systems or deferred. Engine maintenance may correct defects or improve performance, security, compatibility, networking reliability, accessibility, diagnostics, and authoring tools only when regression validation proves that established gameplay behavior and content legality remain unchanged.
 
 ### 2.1 Design pillars
 
@@ -394,6 +396,20 @@ The Academy uses **Transparent Map with Progressive Lessons**:
 3. Resource: Specials, premium dash bridges, Ultimates, and team actions.
 4. Freestyle: visible cancel graph, free practice, and player recipes.
 
+The player-facing curriculum organizes those mechanics into seven course families:
+
+1. **Orientation and Controls:** device setup, remapping, movement, facing, depth, dash, jump, interaction, and HUD.
+2. **Combat Foundations:** standing, directional, aerial, low, ground, grab, throw, recovery, food, basic weapons, and each hero's beginner route.
+3. **Defense and Survival:** Guard, Exact Block, Counter, Combo Breaker, Defense Bar, grabs, pressure, projectiles, hazards, and groups.
+4. **Conversion and Combo Grammar:** launch, aerial pursuit, low-to-ground routes, cancels, target states, hit-stun, juggle, bounce, scaling, and safe anti-infinite endings.
+5. **Resources Equipment and Environments:** Specials, Ultimates, Attack Bar, loadouts, weapons, ammunition, handoffs, environmental interactions, mounts, vehicles, and objectives.
+6. **Hero and Co-op Specialization:** complete hero courses, sidegrade trials, unique defensive identities, pair routes, partner rescue, handoffs, cooperative attacks, and finishers.
+7. **Mastery and Freestyle:** advanced routing, efficiency, boss Resolve, specialist counterplay, My Combos, mastery exams, and acquisition challenges.
+
+Every authored lesson follows `Demonstration -> Guided Practice -> Independent Trial -> Optional Mastery Goal`. Failure has no penalty and supports instant retry. Basic courses are available from first launch; hero and spoiler-sensitive modules unlock with their content. An optional placement assessment may open higher tiers without awarding skipped rewards or ownership. Story completion never requires Academy completion.
+
+Lesson progress uses **Available**, **Practiced**, **Certified**, and **Mastered** states. A placement assessment may mark a lesson **Access Granted** without assigning false completion. Free Practice is always available; prerequisites exist only for real dependencies; newly introduced courses append without resetting prior progress. Persistent profiles own their individual results, while Guests retain none.
+
 Stage 1 also provides one environmental exercise covering eligible impact, break states, the usable fragment, hazard response, and cooperative redirect. Mounted and advanced-weapon lessons unlock only when their later-stage content is introduced.
 
 All legal destinations and conditions for the currently revealed and equipped graph are visible. Academy teaches representative grammar rather than every combination. My Combos stores abstract-action recipes, not video, and can record, name, save, replay, practice, and delete legal routes across remapped controls.
@@ -413,6 +429,22 @@ Profiles can be exported to and imported from a versioned portable backup. Impor
 Score is run-specific. Credits are persistent, gameplay-earned, and never sold for real money. Hero Mastery is non-spendable progression. One shared Credit wallet serves all heroes; each hero has an independent Mastery track.
 
 Payouts itemize completion, difficulty, rank, first clear, discoveries, achievements, Academy challenges, and Hero Mastery. Replays retain bounded rewards without daily timers or expiring bonuses. Co-op partners receive full shared completion/rank payout rather than splitting a pool. Cheat-Assisted results award no score, rank, Credits, Hero Mastery, or challenge-derived payout.
+
+Curated Missions use **Optional Prestige Rewards**. Every first clear grants itemized Credits, the mission's Museum case record, and its Canon-Compatible Side Story Chronicle entry; Mission 4 additionally unlocks Lin Lan for her approved noncompetitive destinations. Optional objectives and higher ranks may grant themed costumes, profile emblems, titles, artwork, music, or Museum collectibles, but no exclusive required power, mandatory campaign evidence, required technique, main-story progression, or paid statistical advantage. Replays pay bounded Credits, while first-clear and rank-improvement bonuses are non-repeatable. Cheat-Assisted clears preserve mission completion, side-story and Museum access, and Lin Lan's content-access unlock but grant no score, rank, Credits, Hero Mastery, prestige reward, or competitive achievement.
+
+Curated results use an **Objective-First Protective Duty Grade**. Primary objective condition outranks protection, restraint and collateral control, which outrank combat mastery and resource/time efficiency. Each mission supplies its own objective facts: rescued-group condition and route safety; convoy, cargo, and stolen-case recovery; genuine equipment, interceptions, and decoy errors; or live capture, disabled escape routes, civilian protection, and collateral. C/B/A/S thresholds are validated per mission, difficulty, and solo/co-op configuration. S denotes excellent, not perfect, play and requires no particular hero, move, route, or purchase. Failed and Cheat-Assisted attempts remain retriable and accessible but unranked and ineligible for clear rewards under the established rules.
+
+Curated Missions use **Story-Timeline Availability without Mission Dependencies**. The initial gates are Stage 3 for *Storm over Qinglan* and *No Escape at Reedwater*, Stage 5 for *The Medicine Road*, and Stage 6 for *The Vanishing Survey*. Before its gate, an installed mission exposes only a localized spoiler-safe clue. Access requires no score, rank, difficulty, Credits, or another optional package. Cheat-Assisted Story completion satisfies content-access gates, late installation opens immediately when the gate is already met, and chronological ordering is recommended but not enforced.
+
+The initial post-Stage-3 chronology places *Storm over Qinglan* approximately 10–14 days after Stage 3, *No Escape at Reedwater* approximately four weeks after Stage 3, and Stage 4 approximately six weeks after Stage 3. The main evidence investigation continues independently during both side stories; neither Curated Mission supplies a mandatory Stage 4 fact.
+
+The first four missions are an initial collection rather than a closed catalogue. Later canon-compatible side stories may declare their own chronology and independent Story gate, but no Curated Mission may create a compulsory DLC ownership chain, alter the shared Combat Constitution, or become necessary for the main campaign.
+
+Curated Missions use a **Permanent Expandable Case Catalogue**. Every package declares a stable case ID, package version, campaign-timeline position, independent Story gate, canon label, supported player configurations, objective and grading profiles, rewards, content dependencies, localization and accessibility data, and optional Automatic Highlight profile. New cases are inserted chronologically; the Mission Hub can filter them by timeline, location, objective family, installation, completion, rank, and eligible heroes.
+
+Installed or acquired cases never expire or rotate out. A new case may add data-defined heroes, environments, weapons, mounts, enemies, bosses, cosmetics, music, and Museum material but cannot alter the Combat Constitution or require ownership of another optional case. Related cases may use conditional continuity dialogue while always providing a self-contained recap. Stable IDs and versioned migration preserve compatible records and replays; incompatible historical results remain visible as Legacy records.
+
+Curated Mission co-op uses **Compatible Package on Every Device**. Same-device co-op uses one local installation. Local-Wi-Fi readiness requires both devices to hold and validate the same compatible case package and gameplay assets; the host never streams or silently substitutes content. A future commercial guest-pass may authorize access, but the guest must still download and validate the package. Uninstalling a case preserves completion, records, rewards, and hero-unlock state. Lin Lan's unlock remains recorded; if her reusable hero assets are absent she appears as **Unlocked—Assets Not Installed** until reinstall. Reinstallation requires no repeated clear.
 
 ### 15.3 Store
 
@@ -438,6 +470,20 @@ Critical warnings, defense profiles, prompts, and condition states use icons, sh
 
 Guide is a localized text reference distinct from Academy's learning-by-doing activities. Its chapters are Getting Started; Controls and Remapping; Movement and Facing; Standing, Aerial, Low, and Ground Combat; Guard, Exact Block, Counter, and Combo Breaker; Combos, Cancels, Scaling, and Anti-Infinite Rules; Specials, Ultimates, and Loadouts; Grabs, Weapons, Food, and Containers; Environmental Combat and Hazards; Solo and Co-op; Difficulty and Special Enemies; Score, Credits, Mastery, Store, and Records; Accessibility and Assisted Rulesets; Academy and My Combos; Elder's Secrets; and Glossary. Mounted Encounters and Advanced Ranged Weapons appear when their content is introduced.
 
+Guide and Academy follow a **Reference versus Practice Contract**. Guide owns searchable explanation, diagrams, current-binding control cards, examples, glossary, and cheat documentation without reading rewards or completion requirements. Academy owns interactive demonstration, guided practice, independent certification, optional mastery, free practice, and declared challenge rewards. Both consume one authoritative rules and action-data source, deep-link to one another and Move Lists, and never contradict or exclusively hide an essential rule.
+
+Guide also owns the complete localized **Automatic Highlights** reference for Curated Missions. Mission selection displays only the setting, concise purpose, six category names, and a deep link. Result and Museum cards show localized reasons and criterion links. All surfaces consume one criterion and localization source; highlight reading or use creates no Academy progress or gameplay reward.
+
+Automatic Highlight stills follow **Ephemeral by Default, Pin to Keep**. Results reconstruct temporary stills from deterministic replay; after the player leaves results, an unpinned still is discarded while the Run Archive retains compact event metadata, verified facts, and the compatible replay reference. Explicit export or **Pin to Museum Highlights** preserves the result. Museum pins use a compressed 1280x720 internal image, while clean-image export uses PNG and localized card export may add the authored title and reason outside that clean image.
+
+Each persistent profile initially receives capacity for 50 pinned highlight images. The UI warns before reaching the limit and supports filter, rename, export, unpin, and confirmed deletion; it never silently deletes a pin. Content-hash deduplication prevents identical same-device copies from consuming duplicate image storage. Profile backup offers image-inclusive and metadata-only forms, and image removal never removes the run record. In co-op, each persistent player manages their own pin; same-device pins may share deduplicated data, local-Wi-Fi pins remain local to each device, and Guests may export but cannot create persistent Museum pins.
+
+Curated Mission replays use **Tiered Replay Retention with Pin Guarantee**. Every result permanently retains compact Run Archive metadata, score facts, and localized Highlight explanations. Full deterministic capsules are retained for each comparable-category personal best, the five most recent Curated runs per profile, every manually pinned replay, and every run with a Museum-pinned Highlight. A Museum pin guarantees **View Replay Moment** while the replay remains compatible. Older unpinned, non-best capsules may compact, leaving a clear **Replay No Longer Retained** state without deleting facts. Incompatible updates preserve existing pinned images, reasons, facts, and Legacy status but disable inaccurate playback and reconstruction. Unpinning permits compaction only when no other retention rule applies. Backup supports full-capsule and metadata-only forms.
+
+The feature releases behind a **Curated-Only Validation Gate**. All four Curated Missions must demonstrate identical combat hashes and outcomes with capture on or off; no highlight-specific local-Wi-Fi messages; the fixed 24-candidate bound and validated negligible frame-time cost; immediate result persistence and cancelable reconstruction; authored replay cases plus human quality review; complete English, Simplified Chinese, and German presentation; keyboard, gamepad, screen-reader, backup, export, and storage-limit coverage; and no effect on scoring, rewards, rank, achievements, AI, timing, randomness, or Combat Constitution legality. No highlight image, event, or analytics data is uploaded automatically; diagnostic export requires explicit player action.
+
+If validation or performance fails, capture may be disabled for affected content without invalidating runs or deleting existing Museum pins. Successful Curated Mission validation authorizes only that scope. Story, Random Operations, Chapter Challenge, and other modes require a separately approved expansion and their own acceptance coverage.
+
 English, Simplified Chinese, and German authored explanations use stable localization keys and English fallback diagnostics. Input examples render the current profile/device bindings. Stable mechanical facts come from the same rules and action data used by Move Lists and Academy. Essential content remains usable without video, animation, sound, a mouse, or a physical keyboard. Briefings, Move Lists, Store entries, Academy, pause, and post-defeat choices may deep-link to a relevant article.
 
 ### 16.2 Cheat-Assisted play
@@ -447,6 +493,8 @@ All beginner-oriented cheats and presets are openly documented from first launch
 Each cheat has a stable ASCII identifier and localized card containing its name, scope, exact effect, conflicts, preset membership, and progression consequences. Keyboard users may type an identifier; input is case-insensitive, ignores surrounding whitespace, and treats spaces, hyphens, and underscores as equivalent. Misspellings are never guessed. Gamepad and pointer users select the same card directly and never need an on-screen keyboard. Gamepad navigation uses remappable abstract menu actions.
 
 Hero-scoped modifiers affect only their selected hero. Session-scoped modifiers affect the whole team. Any accepted modifier marks the entire run **Cheat-Assisted**. Both co-op participants must accept that reward consequence, and every session-scoped change requires both participants' confirmation.
+
+Applicable cheats are available in Story Mode, Chapter Challenge, Character Chronicles, Mission Remix, Curated Missions, and Random Operations. An irrelevant modifier remains visible with an explanation but has no undeclared effect. Academy permits arbitrary modifiers only in Free Practice and Cheat Practice; authored lessons, certification, mastery, and technique-acquisition challenges retain their declared rules.
 
 Cheats can be configured in lobby, briefing, and eligible checkpoints. Solo pause may propose and accept a change; co-op pause uses synchronized consent and applies only at a safe resume boundary. Active combat input never enters a code. The first accepted activation permanently marks that run even if every cheat is later disabled. HUD, pause, readiness, and results show Cheat-Assisted status; results retain the canonical codes and first activation point. Saved preferences start disabled on a new run unless the player explicitly chooses to reuse them.
 
@@ -891,9 +939,11 @@ Candidate frame and encounter data becomes **Validated** only after deterministi
 | `BRIGHTSPIRIT` | Hero | Attack Bar remains full | A new Ultimate cannot begin during an active Ultimate, illegal state, or protected boss transition |
 | `STRONGHANDS` | Hero | Outgoing Health and Resolve damage is multiplied by `2.0` | Scaling, boss thresholds, carryover caps, phase queues, surrender, and protected states remain |
 | `TRUSTYTOOLS` | Hero | Weapons used by the hero lose no integrity and cannot break from integrity depletion | Throws, drops, disarms, transfers, stage hazards, landing validation, and deterministic recovery remain |
+| `STEADYRIDE` | Hero | Mounted Stability cannot decrease | Mounted reactions, steering interruption, obstacles, route boundaries, required inputs, safe dismounts, and boss transitions remain; the mount never becomes a collision weapon |
 | `QUIETCROWD` | Session | Uses Easy-profile commitment/concurrency and per-hero pressure limits | Selected difficulty's roster, variants, moves, formations, boss phases, objectives, and story remain |
 | `FULLPANTRY` | Session | Each eligible authored food container adds one deterministic recovery item within placement/reachability limits | Required weapons, objective items, container identity, and deterministic spawn order remain |
 | `HOMECOMING` | Session | Team defeat restores the latest valid checkpoint without exhausting continues; if no checkpoint exists, restart the stage | Canonical checkpoint snapshot, current Cheat-Assisted state, and story/encounter invariants remain |
+| `SAFEPASSAGE` | Session | Mandatory protected people and objects cannot cross from Critical into a completion-blocking failed, dead, Compromised, Lost, or permanently destroyed state | Critical condition, damage, reactions, warnings, escort movement, interception, evidence identification, routes, escape-network tasks, enemies, bosses, and required player actions remain; objectives never auto-complete |
 
 Conflicting or superseded cards remain visible and explain their effective state before confirmation. No modifier removes mandatory enemies, bosses, objectives, cinematics, endings, or difficulty-specific content.
 
@@ -901,16 +951,16 @@ Conflicting or superseded cards remain visible and explain their effective state
 
 | Canonical preset | Included codes | Intended use |
 |---|---|---|
-| `FIRSTSTEPS` | `SOFTERBLOWS`, `IRONGUARD`, `HOMECOMING` | Forgiving first play while preserving damage, reactions, and defeat pressure within each checkpoint |
-| `CALMBATTLE` | `SOFTERBLOWS`, `QUIETCROWD`, `FULLPANTRY`, `HOMECOMING` | Experience selected-difficulty enemies and mechanics with lower simultaneous pressure and more recovery |
-| `PEACEFULPATH` | `SAFEHEART`, `IRONGUARD`, `HOMECOMING` | Recommended guaranteed story-completion route while preserving enemy reaction feedback |
-| `UNSTOPPABLE` | `SAFEHEART`, `STEADYFEET`, `IRONGUARD`, `BRIGHTSPIRIT`, `STRONGHANDS`, `TRUSTYTOOLS`, `HOMECOMING` | Full power-fantasy and experimentation |
+| `FIRSTSTEPS` | `SOFTERBLOWS`, `IRONGUARD`, `STEADYRIDE`, `HOMECOMING` | Forgiving first play while preserving damage, reactions, and defeat pressure within each checkpoint |
+| `CALMBATTLE` | `SOFTERBLOWS`, `QUIETCROWD`, `FULLPANTRY`, `STEADYRIDE`, `HOMECOMING` | Experience selected-difficulty enemies and mechanics with lower simultaneous pressure and more recovery |
+| `PEACEFULPATH` | `SAFEHEART`, `IRONGUARD`, `STEADYRIDE`, `SAFEPASSAGE`, `HOMECOMING` | Recommended guaranteed completion route while preserving enemy and objective feedback |
+| `UNSTOPPABLE` | `SAFEHEART`, `STEADYFEET`, `IRONGUARD`, `BRIGHTSPIRIT`, `STRONGHANDS`, `TRUSTYTOOLS`, `STEADYRIDE`, `SAFEPASSAGE`, `HOMECOMING` | Full power-fantasy and experimentation |
 
 Selecting a preset expands it into visible ordinary codes. Adding or removing a component produces a **Custom Cheat Configuration**; there is no hidden preset-only effect.
 
 ## E.3 Activation, disclosure, and persistence
 
-- All ten codes and four presets are available in Elder's Secrets from first launch.
+- All twelve codes and four presets are available in Elder's Secrets from first launch.
 - Selecting a card provides Add, Remove, Preview in Academy, and Apply actions as appropriate; selection never silently activates a modifier.
 - After the first defeat, the results screen may neutrally link to Retry, Academy, Accessibility, and Elder's Secrets, but it never automatically activates or prescribes a cheat.
 - Hero-scoped preferences may persist per profile. Session-scoped configuration is reviewed per run. Temporary Guests retain no code-card or preference state after the session.
@@ -920,11 +970,11 @@ Selecting a preset expands it into visible ordinary codes. Adding or removing a 
 
 ## E.4 Verification matrix
 
-Verification covers every individual code, all four presets, pairwise coverage across the ten codes, the `SAFEHEART`/`SOFTERBLOWS` conflict, and explicit high-risk combinations involving no-Health/no-knockdown, unlimited breaker use, repeated Ultimates, doubled boss damage, weapon disarm/hazard recovery, difficulty-specific `QUIETCROWD`, mixed weapon/food containers, and every checkpoint position.
+Verification covers every individual code, all four presets, pairwise coverage across the twelve codes, the `SAFEHEART`/`SOFTERBLOWS` conflict, and explicit high-risk combinations involving no-Health/no-knockdown, unlimited breaker use, repeated Ultimates, doubled boss damage, weapon disarm/hazard recovery, mounted Stability, difficulty-specific `QUIETCROWD`, mixed weapon/food containers, `SAFEPASSAGE` across every mandatory objective lifecycle, and every checkpoint position.
 
 The matrix spans solo, same-device co-op, and local-Wi-Fi co-op; keyboard-only and gamepad-only navigation; English, Simplified Chinese, and German; pre-stage, pause, checkpoint, and co-op-consent activation; save/export/import/migration; replay metadata and deterministic hashes; Academy Free/Cheat Practice and authored restrictions; reward suppression and narrative/access preservation; bosses, surrender, objectives, stage endings, and difficulty unlocks.
 
-Acceptance requires zero progression corruption, zero peer desynchronization, zero accidental activation, correct reward categorization, correct next-tier unlocking, and no configuration that prevents mandatory content from completing. Exhaustive testing of all `2^10` combinations is not required when pairwise coverage and explicit risk cases cover the interaction space.
+Acceptance requires zero progression corruption, zero peer desynchronization, zero accidental activation, correct reward categorization, correct next-tier unlocking, and no configuration that prevents mandatory content from completing. Exhaustive testing of all `2^12` combinations is not required when pairwise coverage and explicit risk cases cover the interaction space.
 
 ## 20. Specification review gate
 
