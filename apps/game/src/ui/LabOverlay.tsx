@@ -1,8 +1,23 @@
-import { CANCEL_TIMING, type FacingMode, HEROES, type HeroDef } from '@ffp/sim';
+import {
+  CANCEL_TIMING,
+  ENEMIES,
+  type FacingMode,
+  HEROES,
+  type HeroDef,
+  TRAINER_INTERVALS,
+  type TrainerSettings,
+} from '@ffp/sim';
 import type { KeyboardP2Preset, LayoutName } from '@ffp/platform';
-import { LINK_TEXT, TEXT, moveInputText } from '../text/en';
+import { LINK_TEXT, TEXT, moveInputText, profileText } from '../text/en';
 import { InputPrompt, PLAYER_COLORS, PromptText } from './InputPrompt';
-import type { LabState, PlayerView, PromptStyle, RecipePlayerView, TargetView } from './labState';
+import type {
+  DefenseView,
+  LabState,
+  PlayerView,
+  PromptStyle,
+  RecipePlayerView,
+  TargetView,
+} from './labState';
 
 export interface LabActions {
   setFacing(slot: number, mode: FacingMode): void;
@@ -19,6 +34,8 @@ export interface LabActions {
   setRefill(on: boolean): void;
   dummyToWall(): void;
   practise(slot: number, recipeId: string): void;
+  setInfiniteDefense(on: boolean): void;
+  setTrainer(settings: Partial<TrainerSettings>): void;
 }
 
 const panel = {
@@ -214,6 +231,13 @@ function Settings({ state, actions }: { state: LabState; actions: LabActions }) 
         onChange={actions.setRefill}
         testId="set-refill"
       />
+      <Check
+        label="Infinite Defense meter"
+        checked={state.infiniteDefense.value}
+        onChange={actions.setInfiniteDefense}
+        testId="set-defense"
+      />
+      <TrainerSettingsView state={state} actions={actions} />
       <div style={{ margin: '4px 0' }}>
         <button
           data-testid="dummy-to-wall"
@@ -225,6 +249,111 @@ function Settings({ state, actions }: { state: LabState; actions: LabActions }) 
           Dummy 1 to the wall
         </button>
       </div>
+    </div>
+  );
+}
+
+const TRAINER = ENEMIES[0]!;
+const ATTACKERS = ['none', 'Dummy 1', 'all dummies'] as const;
+
+/** F2: the training enemy's script. */
+function TrainerSettingsView({ state, actions }: { state: LabState; actions: LabActions }) {
+  const t = state.trainer.value;
+  const patterns = ['cycle through all', ...TRAINER.actions.map((a) => a.name)];
+  return (
+    <div style={{ marginTop: '6px', borderTop: '1px solid #555', paddingTop: '4px' }}>
+      <div>Training enemy</div>
+      <Select
+        label="Attacking dummies"
+        value={ATTACKERS[t.attackers] ?? 'none'}
+        options={ATTACKERS}
+        onChange={(v) => actions.setTrainer({ attackers: ATTACKERS.indexOf(v) })}
+        testId="set-attackers"
+      />
+      <Select
+        label="Attack"
+        value={patterns[t.pattern + 1] ?? patterns[0]!}
+        options={patterns}
+        onChange={(v) => actions.setTrainer({ pattern: patterns.indexOf(v) - 1 })}
+        testId="set-pattern"
+      />
+      <Select
+        label="Frames between attacks"
+        value={String(t.interval)}
+        options={TRAINER_INTERVALS.map(String)}
+        onChange={(v) => actions.setTrainer({ interval: Number(v) })}
+        testId="set-interval"
+      />
+      <Check
+        label="Walk into range"
+        checked={t.approach}
+        onChange={(on) => actions.setTrainer({ approach: on })}
+        testId="set-approach"
+      />
+    </div>
+  );
+}
+
+/** F8: Defense meter, guard facing and timing readouts per player, plus the attack list. */
+function DefensePanel({ views, trainer }: { views: DefenseView[]; trainer: LabState['trainer'] }) {
+  const t = trainer.value;
+  return (
+    <div style={{ ...panel, maxWidth: '420px' }} data-testid="lab-defense">
+      <div>Defense · F8 to close</div>
+      {views.map((v) => {
+        const color = PLAYER_COLORS[v.slot];
+        const c = v.counts;
+        return (
+          <div style={{ marginTop: '6px' }} data-testid={`defense-p${v.slot + 1}`}>
+            <div style={{ color }}>
+              P{v.slot + 1} · Defense{' '}
+              <span data-testid={`defense-meter-p${v.slot + 1}`}>{v.defense}</span>%
+              {v.defense < 25 ? ' (below the 25 % floor: recovers when calm)' : ''}
+            </div>
+            <div style={{ height: '8px', background: '#333', margin: '2px 0 4px', width: '200px' }}>
+              <div
+                style={{
+                  height: '8px',
+                  width: `${v.defense * 2}px`,
+                  background: v.defense >= 75 ? '#7ddc7d' : v.defense >= 25 ? '#e0c050' : '#e05050',
+                }}
+              />
+            </div>
+            <div>
+              state {v.state} · guard {v.guard}
+            </div>
+            <div data-testid={`defense-counts-p${v.slot + 1}`}>
+              exact {c.exact} · counter {c.counter} · guard {c.guard} · early {c.early} · late{' '}
+              {c.late} · hit {c.hit} · crush {c.crush} · breaker {c.breaker}
+            </div>
+            <div data-testid={`defense-log-p${v.slot + 1}`} style={{ marginTop: '2px' }}>
+              {v.log.length === 0 ? (
+                <div style={{ opacity: 0.7 }}>no defense yet</div>
+              ) : (
+                v.log.map((e, i) => (
+                  <div
+                    style={{ color: e.good ? '#9be89b' : '#f0a0a0', opacity: i === 0 ? 1 : 0.7 }}
+                  >
+                    {String(e.frame).padStart(6, ' ')} {e.text}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        );
+      })}
+      <div style={{ marginTop: '6px', opacity: 0.85 }}>
+        Training enemy:{' '}
+        {t.attackers === 0
+          ? 'not attacking (F2 to arm it)'
+          : `${ATTACKERS[t.attackers]} · ${t.pattern < 0 ? 'cycle' : TRAINER.actions[t.pattern]?.name} · every ${t.interval} f`}
+      </div>
+      {TRAINER.actions.map((a) => (
+        <div style={{ paddingLeft: '8px', opacity: 0.85 }}>
+          {a.name}: {a.startup}/{a.active.join('+')}/{a.recovery} ·{' '}
+          {profileText(a.tags) || 'standard'}
+        </div>
+      ))}
     </div>
   );
 }
@@ -437,7 +566,8 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
           <div style={panel}>
             <div>Lab · F1 hide · F2 settings</div>
             <div>
-              F3 hitboxes · F5 moves · F6 slow{state.slowMotion.value ? ' (on)' : ''} · F7 recipes
+              F3 hitboxes · F5 moves · F6 slow{state.slowMotion.value ? ' (on)' : ''} · F7 recipes ·
+              F8 defense
             </div>
             <div>
               frame <span data-testid="lab-frame">{state.frame.value}</span>
@@ -459,6 +589,9 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
           {state.moveListOpen.value ? <MoveList players={players} /> : null}
           {state.recipesOpen.value ? (
             <RecipesPanel views={state.recipes.value} players={players} actions={actions} />
+          ) : null}
+          {state.defenseOpen.value ? (
+            <DefensePanel views={state.defense.value} trainer={state.trainer} />
           ) : null}
         </div>
       ) : null}
@@ -497,6 +630,9 @@ function HintBar({ players }: { players: PlayerView[] }) {
                 TEXT.hintAttack,
                 TEXT.hintAirAttack,
                 TEXT.hintLowAttack,
+                TEXT.hintGuard,
+                TEXT.hintCounter,
+                TEXT.hintBreaker,
               ].map((t) => (
                 <span style={{ marginRight: '12px' }}>
                   <PromptText text={t} ctx={p.ctx} color={color} />

@@ -300,7 +300,8 @@ function stepGuard(world: World, f: Fighter, input: FrameInput, guardPressed: bo
   const freshDir = frame - f.lastDirFrame <= DEFENSE.counterChord && (dx !== 0 || dz !== 0);
   if (f.state === MoveState.Guard) {
     if (held && guardPressed) openAttempt(f, frame);
-    if (!held || (f.defense <= 0 && f.exactFrame === NO_TAP)) {
+    // A tap keeps the guard up for its exact-block attempt; after that only holding does.
+    if (f.exactFrame === NO_TAP && (!held || f.defense <= 0)) {
       f.state = MoveState.Idle;
       f.stateFrame = 0;
       f.pivotAt = NO_TAP;

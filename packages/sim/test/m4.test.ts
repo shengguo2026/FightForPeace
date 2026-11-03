@@ -291,6 +291,18 @@ describe('Exact Block (Review Focus 2)', () => {
     expect(h.state).toBe(MoveState.Guard);
   });
 
+  test('a quick tap (released before contact) still exact-blocks', () => {
+    const c = contactFrame(arena, 'jab');
+    const w = arena();
+    attack(w, 'jab');
+    until(w, c - 3);
+    step(w, [guardPress()]);
+    until(w, c + 1);
+    expect(hero(w).defEvent).toBe(DefEvent.Exact);
+    run(w, repeat(idle, 6));
+    expect(hero(w).state).toBe(MoveState.Idle);
+  });
+
   test('pressed 5 f before contact: normal guard, reported as too early', () => {
     const c = contactFrame(arena, 'jab');
     const w = arena();

@@ -78,6 +78,28 @@ export interface RecipePlayerView {
   recipes: RecipeView[];
 }
 
+/** One player's defense, for the F8 panel. */
+export interface DefenseView {
+  slot: number;
+  defense: number;
+  state: string;
+  guard: string;
+  /** Most recent readouts first: frame and text. */
+  log: { frame: number; text: string; good: boolean }[];
+  counts: Record<
+    'guard' | 'exact' | 'counter' | 'crush' | 'breaker' | 'hit' | 'early' | 'late',
+    number
+  >;
+}
+
+/** Training-enemy script as the Lab edits it. */
+export interface TrainerView {
+  attackers: number;
+  pattern: number;
+  interval: number;
+  approach: boolean;
+}
+
 export interface LabState {
   visible: Signal<boolean>;
   settingsOpen: Signal<boolean>;
@@ -102,6 +124,10 @@ export interface LabState {
   infiniteMeter: Signal<boolean>;
   counterHit: Signal<boolean>;
   refill: Signal<boolean>;
+  defenseOpen: Signal<boolean>;
+  defense: Signal<DefenseView[]>;
+  infiniteDefense: Signal<boolean>;
+  trainer: Signal<TrainerView>;
 }
 
 export function createLabState(visible: boolean): LabState {
@@ -129,6 +155,10 @@ export function createLabState(visible: boolean): LabState {
     infiniteMeter: signal(false),
     counterHit: signal(false),
     refill: signal(true),
+    defenseOpen: signal(true),
+    defense: signal([]),
+    infiniteDefense: signal(false),
+    trainer: signal({ attackers: 1, pattern: 0, interval: 70, approach: true }),
   };
 }
 

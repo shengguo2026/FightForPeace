@@ -1,4 +1,4 @@
-import type { ReplayLog } from '@ffp/sim';
+import type { ReplayLog, TrainerSettings } from '@ffp/sim';
 import type { PadSnapshot, SlotState } from '@ffp/platform';
 
 export interface DebugBody {
@@ -22,6 +22,11 @@ export interface DebugBody {
   wallBounceUsed: boolean;
   groundBounceUsed: boolean;
   contactAt: number;
+  defense: number;
+  defEvent: number;
+  defOffset: number;
+  defFrame: number;
+  aiStep: number;
 }
 
 /** Test hook, installed in dev and e2e builds only (see debug.ts). */
@@ -37,6 +42,9 @@ export interface FfpDebugHook {
   fakePads(pads: (PadSnapshot | null)[]): void;
   paused(): boolean;
   slots(): SlotState[];
+  /** Lab: changes the training enemy's script. */
+  setTrainer(settings: Partial<TrainerSettings>): void;
+  setDefense(slot: number, value: number): void;
 }
 
 declare global {

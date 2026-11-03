@@ -1,6 +1,7 @@
 import {
   type FacingMode,
   MoveState,
+  type TrainerSettings,
   type RecipeDef,
   fx,
   heroOf,
@@ -61,9 +62,16 @@ export class GameSession {
   private previous: Fighter[];
   private alpha = 0;
 
-  constructor(seed: number) {
-    this.world = createWorld(seed, { dummies: LAB_DUMMIES });
+  constructor(seed: number, trainer: Partial<TrainerSettings> = {}) {
+    this.world = createWorld(seed, { dummies: LAB_DUMMIES, trainer });
     this.previous = cloneFighters(this.world.bodies);
+  }
+
+  /** Lab: the training enemy's script (who attacks, which attack, how often). */
+  setTrainer(settings: Partial<TrainerSettings>): void {
+    Object.assign(this.world.trainer, settings);
+    for (const d of this.world.bodies)
+      if (d.team === 'enemy') d.aiTimer = this.world.trainer.interval;
   }
 
   /** Advances by the wall time since the last render frame. Pads must be polled first. */
@@ -142,6 +150,7 @@ function resetBody(d: Fighter): void {
   d.vz = 0;
   d.protectedRecovery = false;
   d.groundWindow = 0;
+  d.action = -1;
   d.bounce = 0;
   d.airRecover = false;
   d.ctx.open = false;
@@ -155,6 +164,7 @@ function cloneFighters(bodies: readonly Fighter[]): Fighter[] {
     contactIds: [...b.contactIds],
     contactScales: [...b.contactScales],
     hitIds: [...b.hitIds],
+    rewardIds: [...b.rewardIds],
     ctx: { ...b.ctx, route: [...b.ctx.route] },
   }));
 }

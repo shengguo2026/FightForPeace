@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import {
   BODY_HALF_D,
   BODY_HALF_W,
+  DefEvent,
   type Fighter,
   HEROES,
   MoveState,
@@ -9,8 +10,10 @@ import {
   fxToPixels,
   groundFocus,
   hurtbox,
+  kitOf,
   phaseOf,
 } from '@ffp/sim';
+import { profileText } from '../text/en';
 import { AssetRegistry, type PlaceholderFamily } from '@ffp/platform';
 import type { RenderSnapshot } from '../game';
 
@@ -33,6 +36,16 @@ export const STRIKE_COLORS: Record<string, number> = {
 };
 const RECOVERY_COLOR = 0x8a8f99;
 const POPUP_MS = 700;
+const CALLOUT_MS = 900;
+/** Words drawn over a hero for defensive outcomes (shape and text, not colour alone). */
+const CALLOUTS: Partial<Record<number, { text: string; color: string }>> = {
+  [DefEvent.Exact]: { text: 'EXACT', color: '#7df9ff' },
+  [DefEvent.ExactBreak]: { text: 'EXACT · BREAK', color: '#7df9ff' },
+  [DefEvent.Counter]: { text: 'COUNTER', color: '#ffd166' },
+  [DefEvent.GuardCrush]: { text: 'GUARD CRUSH', color: '#ff6b6b' },
+  [DefEvent.Breaker]: { text: 'BREAKER', color: '#c3a6ff' },
+  [DefEvent.CounterMiss]: { text: 'counter missed', color: '#bbbbbb' },
+};
 
 export interface StageOptions {
   getSnapshot: () => RenderSnapshot;
@@ -56,6 +69,7 @@ export class StageScene extends Phaser.Scene {
   private moveLabels = new Map<number, Phaser.GameObjects.Text>();
   private comboLabels = new Map<number, Phaser.GameObjects.Text>();
   private lastHits = new Map<number, number>();
+  private lastDefense = new Map<number, string>();
   private popups: Popup[] = [];
   private readonly assets = new AssetRegistry();
 
@@ -96,9 +110,11 @@ export class StageScene extends Phaser.Scene {
         g.strokeEllipse(p.x, p.z - 6, 300, 52);
       }
       this.drawShadow(p);
+      if (f.state === MoveState.Guard || f.state === MoveState.Blockstun) this.drawGuard(f, p);
       const top = this.drawBody(f, p);
       this.label(f, p, top);
       this.feedback(f, p, top, time);
+      this.defense(f, p, top, time);
     }
     // Boxes go on top of every body, so a hitbox inside a target stays visible.
     if (collision) for (const { f, p } of drawn) this.drawBoxes(f, p);
@@ -116,7 +132,7 @@ export class StageScene extends Phaser.Scene {
   private family(f: Fighter): PlaceholderFamily | 'stub' | null {
     if (f.state !== MoveState.Attack) return null;
     if (f.action < 0) return 'stub';
-    const a = HEROES[f.hero]?.actions[f.action];
+    const a = kitOf(f)?.actions[f.action];
     if (!a) return null;
     const r = this.assets.resolve(a.pose);
     return r.kind === 'placeholder' ? r.family : a.category;
@@ -179,7 +195,7 @@ export class StageScene extends Phaser.Scene {
     width: number,
     height: number,
   ): void {
-    const a = HEROES[f.hero]!.actions[f.action]!;
+    const a = kitOf(f)!.actions[f.action]!;
     const { phase } = phaseOf(a, f.stateFrame + 1);
     const reach = phase === 'active' ? 1 : phase === 'startup' ? 0.45 : 0.65;
     const color = phase === 'recovery' ? RECOVERY_COLOR : (STRIKE_COLORS[fam] ?? 0xffffff);
@@ -266,8 +282,13 @@ export class StageScene extends Phaser.Scene {
       m.setDepth(10);
       this.moveLabels.set(f.id, m);
     }
-    const a = f.action >= 0 ? HEROES[f.hero]?.actions[f.action] : undefined;
-    m.setText(this.opts.showLabels() && a ? a.name : '');
+    const a =
+      f.state === MoveState.Attack && f.action >= 0 ? kitOf(f)?.actions[f.action] : undefined;
+    // An enemy attack is always announced with its defense profile in words (telegraph).
+    const profile = f.team === 'enemy' && a ? profileText(a.tags) : '';
+    const text = a && (f.team === 'enemy' || this.opts.showLabels()) ? a.name : '';
+    m.setText(profile ? `${text}\n${profile}` : text);
+    m.setColor(a?.tags.includes('unblockable') ? '#ff8080' : '#ffe9a8');
     m.setPosition(p.x, top - 38);
   }
 
@@ -310,6 +331,48 @@ export class StageScene extends Phaser.Scene {
     const combo = f.ctx.open && f.ctx.hits > 1 ? `${f.ctx.hits} hits · ${f.ctx.damage}` : '';
     c.setText([combo, ground].filter(Boolean).join('\n'));
     c.setPosition(p.x, top - 44);
+  }
+
+  /** Defensive facing: a 150° arc in front of a guarding hero, on the floor. */
+  private drawGuard(f: Fighter, p: Pos): void {
+    const g = this.gfx;
+    const angle = Math.atan2(f.guardZ * 0.6, f.guardX);
+    const crushed = f.defense <= 0;
+    g.lineStyle(8, crushed ? 0xaaaaaa : 0x7df9ff, crushed ? 0.4 : 0.85);
+    g.beginPath();
+    g.arc(p.x, p.z, 110, angle - (75 * Math.PI) / 180, angle + (75 * Math.PI) / 180);
+    g.strokePath();
+  }
+
+  /** Defense bar above heroes, and the call-out words for defensive outcomes. */
+  private defense(f: Fighter, p: Pos, top: number, time: number): void {
+    if (f.team !== 'hero') return;
+    const g = this.gfx;
+    const w = 90;
+    const y = top - 74;
+    g.fillStyle(0x222222, 0.8);
+    g.fillRect(p.x - w / 2, y, w, 8);
+    g.fillStyle(f.defense >= 75 ? 0x7ddc7d : f.defense >= 25 ? 0xe0c050 : 0xe05050, 1);
+    g.fillRect(p.x - w / 2, y, (w * f.defense) / 100, 8);
+    // Tick at the 75 % breaker threshold.
+    g.fillStyle(0xffffff, 0.9);
+    g.fillRect(p.x - w / 2 + w * 0.75, y - 2, 2, 12);
+    const key = `${f.defEvent}/${f.defFrame}`;
+    if (this.lastDefense.get(f.id) === key) return;
+    this.lastDefense.set(f.id, key);
+    const c = CALLOUTS[f.defEvent];
+    if (!c || f.defFrame === 0) return;
+    const t = this.add.text(p.x, top - 100, c.text, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '38px',
+      fontStyle: 'bold',
+      color: c.color,
+      stroke: '#000000',
+      strokeThickness: 6,
+    });
+    t.setOrigin(0.5, 1);
+    t.setDepth(13);
+    this.popups.push({ text: t, born: time + (CALLOUT_MS - POPUP_MS) });
   }
 
   private updatePopups(time: number): void {
