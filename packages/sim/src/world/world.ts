@@ -30,7 +30,7 @@ export const DUMMY_HEALTH = 1000;
 export const HERO_HEALTH = 1000;
 
 /** Version of the byte layout written by encodeWorld. Bump on any layout change. */
-export const STATE_FORMAT = 5;
+export const STATE_FORMAT = 6;
 
 /** Walking speeds (fixed point per frame), kept as exports for existing callers. */
 export const WALK_SPEED_X = ON_FOOT.walkX;
@@ -128,6 +128,10 @@ export function createFighter(
     health: team === 'hero' ? HERO_HEALTH : DUMMY_HEALTH,
     maxHealth: team === 'hero' ? HERO_HEALTH : DUMMY_HEALTH,
     ctx: emptyContext(),
+    protectedRecovery: false,
+    bounce: 0,
+    heavyFall: false,
+    groundWindow: 0,
   };
 }
 
@@ -206,7 +210,7 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
       applyHeroChoice(world, f);
       stepHero(world, f, normalize(inputs[f.slot]), ON_FOOT);
       if (world.infiniteMeter) f.meter = 100;
-    } else if (!stepReaction(f)) {
+    } else if (!stepReaction(world, f)) {
       stepDummy(world, f);
     }
   }
@@ -347,6 +351,10 @@ export function encodeWorld(world: World): Uint8Array {
     w.u32(b.health);
     w.u32(b.maxHealth);
     encodeContext(w, b.ctx);
+    w.u8(b.protectedRecovery ? 1 : 0);
+    w.u8(b.bounce);
+    w.u8(b.heavyFall ? 1 : 0);
+    w.u32(b.groundWindow);
   }
   return w.bytes();
 }
@@ -368,6 +376,14 @@ function encodeContext(w: ByteWriter, c: ComboContext): void {
   w.u8(c.exhausted ? 1 : 0);
   w.u8(c.groundTag);
   w.u32(c.lastDamage);
+  w.u8(c.wallBounceUsed ? 1 : 0);
+  w.u8(c.groundBounceUsed ? 1 : 0);
+  w.u8(c.groundOpened ? 1 : 0);
+  w.u8(c.groundExtUsed ? 1 : 0);
+  w.u8(c.groundFinUsed ? 1 : 0);
+  w.u8(c.ended);
+  w.u32(c.route.length);
+  for (const r of c.route) w.u32(r);
 }
 
 /** Names of the heroes in roster order, for menus and the Lab. */

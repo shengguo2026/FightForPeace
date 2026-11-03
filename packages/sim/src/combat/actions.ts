@@ -1,6 +1,6 @@
 import { ActionBit, DirBit } from '../input/bits';
 import type { MovementProfile } from '../movement/profile';
-import { type Fighter, type FrameInput, MoveState, type World } from '../world/types';
+import { type Fighter, type FrameInput, MoveState, Protect, type World } from '../world/types';
 import { HEROES, activeSpan, dirMatches, findAction } from './roster';
 import {
   type ActionDef,
@@ -125,7 +125,10 @@ export function pressDuringAction(
 ): PressOutcome {
   const frame = world.frame;
   const n = f.stateFrame + 1;
-  const index = a.links.findIndex((l) => l.kind === press.kind && dirMatches(l.dir, press.dir));
+  // A jump chase takes the jump in whatever direction is held (the launcher's Up included).
+  const index = a.links.findIndex(
+    (l) => l.kind === press.kind && (l.kind === 'jump' || dirMatches(l.dir, press.dir)),
+  );
   if (index === -1) {
     logVerdict(f, frame, VerdictTo.None, Reject.Unlinked);
     return 'unlinked';
@@ -139,10 +142,12 @@ export function pressDuringAction(
   if (link.kind === 'action' && (f.chainUsed & (1 << link.to)) !== 0)
     return reject(Reject.AlreadyUsed);
   const targets = contactTargets(world, f);
-  if (targets.some((t) => t.ctx.exhausted)) return reject(Reject.StunExhausted);
+  const blocked = f.contactAt >= 0 && !link.onWhiff ? protectionReason(targets) : Reject.None;
+  if (blocked !== Reject.None) return reject(blocked);
+  if (targets.some((t) => t.ctx.open && t.ctx.exhausted)) return reject(Reject.StunExhausted);
   if (link.premium > 0 && !world.infiniteMeter && f.meter < link.premium)
     return reject(Reject.NoMeter);
-  if (link.category === 'dashBridge' && targets.some((t) => t.ctx.bridgeUsed))
+  if (link.category === 'dashBridge' && targets.some((t) => t.ctx.open && t.ctx.bridgeUsed))
     return reject(Reject.BridgeSpent);
   const timing = CANCEL_TIMING[link.category];
   const activeEnd = a.startup + activeSpan(a);
@@ -163,6 +168,18 @@ function contactTargets(world: World, f: Fighter): Fighter[] {
 }
 
 /**
+ * Protected recovery grants no hit-confirmed cancels: when every target this action hit
+ * is protected, a hit-only link is rejected with the reason the combo ended.
+ */
+function protectionReason(targets: readonly Fighter[]): number {
+  if (targets.length === 0 || targets.some((t) => !t.protectedRecovery)) return Reject.None;
+  const t = targets[0]!;
+  if (t.ctx.exhausted) return Reject.StunExhausted;
+  if (t.ctx.ended === Protect.AirRecovery) return Reject.JuggleExhausted;
+  return Reject.Protected;
+}
+
+/**
  * Decides on a queued link this frame: 'fire' (start the destination now), 'wait', or a
  * late rejection (contact never came, or came too late for an early press).
  */
@@ -180,6 +197,8 @@ export function queuedLink(world: World, f: Fighter, a: ActionDef): LinkDef | nu
   if (f.contactAt >= 0) {
     if (f.reqFrame < f.contactAt - timing.buffer) return drop(Reject.TooEarly);
     if (n <= activeEnd) return null;
+    const blocked = link.onWhiff ? Reject.None : protectionReason(contactTargets(world, f));
+    if (blocked !== Reject.None) return drop(blocked);
     if (link.premium > 0 && !world.infiniteMeter && f.meter < link.premium)
       return drop(Reject.NoMeter);
     return link;

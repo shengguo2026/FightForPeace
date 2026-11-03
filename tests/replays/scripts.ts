@@ -1,4 +1,18 @@
-import { ActionBit, DirBit, type FrameInput, type ReplayLog, type WorldOptions } from '@ffp/sim';
+import {
+  ActionBit,
+  DirBit,
+  type Fighter,
+  type FrameInput,
+  HEROES,
+  MoveState,
+  type ReplayLog,
+  type World,
+  type WorldOptions,
+  createWorld,
+  fx,
+  heroOf,
+  step,
+} from '@ffp/sim';
 
 type Dir = 'up' | 'down' | 'left' | 'right';
 type Act = keyof typeof ActionBit;
@@ -186,6 +200,162 @@ export const comboRoutes: ReplayScript = {
   })(),
 };
 
-export const SCRIPTS = [walkSquare, dashJump, crowd, comboRoutes];
+/**
+ * Records inputs by playing the game: each frame's input is chosen from the world state
+ * (walk to a spot, wait for contact, press). The result is a plain input log, so the
+ * golden replay checks it like any other; the recorder only makes the script readable.
+ */
+class Recorder {
+  readonly frames: FrameInput[][] = [];
+  readonly world: World;
+  private held: [Set<Dir>, Set<Dir>] = [new Set(), new Set()];
+  private joined = [true, false];
+
+  constructor(
+    seed: number,
+    readonly options: WorldOptions,
+  ) {
+    this.world = createWorld(seed, options);
+  }
+
+  private input(slot: number, dirs: Dir[], acts: Act[]): FrameInput {
+    const held = this.held[slot]!;
+    let dirPressed = 0;
+    for (const d of dirs) if (!held.has(d)) dirPressed |= DirBit[d];
+    this.held[slot] = new Set(dirs);
+    const has = (d: Dir) => dirs.includes(d);
+    const pressed = acts.reduce((m, a) => m | ActionBit[a], 0);
+    return {
+      moveX: has('left') ? -1 : has('right') ? 1 : 0,
+      moveZ: has('up') ? -1 : has('down') ? 1 : 0,
+      pressed,
+      held: pressed,
+      dirPressed,
+    };
+  }
+
+  /** One frame: `slot` holds `dirs` and presses `acts`; the other player idles. */
+  tick(slot = 0, dirs: Dir[] = [], acts: Act[] = []): void {
+    if (slot === 1) this.joined[1] = true;
+    const row = [0, 1]
+      .filter((s) => this.joined[s])
+      .map((s) => (s === slot ? this.input(s, dirs, acts) : this.input(s, [], [])));
+    step(this.world, row);
+    this.frames.push(row);
+  }
+
+  hero(slot: number): Fighter {
+    return heroOf(this.world, slot)!;
+  }
+
+  body(id: number): Fighter {
+    return this.world.bodies.find((b) => b.id === id)!;
+  }
+
+  wait(until: () => boolean, max = 200): this {
+    for (let i = 0; i < max && !until(); i += 1) this.tick();
+    return this;
+  }
+
+  /** Walks `slot` to (x, z) in pixels, then faces `facing` with a one-frame tap. */
+  walkTo(slot: number, x: number, z: number, facing: 1 | -1): this {
+    for (let i = 0; i < 600; i += 1) {
+      const h = this.hero(slot);
+      const dx = fx(x) - h.x;
+      const dz = fx(z) - h.z;
+      const dirs: Dir[] = [];
+      if (dx > fx(2)) dirs.push('right');
+      if (dx < -fx(2)) dirs.push('left');
+      if (dz > fx(2)) dirs.push('down');
+      if (dz < -fx(2)) dirs.push('up');
+      if (dirs.length === 0) break;
+      this.tick(slot, dirs);
+    }
+    this.tick(slot);
+    if (this.hero(slot).facing !== facing) this.tick(slot, [facing === 1 ? 'right' : 'left']);
+    return this.idle(slot, 4);
+  }
+
+  idle(slot: number, n: number): this {
+    for (let i = 0; i < n; i += 1) this.tick(slot);
+    return this;
+  }
+
+  /** Waits until `until` holds (up to max frames), then presses. */
+  pressWhen(slot: number, until: () => boolean, acts: Act[], dirs: Dir[] = []): this {
+    for (let i = 0; i < 200 && !until(); i += 1) this.tick(slot);
+    this.tick(slot, dirs, acts);
+    return this;
+  }
+
+  running(slot: number): string | null {
+    const h = this.hero(slot);
+    return h.action >= 0 ? HEROES[h.hero]!.actions[h.action]!.id : null;
+  }
+
+  contact(slot: number): boolean {
+    return this.hero(slot).contactAt >= 0;
+  }
+
+  free(slot: number): boolean {
+    const h = this.hero(slot);
+    return h.action < 0 && (h.state === MoveState.Idle || h.state === MoveState.Walk);
+  }
+
+  /** Waits for the dummy to recover and its combo to close. */
+  settle(id: number): this {
+    return this.wait(() => this.body(id).state === MoveState.Idle && !this.body(id).ctx.open, 300);
+  }
+}
+
+/** Every §8.3 recipe for both founders, plus a co-op juggle sharing one budget. */
+function academyRecipes(): FrameInput[][] {
+  const r = new Recorder(5, { dummies: 2, counterHit: true });
+  const d1 = r.body(101);
+  const d2 = r.body(102);
+  const near = (s: number, d: Fighter, gap: number) => r.walkTo(s, d.x / 256 - gap, d.z / 256, 1);
+  const recipes = (s: number, d: Fighter) => {
+    // Foundation: neutral Attack three times, each after the previous hit.
+    near(s, d, 80);
+    r.pressWhen(s, () => true, ['Attack']);
+    r.pressWhen(s, () => r.contact(s), ['Attack']);
+    r.pressWhen(s, () => r.contact(s) && r.hero(s).chainUsed !== 1, ['Attack']);
+    r.settle(d.id);
+    // Aerial conversion: launcher, jump chase, air Attack, Forward + air Attack.
+    near(s, d, 80);
+    r.pressWhen(s, () => true, ['Attack'], ['up']);
+    r.pressWhen(s, () => r.contact(s), ['Jump']);
+    r.pressWhen(s, () => r.hero(s).state === MoveState.Air && r.hero(s).stateFrame > 2, ['Attack']);
+    r.pressWhen(s, () => r.contact(s), ['Attack'], ['right']);
+    r.settle(d.id);
+    // Low to ground: dash, low attack (counter-trip), ground extension, Forward finisher.
+    near(s, d, 200);
+    r.pressWhen(s, () => true, ['Dash']);
+    r.pressWhen(s, () => r.hero(s).stateFrame >= 3, ['LowAttack']);
+    r.pressWhen(s, () => d.state === MoveState.Down && r.free(s), ['Attack']);
+    r.pressWhen(s, () => r.running(s) !== null && r.contact(s), ['Attack'], ['right']);
+    r.settle(d.id);
+  };
+  recipes(0, d1);
+  r.tick(1); // Player 2 (River Scout) joins
+  recipes(1, d2);
+  // Co-op: Mountain launches dummy 1 and River, on its other side, chases it.
+  r.walkTo(1, d1.x / 256 + 80, d1.z / 256, -1);
+  near(0, d1, 80);
+  r.pressWhen(0, () => true, ['Attack'], ['up']);
+  r.pressWhen(1, () => d1.y > fx(40), ['Jump']);
+  r.pressWhen(1, () => r.hero(1).state === MoveState.Air && r.hero(1).stateFrame > 3, ['Attack']);
+  r.settle(101).idle(0, 30);
+  return r.frames;
+}
+
+export const academyRecipesScript: ReplayScript = {
+  name: 'academy-recipes',
+  seed: 5,
+  options: { dummies: 2, counterHit: true },
+  frames: academyRecipes(),
+};
+
+export const SCRIPTS = [walkSquare, dashJump, crowd, comboRoutes, academyRecipesScript];
 
 export type { ReplayLog };

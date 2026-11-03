@@ -1,6 +1,6 @@
 import { readFileSync, mkdtempSync, writeFileSync, copyFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 import {
   GENERATED_PATH,
   HeroDataError,
@@ -20,11 +20,12 @@ const load = (name: string) =>
   );
 
 test('the committed heroes.gen.ts is up to date (run pnpm gen:heroes)', () => {
-  expect(readFileSync(GENERATED_PATH, 'utf8')).toBe(generate());
+  // A Windows checkout may have CRLF line endings; compare the text, not the line endings.
+  expect(readFileSync(GENERATED_PATH, 'utf8').replace(/\r\n/g, '\n')).toBe(generate());
 });
 
 test('roster order puts the founders first', () => {
-  expect(files.map((f) => f.split('/').pop())).toEqual(['mountain.yaml', 'river.yaml']);
+  expect(files.map((f) => basename(f))).toEqual(['mountain.yaml', 'river.yaml']);
 });
 
 const SAR: Record<string, [number, number | number[], number]> = {
@@ -103,9 +104,35 @@ test('pose IDs name the hero, category and action', () => {
 
 test('a third hero file becomes a third roster entry with no code change (Review Focus 7)', () => {
   const dir = mkdtempSync(join(tmpdir(), 'heroes-'));
-  for (const f of files) copyFileSync(f, join(dir, f.split('/').pop()!));
+  for (const f of files) copyFileSync(f, join(dir, basename(f)));
   writeFileSync(join(dir, 'zz-test.yaml'), base.replace('id: mountain', 'id: test-hero'));
-  const source = generate(heroFiles(`${dir}/`));
+  const source = generate(heroFiles(join(dir, '/')));
   expect(source).toContain('"id": "test-hero"');
   expect(source.match(/"bodyWidth"/g)).toHaveLength(3);
+});
+
+describe('Academy recipes (M3)', () => {
+  test.each(['mountain.yaml', 'river.yaml'])('%s has the three §8.3 recipes', (file) => {
+    const hero = load(file);
+    expect(hero.recipes?.map((r) => r.family)).toEqual(['foundation', 'aerial', 'ground']);
+    expect(hero.recipes?.find((r) => r.family === 'ground')?.setup?.counterHit).toBe(true);
+  });
+
+  test('a recipe step naming an unknown action fails with a readable message', () => {
+    const bad = base.replace(
+      'steps: [masons-touch, brace-elbow, gatepost-hammer]',
+      'steps: [masons-touch, brace-elbo]',
+    );
+    expect(() => loadHero(bad)).toThrow(/recipe "foundation" names unknown action "brace-elbo"/);
+  });
+
+  test('alternatives compile to action indices and jump steps are hints', () => {
+    const compiled = compileHero(load('mountain.yaml')) as {
+      actions: { id: string }[];
+      recipes: { steps: { jump: boolean; any: number[] }[] }[];
+    };
+    const ids = (any: number[]) => any.map((i) => compiled.actions[i]!.id);
+    expect(compiled.recipes[1]!.steps[1]).toEqual({ jump: true, any: [] });
+    expect(ids(compiled.recipes[2]!.steps[2]!.any)).toEqual(['lockgate-press', 'foundation-rise']);
+  });
 });

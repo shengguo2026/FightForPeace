@@ -1,5 +1,6 @@
 import {
   ActionBit,
+  type ComboContext,
   type Fighter,
   type FrameInput,
   HEROES,
@@ -9,7 +10,12 @@ import {
   VerdictTo,
   fxToPixels,
   heroOf,
+  Protect,
+  juggleBand,
   phaseOf,
+  recipeAttackSteps,
+  recipeDone,
+  recipeProgress,
   stunBand,
 } from '@ffp/sim';
 import {
@@ -20,11 +26,13 @@ import {
   resolvePrompt,
 } from '@ffp/platform';
 import type { GameSession } from '../game';
+import { moveInputText } from '../text/en';
 import {
   HISTORY_LENGTH,
   type HistoryEntry,
   type LabState,
   type PlayerView,
+  type RecipePlayerView,
   type TargetView,
 } from './labState';
 
@@ -48,7 +56,28 @@ const STATE_NAMES: Record<number, string> = {
   [MoveState.Down]: 'down',
   [MoveState.GetUp]: 'getting up',
   [MoveState.Landing]: 'landing recovery',
+  [MoveState.Recover]: 'protected landing',
 };
+
+const PROTECT_TEXT: Record<number, string> = {
+  [Protect.GetUp]: 'protected get-up',
+  [Protect.AirRecovery]: 'air recovery (juggle budget exhausted)',
+  [Protect.SoftReset]: 'soft reset (hit-stun budget exhausted)',
+  [Protect.MissedWindow]: 'ground window missed',
+};
+
+function groundRouteText(d: Fighter): string {
+  const c = d.ctx;
+  if (!c.groundOpened) return '—';
+  const window = d.groundWindow > 0 ? `window ${d.groundWindow} f` : 'window closed';
+  const ext = c.groundExtUsed ? 'extension used' : 'extension available';
+  const fin = c.groundFinUsed ? 'finisher used' : 'finisher available';
+  return `${window} · ${ext} · ${fin}`;
+}
+
+function routeNames(route: readonly number[]): string[] {
+  return route.map((code) => HEROES[Math.trunc(code / 64)]?.actions[code % 64]?.name ?? '?');
+}
 
 /** Name of a cancel destination code (action index or VerdictTo). */
 function destName(f: Fighter, to: number): string {
@@ -202,41 +231,113 @@ export function refreshTarget(session: GameSession, lab: LabState): void {
   if (hitNow && !(current && current.ctx.open)) followed = hitNow.id;
   const d = dummies.find((x) => x.id === followed);
   if (!d) return;
-  const prev = lab.target.value;
   const c = d.ctx;
-  // When the combo ends, keep showing its final numbers until the next hit.
-  const view: TargetView =
-    !c.open && prev && prev.name === `Dummy ${d.id - 100}`
-      ? {
-          ...prev,
-          open: false,
-          health: `${d.health}/${d.maxHealth}`,
-          reaction: stateName(d.state, 0),
-        }
-      : {
-          name: `Dummy ${d.id - 100}`,
-          open: c.open,
-          health: `${d.health}/${d.maxHealth}`,
-          hits: c.hits,
-          damage: c.damage,
-          scale: c.scale,
-          stunBudget: c.stunBudget,
-          stunBand: stunBand(c.stunBudget),
-          meterBudget: c.meterBudget,
-          juggleBudget: c.juggleBudget,
-          bridge: c.bridgeUsed,
-          exhausted: c.exhausted,
-          reaction: stateName(d.state, 0),
-          ground:
-            c.groundTag === 1
-              ? 'opens ground window'
-              : c.groundTag === 2
-                ? 'terminal knockdown'
-                : '—',
-        };
+  // A closed combo keeps its final numbers (the simulation leaves them) until the next hit.
+  const view: TargetView = {
+    name: `Dummy ${d.id - 100}`,
+    open: c.open,
+    health: `${d.health}/${d.maxHealth}`,
+    hits: c.hits,
+    damage: c.damage,
+    scale: c.scale,
+    stunBudget: c.stunBudget,
+    stunBand: stunBand(c.stunBudget),
+    meterBudget: c.meterBudget,
+    juggleBudget: c.juggleBudget,
+    juggleBand: juggleBand(c.juggleBudget),
+    bridge: c.bridgeUsed,
+    exhausted: c.exhausted,
+    reaction: stateName(d.state, 0),
+    ground:
+      c.groundTag === 1 ? 'opens ground window' : c.groundTag === 2 ? 'terminal knockdown' : '—',
+    wallBounce: c.wallBounceUsed ? 'used' : 'available',
+    groundBounce: c.groundBounceUsed ? 'used' : 'available',
+    groundRoute: groundRouteText(d),
+    protection: d.protectedRecovery
+      ? `protected · ${PROTECT_TEXT[c.ended] ?? 'recovering'}`
+      : c.open
+        ? '—'
+        : (PROTECT_TEXT[c.ended] ?? 'recovered'),
+    route: routeNames(c.route),
+  };
   const sig = JSON.stringify(view);
   if (sig !== lastTargetSig) {
     lastTargetSig = sig;
     lab.target.value = view;
+  }
+}
+
+/** Combo contexts already credited per recipe, so each performance counts once. */
+const credited = new WeakMap<ComboContext, Set<string>>();
+const performedCounts = new Map<string, number>();
+let lastRecipeSig = '';
+
+/**
+ * Academy recipes for each joined player, ticked off against the route of the dummy the
+ * Lab follows. A recipe counts as performed once per combo context.
+ */
+export function refreshRecipes(session: GameSession, lab: LabState): void {
+  const dummies = session.world.bodies.filter((b) => b.team === 'enemy');
+  for (const d of dummies) {
+    const seen = credited.get(d.ctx) ?? new Set<string>();
+    HEROES.forEach((hero, h) => {
+      for (const r of hero.recipes) {
+        const key = `${hero.id}/${r.id}`;
+        if (seen.has(key) || !recipeDone(r, d.ctx.route, h)) continue;
+        seen.add(key);
+        performedCounts.set(key, (performedCounts.get(key) ?? 0) + 1);
+      }
+    });
+    credited.set(d.ctx, seen);
+  }
+  const followedDummy = dummies.find((d) => d.id === followed);
+  const route = followedDummy?.ctx.route ?? [];
+  const views: RecipePlayerView[] = [];
+  for (const slot of [0, 1]) {
+    const f = heroOf(session.world, slot);
+    if (!f) continue;
+    const hero = HEROES[f.hero]!;
+    views.push({
+      slot,
+      hero: hero.name,
+      recipes: hero.recipes.map((r) => {
+        const progress = recipeProgress(r, route, f.hero);
+        const attacks = recipeAttackSteps(r).length;
+        let k = 0;
+        const steps = r.steps.map((s) => {
+          if (s.jump) {
+            return { label: 'jump chase', jump: true, input: '{action:Jump}', done: progress > k };
+          }
+          const a = s.any.map((i) => hero.actions[i]!);
+          k += 1;
+          return {
+            label: a.map((x) => x.name).join(' or '),
+            jump: false,
+            input: a
+              .map((x, i) => {
+                const t = moveInputText(x.context, x.dir);
+                // Alternatives share their context: name it once.
+                return i === 0 ? t : t.slice(t.indexOf(': ') + 2);
+              })
+              .join(' or '),
+            done: k <= progress,
+          };
+        });
+        return {
+          id: r.id,
+          name: r.name,
+          family: r.family,
+          steps,
+          done: progress === attacks,
+          performed: performedCounts.get(`${hero.id}/${r.id}`) ?? 0,
+          counterHit: r.counterHit,
+        };
+      }),
+    });
+  }
+  const sig = JSON.stringify(views);
+  if (sig !== lastRecipeSig) {
+    lastRecipeSig = sig;
+    lab.recipes.value = views;
   }
 }

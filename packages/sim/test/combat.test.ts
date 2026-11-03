@@ -339,9 +339,15 @@ describe('combo context and budgets (Review Focus 5)', () => {
     run(w, repeat(idle, 120));
     const d = dummy(w);
     expect(d.ctx.open).toBe(false);
-    expect(d.ctx.scale).toBe(100);
-    expect(d.ctx.stunBudget).toBe(100);
+    expect(d.ctx.hits).toBe(3); // the closed combo stays readable in the Lab
     expect(d.health).toBe(d.maxHealth);
+    // The next hit opens a fresh context with full budgets.
+    hero(w).x = d.x - fx(80);
+    run(w, [press('Attack'), ...repeat(idle, 8)]);
+    expect(d.ctx.open).toBe(true);
+    expect(d.ctx.hits).toBe(1);
+    expect(d.ctx.scale).toBe(85);
+    expect(d.ctx.stunBudget).toBe(90);
   });
 
   test('meter gain stops at 30 % per combo', () => {

@@ -50,8 +50,10 @@ export const MoveState = {
   Launched: 6,
   Down: 7,
   GetUp: 8,
-  /** Landing recovery after an aerial attack. */
+  /** Landing recovery after an aerial attack or a jump. */
   Landing: 9,
+  /** Protected landing after air recovery (targets). */
+  Recover: 10,
 } as const;
 export type MoveState = (typeof MoveState)[keyof typeof MoveState];
 
@@ -132,9 +134,22 @@ export interface Fighter extends Body {
   maxHealth: number;
   /** Combo context owned by this fighter as a defender. */
   ctx: ComboContext;
+
+  // --- M3 aerial and ground combat ----------------------------------------------------
+  /** Protected recovery: cannot be hit and gives attackers nothing until actionable. */
+  protectedRecovery: boolean;
+  /** Bounces armed by the last hit (Bounce bits); spent on impact if the quota allows. */
+  bounce: number;
+  /** Minimal-lift juggle band: falls with 1.5 × gravity until it lands. */
+  heavyFall: boolean;
+  /** Frames left in the open ground window while downed (0 = closed). */
+  groundWindow: number;
 }
 
-/** Ground-route tag recorded by the last knockdown (shown in the Lab; used from M3). */
+/** Bounce bits armed on a target by tagged hits. */
+export const Bounce = { Wall: 1, Ground: 2 } as const;
+
+/** Ground-route tag recorded by the last knockdown. */
 export const GroundTag = { None: 0, Opens: 1, Terminal: 2 } as const;
 
 /**
@@ -151,7 +166,7 @@ export interface ComboContext {
   /** Damage scale in percent for the next action. */
   scale: number;
   stunBudget: number;
-  /** Stored for M3; not enforced in M2. */
+  /** Move-weighted juggle budget; 0 = exhausted (protected landing). */
   juggleBudget: number;
   /** Attack meter that can still be earned from this combo. */
   meterBudget: number;
@@ -160,7 +175,31 @@ export interface ComboContext {
   groundTag: number;
   /** Damage dealt by the most recent hit, for the hit pop-up. */
   lastDamage: number;
+  /** One ordinary wall rebound and one ground bounce per combo (a relaunch uses the latter). */
+  wallBounceUsed: boolean;
+  groundBounceUsed: boolean;
+  /** The ground window opened once in this combo (re-knockdown never refreshes it). */
+  groundOpened: boolean;
+  /** Ground route allowance shared by every attacker: one extension, one finisher. */
+  groundExtUsed: boolean;
+  groundFinUsed: boolean;
+  /** How the combo ended (Protect code), 0 while open or ended by plain recovery. */
+  ended: number;
+  /** Actions that connected, in order: hero roster index × 64 + action index. */
+  route: number[];
 }
+
+/** Why a target entered protected recovery (for the Lab). Numbers are encoded. */
+export const Protect = {
+  None: 0,
+  GetUp: 1,
+  AirRecovery: 2,
+  SoftReset: 3,
+  MissedWindow: 4,
+} as const;
+
+/** Route log cap per context. */
+export const ROUTE_CAP = 32;
 
 export interface DummySettings {
   /** Treat every hit as a counter-hit (dummies do not attack yet). */

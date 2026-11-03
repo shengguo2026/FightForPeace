@@ -25,7 +25,7 @@ Stop the server with `Ctrl+C`.
 
 If `node --version` shows something older than 24, install Node.js 24 LTS from nodejs.org. If `pnpm` is missing, run `corepack enable` once in an administrator PowerShell.
 
-## Controls (M2)
+## Controls (M3)
 
 Keys are physical positions, so they stay in the same place on QWERTZ and AZERTY keyboards. The screen always shows the character printed on your key (for example Jump is `Z` on a German keyboard, `Y` on a US one), and a gamepad shows its own buttons.
 
@@ -46,6 +46,8 @@ Guard is only used in the dash low-attack chord so far (defense arrives in M4). 
 
 **Heroes.** Player 1 is the Mountain Guardian (blue, wide), Player 2 the River Scout (orange, slim); the Lab settings (F2) switch either one. Each has 15 normal attacks: a three-hit neutral string (Attack, Attack, Attack), Forward/Backward/Up/Down + Attack routes, aerial attacks (jump, then Attack with or without a direction), a dash attack (dash, then Attack) and a low attack (dash, then Attack + Guard together, or the optional Low Attack binding). Forward and Backward count from the way the hero is facing when you press Attack: holding the opposite direction performs the Backward move, it does not turn you around. F5 lists every move with its input, frame data and combo links.
 
+**Aerial and ground combat (M3).** Launches and juggles spend the dummy's juggle budget; as it runs low, hits lift less, and when it runs out the dummy drifts down and lands protected. Each combo allows one wall rebound (Gatepost Hammer, Open Channel Kick or Current Chase into a stage edge) and one ground bounce (Stonefall Knee). A knockdown that opens a ground window (Low Bank Sweep, or a low attack's counter-trip) marks the downed dummy with "▼ ground window"; standing close and facing it puts a green ring under it, and then Attack and Forward/Backward + Attack use your hero's ground moves: one extension (Settling Palm, Skipping Current), then one finisher (Lockgate Press, Foundation Rise, Rising Eddy). A dummy in protected recovery is drawn translucent and cannot be hit. A plain jump now lands with 4 frames of landing recovery.
+
 **Joining and devices.** Player 1 plays alone on the keyboard or on any gamepad: the device you touch last takes over. Player 2 joins by pressing Num 4 (Attack) on the split keyboard, or Start on a second gamepad. Once two players are in, a newly plugged-in gamepad does not take over anybody. Unplugging a player's gamepad pauses the game until it is plugged back in, or until that player presses Attack on another device.
 
 **Lab keys.**
@@ -58,8 +60,9 @@ Guard is only used in the dash low-attack chord so far (defense arrives in M4). 
 | F4 | Training dummies walk towards the nearest hero |
 | F5 | Move list for each joined hero: input, startup/active/recovery frames, damage, combo links and their conditions |
 | F6 | Slow motion (a quarter speed; the simulation itself is unchanged) |
+| F7 | Academy recipes (spec §8.3) for each joined hero, ticked off step by step on the dummy you are hitting, with a "performed" count and a **Practise** button that puts your hero in front of Dummy 1 (and turns on counter-hit dummies when the recipe needs them) |
 
-The Lab also shows, per player, the hero, the current move and its phase, the last combo-link verdict (and the reason a press was rejected), the attack meter and the dash bridge; and for the last dummy hit: health, hits, damage, damage scale, hit-stun budget, meter-gain budget, juggle budget (enforced from M3), dash bridge and ground tag. F2 adds hero selection, infinite attack meter, counter-hit dummies and health refill.
+The Lab also shows, per player, the hero, the current move and its phase, the last combo-link verdict (and the reason a press was rejected), the attack meter and the dash bridge; and for the last dummy hit: health, hits, damage, damage scale, hit-stun budget, meter-gain budget, juggle budget and lift band, wall rebound and ground bounce, dash bridge, knockdown tag, ground route (window frames, extension, finisher), recovery (protected, and why the combo ended) and the route of moves that connected. F2 adds hero selection, infinite attack meter, counter-hit dummies, health refill and "Dummy 1 to the wall".
 
 ## Developer commands
 
@@ -86,13 +89,25 @@ The first `pnpm e2e` on a new machine needs the browsers: `pnpm --filter @ffp/ga
 
 When a change alters simulation results on purpose, bump `RULES_VERSION` in `packages/sim/src/replay.ts` and re-record the golden replays in the same commit (see above). A replay recorded under another rules version fails loudly instead of silently producing a different hash.
 
+## M3 test checklist
+
+1. Press F7: the Academy recipes for the Mountain Guardian. Press **Practise** next to "Foundation" and press T three times: every step gets a tick and "performed" becomes 1.
+2. **Practise** "Aerial conversion": W + T (High Bank Lift), Jump right after the hit, T in the air (Rafter Palm), then D + T (Stonefall Knee). The dummy bounces off the floor once (target panel: "ground bounce used") and then lies down translucent: protected get-up. Juggle budget in the target panel drops (100 → 70 → 60 → 35 → 20).
+3. **Practise** "Low to ground" (this turns on counter-hit dummies): double-tap D, then T + G together (Faultline Reap). The dummy trips and shows "▼ ground window"; a green ring appears under it while you face it. Press T (Settling Palm), then D + T (Lockgate Press, three hits) or A + T (Foundation Rise, a relaunch). The panel shows "ground route … extension used · finisher used".
+4. In the ground window, press T twice: the second press is rejected with "ground route already used" (Player 1 panel). Walk away or turn around: the ring disappears and T is Mason's Touch again. Let the window run out: "ground window missed", the dummy gets up protected.
+5. Mason's Touch → S + T (Low Bank Sweep) also opens a ground window, without counter-hit dummies.
+6. F2, "Dummy 1 to the wall", then T three times: Gatepost Hammer slams the dummy into the stage edge and it rebounds into the air ("wall rebound used"). Repeat the string in the same combo: no second rebound.
+7. F2: switch Player 1 to the River Scout and do its three recipes the same way (Reed Tap string; W + T, Jump, T, D + T; dash, T + G, T, D + T for Rising Eddy, which switches sides).
+8. Join Player 2 (Num 4). Player 1 launches the dummy with W + T, Player 2 jumps (Num 5) and hits it (Num 4): the juggle budget keeps falling in one shared combo (it never resets when the other player hits); if it reaches 0, the dummy recovers in the air and lands protected.
+9. Jump on the spot: a short landing pause after touching down. Attack pressed during that pause comes out right after it.
+
 ## M2 test checklist
 
 1. Walk up to Dummy 1 and press T three times: three hits (Mason's Touch, Brace Elbow, Gatepost Hammer); the third knocks the dummy back. The target panel at the top right shows 3 hits and the damage.
 2. Try each direction + T as the first hit: D + T advances (Stone Shoulder), A + T retreats while still facing right (Anchor Hook), W + T launches (High Bank Lift), S + T knocks down (Low Bank Sweep). F5 lists every route.
 3. W + T on the dummy, then Jump right after the hit, then T in the air, then D + T: the launcher, jump chase and aerial follow-ups.
 4. Jump anywhere and press T, D + T, A + T, W + T and S + T in the air: every aerial attack uses the tucked body with the **magenta strike angled down**, never the yellow arm of standing attacks or the cyan floor sweep of the low attack.
-5. Dash (double-tap D), then T: the dash attack. Dash, then T and G together: the low attack (crouch + cyan sweep). F2, "Counter-hit dummies": the low attack now trips the dummy, and it shows "ground window (M3)".
+5. Dash (double-tap D), then T: the dash attack. Dash, then T and G together: the low attack (crouch + cyan sweep). F2, "Counter-hit dummies": the low attack now trips the dummy, and it shows "▼ ground window".
 6. F2, "Infinite attack meter". Do the three-hit string, then double-tap D right after the third hit: the premium dash bridge (25 % meter), then T for the dash attack. The target panel shows "dash bridge used".
 7. F3: red hitboxes appear only on active frames; F6 slows everything down to see them. During the low attack the blue hurtbox is lower.
 8. Press T at the wrong moment inside a string (too early, after a miss, or a direction with no link): the Player 1 panel names the reason.

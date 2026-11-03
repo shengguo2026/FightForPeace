@@ -101,12 +101,30 @@ export interface ActionDef {
   pose: string;
 }
 
+export interface RecipeStep {
+  /** A jump-chase hint between two attacks; never matched against hits. */
+  jump: boolean;
+  /** Action indices accepted for this step. */
+  any: readonly number[];
+}
+
+/** An Academy representative recipe (spec §8.3): a route the Lab tracks while you play. */
+export interface RecipeDef {
+  id: string;
+  name: string;
+  family: 'foundation' | 'aerial' | 'ground';
+  steps: readonly RecipeStep[];
+  /** The recipe needs counter-hit dummies (counter-trip openers). */
+  counterHit: boolean;
+}
+
 export interface HeroDef {
   id: string;
   name: string;
   /** Placeholder silhouette width in pixels (presentation only). */
   bodyWidth: number;
   actions: readonly ActionDef[];
+  recipes: readonly RecipeDef[];
 }
 
 /** Category-tuned cancel timing (frames): early buffer before contact, window after it. */
@@ -132,6 +150,9 @@ export const Reject = {
   StunExhausted: 8,
   NotYet: 9,
   QueueFull: 10,
+  JuggleExhausted: 11,
+  Protected: 12,
+  GroundSpent: 13,
 } as const;
 export type Reject = (typeof Reject)[keyof typeof Reject];
 
@@ -147,4 +168,7 @@ export const REJECT_TEXT: Record<number, string> = {
   [Reject.StunExhausted]: 'hit-stun budget exhausted',
   [Reject.NotYet]: 'arrives in M5',
   [Reject.QueueFull]: 'a valid follow-up is already queued',
+  [Reject.JuggleExhausted]: 'juggle budget exhausted',
+  [Reject.Protected]: 'target is in protected recovery',
+  [Reject.GroundSpent]: 'ground route already used',
 };
