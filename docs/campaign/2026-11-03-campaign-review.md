@@ -160,7 +160,7 @@ Guo accepted every recommendation in Part 2 and in the Stage 3 close check.
 | Gap | Done |
 |---|---|
 | G1 Tomas's age | Recorded in `story_line.md`; Stage 3 prompts draw him at about 54. |
-| G2 Outfits | Outfit-pipeline spike added to the roadmap (M5 guardrail); Stage 3 outfits are drawn as model sheets and renders until it is decided. |
+| G2 Outfits | Decided 2026-11-03: no rig and no overlays (spike dropped); outfits seen in play get full key-pose sheets. Only the free default evolution gets full sheets; Store outfits stay colour swaps in play (roadmap campaign decision 4). |
 | G3 Lost decisions | §13 and the save rule restored. |
 | G4 File locations | Specifications moved to `docs/superpowers/specs/`, the music direction to `docs/production/`, `story_line.md`, `Features_Decisions.md` and the feature records to the repository root; the stale root copies were replaced. `refinement/` is now an empty drop folder with a README. |
 | G5 Scope | Three-release plan in the roadmap. |
