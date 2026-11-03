@@ -53,16 +53,6 @@ async function play(page: Page, cues: Cue[]) {
   );
 }
 
-/** Pause / resume (Escape), waiting until the pause state has flipped. */
-async function esc(page: Page) {
-  const before = await page.evaluate(() => window.__ffp!.paused());
-  await page.evaluate(() => {
-    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', key: 'Escape' }));
-    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'Escape', key: 'Escape' }));
-  });
-  await page.waitForFunction((b) => window.__ffp!.paused() !== b, before);
-}
-
 const JAB = 0;
 const CLUB = 1;
 
