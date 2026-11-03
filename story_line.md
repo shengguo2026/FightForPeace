@@ -96,7 +96,7 @@ Their objective is explicit:
 
 ### 4.3 Founding heroes
 
-**Canon:** Mountain Guardian and River Scout are working archetype titles; their final personal names remain unresolved.
+**Canon:** Mountain Guardian and River Scout remain the in-game role titles. Their personal names (decided 2026-11-03) are **Shi Lei / 石磊** (Mountain Guardian; family name Shi, given name Lei) and **Lan Xi / 澜溪** (River Scout; family name Lan, given name Xi), identical in English and German. Dialogue, HUD and selection use the role titles; formal Museum records, the Campaign Chronicle and the Stage 8 credits *Those Who Built Peace* use the personal names, for example **Shi Lei, Mountain Guardian**.
 
 - **Mountain Guardian** is a calm, grounded protector associated with village craft, waterworks, close control, stable defense, and deliberate power.
 - **River Scout** is a warm, alert messenger and river-path guide associated with mobility, aerial pursuit, repositioning, and rapid response.
@@ -1603,8 +1603,8 @@ The final epilogue returns to the village. It shows restitution beginning, the F
 | Character or group | Last confirmed state | Future direction or restriction |
 |---|---|---|
 | Sheng Guo / 盛国 / Wise Elder | Leads the village, detects Tomas's deception, preserves the formula for research, expels Tomas, and continues the sponsor investigation. | Age 26 during the historical battle, about 66 in Stage 1 and 69 in Stage 2. As a governance apprentice and Measured Hand civic-defense practitioner, opposed but ultimately complied with the collective exile, protected the family's departure, and preserved the case records and his objection. Succeeds his mentor at about 34, reforms future procedure, but fails to repair the old case fully. `GuoPhoto.jpg` is the approved facial reference for his age-linked model sheets; Simplified Chinese always uses the personal name 盛国. |
-| Mountain Guardian | Helps restore the river and remains part of the expanded roster. A returning founder may recognize the Stage 1 seal in Stage 2. | Remains a selectable founding hero; personal name and deeper biography are unresolved. |
-| River Scout | Helps restore the river and remains part of the expanded roster. A returning founder may recognize the Stage 1 seal in Stage 2. | Remains a selectable founding hero; personal name and deeper biography are unresolved. |
+| Mountain Guardian | Helps restore the river and remains part of the expanded roster. A returning founder may recognize the Stage 1 seal in Stage 2. | Remains a selectable founding hero. Personal name **Shi Lei / 石磊** (decided 2026-11-03); deeper biography is unresolved. |
+| River Scout | Helps restore the river and remains part of the expanded roster. A returning founder may recognize the Stage 1 seal in Stage 2. | Remains a selectable founding hero. Personal name **Lan Xi / 澜溪** (decided 2026-11-03); deeper biography is unresolved. |
 | Wind Sentinel | Protects the Stage 2 greenhouse as an 18-year-old civil-protection hero. | Remains Fire Warden's unique twin sister and a fast karate-derived fighter. |
 | Fire Warden | Protects the Stage 2 greenhouse as an 18-year-old civil-protection hero. | Remains Wind Sentinel's unique twin brother and a Sanda, kickboxing, and control specialist. |
 | Sluice Commander | Defeated through surrender or safe capture presentation. | **Confirmed (2026-11-03):** held by the village, then transferred to the regional authority for lawful trial; the Stage 2 Museum and Campaign Chronicle state this in one line. Stage 1 is unchanged. Do not reuse the character as free or dead. |

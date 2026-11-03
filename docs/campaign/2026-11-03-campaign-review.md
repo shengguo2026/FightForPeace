@@ -168,7 +168,7 @@ Guo accepted every recommendation in Part 2 and in the Stage 3 close check.
 | G7 Wayfarer Chronicle | *The Road Between* recorded in `story_line.md` §8; specified before M38. |
 | G8 Playable kits | Recorded in `story_line.md` §8; Kael and Lin Lan before Release 2, Soren and Chen Yue with *The Road Between*. |
 | G9 Backstory chapters | Placement table in `story_line.md` §9.6. |
-| G10 Founders' names | Two name pairs proposed to Guo; waiting for the choice. |
+| G10 Founders' names | Decided: **Shi Lei / 石磊** (Mountain Guardian) and **Lan Xi / 澜溪** (River Scout), recorded in `story_line.md` and `Features_Decisions.md`. |
 | G11 Visual identities | Stage 3 cast designed in the Stage 3 prompt anchors; later casts per release (roadmap A6). |
 | G12 Constitution audit | Roadmap M24. |
 | G13 Shared condition, evidence and grade modules | Roadmap M25. |
