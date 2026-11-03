@@ -14,12 +14,12 @@ import {
   bandLift,
   emptyContext,
   juggleBand,
-  routeCode,
   scaledHitstun,
   splitDamage,
 } from './context';
-import { REACTION, enter, enterProtection, exhaustJuggle } from './reactions';
-import { HEROES, activeSegment, segmentCount } from './roster';
+import { defend, defenseSnapshots } from './defense';
+import { REACTION, enter, enterProtection, exhaustJuggle, interrupt } from './reactions';
+import { activeSegment, kitOf, routeCode, segmentCount } from './roster';
 import type { ActionDef } from './types';
 
 /** Target hurtbox (M2 candidate): half width, half depth, standing and low heights. */
@@ -41,8 +41,8 @@ export interface Box {
 
 /** The running action of a fighter, or undefined. */
 export function runningAction(f: Fighter): ActionDef | undefined {
-  if (f.state !== MoveState.Attack || f.action < 0 || f.hero < 0) return undefined;
-  return HEROES[f.hero]?.actions[f.action];
+  if (f.state !== MoveState.Attack || f.action < 0) return undefined;
+  return kitOf(f)?.actions[f.action];
 }
 
 /** World-space hitbox of a fighter's action on its current frame, or null when not active. */
@@ -104,10 +104,13 @@ export function groundAllows(ctx: ComboContext, a: ActionDef): boolean {
 
 /**
  * Hit pass, after all movement. Attackers and targets are visited in ascending id order.
- * Heroes never hit heroes. Each target can be hit once per active segment.
+ * Heroes never hit heroes. Each target can be hit once per active segment. A contact on a
+ * defender first goes through its defense (guard, exact block, counter), judged against
+ * the defender's guard state as it was when this pass began.
  */
 export function resolveHits(world: World): void {
   const bodies = [...world.bodies].sort((a, b) => a.id - b.id);
+  const snaps = defenseSnapshots(bodies);
   for (const att of bodies) {
     const a = runningAction(att);
     if (!a) continue;
@@ -120,8 +123,16 @@ export function resolveHits(world: World): void {
     }
     const box = activeHitbox(att)!;
     for (const t of bodies) {
+      // A counter or deflect may have stopped this action part-way through the targets.
+      if (runningAction(att) !== a) break;
       if (att.hitIds.includes(t.id) || !canHit(att, a, t)) continue;
       if (!overlaps(box, hurtbox(t))) continue;
+      const snap = snaps.get(t.id);
+      if (snap && defend(world, att, a, seg, t, snap)) {
+        att.hitIds.push(t.id);
+        if (att.contactAt < 0) att.contactAt = att.stateFrame + 1;
+        continue;
+      }
       applyHit(world, att, a, seg, t);
     }
   }
@@ -165,7 +176,7 @@ function applyHit(world: World, att: Fighter, a: ActionDef, seg: number, t: Figh
     const cost = ctx.actions === 0 ? a.starterProration : a.damageScaleCost;
     ctx.scale = Math.max(DAMAGE_FLOOR, ctx.scale - cost);
     ctx.actions += 1;
-    if (ctx.route.length < ROUTE_CAP) ctx.route.push(routeCode(att.hero, att.action));
+    if (ctx.route.length < ROUTE_CAP) ctx.route.push(routeCode(att.team, att.hero, att.action));
   } else {
     hitstun = scaledHitstun(a.reaction.hitstun, ctx.stunBudget + a.stunDecayCost);
     band = juggleBand(ctx.juggleBudget + a.juggleCost);
@@ -200,7 +211,7 @@ function react(
   const dir = pushDir(att, a, t);
   const trip = r.counterTrip && world.dummy.counterHit;
   const ctx = t.ctx;
-  t.action = -1;
+  interrupt(t);
   t.stateFrame = 0;
 
   if (ctx.exhausted || (juggleOut && !airborne)) {
@@ -269,7 +280,7 @@ function groundReact(
 ): void {
   const ctx = t.ctx;
   const finisher = a.tags.includes('groundFinisher');
-  t.action = -1;
+  interrupt(t);
   t.vx = 0;
   t.vz = 0;
   if (finisher) ctx.groundFinUsed = true;

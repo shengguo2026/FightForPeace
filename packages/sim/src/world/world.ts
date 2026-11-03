@@ -6,17 +6,11 @@ import { collide, type PositionLog } from '../collision/collide';
 import { emptyContext } from '../combat/context';
 import { resolveHits } from '../combat/hits';
 import { closeContextIfActionable, stepReaction } from '../combat/reactions';
-import { HEROES, heroIndex } from '../combat/roster';
-import { NO_TAP, directed, stepHero } from '../movement/controller';
+import { HEROES, TRAINER_KIT, heroIndex } from '../combat/roster';
+import { defaultTrainer, stepTrainer } from '../combat/trainer';
+import { NO_TAP, stepHero } from '../movement/controller';
+import { ON_FOOT } from '../movement/profile';
 import {
-  BODY_HALF_D,
-  BODY_HALF_W,
-  DUMMY_SPEED_X,
-  DUMMY_SPEED_Z,
-  ON_FOOT,
-} from '../movement/profile';
-import {
-  type Axis,
   type FacingMode,
   type Fighter,
   type FrameInput,
@@ -24,13 +18,14 @@ import {
   type Team,
   type World,
   type ComboContext,
+  type TrainerSettings,
 } from './types';
 
 export const DUMMY_HEALTH = 1000;
 export const HERO_HEALTH = 1000;
 
 /** Version of the byte layout written by encodeWorld. Bump on any layout change. */
-export const STATE_FORMAT = 6;
+export const STATE_FORMAT = 7;
 
 /** Walking speeds (fixed point per frame), kept as exports for existing callers. */
 export const WALK_SPEED_X = ON_FOOT.walkX;
@@ -65,6 +60,10 @@ export interface WorldOptions {
   /** Lab: dummies refill their health when a combo ends (default on). */
   refill?: boolean;
   infiniteMeter?: boolean;
+  /** Lab: heroes' Defense meter stays full. */
+  infiniteDefense?: boolean;
+  /** Lab: the training enemy's script (default: dummies never attack). */
+  trainer?: Partial<TrainerSettings>;
 }
 
 const DEFAULT_HEROES = ['mountain', 'river'];
@@ -132,6 +131,28 @@ export function createFighter(
     bounce: 0,
     heavyFall: false,
     groundWindow: 0,
+    defense: 100,
+    defIdle: 0,
+    guardX: team === 'hero' ? 1 : -1,
+    guardZ: 0,
+    guardNeutral: true,
+    pivotX: 0,
+    pivotZ: 0,
+    pivotAt: NO_TAP,
+    exactFrame: NO_TAP,
+    precisionUntil: NO_TAP,
+    counterFrame: NO_TAP,
+    counterX: 0,
+    counterZ: 0,
+    lastDirFrame: NO_TAP,
+    lastUltFrame: NO_TAP,
+    rewardIds: [],
+    defEvent: 0,
+    defOffset: 0,
+    defFrame: 0,
+    defAction: -1,
+    aiTimer: 0,
+    aiStep: 0,
   };
 }
 
@@ -149,7 +170,7 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
   const dummies = Math.min(options.dummies ?? 0, DUMMY_SPAWN.length);
   for (let i = 0; i < dummies; i += 1) {
     const s = DUMMY_SPAWN[i]!;
-    bodies.push(createFighter(DUMMY_ID_BASE + i, 'enemy', -1, s.x, s.z));
+    bodies.push(createFighter(DUMMY_ID_BASE + i, 'enemy', -1, s.x, s.z, 'manual', TRAINER_KIT));
   }
   const world: World = {
     frame: 0,
@@ -161,6 +182,8 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
     playerHero: heroes,
     dummy: { counterHit: options.counterHit ?? false, refill: options.refill ?? true },
     infiniteMeter: options.infiniteMeter ?? false,
+    infiniteDefense: options.infiniteDefense ?? false,
+    trainer: { ...defaultTrainer(), ...options.trainer },
   };
   world.bodies.sort((a, b) => a.id - b.id);
   return world;
@@ -211,7 +234,7 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
       stepHero(world, f, normalize(inputs[f.slot]), ON_FOOT);
       if (world.infiniteMeter) f.meter = 100;
     } else if (!stepReaction(world, f)) {
-      stepDummy(world, f);
+      stepTrainer(world, f);
     }
   }
   resolveHits(world);
@@ -240,37 +263,6 @@ function normalize(input: Partial<FrameInput> | undefined): FrameInput {
   };
 }
 
-/** Training dummy: stands still, or walks towards the nearest hero when chasing. */
-function stepDummy(world: World, f: Fighter): void {
-  f.vx = 0;
-  f.vz = 0;
-  f.state = MoveState.Idle;
-  if (!world.dummiesChase) return;
-  let target: Fighter | null = null;
-  let best = 0;
-  for (const h of world.bodies) {
-    if (h.team !== 'hero') continue;
-    const d = (h.x - f.x) * (h.x - f.x) + (h.z - f.z) * (h.z - f.z);
-    if (target === null || d < best) {
-      target = h;
-      best = d;
-    }
-  }
-  if (!target) return;
-  const dx = target.x - f.x;
-  const dz = target.z - f.z;
-  const reachX = 2 * BODY_HALF_W + fx(8);
-  const reachZ = 2 * BODY_HALF_D + fx(4);
-  if (Math.abs(dx) <= reachX && Math.abs(dz) <= reachZ) return;
-  const sx: Axis = Math.abs(dx) > reachX ? (dx > 0 ? 1 : -1) : 0;
-  const sz: Axis = Math.abs(dz) > fx(4) ? (dz > 0 ? 1 : -1) : 0;
-  [f.vx, f.vz] = directed(sx, sz, DUMMY_SPEED_X, DUMMY_SPEED_Z, ON_FOOT.diagonal);
-  if (sx !== 0) f.facing = sx;
-  f.state = f.vx !== 0 || f.vz !== 0 ? MoveState.Walk : MoveState.Idle;
-  f.x += f.vx;
-  f.z += f.vz;
-}
-
 const TEAM_CODE: Record<Team, number> = { hero: 0, enemy: 1 };
 const FACING_MODE_CODE: Record<FacingMode, number> = { manual: 0, assisted: 1 };
 
@@ -295,6 +287,11 @@ export function encodeWorld(world: World): Uint8Array {
   w.u8(world.dummy.counterHit ? 1 : 0);
   w.u8(world.dummy.refill ? 1 : 0);
   w.u8(world.infiniteMeter ? 1 : 0);
+  w.u8(world.infiniteDefense ? 1 : 0);
+  w.u8(world.trainer.attackers);
+  w.i32(world.trainer.pattern);
+  w.u32(world.trainer.interval);
+  w.u8(world.trainer.approach ? 1 : 0);
   const bodies = [...world.bodies].sort((a, b) => a.id - b.id);
   w.u32(bodies.length);
   for (const b of bodies) {
@@ -355,6 +352,29 @@ export function encodeWorld(world: World): Uint8Array {
     w.u8(b.bounce);
     w.u8(b.heavyFall ? 1 : 0);
     w.u32(b.groundWindow);
+    w.u32(b.defense);
+    w.u32(b.defIdle);
+    w.i32(b.guardX);
+    w.i32(b.guardZ);
+    w.u8(b.guardNeutral ? 1 : 0);
+    w.i32(b.pivotX);
+    w.i32(b.pivotZ);
+    w.i32(b.pivotAt);
+    w.i32(b.exactFrame);
+    w.i32(b.precisionUntil);
+    w.i32(b.counterFrame);
+    w.i32(b.counterX);
+    w.i32(b.counterZ);
+    w.i32(b.lastDirFrame);
+    w.i32(b.lastUltFrame);
+    w.u32(b.rewardIds.length);
+    for (const id of b.rewardIds) w.u32(id);
+    w.u8(b.defEvent);
+    w.i32(b.defOffset);
+    w.u32(b.defFrame);
+    w.i32(b.defAction);
+    w.i32(b.aiTimer);
+    w.u32(b.aiStep);
   }
   return w.bytes();
 }
@@ -384,6 +404,7 @@ function encodeContext(w: ByteWriter, c: ComboContext): void {
   w.u8(c.ended);
   w.u32(c.route.length);
   for (const r of c.route) w.u32(r);
+  w.u8(c.breakerUsed ? 1 : 0);
 }
 
 /** Names of the heroes in roster order, for menus and the Lab. */

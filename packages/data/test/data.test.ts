@@ -5,6 +5,7 @@ import {
   GENERATED_PATH,
   HeroDataError,
   compileHero,
+  enemyFiles,
   generate,
   heroFiles,
   loadHero,
@@ -66,11 +67,13 @@ test.each([
   ['river.yaml', { standing: 7, aerial: 4, ground: 2, dash: 1, low: 1 }],
 ])('%s has 15 actions with the §10.2 category split and Appendix B frame data', (file, split) => {
   const hero = load(file);
-  expect(hero.actions).toHaveLength(15);
+  // Counters are counted separately from the 15 normal actions (F&D §13).
+  const normals = hero.actions.filter((a) => a.category !== 'counter');
+  expect(normals).toHaveLength(15);
   const counts: Record<string, number> = {};
-  for (const a of hero.actions) counts[a.category] = (counts[a.category] ?? 0) + 1;
+  for (const a of normals) counts[a.category] = (counts[a.category] ?? 0) + 1;
   expect(counts).toEqual(split);
-  for (const a of hero.actions) {
+  for (const a of normals) {
     expect([a.frames.startup, a.frames.active, a.frames.recovery]).toEqual(SAR[a.id]);
     expect(a.frames.landing ?? false).toBe(a.category === 'aerial');
   }
@@ -106,7 +109,7 @@ test('a third hero file becomes a third roster entry with no code change (Review
   const dir = mkdtempSync(join(tmpdir(), 'heroes-'));
   for (const f of files) copyFileSync(f, join(dir, basename(f)));
   writeFileSync(join(dir, 'zz-test.yaml'), base.replace('id: mountain', 'id: test-hero'));
-  const source = generate(heroFiles(join(dir, '/')));
+  const source = generate(heroFiles(join(dir, '/')), []);
   expect(source).toContain('"id": "test-hero"');
   expect(source.match(/"bodyWidth"/g)).toHaveLength(3);
 });
@@ -134,5 +137,67 @@ describe('Academy recipes (M3)', () => {
     const ids = (any: number[]) => any.map((i) => compiled.actions[i]!.id);
     expect(compiled.recipes[1]!.steps[1]).toEqual({ jump: true, any: [] });
     expect(ids(compiled.recipes[2]!.steps[2]!.any)).toEqual(['lockgate-press', 'foundation-rise']);
+  });
+});
+
+describe('Defense data (M4)', () => {
+  const trainer = () => loadHero(readFileSync(enemyFiles()[0]!, 'utf8'), 'trainer.yaml', 'enemy');
+
+  test.each(['mountain.yaml', 'river.yaml'])(
+    '%s has one counter action, after the normals',
+    (file) => {
+      const hero = load(file);
+      const counters = hero.actions.filter((a) => a.category === 'counter');
+      expect(counters).toHaveLength(1);
+      expect(hero.actions.at(-1)!.category).toBe('counter');
+      expect(counters[0]!.input.context).toBe('counter');
+    },
+  );
+
+  test('the training enemy has one attack per defense-response profile', () => {
+    const t = trainer();
+    expect(enemyFiles().map((f) => basename(f))).toEqual(['trainer.yaml']);
+    const tags = Object.fromEntries(t.actions.map((a) => [a.id, a.tags ?? []]));
+    expect(Object.keys(tags)).toEqual([
+      'jab',
+      'club',
+      'thrust',
+      'two-step',
+      'barrage',
+      'bell-hammer',
+    ]);
+    expect(tags['jab']).toContain('counterable');
+    expect(tags['club']).toContain('guardPressure');
+    expect(tags['thrust']).toEqual(expect.arrayContaining(['guardPiercing', 'uncounterable']));
+    expect(tags['two-step']).toContain('deflectBreak');
+    expect(tags['bell-hammer']).toEqual(expect.arrayContaining(['unblockable', 'uncounterable']));
+    for (const a of t.actions) expect(a.input.context).toBe('script');
+  });
+
+  test('guard cost and block-stun compile with defaults', () => {
+    const c = compileHero(trainer(), 'enemy') as {
+      actions: { id: string; guardCost: number; blockstun: number; pose: string }[];
+    };
+    const club = c.actions.find((a) => a.id === 'club')!;
+    expect(club.guardCost).toBe(35);
+    expect(club.blockstun).toBe(18);
+    expect(club.pose).toBe('enemy.trainer.pose.standing.club');
+    const m = compileHero(load('mountain.yaml')) as {
+      actions: { guardCost: number; blockstun: number }[];
+    };
+    expect(m.actions[0]).toMatchObject({ guardCost: 10, blockstun: 14 });
+  });
+
+  test('a hero attack cannot be unblockable', () => {
+    const bad = base.replace('tags: [wallBounce]', 'tags: [wallBounce, unblockable]');
+    expect(() => loadHero(bad)).toThrow(/tag unblockable is for enemies only/);
+  });
+
+  test('a counter action must use the counter context', () => {
+    const bad = base.replace(
+      'input: { context: counter, dir: neutral }',
+      'input: { context: neutral, dir: neutral }',
+    );
+    expect(() => loadHero(bad)).toThrow(/counter actions use category and context counter/);
   });
 });

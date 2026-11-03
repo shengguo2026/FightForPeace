@@ -1,8 +1,32 @@
-import { HERO_DATA } from './heroes.gen';
+import { ENEMY_DATA, HERO_DATA } from './heroes.gen';
 import { type ActionDef, Dir, type HeroDef, type InputContext } from './types';
 
 /** The hero roster: a list of any length, in selection order (founders first). */
 export const HEROES: readonly HeroDef[] = HERO_DATA;
+/** Enemy kits (M4: the training enemy). */
+export const ENEMIES: readonly HeroDef[] = ENEMY_DATA;
+/** Kit index of the training enemy used by Lab dummies. */
+export const TRAINER_KIT = 0;
+/** Route codes of enemy actions start at this kit code (heroes use their roster index). */
+export const ENEMY_ROUTE_BASE = 32;
+
+/** The action kit of a fighter: its hero definition, or its enemy kit. */
+export function kitOf(f: { team: string; hero: number }): HeroDef | undefined {
+  if (f.hero < 0) return undefined;
+  return f.team === 'hero' ? HEROES[f.hero] : ENEMIES[f.hero];
+}
+
+/** Route-log code of an action that connected: kit code × 64 + action index. */
+export function routeCode(team: string, kit: number, action: number): number {
+  return (team === 'hero' ? kit : ENEMY_ROUTE_BASE + kit) * 64 + action;
+}
+
+/** The action a route-log code names, if any. */
+export function routeAction(code: number): ActionDef | undefined {
+  const k = Math.trunc(code / 64);
+  const kit = k >= ENEMY_ROUTE_BASE ? ENEMIES[k - ENEMY_ROUTE_BASE] : HEROES[k];
+  return kit?.actions[code % 64];
+}
 
 export function heroIndex(id: string, roster: readonly HeroDef[] = HEROES): number {
   const i = roster.findIndex((h) => h.id === id);

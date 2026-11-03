@@ -7,13 +7,22 @@ import { StageScene, VIEW_HEIGHT, VIEW_WIDTH } from './scenes/StageScene';
 import { LabOverlay, type LabActions } from './ui/LabOverlay';
 import { PauseOverlay } from './ui/PauseOverlay';
 import { createLabState } from './ui/labState';
-import { heldKeys, refreshPlayers, refreshRecipes, refreshTarget } from './ui/views';
+import {
+  heldKeys,
+  refreshDefense,
+  refreshPlayers,
+  refreshRecipes,
+  refreshTarget,
+} from './ui/views';
 import { captureNextKey, installKeyboard, readPads } from './input/browserInput';
 import { installDebugHook } from './debug';
 
 const devBuild = import.meta.env.DEV || import.meta.env.MODE === 'e2e';
-const session = new GameSession(1);
-const lab = createLabState(devBuild);
+// M4: the Lab is the playable build, so it is visible everywhere and Dummy 1 attacks with
+// the Straight Jab. Automated tests start with still dummies and arm them when needed.
+const lab = createLabState(true);
+if (import.meta.env.MODE === 'e2e') lab.trainer.value = { ...lab.trainer.value, attackers: 0 };
+const session = new GameSession(1, lab.trainer.value);
 
 new Phaser.Game({
   type: Phaser.AUTO,
@@ -71,6 +80,14 @@ const actions: LabActions = {
     session.world.dummy.refill = on;
   },
   dummyToWall: () => session.dummyToWall(),
+  setInfiniteDefense: (on) => {
+    lab.infiniteDefense.value = on;
+    session.world.infiniteDefense = on;
+  },
+  setTrainer: (settings) => {
+    lab.trainer.value = { ...lab.trainer.value, ...settings };
+    session.setTrainer(lab.trainer.value);
+  },
   practise: (slot, recipeId) => {
     const hero = heroOf(session.world, slot);
     const recipe = hero ? HEROES[hero.hero]?.recipes.find((r) => r.id === recipeId) : undefined;
@@ -92,6 +109,7 @@ installKeyboard(session, (code) => {
   if (code === 'F5') lab.moveListOpen.value = !lab.moveListOpen.value;
   if (code === 'F6') lab.slowMotion.value = !lab.slowMotion.value;
   if (code === 'F7') lab.recipesOpen.value = !lab.recipesOpen.value;
+  if (code === 'F8') lab.defenseOpen.value = !lab.defenseOpen.value;
 });
 
 if (devBuild) installDebugHook(session, lab);
@@ -117,6 +135,7 @@ function tick(now: number): void {
   refreshPlayers(session, lab, report.inputs);
   refreshTarget(session, lab);
   refreshRecipes(session, lab);
+  refreshDefense(session, lab);
   const held = heldKeys(session);
   if (held.join(' ') !== lab.heldKeys.value.join(' ')) lab.heldKeys.value = held;
 

@@ -1,7 +1,8 @@
 /**
- * Hero action data: YAML files in packages/data/heroes are validated against a TypeBox
- * schema, checked for consistency (link targets, unique input slots), converted to the
- * simulation's integer units and written to packages/sim/src/combat/heroes.gen.ts.
+ * Action data: hero files in packages/data/heroes and enemy kits in packages/data/enemies
+ * are validated against a TypeBox schema, checked for consistency (link targets, unique
+ * input slots), converted to the simulation's integer units and written to
+ * packages/sim/src/combat/heroes.gen.ts.
  *
  *   pnpm gen:heroes
  *
@@ -9,7 +10,7 @@
  * no relative imports so Node can run it directly with type stripping.
  */
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
-import { basename } from 'node:path';
+import { basename, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { type Static, Type as T } from '@sinclair/typebox';
 import { Value } from '@sinclair/typebox/value';
@@ -98,6 +99,7 @@ const Action = T.Object(
       T.Literal('ground'),
       T.Literal('dash'),
       T.Literal('low'),
+      T.Literal('counter'),
     ]),
     input: T.Object(
       {
@@ -108,6 +110,8 @@ const Action = T.Object(
           T.Literal('groundFocus'),
           T.Literal('dash'),
           T.Literal('dashLow'),
+          T.Literal('counter'),
+          T.Literal('script'),
         ]),
         dir: Dir,
       },
@@ -122,6 +126,8 @@ const Action = T.Object(
         ]),
         recovery: Frames,
         landing: T.Optional(T.Boolean()),
+        /** Guard reaction of a defender who normally guards this action (default hit-stun − 4, at least 6). */
+        blockstun: T.Optional(Frames),
       },
       { additionalProperties: false },
     ),
@@ -135,6 +141,8 @@ const Action = T.Object(
         scale: T.Integer({ minimum: 0, maximum: 100 }),
         starter: T.Optional(T.Integer({ minimum: 0, maximum: 100 })),
         juggle: T.Optional(T.Integer({ minimum: 0, maximum: 100 })),
+        /** Defense-meter percent a normal guard of this action costs (default 10). */
+        guard: T.Optional(T.Integer({ minimum: 0, maximum: 100 })),
       },
       { additionalProperties: false },
     ),
@@ -174,14 +182,25 @@ export const HeroSchema = T.Object(
 
 export type HeroYaml = Static<typeof HeroSchema>;
 
+/** Defense-profile tags only an enemy kit may use (heroes' attacks stay guardable). */
+const ENEMY_ONLY_TAGS = ['unblockable', 'guardPiercing'];
+const DEFAULT_GUARD_COST = 10;
+
 const DIR_CODE = { neutral: 0, forward: 1, backward: 2, up: 3, down: 4, vertical: 5 } as const;
 const FX = 256;
 const fx = (px: number | undefined) => Math.round((px ?? 0) * FX);
 
 export class HeroDataError extends Error {}
 
-/** Parses and validates one hero file. Throws HeroDataError with every problem listed. */
-export function loadHero(source: string, file = 'hero.yaml'): HeroYaml {
+/**
+ * Parses and validates one hero file (or, with kind 'enemy', one enemy kit). Throws
+ * HeroDataError with every problem listed.
+ */
+export function loadHero(
+  source: string,
+  file = 'hero.yaml',
+  kind: 'hero' | 'enemy' = 'hero',
+): HeroYaml {
   const raw: unknown = parse(source);
   const errors = [...Value.Errors(HeroSchema, raw)].map(
     (e) => `${file}: ${e.path || '/'} ${e.message}`,
@@ -194,7 +213,15 @@ export function loadHero(source: string, file = 'hero.yaml'): HeroYaml {
   for (const a of hero.actions) {
     if (ids.has(a.id)) problems.push(`duplicate action id "${a.id}"`);
     ids.add(a.id);
-    if (a.input.context === 'chain') continue;
+    if (kind === 'hero') {
+      for (const t of a.tags ?? []) {
+        if (ENEMY_ONLY_TAGS.includes(t)) problems.push(`"${a.id}": tag ${t} is for enemies only`);
+      }
+      if (a.input.context === 'script') problems.push(`"${a.id}": context script is for enemies`);
+    }
+    if ((a.category === 'counter') !== (a.input.context === 'counter'))
+      problems.push(`"${a.id}": counter actions use category and context counter together`);
+    if (a.input.context === 'chain' || a.input.context === 'script') continue;
     const dirs = a.input.dir === 'vertical' ? ['up', 'down'] : [a.input.dir];
     for (const d of dirs) {
       const key = `${a.input.context}/${d}`;
@@ -205,7 +232,7 @@ export function loadHero(source: string, file = 'hero.yaml'): HeroYaml {
     if (a.frames.landing && a.category !== 'aerial')
       problems.push(`"${a.id}": only aerial actions use landing recovery`);
   }
-  if (!slots.has('neutral/neutral'))
+  if (kind === 'hero' && !slots.has('neutral/neutral'))
     problems.push('no neutral starter (context neutral, dir neutral)');
   for (const a of hero.actions) {
     for (const l of a.links ?? []) {
@@ -232,7 +259,7 @@ export function loadHero(source: string, file = 'hero.yaml'): HeroYaml {
 }
 
 /** Converts a validated hero into the simulation's HeroDef shape (fixed-point units). */
-export function compileHero(hero: HeroYaml): unknown {
+export function compileHero(hero: HeroYaml, kind: 'hero' | 'enemy' = 'hero'): unknown {
   const index = new Map(hero.actions.map((a, i) => [a.id, i]));
   return {
     id: hero.id,
@@ -250,6 +277,7 @@ export function compileHero(hero: HeroYaml): unknown {
         active,
         recovery: a.frames.recovery,
         landing: a.frames.landing ?? false,
+        blockstun: a.frames.blockstun ?? Math.max(6, a.reaction.hitstun - 4),
         hitbox: {
           x: fx(a.hitbox.x),
           w: fx(a.hitbox.w),
@@ -271,6 +299,7 @@ export function compileHero(hero: HeroYaml): unknown {
         damageScaleCost: a.costs.scale,
         starterProration: a.costs.starter ?? 0,
         juggleCost: a.costs.juggle ?? 0,
+        guardCost: a.costs.guard ?? DEFAULT_GUARD_COST,
         meterGain: a.meter,
         moves: (a.moves ?? []).map((m) => ({
           from: m.from,
@@ -297,7 +326,7 @@ export function compileHero(hero: HeroYaml): unknown {
             premium: l.premium ?? 0,
           };
         }),
-        pose: `hero.${hero.id}.pose.${a.category}.${a.id}`,
+        pose: `${kind}.${hero.id}.pose.${a.category}.${a.id}`,
       };
     }),
     recipes: (hero.recipes ?? []).map((r) => ({
@@ -315,6 +344,7 @@ export function compileHero(hero: HeroYaml): unknown {
 }
 
 const HEROES_DIR = fileURLToPath(new URL('../heroes/', import.meta.url));
+const ENEMIES_DIR = fileURLToPath(new URL('../enemies/', import.meta.url));
 export const GENERATED_PATH = fileURLToPath(
   new URL('../../sim/src/combat/heroes.gen.ts', import.meta.url),
 );
@@ -324,7 +354,15 @@ export function heroFiles(dir = HEROES_DIR): string[] {
   return readdirSync(dir)
     .filter((f) => f.endsWith('.yaml'))
     .sort((a, b) => order(a) - order(b) || a.localeCompare(b))
-    .map((f) => `${dir}${f}`);
+    .map((f) => join(dir, f));
+}
+
+/** Enemy kit files, by file name. */
+export function enemyFiles(dir = ENEMIES_DIR): string[] {
+  return readdirSync(dir)
+    .filter((f) => f.endsWith('.yaml'))
+    .sort((a, b) => a.localeCompare(b))
+    .map((f) => join(dir, f));
 }
 
 const ROSTER_ORDER = ['mountain.yaml', 'river.yaml'];
@@ -333,15 +371,27 @@ function order(file: string): number {
   return i === -1 ? ROSTER_ORDER.length : i;
 }
 
-/** Builds the source of heroes.gen.ts from the given hero files. */
-export function generate(files = heroFiles()): string {
-  const heroes = files.map((f) => compileHero(loadHero(readFileSync(f, 'utf8'), basename(f))));
-  const body = JSON.stringify(heroes, null, 2);
-  return `// GENERATED by packages/data/src/generate.ts from packages/data/heroes/*.yaml.
-// Do not edit by hand: change the YAML and run \`pnpm gen:heroes\`.
+/** Builds the source of heroes.gen.ts from the given hero and enemy files. */
+export function generate(files = heroFiles(), enemies = enemyFiles()): string {
+  const compile = (f: string, kind: 'hero' | 'enemy') =>
+    compileHero(loadHero(readFileSync(f, 'utf8'), basename(f), kind), kind);
+  const heroes = JSON.stringify(
+    files.map((f) => compile(f, 'hero')),
+    null,
+    2,
+  );
+  const kits = JSON.stringify(
+    enemies.map((f) => compile(f, 'enemy')),
+    null,
+    2,
+  );
+  return `// GENERATED by packages/data/src/generate.ts from packages/data/heroes/*.yaml and
+// packages/data/enemies/*.yaml. Do not edit by hand: change the YAML and run \`pnpm gen:heroes\`.
 import type { HeroDef } from './types';
 
-export const HERO_DATA: readonly HeroDef[] = ${body};
+export const HERO_DATA: readonly HeroDef[] = ${heroes};
+
+export const ENEMY_DATA: readonly HeroDef[] = ${kits};
 `;
 }
 

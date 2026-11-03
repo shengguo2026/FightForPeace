@@ -17,6 +17,7 @@ export default tseslint.config(
       '**/node_modules/**',
       '**/dist/**',
       '**/dist-types/**',
+      'release/**',
       '**/test-results/**',
       '**/playwright-report/**',
       'packages/sim/test/fixtures/**',

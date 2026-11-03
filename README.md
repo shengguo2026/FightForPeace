@@ -25,7 +25,7 @@ Stop the server with `Ctrl+C`.
 
 If `node --version` shows something older than 24, install Node.js 24 LTS from nodejs.org. If `pnpm` is missing, run `corepack enable` once in an administrator PowerShell.
 
-## Controls (M3)
+## Controls (M4)
 
 Keys are physical positions, so they stay in the same place on QWERTZ and AZERTY keyboards. The screen always shows the character printed on your key (for example Jump is `Z` on a German keyboard, `Y` on a US one), and a gamepad shows its own buttons.
 
@@ -42,11 +42,15 @@ Keys are physical positions, so they stay in the same place on QWERTZ and AZERTY
 | Team Attack | B | Num 0 | . | LB / L1 |
 | Pause | Esc | — | — | Start / Options |
 
-Guard is only used in the dash low-attack chord so far (defense arrives in M4). Special and Ultimate show a placeholder pose (M5). Grab and Team Attack have no effect yet.
+Guard (hold) blocks in the direction you face; Guard + Ultimate is the Combo Breaker (see Defense below). Special and Ultimate on their own show a placeholder pose (M5). Grab and Team Attack have no effect yet.
 
 **Heroes.** Player 1 is the Mountain Guardian (blue, wide), Player 2 the River Scout (orange, slim); the Lab settings (F2) switch either one. Each has 15 normal attacks: a three-hit neutral string (Attack, Attack, Attack), Forward/Backward/Up/Down + Attack routes, aerial attacks (jump, then Attack with or without a direction), a dash attack (dash, then Attack) and a low attack (dash, then Attack + Guard together, or the optional Low Attack binding). Forward and Backward count from the way the hero is facing when you press Attack: holding the opposite direction performs the Backward move, it does not turn you around. F5 lists every move with its input, frame data and combo links.
 
 **Aerial and ground combat (M3).** Launches and juggles spend the dummy's juggle budget; as it runs low, hits lift less, and when it runs out the dummy drifts down and lands protected. Each combo allows one wall rebound (Gatepost Hammer, Open Channel Kick or Current Chase into a stage edge) and one ground bounce (Stonefall Knee). A knockdown that opens a ground window (Low Bank Sweep, or a low attack's counter-trip) marks the downed dummy with "▼ ground window"; standing close and facing it puts a green ring under it, and then Attack and Forward/Backward + Attack use your hero's ground moves: one extension (Settling Palm, Skipping Current), then one finisher (Lockgate Press, Foundation Rise, Rising Eddy). A dummy in protected recovery is drawn translucent and cannot be hit. A plain jump now lands with 4 frames of landing recovery.
+
+**Defense (M4).** Hold Guard to block attacks from the front (a 150° arc); a held guard drains the Defense meter (the bar above your hero) and takes 20 % chip damage. The meter refills after 1.5 s without defending. If it runs out while you block, you suffer a **Guard Crush** (a long stagger). **Exact Block**: press Guard at most 4 frames before the hit lands (a 5-frame window): no damage, no meter loss, +15 Defense, and the attacker staggers. **Predictive Counter**: press a direction towards the attacker and Guard together (either order, within 3 frames) at most 2 frames before contact (a 3-frame window): your hero dodges and answers with a counter move (Bedrock Return for the Mountain Guardian, Eddy Return for the River Scout). A counter that meets nothing leaves you open for a moment. **Combo Breaker**: Guard + Ultimate while you are being hit, juggled or lying in a ground window: costs 75 % Defense, pushes enemies within 260 px away and protects you for half a second; once per combo. Pressing too early, too late or against the wrong attack is explained in the F8 panel in frames.
+
+**Training enemy.** The dummies use a training kit: Straight Jab (counterable), Overhead Club (guard pressure: drains Defense fast), Piercing Thrust (goes through a held guard: Exact Block it), Two-Step (two hits), Pummel Barrage (five hits, practise the Combo Breaker) and Bell Hammer (unblockable: move away). The attack's name and profile appear above the dummy when it starts. F2 sets which dummies attack, which attack (or cycle through all), how many frames between attacks (40 / 70 / 100) and whether they walk into range.
 
 **Joining and devices.** Player 1 plays alone on the keyboard or on any gamepad: the device you touch last takes over. Player 2 joins by pressing Num 4 (Attack) on the split keyboard, or Start on a second gamepad. Once two players are in, a newly plugged-in gamepad does not take over anybody. Unplugging a player's gamepad pauses the game until it is plugged back in, or until that player presses Attack on another device.
 
@@ -60,9 +64,20 @@ Guard is only used in the dash low-attack chord so far (defense arrives in M4). 
 | F4 | Training dummies walk towards the nearest hero |
 | F5 | Move list for each joined hero: input, startup/active/recovery frames, damage, combo links and their conditions |
 | F6 | Slow motion (a quarter speed; the simulation itself is unchanged) |
+| F8 | Defense panel: per player the Defense meter, guard state, counts (exact, counter, guard, early, late, hit, crush, breaker) and a log of the last defensive results with timing in frames; below it the training enemy's attacks with their frame data and profile |
 | F7 | Academy recipes (spec §8.3) for each joined hero, ticked off step by step on the dummy you are hitting, with a "performed" count and a **Practise** button that puts your hero in front of Dummy 1 (and turns on counter-hit dummies when the recipe needs them) |
 
-The Lab also shows, per player, the hero, the current move and its phase, the last combo-link verdict (and the reason a press was rejected), the attack meter and the dash bridge; and for the last dummy hit: health, hits, damage, damage scale, hit-stun budget, meter-gain budget, juggle budget and lift band, wall rebound and ground bounce, dash bridge, knockdown tag, ground route (window frames, extension, finisher), recovery (protected, and why the combo ended) and the route of moves that connected. F2 adds hero selection, infinite attack meter, counter-hit dummies, health refill and "Dummy 1 to the wall".
+The Lab also shows, per player, the hero, the current move and its phase, the last combo-link verdict (and the reason a press was rejected), the attack meter and the dash bridge; and for the last dummy hit: health, hits, damage, damage scale, hit-stun budget, meter-gain budget, juggle budget and lift band, wall rebound and ground bounce, dash bridge, knockdown tag, ground route (window frames, extension, finisher), recovery (protected, and why the combo ended) and the route of moves that connected. F2 adds hero selection, infinite attack meter, infinite Defense meter, the training enemy settings, counter-hit dummies, health refill and "Dummy 1 to the wall".
+
+## Portable build (no installation)
+
+`pnpm release` builds the game and packs it into `release/FightForPeace-<version>.zip`. To play it on any Windows PC:
+
+1. Unzip the file anywhere (a folder with spaces in its name is fine).
+2. Double-click `start.bat`. The game opens in your default browser at `http://localhost:6006` (or the next free port up to 6105).
+3. Keep the black window open while you play; close it to stop the game.
+
+If Node.js 24 is not installed, the first start downloads a pinned Node.js 24 into the `runtime` folder next to `start.bat` and checks its SHA-256 checksum (internet needed once). Starting again while the game runs just opens the browser on the running copy. Problems are written to `logs/server.log`. On macOS or Linux run `./start.sh` instead.
 
 ## Developer commands
 
@@ -70,6 +85,7 @@ The Lab also shows, per player, the hero, the current move and its phase, the la
 | --- | --- |
 | `pnpm dev` | Development server with hot reload |
 | `pnpm build` | Production build into `apps/game/dist` |
+| `pnpm release` | Production build packed as the portable zip in `release/` |
 | `pnpm test` | Unit tests and golden replay tests (Vitest) |
 | `pnpm e2e` | Browser tests (Playwright; Chromium locally, Chromium + Firefox + WebKit in CI) |
 | `pnpm typecheck` | TypeScript, strict |
@@ -88,6 +104,22 @@ The first `pnpm e2e` on a new machine needs the browsers: `pnpm --filter @ffp/ga
 | `tests/replays` | Golden replays. Each records an input log and the expected final state hash. `scripts.ts` holds the input scripts; `RECORD=1 pnpm vitest run tests/replays/record.test.ts` re-records them. |
 
 When a change alters simulation results on purpose, bump `RULES_VERSION` in `packages/sim/src/replay.ts` and re-record the golden replays in the same commit (see above). A replay recorded under another rules version fails loudly instead of silently producing a different hash.
+
+## M4 test checklist
+
+Press F8 for the Defense panel if it is hidden. By default Dummy 1 walks up and throws a Straight Jab every 70 frames.
+
+1. Hold G: the jab is guarded ("Guarded Straight Jab (guard held)"), you take a little chip damage and the Defense bar shrinks. Let go and wait: after about 1.5 s the bar refills.
+2. Tap G just as the jab lands: "Exact Block ✓ … pressed N f before contact (window 5 f)", no damage, the dummy staggers back. Tap a little earlier: "too early for Exact Block". Tap after the hit: "Too late … after the contact".
+3. Press D + G together (towards the dummy) just before the jab lands: "Counter ✓", your hero performs Bedrock Return and hits the dummy. Press it far too early: "Counter ✗ no contact inside the 3 f window" and a short vulnerable pause.
+4. F2, Attack: Overhead Club. Hold G through several clubs: the bar empties and "GUARD CRUSH" shows, with a long stagger.
+5. F2, Attack: Piercing Thrust. Holding G does not stop it ("pierces a held guard"), an Exact Block tap does.
+6. F2, Attack: Bell Hammer. Guard does nothing ("unblockable: move away"); dash away when "Bell Hammer · UNBLOCKABLE" appears above the dummy.
+7. F2, Attack: Pummel Barrage. Let the first hits land, then press G + H: "Combo Breaker ✓ 75 % Defense spent", the dummy is pushed away and you flash protected. Press it again in the same combo, or with less than 75 % Defense: "Combo Breaker ✗" with the reason.
+8. Hold A + G so your guard faces away from the dummy: the jab hits you ("came from outside the guard arc").
+9. F2: "all dummies" makes both dummies attack, "none" stops them; "Frames between attacks" changes the rhythm; untick "Walk into range" and they only attack when you come close. F2 "Infinite Defense meter" keeps the bar full.
+10. Switch Player 1 to the River Scout (F2) and repeat step 3: the counter is Eddy Return.
+11. Portable build: run `pnpm release`, unzip `release\FightForPeace-0.4.0.zip` somewhere else, double-click `start.bat`: the game opens in the browser and plays the same as `pnpm dev`. Double-click `start.bat` again: it says the game is already running and opens the same page.
 
 ## M3 test checklist
 

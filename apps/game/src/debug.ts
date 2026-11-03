@@ -1,4 +1,4 @@
-import { type Fighter, HEROES, hashWorld, heroOf, runReplay } from '@ffp/sim';
+import { type Fighter, hashWorld, heroOf, kitOf, routeAction, runReplay } from '@ffp/sim';
 import type { GameSession } from './game';
 import type { LabState } from './ui/labState';
 import { setFakePads, useFakePads } from './input/browserInput';
@@ -31,6 +31,14 @@ export function installDebugHook(session: GameSession, lab: LabState): void {
     },
     paused: () => lab.paused.value,
     slots: () => session.devices.slots.map((s) => ({ ...s })),
+    setTrainer: (settings) => {
+      lab.trainer.value = { ...lab.trainer.value, ...settings };
+      session.setTrainer(lab.trainer.value);
+    },
+    setDefense: (slot, value) => {
+      const h = heroOf(session.world, slot);
+      if (h) h.defense = value;
+    },
   };
 }
 
@@ -42,19 +50,24 @@ function view(b: Fighter) {
     state: b.state,
     facing: b.facing,
     attackKind: b.attackKind,
-    action: b.action >= 0 ? (HEROES[b.hero]?.actions[b.action]?.id ?? null) : null,
-    category: b.action >= 0 ? (HEROES[b.hero]?.actions[b.action]?.category ?? null) : null,
+    action: b.action >= 0 ? (kitOf(b)?.actions[b.action]?.id ?? null) : null,
+    category: b.action >= 0 ? (kitOf(b)?.actions[b.action]?.category ?? null) : null,
     stateFrame: b.stateFrame,
-    hero: HEROES[b.hero]?.id ?? null,
+    hero: kitOf(b)?.id ?? null,
     meter: b.meter,
     health: b.health,
     combo: { open: b.ctx.open, hits: b.ctx.hits, damage: b.ctx.damage, scale: b.ctx.scale },
     juggle: b.ctx.juggleBudget,
     groundWindow: b.groundWindow,
     protectedRecovery: b.protectedRecovery,
-    route: b.ctx.route.map((c) => HEROES[Math.trunc(c / 64)]?.actions[c % 64]?.id ?? '?'),
+    route: b.ctx.route.map((c) => routeAction(c)?.id ?? '?'),
     wallBounceUsed: b.ctx.wallBounceUsed,
     groundBounceUsed: b.ctx.groundBounceUsed,
     contactAt: b.contactAt,
+    defense: b.defense,
+    defEvent: b.defEvent,
+    defOffset: b.defOffset,
+    defFrame: b.defFrame,
+    aiStep: b.aiStep,
   };
 }

@@ -3,6 +3,7 @@ import {
   DirBit,
   type Fighter,
   type FrameInput,
+  ENEMIES,
   HEROES,
   MoveState,
   type ReplayLog,
@@ -218,7 +219,7 @@ class Recorder {
     this.world = createWorld(seed, options);
   }
 
-  private input(slot: number, dirs: Dir[], acts: Act[]): FrameInput {
+  private input(slot: number, dirs: Dir[], acts: Act[], holds: Act[] = []): FrameInput {
     const held = this.held[slot]!;
     let dirPressed = 0;
     for (const d of dirs) if (!held.has(d)) dirPressed |= DirBit[d];
@@ -229,17 +230,20 @@ class Recorder {
       moveX: has('left') ? -1 : has('right') ? 1 : 0,
       moveZ: has('up') ? -1 : has('down') ? 1 : 0,
       pressed,
-      held: pressed,
+      held: pressed | holds.reduce((m, a) => m | ActionBit[a], 0),
       dirPressed,
     };
   }
 
-  /** One frame: `slot` holds `dirs` and presses `acts`; the other player idles. */
-  tick(slot = 0, dirs: Dir[] = [], acts: Act[] = []): void {
+  /**
+   * One frame: `slot` holds `dirs`, presses `acts` and keeps `holds` held (Guard); the
+   * other player idles.
+   */
+  tick(slot = 0, dirs: Dir[] = [], acts: Act[] = [], holds: Act[] = []): void {
     if (slot === 1) this.joined[1] = true;
     const row = [0, 1]
       .filter((s) => this.joined[s])
-      .map((s) => (s === slot ? this.input(s, dirs, acts) : this.input(s, [], [])));
+      .map((s) => (s === slot ? this.input(s, dirs, acts, holds) : this.input(s, [], [])));
     step(this.world, row);
     this.frames.push(row);
   }
@@ -356,6 +360,72 @@ export const academyRecipesScript: ReplayScript = {
   frames: academyRecipes(),
 };
 
-export const SCRIPTS = [walkSquare, dashJump, crowd, comboRoutes, academyRecipesScript];
+/**
+ * M4 defense drills against the training enemy's attack cycle (jab, club, thrust,
+ * two-step, barrage, bell hammer): exact block, held guard, exact block of a guard-piercing
+ * thrust, a counter, a combo breaker and a dash away from the unblockable.
+ */
+function defenseDrills(): FrameInput[][] {
+  const options: WorldOptions = {
+    dummies: 1,
+    trainer: { attackers: 1, pattern: -1, interval: 70, approach: true },
+  };
+  const r = new Recorder(13, options);
+  const d = r.body(101);
+  const kit = ENEMIES[0]!;
+  const id = () => (d.action >= 0 ? kit.actions[d.action]!.id : null);
+  /** Frames until the dummy's next contact would land, for its running attack. */
+  const toContact = () => kit.actions[d.action]!.startup - 1 - d.stateFrame;
+  const attacking = (name: string, lead: number) => () =>
+    d.state === MoveState.Attack && id() === name && toContact() === lead;
+  const hold = (n: number, dirs: Dir[] = []) => {
+    for (let i = 0; i < n; i += 1) r.tick(0, dirs, [], ['Guard']);
+  };
+  /** Waits (holding Guard if asked) until `cond`, then presses. */
+  const at = (cond: () => boolean, acts: Act[], dirs: Dir[] = [], holds: Act[] = []) => {
+    for (let i = 0; i < 900 && !cond(); i += 1) r.tick(0, [], [], holds);
+    r.tick(0, dirs, acts, holds.length > 0 || acts.includes('Guard') ? ['Guard'] : []);
+  };
+  // The training enemy walks into range by itself.
+  // 1. Jab: Exact Block pressed 2 frames before contact.
+  at(attacking('jab', 2), ['Guard']);
+  hold(12);
+  r.idle(0, 2);
+  // 2. Club: Guard raised early and held (normal guard).
+  at(attacking('club', 12), ['Guard']);
+  hold(40);
+  r.idle(0, 2);
+  // 3. Piercing Thrust beats held guard but not an exact block.
+  at(attacking('thrust', 1), ['Guard']);
+  hold(10);
+  r.idle(0, 2);
+  // 4. Two-Step: Directional Predictive Counter (toward the attacker, then Guard).
+  at(attacking('two-step', 2), [], ['right']);
+  r.tick(0, ['right'], ['Guard'], ['Guard']);
+  r.wait(() => r.free(0), 80);
+  // 5. Pummel Barrage: take two hits, then the Combo Breaker.
+  at(() => r.hero(0).ctx.open && r.hero(0).ctx.hits >= 2, ['Guard', 'Ultimate']);
+  r.wait(() => r.free(0), 80);
+  // 6. Bell Hammer: true unblockable, dash away during its telegraph.
+  at(attacking('bell-hammer', 20), ['Dash'], ['left']);
+  r.idle(0, 120);
+  return r.frames;
+}
+
+export const defenseDrillsScript: ReplayScript = {
+  name: 'defense-drills',
+  seed: 13,
+  options: { dummies: 1, trainer: { attackers: 1, pattern: -1, interval: 70, approach: true } },
+  frames: defenseDrills(),
+};
+
+export const SCRIPTS = [
+  walkSquare,
+  dashJump,
+  crowd,
+  comboRoutes,
+  academyRecipesScript,
+  defenseDrillsScript,
+];
 
 export type { ReplayLog };

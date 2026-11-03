@@ -1,6 +1,10 @@
 import {
   ActionBit,
   type ComboContext,
+  DEFENSE,
+  DefEvent,
+  kitOf,
+  routeAction,
   type Fighter,
   type FrameInput,
   HEROES,
@@ -26,8 +30,9 @@ import {
   resolvePrompt,
 } from '@ffp/platform';
 import type { GameSession } from '../game';
-import { moveInputText } from '../text/en';
+import { BREAKER_DENIED, DEFENSE_TEXT, moveInputText } from '../text/en';
 import {
+  type DefenseView,
   HISTORY_LENGTH,
   type HistoryEntry,
   type LabState,
@@ -57,6 +62,13 @@ const STATE_NAMES: Record<number, string> = {
   [MoveState.GetUp]: 'getting up',
   [MoveState.Landing]: 'landing recovery',
   [MoveState.Recover]: 'protected landing',
+  [MoveState.Guard]: 'guard',
+  [MoveState.Blockstun]: 'block-stun',
+  [MoveState.GuardCrush]: 'GUARD CRUSH',
+  [MoveState.Counter]: 'counter window',
+  [MoveState.CounterMiss]: 'counter missed',
+  [MoveState.Breaker]: 'COMBO BREAKER',
+  [MoveState.Recoil]: 'recoil',
 };
 
 const PROTECT_TEXT: Record<number, string> = {
@@ -64,6 +76,7 @@ const PROTECT_TEXT: Record<number, string> = {
   [Protect.AirRecovery]: 'air recovery (juggle budget exhausted)',
   [Protect.SoftReset]: 'soft reset (hit-stun budget exhausted)',
   [Protect.MissedWindow]: 'ground window missed',
+  [Protect.Breaker]: 'combo breaker',
 };
 
 function groundRouteText(d: Fighter): string {
@@ -76,12 +89,12 @@ function groundRouteText(d: Fighter): string {
 }
 
 function routeNames(route: readonly number[]): string[] {
-  return route.map((code) => HEROES[Math.trunc(code / 64)]?.actions[code % 64]?.name ?? '?');
+  return route.map((code) => routeAction(code)?.name ?? '?');
 }
 
 /** Name of a cancel destination code (action index or VerdictTo). */
 function destName(f: Fighter, to: number): string {
-  if (to >= 0) return HEROES[f.hero]?.actions[to]?.name ?? '?';
+  if (to >= 0) return kitOf(f)?.actions[to]?.name ?? '?';
   if (to === VerdictTo.Jump) return 'jump';
   if (to === VerdictTo.Dash) return 'dash bridge';
   if (to === VerdictTo.Special) return 'Special';
@@ -98,7 +111,7 @@ function verdictText(f: Fighter): string {
 }
 
 function phaseText(f: Fighter): string {
-  const a = f.action >= 0 ? HEROES[f.hero]?.actions[f.action] : undefined;
+  const a = f.action >= 0 ? kitOf(f)?.actions[f.action] : undefined;
   if (!a || f.state !== MoveState.Attack) return '—';
   const ph = phaseOf(a, f.stateFrame + 1);
   return `${ph.phase} ${ph.at}/${ph.of}`;
@@ -179,8 +192,7 @@ export function refreshPlayers(session: GameSession, lab: LabState, steps: Frame
         : '—',
       hero: HEROES[session.world.playerHero[slot] ?? 0]?.name ?? '—',
       heroId: HEROES[session.world.playerHero[slot] ?? 0]?.id ?? 'mountain',
-      action:
-        hero && hero.action >= 0 ? (HEROES[hero.hero]?.actions[hero.action]?.name ?? '—') : '—',
+      action: hero && hero.action >= 0 ? (kitOf(hero)?.actions[hero.action]?.name ?? '—') : '—',
       phase: hero ? phaseText(hero) : '—',
       verdict: hero ? verdictText(hero) : '—',
       meter: hero ? hero.meter : 0,
@@ -339,5 +351,121 @@ export function refreshRecipes(session: GameSession, lab: LabState): void {
   if (sig !== lastRecipeSig) {
     lastRecipeSig = sig;
     lab.recipes.value = views;
+  }
+}
+
+const DIR_NAMES: Record<string, string> = {
+  '1,0': 'right',
+  '-1,0': 'left',
+  '0,-1': 'up-stage',
+  '0,1': 'down-stage',
+  '1,-1': 'right and up',
+  '1,1': 'right and down',
+  '-1,-1': 'left and up',
+  '-1,1': 'left and down',
+};
+
+const GOOD = new Set<number>([
+  DefEvent.Guard,
+  DefEvent.Exact,
+  DefEvent.ExactBreak,
+  DefEvent.Counter,
+  DefEvent.Breaker,
+]);
+
+/** The Lab text for a hero's last defensive outcome. */
+export function defenseText(f: Fighter): string {
+  const t = DEFENSE_TEXT[f.defEvent];
+  if (!t) return '';
+  const counter =
+    f.defEvent === DefEvent.Counter ||
+    f.defEvent === DefEvent.CounterMiss ||
+    f.defEvent === DefEvent.CounterWrongDir;
+  const values: Record<string, string> = {
+    o: String(f.defOffset),
+    a: f.defAction >= 0 ? (routeAction(f.defAction)?.name ?? 'the attack') : 'the attack',
+    w: String(counter ? DEFENSE.counterWindow : DEFENSE.exactWindow),
+    reason: BREAKER_DENIED[f.defOffset] ?? '',
+  };
+  return t.replace(/\{(\w+)\}/g, (m, k: string) => values[k] ?? m);
+}
+
+const COUNT_OF: Partial<Record<number, keyof DefenseView['counts']>> = {
+  [DefEvent.Guard]: 'guard',
+  [DefEvent.Cooldown]: 'guard',
+  [DefEvent.ExactEarly]: 'early',
+  [DefEvent.Exact]: 'exact',
+  [DefEvent.ExactBreak]: 'exact',
+  [DefEvent.Counter]: 'counter',
+  [DefEvent.GuardCrush]: 'crush',
+  [DefEvent.Breaker]: 'breaker',
+  [DefEvent.Hit]: 'hit',
+  [DefEvent.Behind]: 'hit',
+  [DefEvent.Pierced]: 'hit',
+  [DefEvent.Unblockable]: 'hit',
+  [DefEvent.CounterWrongDir]: 'hit',
+  [DefEvent.CounterUncounterable]: 'hit',
+  [DefEvent.Late]: 'late',
+};
+
+const seenDefense = new Map<number, string>();
+const defenseLogs = new Map<number, DefenseView['log']>();
+const defenseCounts = new Map<number, DefenseView['counts']>();
+let lastDefenseSig = '';
+
+const emptyCounts = (): DefenseView['counts'] => ({
+  guard: 0,
+  exact: 0,
+  counter: 0,
+  crush: 0,
+  breaker: 0,
+  hit: 0,
+  early: 0,
+  late: 0,
+});
+
+/** F8: each joined hero's Defense meter, guard facing and timing readouts. */
+export function refreshDefense(session: GameSession, lab: LabState): void {
+  const views: DefenseView[] = [];
+  for (const slot of [0, 1]) {
+    const f = heroOf(session.world, slot);
+    if (!f) continue;
+    const counts = defenseCounts.get(slot) ?? emptyCounts();
+    let log = defenseLogs.get(slot) ?? [];
+    const key = `${f.defEvent}/${f.defFrame}/${f.defOffset}`;
+    if (f.defEvent !== DefEvent.None && seenDefense.get(slot) !== key) {
+      seenDefense.set(slot, key);
+      const c = COUNT_OF[f.defEvent];
+      if (c) counts[c] += 1;
+      // "Too late" rewrites the hit it follows: replace that line instead of adding one.
+      if (f.defEvent === DefEvent.Late) {
+        counts.hit = Math.max(0, counts.hit - 1);
+        log = log.slice(1);
+      }
+      log = [{ frame: f.defFrame, text: defenseText(f), good: GOOD.has(f.defEvent) }, ...log].slice(
+        0,
+        8,
+      );
+    }
+    defenseCounts.set(slot, counts);
+    defenseLogs.set(slot, log);
+    const pivot =
+      f.pivotAt > session.world.frame ? ` · pivoting in ${f.pivotAt - session.world.frame} f` : '';
+    views.push({
+      slot,
+      defense: f.defense,
+      state: stateName(f.state, f.attackKind, f.action),
+      guard:
+        f.state === MoveState.Guard || f.state === MoveState.Blockstun
+          ? `facing ${DIR_NAMES[`${f.guardX},${f.guardZ}`] ?? '?'}${pivot}${f.defense > 0 ? '' : ' · no Defense: Exact Block only'}`
+          : '—',
+      log,
+      counts: { ...counts },
+    });
+  }
+  const sig = JSON.stringify(views);
+  if (sig !== lastDefenseSig) {
+    lastDefenseSig = sig;
+    lab.defense.value = views;
   }
 }

@@ -20,7 +20,12 @@ export const REACTION = {
   /** Rebound speed off a wall, and the speed a target needs to rebound at all. */
   wallRebound: fx(4),
   wallMinSpeed: fx(4),
+  /** Sideways speed of a hero's get-up roll (direction held on the first get-up frame). */
+  getUpRoll: fx(6),
 } as const;
+
+/** "No frame" marker for frame-stamped fields (same value as the controller's NO_TAP). */
+export const NO_FRAME = -1_000_000;
 
 export function inReaction(f: Fighter): boolean {
   return (
@@ -28,8 +33,33 @@ export function inReaction(f: Fighter): boolean {
     f.state === MoveState.Launched ||
     f.state === MoveState.Down ||
     f.state === MoveState.GetUp ||
-    f.state === MoveState.Recover
+    f.state === MoveState.Recover ||
+    f.state === MoveState.Recoil
   );
+}
+
+/**
+ * Stops whatever the fighter was doing (an action, a guard, a counter attempt) because a
+ * hit, a counter or a breaker pushed it into a reaction.
+ */
+export function interrupt(f: Fighter): void {
+  f.action = -1;
+  f.attackKind = 0;
+  f.ghost = false;
+  f.reqLink = -1;
+  f.airUsed = false;
+  f.exactFrame = NO_FRAME;
+  f.counterFrame = NO_FRAME;
+  f.pivotAt = NO_FRAME;
+  f.defIdle = 0;
+}
+
+/** An attacker deflected, countered or pushed: no hit, no combo, just lost time. */
+export function recoil(f: Fighter, frames: number, vx = 0): void {
+  interrupt(f);
+  enter(f, MoveState.Recoil, frames);
+  f.vx = vx;
+  f.vz = 0;
 }
 
 /** Push decays by 1/8 per frame (integer, symmetric for both signs). */
@@ -70,11 +100,20 @@ export function stepReaction(world: World, f: Fighter): boolean {
         // Missing the authored ground window leads directly to protected recovery.
         if (f.groundWindow === 0) enterProtection(world, f, Protect.MissedWindow);
       }
-      if (f.stateFrame >= f.stun) enter(f, MoveState.GetUp, REACTION.getUpFrames);
+      if (f.stateFrame >= f.stun) {
+        enter(f, MoveState.GetUp, REACTION.getUpFrames);
+        f.vx = 0;
+        f.vz = 0;
+      }
       return true;
     case MoveState.GetUp:
     case MoveState.Recover:
+    case MoveState.Recoil:
+      // A hero's get-up roll (or a recoil push) moves; everything else stands still.
       f.stateFrame += 1;
+      f.x += f.vx;
+      f.z += f.vz;
+      if (f.state === MoveState.Recoil) f.vx = decay(f.vx);
       if (f.stateFrame >= f.stun) return toActionable(f);
       return true;
     default:
@@ -179,7 +218,7 @@ export function enter(f: Fighter, state: MoveState, frames: number): void {
   f.stun = frames;
 }
 
-function toActionable(f: Fighter): false {
+export function toActionable(f: Fighter): false {
   f.state = MoveState.Idle;
   f.stateFrame = 0;
   f.stun = 0;
@@ -195,7 +234,7 @@ function toActionable(f: Fighter): false {
 }
 
 function refill(world: World, f: Fighter): void {
-  if (world.dummy.refill && f.team === 'enemy') f.health = f.maxHealth;
+  if (world.dummy.refill) f.health = f.maxHealth;
 }
 
 /**

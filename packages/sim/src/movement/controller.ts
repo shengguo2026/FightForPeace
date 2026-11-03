@@ -19,6 +19,15 @@ import {
 import { activeSpan, totalFrames } from '../combat/roster';
 import { groundFocus } from '../combat/ground';
 import { groundAllows } from '../combat/hits';
+import {
+  DEFENSE,
+  counterMissed,
+  noteLatePress,
+  stepBreaker,
+  tickDefense,
+  tryBreaker,
+} from '../combat/defense';
+import { REACTION, enter, inReaction, stepReaction } from '../combat/reactions';
 import { type ActionDef, Dir, Reject } from '../combat/types';
 import type { MovementProfile } from './profile';
 
@@ -92,17 +101,67 @@ export function directed(
 }
 
 function actionable(f: Fighter): boolean {
-  return f.state === MoveState.Idle || f.state === MoveState.Walk || f.state === MoveState.Dash;
+  return (
+    f.state === MoveState.Idle ||
+    f.state === MoveState.Walk ||
+    f.state === MoveState.Dash ||
+    f.state === MoveState.Guard
+  );
 }
 
 /** Advances one hero by one frame. Collision and hits run afterwards, for everyone at once. */
 export function stepHero(world: World, f: Fighter, input: FrameInput, p: MovementProfile): void {
+  stepHeroFrame(world, f, input, p);
+  tickDefense(world, f);
+}
+
+/** States in which a Guard + Ultimate chord is about breaking a combo, not neutral play. */
+function trappedOrDefending(f: Fighter): boolean {
+  return (
+    inReaction(f) ||
+    f.state === MoveState.Blockstun ||
+    f.state === MoveState.GuardCrush ||
+    f.state === MoveState.CounterMiss ||
+    f.state === MoveState.Breaker
+  );
+}
+
+function stepHeroFrame(world: World, f: Fighter, input: FrameInput, p: MovementProfile): void {
   const frame = world.frame;
   noteCardinal(f, input.dirPressed);
   const tap = detectDoubleTap(f, input.dirPressed, frame, p.doubleTapFrames);
   const dashPressed = (input.pressed & ActionBit.Dash) !== 0;
   const guardPressed = (input.pressed & ActionBit.Guard) !== 0;
-  if (guardPressed) f.lastGuardFrame = frame;
+  const ultPressed = (input.pressed & ActionBit.Ultimate) !== 0;
+  if (guardPressed) {
+    f.lastGuardFrame = frame;
+    noteLatePress(world, f);
+  }
+  if (input.dirPressed !== 0) f.lastDirFrame = frame;
+  if (ultPressed) f.lastUltFrame = frame;
+
+  // An exact-block attempt that met no contact closes with a precision cooldown.
+  if (f.exactFrame !== NO_TAP && frame - f.exactFrame >= DEFENSE.exactWindow) {
+    f.exactFrame = NO_TAP;
+    f.precisionUntil = frame + DEFENSE.precisionCooldown;
+  }
+
+  // Combo Breaker: Guard + Ultimate inside the chord tolerance while trapped. An invalid
+  // chord spends nothing and never activates later.
+  const breakerChord =
+    (guardPressed || ultPressed) &&
+    Math.abs(f.lastGuardFrame - f.lastUltFrame) <= DEFENSE.breakerChord &&
+    frame - Math.min(f.lastGuardFrame, f.lastUltFrame) <= DEFENSE.breakerChord;
+  if (breakerChord && trappedOrDefending(f)) {
+    f.lastUltFrame = NO_TAP;
+    if (tryBreaker(world, f)) return;
+  }
+
+  if (stepDefenseState(world, f, input, guardPressed, p)) return;
+  if (inReaction(f)) {
+    if (f.state === MoveState.GetUp && f.stateFrame === 0) getUpRoll(f, input);
+    if (stepReaction(world, f)) return;
+  }
 
   // 1. Advance the current state; it may become actionable this frame.
   let chained = false;
@@ -168,6 +227,9 @@ export function stepHero(world: World, f: Fighter, input: FrameInput, p: Movemen
     }
   }
 
+  // 2b. Guard: committed directional guard, its pivot, and the counter chord.
+  if (stepGuard(world, f, input, guardPressed)) return;
+
   // 3. Move according to the (possibly new) state.
   if (moved) return;
   switch (f.state) {
@@ -202,6 +264,152 @@ export function stepHero(world: World, f: Fighter, input: FrameInput, p: Movemen
     default:
       break;
   }
+}
+
+/** Guard held or pressed: the 8-way direction held, if any. */
+function heldDir(input: FrameInput): [Axis, Axis] {
+  return [input.moveX, input.moveZ];
+}
+
+function openAttempt(f: Fighter, frame: number): void {
+  // Holding Guard never re-attempts; a press during the precision cooldown only guards.
+  if (frame >= f.precisionUntil) f.exactFrame = frame;
+}
+
+function startCounter(f: Fighter, frame: number, dx: Axis, dz: Axis): void {
+  f.state = MoveState.Counter;
+  f.stateFrame = 0;
+  f.stun = DEFENSE.counterWindow;
+  f.counterFrame = frame;
+  f.counterX = dx;
+  f.counterZ = dz;
+  f.exactFrame = NO_TAP;
+  f.pivotAt = NO_TAP;
+  f.vx = 0;
+  f.vz = 0;
+}
+
+/**
+ * Committed Directional Guard (F&D §6.3). Returns true when the hero is guarding or
+ * started a counter this frame (no walking).
+ */
+function stepGuard(world: World, f: Fighter, input: FrameInput, guardPressed: boolean): boolean {
+  const frame = world.frame;
+  const held = ((input.held | input.pressed) & ActionBit.Guard) !== 0;
+  const [dx, dz] = heldDir(input);
+  const freshDir = frame - f.lastDirFrame <= DEFENSE.counterChord && (dx !== 0 || dz !== 0);
+  if (f.state === MoveState.Guard) {
+    if (held && guardPressed) openAttempt(f, frame);
+    // A tap keeps the guard up for its exact-block attempt; after that only holding does.
+    if (f.exactFrame === NO_TAP && (!held || f.defense <= 0)) {
+      f.state = MoveState.Idle;
+      f.stateFrame = 0;
+      f.pivotAt = NO_TAP;
+      return false;
+    }
+    f.stateFrame += 1;
+    // Guard first, then a fresh direction inside the chord tolerance: a counter.
+    if (
+      f.guardNeutral &&
+      input.dirPressed !== 0 &&
+      freshDir &&
+      frame - f.lastGuardFrame <= DEFENSE.counterChord
+    ) {
+      startCounter(f, frame, dx, dz);
+      return true;
+    }
+    // A direction pressed while Guard is held requests a committed pivot.
+    if (input.dirPressed !== 0 && (dx !== 0 || dz !== 0)) {
+      f.pivotX = dx;
+      f.pivotZ = dz;
+      f.pivotAt = frame + DEFENSE.pivotFrames;
+      f.guardNeutral = false;
+    }
+    if (f.pivotAt !== NO_TAP && frame >= f.pivotAt) {
+      f.guardX = f.pivotX;
+      f.guardZ = f.pivotZ;
+      if (f.pivotX !== 0) f.facing = f.pivotX;
+      f.pivotAt = NO_TAP;
+    }
+    f.vx = 0;
+    f.vz = 0;
+    return true;
+  }
+  if ((f.state !== MoveState.Idle && f.state !== MoveState.Walk) || !held) return false;
+  // A fresh direction and Guard inside the chord tolerance: a counter attempt.
+  if (guardPressed && freshDir) {
+    startCounter(f, frame, dx, dz);
+    return true;
+  }
+  if (guardPressed) openAttempt(f, frame);
+  // Normal guard needs Defense; at 0 a fresh press still shows the exact-block attempt.
+  if (f.defense <= 0 && f.exactFrame === NO_TAP) return false;
+  f.state = MoveState.Guard;
+  f.stateFrame = 0;
+  f.guardNeutral = dx === 0 && dz === 0;
+  if (f.guardNeutral) {
+    f.guardX = f.facing;
+    f.guardZ = 0;
+  } else {
+    // A direction held before Guard sets the defensive facing.
+    f.guardX = dx;
+    f.guardZ = dz;
+    if (dx !== 0) f.facing = dx;
+  }
+  f.pivotAt = NO_TAP;
+  f.vx = 0;
+  f.vz = 0;
+  return true;
+}
+
+/**
+ * Defense states that own the whole frame: block-stun, guard crush, the counter window,
+ * the failed-counter recovery and the breaker. Returns true while the hero stays in one.
+ */
+function stepDefenseState(
+  world: World,
+  f: Fighter,
+  input: FrameInput,
+  guardPressed: boolean,
+  p: MovementProfile,
+): boolean {
+  const frame = world.frame;
+  switch (f.state) {
+    case MoveState.Blockstun: {
+      f.stateFrame += 1;
+      f.x += f.vx;
+      f.vx -= Math.trunc(f.vx / 8);
+      if (guardPressed) openAttempt(f, frame);
+      bufferPress(f, input.pressed & OFFENSIVE_MASK, frame, p.bufferFrames);
+      if (f.stateFrame < f.stun) return true;
+      f.vx = 0;
+      const held = ((input.held | input.pressed) & ActionBit.Guard) !== 0;
+      const guard = held && f.defense > 0;
+      enter(f, guard ? MoveState.Guard : MoveState.Idle, 0);
+      return guard;
+    }
+    case MoveState.GuardCrush:
+    case MoveState.CounterMiss:
+      f.stateFrame += 1;
+      if (f.stateFrame < f.stun) return true;
+      enter(f, MoveState.Idle, 0);
+      return false;
+    case MoveState.Counter:
+      f.stateFrame += 1;
+      if (frame - f.counterFrame < DEFENSE.counterWindow) return true;
+      counterMissed(world, f);
+      return true;
+    case MoveState.Breaker:
+      return stepBreaker(f);
+    default:
+      return false;
+  }
+}
+
+/** A hero holding a direction on the first get-up frame rolls that way. */
+function getUpRoll(f: Fighter, input: FrameInput): void {
+  if (input.moveX === 0 && input.moveZ === 0) return;
+  [f.vx, f.vz] = directed(input.moveX, input.moveZ, REACTION.getUpRoll, REACTION.getUpRoll, 181);
 }
 
 /** Attack pressed in the air: the hero's aerial for that direction, once per jump. */

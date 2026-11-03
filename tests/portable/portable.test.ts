@@ -1,0 +1,200 @@
+// Portable build (docs/review/06 §2): local server and release zip. Paths are built with
+// path.join and compared after normalising, so these pass on Windows and Linux alike.
+import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { createServer, request, type Server } from 'node:http';
+import type { AddressInfo } from 'node:net';
+import { tmpdir } from 'node:os';
+import { join, resolve, sep } from 'node:path';
+import { inflateRawSync } from 'node:zlib';
+import {
+  ID_PATH,
+  mimeType,
+  parseArgs,
+  resolveRequest,
+  startServer,
+} from '../../tools/portable/server.mjs';
+import { assemble, crlf, lf } from '../../tools/release.mjs';
+import { buildZip, readZip } from '../../tools/zip.mjs';
+
+const REPO = resolve(__dirname, '..', '..');
+const servers: Server[] = [];
+let tmp = '';
+
+beforeEach(() => {
+  tmp = mkdtempSync(join(tmpdir(), 'ffp portable '));
+});
+
+afterEach(async () => {
+  await Promise.all(servers.splice(0).map((s) => new Promise((ok) => s.close(ok))));
+  rmSync(tmp, { recursive: true, force: true });
+});
+
+function fakeGame(): string {
+  const game = join(tmp, 'game');
+  mkdirSync(join(game, 'assets'), { recursive: true });
+  writeFileSync(join(game, 'index.html'), '<!doctype html><title>Fight For Peace</title>');
+  writeFileSync(join(game, 'assets', 'main.js'), 'console.log(1);');
+  writeFileSync(join(tmp, 'secret.txt'), 'outside');
+  return game;
+}
+
+async function freePort(): Promise<number> {
+  const s = createServer();
+  await new Promise<void>((ok) => s.listen(0, '127.0.0.1', ok));
+  const { port } = s.address() as AddressInfo;
+  await new Promise((ok) => s.close(ok));
+  return port;
+}
+
+function rawStatus(port: number, path: string): Promise<number> {
+  return new Promise((ok, fail) => {
+    const req = request({ host: '127.0.0.1', port, path }, (res) => {
+      res.resume();
+      ok(res.statusCode ?? 0);
+    });
+    req.on('error', fail);
+    req.end();
+  });
+}
+
+describe('portable server', () => {
+  it('maps request paths inside the game folder and refuses to leave it', () => {
+    const root = join(tmp, 'game');
+    expect(resolveRequest(root, '/')).toBe(join(resolve(root), 'index.html'));
+    expect(resolveRequest(root, '/assets/main.js?v=1')).toBe(
+      join(resolve(root), 'assets', 'main.js'),
+    );
+    for (const bad of ['/../secret.txt', '/assets/../../secret.txt', '/%2e%2e/secret.txt']) {
+      expect(resolveRequest(root, bad)).toBeNull();
+    }
+    expect(resolveRequest(root, '/..%5csecret.txt')).toBeNull();
+    expect(resolveRequest(root, '/%E0%A4%A')).toBeNull();
+    const ok = resolveRequest(root, '/assets/main.js')!;
+    expect(ok.startsWith(resolve(root) + sep)).toBe(true);
+  });
+
+  it('knows the MIME types the game needs', () => {
+    expect(mimeType('index.html')).toMatch(/^text\/html/);
+    expect(mimeType(join('assets', 'main.JS'))).toMatch(/^text\/javascript/);
+    expect(mimeType('a.webp')).toBe('image/webp');
+    expect(mimeType('a.ogg')).toBe('audio/ogg');
+    expect(mimeType('a.unknown')).toBe('application/octet-stream');
+  });
+
+  it('serves files, answers the id check, and refuses traversal', async () => {
+    const game = fakeGame();
+    const port = await freePort();
+    const { server, url } = await startServer({ root: game, port, info: { folder: 'abc' } });
+    servers.push(server);
+    expect(url).toBe(`http://localhost:${port}/`);
+    const base = `http://127.0.0.1:${port}`;
+    const index = await fetch(`${base}/`);
+    expect(index.status).toBe(200);
+    expect(index.headers.get('content-type')).toMatch(/^text\/html/);
+    expect(await index.text()).toContain('Fight For Peace');
+    const js = await fetch(`${base}/assets/main.js`);
+    expect(js.headers.get('content-type')).toMatch(/^text\/javascript/);
+    const id = (await (await fetch(`${base}${ID_PATH}`)).json()) as Record<string, string>;
+    expect(id).toEqual({ app: 'fight-for-peace', folder: 'abc' });
+    // fetch() would normalise "..", so send the raw path.
+    expect(await rawStatus(port, '/../secret.txt')).toBe(400);
+    expect(await rawStatus(port, '/%2e%2e/secret.txt')).toBe(400);
+    expect((await fetch(`${base}/missing.js`)).status).toBe(404);
+    expect((await fetch(`${base}/`, { method: 'POST' })).status).toBe(405);
+  });
+
+  it('moves to the next port when the first is busy', async () => {
+    const game = fakeGame();
+    const first = await freePort();
+    const blocker = createServer();
+    await new Promise<void>((ok) => blocker.listen(first, '127.0.0.1', ok));
+    servers.push(blocker);
+    const { server, port } = await startServer({ root: game, first, last: first + 20 });
+    servers.push(server);
+    expect(port).toBeGreaterThan(first);
+    expect(port).toBeLessThanOrEqual(first + 20);
+    await expect(startServer({ root: game, port: first })).rejects.toThrow(/in use/);
+  });
+
+  it('reads --port, --no-open and FFP_PORT', () => {
+    expect(parseArgs([])).toEqual({ port: undefined, open: true });
+    expect(parseArgs(['--port', '7000', '--no-open'])).toEqual({ port: 7000, open: false });
+    expect(parseArgs(['--port=7001'])).toEqual({ port: 7001, open: true });
+    expect(parseArgs([], { FFP_PORT: '7002' }).port).toBe(7002);
+    expect(() => parseArgs(['--port', 'abc'])).toThrow(/port/);
+  });
+});
+
+describe('release zip', () => {
+  it('converts line endings either way', () => {
+    expect(crlf('a\nb\r\nc\n')).toBe('a\r\nb\r\nc\r\n');
+    expect(lf('a\r\nb\nc\r\n')).toBe('a\nb\nc\n');
+  });
+
+  it('round-trips entries and keeps permissions', () => {
+    const zip = buildZip([
+      { name: 'x/run.sh', data: Buffer.from('#!/bin/sh\n'), mode: 0o755 },
+      { name: 'x/a.txt', data: Buffer.from('hello '.repeat(50)) },
+    ]);
+    const entries = readZip(zip);
+    expect(entries.map((e) => [e.name, e.mode])).toEqual([
+      ['x/run.sh', 0o755],
+      ['x/a.txt', 0o644],
+    ]);
+    expect(() => buildZip([{ name: 'x\\y.txt', data: Buffer.alloc(1) }])).toThrow();
+  });
+
+  it('packs the game with start scripts, "/" names and the right line endings', () => {
+    const game = fakeGame();
+    const out = join(tmp, 'release');
+    const { zipPath, names } = assemble({ version: '9.9.9', gameDir: game, outDir: out });
+    const root = 'FightForPeace-9.9.9';
+    for (const n of names) {
+      expect(n.startsWith(`${root}/`)).toBe(true);
+      expect(n).not.toContain('\\');
+    }
+    expect(names).toEqual(
+      expect.arrayContaining([
+        `${root}/start.bat`,
+        `${root}/start.sh`,
+        `${root}/README.txt`,
+        `${root}/VERSION`,
+        `${root}/runtime.json`,
+        `${root}/server/server.mjs`,
+        `${root}/server/get-node.ps1`,
+        `${root}/game/index.html`,
+        `${root}/game/assets/main.js`,
+      ]),
+    );
+    const zip = readFileSync(zipPath);
+    const body = (name: string): { text: string; mode: number } => {
+      const e = readZip(zip).find((r) => r.name === `${root}/${name}`)!;
+      const raw = zip.subarray(e.start, e.start + e.size);
+      const data = e.method === 8 ? inflateRawSync(raw) : raw;
+      return { text: data.toString('utf8'), mode: e.mode };
+    };
+    const bat = body('start.bat');
+    expect(bat.text).toContain('\r\n');
+    expect(bat.text.replace(/\r\n/g, '')).not.toContain('\n');
+    const sh = body('start.sh');
+    expect(sh.text.startsWith('#!')).toBe(true);
+    expect(sh.text).not.toContain('\r');
+    expect(sh.mode).toBe(0o755);
+    expect(body('server/server.mjs').text).not.toContain('\r');
+    expect(body('VERSION').text).toBe('9.9.9\n');
+    const runtime = JSON.parse(body('runtime.json').text) as { node: string };
+    expect(runtime.node).toMatch(/^24\./);
+  });
+
+  it('pins a checksum for every Node download', () => {
+    const runtime = JSON.parse(
+      readFileSync(join(REPO, 'tools', 'portable', 'runtime.json'), 'utf8'),
+    ) as { files: Record<string, { url: string; sha256: string }> };
+    const platforms = Object.values(runtime.files);
+    expect(platforms.length).toBeGreaterThanOrEqual(4);
+    for (const p of platforms) {
+      expect(p.url).toMatch(/^https:\/\/nodejs\.org\/dist\//);
+      expect(p.sha256).toMatch(/^[0-9a-f]{64}$/);
+    }
+  });
+});

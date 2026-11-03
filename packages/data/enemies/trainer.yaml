@@ -1,0 +1,88 @@
+# Training enemy (M4 Combat Lab): one readable attack per Layered Defense-Response Profile
+# (F&D §6.3). Actions use the hero action schema; context "script" means the Lab's training
+# AI picks them, not an input. Defense numbers: costs.guard is Defense-meter percent taken
+# by a normal guard, frames.blockstun the guard reaction. Tags carry the defense profile:
+# guardPressure, guardPiercing, unblockable, counterable, uncounterable, deflectBreak
+# (on a multi-hit action, its concluding contact breaks the sequence when exact-blocked).
+id: trainer
+name: Training Enemy
+bodyWidth: 70
+actions:
+  - id: jab
+    name: Straight Jab
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 14, active: 3, recovery: 18, blockstun: 12 }
+    hitbox: { x: 20, w: 110, y: 160, h: 90, depth: 34 }
+    damage: 40
+    reaction: { kind: stagger, hitstun: 16, push: 2 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 10 }
+    meter: 0
+    tags: [counterable]
+    moves:
+      - { from: 1, to: 14, forward: 0.5 }
+
+  - id: club
+    name: Overhead Club
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 20, active: 4, recovery: 24, blockstun: 18 }
+    hitbox: { x: 20, w: 120, y: 120, h: 170, depth: 36 }
+    damage: 90
+    reaction: { kind: knockback, hitstun: 24, push: 9 }
+    costs: { stun: 18, scale: 15, starter: 10, guard: 35 }
+    meter: 0
+    tags: [guardPressure, counterable]
+
+  - id: thrust
+    name: Piercing Thrust
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 22, active: 4, recovery: 26, blockstun: 14 }
+    hitbox: { x: 20, w: 135, y: 140, h: 80, depth: 30 }
+    damage: 70
+    reaction: { kind: knockback, hitstun: 22, push: 7 }
+    costs: { stun: 15, scale: 12, starter: 10, guard: 15 }
+    meter: 0
+    tags: [guardPiercing, uncounterable]
+    moves:
+      - { from: 16, to: 22, forward: 2 }
+
+  - id: two-step
+    name: Two-Step
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 14, active: [3, 8, 3], recovery: 22, blockstun: 14 }
+    hitbox: { x: 20, w: 115, y: 140, h: 120, depth: 34 }
+    damage: 70
+    reaction: { kind: stagger, hitstun: 20, push: 2 }
+    costs: { stun: 12, scale: 10, starter: 10, guard: 12 }
+    meter: 0
+    tags: [counterable, deflectBreak]
+    moves:
+      - { from: 15, to: 25, forward: 1 }
+
+  - id: barrage
+    name: Pummel Barrage
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: [3, 6, 3, 6, 3, 6, 3, 6, 3], recovery: 26, blockstun: 12 }
+    hitbox: { x: 20, w: 115, y: 130, h: 130, depth: 34 }
+    damage: 120
+    reaction: { kind: stagger, hitstun: 22, push: 1 }
+    costs: { stun: 8, scale: 5, starter: 10, guard: 8 }
+    meter: 0
+    moves:
+      - { from: 13, to: 50, forward: 0.5 }
+
+  - id: bell-hammer
+    name: Bell Hammer
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 45, active: 5, recovery: 30 }
+    hitbox: { x: 10, w: 150, y: 0, h: 110, depth: 44 }
+    damage: 150
+    reaction: { kind: knockdown, hitstun: 30, push: 6, lift: 6 }
+    costs: { stun: 30, scale: 20, starter: 10 }
+    meter: 0
+    tags: [unblockable, uncounterable, terminalKnockdown]

@@ -3,3 +3,5 @@ pnpm-lock.yaml
 docs/
 tests/replays/*.json
 packages/sim/src/combat/heroes.gen.ts
+tools/portable/runtime.json
+release/

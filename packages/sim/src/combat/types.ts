@@ -3,8 +3,18 @@
  * fixed point (1/256 px); all times are 60 Hz frames.
  */
 
-export type ActionCategory = 'standing' | 'aerial' | 'ground' | 'dash' | 'low';
-export type InputContext = 'neutral' | 'chain' | 'air' | 'groundFocus' | 'dash' | 'dashLow';
+export type ActionCategory = 'standing' | 'aerial' | 'ground' | 'dash' | 'low' | 'counter';
+export type InputContext =
+  | 'neutral'
+  | 'chain'
+  | 'air'
+  | 'groundFocus'
+  | 'dash'
+  | 'dashLow'
+  /** Started by a successful Directional Predictive Counter. */
+  | 'counter'
+  /** Picked by the training enemy's script, never by an input. */
+  | 'script';
 export type ReactionKind = 'stagger' | 'knockback' | 'launch' | 'knockdown' | 'trip';
 export type CancelCategory = 'chain' | 'air' | 'jumpChase' | 'dashBridge' | 'special' | 'ultimate';
 export type LinkKind = 'action' | 'jump' | 'dash' | 'special' | 'ultimate';
@@ -84,6 +94,8 @@ export interface ActionDef {
   recovery: number;
   /** Aerial: recovery applies after landing. */
   landing: boolean;
+  /** Guard reaction of a defender who normally guards this action. */
+  blockstun: number;
   hitbox: HitboxDef;
   hurtbox: 'standing' | 'low';
   damage: number;
@@ -92,9 +104,15 @@ export interface ActionDef {
   damageScaleCost: number;
   starterProration: number;
   juggleCost: number;
+  /** Defense-meter percent a normal guard of this action costs. */
+  guardCost: number;
   meterGain: number;
   moves: readonly MoveSample[];
-  /** Open tag set (opensGroundWindow, terminalKnockdown, passThrough, guardPressure, …). */
+  /**
+   * Open tag set (opensGroundWindow, terminalKnockdown, passThrough, …) including the
+   * defense profile: guardPressure, guardPiercing, unblockable, counterable, uncounterable,
+   * deflectBreak.
+   */
   tags: readonly string[];
   links: readonly LinkDef[];
   /** Logical asset ID of the pose. */
