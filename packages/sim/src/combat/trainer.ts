@@ -102,8 +102,12 @@ export function stepTrainer(world: World, f: Fighter): void {
   applyActionMovement(f, a, 1, NO_INPUT, ON_FOOT);
 }
 
-/** How far from the dummy's centre an attack reaches a hero's centre (x) and depth (z). */
+/**
+ * How far from the dummy's centre an attack reaches a hero's centre (x) and depth (z). A
+ * grab measures centre to centre (its reach), so the trainer closes in further for it.
+ */
 export function reach(a: ActionDef): { x: number; z: number } {
+  if (a.category === 'grab') return { x: a.hitbox.x + a.hitbox.w - fx(10), z: a.hitbox.depth };
   return {
     x: a.hitbox.x + a.hitbox.w + HURT_HALF_W - fx(10),
     z: a.hitbox.depth + HURT_HALF_D,

@@ -1,8 +1,9 @@
 import * as Phaser from 'phaser';
 import { render, h } from 'preact';
 import { DEFAULT_KEYBOARD_P1, rebind } from '@ffp/platform';
-import { HEROES, heroOf } from '@ffp/sim';
+import { HEROES, equip, heroOf } from '@ffp/sim';
 import { GameSession } from './game';
+import { EQUIP_TEXT } from './text/en';
 import { StageScene, VIEW_HEIGHT, VIEW_WIDTH } from './scenes/StageScene';
 import { LabOverlay, type LabActions } from './ui/LabOverlay';
 import { PauseOverlay } from './ui/PauseOverlay';
@@ -10,6 +11,7 @@ import { createLabState } from './ui/labState';
 import {
   heldKeys,
   refreshDefense,
+  refreshGrab,
   refreshPlayers,
   refreshRecipes,
   refreshTarget,
@@ -88,6 +90,11 @@ const actions: LabActions = {
     lab.trainer.value = { ...lab.trainer.value, ...settings };
     session.setTrainer(lab.trainer.value);
   },
+  equip: (slot, kind, dir, action) => {
+    const result = equip(session.world, slot, kind, dir, action);
+    lab.equipNote.value = EQUIP_TEXT[result] ?? '';
+    refreshGrab(session, lab);
+  },
   practise: (slot, recipeId) => {
     const hero = heroOf(session.world, slot);
     const recipe = hero ? HEROES[hero.hero]?.recipes.find((r) => r.id === recipeId) : undefined;
@@ -110,6 +117,7 @@ installKeyboard(session, (code) => {
   if (code === 'F6') lab.slowMotion.value = !lab.slowMotion.value;
   if (code === 'F7') lab.recipesOpen.value = !lab.recipesOpen.value;
   if (code === 'F8') lab.defenseOpen.value = !lab.defenseOpen.value;
+  if (code === 'F9') lab.grabOpen.value = !lab.grabOpen.value;
 });
 
 if (devBuild) installDebugHook(session, lab);
@@ -136,6 +144,7 @@ function tick(now: number): void {
   refreshTarget(session, lab);
   refreshRecipes(session, lab);
   refreshDefense(session, lab);
+  refreshGrab(session, lab);
   const held = heldKeys(session);
   if (held.join(' ') !== lab.heldKeys.value.join(' ')) lab.heldKeys.value = held;
 

@@ -10,6 +10,7 @@ import {
   type World,
   type WorldOptions,
   createWorld,
+  escapeOpen,
   fx,
   heroOf,
   step,
@@ -419,6 +420,85 @@ export const defenseDrillsScript: ReplayScript = {
   frames: defenseDrills(),
 };
 
+/**
+ * M5 offense: Mountain's neutral and forward Specials, a grab with a forward throw, a grab
+ * with extension and release strike, and the signature Ultimate (Lab infinite meter); then
+ * River's Current Crescent projectile and a backward throw.
+ */
+function specialsGrabs(): FrameInput[][] {
+  const r = new Recorder(21, { dummies: 2, infiniteMeter: true });
+  const d1 = r.body(101);
+  const d2 = r.body(102);
+  const near = (s: number, d: Fighter, gap: number) => r.walkTo(s, d.x / 256 - gap, d.z / 256, 1);
+  const holding = (s: number) => r.hero(s).state === MoveState.Grabbing;
+  const done = (s: number, d: Fighter) => r.wait(() => r.free(s), 200).settle(d.id);
+  near(0, d1, 80);
+  r.tick(0, [], ['Special']);
+  done(0, d1);
+  near(0, d1, 90);
+  r.tick(0, ['right'], ['Special']);
+  done(0, d1);
+  near(0, d1, 60);
+  r.tick(0, [], ['Interact']);
+  r.pressWhen(0, () => holding(0), ['Interact']);
+  done(0, d1);
+  near(0, d1, 60);
+  r.tick(0, [], ['Interact']);
+  r.pressWhen(0, () => holding(0), ['Attack']);
+  r.pressWhen(0, () => holding(0), ['Attack']);
+  done(0, d1);
+  near(0, d1, 80);
+  r.tick(0, [], ['Ultimate']);
+  done(0, d1);
+  r.tick(1); // Player 2 (River Scout) joins
+  near(1, d2, 220);
+  r.tick(1, [], ['Special']);
+  done(1, d2);
+  near(1, d2, 60);
+  r.tick(1, [], ['Interact']);
+  r.pressWhen(1, () => holding(1), ['Interact'], ['left']);
+  done(1, d2);
+  r.idle(0, 30);
+  return r.frames;
+}
+
+export const specialsGrabsScript: ReplayScript = {
+  name: 'specials-grabs',
+  seed: 21,
+  options: { dummies: 2, infiniteMeter: true },
+  frames: specialsGrabs(),
+};
+
+const GRAB_TRAINER = { attackers: 1, pattern: 6, interval: 70, approach: true };
+
+/**
+ * M5 defense against the training enemy's Collar Grab: a Grab escape on the third frame of
+ * the window, then an early press (the one attempt fails and the throw lands).
+ */
+function grabEscape(): FrameInput[][] {
+  const r = new Recorder(23, { dummies: 1, trainer: GRAB_TRAINER });
+  const grabbed = () => r.hero(0).state === MoveState.Grabbed;
+  const d = r.body(101);
+  // Walk toward the training enemy until it is close (it walks into range by itself).
+  for (let i = 0; i < 300 && Math.abs(d.x - r.hero(0).x) > fx(160); i += 1) r.tick(0, ['right']);
+  r.wait(() => escapeOpen(r.world, r.hero(0)), 600);
+  r.idle(0, 2);
+  r.tick(0, [], ['Guard'], ['Guard']);
+  r.wait(() => r.free(0) && !grabbed(), 120);
+  r.wait(grabbed, 600);
+  r.tick(0, [], ['Guard'], ['Guard']);
+  r.wait(() => r.free(0) && !grabbed(), 200);
+  r.idle(0, 60);
+  return r.frames;
+}
+
+export const grabEscapeScript: ReplayScript = {
+  name: 'grab-escape',
+  seed: 23,
+  options: { dummies: 1, trainer: GRAB_TRAINER },
+  frames: grabEscape(),
+};
+
 export const SCRIPTS = [
   walkSquare,
   dashJump,
@@ -426,6 +506,8 @@ export const SCRIPTS = [
   comboRoutes,
   academyRecipesScript,
   defenseDrillsScript,
+  specialsGrabsScript,
+  grabEscapeScript,
 ];
 
 export type { ReplayLog };

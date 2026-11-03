@@ -492,4 +492,26 @@ describe('Grab Escape, restraint and rescue (Review Focus 7)', () => {
     expect(hero(w).state).toBe(MoveState.Grabbed);
     expect(hero(w).health).toBe(hero(w).maxHealth);
   });
+
+  test('the armed trainer walks into grab reach and its first Collar Grab connects', () => {
+    const w = arena(
+      'mountain',
+      {
+        trainer: {
+          attackers: 1,
+          pattern: idx(TRAINER, 'collar-grab'),
+          interval: 30,
+          approach: true,
+        },
+      },
+      400,
+    );
+    until(w, () => dummyOf(w).state === MoveState.Attack, 300);
+    until(
+      w,
+      () => dummyOf(w).state !== MoveState.Attack || hero(w).state === MoveState.Grabbed,
+      40,
+    );
+    expect(hero(w).state).toBe(MoveState.Grabbed);
+  });
 });

@@ -4,8 +4,11 @@ import {
   BODY_HALF_W,
   DefEvent,
   type Fighter,
+  GrabEvent,
   HEROES,
+  METER,
   MoveState,
+  type Projectile,
   activeHitbox,
   fxToPixels,
   groundFocus,
@@ -33,7 +36,13 @@ export const STRIKE_COLORS: Record<string, number> = {
   low: 0x5ef2e6,
   aerial: 0xff4fd8,
   ground: 0xb0ff6a,
+  special: 0xffb347,
+  ultimate: 0xff5ea0,
+  grab: 0xc8a2ff,
+  grabStrike: 0xc8a2ff,
+  throw: 0xc8a2ff,
 };
+const PROJECTILE_COLOR = 0x8fe3ff;
 const RECOVERY_COLOR = 0x8a8f99;
 const POPUP_MS = 700;
 const CALLOUT_MS = 900;
@@ -45,6 +54,17 @@ const CALLOUTS: Partial<Record<number, { text: string; color: string }>> = {
   [DefEvent.GuardCrush]: { text: 'GUARD CRUSH', color: '#ff6b6b' },
   [DefEvent.Breaker]: { text: 'BREAKER', color: '#c3a6ff' },
   [DefEvent.CounterMiss]: { text: 'counter missed', color: '#bbbbbb' },
+  [DefEvent.Armored]: { text: 'ARMOR', color: '#ffb347' },
+};
+/** Words drawn over a hero for grab outcomes. */
+const GRAB_CALLOUTS: Partial<Record<number, { text: string; color: string }>> = {
+  [GrabEvent.Throw]: { text: 'THROW', color: '#c8a2ff' },
+  [GrabEvent.Escape]: { text: 'ESCAPED', color: '#7df9ff' },
+  [GrabEvent.EscapeEarly]: { text: 'too early', color: '#bbbbbb' },
+  [GrabEvent.EscapeLate]: { text: 'too late', color: '#bbbbbb' },
+  [GrabEvent.Interrupted]: { text: 'GRAB BROKEN', color: '#ffd166' },
+  [GrabEvent.Rescued]: { text: 'FREED', color: '#7ddc7d' },
+  [GrabEvent.RescuedPartner]: { text: 'RESCUE', color: '#7ddc7d' },
 };
 
 export interface StageOptions {
@@ -70,6 +90,8 @@ export class StageScene extends Phaser.Scene {
   private comboLabels = new Map<number, Phaser.GameObjects.Text>();
   private lastHits = new Map<number, number>();
   private lastDefense = new Map<number, string>();
+  private lastGrab = new Map<number, string>();
+  private cues = new Map<number, Phaser.GameObjects.Text>();
   private popups: Popup[] = [];
   private readonly assets = new AssetRegistry();
 
@@ -89,7 +111,8 @@ export class StageScene extends Phaser.Scene {
   }
 
   override update(time: number): void {
-    const { previous, current, alpha } = this.opts.getSnapshot();
+    const snap = this.opts.getSnapshot();
+    const { previous, current, alpha } = snap;
     const byId = new Map(previous.map((b) => [b.id, b]));
     const drawn = current
       .map((b) => ({ f: b, p: interpolate(byId.get(b.id) ?? b, b, alpha) }))
@@ -115,7 +138,10 @@ export class StageScene extends Phaser.Scene {
       this.label(f, p, top);
       this.feedback(f, p, top, time);
       this.defense(f, p, top, time);
+      this.grabCue(f, p, top, time, snap.escapeOpen.has(f.id));
     }
+    this.drawTethers(drawn);
+    for (const pr of snap.projectiles) this.drawProjectile(pr);
     // Boxes go on top of every body, so a hitbox inside a target stays visible.
     if (collision) for (const { f, p } of drawn) this.drawBoxes(f, p);
     this.updatePopups(time);
@@ -357,6 +383,13 @@ export class StageScene extends Phaser.Scene {
     // Tick at the 75 % breaker threshold.
     g.fillStyle(0xffffff, 0.9);
     g.fillRect(p.x - w / 2 + w * 0.75, y - 2, 2, 12);
+    // Attack meter below it; a full bar is an Ultimate.
+    const full = f.meter >= METER.max;
+    g.fillStyle(0x222222, 0.8);
+    g.fillRect(p.x - w / 2, y + 12, w, 8);
+    g.fillStyle(full ? 0xff5ea0 : 0xffb347, 1);
+    g.fillRect(p.x - w / 2, y + 12, (w * f.meter) / METER.max, 8);
+    this.readyLabel(f, p.x, y + 22, full);
     const key = `${f.defEvent}/${f.defFrame}`;
     if (this.lastDefense.get(f.id) === key) return;
     this.lastDefense.set(f.id, key);
@@ -367,6 +400,106 @@ export class StageScene extends Phaser.Scene {
       fontSize: '38px',
       fontStyle: 'bold',
       color: c.color,
+      stroke: '#000000',
+      strokeThickness: 6,
+    });
+    t.setOrigin(0.5, 1);
+    t.setDepth(13);
+    this.popups.push({ text: t, born: time + (CALLOUT_MS - POPUP_MS) });
+  }
+
+  private ready = new Map<number, Phaser.GameObjects.Text>();
+
+  private readyLabel(f: Fighter, x: number, y: number, full: boolean): void {
+    let t = this.ready.get(f.id);
+    if (!t) {
+      t = this.add.text(0, 0, 'ULTIMATE READY', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '18px',
+        fontStyle: 'bold',
+        color: '#ff8fbf',
+        stroke: '#000000',
+        strokeThickness: 4,
+      });
+      t.setOrigin(0.5, 0);
+      t.setDepth(12);
+      this.ready.set(f.id, t);
+    }
+    t.setVisible(full);
+    t.setPosition(x, y);
+  }
+
+  /** A line from each grabber to the fighter it holds. */
+  private drawTethers(drawn: { f: Fighter; p: Pos }[]): void {
+    const at = new Map(drawn.map((d) => [d.f.id, d.p]));
+    const g = this.gfx;
+    for (const { f, p } of drawn) {
+      if (!f.grabbedBy) continue;
+      const q = at.get(f.grabbedBy);
+      if (!q) continue;
+      g.lineStyle(6, 0xc8a2ff, 0.8);
+      g.lineBetween(q.x, q.z - q.y - 150, p.x, p.z - p.y - 150);
+    }
+  }
+
+  private drawProjectile(pr: Projectile): void {
+    const g = this.gfx;
+    const x = fxToPixels(pr.x);
+    const z = fxToPixels(pr.z);
+    const y = fxToPixels(pr.y);
+    const w = fxToPixels(pr.hw) * 2;
+    const h = fxToPixels(pr.h);
+    g.fillStyle(0x000000, 0.3);
+    g.fillEllipse(x, z, w, 16);
+    g.fillStyle(PROJECTILE_COLOR, 0.9);
+    g.fillEllipse(x, z - y - h / 2, w, h);
+  }
+
+  /**
+   * Grab state words over a fighter: ESCAPE while the Grab escape window is open (the
+   * telegraph), GRABBED or RESTRAINED otherwise, plus grab-outcome call-outs for heroes.
+   */
+  private grabCue(f: Fighter, p: Pos, top: number, time: number, escape: boolean): void {
+    let c = this.cues.get(f.id);
+    if (!c) {
+      c = this.add.text(0, 0, '', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '34px',
+        fontStyle: 'bold',
+        stroke: '#000000',
+        strokeThickness: 6,
+      });
+      c.setOrigin(0.5, 1);
+      c.setDepth(14);
+      this.cues.set(f.id, c);
+    }
+    let text = '';
+    let color = '#ffffff';
+    if (escape) {
+      text = 'ESCAPE!';
+      color = '#ffd166';
+    } else if (f.state === MoveState.Grabbed) {
+      text = 'GRABBED';
+      color = '#c8a2ff';
+    } else if (f.state === MoveState.Restrained) {
+      text = `RESTRAINED ${Math.max(0, f.stun - f.stateFrame)}`;
+      color = '#ff9a9a';
+    }
+    c.setText(text);
+    c.setColor(color);
+    c.setScale(escape ? 1.2 : 1);
+    c.setPosition(p.x, top - 140);
+    if (f.team !== 'hero') return;
+    const key = `${f.grabEvent}/${f.grabFrame}`;
+    if (this.lastGrab.get(f.id) === key) return;
+    this.lastGrab.set(f.id, key);
+    const call = GRAB_CALLOUTS[f.grabEvent];
+    if (!call || f.grabFrame === 0) return;
+    const t = this.add.text(p.x, top - 100, call.text, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '38px',
+      fontStyle: 'bold',
+      color: call.color,
       stroke: '#000000',
       strokeThickness: 6,
     });

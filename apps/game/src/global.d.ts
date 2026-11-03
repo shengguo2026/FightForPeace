@@ -27,6 +27,11 @@ export interface DebugBody {
   defOffset: number;
   defFrame: number;
   aiStep: number;
+  grabbedBy: number;
+  grabId: number;
+  grabEvent: number;
+  grabOffset: number;
+  loadout: number[];
 }
 
 /** Test hook, installed in dev and e2e builds only (see debug.ts). */
@@ -45,6 +50,12 @@ export interface FfpDebugHook {
   /** Lab: changes the training enemy's script. */
   setTrainer(settings: Partial<TrainerSettings>): void;
   setDefense(slot: number, value: number): void;
+  /** Sets a hero's attack meter, in percent. */
+  setMeter(slot: number, percent: number): void;
+  equip(slot: number, kind: 'special' | 'ultimate', dir: number, action: string | null): string;
+  /** Is this player's Grab escape window open (the ESCAPE telegraph)? */
+  escapeOpen(slot: number): boolean;
+  projectiles(): number;
 }
 
 declare global {
