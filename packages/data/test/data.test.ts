@@ -1,6 +1,6 @@
 import { readFileSync, mkdtempSync, writeFileSync, copyFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 import {
   GENERATED_PATH,
   HeroDataError,
@@ -20,11 +20,12 @@ const load = (name: string) =>
   );
 
 test('the committed heroes.gen.ts is up to date (run pnpm gen:heroes)', () => {
-  expect(readFileSync(GENERATED_PATH, 'utf8')).toBe(generate());
+  // A Windows checkout may have CRLF line endings; compare the text, not the line endings.
+  expect(readFileSync(GENERATED_PATH, 'utf8').replace(/\r\n/g, '\n')).toBe(generate());
 });
 
 test('roster order puts the founders first', () => {
-  expect(files.map((f) => f.split('/').pop())).toEqual(['mountain.yaml', 'river.yaml']);
+  expect(files.map((f) => basename(f))).toEqual(['mountain.yaml', 'river.yaml']);
 });
 
 const SAR: Record<string, [number, number | number[], number]> = {
@@ -103,9 +104,9 @@ test('pose IDs name the hero, category and action', () => {
 
 test('a third hero file becomes a third roster entry with no code change (Review Focus 7)', () => {
   const dir = mkdtempSync(join(tmpdir(), 'heroes-'));
-  for (const f of files) copyFileSync(f, join(dir, f.split('/').pop()!));
+  for (const f of files) copyFileSync(f, join(dir, basename(f)));
   writeFileSync(join(dir, 'zz-test.yaml'), base.replace('id: mountain', 'id: test-hero'));
-  const source = generate(heroFiles(`${dir}/`));
+  const source = generate(heroFiles(join(dir, '/')));
   expect(source).toContain('"id": "test-hero"');
   expect(source.match(/"bodyWidth"/g)).toHaveLength(3);
 });
