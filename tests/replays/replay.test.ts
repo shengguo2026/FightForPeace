@@ -1,10 +1,12 @@
 import {
+  HEROES,
   RULES_VERSION,
   type ReplayLog,
   SIM_HZ,
   createAccumulator,
   createWorld,
   hashWorld,
+  recipeDone,
   runReplay,
   step,
 } from '@ffp/sim';
@@ -12,6 +14,7 @@ import walkSquareJson from './walk-square.json';
 import dashJumpJson from './dash-jump.json';
 import crowdJson from './crowd.json';
 import comboRoutesJson from './combo-routes.json';
+import academyRecipesJson from './academy-recipes.json';
 import { SCRIPTS } from './scripts';
 
 const LOGS: [string, ReplayLog][] = [
@@ -19,7 +22,29 @@ const LOGS: [string, ReplayLog][] = [
   ['dash-jump', dashJumpJson as ReplayLog],
   ['crowd', crowdJson as ReplayLog],
   ['combo-routes', comboRoutesJson as ReplayLog],
+  ['academy-recipes', academyRecipesJson as ReplayLog],
 ];
+
+test('academy-recipes performs every §8.3 recipe of both founders and a shared co-op juggle', () => {
+  const log = academyRecipesJson as ReplayLog;
+  const world = createWorld(log.seed, log.options);
+  const done = new Set<string>();
+  let coop = false;
+  for (const f of log.frames) {
+    step(world, f);
+    for (const d of world.bodies.filter((b) => b.team === 'enemy')) {
+      HEROES.forEach((h, i) => {
+        for (const r of h.recipes) if (recipeDone(r, d.ctx.route, i)) done.add(`${h.id}/${r.id}`);
+      });
+      const heroes = new Set(d.ctx.route.map((c) => Math.trunc(c / 64)));
+      if (heroes.size === 2) coop = true;
+    }
+  }
+  expect([...done].sort()).toEqual(
+    HEROES.flatMap((h) => h.recipes.map((r) => `${h.id}/${r.id}`)).sort(),
+  );
+  expect(coop).toBe(true);
+});
 
 test.each(LOGS)('golden replay %s reproduces its recorded hash', (name, log) => {
   expect(log.version).toBe(2);

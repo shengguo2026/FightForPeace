@@ -146,12 +146,27 @@ const Action = T.Object(
   { additionalProperties: false },
 );
 
+const Recipe = T.Object(
+  {
+    id: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
+    name: T.String({ minLength: 1 }),
+    family: T.Union([T.Literal('foundation'), T.Literal('aerial'), T.Literal('ground')]),
+    /** Action ids in order; "a|b" accepts either; "jump" is a hint and is not matched. */
+    steps: T.Array(T.String({ pattern: '^[a-z][a-z0-9|-]*$' }), { minItems: 1, maxItems: 12 }),
+    setup: T.Optional(
+      T.Object({ counterHit: T.Optional(T.Boolean()) }, { additionalProperties: false }),
+    ),
+  },
+  { additionalProperties: false },
+);
+
 export const HeroSchema = T.Object(
   {
     id: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
     name: T.String({ minLength: 1 }),
     bodyWidth: T.Integer({ minimum: 20, maximum: 400 }),
     actions: T.Array(Action, { minItems: 1, maxItems: 32 }),
+    recipes: T.Optional(T.Array(Recipe, { maxItems: 16 })),
   },
   { additionalProperties: false },
 );
@@ -198,6 +213,17 @@ export function loadHero(source: string, file = 'hero.yaml'): HeroYaml {
     }
     for (const m of a.moves ?? []) {
       if (m.to < m.from) problems.push(`"${a.id}": move sample ends before it starts`);
+    }
+  }
+  const recipeIds = new Set<string>();
+  for (const r of hero.recipes ?? []) {
+    if (recipeIds.has(r.id)) problems.push(`duplicate recipe id "${r.id}"`);
+    recipeIds.add(r.id);
+    for (const step of r.steps) {
+      if (step === 'jump') continue;
+      for (const id of step.split('|')) {
+        if (!ids.has(id)) problems.push(`recipe "${r.id}" names unknown action "${id}"`);
+      }
     }
   }
   if (problems.length > 0) throw new HeroDataError(problems.map((p) => `${file}: ${p}`).join('\n'));
@@ -273,6 +299,17 @@ export function compileHero(hero: HeroYaml): unknown {
         pose: `hero.${hero.id}.pose.${a.category}.${a.id}`,
       };
     }),
+    recipes: (hero.recipes ?? []).map((r) => ({
+      id: r.id,
+      name: r.name,
+      family: r.family,
+      steps: r.steps.map((step) =>
+        step === 'jump'
+          ? { jump: true, any: [] }
+          : { jump: false, any: step.split('|').map((id) => index.get(id)!) },
+      ),
+      counterHit: r.setup?.counterHit ?? false,
+    })),
   };
 }
 

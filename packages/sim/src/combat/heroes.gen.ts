@@ -211,7 +211,9 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
-        "tags": [],
+        "tags": [
+          "wallBounce"
+        ],
         "links": [
           {
             "kind": "ultimate",
@@ -590,6 +592,7 @@ export const HERO_DATA: readonly HeroDef[] = [
           }
         ],
         "tags": [
+          "groundBounce",
           "terminalKnockdown"
         ],
         "links": [
@@ -679,7 +682,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "landing": false,
         "hitbox": {
           "x": 2560,
-          "w": 28160,
+          "w": 35840,
           "y": 0,
           "h": 17920,
           "depth": 9216
@@ -700,7 +703,9 @@ export const HERO_DATA: readonly HeroDef[] = [
         "juggleCost": 0,
         "meterGain": 3,
         "moves": [],
-        "tags": [],
+        "tags": [
+          "groundExtension"
+        ],
         "links": [
           {
             "kind": "action",
@@ -743,7 +748,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "landing": false,
         "hitbox": {
           "x": 2560,
-          "w": 28160,
+          "w": 35840,
           "y": 0,
           "h": 17920,
           "depth": 9216
@@ -765,7 +770,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "meterGain": 5,
         "moves": [],
         "tags": [
-          "closesGroundRoute",
+          "groundFinisher",
           "terminalKnockdown"
         ],
         "links": [],
@@ -785,7 +790,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "landing": false,
         "hitbox": {
           "x": 2560,
-          "w": 28160,
+          "w": 35840,
           "y": 0,
           "h": 30720,
           "depth": 9216
@@ -807,7 +812,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "meterGain": 5,
         "moves": [],
         "tags": [
-          "closesGroundRoute",
+          "groundFinisher",
           "relaunch"
         ],
         "links": [],
@@ -931,6 +936,91 @@ export const HERO_DATA: readonly HeroDef[] = [
         ],
         "links": [],
         "pose": "hero.mountain.pose.low.faultline-reap"
+      }
+    ],
+    "recipes": [
+      {
+        "id": "foundation",
+        "name": "Foundation",
+        "family": "foundation",
+        "steps": [
+          {
+            "jump": false,
+            "any": [
+              0
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              1
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              2
+            ]
+          }
+        ],
+        "counterHit": false
+      },
+      {
+        "id": "aerial-conversion",
+        "name": "Aerial conversion",
+        "family": "aerial",
+        "steps": [
+          {
+            "jump": false,
+            "any": [
+              5
+            ]
+          },
+          {
+            "jump": true,
+            "any": []
+          },
+          {
+            "jump": false,
+            "any": [
+              7
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              8
+            ]
+          }
+        ],
+        "counterHit": false
+      },
+      {
+        "id": "low-to-ground",
+        "name": "Low to ground",
+        "family": "ground",
+        "steps": [
+          {
+            "jump": false,
+            "any": [
+              14
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              10
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              11,
+              12
+            ]
+          }
+        ],
+        "counterHit": true
       }
     ]
   },
@@ -1142,7 +1232,9 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
-        "tags": [],
+        "tags": [
+          "wallBounce"
+        ],
         "links": [
           {
             "kind": "ultimate",
@@ -1544,7 +1636,8 @@ export const HERO_DATA: readonly HeroDef[] = [
           }
         ],
         "tags": [
-          "carry"
+          "carry",
+          "wallBounce"
         ],
         "links": [
           {
@@ -1713,7 +1806,9 @@ export const HERO_DATA: readonly HeroDef[] = [
         "juggleCost": 0,
         "meterGain": 3,
         "moves": [],
-        "tags": [],
+        "tags": [
+          "groundExtension"
+        ],
         "links": [
           {
             "kind": "action",
@@ -1764,7 +1859,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "meterGain": 5,
         "moves": [],
         "tags": [
-          "closesGroundRoute",
+          "groundFinisher",
           "relaunch",
           "sideSwitch"
         ],
@@ -1890,6 +1985,90 @@ export const HERO_DATA: readonly HeroDef[] = [
         ],
         "links": [],
         "pose": "hero.river.pose.low.undertow-slide"
+      }
+    ],
+    "recipes": [
+      {
+        "id": "foundation",
+        "name": "Foundation",
+        "family": "foundation",
+        "steps": [
+          {
+            "jump": false,
+            "any": [
+              0
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              1
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              2
+            ]
+          }
+        ],
+        "counterHit": false
+      },
+      {
+        "id": "aerial-conversion",
+        "name": "Aerial conversion",
+        "family": "aerial",
+        "steps": [
+          {
+            "jump": false,
+            "any": [
+              5
+            ]
+          },
+          {
+            "jump": true,
+            "any": []
+          },
+          {
+            "jump": false,
+            "any": [
+              7
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              8
+            ]
+          }
+        ],
+        "counterHit": false
+      },
+      {
+        "id": "low-to-ground",
+        "name": "Low to ground",
+        "family": "ground",
+        "steps": [
+          {
+            "jump": false,
+            "any": [
+              14
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              11
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              12
+            ]
+          }
+        ],
+        "counterHit": true
       }
     ]
   }

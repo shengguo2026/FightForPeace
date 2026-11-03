@@ -17,6 +17,8 @@ import {
   startAction,
 } from '../combat/actions';
 import { activeSpan, totalFrames } from '../combat/roster';
+import { groundFocus } from '../combat/ground';
+import { groundAllows } from '../combat/hits';
 import { type ActionDef, Dir, Reject } from '../combat/types';
 import type { MovementProfile } from './profile';
 
@@ -371,6 +373,10 @@ function airStep(f: Fighter, input: FrameInput, p: MovementProfile): void {
   if (f.y <= 0) {
     f.y = 0;
     toIdle(f);
+    if (p.jumpLandingFrames > 0) {
+      f.state = MoveState.Landing;
+      f.stun = p.jumpLandingFrames;
+    }
   }
 }
 
@@ -437,6 +443,21 @@ function startAttack(
   const low =
     action === ActionBit.LowAttack ||
     (fromDash && frame(world) - f.lastGuardFrame <= p.chordFrames);
+  // Ground-Opportunity Focus: near a marked downed target, Attack selects ground actions.
+  const focus = low || fromDash ? null : groundFocus(world, f);
+  if (focus) {
+    const ground = selectAction(f, 'groundFocus', resolveDir(f, input));
+    if (ground >= 0) {
+      if (!groundAllows(focus.ctx, actionOf(f, ground)!)) {
+        f.verdictTo = ground;
+        f.verdictReject = Reject.GroundSpent;
+        f.verdictFrame = frame(world);
+        return;
+      }
+      startAction(f, ground);
+      return;
+    }
+  }
   const context = low ? 'dashLow' : fromDash ? 'dash' : 'neutral';
   const index = selectAction(f, context, low || fromDash ? Dir.Neutral : resolveDir(f, input));
   if (index >= 0) startAction(f, index);

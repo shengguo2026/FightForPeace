@@ -36,6 +36,8 @@ export interface MovementProfile {
   turnGraceFrames: number;
   /** Offensive input buffer window. */
   bufferFrames: number;
+  /** Landing recovery after a plain jump (aerial attacks use their own). */
+  jumpLandingFrames: number;
   /** Assisted Facing search box around the hero. */
   assistRangeX: number;
   assistRangeZ: number;
@@ -60,6 +62,7 @@ export const ON_FOOT: MovementProfile = {
   chordFrames: 3,
   turnGraceFrames: 8,
   bufferFrames: 9,
+  jumpLandingFrames: 4,
   assistRangeX: fx(480),
   assistRangeZ: fx(160),
 };

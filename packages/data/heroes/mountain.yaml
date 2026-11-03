@@ -49,6 +49,7 @@ actions:
     reaction: { kind: knockback, hitstun: 26, push: 12 }
     costs: { stun: 18, scale: 15 }
     meter: 6
+    tags: [wallBounce]
     moves:
       - { from: 1, to: 11, forward: 1 }
     links:
@@ -141,7 +142,7 @@ actions:
     reaction: { kind: knockback, hitstun: 26, push: 7, lift: 4, airPop: -8 }
     costs: { stun: 18, scale: 15, juggle: 25 }
     meter: 5
-    tags: [terminalKnockdown]
+    tags: [groundBounce, terminalKnockdown]
     moves:
       - { from: 10, to: 15, forward: 4, vy: -6 }
     links:
@@ -167,12 +168,13 @@ actions:
     category: ground
     input: { context: groundFocus, dir: neutral }
     frames: { startup: 8, active: 4, recovery: 15 }
-    hitbox: { x: 10, w: 110, y: 0, h: 70, depth: 36 }
+    hitbox: { x: 10, w: 140, y: 0, h: 70, depth: 36 }
     damage: 30
     reaction: { kind: stagger, hitstun: 20 }
     costs: { stun: 10, scale: 10 }
     meter: 3
-    note: Needs Ground-Opportunity Focus (M3).
+    tags: [groundExtension]
+    note: Needs Ground-Opportunity Focus.
     links:
       - { to: lockgate-press, category: chain, on: [hit] }
       - { to: foundation-rise, category: chain, on: [hit] }
@@ -182,26 +184,26 @@ actions:
     category: ground
     input: { context: groundFocus, dir: forward }
     frames: { startup: 10, active: [6, 1, 5, 1, 5], recovery: 20 }
-    hitbox: { x: 10, w: 110, y: 0, h: 70, depth: 36 }
+    hitbox: { x: 10, w: 140, y: 0, h: 70, depth: 36 }
     damage: 60
     reaction: { kind: knockdown, hitstun: 30 }
     costs: { stun: 20, scale: 15 }
     meter: 5
-    tags: [terminalKnockdown, closesGroundRoute]
-    note: Needs Ground-Opportunity Focus (M3).
+    tags: [terminalKnockdown, groundFinisher]
+    note: Needs Ground-Opportunity Focus.
 
   - id: foundation-rise
     name: Foundation Rise
     category: ground
     input: { context: groundFocus, dir: backward }
     frames: { startup: 12, active: 5, recovery: 23 }
-    hitbox: { x: 10, w: 110, y: 0, h: 120, depth: 36 }
+    hitbox: { x: 10, w: 140, y: 0, h: 120, depth: 36 }
     damage: 50
     reaction: { kind: launch, hitstun: 30, lift: 13 }
     costs: { stun: 20, scale: 15, juggle: 35 }
     meter: 5
-    tags: [relaunch, closesGroundRoute]
-    note: Needs Ground-Opportunity Focus (M3).
+    tags: [relaunch, groundFinisher]
+    note: Needs Ground-Opportunity Focus.
 
   - id: rampart-charge
     name: Rampart Charge
@@ -234,3 +236,20 @@ actions:
     tags: [opensGroundWindow]
     moves:
       - { from: 1, to: 8, forward: 3 }
+
+# Academy representative recipes (spec §8.3). Steps name actions; "a|b" accepts either;
+# "jump" is a hint shown between steps and is not matched.
+recipes:
+  - id: foundation
+    name: Foundation
+    family: foundation
+    steps: [masons-touch, brace-elbow, gatepost-hammer]
+  - id: aerial-conversion
+    name: Aerial conversion
+    family: aerial
+    steps: [high-bank-lift, jump, rafter-palm, stonefall-knee]
+  - id: low-to-ground
+    name: Low to ground
+    family: ground
+    steps: [faultline-reap, settling-palm, lockgate-press|foundation-rise]
+    setup: { counterHit: true }

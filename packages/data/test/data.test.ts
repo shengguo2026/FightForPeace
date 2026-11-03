@@ -109,3 +109,29 @@ test('a third hero file becomes a third roster entry with no code change (Review
   expect(source).toContain('"id": "test-hero"');
   expect(source.match(/"bodyWidth"/g)).toHaveLength(3);
 });
+
+describe('Academy recipes (M3)', () => {
+  test.each(['mountain.yaml', 'river.yaml'])('%s has the three §8.3 recipes', (file) => {
+    const hero = load(file);
+    expect(hero.recipes?.map((r) => r.family)).toEqual(['foundation', 'aerial', 'ground']);
+    expect(hero.recipes?.find((r) => r.family === 'ground')?.setup?.counterHit).toBe(true);
+  });
+
+  test('a recipe step naming an unknown action fails with a readable message', () => {
+    const bad = base.replace(
+      'steps: [masons-touch, brace-elbow, gatepost-hammer]',
+      'steps: [masons-touch, brace-elbo]',
+    );
+    expect(() => loadHero(bad)).toThrow(/recipe "foundation" names unknown action "brace-elbo"/);
+  });
+
+  test('alternatives compile to action indices and jump steps are hints', () => {
+    const compiled = compileHero(load('mountain.yaml')) as {
+      actions: { id: string }[];
+      recipes: { steps: { jump: boolean; any: number[] }[] }[];
+    };
+    const ids = (any: number[]) => any.map((i) => compiled.actions[i]!.id);
+    expect(compiled.recipes[1]!.steps[1]).toEqual({ jump: true, any: [] });
+    expect(ids(compiled.recipes[2]!.steps[2]!.any)).toEqual(['lockgate-press', 'foundation-rise']);
+  });
+});

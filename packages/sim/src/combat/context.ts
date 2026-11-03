@@ -1,10 +1,13 @@
-import { type ComboContext, GroundTag } from '../world/types';
+import { type ComboContext, GroundTag, Protect } from '../world/types';
 
 /** Candidate budget sizes (Features_Decisions §10.2, spec §7.7). */
 export const STUN_BUDGET = 100;
 export const JUGGLE_BUDGET = 100;
 export const METER_BUDGET = 30;
 export const DAMAGE_FLOOR = 30;
+/** Juggle points spent by an ordinary wall rebound and an ordinary ground bounce. */
+export const WALL_BOUNCE_COST = 15;
+export const GROUND_BOUNCE_COST = 15;
 
 export function emptyContext(): ComboContext {
   return {
@@ -20,7 +23,34 @@ export function emptyContext(): ComboContext {
     exhausted: false,
     groundTag: GroundTag.None,
     lastDamage: 0,
+    wallBounceUsed: false,
+    groundBounceUsed: false,
+    groundOpened: false,
+    groundExtUsed: false,
+    groundFinUsed: false,
+    ended: Protect.None,
+    route: [],
   };
+}
+
+/**
+ * Lift multiplier (percent) for the juggle budget remaining before an action: full lift
+ * and air hold from 61, reduced from 31, minimal (with a heavier fall) from 1.
+ */
+export function juggleBand(budget: number): number {
+  if (budget > 60) return 100;
+  if (budget > 30) return 70;
+  return 40;
+}
+
+/** An upward speed scaled by a juggle band; downward speeds are never scaled. */
+export function bandLift(v: number, band: number): number {
+  return v > 0 ? Math.trunc((v * band) / 100) : v;
+}
+
+/** Route log entry for an action that connected. */
+export function routeCode(hero: number, action: number): number {
+  return hero * 64 + action;
 }
 
 /** Hit-stun multiplier (percent) for the budget remaining before an action. */

@@ -49,6 +49,7 @@ actions:
     reaction: { kind: knockback, hitstun: 24, push: 12 }
     costs: { stun: 16, scale: 15 }
     meter: 6
+    tags: [wallBounce]
     moves:
       - { from: 1, to: 9, forward: 1.5 }
     links:
@@ -145,7 +146,7 @@ actions:
     reaction: { kind: knockback, hitstun: 24, push: 6, lift: 3, airPop: 5 }
     costs: { stun: 15, scale: 12, juggle: 20 }
     meter: 5
-    tags: [carry]
+    tags: [carry, wallBounce]
     moves:
       - { from: 1, to: 12, forward: 5 }
     links:
@@ -191,7 +192,8 @@ actions:
     reaction: { kind: stagger, hitstun: 18 }
     costs: { stun: 10, scale: 10 }
     meter: 3
-    note: Needs Ground-Opportunity Focus (M3).
+    tags: [groundExtension]
+    note: Needs Ground-Opportunity Focus.
     links:
       - { to: rising-eddy, category: chain, on: [hit] }
 
@@ -205,8 +207,8 @@ actions:
     reaction: { kind: launch, hitstun: 30, lift: 12 }
     costs: { stun: 18, scale: 15, juggle: 35 }
     meter: 5
-    tags: [relaunch, closesGroundRoute, sideSwitch]
-    note: Needs Ground-Opportunity Focus (M3).
+    tags: [relaunch, groundFinisher, sideSwitch]
+    note: Needs Ground-Opportunity Focus.
 
   - id: rapid-crossing
     name: Rapid Crossing
@@ -239,3 +241,20 @@ actions:
     moves:
       - { from: 1, to: 13, forward: 7 }
       - { from: 14, to: 20, forward: 3 }
+
+# Academy representative recipes (spec §8.3). Steps name actions; "a|b" accepts either;
+# "jump" is a hint shown between steps and is not matched.
+recipes:
+  - id: foundation
+    name: Foundation
+    family: foundation
+    steps: [reed-tap, turning-current, open-channel-kick]
+  - id: aerial-conversion
+    name: Aerial conversion
+    family: aerial
+    steps: [northbank-arc, jump, reedwing-tap, current-chase]
+  - id: low-to-ground
+    name: Low to ground
+    family: ground
+    steps: [undertow-slide, skipping-current, rising-eddy]
+    setup: { counterHit: true }
