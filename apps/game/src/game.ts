@@ -1,5 +1,9 @@
 import {
   type FacingMode,
+  MoveState,
+  type RecipeDef,
+  fx,
+  heroOf,
   type Fighter,
   type FrameInput,
   SIM_HZ,
@@ -91,9 +95,57 @@ export class GameSession {
     setHero(this.world, slot, heroId);
   }
 
+  /** Lab: puts Dummy 1 next to the right stage edge and Player 1 in front of it. */
+  dummyToWall(): void {
+    const d = this.world.bodies.find((b) => b.team === 'enemy');
+    if (!d) return;
+    resetBody(d);
+    d.x = this.world.bounds.maxX - fx(60);
+    this.placeHero(0, d, 80);
+  }
+
+  /**
+   * Lab: sets up a recipe: the player's hero in front of Dummy 1 (further away for a
+   * dash opener), and counter-hit dummies when the recipe needs them.
+   */
+  practise(slot: number, recipe: RecipeDef): boolean {
+    const d = this.world.bodies.find((b) => b.team === 'enemy');
+    if (!d) return false;
+    resetBody(d);
+    if (d.x > this.world.bounds.maxX - fx(400)) d.x = fx(1100);
+    this.placeHero(slot, d, recipe.family === 'ground' ? 160 : 80);
+    if (recipe.counterHit) this.world.dummy.counterHit = true;
+    return this.world.dummy.counterHit;
+  }
+
+  private placeHero(slot: number, d: Fighter, gap: number): void {
+    const h = heroOf(this.world, slot);
+    if (!h) return;
+    h.x = d.x - fx(gap);
+    h.z = d.z;
+    h.facing = 1;
+  }
+
   setKeyboardP2Preset(preset: KeyboardP2Preset): void {
     this.devices.keyboardP2.setBindings(keyboardP2(preset));
   }
+}
+
+/** Lab reset of a training dummy: standing, idle, combo closed. */
+function resetBody(d: Fighter): void {
+  d.state = MoveState.Idle;
+  d.stateFrame = 0;
+  d.stun = 0;
+  d.y = 0;
+  d.vx = 0;
+  d.vy = 0;
+  d.vz = 0;
+  d.protectedRecovery = false;
+  d.groundWindow = 0;
+  d.bounce = 0;
+  d.airRecover = false;
+  d.ctx.open = false;
+  d.health = d.maxHealth;
 }
 
 function cloneFighters(bodies: readonly Fighter[]): Fighter[] {
@@ -103,6 +155,6 @@ function cloneFighters(bodies: readonly Fighter[]): Fighter[] {
     contactIds: [...b.contactIds],
     contactScales: [...b.contactScales],
     hitIds: [...b.hitIds],
-    ctx: { ...b.ctx },
+    ctx: { ...b.ctx, route: [...b.ctx.route] },
   }));
 }

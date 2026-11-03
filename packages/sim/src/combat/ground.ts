@@ -1,5 +1,5 @@
 import { fx } from '../math/fixed';
-import { type Fighter, MoveState, type World } from '../world/types';
+import { type Fighter, MoveState } from '../world/types';
 
 /** Candidate Ground-Opportunity Focus range (F&D §6.2): in front of the hero, near its depth. */
 export const GROUND_FOCUS = { rangeX: fx(180), rangeZ: fx(32) } as const;
@@ -19,11 +19,11 @@ export function groundMarked(t: Fighter): boolean {
  * Ground-Opportunity Focus: the marked target a grounded hero is close to and facing, or
  * null. Nearest wins, then the lower id. Moving out of range or facing away releases it.
  */
-export function groundFocus(world: World, f: Fighter): Fighter | null {
+export function groundFocus(bodies: readonly Fighter[], f: Fighter): Fighter | null {
   if (f.y > 0 || f.state === MoveState.Air) return null;
   let best: Fighter | null = null;
   let bestD = 0;
-  for (const t of world.bodies) {
+  for (const t of bodies) {
     if (t.team === f.team || !groundMarked(t)) continue;
     const dx = t.x - f.x;
     const dz = t.z - f.z;

@@ -319,12 +319,12 @@ describe('Ground-Opportunity Focus and the two-step route (Review Focus 4)', () 
     const d = dummyOf(w);
     const h = hero(w);
     expect(d.groundWindow).toBeGreaterThan(0);
-    expect(groundFocus(w, h)).toBe(d);
+    expect(groundFocus(w.bodies, h)).toBe(d);
     h.facing = -1;
-    expect(groundFocus(w, h)).toBeNull();
+    expect(groundFocus(w.bodies, h)).toBeNull();
     h.facing = 1;
     h.x = d.x - fx(260);
-    expect(groundFocus(w, h)).toBeNull();
+    expect(groundFocus(w.bodies, h)).toBeNull();
   });
 
   test('without focus, Attack keeps its standing meaning', () => {
@@ -438,4 +438,18 @@ describe('jump landing recovery', () => {
     run(w, [press('Attack'), ...repeat(idle, ON_FOOT.jumpLandingFrames)]);
     expect(running(w)).toBe('masons-touch');
   });
+});
+
+test('jump chase accepts the jump while a direction is still held (Up after the launcher)', () => {
+  const w = duel('mountain');
+  perform(
+    w,
+    [
+      { when: () => true, input: up() },
+      { when: () => contacted(w, 'high-bank-lift'), input: press('Jump', { moveZ: -1 }) },
+    ],
+    0,
+  );
+  run(w, repeat(idle, 8));
+  expect(hero(w).state).toBe(MoveState.Air);
 });

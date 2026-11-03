@@ -49,5 +49,12 @@ function view(b: Fighter) {
     meter: b.meter,
     health: b.health,
     combo: { open: b.ctx.open, hits: b.ctx.hits, damage: b.ctx.damage, scale: b.ctx.scale },
+    juggle: b.ctx.juggleBudget,
+    groundWindow: b.groundWindow,
+    protectedRecovery: b.protectedRecovery,
+    route: b.ctx.route.map((c) => HEROES[Math.trunc(c / 64)]?.actions[c % 64]?.id ?? '?'),
+    wallBounceUsed: b.ctx.wallBounceUsed,
+    groundBounceUsed: b.ctx.groundBounceUsed,
+    contactAt: b.contactAt,
   };
 }

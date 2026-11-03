@@ -45,10 +45,37 @@ export interface TargetView {
   stunBand: number;
   meterBudget: number;
   juggleBudget: number;
+  juggleBand: number;
   bridge: boolean;
   exhausted: boolean;
   reaction: string;
   ground: string;
+  wallBounce: string;
+  groundBounce: string;
+  /** Ground route: window frames left, extension and finisher state. */
+  groundRoute: string;
+  /** Protected recovery, or how the last combo ended. */
+  protection: string;
+  /** Names of the actions that connected, in order. */
+  route: string[];
+}
+
+/** One Academy recipe as the Lab shows it for one player. */
+export interface RecipeView {
+  id: string;
+  name: string;
+  family: string;
+  /** Step labels: action names (alternatives joined with "or"); jump hints included. */
+  steps: { label: string; jump: boolean; input: string; done: boolean }[];
+  done: boolean;
+  performed: number;
+  counterHit: boolean;
+}
+
+export interface RecipePlayerView {
+  slot: number;
+  hero: string;
+  recipes: RecipeView[];
 }
 
 export interface LabState {
@@ -69,6 +96,8 @@ export interface LabState {
   rebinding: Signal<boolean>;
   target: Signal<TargetView | null>;
   moveListOpen: Signal<boolean>;
+  recipesOpen: Signal<boolean>;
+  recipes: Signal<RecipePlayerView[]>;
   slowMotion: Signal<boolean>;
   infiniteMeter: Signal<boolean>;
   counterHit: Signal<boolean>;
@@ -94,6 +123,8 @@ export function createLabState(visible: boolean): LabState {
     rebinding: signal(false),
     target: signal(null),
     moveListOpen: signal(false),
+    recipesOpen: signal(false),
+    recipes: signal([]),
     slowMotion: signal(false),
     infiniteMeter: signal(false),
     counterHit: signal(false),

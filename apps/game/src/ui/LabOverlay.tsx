@@ -2,7 +2,7 @@ import { CANCEL_TIMING, type FacingMode, HEROES, type HeroDef } from '@ffp/sim';
 import type { KeyboardP2Preset, LayoutName } from '@ffp/platform';
 import { LINK_TEXT, TEXT, moveInputText } from '../text/en';
 import { InputPrompt, PLAYER_COLORS, PromptText } from './InputPrompt';
-import type { LabState, PlayerView, PromptStyle, TargetView } from './labState';
+import type { LabState, PlayerView, PromptStyle, RecipePlayerView, TargetView } from './labState';
 
 export interface LabActions {
   setFacing(slot: number, mode: FacingMode): void;
@@ -17,6 +17,8 @@ export interface LabActions {
   setInfiniteMeter(on: boolean): void;
   setCounterHit(on: boolean): void;
   setRefill(on: boolean): void;
+  dummyToWall(): void;
+  practise(slot: number, recipeId: string): void;
 }
 
 const panel = {
@@ -212,6 +214,17 @@ function Settings({ state, actions }: { state: LabState; actions: LabActions }) 
         onChange={actions.setRefill}
         testId="set-refill"
       />
+      <div style={{ margin: '4px 0' }}>
+        <button
+          data-testid="dummy-to-wall"
+          onClick={(e) => {
+            (e.target as HTMLElement).blur();
+            actions.dummyToWall();
+          }}
+        >
+          Dummy 1 to the wall
+        </button>
+      </div>
     </div>
   );
 }
@@ -264,10 +277,21 @@ function TargetPanel({ t }: { t: TargetView | null }) {
         hit-stun budget {t.stunBudget} ({t.stunBand}%){t.exhausted ? ' · exhausted' : ''}
       </div>
       <div>meter-gain budget {t.meterBudget}%</div>
-      <div>juggle budget {t.juggleBudget} (M3)</div>
+      <div>
+        juggle budget <span data-testid="lab-target-juggle">{t.juggleBudget}</span> (lift{' '}
+        {t.juggleBand}%)
+      </div>
+      <div data-testid="lab-target-bounces">
+        wall rebound {t.wallBounce} · ground bounce {t.groundBounce}
+      </div>
       <div>dash bridge {t.bridge ? 'used' : 'available'}</div>
       <div>
-        state {t.reaction} · ground {t.ground}
+        state {t.reaction} · knockdown {t.ground}
+      </div>
+      <div data-testid="lab-target-ground">ground route {t.groundRoute}</div>
+      <div data-testid="lab-target-protection">recovery {t.protection}</div>
+      <div data-testid="lab-target-route" style={{ maxWidth: '260px' }}>
+        route {t.route.length > 0 ? t.route.join(' → ') : '—'}
       </div>
     </div>
   );
@@ -304,7 +328,7 @@ function MoveList({ players }: { players: PlayerView[] }) {
                 P{p.slot + 1} · {hero.name}
               </div>
               {hero.actions.map((a) => (
-                <div style={{ margin: '3px 0', opacity: a.context === 'groundFocus' ? 0.6 : 1 }}>
+                <div style={{ margin: '3px 0' }}>
                   <b>{a.name}</b> [{a.category}]{' '}
                   <PromptText text={moveInputText(a.context, a.dir)} ctx={p.ctx} color={color} /> ·{' '}
                   {a.startup}/{a.active.join('+')}/{a.recovery}
@@ -332,6 +356,67 @@ function MoveList({ players }: { players: PlayerView[] }) {
   );
 }
 
+/** F7: the Academy recipes from spec §8.3, ticked off live against the followed dummy. */
+function RecipesPanel(props: {
+  views: RecipePlayerView[];
+  players: PlayerView[];
+  actions: LabActions;
+}) {
+  return (
+    <div
+      style={{ ...panel, maxHeight: '86vh', overflowY: 'auto', pointerEvents: 'auto' }}
+      data-testid="lab-recipes"
+    >
+      <div>Academy recipes · F7 to close</div>
+      {props.views.map((v) => {
+        const p = props.players[v.slot];
+        const color = PLAYER_COLORS[v.slot];
+        return (
+          <div style={{ marginTop: '6px' }} data-testid={`recipes-p${v.slot + 1}`}>
+            <div style={{ color }}>
+              P{v.slot + 1} · {v.hero}
+            </div>
+            {v.recipes.map((r) => (
+              <div
+                style={{
+                  margin: '4px 0',
+                  paddingLeft: '6px',
+                  borderLeft: `2px solid ${r.done ? '#7ddc7d' : '#555'}`,
+                }}
+                data-testid={`recipe-p${v.slot + 1}-${r.id}`}
+              >
+                <div>
+                  <b>{r.name}</b>
+                  {r.done ? ' ✓' : ''} · performed{' '}
+                  <span data-testid={`recipe-count-p${v.slot + 1}-${r.id}`}>{r.performed}</span>{' '}
+                  <button
+                    data-testid={`practise-p${v.slot + 1}-${r.id}`}
+                    onClick={(e) => {
+                      (e.target as HTMLElement).blur();
+                      props.actions.practise(v.slot, r.id);
+                    }}
+                  >
+                    Practise
+                  </button>
+                </div>
+                {r.counterHit ? (
+                  <div style={{ opacity: 0.8 }}>needs counter-hit dummies</div>
+                ) : null}
+                {r.steps.map((s, i) => (
+                  <div style={{ paddingLeft: '12px', opacity: s.jump ? 0.8 : 1 }}>
+                    {s.done ? '✓' : `${i + 1}.`} {s.label}{' '}
+                    {p ? <PromptText text={s.input} ctx={p.ctx} color={color} /> : null}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 export function LabOverlay({ state, actions }: { state: LabState; actions: LabActions }) {
   const players = state.players.value;
   return (
@@ -351,7 +436,9 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
         >
           <div style={panel}>
             <div>Lab · F1 hide · F2 settings</div>
-            <div>F3 hitboxes · F5 moves · F6 slow{state.slowMotion.value ? ' (on)' : ''}</div>
+            <div>
+              F3 hitboxes · F5 moves · F6 slow{state.slowMotion.value ? ' (on)' : ''} · F7 recipes
+            </div>
             <div>
               frame <span data-testid="lab-frame">{state.frame.value}</span>
               {state.paused.value ? ' (paused)' : ''}
@@ -370,6 +457,9 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
           <TargetPanel t={state.target.value} />
           {state.settingsOpen.value ? <Settings state={state} actions={actions} /> : null}
           {state.moveListOpen.value ? <MoveList players={players} /> : null}
+          {state.recipesOpen.value ? (
+            <RecipesPanel views={state.recipes.value} players={players} actions={actions} />
+          ) : null}
         </div>
       ) : null}
       <HintBar players={players} />

@@ -3,11 +3,11 @@ import {
   BODY_HALF_D,
   BODY_HALF_W,
   type Fighter,
-  GroundTag,
   HEROES,
   MoveState,
   activeHitbox,
   fxToPixels,
+  groundFocus,
   hurtbox,
   phaseOf,
 } from '@ffp/sim';
@@ -83,7 +83,18 @@ export class StageScene extends Phaser.Scene {
     const g = this.gfx;
     g.clear();
     const collision = this.opts.showCollision();
+    // Ground-Opportunity Focus: a ring under each marked target a hero is focused on.
+    const focused = new Set<number>();
+    for (const f of current) {
+      if (f.team !== 'hero') continue;
+      const t = groundFocus(current, f);
+      if (t) focused.add(t.id);
+    }
     for (const { f, p } of drawn) {
+      if (focused.has(f.id)) {
+        g.lineStyle(4, 0xb0ff6a, 0.9);
+        g.strokeEllipse(p.x, p.z - 6, 300, 52);
+      }
       this.drawShadow(p);
       const top = this.drawBody(f, p);
       this.label(f, p, top);
@@ -120,9 +131,11 @@ export class StageScene extends Phaser.Scene {
     const color = f.team === 'hero' ? (HERO_COLORS[f.slot] ?? 0xd8d8d8) : DUMMY_COLOR;
     const flash = f.state === MoveState.Hitstun && f.stateFrame < 4;
 
+    // Protected recovery is drawn translucent: nothing can hit it.
+    const alpha = f.protectedRecovery ? 0.45 : 1;
     if (f.state === MoveState.Down) {
       // Lying on the floor.
-      g.fillStyle(color, 1);
+      g.fillStyle(color, alpha);
       g.fillRect(p.x - BODY_H * 0.45, p.z - 50, BODY_H * 0.9, 46);
       return p.z - 60;
     }
@@ -130,10 +143,15 @@ export class StageScene extends Phaser.Scene {
     if (fam === 'low') height = BODY_H * 0.6;
     else if (fam === 'aerial') height = BODY_H * 0.7;
     else if (fam === 'ground') height = BODY_H * 0.55;
-    else if (f.state === MoveState.Landing || f.state === MoveState.GetUp) height = BODY_H * 0.82;
+    else if (
+      f.state === MoveState.Landing ||
+      f.state === MoveState.GetUp ||
+      f.state === MoveState.Recover
+    )
+      height = BODY_H * 0.82;
     const left = p.x - width / 2;
     const top = p.z - p.y - height;
-    g.fillStyle(flash ? 0xffffff : color, f.state === MoveState.Dash ? 0.7 : 1);
+    g.fillStyle(flash ? 0xffffff : color, f.state === MoveState.Dash ? 0.7 : alpha);
     g.fillRect(left, top, width, height);
     // Facing notch.
     g.fillStyle(0xe0503c, 1);
@@ -284,9 +302,11 @@ export class StageScene extends Phaser.Scene {
       this.comboLabels.set(f.id, c);
     }
     const ground =
-      f.ctx.groundTag === GroundTag.Opens && f.state === MoveState.Down
-        ? '▼ ground window (M3)'
-        : '';
+      f.groundWindow > 0 && !f.protectedRecovery && f.state === MoveState.Down
+        ? `▼ ground window ${f.groundWindow}`
+        : f.protectedRecovery
+          ? 'protected'
+          : '';
     const combo = f.ctx.open && f.ctx.hits > 1 ? `${f.ctx.hits} hits · ${f.ctx.damage}` : '';
     c.setText([combo, ground].filter(Boolean).join('\n'));
     c.setPosition(p.x, top - 44);

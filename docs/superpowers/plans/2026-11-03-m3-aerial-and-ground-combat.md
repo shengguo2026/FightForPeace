@@ -37,6 +37,7 @@
 | Relaunch finisher | Foundation Rise, Rising Eddy: count as the finisher, consume the ground-bounce quota and their juggle cost; when the quota is spent or the juggle budget is empty they resolve as a separating kick (8 px/f push, protected get-up) | F&D §6.2, §10.2 |
 | Jump landing recovery | **4 f** after a plain jump (aerial attacks keep their own landing recovery); offensive presses during it are buffered | roadmap M3 |
 | Downed hurtbox | 60 px high | §7.5 |
+| Jump chase direction | the jump-chase link accepts Jump with any held direction (players still hold Up after an Up + Attack launcher); the jump goes in the held direction | M3 creator-test finding |
 
 ## Data changes
 

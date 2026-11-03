@@ -43,7 +43,7 @@ export function moveInputText(context: string, dir: number): string {
     case 'dashLow':
       return 'dashing: {action:Attack}+{action:Guard}, or {action:LowAttack}';
     case 'groundFocus':
-      return `downed target (M3): ${d}{action:Attack}`;
+      return `near a downed target: ${d}{action:Attack}`;
     default:
       return '';
   }

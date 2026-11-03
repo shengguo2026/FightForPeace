@@ -1,12 +1,13 @@
 import * as Phaser from 'phaser';
 import { render, h } from 'preact';
 import { DEFAULT_KEYBOARD_P1, rebind } from '@ffp/platform';
+import { HEROES, heroOf } from '@ffp/sim';
 import { GameSession } from './game';
 import { StageScene, VIEW_HEIGHT, VIEW_WIDTH } from './scenes/StageScene';
 import { LabOverlay, type LabActions } from './ui/LabOverlay';
 import { PauseOverlay } from './ui/PauseOverlay';
 import { createLabState } from './ui/labState';
-import { heldKeys, refreshPlayers, refreshTarget } from './ui/views';
+import { heldKeys, refreshPlayers, refreshRecipes, refreshTarget } from './ui/views';
 import { captureNextKey, installKeyboard, readPads } from './input/browserInput';
 import { installDebugHook } from './debug';
 
@@ -69,6 +70,12 @@ const actions: LabActions = {
     lab.refill.value = on;
     session.world.dummy.refill = on;
   },
+  dummyToWall: () => session.dummyToWall(),
+  practise: (slot, recipeId) => {
+    const hero = heroOf(session.world, slot);
+    const recipe = hero ? HEROES[hero.hero]?.recipes.find((r) => r.id === recipeId) : undefined;
+    if (recipe) lab.counterHit.value = session.practise(slot, recipe);
+  },
 };
 
 const root = document.getElementById('lab')!;
@@ -84,6 +91,7 @@ installKeyboard(session, (code) => {
   if (code === 'F4') actions.setDummiesChase(!lab.dummiesChase.value);
   if (code === 'F5') lab.moveListOpen.value = !lab.moveListOpen.value;
   if (code === 'F6') lab.slowMotion.value = !lab.slowMotion.value;
+  if (code === 'F7') lab.recipesOpen.value = !lab.recipesOpen.value;
 });
 
 if (devBuild) installDebugHook(session, lab);
@@ -108,6 +116,7 @@ function tick(now: number): void {
   void session.labels.version;
   refreshPlayers(session, lab, report.inputs);
   refreshTarget(session, lab);
+  refreshRecipes(session, lab);
   const held = heldKeys(session);
   if (held.join(' ') !== lab.heldKeys.value.join(' ')) lab.heldKeys.value = held;
 

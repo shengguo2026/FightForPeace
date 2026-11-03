@@ -125,7 +125,10 @@ export function pressDuringAction(
 ): PressOutcome {
   const frame = world.frame;
   const n = f.stateFrame + 1;
-  const index = a.links.findIndex((l) => l.kind === press.kind && dirMatches(l.dir, press.dir));
+  // A jump chase takes the jump in whatever direction is held (the launcher's Up included).
+  const index = a.links.findIndex(
+    (l) => l.kind === press.kind && (l.kind === 'jump' || dirMatches(l.dir, press.dir)),
+  );
   if (index === -1) {
     logVerdict(f, frame, VerdictTo.None, Reject.Unlinked);
     return 'unlinked';

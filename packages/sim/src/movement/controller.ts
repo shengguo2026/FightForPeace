@@ -444,7 +444,7 @@ function startAttack(
     action === ActionBit.LowAttack ||
     (fromDash && frame(world) - f.lastGuardFrame <= p.chordFrames);
   // Ground-Opportunity Focus: near a marked downed target, Attack selects ground actions.
-  const focus = low || fromDash ? null : groundFocus(world, f);
+  const focus = low || fromDash ? null : groundFocus(world.bodies, f);
   if (focus) {
     const ground = selectAction(f, 'groundFocus', resolveDir(f, input));
     if (ground >= 0) {

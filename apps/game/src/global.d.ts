@@ -15,6 +15,13 @@ export interface DebugBody {
   meter: number;
   health: number;
   combo: { open: boolean; hits: number; damage: number; scale: number };
+  juggle: number;
+  groundWindow: number;
+  protectedRecovery: boolean;
+  route: string[];
+  wallBounceUsed: boolean;
+  groundBounceUsed: boolean;
+  contactAt: number;
 }
 
 /** Test hook, installed in dev and e2e builds only (see debug.ts). */
