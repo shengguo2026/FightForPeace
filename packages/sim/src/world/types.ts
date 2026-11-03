@@ -69,6 +69,13 @@ export const MoveState = {
   Breaker: 16,
   /** An attacker's recoil after being exact-blocked, countered or pushed by a breaker. */
   Recoil: 17,
+  // --- M5 grabs ---
+  /** Holding a grabbed target (hero: the grab route's decision window; enemy: its hold). */
+  Grabbing: 18,
+  /** Held by a grabber. */
+  Grabbed: 19,
+  /** A hero tied up by a `restraint` grab: waits for a partner rescue or the time-out. */
+  Restrained: 20,
 } as const;
 export type MoveState = (typeof MoveState)[keyof typeof MoveState];
 
@@ -196,6 +203,87 @@ export interface Fighter extends Body {
   /** Training enemy: frames until the next attack, and the step of its attack cycle. */
   aiTimer: number;
   aiStep: number;
+
+  // --- M5 Specials, Ultimates and grabs --------------------------------------------------
+  /** Equipped moves: Special slots 0–4 then Ultimate slots 5–9 (by Dir), -1 = empty. */
+  loadout: number[];
+  /** Ultimate cinematic protection: strikes and grabs ignore this fighter. */
+  cinematic: boolean;
+  /** Id of the fighter this one holds (0 = none). */
+  grabId: number;
+  /** Id of the fighter holding this one (0 = none). */
+  grabbedBy: number;
+  /** World frame the current hold (or decision window) began. */
+  grabStart: number;
+  /** The grab route's one extension has been used. */
+  grabExtUsed: boolean;
+  /** Direction of the running grab attempt (8-way, belt plane). */
+  grabX: Axis;
+  grabZ: Axis;
+  /** No grab may take this fighter before this frame (re-grab immunity). */
+  regrabUntil: number;
+  /** The one Grab Escape attempt of the current hold was used. */
+  escapeTried: boolean;
+  /** Thrown as a body projectile: thrower id (0 = not), and the throw's route code. */
+  thrownBy: number;
+  thrownCode: number;
+  /** Last grab outcome for the Lab (GrabEvent), its offset and frame. */
+  grabEvent: number;
+  grabOffset: number;
+  grabFrame: number;
+}
+
+/**
+ * Grab outcomes for the Lab's grab panel. Numbers are encoded; never renumber. Offsets:
+ * Escape = frame inside the window (0-based); EscapeEarly/Late = frames outside it.
+ */
+export const GrabEvent = {
+  None: 0,
+  /** This hero grabbed someone. */
+  Hold: 1,
+  Whiff: 2,
+  Contested: 3,
+  Throw: 4,
+  ReleaseStrike: 5,
+  SpecialFinish: 6,
+  /** The decision window ran out: separating shove. */
+  Shove: 7,
+  /** The grab was broken by a hit on the grabber. */
+  Interrupted: 8,
+  Escape: 9,
+  EscapeEarly: 10,
+  EscapeLate: 11,
+  /** Held to the end without an escape attempt: the enemy's finisher landed. */
+  Thrown: 12,
+  Restrained: 13,
+  Rescued: 14,
+  RestraintEnded: 15,
+  /** A thrown body hit another enemy. */
+  BodyHit: 16,
+  /** This hero was grabbed. */
+  Grabbed: 17,
+  Extension: 18,
+  /** This hero freed a restrained partner. */
+  RescuedPartner: 19,
+} as const;
+
+/** A projectile in flight (one per owner). All values fixed point. */
+export interface Projectile {
+  /** Owner fighter id. */
+  owner: number;
+  /** Route code of the action that launched it. */
+  code: number;
+  /** Centre of the box, its bottom height and depth. */
+  x: number;
+  z: number;
+  y: number;
+  vx: number;
+  /** Frames left. */
+  life: number;
+  /** Half width, height, half depth of the box. */
+  hw: number;
+  h: number;
+  depth: number;
 }
 
 /**
@@ -236,6 +324,8 @@ export const DefEvent = {
   Hit: 16,
   /** Guarded inside the exact window, but the press was in the precision cooldown. */
   Cooldown: 17,
+  /** The hero's armored Special absorbed the strike (damage, no reaction). */
+  Armored: 18,
 } as const;
 
 /** Bounce bits armed on a target by tagged hits. */
@@ -333,4 +423,8 @@ export interface World {
   /** Lab switch: heroes' Defense meter stays full. */
   infiniteDefense: boolean;
   trainer: TrainerSettings;
+  /** Loadout chosen by each player slot (applies to the hero when it spawns or switches). */
+  playerLoadout: number[][];
+  /** Projectiles in flight, in ascending owner id. */
+  projectiles: Projectile[];
 }

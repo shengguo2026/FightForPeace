@@ -38,6 +38,7 @@ actions:
       - { to: gatepost-hammer, category: chain, on: [hit, guard] }
       - { to: high-bank-lift, category: chain, on: [hit, guard] }
       - { to: special, input: neutral, category: special, on: [hit, guard] }
+      - { to: grab, category: grab, on: [hit] }
 
   - id: gatepost-hammer
     name: Gatepost Hammer
@@ -252,6 +253,175 @@ actions:
     tags: [wallBounce]
     links:
       - { to: dash, input: forward, category: dashBridge, on: [hit], premium: 25 }
+
+  # M5: core Specials (spec §8.1, Appendix B.3). `Special` + direction picks the move in
+  # that loadout slot; these three are the default loadout (neutral is a fixed signature).
+  - id: stonewake-palm
+    name: Stonewake Palm
+    category: special
+    input: { context: special, dir: neutral }
+    frames: { startup: 12, active: 4, recovery: 22 }
+    hitbox: { x: 20, w: 125, y: 110, h: 170, depth: 40 }
+    damage: 85
+    reaction: { kind: knockback, hitstun: 26, push: 11 }
+    costs: { stun: 15, scale: 12, starter: 15 }
+    meter: 6
+    tags: [wallBounce]
+    moves:
+      - { from: 1, to: 12, forward: 1 }
+
+  - id: gatebreaker-advance
+    name: Gatebreaker Advance
+    category: special
+    input: { context: special, dir: forward }
+    frames: { startup: 16, active: 8, recovery: 28 }
+    hitbox: { x: 15, w: 120, y: 100, h: 180, depth: 40 }
+    damage: 95
+    reaction: { kind: knockback, hitstun: 28, push: 10 }
+    costs: { stun: 18, scale: 15, starter: 15 }
+    meter: 7
+    tags: [guardPressure]
+    armor: { from: 6, to: 15 }
+    moves:
+      - { from: 1, to: 20, forward: 5 }
+
+  - id: rising-rampart
+    name: Rising Rampart
+    category: special
+    input: { context: special, dir: backward }
+    frames: { startup: 7, active: 8, recovery: 30 }
+    hitbox: { x: 0, w: 120, y: 120, h: 220, depth: 44 }
+    damage: 70
+    reaction: { kind: launch, hitstun: 30, push: 2, lift: 14, airPop: 12 }
+    costs: { stun: 15, scale: 12, starter: 15, juggle: 30 }
+    meter: 6
+    invulnerable: { from: 1, to: 6 }
+    links:
+      - { to: jump, input: neutral, category: jumpChase, on: [hit] }
+
+  # Signature Ultimate (neutral `Ultimate`, full meter): four hits, the last a terminal
+  # knockdown that ends the combo with a protected get-up.
+  - id: rivergate-oath
+    name: Rivergate Oath
+    category: ultimate
+    input: { context: ultimate, dir: neutral }
+    frames: { startup: 10, active: [3, 4, 3, 4, 3, 4, 3], recovery: 42 }
+    hitbox: { x: 10, w: 150, y: 60, h: 240, depth: 50 }
+    damage: 320
+    reaction: { kind: knockdown, hitstun: 30, push: 10, lift: 9 }
+    costs: { stun: 10, scale: 0, juggle: 10 }
+    meter: 0
+    tags: [finalReaction, terminalKnockdown]
+    moves:
+      - { from: 1, to: 24, forward: 2 }
+
+  # Catalogue moves (Appendix A.1/A.3): owned in the Lab, equipped through the loadout.
+  - id: skybreak-column
+    name: Skybreak Column
+    category: special
+    input: { context: special, dir: up }
+    slots: [up, backward]
+    catalogue: true
+    frames: { startup: 11, active: 7, recovery: 25 }
+    hitbox: { x: 0, w: 90, y: 100, h: 300, depth: 36 }
+    damage: 75
+    reaction: { kind: launch, hitstun: 30, push: 1, lift: 15, airPop: 13 }
+    costs: { stun: 15, scale: 12, starter: 15, juggle: 30 }
+    meter: 6
+    links:
+      - { to: jump, input: neutral, category: jumpChase, on: [hit] }
+
+  - id: still-mountain
+    name: Still Mountain
+    category: ultimate
+    input: { context: ultimate, dir: backward }
+    slots: [backward]
+    catalogue: true
+    frames: { startup: 5, active: 14, recovery: 38 }
+    hitbox: { x: -60, w: 260, y: 40, h: 260, depth: 70 }
+    damage: 240
+    reaction: { kind: knockdown, hitstun: 30, push: 16, lift: 7 }
+    costs: { stun: 10, scale: 0 }
+    meter: 0
+    tags: [terminalKnockdown]
+    invulnerable: { from: 1, to: 5 }
+
+  # Grab kit (F&D §6.7 Short Branching Grab Route). `Interact` grabs; while holding,
+  # `Attack` is the extension (then the release strike), `Interact` throws (Backward for
+  # the back throw), `Special` is the Special finisher. Route moves act on the held target.
+  - id: millstone-clasp
+    name: Millstone Clasp
+    category: grab
+    input: { context: grab, dir: neutral }
+    frames: { startup: 6, active: 2, recovery: 22 }
+    hitbox: { x: 20, w: 100, y: 120, h: 140, depth: 40 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 0 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    moves:
+      - { from: 1, to: 6, forward: 2 }
+
+  - id: keystone-knee
+    name: Keystone Knee
+    category: grabStrike
+    input: { context: grabExtension, dir: neutral }
+    frames: { startup: 6, active: 3, recovery: 10 }
+    hitbox: { x: 20, w: 80, y: 100, h: 120, depth: 30 }
+    damage: 45
+    reaction: { kind: stagger, hitstun: 20 }
+    costs: { stun: 10, scale: 10, starter: 15 }
+    meter: 4
+
+  - id: lintel-drop
+    name: Lintel Drop
+    category: grabStrike
+    input: { context: grabRelease, dir: neutral }
+    frames: { startup: 9, active: 4, recovery: 18 }
+    hitbox: { x: 20, w: 110, y: 120, h: 140, depth: 36 }
+    damage: 70
+    reaction: { kind: knockback, hitstun: 26, push: 12 }
+    costs: { stun: 15, scale: 12, starter: 15 }
+    meter: 5
+    tags: [wallBounce]
+
+  - id: sluicegate-toss
+    name: Sluicegate Toss
+    category: throw
+    input: { context: grabThrow, dir: neutral }
+    frames: { startup: 8, active: 3, recovery: 20 }
+    hitbox: { x: 20, w: 100, y: 100, h: 160, depth: 36 }
+    damage: 60
+    bodyDamage: 50
+    reaction: { kind: knockdown, hitstun: 30, push: 11, lift: 7 }
+    costs: { stun: 15, scale: 12, starter: 15 }
+    meter: 6
+    tags: [bodyProjectile, terminalKnockdown]
+
+  - id: turning-weir
+    name: Turning Weir
+    category: throw
+    input: { context: grabThrow, dir: backward }
+    frames: { startup: 10, active: 3, recovery: 22 }
+    hitbox: { x: 20, w: 100, y: 100, h: 160, depth: 36 }
+    damage: 65
+    bodyDamage: 50
+    reaction: { kind: knockdown, hitstun: 30, push: 10, lift: 8 }
+    costs: { stun: 15, scale: 12, starter: 15 }
+    meter: 6
+    tags: [bodyProjectile, throwBack, terminalKnockdown]
+
+  - id: quarry-fall
+    name: Quarry Fall
+    category: grabStrike
+    input: { context: grabSpecial, dir: neutral }
+    frames: { startup: 12, active: 4, recovery: 24 }
+    hitbox: { x: 20, w: 100, y: 0, h: 200, depth: 36 }
+    damage: 90
+    reaction: { kind: knockdown, hitstun: 30, push: 2, lift: 5 }
+    costs: { stun: 18, scale: 15, starter: 15 }
+    meter: 6
+    tags: [opensGroundWindow]
 
 # Academy representative recipes (spec §8.3). Steps name actions; "a|b" accepts either;
 # "jump" is a hint shown between steps and is not matched.

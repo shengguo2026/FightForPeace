@@ -12,6 +12,7 @@ import { applyActionMovement, startAction } from './actions';
 import { HURT_HALF_D, HURT_HALF_W } from './hits';
 import { kitOf, totalFrames } from './roster';
 import type { ActionDef } from './types';
+import { stepEnemyHold } from './grabs';
 
 const NO_INPUT: FrameInput = { moveX: 0, moveZ: 0, pressed: 0, held: 0, dirPressed: 0 };
 
@@ -48,6 +49,10 @@ export function nextAttack(world: World, f: Fighter): number {
  * range. Fully deterministic: no randomness, ties go to the lower id.
  */
 export function stepTrainer(world: World, f: Fighter): void {
+  if (f.state === MoveState.Grabbing) {
+    stepEnemyHold(world, f);
+    return;
+  }
   if (f.state === MoveState.Attack) {
     stepEnemyAction(f);
     return;
@@ -70,8 +75,13 @@ export function stepTrainer(world: World, f: Fighter): void {
   const index = nextAttack(world, f);
   const a = kitOf(f)!.actions[index]!;
   if (dx !== 0) f.facing = dx > 0 ? 1 : -1;
-  // Wait while the hero is down or protected: an attack could not connect.
-  const busy = target.protectedRecovery || target.state === MoveState.Down;
+  // Wait while the hero is down, protected or out of the fight: an attack could not connect.
+  const busy =
+    target.protectedRecovery ||
+    target.state === MoveState.Down ||
+    target.state === MoveState.Restrained ||
+    target.state === MoveState.Grabbed ||
+    (a.category === 'grab' && world.frame < target.regrabUntil);
   const { x: rx, z: rz } = reach(a);
   const inRange = Math.abs(dx) <= rx && Math.abs(dz) <= rz;
   if (!inRange || busy) {

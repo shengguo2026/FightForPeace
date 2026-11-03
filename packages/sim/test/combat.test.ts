@@ -213,13 +213,15 @@ describe('reason-aware cancels (Review Focus 3)', () => {
     expect(hero(w2).verdictReject).toBe(Reject.TooLate);
   });
 
-  test('Specials and Ultimates are rejected as arriving in M5', () => {
+  test('a Special link leads to the move in that loadout slot (M5)', () => {
     const w = duel('mountain');
     run(w, [press('Attack'), ...repeat(idle, 6), press('Attack')]);
     while (actionId(w) !== 'brace-elbow') run(w, [idle]);
     run(w, repeat(idle, 8));
     run(w, [press('Special')]);
-    expect(hero(w).verdictReject).toBe(Reject.NotYet);
+    expect(hero(w).verdictReject).toBe(Reject.None);
+    run(w, repeat(idle, 8));
+    expect(actionId(w)).toBe('stonewake-palm');
   });
 
   test('a move cannot repeat in one string', () => {
@@ -257,11 +259,11 @@ describe('premium dash bridge (Review Focus 4)', () => {
     const w = duel('mountain');
     toGatepostRecovery(w);
     expect(dummy(w).ctx.actions).toBe(3);
-    hero(w).meter = 40;
+    hero(w).meter = 400;
     run(w, [press('Dash')]);
     expect(hero(w).state).toBe(MoveState.Dash);
     expect(hero(w).bridged).toBe(true);
-    expect(hero(w).meter).toBe(15);
+    expect(hero(w).meter).toBe(150); // meter is kept in tenths of a percent
     expect(dummy(w).ctx.bridgeUsed).toBe(true);
     run(w, [idle, press('Attack')]);
     expect(actionId(w)).toBe('rampart-charge');
@@ -270,7 +272,7 @@ describe('premium dash bridge (Review Focus 4)', () => {
   test('double-tapping Forward also takes the bridge', () => {
     const w = duel('mountain');
     toGatepostRecovery(w);
-    hero(w).meter = 25;
+    hero(w).meter = 250;
     run(w, [tapDir('right'), idle, tapDir('right')]);
     expect(hero(w).bridged).toBe(true);
     expect(hero(w).meter).toBe(0);
@@ -279,17 +281,17 @@ describe('premium dash bridge (Review Focus 4)', () => {
   test('not enough meter rejects the bridge and spends nothing', () => {
     const w = duel('mountain');
     toGatepostRecovery(w);
-    hero(w).meter = 10;
+    hero(w).meter = 100;
     run(w, [press('Dash')]);
     expect(hero(w).verdictReject).toBe(Reject.NoMeter);
-    expect(hero(w).meter).toBe(10);
+    expect(hero(w).meter).toBe(100);
     expect(hero(w).state).toBe(MoveState.Attack);
   });
 
   test('a spent bridge is rejected', () => {
     const w = duel('mountain');
     toGatepostRecovery(w);
-    hero(w).meter = 100;
+    hero(w).meter = 1000;
     dummy(w).ctx.bridgeUsed = true;
     run(w, [press('Dash')]);
     expect(hero(w).verdictReject).toBe(Reject.BridgeSpent);
@@ -350,14 +352,23 @@ describe('combo context and budgets (Review Focus 5)', () => {
     expect(d.ctx.stunBudget).toBe(90);
   });
 
-  test('meter gain stops at 30 % per combo', () => {
-    const w = duel('mountain');
-    const d = dummy(w);
-    d.ctx = { ...d.ctx, open: true, meterBudget: 2 };
-    d.state = MoveState.Hitstun;
-    d.stun = 100;
-    run(w, [press('Attack'), ...repeat(idle, 6)]);
-    expect(hero(w).meter).toBe(2);
+  test('meter gain follows the decay band of the combo (M5: F&D §6.6)', () => {
+    // Mason's Touch: 3 % authored gain = 30 tenths; bands 100 / 60 / 25 / 0 %.
+    for (const [budget, gain] of [
+      [100, 30],
+      [50, 18],
+      [20, 7],
+      [0, 0],
+    ] as const) {
+      const w = duel('mountain');
+      const d = dummy(w);
+      d.ctx = { ...d.ctx, open: true, meterBudget: budget };
+      d.state = MoveState.Hitstun;
+      d.stun = 100;
+      run(w, [press('Attack'), ...repeat(idle, 6)]);
+      expect(hero(w).meter).toBe(gain);
+      expect(d.ctx.meterBudget).toBe(Math.max(0, budget - 10));
+    }
   });
 
   test('stun exhaustion forces separation and closes cancels', () => {

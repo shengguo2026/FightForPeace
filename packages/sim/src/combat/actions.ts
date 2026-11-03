@@ -2,6 +2,8 @@ import { ActionBit, DirBit } from '../input/bits';
 import type { MovementProfile } from '../movement/profile';
 import { type Fighter, type FrameInput, MoveState, Protect, type World } from '../world/types';
 import { activeSpan, dirMatches, findAction, kitOf } from './roster';
+import { loadoutAction } from './loadout';
+import { METER } from './meter';
 import {
   type ActionDef,
   CANCEL_TIMING,
@@ -12,7 +14,14 @@ import {
 } from './types';
 
 /** Destination codes for the Lab verdict log (action links use the action index ≥ 0). */
-export const VerdictTo = { None: -1, Jump: -2, Dash: -3, Special: -4, Ultimate: -5 } as const;
+export const VerdictTo = {
+  None: -1,
+  Jump: -2,
+  Dash: -3,
+  Special: -4,
+  Ultimate: -5,
+  Grab: -6,
+} as const;
 
 const LINK_CODE: Record<LinkDef['kind'], number> = {
   action: 0,
@@ -20,6 +29,7 @@ const LINK_CODE: Record<LinkDef['kind'], number> = {
   dash: VerdictTo.Dash,
   special: VerdictTo.Special,
   ultimate: VerdictTo.Ultimate,
+  grab: VerdictTo.Grab,
 };
 
 /** Remembers the most recently pressed cardinal direction (horizontal wins a same-frame tie). */
@@ -53,13 +63,27 @@ export function selectAction(f: Fighter, context: InputContext, dir: number): nu
   return kit ? findAction(kit, context, dir) : -1;
 }
 
+const ATTACK_KIND: Partial<Record<ActionDef['category'], number>> = {
+  low: ActionBit.LowAttack,
+  special: ActionBit.Special,
+  ultimate: ActionBit.Ultimate,
+  grab: ActionBit.Interact,
+  grabStrike: ActionBit.Interact,
+  throw: ActionBit.Interact,
+};
+
 /** Starts an action. Aerial actions keep the current momentum; ground actions root the hero. */
 export function startAction(f: Fighter, index: number): void {
   const a = actionOf(f, index)!;
   f.state = MoveState.Attack;
   f.stateFrame = 0;
   f.action = index;
-  f.attackKind = a.category === 'low' ? ActionBit.LowAttack : ActionBit.Attack;
+  f.attackKind = ATTACK_KIND[a.category] ?? ActionBit.Attack;
+  f.cinematic = false;
+  if (a.category === 'grab') {
+    f.grabX = f.facing;
+    f.grabZ = 0;
+  }
   f.contactAt = -1;
   f.contactIds = [];
   f.contactScales = [];
@@ -106,6 +130,7 @@ export function cancelPresses(
   if (input.pressed & (ActionBit.Attack | ActionBit.LowAttack)) out.push({ kind: 'action', dir });
   if (input.pressed & ActionBit.Special) out.push({ kind: 'special', dir });
   if (input.pressed & ActionBit.Ultimate) out.push({ kind: 'ultimate', dir });
+  if (input.pressed & ActionBit.Interact) out.push({ kind: 'grab', dir });
   if (input.pressed & ActionBit.Jump) out.push({ kind: 'jump', dir });
   if (dashRequested) out.push({ kind: 'dash', dir: Dir.Forward });
   return out;
@@ -128,7 +153,9 @@ export function pressDuringAction(
   const n = f.stateFrame + 1;
   // A jump chase takes the jump in whatever direction is held (the launcher's Up included).
   const index = a.links.findIndex(
-    (l) => l.kind === press.kind && (l.kind === 'jump' || dirMatches(l.dir, press.dir)),
+    (l) =>
+      l.kind === press.kind &&
+      (l.kind === 'jump' || l.kind === 'grab' || dirMatches(l.dir, press.dir)),
   );
   if (index === -1) {
     logVerdict(f, frame, VerdictTo.None, Reject.Unlinked);
@@ -139,14 +166,16 @@ export function pressDuringAction(
     logVerdict(f, frame, linkCode(link), reason);
     return 'rejected';
   };
-  if (link.kind === 'special' || link.kind === 'ultimate') return reject(Reject.NotYet);
+  if (link.kind !== 'jump' && link.kind !== 'dash' && linkDest(f, link) < 0)
+    return reject(Reject.EmptySlot);
+  if (link.kind === 'ultimate' && !fullMeter(world, f)) return reject(Reject.NoMeter);
   if (link.kind === 'action' && (f.chainUsed & (1 << link.to)) !== 0)
     return reject(Reject.AlreadyUsed);
   const targets = contactTargets(world, f);
   const blocked = f.contactAt >= 0 && !link.onWhiff ? protectionReason(targets) : Reject.None;
   if (blocked !== Reject.None) return reject(blocked);
   if (targets.some((t) => t.ctx.open && t.ctx.exhausted)) return reject(Reject.StunExhausted);
-  if (link.premium > 0 && !world.infiniteMeter && f.meter < link.premium)
+  if (link.premium > 0 && !world.infiniteMeter && f.meter < link.premium * METER.unit)
     return reject(Reject.NoMeter);
   if (link.category === 'dashBridge' && targets.some((t) => t.ctx.open && t.ctx.bridgeUsed))
     return reject(Reject.BridgeSpent);
@@ -162,6 +191,34 @@ export function pressDuringAction(
   f.reqFrame = n;
   logVerdict(f, frame, linkCode(link), Reject.None);
   return 'queued';
+}
+
+/** A full Attack meter (or the Lab's infinite meter). */
+export function fullMeter(world: World, f: Fighter): boolean {
+  return world.infiniteMeter || f.meter >= METER.max;
+}
+
+/** Any Ultimate consumes the whole bar, on acceptance only. */
+export function spendUltimate(world: World, f: Fighter): void {
+  if (!world.infiniteMeter) f.meter = 0;
+}
+
+/**
+ * The action a link leads to: its action, the move in the loadout slot it names, or the
+ * hero's grab; -1 when the slot is empty (jumps and dashes have no action).
+ */
+export function linkDest(f: Fighter, link: LinkDef): number {
+  switch (link.kind) {
+    case 'action':
+      return link.to;
+    case 'special':
+    case 'ultimate':
+      return loadoutAction(f, link.kind, link.dir);
+    case 'grab':
+      return selectAction(f, 'grab', 0);
+    default:
+      return -1;
+  }
 }
 
 function contactTargets(world: World, f: Fighter): Fighter[] {
@@ -200,8 +257,9 @@ export function queuedLink(world: World, f: Fighter, a: ActionDef): LinkDef | nu
     if (n <= activeEnd) return null;
     const blocked = link.onWhiff ? Reject.None : protectionReason(contactTargets(world, f));
     if (blocked !== Reject.None) return drop(blocked);
-    if (link.premium > 0 && !world.infiniteMeter && f.meter < link.premium)
+    if (link.premium > 0 && !world.infiniteMeter && f.meter < link.premium * METER.unit)
       return drop(Reject.NoMeter);
+    if (link.kind === 'ultimate' && !fullMeter(world, f)) return drop(Reject.NoMeter);
     return link;
   }
   if (n <= activeEnd) return null;
@@ -211,7 +269,8 @@ export function queuedLink(world: World, f: Fighter, a: ActionDef): LinkDef | nu
 
 /** Pays for a premium transition and records the bridge on every target this action hit. */
 export function commitLink(world: World, f: Fighter, link: LinkDef): void {
-  if (link.premium > 0 && !world.infiniteMeter) f.meter -= link.premium;
+  if (link.premium > 0 && !world.infiniteMeter) f.meter -= link.premium * METER.unit;
+  if (link.kind === 'ultimate') spendUltimate(world, f);
   if (link.category === 'dashBridge') {
     for (const t of contactTargets(world, f)) t.ctx.bridgeUsed = true;
   }

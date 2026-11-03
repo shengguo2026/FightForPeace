@@ -2,23 +2,28 @@ import { ActionBit } from '../src/input/bits';
 import { ON_FOOT } from '../src/movement/profile';
 import { MoveState } from '../src/world/types';
 import { setFacingMode } from '../src/world/world';
-import { HEROES } from '../src/combat/roster';
+import { HEROES, totalFrames } from '../src/combat/roster';
 import { Dir } from '../src/combat/types';
 import { hero, idle, inp, press, repeat, run, world } from './helpers';
 
-const P = ON_FOOT;
+const P = { ...ON_FOOT, attackFrames: 0 };
+// M5: the buffer rules are tested on the Mountain Guardian's neutral Special (Stonewake
+// Palm), which has no cancel links, in place of the M1 attack stub.
+const SPECIAL = HEROES[0]!.actions.find((a) => a.id === 'stonewake-palm')!;
+P.attackFrames = totalFrames(SPECIAL);
 
-// Special and Ultimate keep the M1 attack stub until M5; the buffer rules are tested on it.
-test('Special starts an attack stub that roots the hero', () => {
-  const w = world();
-  const x0 = hero(w).x;
-  run(w, [press('Special'), ...repeat(inp({ moveX: 1 }), 5)]);
-  expect(hero(w).state).toBe(MoveState.Attack);
-  expect(hero(w).attackKind).toBe(ActionBit.Special);
-  expect(hero(w).x).toBe(x0);
+test('Special starts the neutral Special, and held movement does not move the hero', () => {
+  const a = world();
+  const b = world();
+  run(a, [press('Special'), ...repeat(inp({ moveX: 1 }), 5)]);
+  run(b, [press('Special'), ...repeat(idle, 5)]);
+  expect(hero(a).state).toBe(MoveState.Attack);
+  expect(hero(a).attackKind).toBe(ActionBit.Special);
+  expect(HEROES[0]!.actions[hero(a).action]!.id).toBe('stonewake-palm');
+  expect(hero(a).x).toBe(hero(b).x);
 });
 
-test('the stub ends after attackFrames and the hero can walk again', () => {
+test('the Special ends after its frames and the hero can walk again', () => {
   const w = world();
   run(w, [press('Special'), ...repeat(idle, P.attackFrames - 1)]);
   expect(hero(w).state).toBe(MoveState.Attack);

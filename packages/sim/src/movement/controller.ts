@@ -9,6 +9,9 @@ import {
   cancelPresses,
   commitLink,
   framesLeft,
+  fullMeter,
+  linkDest,
+  spendUltimate,
   noteCardinal,
   pressDuringAction,
   queuedLink,
@@ -28,6 +31,8 @@ import {
   tryBreaker,
 } from '../combat/defense';
 import { REACTION, enter, inReaction, stepReaction } from '../combat/reactions';
+import { resumeHold, startGrabAttempt, stepHeroHold, tryEscape } from '../combat/grabs';
+import { loadoutAction } from '../combat/loadout';
 import { type ActionDef, Dir, Reject } from '../combat/types';
 import type { MovementProfile } from './profile';
 
@@ -126,7 +131,8 @@ function trappedOrDefending(f: Fighter): boolean {
   );
 }
 
-function stepHeroFrame(world: World, f: Fighter, input: FrameInput, p: MovementProfile): void {
+function stepHeroFrame(world: World, f: Fighter, frameInput: FrameInput, p: MovementProfile): void {
+  let input = frameInput;
   const frame = world.frame;
   noteCardinal(f, input.dirPressed);
   const tap = detectDoubleTap(f, input.dirPressed, frame, p.doubleTapFrames);
@@ -154,8 +160,17 @@ function stepHeroFrame(world: World, f: Fighter, input: FrameInput, p: MovementP
     frame - Math.min(f.lastGuardFrame, f.lastUltFrame) <= DEFENSE.breakerChord;
   if (breakerChord && trappedOrDefending(f)) {
     f.lastUltFrame = NO_TAP;
+    // The chord's Ultimate press is spent on the breaker attempt: never a later Ultimate.
+    input = { ...input, pressed: input.pressed & ~ActionBit.Ultimate };
     if (tryBreaker(world, f)) return;
   }
+
+  // Grabs: holding (the grab route), or held by an enemy (Guard is the Grab Escape).
+  if (f.state === MoveState.Grabbing) {
+    stepHeroHold(world, f, input);
+    return;
+  }
+  if (f.state === MoveState.Grabbed && guardPressed) tryEscape(world, f);
 
   if (stepDefenseState(world, f, input, guardPressed, p)) return;
   if (inReaction(f)) {
@@ -460,6 +475,13 @@ function stepRunningAction(
 
   bufferPress(f, 0, frame, p.bufferFrames);
   if (!a.landing && n > totalFrames(a)) {
+    // The grab extension is over: back to holding the target with a fresh window.
+    if (f.grabId !== 0) {
+      endAction(f);
+      resumeHold(world, f);
+      bufferPress(f, input.pressed & OFFENSIVE_MASK, frame, p.bufferFrames);
+      return true;
+    }
     // The action is over: this frame belongs to whatever comes next.
     endAction(f);
     bufferPress(f, input.pressed & OFFENSIVE_MASK, frame, p.bufferFrames);
@@ -482,9 +504,10 @@ function stepRunningAction(
 
   const link = queuedLink(world, f, a);
   if (link) {
+    const dest = linkDest(f, link);
     commitLink(world, f, link);
-    if (link.kind === 'action') {
-      startAction(f, link.to);
+    if (dest >= 0) {
+      startAction(f, dest);
       runActionFrame(f, actionOf(f)!, 1, input, p);
     } else if (link.kind === 'jump') {
       f.action = -1;
@@ -532,6 +555,7 @@ function endAction(f: Fighter): void {
   f.attackKind = 0;
   f.ghost = false;
   f.reqLink = -1;
+  f.cinematic = false;
 }
 
 function toIdle(f: Fighter): void {
@@ -613,8 +637,14 @@ function startAttack(
   p: MovementProfile,
 ): void {
   const fromDash = f.state === MoveState.Dash;
-  const stub = action === ActionBit.Special || action === ActionBit.Ultimate || f.hero < 0;
+  const loadoutPress = action === ActionBit.Special || action === ActionBit.Ultimate;
   f.attackFromDash = fromDash;
+  if (action === ActionBit.Interact) {
+    // Directional Contextual Grab (or freeing a restrained partner).
+    f.targetId = 0;
+    startGrabAttempt(world, f, input);
+    return;
+  }
   // Explicit left/right never turns the hero: it selects Forward or Backward (spec §5.3).
   // Turn grace: a walk turn toward the held direction only a few frames before Attack
   // (Left held a moment before the press) is undone, so the press still reads Backward.
@@ -628,7 +658,7 @@ function startAttack(
     ) {
       f.facing = f.facing === 1 ? -1 : 1;
     }
-  } else if (f.facingMode === 'assisted' && !stub && !fromDash) {
+  } else if (f.facingMode === 'assisted' && !loadoutPress && !fromDash) {
     const kept = chained && f.targetId !== 0 ? world.bodies.find((b) => b.id === f.targetId) : null;
     const target = kept ?? nearestEnemy(world, f, p);
     f.targetId = target ? target.id : 0;
@@ -636,15 +666,8 @@ function startAttack(
   } else {
     f.targetId = 0;
   }
-  if (stub) {
-    f.state = MoveState.Attack;
-    f.stateFrame = 0;
-    f.action = -1;
-    f.attackKind = action;
-    f.vx = 0;
-    f.vz = 0;
-    f.dirX = 0;
-    f.dirZ = 0;
+  if (loadoutPress) {
+    startLoadoutMove(world, f, input, action === ActionBit.Special ? 'special' : 'ultimate');
     return;
   }
   // Guard pressed just before Attack out of a dash, or the Low Attack binding: the low attack.
@@ -669,6 +692,33 @@ function startAttack(
   const context = low ? 'dashLow' : fromDash ? 'dash' : 'neutral';
   const index = selectAction(f, context, low || fromDash ? Dir.Neutral : resolveDir(f, input));
   if (index >= 0) startAction(f, index);
+}
+
+/**
+ * Special or Ultimate plus a direction: the move in that loadout slot (spec §9). An empty
+ * slot never falls back to another move; an Ultimate needs and spends the full bar, only
+ * once it is accepted. Assisted Facing never turns a directional Special or Ultimate.
+ */
+function startLoadoutMove(
+  world: World,
+  f: Fighter,
+  input: FrameInput,
+  kind: 'special' | 'ultimate',
+): void {
+  const to = kind === 'special' ? VerdictTo.Special : VerdictTo.Ultimate;
+  const index = loadoutAction(f, kind, resolveDir(f, input));
+  const verdict = (reject: number) => {
+    f.verdictTo = to;
+    f.verdictReject = reject;
+    f.verdictFrame = frame(world);
+  };
+  if (index < 0) return verdict(Reject.EmptySlot);
+  if (kind === 'ultimate') {
+    if (!fullMeter(world, f)) return verdict(Reject.NoMeter);
+    spendUltimate(world, f);
+  }
+  verdict(Reject.None);
+  startAction(f, index);
 }
 
 function frame(world: World): number {

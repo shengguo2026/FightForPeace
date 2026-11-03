@@ -4,6 +4,10 @@
 # by a normal guard, frames.blockstun the guard reaction. Tags carry the defense profile:
 # guardPressure, guardPiercing, unblockable, counterable, uncounterable, deflectBreak
 # (on a multi-hit action, its concluding contact breaks the sequence when exact-blocked).
+# M5 grabs (category grab): `grab` holds the hero for `hold` frames with an 11-frame
+# Grab Escape window from `escapeFrom`; then the action's damage and reaction (a throw),
+# or, tagged `restraint`, the hero is restrained for `restraint` frames. A
+# `rescueInterruptible` grab breaks when the partner strikes the grabber.
 id: trainer
 name: Training Enemy
 bodyWidth: 70
@@ -86,3 +90,33 @@ actions:
     costs: { stun: 30, scale: 20, starter: 10 }
     meter: 0
     tags: [unblockable, uncounterable, terminalKnockdown]
+
+  - id: collar-grab
+    name: Collar Grab
+    category: grab
+    input: { context: script, dir: neutral }
+    frames: { startup: 16, active: 3, recovery: 26 }
+    hitbox: { x: 20, w: 100, y: 120, h: 140, depth: 40 }
+    damage: 80
+    reaction: { kind: knockdown, hitstun: 30, push: 8, lift: 6 }
+    costs: { stun: 15, scale: 12, starter: 10 }
+    meter: 0
+    tags: [rescueInterruptible, terminalKnockdown]
+    grab: { hold: 48, escapeFrom: 20, escapeWindow: 11 }
+    moves:
+      - { from: 1, to: 16, forward: 1 }
+
+  - id: rope-snare
+    name: Rope Snare
+    category: grab
+    input: { context: script, dir: neutral }
+    frames: { startup: 18, active: 3, recovery: 28 }
+    hitbox: { x: 20, w: 110, y: 100, h: 160, depth: 40 }
+    damage: 20
+    reaction: { kind: stagger, hitstun: 20 }
+    costs: { stun: 10, scale: 10, starter: 10 }
+    meter: 0
+    tags: [rescueInterruptible, restraint]
+    grab: { hold: 48, escapeFrom: 20, escapeWindow: 11, restraint: 150 }
+    moves:
+      - { from: 1, to: 18, forward: 1 }
