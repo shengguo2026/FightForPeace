@@ -242,6 +242,21 @@ actions:
       - { from: 1, to: 13, forward: 7 }
       - { from: 14, to: 20, forward: 3 }
 
+  # M4: the Directional Predictive Counter response (F&D §6.3): a turning kick that
+  # lifts the interrupted attacker for a jump chase.
+  - id: eddy-return
+    name: Eddy Return
+    category: counter
+    input: { context: counter, dir: neutral }
+    frames: { startup: 3, active: 4, recovery: 14 }
+    hitbox: { x: 0, w: 140, y: 120, h: 170, depth: 40 }
+    damage: 95
+    reaction: { kind: launch, hitstun: 30, push: 3, lift: 13 }
+    costs: { stun: 16, scale: 12, starter: 20, juggle: 25 }
+    meter: 5
+    links:
+      - { to: jump, category: jumpChase, on: [hit] }
+
 # Academy representative recipes (spec §8.3). Steps name actions; "a|b" accepts either;
 # "jump" is a hint shown between steps and is not matched.
 recipes:

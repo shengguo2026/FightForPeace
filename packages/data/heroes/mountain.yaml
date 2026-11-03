@@ -237,6 +237,22 @@ actions:
     moves:
       - { from: 1, to: 8, forward: 3 }
 
+  # M4: the Directional Predictive Counter response (F&D §6.3). Starts when a counter
+  # succeeds; the interrupted attacker is in recoil, so the short startup always connects.
+  - id: bedrock-return
+    name: Bedrock Return
+    category: counter
+    input: { context: counter, dir: neutral }
+    frames: { startup: 3, active: 4, recovery: 16 }
+    hitbox: { x: 10, w: 130, y: 110, h: 160, depth: 40 }
+    damage: 110
+    reaction: { kind: knockback, hitstun: 30, push: 11 }
+    costs: { stun: 16, scale: 12, starter: 20 }
+    meter: 5
+    tags: [wallBounce]
+    links:
+      - { to: dash, input: forward, category: dashBridge, on: [hit], premium: 25 }
+
 # Academy representative recipes (spec §8.3). Steps name actions; "a|b" accepts either;
 # "jump" is a hint shown between steps and is not matched.
 recipes:
