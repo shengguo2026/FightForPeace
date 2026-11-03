@@ -1,7 +1,8 @@
 # Fight For Peace — Campaign Review: Full Picture, Gaps and Recommendations
 
 **Date:** 2026-11-03
-**Sources read:** everything in `refinement/` (`story_line.md`, `Features_Decisions.md`, the shared game specification, the expanded game modes specification, the Stage 3–8 specifications, the four Curated Mission specifications and feature records, and `campaign_music_direction.md`), plus the repository roadmap, the Stage 2 specification and decision log, the Stage 2 prompt files and `FLOW_LESSONS.md`.
+**Sources read:** everything Guo supplied in `refinement/` on 2026-11-03 (now moved to the repository root, `docs/superpowers/specs/` and `docs/production/`: `story_line.md`, `Features_Decisions.md`, the shared game specification, the expanded game modes specification, the Stage 3–8 specifications, the four Curated Mission specifications and feature records, and `campaign_music_direction.md`), plus the repository roadmap, the Stage 2 specification and decision log, the Stage 2 prompt files and `FLOW_LESSONS.md`.
+**Status:** all recommendations accepted by Guo on 2026-11-03; see Part 4.
 **Companion documents:** `docs/review/07-stage3-production-readiness.md` (the close check of Stage 3), `docs/superpowers/plans/2026-10-21-roadmap.md` (updated implementation plan), and `FightForPeace/codex_prompts_stage3.md` in the Pictures repository (numbered Stage 3 prompts).
 
 ---
@@ -149,3 +150,31 @@ Stage 3 Secure/Strained/Critical, Stage 4 Secure/Disturbed/Recovered, Stage 7 Pr
 5. This review, the Stage 3 close check, and the updated roadmap.
 
 The Stage 3 prompt file is in the Pictures repository PR, because Codex reads it from there.
+
+---
+
+## Part 4 · Decisions of 2026-11-03 and what was done
+
+Guo accepted every recommendation in Part 2 and in the Stage 3 close check.
+
+| Gap | Done |
+|---|---|
+| G1 Tomas's age | Recorded in `story_line.md`; Stage 3 prompts draw him at about 54. |
+| G2 Outfits | Outfit-pipeline spike added to the roadmap (M5 guardrail); Stage 3 outfits are drawn as model sheets and renders until it is decided. |
+| G3 Lost decisions | §13 and the save rule restored. |
+| G4 File locations | Specifications moved to `docs/superpowers/specs/`, the music direction to `docs/production/`, `story_line.md`, `Features_Decisions.md` and the feature records to the repository root; the stale root copies were replaced. `refinement/` is now an empty drop folder with a README. |
+| G5 Scope | Three-release plan in the roadmap. |
+| G6 Reunion choice | `story_line.md` §8.7, rule 19 and Phase 1 item 4 now use Stage 8's Meet Now / Reply and Meet Later / Not Yet, stored as `meet_now`, `meet_later`, `not_yet`. |
+| G7 Wayfarer Chronicle | *The Road Between* recorded in `story_line.md` §8; specified before M38. |
+| G8 Playable kits | Recorded in `story_line.md` §8; Kael and Lin Lan before Release 2, Soren and Chen Yue with *The Road Between*. |
+| G9 Backstory chapters | Placement table in `story_line.md` §9.6. |
+| G10 Founders' names | Two name pairs proposed to Guo; waiting for the choice. |
+| G11 Visual identities | Stage 3 cast designed in the Stage 3 prompt anchors; later casts per release (roadmap A6). |
+| G12 Constitution audit | Roadmap M24. |
+| G13 Shared condition, evidence and grade modules | Roadmap M25. |
+| G14 Stale lines | Xu Lian's stage assignments confirmed in `story_line.md`. |
+| G15 Sluice Commander | Custody line added to the `story_line.md` character table. |
+| G16 Lab animals | Text only; no animals in any Stage 3 prompt. |
+| G17 Labels | Fixed. |
+| Stage 3 S3-1 to S3-12 | Written into the Stage 3 specification (§7.2, §14, §15, §16, appendix E and new §22, version 1.1), with English, Chinese and German names for every achievement, encounter and other new name. |
+

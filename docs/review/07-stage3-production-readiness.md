@@ -1,7 +1,7 @@
 # Review 07 · Stage 3 Close Check — "Shadows over the Herb Mountain"
 
 **Date:** 2026-11-03
-**Reviewed:** `refinement/2026-11-01-fight-for-peace-stage-3-specification.md` (1.0, approved-design draft ready for builder review), `refinement/stage3_feature_story_line.md`, `story_line.md` §4 (Stage 3), `campaign_music_direction.md`, the Stage 2 and Stage 4–8 specifications (for comparison), and the Pictures repository (existing anchors).
+**Reviewed:** `docs/superpowers/specs/2026-11-01-fight-for-peace-stage-3-specification.md` (1.0, approved-design draft ready for builder review), `stage3_feature_story_line.md`, `story_line.md` §4 (Stage 3), `campaign_music_direction.md`, the Stage 2 and Stage 4–8 specifications (for comparison), and the Pictures repository (existing anchors).
 **Verdict:** Stage 3 is sound in story and systems, but it is the lightest of the six new stage specifications. Stages 4–8 later fixed several things that Stage 3 still leaves open. Twelve items need a decision before the Stage 3 build milestone (M27); none blocks M3. The proposals below are my recommendations; the Stage 3 prompt file uses them, so you can approve them by approving the pictures.
 
 ---
@@ -40,6 +40,6 @@
 - **Laboratory mice.** Mentioned in the research update text only; never shown.
 - **Builder review.** The spec asks for a builder review (§21). Do it at the start of M27, after the Constitution audit (M24), so it can confirm the condition model (S3-1) against the shared module.
 
-## 4 · What I changed
+## 4 · Decision
 
-Nothing in the Stage 3 specification yet. These proposals are applied in the prompt file and the roadmap only. When you approve them, I will write them into the specification (sections 7.2, 14, 16 and appendix E) in one edit.
+Guo accepted all twelve proposals on 2026-11-03. They are written into the Stage 3 specification (version 1.1: §7.2, §14, §15, §16, appendix E and new §22) and the decision record (`stage3_feature_story_line.md` §23). Every achievement, encounter and other new name has its English, Simplified Chinese and German form in specification §22.3 to §22.5.

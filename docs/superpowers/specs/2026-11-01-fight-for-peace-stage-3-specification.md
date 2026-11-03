@@ -1,7 +1,7 @@
 # Fight for Peace Stage 3 Product Content and Technical Specification
 
-**Version:** 1.0 approved-design draft  
-**Date:** 2026-11-01  
+**Version:** 1.1 approved-design draft (production decisions of 2026-11-03 added in §22)  
+**Date:** 2026-11-01, updated 2026-11-03  
 **Stage title:** *Shadows over the Herb Mountain* / *药山阴影* / *Schatten über dem Kräuterberg*  
 **Decision source:** `stage3_feature_story_line.md`  
 **Campaign continuity source:** `story_line.md`  
@@ -156,11 +156,11 @@ The stage tracks authored sample and documentation state for presentation and sc
 
 Each rescue group owns one deterministic condition state:
 
-- **Secure:** strong protection and timely stabilization.
-- **Strained:** moderate delay, pressure, or environmental exposure.
-- **Critical:** poor protection or severe delay, but still alive and recoverable.
+- **Secure / 安稳 / Sicher:** no authored hostile action against the group was completed.
+- **Strained / 吃力 / Angespannt:** exactly one authored hostile action was completed.
+- **Critical / 危急 / Kritisch:** two or more authored hostile actions were completed; the group is still alive and recoverable.
 
-Condition transitions must use visible authored events and never a hidden execution clock. The UI communicates state through text or icon plus non-color visual treatment and optional audio/caption feedback. Condition affects medical presentation, score, recognition, and epilogue details only.
+A **completed hostile action** is a visible, interruptible enemy action inside the group's protected zone (for example a raider pulling a rope line taut, kicking over a lantern, or dragging a supply crate against an enclosure). Each action has an on-screen tell, can be interrupted by any legal hit, grab, redirect or defeat, and counts at most once. The count locks when the group reaches shelter. Condition never depends on elapsed time (decided 2026-11-03, Stage 3 review S3-1). Condition transitions must use visible authored events and never a hidden execution clock. The UI communicates state through text or icon plus non-color visual treatment and optional audio/caption feedback. Condition affects medical presentation, score, recognition, and epilogue details only.
 
 Freed captives follow short, deterministic routes to protected shelters. They may wait for a safe handoff event but never become long-duration escort AI. A captive cannot be damaged by an unavoidable spawn, hidden hazard, off-screen attack, or non-interactive cinematic event.
 
@@ -331,7 +331,7 @@ No interaction may:
 
 ### 14.1 Signal Hut branch
 
-The heroes restore the damaged cliffside communication hut and rescue its trapped operator. Completion records operator state, repair state, encounter result, time band, and accessibility-safe feedback.
+The heroes restore the damaged cliffside communication hut and rescue its trapped operator. The operator is **Wei Shan / 魏珊 / Wei Shan**, 29, Qinglan's radio keeper. Completion records operator state (using the §7.2 count model), repair state, encounter result, and accessibility-safe feedback; there is no time band.
 
 ### 14.2 Herbalist Shelter branch
 
@@ -343,7 +343,7 @@ Completing both branches in an eligible run grants a Stage 3 optional-completion
 
 Locked entries show concise localized unlock clues through pointer hover, keyboard or gamepad focus, click or confirmation, touch, and accessibility labels. Hints identify the relevant stage and action type without revealing unreached mandatory story facts. Cheat eligibility is stated explicitly.
 
-Exact achievement names, catalogue size, thresholds, score, Credit rewards, and condition-grade achievements are Deferred. The catalogue should cover story completion, optional branches, rescue condition, mounted mastery, Garran counterplay, higher difficulty, and sponsor evidence without requiring mutually impossible actions in one run.
+The Museum record is the **Silvermist Ecology Folio / 银雾生态图册 / Silbernebel-Ökologiemappe**. The achievement catalogue and grade are fixed in §22.2 and §22.3; Credit rewards remain Deferred. The catalogue covers story completion, optional branches, rescue condition, mounted mastery, Garran counterplay, higher difficulty, and sponsor evidence without requiring mutually impossible actions in one run.
 
 ### 14.4 Store and wardrobe
 
@@ -377,7 +377,7 @@ Stage 3 teaching coverage includes:
 - Garran's Hookstaff ranges, clinch escape, partner interrupt, winch warnings, and redirects.
 - Conservation, optional branches, Museum clues, and non-actionable research framing.
 
-No new Stage 3 cheat code is required. Existing openly documented individual cheats and clusters remain selectable by keyboard and gamepad. `STEADYRIDE` covers eligible horse Stability behavior.
+Stage 3 adds `STEADYRIDE`, which covers eligible horse Stability behavior. Existing openly documented individual cheats and clusters remain selectable by keyboard and gamepad.
 
 Any accepted cheat marks the run Cheat-Assisted. Such a run may complete the stage and unlock later difficulties, but receives no score, Credits, mastery achievements, performance grades, or competitive records under the shared rules. Narrative completion and eligible story or Museum discoveries remain available.
 
@@ -401,7 +401,7 @@ Generated images and clips contain no embedded language-dependent text, signage,
 
 Flow production follows the established constraints: small motion grounded in the frame; named prop hands, gaze targets, and container contents; still-frame verification before generation; and action redesign after two failed attempts. Large motion, travel, handoffs, and time changes should normally be assembled in editing rather than forced into one generation.
 
-Final cinematic chapters, shot count, scripts, voices, and timing are Deferred. At minimum, presentation must cover the research purpose, kidnapping briefing, Tomas confirmation, Ren rescue priority, Garran capture, invoice discovery, and Tomas's lowland contact without replacing playable state-dependent events.
+The shot list is fixed in §22.6 (fifteen short clips with start and end frames, plus stills); final scripts, voices, and timing are Deferred. At minimum, presentation must cover the research purpose, kidnapping briefing, Tomas confirmation, Ren rescue priority, Garran capture, invoice discovery, and Tomas's lowland contact without replacing playable state-dependent events.
 
 ### 16.3 Music and SFX
 
@@ -518,7 +518,7 @@ Final story frames, Flow clips, subtitles, transcripts, voices, music, ambience,
 
 - Exact action frames, hitboxes, damage, Defense and Resolve values, AI weights, and threat budgets.
 - Final spawn tables, map dimensions, camera bounds, horse speeds, checkpoint payload sizes, rollback window, and browser-performance budgets.
-- Exact score, Credits, achievement names and thresholds, condition thresholds, Store prices, and unlock wording.
+- Exact Credits, Store prices, and unlock wording (the grade, achievement names, condition model and stable IDs are fixed in §22).
 - Final dialogue, voice casting, subtitle timing, cinematic shot count, animation, effects, artwork, music masters, ambience, SFX, and Museum layout.
 - Final commercial-use verification for every generated, recorded, licensed, or commissioned asset.
 
@@ -536,3 +536,86 @@ Builder review must confirm:
 4. Every boss, enemy, mount, weapon, and environmental action uses shared legal combat budgets.
 5. All essential information has localized visual or textual access independent of generated video and audio.
 6. Deferred values remain data-defined and pass their stated promotion gates before final content lock.
+
+## 22. Production decisions of 2026-11-03
+
+Accepted by the creator on 2026-11-03 from `docs/review/07-stage3-production-readiness.md`. Every player-facing name below has its English, Simplified Chinese and German form; the localization tables use these exact strings.
+
+### 22.1 Stable IDs
+
+| Content | ID |
+| --- | --- |
+| Stage | `story.stage3.herb_mountain` |
+| Signal Hut branch | `branch.stage3.signal_hut` |
+| Herbalist Shelter branch | `branch.stage3.herbalist_shelter` |
+| Museum record | `museum.stage3.silvermist_ecology_folio` |
+| Sponsor Dossier entry | `dossier.stage3.damaged_invoice` |
+
+### 22.2 Stage grade (100 points)
+
+| Category | Points | Rule |
+| --- | ---: | --- |
+| Rescue condition | 35 | Per group: Secure full share, Strained half, Critical none. |
+| Research record | 15 | Documented full, Recovered two thirds, Disturbed one third. |
+| Garran capture and counterplay | 20 | Live capture, disarm, winch redirects. |
+| Combat quality | 20 | Shared combat-quality rules. |
+| Optional branches | 10 | 5 per branch. |
+
+Any group in Critical condition caps the grade at A. A Cheat-Assisted run receives no grade. The grade uses the shared grade module (roadmap M25).
+
+### 22.3 Achievements
+
+| # | English | 中文 | Deutsch | Condition |
+| ---: | --- | --- | --- | --- |
+| 1 | Mist Lifts | 雾散山明 | Der Nebel lichtet sich | Clear Stage 3. |
+| 2 | Every Voice Home | 人人平安归 | Alle Stimmen kehren heim | All four rescue groups Secure in one run. |
+| 3 | Signal Restored | 信号重连 | Signal wiederhergestellt | Complete the Signal Hut branch. |
+| 4 | Shelter Remembered | 草庐忆旧 | Die Hütte nicht vergessen | Complete the Herbalist Shelter branch. |
+| 5 | Both Paths Walked | 双径皆行 | Beide Wege gegangen | Complete both branches in one run. |
+| 6 | Steady on the Switchback | 盘山稳骑 | Sicher in den Serpentinen | No horse Stability break on Normal or higher. |
+| 7 | Hook Unhooked | 卸钩 | Den Haken gelöst | Disarm Garran in every phase where he holds the Hookstaff. |
+| 8 | Paper Trail | 纸上踪迹 | Die Papierspur | Examine the invoice and open its Sponsor Dossier page. |
+
+### 22.4 Encounter names
+
+| Area (EN / 中文 / DE) | # | English | 中文 | Deutsch |
+| --- | ---: | --- | --- | --- |
+| Lower Switchback / 盘山下道 / Untere Serpentinen | 1 | Hoofprints in the Mud | 泥中蹄印 | Hufspuren im Schlamm |
+| | 2 | Rope across the Trail | 横道绳索 | Ein Seil über dem Pfad |
+| Qinglan Hamlet / 青岚村 / Dorf Qinglan | 3 | Empty Drying Racks | 空空晒架 | Leere Trockengestelle |
+| | 4 | The Watch Path | 守望小径 | Der Wachpfad |
+| Moonbell Basin / 月铃谷 / Mondglockental | 5 | Mist over the Beds | 苗床雾起 | Nebel über den Beeten |
+| | 6 | Two Voices in the Mist | 雾中两声 | Zwei Stimmen im Nebel |
+| Echo Quarry / 回声石场 / Echosteinbruch | 7 | Loose Scaffold | 松动的脚手架 | Loses Gerüst |
+| | 8 | Hammer Line | 铁锤阵 | Die Hammerreihe |
+| | 9 | Cart Rails | 矿车轨道 | Lorengleise |
+| Broken Ridge Camp / 断脊营地 / Lager am Gebrochenen Grat | 10 | Outer Fence | 外围栅栏 | Der äußere Zaun |
+| | 11 | Lantern Row | 灯笼排 | Die Laternenreihe |
+| | 12 | Ren Xia's Enclosure | 任霞的围栏 | Ren Xias Verschlag |
+| High Winch Terrace / 高索台 / Hochseil-Terrasse | Boss | Chief of the Broken Ridge | 断脊之首 | Der Anführer vom Gebrochenen Grat |
+| Signal Hut / 信号小屋 / Funkhütte | Branch | The Silent Antenna | 沉默的天线 | Die stumme Antenne |
+| Herbalist Shelter / 草药师草庐 / Kräuterhütte | Branch | Baskets Left Behind | 遗落的竹篮 | Zurückgelassene Körbe |
+
+### 22.5 Other names
+
+| Item | English | 中文 | Deutsch |
+| --- | --- | --- | --- |
+| Research record states | Documented / Disturbed / Recovered | 已记录 / 受扰 / 已寻回 | Dokumentiert / Gestört / Geborgen |
+| Garran's phases | Hookstaff Control / Clinch and Cast / Winch Pressure | 钩杖制敌 / 缠抱摔投 / 绞盘压迫 | Hakenstab-Kontrolle / Klammern und Werfen / Seilwinden-Druck |
+| Store outfits | Mountain Rescue Outfit / Highland Gathering Festival Attire | 山地救援服 / 高地采集节盛装 | Bergrettungsausrüstung / Festtracht des Hochland-Sammelfests |
+| Museum record | Silvermist Ecology Folio | 银雾生态图册 | Silbernebel-Ökologiemappe |
+| Museum artifacts | Qinglan Rescue Bell / Gao Wen's Trail Ledger / The Broken Hookstaff | 青岚救援钟 / 高文的山径记录簿 / 断裂的钩杖 | Rettungsglocke von Qinglan / Gao Wens Pfadbuch / Der zerbrochene Hakenstab |
+| Profile badges | Silvermist / Ridge Unhooked | 银雾 / 卸钩之岭 | Silbernebel / Der Grat ohne Haken |
+| Qinglan residents | Wei Shan (radio keeper, 29) / Grandmother Qiu (weaver, about 72) | 魏珊 / 邱奶奶 | Wei Shan / Großmutter Qiu |
+
+### 22.6 Presentation, visuals and music
+
+- **Shot list:** F01 title loop; H01 research update; H02 Qinglan partnership; H03 gathering at the ledge; H04 return with the demand; H05 departure at dawn; T01 radio intercept; T02 planning cabin; T03 the prepared route; E01 Garran restrained; E02 the private case; E03 reunion at Qinglan (with Secure and Critical inserts); E04 the invoice beside the seals; E05 Tomas at the lowland shelter; E06 paths through the mist. Each clip is generated from an approved start frame and end frame with small motion only; travel, mounting and escapes are assembled in editing. Prompts: `FightForPeace/codex_prompts_stage3.md`, `flow_prompts_stage3.md` and `music_prompts_stage3.md` in the Pictures repository.
+- **Garran's music layers:** *Hookstaff Control*, *Clinch and Cast*, *Winch Pressure*, plus a capture ending that resolves into the village motif.
+- **Bandit identity:** weathered charcoal, ochre and dark-brown clothing with a dull-red rope armband; no emblem, so the sponsor stays hidden.
+- **Tomas:** about 54, upright, grey-haired; the Stage 2 frailty was an act (`story_line.md`, decided 2026-11-03).
+- **Default clothing evolution:** trail boots or trail shoes instead of sandals or soft shoes, a light weather layer in the hero's colour, a small chest radio and a leaf-shaped first-aid pouch; silhouettes and marks stay recognisable. In-play use follows the outfit pipeline decision (roadmap M5).
+- **Mounted kit:** each hero's horse actions reuse that hero's motorbike kit names and inputs with horse timing.
+- **Shared assets:** Qinglan Hamlet, Gao Wen and the Signal Hut are built once and reused by *Storm over Qinglan*.
+- **Research animals:** the laboratory mice appear in text only, never in art or video.
+- **Builder review (§21):** held at the start of roadmap M27, after the Combat Constitution audit (M24), so the §7.2 count model is checked against the shared protected-unit module.

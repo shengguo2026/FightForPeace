@@ -485,7 +485,9 @@ Xu Lian provides a sealed evidence package and recorded statement before request
 
 The son receives the records without being forced into immediate personal contact. This preserves his agency and allows him to evaluate the material alongside the village case file, the elder's written objection, and his own observations.
 
-**Unresolved:** The later stage assignments of Xu Lian's documentary return and optional meeting, and the final visual identities of Xu Lian, Xu Tao, Xu Rong, and Xu Decheng.
+**Confirmed (2026-11-03):** Xu Lian's documentary disclosure arrives in Stage 4, her lawful notice in Stage 7, and her invitation in the Stage 8 epilogue.
+
+**Unresolved:** The final visual identities of Xu Lian, Xu Tao, Xu Rong, and Xu Decheng (designed with the Release 2 art).
 
 ### 8.4 His father's betrayal
 
@@ -669,25 +671,29 @@ The Wayfarer Watch operates along the Changling Trade Road, Qingshi's outer rout
 
 The group coordinates with the Regional Civil Protection Council during serious incidents while remaining institutionally independent. It documents uses of force, treatment of captives, recovered property, and civilian injuries. Its canonical Character Chronicle missions demonstrate Kael's self-defined protective use of force and his effort to make amends through conduct rather than instant forgiveness. He does not immediately join the village patrol or transfer his loyalty to the elder.
 
-During the final sponsor crisis, the independent group voluntarily cooperates with the village because their protective objectives align. The son may become a selectable guest hero while retaining his separate affiliation. His accepted, declined, or deferred meeting with his mother does not alter this role, and permanent village membership is not required for a peaceful conclusion.
+During the final sponsor crisis, the independent group voluntarily cooperates with the village because their protective objectives align. The son may become a selectable guest hero while retaining his separate affiliation. His Meet Now, Reply and Meet Later, or Not Yet answer to his mother does not alter this role, and permanent village membership is not required for a peaceful conclusion.
 
 Kael's guest-hero unlock occurs after he has reviewed the evidence, left Tomas, accepted responsibility for the unlawful interception, co-founded the Wayfarer Watch, and completed its first canonical protection Chronicle without village supervision. At that milestone he becomes profile-wide selectable in the Academy, Random Operations, completed Mission Remixes, and other non-canonical free-selection modes.
 
 In canonical Story Mode, Kael becomes selectable only from the later chapter in which the Wayfarer Watch voluntarily joins the village against the sponsor. He cannot be inserted retroactively into Stages 1 or 2 or earlier canonical encounters. The unlock is independent of the mother–son reunion choice, difficulty, score, credits, and performance grade. Duplicate-hero restrictions remain active. Soren and Chen Yue remain unavailable in canonical Story and Chapter Challenge selections but become selectable in completed Mission Remixes and Random Operations through the Wayfarer Watch unlock path.
 
-Kael's confrontation and capture occur in Stage 4, while his voluntary Wayfarer Watch alliance with the village occurs in Stage 7. The exact Stage 4 encounter structure and placement of the first Wayfarer Watch Chronicle remain for the campaign breakdown. His detailed move list and frame data remain production decisions. Soren's and Chen Yue's model sheets, move lists, frame data, and precise Wayfarer Watch unlock presentation remain later production decisions.
+Kael's confrontation and capture occur in Stage 4, while his voluntary Wayfarer Watch alliance with the village occurs in Stage 7. The exact Stage 4 encounter structure is defined by the Stage 4 specification.
+
+**Planned (accepted 2026-11-03, campaign review G7):** the first Wayfarer Watch Chronicle, working title ***The Road Between***, is one short Character Chronicle set between Stages 4 and 7. It opens in the Mission Hub after Stage 6. Kael, Soren and Chen Yue are its canonical trio, protecting a mountain caravan from road predators without village supervision. Its first clear unlocks Kael for free-selection modes and starts Soren's and Chen Yue's unlock path. Its specification is written before roadmap milestone M38.
+
+**Planned (campaign review G8):** Kael's playable kit (for Stages 7 and 8 and free modes), Lin Lan's kit, and Soren's and Chen Yue's kits are written in the format of the Stage 5 hero contract (15 named normals, Specials, Ultimates) before their content wave: Kael and Lin Lan for Release 2, Soren and Chen Yue with *The Road Between*. His detailed frame data remains a production decision. Soren's and Chen Yue's model sheets, move lists, frame data, and precise Wayfarer Watch unlock presentation remain later production decisions.
 
 ### 8.7 Convergent mother-son reunion branch
 
-**Planned:** The reunion choice is a personal narrative branch, not a campaign branch. The evidence reaches the son before the choice, so no mandatory historical fact depends on whether he agrees to meet his mother.
+**Confirmed (aligned with the Stage 8 specification on 2026-11-03):** The reunion choice is a personal narrative branch, not a campaign branch. The evidence reaches the son before the choice, so no mandatory historical fact depends on whether he agrees to meet his mother.
 
-Xu Lian sends one invitation through the Regional Civil Protection Council only after her son has left Tomas, reviewed the evidence, and completed his first independent civilian-protection mission. This cooling-off period lets him make the choice after demonstrating his own values rather than while injured, detained, or emotionally dependent on either family.
+Xu Lian's invitation reaches Kael through the Regional Civil Protection Council during the Stage 8 epilogue, after he has left Tomas, reviewed the evidence, and led the Wayfarer Watch's independent protection work. This cooling-off period lets him make the choice after demonstrating his own values rather than while injured, detained, or emotionally dependent on either family.
 
-- **Accepted:** He chooses a neutral meeting in the quiet public courtyard of the **Yunzhou Cooperative Exchange**, which belongs to neither the Xu family enterprise nor the village. A Council liaison remains available nearby but does not participate. The conversation begins cautiously and does not create instant forgiveness, restored custody, or a perfect family reunion.
-- **Declined:** He acknowledges the authenticated evidence but chooses not to meet. Xu Lian respects the boundary and sends no repeated requests. The decision is not framed as cruelty, failure, or the morally inferior route.
-- **Deferred:** He leaves the request open without a promised deadline and may reconsider after more time. The ending preserves possibility without promising a later decision.
+- **Meet Now:** He chooses a neutral meeting in the quiet public courtyard of the **Yunzhou Cooperative Exchange**, which belongs to neither the Xu family enterprise nor the village. A Council liaison remains available nearby but does not participate. The conversation begins cautiously and does not create instant forgiveness, restored custody, or a perfect family reunion.
+- **Reply and Meet Later:** He answers the invitation and agrees to meet after more time, without a promised date. The ending preserves the coming meeting without showing it.
+- **Not Yet:** He acknowledges the authenticated evidence but is not ready to meet. This is not a rejection: Xu Lian respects the boundary and sends no repeated requests, and the decision is not framed as cruelty, failure, or the morally inferior route.
 
-All three states share the same canonical outcome: the son has left Tomas, rejected inherited revenge, and gained access to his mother's evidence; her testimony enters the historical record; and the main campaign, fighting stages, and peaceful ending remain unchanged. The save profile records `accepted`, `declined`, or `deferred` for later personal scenes, while campaign progression checks only `son_left_tomas`.
+All three states share the same canonical outcome: the son has left Tomas, rejected inherited revenge, and gained access to his mother's evidence; her testimony enters the historical record; and the main campaign, fighting stages, and peaceful ending remain unchanged. The save profile records `meet_now`, `meet_later`, or `not_yet` for later personal scenes, while campaign progression checks only `son_left_tomas`.
 
 The choice grants no score, credits, achievement, combat power, costume, superior ending rank, or other material advantage. This protects the son's autonomy and prevents the game from rewarding one emotionally sensitive decision as the objectively correct answer.
 
@@ -1336,6 +1342,15 @@ English, Simplified Chinese, German, keyboard, gamepad, pointer, touch-capable U
 
 The backstory must not arrive as one uninterrupted exposition dump. Each chapter appears when the present-day investigation or the son's experience makes that part of the past relevant.
 
+**Confirmed placement (2026-11-03):** each chapter is two or three still or small-motion shots with transcript.
+
+| Chapter | Placement |
+| --- | --- |
+| Courtship, marriage and parenthood; the separation and custody; the son's isolation | Stage 4, inside *Truth under Seal* |
+| The exile and Oren's teaching | Stage 5, present-day frame |
+| Continuing family exclusion; Tomas's turn toward fraud and his fortune | Stage 6, after the abandoned operation |
+| The recovery of Xu Lian's records | Stage 7, with the lawful notice |
+
 ### 9.7 Campaign Chronicle archive
 
 **Confirmed:** Collection and Records -> Museum and Archive contains the localized **Campaign Chronicle / 战役纪事 / Kampagnenchronik**. Guide remains mechanical reference, and no additional top-level navigation module is created.
@@ -1592,7 +1607,7 @@ The final epilogue returns to the village. It shows restitution beginning, the F
 | River Scout | Helps restore the river and remains part of the expanded roster. A returning founder may recognize the Stage 1 seal in Stage 2. | Remains a selectable founding hero; personal name and deeper biography are unresolved. |
 | Wind Sentinel | Protects the Stage 2 greenhouse as an 18-year-old civil-protection hero. | Remains Fire Warden's unique twin sister and a fast karate-derived fighter. |
 | Fire Warden | Protects the Stage 2 greenhouse as an 18-year-old civil-protection hero. | Remains Wind Sentinel's unique twin brother and a Sanda, kickboxing, and control specialist. |
-| Sluice Commander | Defeated through surrender or safe capture presentation. | Exact post-Stage 1 custody details are not yet defined; do not silently reuse the character as free or dead. |
+| Sluice Commander | Defeated through surrender or safe capture presentation. | **Confirmed (2026-11-03):** held by the village, then transferred to the regional authority for lawful trial; the Stage 2 Museum and Campaign Chronicle state this in one line. Stage 1 is unchanged. Do not reuse the character as free or dead. |
 | Luo Fen / 罗芬 and Deng Hao / 邓浩 | Stage 3 expedition survivors, aged 44 and 32. Luo Fen carries the ransom demand; injured field medic Deng Hao documents the ambush. | Return safely and initiate the mountain rescue without possessing an implausibly complete camp map. Final visual identities remain unresolved. |
 | Gao Wen / 高文 and Tao Min / 陶敏 | Stage 3 captives, aged 52 and 22. Gao is Qinglan's trail and conservation steward; Tao is his apprentice and observes the bandit route. | Rescued alive at Moonbell Basin under the Secure, Strained, or Critical presentation system. Final visual identities remain unresolved. |
 | An Bo / 安博 | Stage 3 captive, age 35, Qinglan horse handler, and rescue volunteer forced to maintain captured horses and quarry transport equipment. | Rescued alive at Echo Quarry and helps calm the recovered horses. Final visual identity remains unresolved. |
@@ -1656,7 +1671,7 @@ Future stage work must observe the following rules:
 16. Treat the shared combat engine as a permanent campaign constitution. New stages, Curated Missions, heroes, weapons, mounts, environments, enemies, and bosses may add data-defined content and authored combinations, but may not fork, replace, or redesign the universal combat rules. Maintenance may correct defects, improve performance, security, tooling, compatibility, or accessibility only when validated gameplay behavior remains unchanged.
 17. Do not treat the previous elder as either a blameless protector or a simple tyrant. Preserve the real emergency, the legitimate need to stop the father, and the injustice of permanent family punishment without individual review.
 18. Treat the finalized Stage 1 and Stage 2 storylines as locked. Later refinements may reveal earlier off-screen history or consequences, but must not add encounters, characters, scenes, clues, or changed outcomes to those stages unless a separate critical continuity conflict is explicitly approved for correction.
-19. Do not attach combat power, currency, achievements, superior ending ranks, or campaign divergence to the mother-son reunion choice. Accepted, declined, and deferred are equally valid personal states that converge on one canonical campaign timeline.
+19. Do not attach combat power, currency, achievements, superior ending ranks, or campaign divergence to the mother-son reunion choice. Meet Now, Reply and Meet Later, and Not Yet are equally valid personal states that converge on one canonical campaign timeline.
 20. Do not equate Tomas's cooperation or abandonment of revenge with exoneration. He survives and may contribute to the truth, but still faces lawful accountability, restitution, and uncertain personal relationships; he also remains a noncombatant rather than the final physical boss.
 21. Do not portray Rovan as the architect of a generations-long master plan or make his descendants inherit guilt. The modern sponsor inherits and transforms parts of an old criminal infrastructure under contemporary leadership and motives; the institutional connection is revealed late through evidence rather than an unchanged emblem.
 22. Preserve the martial master's left-side injury consistently across ages and media. Mobility support may improve comfort and stability but cannot erase the injury or return him to unrestricted field combat.
@@ -1672,7 +1687,7 @@ Refine these topics in the following dependency order:
 1. **Oren Rell and the historical betrayal — core event confirmed:** age, motive, Communal Supply and Trade Steward role, Seasonal Emergency and Trade Reserve, false emergency convoy, Rovan Kest and his institutional legacy, live capture, regional sentence, Qiao Lan's sacrifice and memorial, named supporting witnesses, fictional regional locations, and serious but contained harm. Remaining character-model and environmental-map details belong to later visual production.
 2. **The exile and the current elder's involvement — core process confirmed:** one-month containment-to-exile chronology; rejected individual judgment and restitution plan; independent caravan matron; split-custody evidence chain; resettlement in Qingshi via the Changling Trade Road; and Tomas's later move to Yunzhou. Exact map geometry remains for the campaign-map pass.
 3. **Historical Chronicle characters:** young elder, earlier Mountain Guardian and martial master, historical commander, personal names, relationships, Academy role, and visual identities.
-4. **Tomas's former wife:** name, professional role, present life, return to the story, preserved evidence, meeting request, and optional accepted, declined, and deferred scenes.
+4. **Tomas's former wife:** name, professional role, present life, return to the story, preserved evidence, meeting request, and the optional Meet Now, Reply and Meet Later, and Not Yet scenes of the Stage 8 epilogue.
 5. **Tomas's son and companions:** name, age, fighting style, first appearance, companions, independent protection group, operating area, Chronicle missions, and guest-hero unlock point.
 6. **The unknown sponsor:** identity, organizational nature, motive, intermediary structure, reason for exploiting Tomas, and final responsible leadership.
 7. **Long-term village transformation:** placement of the later three-to-five-year development period and the narrative introduction of advanced infrastructure, clothing, wearables, robots, and civil-protection technology.

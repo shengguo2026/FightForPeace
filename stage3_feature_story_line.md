@@ -103,7 +103,7 @@ Four people remain captive:
 
 - **Confirmed:** All four rescues are mandatory, and every captive survives canonically.
 - **Confirmed:** There is no hidden execution timer.
-- **Confirmed:** Each rescue group receives a visible **Secure**, **Strained**, or **Critical** condition grade based on delay, environmental damage, and protection performance.
+- **Confirmed:** Each rescue group receives a visible **Secure**, **Strained**, or **Critical** condition grade based on how many visible, interruptible hostile actions against the group were completed (none, one, two or more), never on elapsed time (refined 2026-11-03; Stage 3 specification §7.2).
 - **Confirmed:** Condition changes medical presentation, score, recognition, and epilogue details. It never causes death, blocks completion, or changes the canonical story.
 - **Confirmed:** Freed captives follow short authored routes to protected shelters. Stage 3 does not become a long escort mission.
 - **Confirmed:** Captives provide contextual knowledge but never become combatants.
@@ -348,3 +348,10 @@ The feature direction is complete. The following are production tasks, not open 
 - Final artwork, model sheets, costumes, animations, VFX, story frames, video edits, music, ambience, and SFX.
 - Rights, provenance, consent, commercial-use verification, asset hashes, and browser delivery variants.
 - Full solo, co-op, local-Wi-Fi, difficulty, checkpoint, accessibility, localization, deterministic-replay, and performance validation.
+
+## 23. Production decisions of 2026-11-03
+
+- **Confirmed:** The creator accepted every proposal of the Stage 3 close check (`docs/review/07-stage3-production-readiness.md`): the counted condition model, the 100-point grade, eight achievements, stable IDs, the operator Wei Shan, the Silvermist Ecology Folio, the encounter names, the research record states, the shot list, Garran's music layers, the bandits' dull-red rope armband, the default clothing evolution and the reuse of the bike kit names on horses.
+- **Confirmed:** Achievements, encounter names and all other new names are localized in English, Simplified Chinese and German; the authoritative tables are in the Stage 3 specification §22.
+- **Confirmed:** Tomas is about 54 in Stage 3 and upright; his Stage 2 frailty was part of the deception.
+
