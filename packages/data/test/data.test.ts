@@ -82,7 +82,8 @@ test.each([
   }
 });
 
-const base = readFileSync(files[0]!, 'utf8');
+// A Windows checkout may have CRLF line endings: edits below match LF text.
+const base = readFileSync(files[0]!, 'utf8').replace(/\r\n/g, '\n');
 
 test('a missing link target fails with a readable message', () => {
   const bad = base.replace('to: brace-elbow,', 'to: brace-elbo,');
