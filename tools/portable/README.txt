@@ -1,8 +1,9 @@
 Fight For Peace @VERSION@ - portable build
 ==========================================
 
-Stage 1 "The Broken Water Pact" (milestone M9, greybox) and the Combat Lab, played in
-your browser from this folder. The version is shown in the lower right corner of the game.
+Stage 1 "The Broken Water Pact", the village menu and the Combat Lab (milestone M10),
+played in your browser from this folder. Menus and subtitles in English, Simplified
+Chinese and German. The version is shown in the lower right corner of the game.
 
 Start
 -----
@@ -33,9 +34,14 @@ Logs: the "logs" folder (server.log, last-port.txt).
 
 Playing Stage 1
 ---------------
-The game opens on the Lab overlay with "Stage 1" selected in the Arena panel: pick a
-difficulty and press Start. Add ?stage=1 to the address to start the stage directly
-(also &difficulty=easy|medium|hard|extreme|ultimate and &beat=1..8 for a practice run).
+The first start asks for the language, subtitles, essential accessibility, the keyboard
+layout and your controls, then opens the village. Play leads through the mode (solo or
+same-device co-op), the players, stage and difficulty, the heroes, the story and the
+elder's briefing into Stage 1. Continue appears in the village once a checkpoint is saved.
+Menus work with the keyboard (arrows, Enter, Esc), a gamepad or the mouse.
+Add ?stage=1 to the address to skip the menus and start the stage directly
+(also &difficulty=easy|medium|hard|extreme|ultimate and &beat=1..8 for a practice run),
+or ?lab to open the Combat Lab directly.
 Hold Interact next to a worker, a clue, the sponsor evidence or a downed partner.
 Continues: Easy 5, Medium 3, Hard 2, Extreme 1, Ultimate none. A defeat spends one and
 restores the latest checkpoint (beats 3, 5 and the boss); with none left the stage
@@ -51,7 +57,12 @@ Licences
 --------
 THIRD-PARTY-NOTICES.txt lists the open-source packages inside the game and their licences.
 
+Saves
+-----
+Profiles, settings, controls and progress are saved in the "saves" folder inside this
+game folder (one file per profile, with daily backups). Settings > Profile Data can also
+export every profile as a .ffpsave file and import one again, with a preview first.
+
 Updating
 --------
-Unzip the new version next to the old one. (Saves arrive in a later milestone and will
-be kept in a "saves" folder inside the game folder.)
+Unzip the new version next to the old one and copy the "saves" folder across.

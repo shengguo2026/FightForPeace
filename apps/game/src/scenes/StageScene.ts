@@ -43,6 +43,8 @@ import {
 } from '@ffp/platform';
 import type { RenderSnapshot } from '../game';
 import { ArenaView } from './arenaView';
+import { callout, dt } from '../text/i18n';
+import { presentation } from '../shell/presentation';
 
 export const VIEW_WIDTH = 1920;
 export const VIEW_HEIGHT = 1080;
@@ -286,14 +288,15 @@ export class StageScene extends Phaser.Scene {
       }
       const top = target.p.z - fxToPixels(BODY_HALF_D) - 300;
       this.teamWord.setPosition(target.p.x, top).setVisible(true);
-      this.teamWord.setText(`TEAM? ${Math.max(0, inv.until - frame + 1)}`);
+      this.teamWord.setText(`${callout('TEAM?')} ${Math.max(0, inv.until - frame + 1)}`);
     } else this.teamWord?.setVisible(false);
     const l = coop.log;
     const key = `${l.kind}/${l.frame}`;
     if (key === this.lastCoop) return;
     this.lastCoop = key;
     if (l.frame === 0) return;
-    const finisher = TEAM_FINISHERS[0]?.name.toUpperCase() ?? 'TEAM FINISHER';
+    const fin = TEAM_FINISHERS[0];
+    const finisher = fin ? dt(`coop.finisher.${fin.id}`, fin.name).toUpperCase() : 'TEAM FINISHER';
     const words: Partial<Record<number, [string, string, number]>> = {
       [CoopEvent.Finisher]: [finisher, '#7dffb0', l.target],
       [CoopEvent.Assist]: ['ASSIST', '#7ddc7d', l.target],
@@ -304,7 +307,7 @@ export class StageScene extends Phaser.Scene {
     const word = words[l.kind];
     const at = word ? byId.get(word[2]) : undefined;
     if (!word || !at) return;
-    const t = this.add.text(at.p.x, at.p.z - 340, word[0], {
+    const t = this.add.text(at.p.x, at.p.z - 340, callout(word[0]), {
       fontFamily: 'system-ui, sans-serif',
       fontSize: l.kind === CoopEvent.Finisher ? '52px' : '38px',
       fontStyle: 'bold',
@@ -383,8 +386,9 @@ export class StageScene extends Phaser.Scene {
     sp.setAlpha(f.protectedRecovery ? 0.55 : f.state === MoveState.Dash ? 0.85 : 1);
     // Hit flash: the first frames of hit-stun draw the figure solid white.
     if (f.state === MoveState.Hitstun && f.stateFrame < 4) {
-      sp.setTint(0xffffff);
-      sp.setTintMode(Phaser.TintModes.FILL);
+      // Reduced flashing (M10): a soft red tint instead of the solid white flash.
+      sp.setTint(presentation.reducedFlashing ? 0xffb0b0 : 0xffffff);
+      sp.setTintMode(presentation.reducedFlashing ? Phaser.TintModes.MULTIPLY : Phaser.TintModes.FILL);
     } else {
       sp.setTintMode(Phaser.TintModes.MULTIPLY);
       if (f.team === 'hero' && f.slot === 1) sp.setTint(0xffe2c4);
@@ -671,7 +675,7 @@ export class StageScene extends Phaser.Scene {
     this.lastWeapon.set(f.id, key);
     const c = WEAPON_CALLOUTS[f.weaponEvent];
     if (!c || f.weaponFrame === 0) return;
-    const t = this.add.text(p.x, top - 150, c.text, {
+    const t = this.add.text(p.x, top - 150, callout(c.text), {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '34px',
       fontStyle: 'bold',
@@ -937,7 +941,7 @@ export class StageScene extends Phaser.Scene {
     this.lastDefense.set(f.id, key);
     const c = CALLOUTS[f.defEvent];
     if (!c || f.defFrame === 0) return;
-    const t = this.add.text(p.x, top - 100, c.text, {
+    const t = this.add.text(p.x, top - 100, callout(c.text), {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '38px',
       fontStyle: 'bold',
@@ -1037,7 +1041,7 @@ export class StageScene extends Phaser.Scene {
     this.lastGrab.set(f.id, key);
     const call = GRAB_CALLOUTS[f.grabEvent];
     if (!call || f.grabFrame === 0) return;
-    const t = this.add.text(p.x, top - 100, call.text, {
+    const t = this.add.text(p.x, top - 100, callout(call.text), {
       fontFamily: 'system-ui, sans-serif',
       fontSize: '38px',
       fontStyle: 'bold',

@@ -3,6 +3,9 @@
 // port 6006 or the next free one up to 6105, and opens the default browser.
 //
 //   node server/server.mjs [--port 7000] [--no-open]      (also: FFP_PORT=7000)
+//
+// M10: profiles are saved by this server into ../saves (one JSON file per record), so they
+// do not depend on the port or the browser; copying the game folder copies the saves.
 import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
@@ -10,6 +13,9 @@ import {
   appendFileSync,
   mkdirSync,
   readFileSync,
+  readdirSync,
+  renameSync,
+  rmSync,
   statSync,
   writeFileSync,
 } from 'node:fs';
@@ -22,6 +28,12 @@ export const LAST_PORT = 6105;
 export const HOST = '127.0.0.1';
 /** Identifies a Fight For Peace server, and which game folder it serves. */
 export const ID_PATH = '/__ffp/id';
+/** M10 save API (review 06 §2.4): the game's profiles, as files in `saves/`. */
+export const SAVES_PATH = '/__ffp/saves/';
+/** Record names the game uses (packages/platform save/backends.ts RECORD_NAME). */
+export const RECORD_NAME = /^[a-z0-9][a-z0-9._-]{0,95}$/;
+/** Largest save record accepted (a backup of many profiles stays far below this). */
+export const MAX_RECORD_BYTES = 4 * 1024 * 1024;
 
 const MIME = {
   '.html': 'text/html; charset=utf-8',
@@ -75,15 +87,95 @@ export function folderId(appDir) {
   return createHash('sha256').update(resolve(appDir)).digest('hex').slice(0, 16);
 }
 
-function handler(root, info) {
+/**
+ * GET /__ffp/saves/?prefix=… lists record names; GET, PUT and DELETE /__ffp/saves/<name>
+ * read, write and remove one record. Writes go to a temporary file first and are renamed
+ * into place, so a crash never leaves half a save. Only requests from the game's own
+ * origin are accepted (no cross-site writes from other pages).
+ */
+function savesHandler(savesDir, req, res) {
+  const url = new URL(req.url ?? '/', 'http://localhost');
+  const name = decodeURIComponent(url.pathname.slice(SAVES_PATH.length));
+  const origin = req.headers.origin;
+  const host = req.headers.host;
+  if (origin && host && origin !== `http://${host}`) {
+    res.writeHead(403, { 'Content-Type': MIME['.txt'] }).end('Forbidden');
+    return;
+  }
+  const json = (code, body) =>
+    res
+      .writeHead(code, { 'Content-Type': MIME['.json'], 'Cache-Control': 'no-store' })
+      .end(JSON.stringify(body));
+  mkdirSync(savesDir, { recursive: true });
+  if (name === '') {
+    if (req.method !== 'GET') return json(405, { error: 'method' });
+    const prefix = url.searchParams.get('prefix') ?? '';
+    const names = readdirSync(savesDir)
+      .filter((f) => f.endsWith('.json'))
+      .map((f) => f.slice(0, -5))
+      .filter((n) => RECORD_NAME.test(n) && n.startsWith(prefix))
+      .sort();
+    return json(200, names);
+  }
+  if (!RECORD_NAME.test(name)) return json(400, { error: 'name' });
+  const file = join(savesDir, `${name}.json`);
+  if (req.method === 'GET') {
+    let text;
+    try {
+      text = readFileSync(file, 'utf8');
+    } catch {
+      return json(404, { error: 'not found' });
+    }
+    res.writeHead(200, { 'Content-Type': MIME['.json'], 'Cache-Control': 'no-store' });
+    res.end(text);
+    return;
+  }
+  if (req.method === 'DELETE') {
+    rmSync(file, { force: true });
+    return json(200, { ok: true });
+  }
+  if (req.method === 'PUT') {
+    const chunks = [];
+    let size = 0;
+    req.on('data', (c) => {
+      size += c.length;
+      if (size > MAX_RECORD_BYTES) {
+        json(413, { error: 'too large' });
+        req.destroy();
+        return;
+      }
+      chunks.push(c);
+    });
+    req.on('end', () => {
+      if (size > MAX_RECORD_BYTES) return;
+      const tmp = `${file}.${process.pid}.tmp`;
+      try {
+        writeFileSync(tmp, Buffer.concat(chunks));
+        renameSync(tmp, file);
+        json(200, { ok: true });
+      } catch (err) {
+        rmSync(tmp, { force: true });
+        json(500, { error: String(err.message ?? err) });
+      }
+    });
+    return;
+  }
+  json(405, { error: 'method' });
+}
+
+function handler(root, info, savesDir) {
   return (req, res) => {
+    if (savesDir && (req.url ?? '').startsWith(SAVES_PATH)) {
+      savesHandler(savesDir, req, res);
+      return;
+    }
     if (req.method !== 'GET' && req.method !== 'HEAD') {
       res.writeHead(405, { Allow: 'GET, HEAD' }).end();
       return;
     }
     if (req.url === ID_PATH) {
       res.writeHead(200, { 'Content-Type': MIME['.json'], 'Cache-Control': 'no-store' });
-      res.end(JSON.stringify(info));
+      res.end(JSON.stringify({ ...info, saves: Boolean(savesDir) }));
       return;
     }
     const file = resolveRequest(root, req.url ?? '/');
@@ -139,8 +231,9 @@ export async function startServer({
   first = FIRST_PORT,
   last = LAST_PORT,
   info = {},
+  saves,
 }) {
-  const server = http.createServer(handler(root, { app: 'fight-for-peace', ...info }));
+  const server = http.createServer(handler(root, { app: 'fight-for-peace', ...info }, saves));
   const candidates = port ? [port] : Array.from({ length: last - first + 1 }, (_, i) => first + i);
   for (const p of candidates) {
     try {
@@ -237,6 +330,7 @@ async function main() {
     root: gameDir,
     port: args.port,
     info: { folder: id, version },
+    saves: join(appDir, 'saves'),
   });
   writeFileSync(portFile, `${port}\n`);
   log(`Fight For Peace ${version} running at ${url}`);

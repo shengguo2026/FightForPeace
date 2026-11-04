@@ -8,3 +8,8 @@ export * from './input/prompts';
 export * from './assets/registry';
 export * from './assets/sprites';
 export * from './render/quality';
+export * from './i18n/i18n';
+export * from './save/schema';
+export * from './save/codec';
+export * from './save/backends';
+export * from './save/store';

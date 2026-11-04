@@ -6,10 +6,12 @@ import type { LabState } from './labState';
  * Shown while gameplay is paused: a lost controller, the window losing focus, or a pause
  * the player asked for.
  */
-export function PauseOverlay({ state }: { state: LabState }) {
+export function PauseOverlay({ state, menu }: { state: LabState; menu?: () => boolean }) {
   if (!state.paused.value) return null;
   const players = state.players.value;
   const waiting = state.waiting.value;
+  // M10: a pause the player asked for opens the shell's pause menu instead.
+  if (menu?.() && waiting.length === 0 && !state.focusPaused.value) return null;
   const ctx = players[waiting[0] ?? 0]?.ctx ?? players[0]?.ctx;
   if (!ctx) return null;
   return (

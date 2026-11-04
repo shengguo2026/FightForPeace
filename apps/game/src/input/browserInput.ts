@@ -49,15 +49,20 @@ export function readPads(): (PadSnapshot | null)[] {
 
 /** A key the player is binding: the next press is captured instead of played. */
 let captureNext: ((code: string) => void) | null = null;
-export function captureNextKey(cb: (code: string) => void): void {
+export function captureNextKey(cb: ((code: string) => void) | null): void {
   captureNext = cb;
 }
 
 /**
  * Wires window keyboard events to both keyboard binding sets and the label source.
- * `onLabKey` receives F1–F10.
+ * `onLabKey` receives F1–F10. `intercept` (M10 menus) sees key events before gameplay and
+ * returns true when it used them.
  */
-export function installKeyboard(session: GameSession, onLabKey: (code: string) => void): void {
+export function installKeyboard(
+  session: GameSession,
+  onLabKey: (code: string) => void,
+  intercept: (e: KeyboardEvent) => boolean = () => false,
+): void {
   const { keyboardP1, keyboardP2 } = session.devices;
   window.addEventListener('keydown', (e) => {
     session.labels.observe(e.code, e.key);
@@ -73,11 +78,17 @@ export function installKeyboard(session: GameSession, onLabKey: (code: string) =
       cb(e.code);
       return;
     }
+    if (intercept(e)) return;
     if (keyboardP1.binds(e.code) || keyboardP2.binds(e.code)) e.preventDefault();
     keyboardP1.keyDown(e.code);
     keyboardP2.keyDown(e.code);
   });
   window.addEventListener('keyup', (e) => {
+    if (intercept(e)) {
+      keyboardP1.keyUp(e.code);
+      keyboardP2.keyUp(e.code);
+      return;
+    }
     keyboardP1.keyUp(e.code);
     keyboardP2.keyUp(e.code);
   });

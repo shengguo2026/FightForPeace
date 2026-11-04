@@ -20,6 +20,7 @@ import {
 import type { QualityGovernor } from '@ffp/platform';
 import type { GameSession } from './game';
 import type { LabState } from './ui/labState';
+import type { Shell } from './shell/shell';
 import { setFakePads, useFakePads } from './input/browserInput';
 
 /** Installs window.__ffp for automated tests. Called in dev and e2e builds only. */
@@ -27,8 +28,19 @@ export function installDebugHook(
   session: GameSession,
   lab: LabState,
   quality: QualityGovernor,
+  shell: Shell,
 ): void {
   window.__ffp = {
+    shell: {
+      screen: () => shell.screen.value,
+      profile: () => (shell.active.value ? structuredClone(shell.active.value) : null),
+      storage: () => shell.storage.value,
+      flush: () => shell.flushSave(),
+      exportText: async () => {
+        await shell.flushSave();
+        return shell.store!.exportBackup();
+      },
+    },
     frame: () => session.world.frame,
     body: (id) => {
       const b = session.world.bodies.find((x) => x.id === id);

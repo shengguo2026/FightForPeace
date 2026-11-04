@@ -18,6 +18,12 @@ import {
 } from '@ffp/sim';
 import type { AssetRegistry, BossView, QualityLevel } from '@ffp/platform';
 import { ARENA_TEXT, STAGE_TEXT } from '../text/en';
+import { dt, difficultyName, t, type TextId } from '../text/i18n';
+import { presentation } from '../shell/presentation';
+
+/** Localized stage and arena words (English from en.ts is the fallback). */
+const S = (k: keyof typeof STAGE_TEXT) => t(`run.${k}` as TextId);
+const A = (k: keyof typeof ARENA_TEXT) => t(`arena.${k}` as TextId);
 
 const VIEW_W = 1920;
 const VIEW_H = 1080;
@@ -192,13 +198,17 @@ export class ArenaView {
     const def = STAGES[run.stage]!;
     const beat = def.beats[run.beat]!;
     const diff = DIFFICULTIES[run.difficulty]!;
+    const bk = `stage.${def.id}.beat.${beat.id}`;
+    const beatName = dt(`${bk}.name`, beat.name);
     this.title.setText(
-      `${STAGE_TEXT.stage} ${run.stage + 1} · ${STAGE_TEXT.beat} ${run.beat + 1}/${def.beats.length}: ${beat.name} · ${diff.name} · ${STAGE_TEXT.continues} ${run.continues}`,
+      `${S('stage')} ${run.stage + 1} · ${S('beat')} ${run.beat + 1}/${def.beats.length}: ${beatName} · ${difficultyName(diff.id)} · ${S('continues')} ${run.continues}`,
     );
     const workers = run.workers.length
-      ? ` · ${STAGE_TEXT.workers} ${run.workers.filter((w) => w.state !== 0).length}/${run.workers.length}`
+      ? ` · ${S('workers')} ${run.workers.filter((w) => w.state !== 0).length}/${run.workers.length}`
       : '';
-    this.objective.setText(run.phase === RunPhase.Complete ? '' : `${beat.objective}${workers}`);
+    this.objective.setText(
+      run.phase === RunPhase.Complete ? '' : `${dt(`${bk}.objective`, beat.objective)}${workers}`,
+    );
     // The boss bar takes the line under the title while the Commander fights.
     this.objective.setVisible(this.bossName.text === '');
     const e = run.event;
@@ -206,23 +216,19 @@ export class ArenaView {
     let banner = '';
     let color = '#ffffff';
     if (run.phase === RunPhase.Defeat) {
-      banner = `${STAGE_TEXT.defeated}
-${
-  run.continues > 0
-    ? STAGE_TEXT.continueLeft.replace('{n}', String(run.continues))
-    : STAGE_TEXT.noContinues
-}`;
+      banner = `${S('defeated')}
+${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : S('noContinues')}`;
       color = '#ff6b6b';
     } else if (run.phase === RunPhase.Complete) {
-      banner = STAGE_TEXT.complete;
+      banner = S('complete');
       color = '#7ddc7d';
     } else if (e.kind === RunEvent.RiverRestored && age < 180) {
-      banner = STAGE_TEXT.riverRestored;
+      banner = S('riverRestored');
       color = '#8fe3ff';
     } else if (e.kind === RunEvent.BeatStart && age < 120 && run.phase !== RunPhase.Transition) {
-      banner = `${STAGE_TEXT.beat} ${run.beat + 1} · ${beat.name}`;
+      banner = `${S('beat')} ${run.beat + 1} · ${beatName}`;
     } else if (e.kind === RunEvent.LockClear && age < 60) {
-      banner = STAGE_TEXT.lockClear;
+      banner = S('lockClear');
       color = '#7ddc7d';
     }
     this.banner.setText(banner);
@@ -234,7 +240,7 @@ ${
       run.workers.every((w) => w.state !== 0) &&
       (run.locksDone < beat.locks.length || exitOpenRun(run));
     const blink = Math.floor(frame / 20) % 2 === 0;
-    this.go.setText(ahead && blink && banner === '' ? `${STAGE_TEXT.go} →` : '');
+    this.go.setText(ahead && blink && banner === '' ? `${S('go')} →` : '');
     // The river runs again (placeholder until the ending clips arrive in M13): water
     // flows back into the dry bed on the plate's left side once the Commander yields.
     if (beat.evidence && run.evidence >= 1) {
@@ -344,7 +350,7 @@ ${
     const waves = arena.waves.length;
     const left = bodies.filter((b) => b.team === 'enemy' && !b.ko && !nonCombatant(b)).length;
     this.title.setText(
-      `${arena.name} · ${diff.name} · ${ARENA_TEXT.wave} ${Math.max(1, enc.wave + 1)}/${waves} · ${left} ${ARENA_TEXT.left}`,
+      `${dt(`arena.${arena.id}.name`, arena.name)} · ${difficultyName(diff.id)} · ${A('wave')} ${Math.max(1, enc.wave + 1)}/${waves} · ${left} ${A('left')}`,
     );
     // A stage lock's boss bar goes once the lock is cleared (the Commander has surrendered).
     if (arena.stage && enc.result !== 0) this.bossName.setText('');
@@ -352,14 +358,13 @@ ${
     this.drawDevices(enc);
     this.drawWarnings(enc, bodies, frame);
     this.drawTags(enc, bodies);
-    const result =
-      enc.result === 1 ? ARENA_TEXT.cleared : enc.result === 2 ? ARENA_TEXT.defeated : '';
+    const result = enc.result === 1 ? A('cleared') : enc.result === 2 ? A('defeated') : '';
     // Stage beats (M9) draw their own banners in drawStage.
     if (arena.stage) {
       this.banner.setText('');
       return;
     }
-    this.banner.setText(result ? `${result}\n${ARENA_TEXT.restart}` : '');
+    this.banner.setText(result ? `${result}\n${A('restart')}` : '');
     this.banner.setColor(enc.result === 1 ? '#7ddc7d' : '#ff6b6b');
     this.banner.setAlign('center');
   }
@@ -405,15 +410,15 @@ ${
     const phase = prof.phases[b.phase]!;
     const state =
       b.stagger > 0
-        ? ` · ${ARENA_TEXT.stagger}`
+        ? ` · ${A('stagger')}`
         : b.shift > 0
-          ? ` · ${ARENA_TEXT.phaseShift}`
+          ? ` · ${A('phaseShift')}`
           : b.pending
-            ? ` · ${ARENA_TEXT.phaseQueued}`
+            ? ` · ${A('phaseQueued')}`
             : '';
     const kit = ENEMIES[f.hero]!;
     this.bossName.setText(
-      `${kit.name} · ${ARENA_TEXT.phase} ${b.phase + 1}: ${phase.name} · ${ARENA_TEXT.resolve} ${b.resolve}/${b.resolveMax}${state}`,
+      `${dt(`enemy.${kit.id}.name`, kit.name)} · ${A('phase')} ${b.phase + 1}: ${dt(`enemy.${kit.id}.phase.${b.phase}`, phase.name)} · ${A('resolve')} ${b.resolve}/${b.resolveMax}${state}`,
     );
     this.bossName.setColor(b.stagger > 0 ? '#ffd166' : '#ffffff');
   }
@@ -461,7 +466,7 @@ ${
       g.fillTriangle(ex + dir * 26, ey, ex - dir * 18, ey - 30, ex - dir * 18, ey + 30);
       const t = this.warnTexts[n];
       if (t) {
-        t.setText(`⚠ ${ARENA_TEXT.incoming}`);
+        t.setText(`⚠ ${A('incoming')}`);
         t.setOrigin(side === 1 ? 1 : 0, 0.5);
         t.setPosition(side === 1 ? ex - 40 : ex + 40, ey);
         t.setVisible(true);
@@ -505,11 +510,11 @@ ${
       }
       const group = e.aiMode === AiMode.Group || (e.threatFlags & Threat.Group) !== 0;
       const text = group
-        ? ARENA_TEXT.teamAttack
+        ? A('teamAttack')
         : e.state === MoveState.Flee
-          ? ARENA_TEXT.flee
+          ? A('flee')
           : e.state === MoveState.Surrender
-            ? ARENA_TEXT.surrender
+            ? A('surrender')
             : '';
       t.setText(text);
       t.setColor(group ? '#ff9a3c' : '#dddddd');
@@ -534,7 +539,7 @@ ${
       pan.pan.value = side * 0.8;
       osc.frequency.setValueAtTime(880, ctx.currentTime);
       osc.frequency.setValueAtTime(660, ctx.currentTime + 0.09);
-      gain.gain.setValueAtTime(0.12, ctx.currentTime);
+      gain.gain.setValueAtTime(Math.max(0.0001, 0.12 * presentation.effects), ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
       osc.connect(gain).connect(pan).connect(ctx.destination);
       osc.start();

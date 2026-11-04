@@ -82,6 +82,38 @@ export class DeviceHub {
     for (const pad of this.pads.values()) pad.sample();
   }
 
+  /**
+   * M10: drops every latched press and event (after a menu, so a menu confirm never
+   * becomes an attack), keeping what is physically held.
+   */
+  flush(): void {
+    for (const id of this.deviceIds()) {
+      const src = this.source(id);
+      src?.sample();
+      src?.takeEvents();
+    }
+  }
+
+  /**
+   * M10 readiness lobby: sets who plays with which device. Player 1 must have a device;
+   * Player 2 joins with a device or leaves with null. A device belongs to one player.
+   */
+  assignPlayers(devices: readonly (DeviceId | null)[]): void {
+    const [d1, d2] = devices;
+    if (!d1 || d1 === d2) throw new Error('invalid player devices');
+    const p1 = this.slots[0]!;
+    const p2 = this.slots[1]!;
+    p1.joined = true;
+    p1.device = d1;
+    p1.waiting = false;
+    p1.lostPadId = null;
+    p2.joined = Boolean(d2);
+    p2.device = d2 ?? null;
+    p2.waiting = false;
+    p2.lostPadId = null;
+    this.flush();
+  }
+
   /** Slots whose controller is missing. */
   waitingSlots(): number[] {
     return this.slots.flatMap((s, i) => (s.waiting ? [i] : []));

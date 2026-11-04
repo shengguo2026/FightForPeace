@@ -19,6 +19,9 @@ const FORBIDDEN = [
   /\b(Space|Enter|Shift|Esc|Escape)\b/,
   /[✕○□△]/, // pad glyphs
   /\b(LB|RB|LT|RT|L1|R1|L2|R2|ZL|ZR)\b/,
+  /(按|按下|长按|连按)\s*[A-Z0-9](?![a-z])/, // Chinese "按 T"
+  /(空格键|回车键|退格键|方向键)/, // Chinese key names
+  /(Leertaste|Eingabetaste|Pfeiltaste|Umschalttaste)/, // German key names
 ];
 
 const DIRS = ['Forward', 'Backward', 'Up', 'Down', 'Left', 'Right'];
@@ -48,6 +51,9 @@ test('the checker catches raw key names', () => {
   expect(check('Press {action:Attack} three times')).toEqual([]);
   expect(check('Move {dir:Forward} then {action:Jump}')).toEqual([]);
   expect(check('{action:Kick}')).not.toEqual([]);
+  for (const bad of ['按 T 攻击', '按下空格键跳跃', 'Drücke die Leertaste'])
+    expect(check(bad), bad).not.toEqual([]);
+  expect(check('按 {action:Attack} 攻击')).toEqual([]);
 });
 
 test('player-facing text files contain no key or button names', () => {

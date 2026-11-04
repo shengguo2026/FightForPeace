@@ -8,6 +8,7 @@ import { join, resolve, sep } from 'node:path';
 import { inflateRawSync } from 'node:zlib';
 import {
   ID_PATH,
+  SAVES_PATH,
   mimeType,
   parseArgs,
   resolveRequest,
@@ -95,12 +96,43 @@ describe('portable server', () => {
     const js = await fetch(`${base}/assets/main.js`);
     expect(js.headers.get('content-type')).toMatch(/^text\/javascript/);
     const id = (await (await fetch(`${base}${ID_PATH}`)).json()) as Record<string, string>;
-    expect(id).toEqual({ app: 'fight-for-peace', folder: 'abc' });
+    expect(id).toEqual({ app: 'fight-for-peace', folder: 'abc', saves: false });
     // fetch() would normalise "..", so send the raw path.
     expect(await rawStatus(port, '/../secret.txt')).toBe(400);
     expect(await rawStatus(port, '/%2e%2e/secret.txt')).toBe(400);
     expect((await fetch(`${base}/missing.js`)).status).toBe(404);
     expect((await fetch(`${base}/`, { method: 'POST' })).status).toBe(405);
+  });
+
+  it('stores save records in the saves folder, atomically and only by name', async () => {
+    const game = fakeGame();
+    const saves = join(game, '..', 'saves');
+    const port = await freePort();
+    const { server } = await startServer({ root: game, port, saves });
+    servers.push(server);
+    const base = `http://127.0.0.1:${port}`;
+    const id = (await (await fetch(`${base}${ID_PATH}`)).json()) as Record<string, unknown>;
+    expect(id.saves).toBe(true);
+    expect((await fetch(`${base}${SAVES_PATH}profile.p1`)).status).toBe(404);
+    const put = await fetch(`${base}${SAVES_PATH}profile.p1`, { method: 'PUT', body: '{"a":1}' });
+    expect(put.status).toBe(200);
+    expect(readFileSync(join(saves, 'profile.p1.json'), 'utf8')).toBe('{"a":1}');
+    expect(await (await fetch(`${base}${SAVES_PATH}profile.p1`)).text()).toBe('{"a":1}');
+    await fetch(`${base}${SAVES_PATH}device`, { method: 'PUT', body: '{}' });
+    expect(await (await fetch(`${base}${SAVES_PATH}?prefix=profile.`)).json()).toEqual([
+      'profile.p1',
+    ]);
+    expect(await (await fetch(`${base}${SAVES_PATH}`)).json()).toEqual(['device', 'profile.p1']);
+    expect((await fetch(`${base}${SAVES_PATH}Bad%20Name`, { method: 'PUT', body: 'x' })).status).toBe(400);
+    expect(await rawStatus(port, `${SAVES_PATH}..%2Fescape`)).toBe(400);
+    const foreign = await fetch(`${base}${SAVES_PATH}profile.p1`, {
+      method: 'PUT',
+      body: 'x',
+      headers: { Origin: 'http://evil.example' },
+    });
+    expect(foreign.status).toBe(403);
+    expect((await fetch(`${base}${SAVES_PATH}profile.p1`, { method: 'DELETE' })).status).toBe(200);
+    expect((await fetch(`${base}${SAVES_PATH}profile.p1`)).status).toBe(404);
   });
 
   it('moves to the next port when the first is busy', async () => {
