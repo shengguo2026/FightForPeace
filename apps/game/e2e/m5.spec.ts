@@ -1,56 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
+import { play } from './cues';
 
 test.describe.configure({ timeout: 90_000 });
 
 async function ready(page: Page) {
   await page.goto('/');
   await page.waitForFunction(() => (window.__ffp?.frame() ?? 0) > 10);
-}
-
-/** One scripted press: when `when` (an expression over h = hero 1, d = dummy 1) holds. */
-interface Cue {
-  when: string;
-  keys: string[];
-  hold?: string[];
-}
-
-/**
- * Plays cues in the page, one per animation frame at most: each waits for its condition
- * (never a wall-clock delay), then presses its keys, holding `hold` for a few frames.
- */
-async function play(page: Page, cues: Cue[]) {
-  await page.evaluate(
-    (list) =>
-      new Promise<void>((resolve, reject) => {
-        const key = (type: string, code: string) =>
-          window.dispatchEvent(new KeyboardEvent(type, { code, key: code }));
-        let i = 0;
-        let frames = 0;
-        const tick = () => {
-          const h = window.__ffp!.hero(0)!;
-          const d = window.__ffp!.body(101)!;
-          const c = list[i]!;
-          if (new Function('h', 'd', `return ${c.when}`)(h, d)) {
-            const held = c.hold ?? [];
-            for (const k of held) key('keydown', k);
-            for (const k of c.keys) key('keydown', k);
-            for (const k of c.keys) key('keyup', k);
-            let n = 0;
-            const release = () => {
-              if ((n += 1) < 4) return requestAnimationFrame(release);
-              for (const k of held) key('keyup', k);
-            };
-            requestAnimationFrame(release);
-            i += 1;
-            if (i === list.length) return resolve();
-          }
-          if ((frames += 1) > 2400) return reject(new Error(`cue ${i} timed out: ${c.when}`));
-          requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-      }),
-    cues,
-  );
 }
 
 const routeHas = (page: Page, id: string) =>

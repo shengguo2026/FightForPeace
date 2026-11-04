@@ -33,6 +33,7 @@ test('Player 1 is the Mountain Guardian; F2 switches to the River Scout', async 
 });
 
 test('three Attack presses on a dummy give a three-hit string', async ({ page }, testInfo) => {
+  test.slow(); // counted in simulation steps; a slow CI browser takes long to render
   await ready(page);
   await page.evaluate(() => window.__ffp!.place(0, -80, 0));
   // Press Attack once to start, then again right after each hit lands (inside the window).
@@ -45,18 +46,23 @@ test('three Attack presses on a dummy give a three-hit string', async ({ page },
         };
         let seen = 0;
         let max = 0;
-        let frames = 0;
-        tap();
-        const tick = () => {
+        let steps = 0;
+        let doneAt = Infinity;
+        // Runs before every simulation step, so the next press lands on the step right
+        // after a hit, however slowly the browser renders. Stops 40 steps after the third
+        // hit (enough to see a fourth if there were one).
+        window.__ffp!.onStep(() => {
+          if (steps === 0) tap();
           const hits = window.__ffp!.body(101)!.combo.hits;
           if (hits > seen) tap();
           seen = hits;
           max = Math.max(max, hits);
-          frames += 1;
-          if (frames < 150) requestAnimationFrame(tick);
-          else resolve(max);
-        };
-        requestAnimationFrame(tick);
+          steps += 1;
+          if (max >= 3 && doneAt === Infinity) doneAt = steps + 40;
+          if (steps < Math.min(doneAt, 240)) return false;
+          resolve(max);
+          return true;
+        });
       }),
   );
   expect(best).toBe(3);
@@ -119,22 +125,28 @@ test('standing, low and aerial attacks use three different poses', async ({ page
 });
 
 test('F3 shows hitboxes on active frames', async ({ page }, testInfo) => {
+  test.slow(); // counted in simulation steps; a slow CI browser takes long to render
   await ready(page);
   await page.evaluate(() => window.__ffp!.place(0, -80, 0));
   await page.keyboard.press('F3');
-  await page.keyboard.press('F6');
-  await page.keyboard.press('KeyT');
-  // Pause on the first active frame (Esc), so the screenshot shows the red hitbox.
-  await page.waitForFunction(
-    () => {
+  // Press Attack and pause on its first active frame, both on exact simulation steps, so
+  // the screenshot shows the red hitbox however slowly the browser renders.
+  await page.evaluate(() => {
+    let pressed = false;
+    window.__ffp!.onStep(() => {
+      if (!pressed) {
+        pressed = true;
+        window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyT', key: 't' }));
+        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyT', key: 't' }));
+        return false;
+      }
       const h = window.__ffp!.hero(0)!;
       if (h.action !== 'masons-touch' || h.stateFrame < 5) return false;
-      window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape', key: 'Escape' }));
+      window.__ffp!.pauseNow();
       return true;
-    },
-    null,
-    { polling: 'raf' },
-  );
+    });
+  });
+  await page.waitForFunction(() => window.__ffp!.paused());
   expect((await hero(page)).stateFrame).toBeLessThanOrEqual(7);
   await page.waitForTimeout(200);
   await page.screenshot({ path: `test-results/m2-hitboxes-${testInfo.project.name}.png` });
