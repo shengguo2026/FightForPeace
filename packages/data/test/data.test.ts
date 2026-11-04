@@ -113,7 +113,7 @@ test('a third hero file becomes a third roster entry with no code change (Review
   const dir = mkdtempSync(join(tmpdir(), 'heroes-'));
   for (const f of files) copyFileSync(f, join(dir, basename(f)));
   writeFileSync(join(dir, 'zz-test.yaml'), base.replace('id: mountain', 'id: test-hero'));
-  const source = generate(heroFiles(join(dir, '/')), []);
+  const source = generate(heroFiles(join(dir, '/')), [], undefined, null);
   expect(source).toContain('"id": "test-hero"');
   expect(source.match(/"bodyWidth"/g)).toHaveLength(3);
 });
@@ -160,7 +160,7 @@ describe('Defense data (M4)', () => {
 
   test('the training enemy has one attack per defense-response profile', () => {
     const t = trainer();
-    expect(enemyFiles().map((f) => basename(f))).toEqual(['trainer.yaml']);
+    expect(enemyFiles().map((f) => basename(f))[0]).toBe('trainer.yaml');
     const tags = Object.fromEntries(t.actions.map((a) => [a.id, a.tags ?? []]));
     expect(Object.keys(tags)).toEqual([
       'jab',

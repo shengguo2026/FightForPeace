@@ -1,0 +1,95 @@
+# Black-Iron Enforcer (spec §12.1, F&D §8): the sponsor-equipped Hard-and-higher challenge.
+# Armoured gauntlet punches absorb strikes on the way in, a long-telegraphed unblockable
+# slam, a heaving grab, exact blocks and a Combo Breaker; and a formation problem: the
+# Anvil Pin group attack shoves you into a partner who strikes from the other side, under
+# one shared telegraph and one 52-point reservation. M7 candidates.
+id: enforcer
+name: Black-Iron Enforcer
+bodyWidth: 96
+actions:
+  - id: gauntlet-punch
+    name: Gauntlet Punch
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 24, active: 4, recovery: 26, blockstun: 18 }
+    hitbox: { x: 20, w: 130, y: 140, h: 120, depth: 36 }
+    damage: 95
+    reaction: { kind: knockback, hitstun: 24, push: 10 }
+    costs: { stun: 18, scale: 15, starter: 10, guard: 35 }
+    meter: 0
+    armor: { from: 1, to: 24 }
+    tags: [guardPressure, counterable]
+    moves:
+      - { from: 1, to: 22, forward: 1 }
+
+  - id: backhand-sweep
+    name: Backhand Sweep
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 18, active: 5, recovery: 22, blockstun: 14 }
+    hitbox: { x: 10, w: 140, y: 120, h: 140, depth: 64 }
+    damage: 70
+    reaction: { kind: knockback, hitstun: 20, push: 8 }
+    costs: { stun: 14, scale: 12, starter: 10, guard: 20 }
+    meter: 0
+    tags: [counterable]
+
+  - id: anvil-slam
+    name: Anvil Slam
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 42, active: 5, recovery: 34 }
+    hitbox: { x: 10, w: 160, y: 0, h: 120, depth: 50 }
+    damage: 130
+    reaction: { kind: knockdown, hitstun: 30, push: 6, lift: 6 }
+    costs: { stun: 30, scale: 20, starter: 10 }
+    meter: 0
+    tags: [unblockable, uncounterable, terminalKnockdown]
+
+  - id: iron-hug
+    name: Iron Hug
+    category: grab
+    input: { context: script, dir: neutral }
+    frames: { startup: 20, active: 3, recovery: 30 }
+    hitbox: { x: 20, w: 110, y: 100, h: 170, depth: 40 }
+    damage: 100
+    reaction: { kind: knockdown, hitstun: 30, push: 12, lift: 7 }
+    costs: { stun: 18, scale: 15, starter: 10 }
+    meter: 0
+    tags: [terminalKnockdown]
+    grab: { hold: 46, escapeFrom: 18, escapeWindow: 11 }
+
+  - id: anvil-shove
+    name: Anvil Pin Shove
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 30, active: 6, recovery: 24, blockstun: 16 }
+    hitbox: { x: 15, w: 130, y: 100, h: 180, depth: 48 }
+    damage: 50
+    reaction: { kind: knockback, hitstun: 26, push: 14 }
+    costs: { stun: 14, scale: 12, starter: 10, guard: 20 }
+    meter: 0
+    tags: [groupAttack]
+    moves:
+      - { from: 22, to: 34, forward: 3 }
+
+profile:
+  role: elite
+  health: 700
+  walk: { x: 2, z: 2 }
+  perception: 2
+  ring: 280
+  defense:
+    tier: elite
+    guard: { every: 2, of: 1 }
+    exact: true
+    breaker: true
+    guardHold: 30
+    cooldown: 200
+  weapons: never
+  group: { action: anvil-shove, threat: 26, partnerThreat: 26, telegraph: 40 }
+  attacks:
+    - { action: gauntlet-punch, threat: 32, cooldown: 140 }
+    - { action: backhand-sweep, threat: 20, cooldown: 90 }
+    - { action: iron-hug, threat: 30, cooldown: 240 }
+    - { action: anvil-slam, threat: 32, cooldown: 300 }

@@ -1,4 +1,5 @@
 import { fx } from '../math/fixed';
+import { bossClash } from '../enemies/boss';
 import { type Fighter, type World, WeaponEvent } from '../world/types';
 import { heldDef, isWeaponAction, logWeapon, payIntegrity } from './held';
 import { type Box, activeHitbox, runningAction } from './hits';
@@ -73,6 +74,8 @@ export function resolveClashes(world: World): void {
       pay(world, q);
       logWeapon(world, p, WeaponEvent.Clash, pa.clash * 4 + qa.clash);
       logWeapon(world, q, WeaponEvent.Clash, qa.clash * 4 + pa.clash);
+      bossClash(world, p);
+      bossClash(world, q);
       if (pa.clash <= qa.clash) knockBack(p, q);
       if (qa.clash <= pa.clash) knockBack(q, p);
     }

@@ -118,6 +118,11 @@ function actionable(f: Fighter): boolean {
 
 /** Advances one hero by one frame. Collision and hits run afterwards, for everyone at once. */
 export function stepHero(world: World, f: Fighter, input: FrameInput, p: MovementProfile): void {
+  // A defeated hero (arena) waits for the result screen (revive arrives with M9).
+  if (f.state === MoveState.Defeated) {
+    f.stateFrame += 1;
+    return;
+  }
   stepHeroFrame(world, f, input, p);
   tickDefense(world, f);
 }

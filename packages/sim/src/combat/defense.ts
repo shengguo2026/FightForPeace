@@ -1,4 +1,6 @@
 import { fx } from '../math/fixed';
+import { dealDamage } from './damage';
+import { profileOf } from '../enemies/data';
 import { type Axis, DefEvent, type Fighter, MoveState, Protect, type World } from '../world/types';
 import { selectAction, startAction } from './actions';
 import { awardGuardMeter } from './meter';
@@ -62,7 +64,8 @@ export interface DefenseSnapshot {
 export function defenseSnapshots(bodies: readonly Fighter[]): Map<number, DefenseSnapshot> {
   const snaps = new Map<number, DefenseSnapshot>();
   for (const f of bodies) {
-    if (f.team !== 'hero') continue;
+    // Heroes, and arena enemies with a defense profile (same rules for everyone).
+    if (f.team !== 'hero' && !profileOf(f)) continue;
     snaps.set(f.id, {
       state: f.state,
       guarding: isGuarding(f),
@@ -120,7 +123,7 @@ export function logDefense(
 
 export function addDefense(world: World, f: Fighter, amount: number): void {
   f.defense = Math.min(DEFENSE.max, f.defense + amount);
-  if (world.infiniteDefense) f.defense = DEFENSE.max;
+  if (world.infiniteDefense && f.team === 'hero') f.defense = DEFENSE.max;
 }
 
 /**
@@ -216,11 +219,11 @@ function exactBlock(
 /** A normal guard of `a` (chip damage, Defense cost, block-stun or Guard Crush). */
 export function normalGuard(world: World, att: Fighter, a: ActionDef, t: Fighter): void {
   const c = world.frame;
-  t.health = Math.max(0, t.health - Math.trunc((a.damage * DEFENSE.chipPercent) / 100));
+  dealDamage(world, t, Math.trunc((a.damage * DEFENSE.chipPercent) / 100));
   // Simultaneous guarded contacts add their guard damage but crush only once.
   if (t.state === MoveState.GuardCrush && t.defFrame === c) return;
   // A held guard-modifier item scales the cost (campaign guardrail M6).
-  const cost = world.infiniteDefense ? 0 : guardCostFor(world, t, a.guardCost);
+  const cost = world.infiniteDefense && t.team === 'hero' ? 0 : guardCostFor(world, t, a.guardCost);
   if (cost > 0 && cost >= t.defense) {
     t.defense = 0;
     interrupt(t);

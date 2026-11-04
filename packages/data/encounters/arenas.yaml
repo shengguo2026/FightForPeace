@@ -1,0 +1,139 @@
+# Arena scenarios (M7): each archetype and the boss, plus the mixed Stage 1 beats of
+# spec Appendix D.3, each on a delivered Stage 1 area. Waves list the enemies that
+# arrive together; `minDifficulty` / `coop` entries only appear at that difficulty or
+# with two heroes; the next wave starts when `next` (default 0) or fewer of the current
+# wave are still fighting. Substitutions are tables: at `minDifficulty` and above, the
+# first `count` enemies of kit `from` become kit `to` (Hard+ challenge substitution).
+# Widths are in pixels; the view is 1920 px wide and follows the heroes.
+arenas:
+  - id: trial-recruit
+    name: 'Trial: Pressed Recruits'
+    area: fields
+    width: 2880
+    waves:
+      - enemies:
+          - { kit: recruit, x: 1500, z: 760 }
+          - { kit: recruit, x: 1640, z: 900 }
+          - { kit: recruit, x: 1800, z: 820, minDifficulty: medium }
+          - { kit: recruit, x: 1700, z: 700, coop: true }
+
+  - id: trial-shield
+    name: 'Trial: Bridge Shield'
+    area: bridge
+    width: 2880
+    waves:
+      - enemies:
+          - { kit: shield, x: 1500, z: 820 }
+          - { kit: recruit, x: 1700, z: 900, minDifficulty: medium }
+          - { kit: recruit, x: 1700, z: 720, coop: true }
+
+  - id: trial-runner
+    name: 'Trial: Canal Runners'
+    area: canal
+    width: 2880
+    waves:
+      - enemies:
+          - { kit: runner, x: 1500, z: 760 }
+          - { kit: runner, x: 1700, z: 900, minDifficulty: medium }
+          - { kit: runner, x: 300, z: 820, coop: true }
+
+  - id: trial-overseer
+    name: 'Trial: Rope Overseer'
+    area: mill
+    width: 2880
+    waves:
+      - enemies:
+          - { kit: overseer, x: 1500, z: 820 }
+          - { kit: recruit, x: 1700, z: 720, minDifficulty: medium }
+          - { kit: recruit, x: 1700, z: 920, coop: true }
+
+  - id: trial-lookout
+    name: 'Trial: Sling Lookouts'
+    area: canal
+    width: 3360
+    waves:
+      - enemies:
+          - { kit: lookout, x: 2700, z: 800 }
+          - { kit: recruit, x: 1400, z: 860 }
+          - { kit: lookout, x: 3100, z: 900, minDifficulty: medium }
+          - { kit: lookout, x: 300, z: 760, coop: true }
+
+  - id: trial-enforcer
+    name: 'Trial: Black-Iron Enforcer'
+    area: courtyard
+    width: 2880
+    minDifficulty: hard
+    waves:
+      - enemies:
+          - { kit: enforcer, x: 1500, z: 820 }
+          - { kit: recruit, x: 1700, z: 720 }
+          - { kit: recruit, x: 1700, z: 920, coop: true }
+
+  - id: beat-bridge
+    name: 'Beat 2: Occupied Bridge'
+    area: bridge
+    width: 2880
+    waves:
+      - enemies:
+          - { kit: recruit, x: 1400, z: 760 }
+          - { kit: recruit, x: 1550, z: 900 }
+          - { kit: shield, x: 1700, z: 820 }
+          - { kit: recruit, x: 1600, z: 700, coop: true }
+        next: 1
+      - enemies:
+          - { kit: runner, x: 2700, z: 820 }
+
+  - id: beat-mill
+    name: 'Beat 4: Working Mill'
+    area: mill
+    width: 2880
+    layout: mill
+    waves:
+      - enemies:
+          - { kit: shield, x: 1400, z: 820 }
+          - { kit: runner, x: 1650, z: 720 }
+          - { kit: overseer, x: 1800, z: 900 }
+          - { kit: runner, x: 2000, z: 860, coop: true }
+
+  - id: beat-canal
+    name: 'Beat 6: Canal Route'
+    area: canal
+    width: 3360
+    waves:
+      - enemies:
+          - { kit: shield, x: 1400, z: 820 }
+          - { kit: runner, x: 1650, z: 720 }
+          - { kit: lookout, x: 2600, z: 880 }
+          - { kit: runner, x: 300, z: 860, coop: true }
+        next: 1
+      - enemies:
+          - { kit: overseer, x: 3000, z: 820 }
+
+  - id: beat-courtyard
+    name: 'Beat 7: Gate Courtyard'
+    area: courtyard
+    width: 2880
+    waves:
+      - enemies:
+          - { kit: recruit, x: 1400, z: 760 }
+          - { kit: recruit, x: 1500, z: 900 }
+          - { kit: shield, x: 1650, z: 820 }
+          - { kit: runner, x: 1800, z: 720 }
+          - { kit: lookout, x: 2500, z: 880 }
+          - { kit: runner, x: 300, z: 860, coop: true }
+    substitutions:
+      - { from: recruit, to: enforcer, minDifficulty: hard, count: 1 }
+
+  - id: boss-commander
+    name: 'Beat 8: Sluice Commander'
+    area: sluice
+    backdrop: plate
+    width: 1920
+    heroX: 420
+    weaponSpot: { x: 1500, z: 700 }
+    devices:
+      - { kind: winch, x: 1480, z: 660, count: 3 }
+    surge: { z0: 620, z1: 790, warn: 60, active: 36, damage: 80 }
+    waves:
+      - enemies:
+          - { kit: commander, x: 1400, z: 820 }

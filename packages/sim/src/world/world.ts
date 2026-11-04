@@ -22,6 +22,11 @@ import {
   stepHazards,
 } from '../combat/environment';
 import { LAB_LAYOUT, type StageLayout } from './stage';
+import { arenaIndex, difficultyIndex, MEDIUM, profileOf } from '../enemies/data';
+import { arenaLayout, newEncounter, setupArena, stepEncounter } from '../enemies/encounter';
+import { installEnemyFactory, stepBoss } from '../enemies/boss';
+import { enemyBreaker, stepEnemy } from '../enemies/ai';
+import { NO_FRAME } from '../combat/reactions';
 import {
   type EquipResult,
   type LoadoutKind,
@@ -47,7 +52,7 @@ export const DUMMY_HEALTH = 1000;
 export const HERO_HEALTH = 1000;
 
 /** Version of the byte layout written by encodeWorld. Bump on any layout change. */
-export const STATE_FORMAT = 9;
+export const STATE_FORMAT = 10;
 
 /** Walking speeds (fixed point per frame), kept as exports for existing callers. */
 export const WALK_SPEED_X = ON_FOOT.walkX;
@@ -97,6 +102,10 @@ export interface WorldOptions {
   environment?: boolean;
   /** Stage layout for `armory` and `environment` (default: the Lab's mill corner). */
   layout?: StageLayout;
+  /** M7: an arena scenario id (ARENAS); the world becomes that encounter. */
+  arena?: string;
+  /** M7: difficulty id for the arena (default medium). */
+  difficulty?: string;
 }
 
 export interface LoadoutChange {
@@ -217,8 +226,48 @@ export function createFighter(
     weaponEvent: 0,
     weaponDetail: 0,
     weaponFrame: 0,
+    aiMode: 0,
+    aiFrame: 0,
+    threat: 0,
+    threatTarget: 0,
+    threatFlags: 0,
+    aiAttack: -1,
+    commitUntil: 0,
+    lastHitBy: 0,
+    lastHitFrame: NO_FRAME,
+    nearSince: NO_FRAME,
+    guardAcc: 0,
+    evadeAcc: 0,
+    defPlan: 0,
+    defAt: 0,
+    seenId: 0,
+    seenStart: NO_FRAME,
+    advUntil: 0,
+    guardUntil: 0,
+    readyAt: [],
+    ko: false,
+    warnUntil: 0,
+    flinches: 0,
+    groupWith: 0,
+    groupAt: 0,
   };
 }
+
+/** An arena enemy of kit `kit` with its profile's health and fresh AI state. */
+export function createEnemy(id: number, kit: number, x: number, z: number): Fighter {
+  const f = createFighter(id, 'enemy', -1, x, z, 'manual', kit);
+  const prof = profileOf(f);
+  if (prof) {
+    f.health = prof.health;
+    f.maxHealth = prof.health;
+    // Rate accumulators start half full, so a 1-in-3 guard comes on the second chance.
+    f.guardAcc = prof.defense.guardEvery * 50;
+    f.evadeAcc = prof.defense.evadeEvery * 50;
+  }
+  f.readyAt = [0, 0, 0, 0, 0, 0, 0, 0];
+  return f;
+}
+installEnemyFactory(createEnemy);
 
 /**
  * Creates a world with Player 1's hero. Player 2's hero appears on the first frame that
@@ -259,8 +308,21 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
     items: [],
     nextItem: ITEM_ID_BASE,
     environment: emptyEnvironment(),
+    encounter: null,
   };
   world.bodies.sort((a, b) => a.id - b.id);
+  if (options.arena !== undefined) {
+    const arena = arenaIndex(options.arena);
+    const diff = options.difficulty === undefined ? MEDIUM : difficultyIndex(options.difficulty);
+    world.encounter = newEncounter(arena, diff);
+    const mill = arenaLayout(arena);
+    if (mill) {
+      world.environment = createEnvironment(mill);
+      placeItems(world, mill);
+    }
+    setupArena(world);
+    return world;
+  }
   const layout = options.layout ?? LAB_LAYOUT;
   if (options.environment) world.environment = createEnvironment(layout);
   if (options.armory) placeItems(world, layout);
@@ -361,7 +423,10 @@ export function heroOf(world: World, slot: number): Fighter | undefined {
 function spawnHero(world: World, slot: number): void {
   const s = HERO_SPAWN[slot]!;
   const facing = world.playerFacing[slot] ?? 'manual';
-  const f = createFighter(slot + 1, 'hero', slot, s.x, s.z, facing, world.playerHero[slot] ?? 0);
+  // In an arena a joining hero appears beside its partner, inside the view.
+  const partner = world.encounter ? world.bodies.find((b) => b.team === 'hero') : undefined;
+  const x = partner ? Math.min(world.bounds.maxX, partner.x + fx(120)) : s.x;
+  const f = createFighter(slot + 1, 'hero', slot, x, s.z, facing, world.playerHero[slot] ?? 0);
   f.loadout = [...(world.playerLoadout[slot] ?? f.loadout)];
   world.bodies.push(f);
   world.bodies.sort((a, b) => a.id - b.id);
@@ -375,6 +440,8 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
   for (let slot = 0; slot < Math.min(inputs.length, MAX_PLAYERS); slot += 1) {
     if (inputs[slot] && !heroOf(world, slot)) spawnHero(world, slot);
   }
+  stepEncounter(world);
+  stepBoss(world);
   const before: PositionLog = new Map();
   for (const f of world.bodies) before.set(f.id, { x: f.x, z: f.z });
   // Heroes (low ids) move first, then enemies, always in id order.
@@ -383,6 +450,10 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
       applyHeroChoice(world, f);
       stepHero(world, f, normalize(inputs[f.slot]), ON_FOOT);
       if (world.infiniteMeter) f.meter = 100;
+    } else if (world.encounter && profileOf(f)) {
+      // Arena enemies: Combo Breaker while trapped, reactions, then their AI.
+      if (enemyBreaker(world, f)) continue;
+      if (!stepReaction(world, f)) stepEnemy(world, f);
     } else if (!stepReaction(world, f)) {
       stepTrainer(world, f);
     }
@@ -393,6 +464,7 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
   resolveClashes(world);
   resolveGrabs(world);
   resolveHits(world);
+  koPass(world);
   grabIntegrity(world);
   collide(world, before);
   sceneryCollide(world);
@@ -400,6 +472,36 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
   hazardHits(world);
   for (const f of world.bodies) closeContextIfActionable(world, f);
   world.frame += 1;
+}
+
+/**
+ * A fighter whose Health reached 0 while standing is knocked down at once; when it would
+ * get up it is defeated (or, the boss, surrenders): see stepReaction.
+ */
+function koPass(world: World): void {
+  for (const f of world.bodies) {
+    if (!f.ko || f.y > 0) continue;
+    if (
+      f.state === MoveState.Hitstun ||
+      f.state === MoveState.Blockstun ||
+      f.state === MoveState.GuardCrush ||
+      f.state === MoveState.Recoil ||
+      f.state === MoveState.Guard ||
+      f.state === MoveState.Attack ||
+      f.state === MoveState.Idle ||
+      f.state === MoveState.Walk
+    ) {
+      f.action = -1;
+      f.attackKind = 0;
+      f.threat = 0;
+      f.state = MoveState.Launched;
+      f.stateFrame = 0;
+      f.vy = fx(4);
+      f.y = 1;
+      f.airRecover = false;
+      f.protectedRecovery = false;
+    }
+  }
 }
 
 function applyHeroChoice(world: World, f: Fighter): void {
@@ -583,8 +685,82 @@ export function encodeWorld(world: World): Uint8Array {
     w.u8(b.weaponEvent);
     w.i32(b.weaponDetail);
     w.u32(b.weaponFrame);
+    w.u8(b.aiMode);
+    w.i32(b.aiFrame);
+    w.u32(b.threat);
+    w.u32(b.threatTarget);
+    w.u8(b.threatFlags);
+    w.i32(b.aiAttack);
+    w.i32(b.commitUntil);
+    w.u32(b.lastHitBy);
+    w.i32(b.lastHitFrame);
+    w.i32(b.nearSince);
+    w.i32(b.guardAcc);
+    w.i32(b.evadeAcc);
+    w.u8(b.defPlan);
+    w.i32(b.defAt);
+    w.u32(b.seenId);
+    w.i32(b.seenStart);
+    w.i32(b.advUntil);
+    w.i32(b.guardUntil);
+    w.u32(b.readyAt.length);
+    for (const r of b.readyAt) w.i32(r);
+    w.u8(b.ko ? 1 : 0);
+    w.i32(b.warnUntil);
+    w.u32(b.flinches);
+    w.u32(b.groupWith);
+    w.i32(b.groupAt);
   }
+  encodeEncounter(w, world);
   return w.bytes();
+}
+
+function encodeEncounter(w: ByteWriter, world: World): void {
+  const e = world.encounter;
+  w.u8(e ? 1 : 0);
+  if (!e) return;
+  w.u32(e.arena);
+  w.u32(e.difficulty);
+  w.i32(e.wave);
+  w.u32(e.waveIds.length);
+  for (const id of e.waveIds) w.u32(id);
+  w.u32(e.nextId);
+  w.u8(e.result);
+  w.i32(e.viewMin);
+  w.i32(e.viewMax);
+  w.i32(e.groupReadyAt);
+  const b = e.boss;
+  w.u8(b ? 1 : 0);
+  if (b) {
+    w.u32(b.id);
+    w.u32(b.phase);
+    w.i32(b.resolve);
+    w.i32(b.resolveMax);
+    w.i32(b.stagger);
+    w.u8(b.closing ? 1 : 0);
+    w.u32(b.breaks);
+    w.u8(b.pending ? 1 : 0);
+    w.i32(b.pendingSince);
+    w.i32(b.carry);
+    w.i32(b.shift);
+  }
+  w.u32(e.devices.length);
+  for (const d of e.devices) {
+    w.u32(d.id);
+    w.i32(d.x);
+    w.i32(d.z);
+    w.u32(d.count);
+    w.u32(d.progress);
+    w.u8(d.active ? 1 : 0);
+    w.i32(d.hazard);
+  }
+  w.u32(e.log.frame);
+  w.u32(e.log.enemy);
+  w.i32(e.log.code);
+  w.u8(e.log.verdict);
+  w.u32(e.peakCommitted);
+  w.u32(e.offscreenWarned);
+  w.u32(e.offscreenUnwarned);
 }
 
 function encodeItems(w: ByteWriter, world: World): void {
