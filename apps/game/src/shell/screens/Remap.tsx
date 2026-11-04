@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import {
   ACTION_NAMES,
   DEFAULT_GAMEPAD,
@@ -124,7 +124,7 @@ export function RemapPanel({ shell, onClose }: { shell: Shell; onClose: () => vo
   };
 
   // Keyboard: the next real key press (Escape cancels).
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!listening || kind === 'gamepad') return;
     captureNextKey((code) => {
       if (code === 'Escape' && listening !== 'Pause') setListening(null);
@@ -134,7 +134,7 @@ export function RemapPanel({ shell, onClose }: { shell: Shell; onClose: () => vo
   }, [listening, kind]);
 
   // Gamepad: the next newly pressed button.
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!listening || kind !== 'gamepad') return;
     const pads = readPads().filter((p) => p !== null);
     listenStart.current = PAD_BUTTONS.map((_, i) => pads.some((p) => p!.buttons[i]));
@@ -156,7 +156,7 @@ export function RemapPanel({ shell, onClose }: { shell: Shell; onClose: () => vo
   }, [listening, kind]);
 
   // Live tester: keys held (keyboard) or buttons held (gamepad).
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!testing) return;
     if (kind === 'gamepad') {
       let raf = 0;

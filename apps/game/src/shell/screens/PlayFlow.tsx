@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useLayoutEffect, useState } from 'preact/hooks';
 import type { DeviceId } from '@ffp/platform';
 import { DIFFICULTIES, HEROES, STAGES, defaultLoadout, SLOTS } from '@ffp/sim';
 import { moveInputText } from '../../text/en';
@@ -71,7 +71,7 @@ export function LobbyScreen({ shell }: { shell: Shell }) {
   void locale.value;
   const lobby = shell.lobby.value;
   const profiles = shell.profiles.value;
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (lobby.length > 0 && lobby.every((p) => p.ready)) shell.lobbyDone();
   }, [lobby]);
   const cycleP1 = (d: number) => {
@@ -231,7 +231,7 @@ export function StageScreen({ shell }: { shell: Shell }) {
 export function HeroesScreen({ shell }: { shell: Shell }) {
   void locale.value;
   const picks = shell.heroPicks.value;
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (picks.length > 0 && picks.every((p) => p.confirmed)) {
       const id = setTimeout(() => shell.heroesDone(), 400);
       return () => clearTimeout(id);
@@ -514,7 +514,7 @@ export function ReadyScreen({ shell }: { shell: Shell }) {
   void locale.value;
   const ready = shell.ready.value;
   const n = shell.lobby.value.length;
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (n > 0 && ready.length === n && ready.every(Boolean)) shell.startStage();
   }, [ready]);
   const mark = (slot: number) => {

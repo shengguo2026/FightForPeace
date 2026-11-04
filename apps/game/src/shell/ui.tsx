@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'preact';
 import type { ComponentChildren } from 'preact';
-import { useEffect, useRef } from 'preact/hooks';
+import { useLayoutEffect, useRef } from 'preact/hooks';
 import { focusFirst } from './nav';
 
 /** Shell art (tools/art/import_shell_art.py); paths are relative, so any port works. */
@@ -44,6 +44,16 @@ export const SHELL_CSS = `
 .ffp-contrast .ffp-bar { outline: 2px solid #fff; }
 `;
 
+/**
+ * Pointer hover moves the focus, but only for a real pointer movement: a screen that
+ * opens under a resting pointer keeps its default focus.
+ */
+export function hoverFocus(e: MouseEvent): void {
+  if (e.movementX === 0 && e.movementY === 0) return;
+  const el = e.currentTarget as HTMLElement;
+  if (document.activeElement !== el) el.focus();
+}
+
 let styled = false;
 export function injectShellStyles(): void {
   if (styled) return;
@@ -68,8 +78,16 @@ export function Screen({
   align?: 'center' | 'start';
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (ref.current) focusFirst(ref.current);
+  useLayoutEffect(() => {
+    const root = ref.current;
+    if (!root) return undefined;
+    focusFirst(root);
+    // The page may still be settling (the screen it replaces gives up focus after this
+    // commit): try once more if nothing inside this screen holds the focus.
+    const id = setTimeout(() => {
+      if (!root.contains(document.activeElement)) focusFirst(root);
+    }, 0);
+    return () => clearTimeout(id);
   }, []);
   return (
     <div
@@ -119,7 +137,7 @@ export function Button({
       disabled={disabled}
       onClick={() => !disabled && onPress()}
       onFocus={onFocus}
-      onMouseEnter={(e) => (e.currentTarget as HTMLElement).focus()}
+      onMouseMove={hoverFocus}
     >
       {icon !== undefined ? <MenuIcon index={icon} /> : null}
       <span class="ffp-col">
@@ -179,7 +197,7 @@ export function Choice<T>({
     const n = options.length;
     onChange(options[(i + d + n) % n]!.value);
   };
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
     const h = (e: Event) => step((e as CustomEvent<number>).detail);
@@ -198,7 +216,7 @@ export function Choice<T>({
       data-value={String(value)}
       onClick={() => step(1)}
       onFocus={onFocus}
-      onMouseEnter={(e) => (e.currentTarget as HTMLElement).focus()}
+      onMouseMove={hoverFocus}
     >
       <span>
         {label}

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import {
   LOCALES,
   LOCALE_NAMES,
@@ -209,7 +209,7 @@ function DisplayPanel({ shell }: { shell: Shell }) {
   const scale = d?.uiScale ?? 100;
   const [pending, setPending] = useState<{ from: number; left: number } | null>(null);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
-  useEffect(
+  useLayoutEffect(
     () => () => {
       if (timer.current) clearInterval(timer.current);
     },
@@ -316,7 +316,7 @@ function ProfilePanel({ shell }: { shell: Shell }) {
   const [message, setMessage] = useState('');
   const [backups, setBackups] = useState<{ name: string; day: string }[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
-  useEffect(() => {
+  useLayoutEffect(() => {
     void shell.store?.backups(p.id).then(setBackups);
   }, [p.id, p.updatedAt]);
   const where =

@@ -2,7 +2,7 @@ import { useState } from 'preact/hooks';
 import { locale, difficultyName, stageName, t } from '../../text/i18n';
 import type { Shell } from '../shell';
 import { useNav } from '../hooks';
-import { ART, MenuIcon, Panel, Screen } from '../ui';
+import { ART, MenuIcon, Panel, Screen, hoverFocus } from '../ui';
 
 type Item = 'continue' | 'play' | 'academy' | 'store' | 'records' | 'guide' | 'settings';
 
@@ -45,7 +45,7 @@ export function VillageScreen({ shell }: { shell: Shell }) {
       data-autofocus={focused === id ? '' : undefined}
       data-testid={`menu-${id}`}
       onFocus={() => setFocused(id)}
-      onMouseEnter={(e) => (e.currentTarget as HTMLElement).focus()}
+      onMouseMove={hoverFocus}
       onClick={onPress}
       style={{ padding: '4px 14px', margin: '4px 0' }}
     >

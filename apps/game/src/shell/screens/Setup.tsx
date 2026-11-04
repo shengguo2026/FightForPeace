@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useLayoutEffect, useState } from 'preact/hooks';
 import {
   DEFAULT_SETTINGS,
   LOCALES,
@@ -31,7 +31,7 @@ export function SetupScreen({ shell }: { shell: Shell }) {
     setSettings(next);
     applyPresentation(next);
   };
-  useEffect(() => {
+  useLayoutEffect(() => {
     const root = document.querySelector<HTMLElement>('[data-shell-screen]');
     if (root) focusFirst(root);
   }, [step]);
