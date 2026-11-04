@@ -94,6 +94,12 @@ export class GameSession {
   private previous: Fighter[];
   private alpha = 0;
   private generation = 0;
+  /**
+   * Test hooks (dev and e2e builds): run before every simulation step, so browser tests
+   * press keys on exact simulation frames however slowly the browser renders. A hook
+   * that returns true is removed.
+   */
+  readonly stepHooks: (() => boolean | void)[] = [];
 
   constructor(
     private readonly seed: number,
@@ -150,6 +156,8 @@ export class GameSession {
     const { steps, alpha } = this.accumulator.advance(paused ? 0 : elapsedMs);
     const inputs: FrameInput[][] = [];
     for (let i = 0; i < (paused ? 0 : steps); i += 1) {
+      this.runStepHooks();
+      if (this.devices.paused) break; // a test hook paused the game on this exact step
       this.previous = cloneFighters(this.world.bodies);
       const frame = this.devices.sampleFrame();
       inputs.push(frame);
@@ -157,6 +165,11 @@ export class GameSession {
     }
     if (!paused) this.alpha = alpha;
     return { frame: this.world.frame, hash: hashWorld(this.world), paused, inputs };
+  }
+
+  private runStepHooks(): void {
+    for (const hook of [...this.stepHooks])
+      if (hook()) this.stepHooks.splice(this.stepHooks.indexOf(hook), 1);
   }
 
   snapshot(): RenderSnapshot {

@@ -63,6 +63,13 @@ export interface FfpDebugHook {
   /** Puts a player's hero next to the first dummy (offsets in pixels) and faces it. */
   place(slot: number, dx: number, dz: number): void;
   hash(): number;
+  /**
+   * Runs `hook` before every simulation step until it returns true. Keys dispatched from
+   * the hook are sampled on that very step.
+   */
+  onStep(hook: () => boolean | void): void;
+  /** Pauses at once (as Esc would); called from a step hook, no further step runs. */
+  pauseNow(): void;
   runReplay(log: ReplayLog): number;
   /** Replaces real gamepads with these virtual ones from now on. */
   fakePads(pads: (PadSnapshot | null)[]): void;

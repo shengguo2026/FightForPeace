@@ -47,6 +47,12 @@ export function installDebugHook(
       h.facing = dx < 0 ? 1 : -1;
     },
     hash: () => hashWorld(session.world),
+    onStep: (hook) => {
+      session.stepHooks.push(hook);
+    },
+    pauseNow: () => {
+      session.devices.userPaused = true;
+    },
     runReplay: (log) => runReplay(log),
     fakePads: (pads) => {
       useFakePads(true);
