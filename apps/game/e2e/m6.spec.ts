@@ -131,10 +131,17 @@ test('the scenery: boards break into a fragment, the cog telegraphs, the pillar 
   await page.waitForFunction(() => window.__ffp!.scenery().boards.state === 3);
   await page.waitForFunction(() => window.__ffp!.items().some((i) => i.weapon === 'timber-board'));
   // Pillar impact: a launching hit into the pillar cracks it.
-  await page.getByTestId('dummy-to-pillar').click();
-  await key(page, 'KeyT', ['KeyD']);
-  await page.waitForFunction(() => window.__ffp!.scenery().pillar.impacts >= 1, null, {
-    timeout: 10_000,
-  });
+  // A press while the hero is still recovering is not buffered, so retry from idle.
+  for (let i = 0; i < 6; i += 1) {
+    await page.getByTestId('dummy-to-pillar').click();
+    await page.waitForFunction(() => window.__ffp!.hero(0)!.state === 0);
+    await key(page, 'KeyT', ['KeyD']);
+    const cracked = await page
+      .waitForFunction(() => window.__ffp!.scenery().pillar.impacts >= 1, null, { timeout: 3_000 })
+      .then(() => true)
+      .catch(() => false);
+    if (cracked) break;
+  }
+  await page.waitForFunction(() => window.__ffp!.scenery().pillar.impacts >= 1);
   await page.screenshot({ path: `test-results/m6-scenery-${testInfo.project.name}.png` });
 });
