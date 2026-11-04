@@ -52,6 +52,7 @@ export const STRIKE_COLORS: Record<string, number> = {
   grab: 0xc8a2ff,
   grabStrike: 0xc8a2ff,
   throw: 0xc8a2ff,
+  team: 0x7dffb0,
 };
 const PROJECTILE_COLOR = 0x8fe3ff;
 const RECOVERY_COLOR = 0x8a8f99;

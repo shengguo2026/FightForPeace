@@ -41,3 +41,6 @@ export * from './collision/collide';
 export * from './world/world';
 export * from './loop/fixedStep';
 export * from './replay';
+export * from './coop/data';
+export * from './coop/handoff';
+export * from './coop/team';

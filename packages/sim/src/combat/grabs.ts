@@ -16,6 +16,8 @@ import { applyHit, canHit, hurtbox, runningAction, sourceOf, type HitSource } fr
 import { enter, interrupt, recoil, toActionable } from './reactions';
 import { activeSegment, activeSpan, kitOf, routeAction, routeCodeOf, segmentCount } from './roster';
 import { type ActionDef, Dir, Reject } from './types';
+import { coopAction, logCoop } from '../coop/data';
+import { CoopEvent } from '../world/types';
 
 /**
  * Candidate grab constants (F&D §6.7, spec §7.8, Appendix B.6). Frames at 60 Hz; distances
@@ -40,10 +42,6 @@ export const GRAB = {
   shovePush: fx(6),
   escapeRecoil: 14,
   escapePush: fx(7),
-  /** Freeing a restrained partner with Interact: reach and the rescuer's short recovery. */
-  rescueX: fx(140),
-  rescueZ: fx(40),
-  rescueRecovery: 10,
   /** Offensive buffer used for presses that arrive just before the hold starts. */
   buffer: 9,
 } as const;
@@ -171,16 +169,22 @@ function nearestGrabbable(world: World, f: Fighter): Fighter | null {
   return best;
 }
 
-/** Neutral Interact next to a restrained partner: frees them at once. */
+/**
+ * Restraint release, a tagged co-op action (coop.yaml `release`): neutral Interact next to
+ * a restrained partner frees them at once.
+ */
 export function tryRescue(world: World, f: Fighter): boolean {
+  const rel = coopAction('release');
   for (const ally of [...world.bodies].sort((p, q) => p.id - q.id)) {
     if (ally === f || ally.team !== f.team || ally.state !== MoveState.Restrained) continue;
-    if (Math.abs(ally.x - f.x) > GRAB.rescueX || Math.abs(ally.z - f.z) > GRAB.rescueZ) continue;
+    if (Math.abs(ally.x - f.x) > rel.reachX || Math.abs(ally.z - f.z) > rel.reachZ) continue;
     toActionable(ally);
     ally.regrabUntil = world.frame + GRAB.regrab;
     logGrab(world, ally, GrabEvent.Rescued);
     logGrab(world, f, GrabEvent.RescuedPartner);
-    enter(f, MoveState.Landing, GRAB.rescueRecovery);
+    logCoop(world, CoopEvent.Release, f.id, ally.id);
+    world.coop.rescues += 1;
+    enter(f, MoveState.Landing, rel.recovery);
     f.vx = 0;
     f.vz = 0;
     return true;
@@ -291,6 +295,8 @@ function connect(world: World, g: Fighter, t: Fighter): void {
   t.bufAction = 0;
   t.facing = g.facing === 1 ? -1 : 1;
   t.thrownBy = 0;
+  // A hero's grab creates one partner-assist opportunity for this hold.
+  t.assist = g.team === 'hero' ? 1 : 0;
   place(world, g, t);
   logGrab(world, g, GrabEvent.Hold);
   logGrab(world, t, GrabEvent.Grabbed);
@@ -301,6 +307,7 @@ function release(world: World, g: Fighter, t: Fighter): void {
   g.grabId = 0;
   t.grabbedBy = 0;
   t.regrabUntil = world.frame + GRAB.regrab;
+  t.releasedAt = world.frame;
 }
 
 function hold(t: Fighter): void {
@@ -508,8 +515,13 @@ export function grabIntegrity(world: World): void {
           t.grabbedBy = 0;
           t.regrabUntil = world.frame + GRAB.regrab;
           if (t.state === MoveState.Grabbed) toActionable(t);
-          // A hero freed because a partner struck the enemy holding it: a rescue.
+          // A hero freed because a partner struck the enemy holding it: a rescue (the
+          // tagged partner interrupt).
           logGrab(world, t, GrabEvent.Rescued);
+          if (t.team === 'hero' && f.lastHitFrame === world.frame && f.lastHitBy !== 0) {
+            logCoop(world, CoopEvent.Interrupt, f.lastHitBy, t.id, f.id);
+            world.coop.rescues += 1;
+          }
         }
         logGrab(world, f, GrabEvent.Interrupted);
       }
@@ -525,6 +537,8 @@ export function grabIntegrity(world: World): void {
       toActionable(f);
     }
     if (f.thrownBy !== 0 && f.state !== MoveState.Launched) f.thrownBy = 0;
+    // The assist opportunity belongs to one hold (it lasts through the release frame).
+    if (f.assist !== 0 && f.grabbedBy === 0 && f.releasedAt !== world.frame) f.assist = 0;
   }
 }
 

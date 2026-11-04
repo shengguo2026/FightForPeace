@@ -29,6 +29,10 @@ import { hitProjectiles } from './projectiles';
 import { hitBodies } from './grabs';
 import { hitItems, payContact, strikeItems, tryDisarm } from './items';
 import { impactEligible, strikeScenery } from './environment';
+import { bossResolve } from '../enemies/boss';
+import { TEAM_FINISHERS, coopAction, logCoop } from '../coop/data';
+import { canClaim, claimHandoff, openHandoff, partnerOf, targetState } from '../coop/handoff';
+import { CoopEvent } from '../world/types';
 
 /** Target hurtbox (M2 candidate): half width, half depth, standing and low heights. */
 export const HURT_HALF_W = fx(40);
@@ -124,8 +128,10 @@ export function canHit(att: Fighter, a: ActionDef, t: Fighter): boolean {
   if (t.team === att.team || t.protectedRecovery || t.cinematic) return false;
   if (nonCombatant(t) || nonCombatant(att)) return false;
   if (t.state === MoveState.GetUp || t.state === MoveState.Recover) return false;
-  // Held targets belong to their grabber's route; restrained heroes are out of the fight.
-  if (t.state === MoveState.Grabbed || t.state === MoveState.Restrained) return false;
+  // Restrained heroes are out of the fight. Held targets belong to their grabber's route,
+  // except for the one tagged partner assist on an enemy a hero holds (F&D §6.7).
+  if (t.state === MoveState.Restrained) return false;
+  if (t.state === MoveState.Grabbed) return assistAllowed(att, a, t);
   const ta = runningAction(t);
   if (ta && within(ta.invulnerable, t.stateFrame + 1)) return false;
   // An enemy grab that is not rescue-interruptible is a protected phase.
@@ -142,10 +148,24 @@ export function groundAllows(ctx: ComboContext, a: ActionDef): boolean {
   return !(a.tags.includes('groundExtension') && ctx.groundExtUsed);
 }
 
-/** An enemy's running grab may be broken by a partner's strike. */
+/** An enemy's running grab may be broken by a partner's strike (the partner-interrupt tag). */
 function grabInterruptible(t: Fighter): boolean {
   const a = kitOf(t)?.actions[t.action];
-  return a?.tags.includes('rescueInterruptible') ?? false;
+  return a?.tags.includes(coopAction('interrupt').tag) ?? false;
+}
+
+/**
+ * One Tagged Partner Assist: the free partner's action carrying the assist tag may strike
+ * an enemy a hero holds, once per grab.
+ */
+function assistAllowed(att: Fighter, a: ActionDef, t: Fighter): boolean {
+  return (
+    att.team === 'hero' &&
+    t.team !== 'hero' &&
+    t.grabbedBy !== att.id &&
+    t.assist === 1 &&
+    a.tags.includes(coopAction('assist').tag)
+  );
 }
 
 /** Armor (Gatebreaker Advance): the defender's action absorbs this strike on this frame. */
@@ -181,16 +201,61 @@ export function sourceOf(f: Fighter): HitSource {
   };
 }
 
+/** A strike contact waiting in a Combined Hit Bundle. */
+interface Contact {
+  att: Fighter;
+  a: ActionDef;
+  seg: number;
+  src: HitSource;
+}
+
+/**
+ * Targets that two or more heroes' strikes will reach on this frame (judged on the state at
+ * the start of the hit pass): their contacts resolve together as one Combined Hit Bundle.
+ */
+function bundleTargets(bodies: readonly Fighter[]): Set<number> {
+  const count = new Map<number, number>();
+  for (const att of bodies) {
+    if (att.team !== 'hero') continue;
+    const a = runningAction(att);
+    if (!a || !strikes(a)) continue;
+    const seg = activeSegment(a, att.stateFrame + 1);
+    if (seg < 0) continue;
+    const ids = seg === att.hitSeg ? att.hitIds : [];
+    const box = activeHitbox(att)!;
+    for (const t of bodies) {
+      if (ids.includes(t.id) || !canHit(att, a, t) || !overlaps(box, hurtbox(t))) continue;
+      count.set(t.id, (count.get(t.id) ?? 0) + 1);
+    }
+  }
+  return new Set([...count].filter(([, n]) => n >= 2).map(([id]) => id));
+}
+
 /**
  * Hit pass, after all movement. Attackers and targets are visited in ascending id order.
  * Heroes never hit heroes. Each target can be hit once per active segment. A contact on a
  * defender first goes through its defense (guard, exact block, counter), judged against
- * the defender's guard state as it was when this pass began.
+ * the defender's guard state as it was when this pass began. Same-frame strikes of both
+ * heroes on one target form a Combined Hit Bundle, resolved before any enemy strikes.
  */
 export function resolveHits(world: World): void {
   const bodies = [...world.bodies].sort((a, b) => a.id - b.id);
   const snaps = defenseSnapshots(bodies);
+  const bundled = bundleTargets(bodies);
+  const pending = new Map<number, Contact[]>();
+  let flushed = bundled.size === 0;
+  const flush = () => {
+    if (flushed) return;
+    flushed = true;
+    for (const [id, list] of [...pending].sort((p, q) => p[0] - q[0])) {
+      const t = bodies.find((b) => b.id === id)!;
+      applyBundle(world, t, list);
+      for (const c of list) afterContact(world, c.att, c.a, t);
+    }
+  };
   for (const att of bodies) {
+    // Heroes have the low ids: their bundles land before any enemy strikes this frame.
+    if (att.team !== 'hero') flush();
     const a = runningAction(att);
     if (!a || !strikes(a)) continue;
     const n = att.stateFrame + 1;
@@ -231,16 +296,27 @@ export function resolveHits(world: World): void {
         if (t.team === 'hero') logDefense(world, t, DefEvent.Armored, 0, att);
         continue;
       }
+      if (att.team === 'hero' && bundled.has(t.id)) {
+        const list = pending.get(t.id) ?? [];
+        list.push({ att, a, seg, src: sourceOf(att) });
+        pending.set(t.id, list);
+        continue;
+      }
       applyHit(world, sourceOf(att), a, seg, t);
-      // Resolve-gated: the boss keeps its weapon until its Stagger Break.
-      if (!bossResists(world, t)) tryDisarm(world, att, a, t);
-      // Cinematic protection from the Ultimate's first valid contact until it ends.
-      if (a.category === 'ultimate') att.cinematic = true;
+      afterContact(world, att, a, t);
     }
   }
+  flush();
   hitProjectiles(world, bodies);
   hitItems(world, bodies, snaps);
   hitBodies(world, bodies);
+}
+
+function afterContact(world: World, att: Fighter, a: ActionDef, t: Fighter): void {
+  // Resolve-gated: the boss keeps its weapon until its Stagger Break.
+  if (!bossResists(world, t)) tryDisarm(world, att, a, t);
+  // Cinematic protection from the Ultimate's first valid contact until it ends.
+  if (a.category === 'ultimate') att.cinematic = true;
 }
 
 function lifts(a: ActionDef): boolean {
@@ -248,16 +324,56 @@ function lifts(a: ActionDef): boolean {
   return k === 'launch' || k === 'knockdown' || k === 'trip';
 }
 
+/** What one hit paid, for the reaction that follows. */
+interface Paid {
+  downed: boolean;
+  airborne: boolean;
+  hitstun: number;
+  band: number;
+  juggleOut: boolean;
+  dmg: number;
+  last: boolean;
+  first: boolean;
+}
+
+/** Shared numbers at the start of a bundle's frame (no player-slot ordering advantage). */
+interface FrameStart {
+  scale: number;
+  stun: number;
+  juggle: number;
+  meter: number;
+}
+
+/** Opens the target's combo context if needed (the first confirmed hit). */
+function openContext(world: World, t: Fighter): ComboContext {
+  if (!t.ctx.open) {
+    t.ctx = { ...emptyContext(), open: true };
+    bossBudgets(world, t);
+  }
+  return t.ctx;
+}
+
+/** Damage-scale floor of a team finisher's part (its finisher's minScale). */
+function scaleFloor(a: ActionDef): number {
+  if (!a.tags.includes('teamFinisher')) return 0;
+  return TEAM_FINISHERS.find((f) => f.move === a.id)?.minScale ?? 0;
+}
+
 /**
- * Applies one hit of action `a` (active segment `seg`) from source `s` to target `t`:
- * opens or continues the target's combo context, pays the budgets on the action's first
- * hit, deals scaled damage and starts the reaction.
+ * Pays one hit of action `a` (active segment `seg`) from source `s` on target `t`: opens
+ * or continues the target's combo context, pays the budgets on the action's first hit,
+ * awards meter and deals scaled damage. In a bundle, `start` holds the shared numbers of
+ * the frame's start, so every participant uses the same scale, stun and meter band.
  */
-export function applyHit(world: World, s: HitSource, a: ActionDef, seg: number, t: Fighter): void {
-  const fresh = !t.ctx.open;
-  const ctx = fresh ? { ...emptyContext(), open: true } : t.ctx;
-  t.ctx = ctx;
-  if (fresh) bossBudgets(world, t);
+function payHit(
+  world: World,
+  s: HitSource,
+  a: ActionDef,
+  seg: number,
+  t: Fighter,
+  start?: FrameStart,
+): Paid {
+  const ctx = openContext(world, t);
   t.thrownBy = 0;
   if (s.owner.team !== t.team) {
     t.lastHitBy = s.owner.id;
@@ -269,14 +385,14 @@ export function applyHit(world: World, s: HitSource, a: ActionDef, seg: number, 
   let k = s.contactIds.indexOf(t.id);
   const first = k === -1;
   let hitstun: number;
-  let band = juggleBand(ctx.juggleBudget);
+  let band = juggleBand(start ? start.juggle : ctx.juggleBudget);
   let juggleOut = false;
   if (first) {
     // Budgets and meter are paid once per offensive action, on its first hit.
     k = s.contactIds.length;
     s.contactIds.push(t.id);
-    s.contactScales.push(ctx.scale);
-    hitstun = scaledHitstun(a.reaction.hitstun, ctx.stunBudget);
+    s.contactScales.push(start ? start.scale : ctx.scale);
+    hitstun = scaledHitstun(a.reaction.hitstun, start ? start.stun : ctx.stunBudget);
     ctx.stunBudget = Math.max(0, ctx.stunBudget - a.stunDecayCost);
     if (ctx.stunBudget === 0) ctx.exhausted = true;
     // The juggle budget pays for holding or launching an airborne target; a ground
@@ -285,8 +401,9 @@ export function applyHit(world: World, s: HitSource, a: ActionDef, seg: number, 
       ctx.juggleBudget = Math.max(0, ctx.juggleBudget - a.juggleCost);
       juggleOut = a.juggleCost > 0 && ctx.juggleBudget === 0;
     }
-    // A full carryover pool earns no self-refunding Attack meter (F&D §8).
-    if (!carryFull(world, t)) awardHitMeter(world, s.owner, a, ctx, k);
+    // A full carryover pool earns no self-refunding Attack meter (F&D §8). Each hero
+    // earns only from its own participation.
+    if (!carryFull(world, t)) awardHitMeter(world, s.owner, a, ctx, k, start?.meter);
     const cost = ctx.actions === 0 ? a.starterProration : a.damageScaleCost;
     ctx.scale = Math.max(DAMAGE_FLOOR, ctx.scale - cost);
     ctx.actions += 1;
@@ -295,22 +412,164 @@ export function applyHit(world: World, s: HitSource, a: ActionDef, seg: number, 
     hitstun = scaledHitstun(a.reaction.hitstun, ctx.stunBudget + a.stunDecayCost);
     band = juggleBand(ctx.juggleBudget + a.juggleCost);
   }
-  const dmg = splitDamage(a.damage, s.contactScales[k]!, seg, segmentCount(a));
+  const scale = Math.max(s.contactScales[k]!, scaleFloor(a));
+  const dmg = splitDamage(a.damage, scale, seg, segmentCount(a));
   dealDamage(world, t, dmg);
   ctx.damage += dmg;
   ctx.lastDamage = dmg;
   ctx.hits += 1;
+  return {
+    downed,
+    airborne,
+    hitstun,
+    band,
+    juggleOut,
+    dmg,
+    last: seg === segmentCount(a) - 1,
+    first,
+  };
+}
 
-  const last = seg === segmentCount(a) - 1;
-  if (downed) groundReact(world, s, a, t, hitstun, last);
-  else if (bossHit(world, a, t, dmg, pushDir(s, a, t))) {
+/** The reaction to a paid hit: ground route, the boss's Resolve, or the ordinary reaction. */
+function reactHit(world: World, s: HitSource, a: ActionDef, t: Fighter, p: Paid): void {
+  if (p.downed) groundReact(world, s, a, t, p.hitstun, p.last);
+  else if (bossHit(world, a, t, p.dmg, pushDir(s, a, t))) {
     // Resolve absorbed the control: a limited flinch, or the Stagger Break telegraph.
     t.impactArmed = false;
   } else {
-    react(world, s, a, t, hitstun, band, juggleOut, airborne, last);
+    react(world, s, a, t, p.hitstun, p.band, p.juggleOut, p.airborne, p.last);
     // Environment eligibility of this hit: an impact surface may now slam the target.
     t.impactArmed = impactEligible(a);
   }
+}
+
+/**
+ * After the reaction: a team finisher's last hit concludes with protected recovery and
+ * closes the combo context; a sender-tagged hit may open a handoff for the partner.
+ */
+function afterHit(world: World, s: HitSource, a: ActionDef, t: Fighter, p: Paid): void {
+  if (a.tags.includes('teamFinisher')) {
+    if (!p.last || t.protectedRecovery) return;
+    enterProtection(world, t, Protect.TeamFinisher);
+    world.coop.finishers += 1;
+    logCoop(world, CoopEvent.Finisher, s.owner.id, partnerOf(world, s.owner)?.id ?? 0, t.id);
+    return;
+  }
+  openHandoff(world, s.owner, a, t);
+}
+
+/**
+ * Applies one hit of action `a` (active segment `seg`) from source `s` to target `t`:
+ * opens or continues the target's combo context, pays the budgets on the action's first
+ * hit, deals scaled damage and starts the reaction.
+ */
+export function applyHit(world: World, s: HitSource, a: ActionDef, seg: number, t: Fighter): void {
+  if (assistHit(world, s, a, seg, t)) return;
+  if (canClaim(world, s.owner, a, t, targetState(t))) claimHandoff(world, s.owner, t);
+  const p = payHit(world, s, a, seg, t);
+  reactHit(world, s, a, t, p);
+  afterHit(world, s, a, t, p);
+}
+
+/**
+ * The partner's grab assist (One Tagged Partner Assist): authored damage, scale and stun
+ * costs and meter inside the held target's combo context, but no reaction: the hold stays
+ * dominant. On the frame a grab finisher released the target the assist still lands, and
+ * the finisher keeps the reaction.
+ */
+function assistHit(world: World, s: HitSource, a: ActionDef, seg: number, t: Fighter): boolean {
+  const owner = s.owner;
+  if (owner.team !== 'hero' || t.team === 'hero' || t.assist !== 1) return false;
+  if (!a.tags.includes(coopAction('assist').tag)) return false;
+  const held = t.state === MoveState.Grabbed && t.grabbedBy !== 0 && t.grabbedBy !== owner.id;
+  const released = t.grabbedBy === 0 && t.releasedAt === world.frame && t.lastHitBy !== owner.id;
+  if (!held && !released) return false;
+  const grabber = held ? t.grabbedBy : t.lastHitBy;
+  payHit(world, s, a, seg, t);
+  t.assist = 2;
+  world.coop.assists += 1;
+  logCoop(world, CoopEvent.Assist, owner.id, grabber, t.id);
+  return true;
+}
+
+/** Reaction priority in a bundle (F&D §6.5); higher wins. */
+function priority(world: World, c: Contact, t: Fighter, state: number): number {
+  const tags = c.a.tags;
+  if (tags.includes('teamFinisher')) return 5;
+  if (canClaim(world, c.att, c.a, t, state)) return 4;
+  if (tags.includes('wallBounce') || tags.includes('groundBounce') || tags.includes('relaunch'))
+    return 3;
+  const k = c.a.reaction.kind;
+  if (k === 'launch' || k === 'knockdown' || k === 'trip') return 2;
+  return k === 'knockback' ? 1 : 0;
+}
+
+/**
+ * Neutral deterministic tie-breaker from combat state and action identity: never the
+ * player slot, the hero's id, host status or arrival order.
+ */
+function neutralKey(code: number, t: Fighter): number {
+  let h = Math.imul(code ^ 0x9e3779b9, 0x85ebca6b);
+  h ^= Math.imul(t.ctx.hits + 1, 0xc2b2ae35);
+  h ^= Math.imul(t.ctx.actions + 7, 0x27d4eb2f);
+  h ^= h >>> 15;
+  return h >>> 0;
+}
+
+/**
+ * Combined Hit Bundle (F&D §6.5): every legal same-frame hit on one target contributes its
+ * damage, costs and its owner's meter, all from the shared numbers at the start of the
+ * frame; then one dominant reaction follows (team finisher, handoff receiver, special
+ * forced reaction, launcher or knockdown, heavy, light), with a neutral tie-breaker. If the
+ * bundle exhausts the budgets, the forced separation inside the reaction overrides it.
+ */
+function applyBundle(world: World, t: Fighter, list: readonly Contact[]): void {
+  if (list.length === 1) {
+    const c = list[0]!;
+    applyHit(world, c.src, c.a, c.seg, t);
+    return;
+  }
+  const state = targetState(t);
+  const ctx = openContext(world, t);
+  const start: FrameStart = {
+    scale: ctx.scale,
+    stun: ctx.stunBudget,
+    juggle: ctx.juggleBudget,
+    meter: ctx.meterBudget,
+  };
+  // Choose the dominant contact before anything is paid (claims read the open handoff).
+  let d = 0;
+  let best = -1;
+  let bestKey = 0;
+  list.forEach((c, i) => {
+    const pr = priority(world, c, t, state);
+    const key = neutralKey(c.src.code, t);
+    if (pr > best || (pr === best && key < bestKey)) {
+      d = i;
+      best = pr;
+      bestKey = key;
+    }
+  });
+  const dom = list[d]!;
+  if (best === 4) claimHandoff(world, dom.att, t);
+  const paid = list.map((c) => payHit(world, c.src, c.a, c.seg, t, start));
+  const boss = world.encounter?.boss;
+  if (boss && boss.id === t.id)
+    list.forEach((c, i) => {
+      if (i !== d && !paid[i]!.downed) bossResolve(world, c.a, t, paid[i]!.dmg);
+    });
+  const p = { ...paid[d]!, juggleOut: paid.some((x) => x.juggleOut) };
+  reactHit(world, dom.src, dom.a, t, p);
+  afterHit(world, dom.src, dom.a, t, p);
+  const c = world.coop;
+  c.bundles += 1;
+  c.bundleFrame = world.frame;
+  c.bundleTarget = t.id;
+  c.bundleHits = list.length;
+  c.bundleDominant = dom.src.code;
+  const other = list.find((x) => x.att !== dom.att)?.att.id ?? 0;
+  // A finisher or claim already logged its own event this frame; the bundle is in `c`.
+  if (best < 4) logCoop(world, CoopEvent.Bundle, dom.att.id, other, t.id, list.length);
 }
 
 function pushDir(att: HitSource, a: ActionDef, t: Fighter): number {

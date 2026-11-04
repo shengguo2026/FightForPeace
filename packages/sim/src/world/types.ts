@@ -305,6 +305,20 @@ export interface Fighter extends Body {
   /** Group attack: partner id (0 = none) and the frame the shared telegraph ends. */
   groupWith: number;
   groupAt: number;
+
+  // --- M8 same-device co-op ------------------------------------------------------------
+  /**
+   * Open handoff opportunity on this target: its TargetState (0 = none), the sender's id,
+   * the frame it opened and its last frame.
+   */
+  handoff: number;
+  handoffFrom: number;
+  handoffAt: number;
+  handoffUntil: number;
+  /** One Tagged Partner Assist on this hero-held target: 0 none, 1 available, 2 spent. */
+  assist: number;
+  /** Frame a hero's grab finisher released this target (a same-frame assist still lands). */
+  releasedAt: number;
 }
 
 /** Enemy AI modes. Numbers are encoded; never renumber. */
@@ -754,6 +768,8 @@ export const Protect = {
   MissedWindow: 4,
   /** The defender broke the combo with a Combo Breaker. */
   Breaker: 5,
+  /** A team finisher concluded the combo (M8). */
+  TeamFinisher: 6,
 } as const;
 
 /** Route log cap per context. */
@@ -778,6 +794,93 @@ export interface TrainerSettings {
   approach: boolean;
   /** Weapon Dummy 1 fights with and reclaims (-1 = unarmed). */
   arm: number;
+}
+
+/** Co-op events for the Lab and the presentation. Numbers are encoded; never renumber. */
+export const CoopEvent = {
+  None: 0,
+  /** A sender's hit opened a handoff (detail = TargetState). */
+  HandoffOpen: 1,
+  /** The partner's receiving move claimed it (detail = TargetState). */
+  HandoffClaim: 2,
+  /** It closed unclaimed (detail: 1 expired, 2 target actionable or protected). */
+  HandoffClosed: 3,
+  /** A Team Attack invitation is waiting for the partner (detail = finisher index). */
+  Invite: 4,
+  /** Both pressed Team Attack on the same frame: one merged, confirmed request. */
+  Merged: 5,
+  /** The partner confirmed: both costs committed, the team finisher begins. */
+  Confirm: 6,
+  /** The invitation ran out unanswered: nothing spent. */
+  Expired: 7,
+  /** Revalidation failed on confirmation: nothing spent (detail = TeamDenied). */
+  Invalid: 8,
+  /** The team finisher connected and closed the combo. */
+  Finisher: 9,
+  /** A partner's grab assist connected on the held target. */
+  Assist: 10,
+  /** Restraint release: the partner freed a restrained hero. */
+  Release: 11,
+  /** Partner interrupt: a strike on the grabber freed the held hero. */
+  Interrupt: 12,
+  /** Same-frame hits on one target resolved as one Combined Hit Bundle (detail = hits). */
+  Bundle: 13,
+  /** Team Attack pressed but no invitation was possible (detail = TeamDenied). */
+  Unavailable: 14,
+} as const;
+
+/** Why a Team Attack could not invite or commit. Numbers are encoded; never renumber. */
+export const TeamDenied = {
+  None: 0,
+  NoPartner: 1,
+  /** No authored team finisher supports this pair. */
+  Pairing: 2,
+  /** No enemy in an authored target state in range. */
+  NoTarget: 3,
+  Meter: 4,
+  /** A hero is not active and controllable. */
+  Busy: 5,
+  /** The partner is out of range of the target. */
+  Range: 6,
+} as const;
+
+/** A pending Team Attack invitation (Invite and Confirm). */
+export interface Invitation {
+  from: number;
+  target: number;
+  /** Index into the team finisher table. */
+  finisher: number;
+  at: number;
+  /** Last frame the partner may confirm. */
+  until: number;
+}
+
+/** The last co-op event (deterministic event identity: kind + frame). */
+export interface CoopLog {
+  kind: number;
+  frame: number;
+  /** Who acted, the partner involved and the target (0 = none). */
+  actor: number;
+  partner: number;
+  target: number;
+  detail: number;
+}
+
+/** Same-device co-op state (M8). */
+export interface CoopState {
+  invite: Invitation | null;
+  log: CoopLog;
+  /** The last Combined Hit Bundle: frame, target, hits and the dominant action's route code. */
+  bundleFrame: number;
+  bundleTarget: number;
+  bundleHits: number;
+  bundleDominant: number;
+  /** Telemetry for the Lab. */
+  handoffs: number;
+  finishers: number;
+  assists: number;
+  rescues: number;
+  bundles: number;
 }
 
 export interface World {
@@ -807,4 +910,6 @@ export interface World {
   environment: Environment;
   /** M7 arena encounter (null in the Lab). */
   encounter: Encounter | null;
+  /** M8 same-device co-op: invitations, handoff and bundle log, telemetry. */
+  coop: CoopState;
 }

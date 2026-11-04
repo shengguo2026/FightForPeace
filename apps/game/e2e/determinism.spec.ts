@@ -11,7 +11,7 @@ const load = (name: string) =>
     ),
   ) as ReplayLog;
 
-for (const name of ['walk-square', 'dash-jump', 'crowd', 'combo-routes']) {
+for (const name of ['walk-square', 'dash-jump', 'crowd', 'combo-routes', 'coop-drills']) {
   test(`golden replay ${name} produces the same hash in this browser`, async ({ page }) => {
     const log = load(name);
     await page.goto('/');
