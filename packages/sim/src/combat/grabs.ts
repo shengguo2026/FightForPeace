@@ -1,4 +1,6 @@
 import { fx } from '../math/fixed';
+import { nonCombatant } from './damage';
+import { bossResists } from '../enemies/boss';
 import {
   type Axis,
   type Fighter,
@@ -78,7 +80,10 @@ export function grabEligible(world: World, g: Fighter, t: Fighter): boolean {
     world.frame >= t.regrabUntil &&
     t.grabbedBy === 0 &&
     t.grabId === 0 &&
-    !UNGRABBABLE.has(t.state)
+    !UNGRABBABLE.has(t.state) &&
+    !nonCombatant(t) &&
+    // Submission states need the boss's Resolve broken first.
+    !bossResists(world, t)
   );
 }
 

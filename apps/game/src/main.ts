@@ -16,6 +16,7 @@ import {
   refreshPlayers,
   refreshRecipes,
   refreshTarget,
+  refreshArena,
 } from './ui/views';
 import { captureNextKey, installKeyboard, readPads } from './input/browserInput';
 import { installDebugHook } from './debug';
@@ -105,6 +106,12 @@ const actions: LabActions = {
   resetArmory: () => session.resetArmory(),
   resetEnvironment: () => session.resetEnvironment(),
   dummyToPillar: () => session.dummyToPillar(),
+  startArena: (arena) => {
+    session.startArena(arena, lab.arenaPick.value.difficulty);
+    // Arena play needs the screen: the Defense panel closes (F8 opens it again).
+    if (arena) lab.defenseOpen.value = false;
+  },
+  pickArena: (pick) => (lab.arenaPick.value = { ...lab.arenaPick.value, ...pick }),
   practise: (slot, recipeId) => {
     const hero = heroOf(session.world, slot);
     const recipe = hero ? HEROES[hero.hero]?.recipes.find((r) => r.id === recipeId) : undefined;
@@ -129,6 +136,9 @@ installKeyboard(session, (code) => {
   if (code === 'F8') lab.defenseOpen.value = !lab.defenseOpen.value;
   if (code === 'F9') lab.grabOpen.value = !lab.grabOpen.value;
   if (code === 'F10') lab.weaponOpen.value = !lab.weaponOpen.value;
+  // M7 arena mode: Home restarts the picked arena, End goes back to the Lab.
+  if (code === 'Home') actions.startArena(lab.arenaPick.value.arena);
+  if (code === 'End') actions.startArena(null);
 });
 
 if (devBuild) installDebugHook(session, lab);
@@ -157,6 +167,7 @@ function tick(now: number): void {
   refreshDefense(session, lab);
   refreshGrab(session, lab);
   refreshWeapons(session, lab);
+  refreshArena(session, lab);
   const held = heldKeys(session);
   if (held.join(' ') !== lab.heldKeys.value.join(' ')) lab.heldKeys.value = held;
 

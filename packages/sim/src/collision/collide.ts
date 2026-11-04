@@ -45,6 +45,7 @@ export function collide(world: World, before: PositionLog): void {
 
 function resolvePair(a: Fighter, b: Fighter, touchingEnemy: Set<number>): void {
   if (a.y > 0 || b.y > 0) return; // airborne fighters pass over
+  if (outOfFight(a) || outOfFight(b)) return; // surrendered, fled or defeated: no blocking
   if (a.grabId === b.id || b.grabId === a.id) return; // a grab places its target itself
   const dx = b.x - a.x;
   const dz = b.z - a.z;
@@ -102,4 +103,10 @@ function updatePin(
 
 function clamp(v: number, lo: number, hi: number): number {
   return v < lo ? lo : v > hi ? hi : v;
+}
+
+function outOfFight(f: Fighter): boolean {
+  return (
+    f.state === MoveState.Flee || f.state === MoveState.Surrender || f.state === MoveState.Defeated
+  );
 }

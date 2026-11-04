@@ -1,0 +1,76 @@
+# Canal Runner (spec §12.1): flanking and aerial pressure. Fast; circles to the hero's open
+# side, lunges, slides low and leaps into flying kicks that pass over low attacks. It
+# never guards: its simple recovery is a backflip on some chances. M7 candidates.
+id: runner
+name: Canal Runner
+bodyWidth: 64
+actions:
+  - id: palm-lunge
+    name: Palm Lunge
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: 3, recovery: 16, blockstun: 12 }
+    hitbox: { x: 20, w: 105, y: 140, h: 110, depth: 30 }
+    damage: 40
+    reaction: { kind: stagger, hitstun: 16, push: 3 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 10 }
+    meter: 0
+    tags: [counterable]
+    moves:
+      - { from: 1, to: 12, forward: 3 }
+
+  - id: slide-kick
+    name: Slide Kick
+    category: low
+    input: { context: script, dir: neutral }
+    frames: { startup: 14, active: 6, recovery: 20, blockstun: 14 }
+    hitbox: { x: 10, w: 130, y: 0, h: 70, depth: 30 }
+    damage: 50
+    reaction: { kind: trip, hitstun: 26, push: 4, lift: 3 }
+    costs: { stun: 14, scale: 12, starter: 10, guard: 12 }
+    meter: 0
+    tags: [counterable]
+    moves:
+      - { from: 10, to: 22, forward: 6 }
+
+  - id: flying-kick
+    name: Flying Kick
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 18, active: 6, recovery: 18, blockstun: 14 }
+    hitbox: { x: 10, w: 120, y: 60, h: 160, depth: 32 }
+    damage: 60
+    reaction: { kind: knockdown, hitstun: 26, push: 6, lift: 5 }
+    costs: { stun: 14, scale: 12, starter: 10, guard: 15 }
+    meter: 0
+    tags: [leap, counterable]
+    moves:
+      - { from: 6, to: 24, forward: 6 }
+
+  - id: backflip
+    name: Backflip
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 4, active: 1, recovery: 14 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    invulnerable: { from: 1, to: 12 }
+    tags: [evade]
+    moves:
+      - { from: 1, to: 14, forward: -7 }
+
+profile:
+  role: flanker
+  health: 260
+  walk: { x: 5, z: 3 }
+  perception: 2
+  ring: 340
+  defense: { tier: basic, evade: { every: 2, of: 1, action: backflip } }
+  weapons: never
+  attacks:
+    - { action: palm-lunge, threat: 12, cooldown: 60 }
+    - { action: slide-kick, threat: 26, cooldown: 150 }
+    - { action: flying-kick, threat: 26, cooldown: 170, minDifficulty: medium }

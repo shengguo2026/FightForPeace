@@ -1,4 +1,5 @@
 import { fx } from '../math/fixed';
+import { profileOf } from '../enemies/data';
 import { type Fighter, Flight, type Item, ItemState, MoveState, type World } from '../world/types';
 import { WEAPONS } from './armory';
 import { baseKit } from './roster';
@@ -63,7 +64,10 @@ export function conditionOf(def: WeaponDef, integrity: number): number {
 /** A normal guard's Defense cost, scaled by a held guard-modifier item. */
 export function guardCostFor(world: World, f: Fighter, cost: number): number {
   const def = heldDef(world, f);
-  return def ? Math.trunc((cost * def.guardCostPercent) / 100) : cost;
+  // An enemy's capability profile may scale it too (the Bridge Shield's shield).
+  const share = profileOf(f)?.defense.guardCost ?? 100;
+  const own = Math.trunc((cost * share) / 100);
+  return def ? Math.trunc((own * def.guardCostPercent) / 100) : own;
 }
 
 export function logWeapon(world: World, f: Fighter | undefined, event: number, detail = 0): void {

@@ -104,6 +104,15 @@ export function stepReaction(world: World, f: Fighter): boolean {
         // Missing the authored ground window leads directly to protected recovery.
         if (f.groundWindow === 0) enterProtection(world, f, Protect.MissedWindow);
       }
+      if (f.stateFrame >= f.stun && f.ko) {
+        // Health ran out: down for good (the boss surrenders instead; F&D §8).
+        f.groundWindow = 0;
+        f.protectedRecovery = false;
+        f.vx = 0;
+        f.vz = 0;
+        enter(f, world.encounter?.boss?.id === f.id ? MoveState.Surrender : MoveState.Defeated, 0);
+        return true;
+      }
       if (f.stateFrame >= f.stun) {
         enter(f, MoveState.GetUp, REACTION.getUpFrames);
         f.vx = 0;

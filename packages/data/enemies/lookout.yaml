@@ -1,0 +1,59 @@
+# Sling Lookout (spec §12.1): ranged control with authored warnings. Keeps its distance
+# in the hero's lane, loads, raises the sling (a long, still warning pose) and releases a
+# stone that a normal guard or an exact block stops. It may shoot from off screen only
+# after the minimum warning with an edge indicator and a sound. M7 candidates.
+id: lookout
+name: Sling Lookout
+bodyWidth: 64
+actions:
+  - id: sling-shot
+    name: Sling Shot
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 36, active: 2, recovery: 20, blockstun: 12 }
+    hitbox: { x: 40, w: 40, y: 170, h: 40, depth: 26 }
+    damage: 45
+    reaction: { kind: stagger, hitstun: 18, push: 3 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 10 }
+    meter: 0
+    projectile: { speed: 13, life: 120 }
+    tags: [offscreenCapable]
+
+  - id: elbow-shove
+    name: Elbow Shove
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: 3, recovery: 16, blockstun: 12 }
+    hitbox: { x: 15, w: 95, y: 140, h: 120, depth: 30 }
+    damage: 30
+    reaction: { kind: knockback, hitstun: 16, push: 9 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 10 }
+    meter: 0
+    tags: [counterable]
+
+  - id: backstep
+    name: Backstep
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 4, active: 1, recovery: 12 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    invulnerable: { from: 1, to: 8 }
+    tags: [evade]
+    moves:
+      - { from: 1, to: 14, forward: -6 }
+
+profile:
+  role: ranged
+  health: 220
+  walk: { x: 3, z: 2 }
+  perception: 6
+  ring: 620
+  defense: { tier: basic, evade: { every: 2, of: 1, action: backstep } }
+  weapons: never
+  attacks:
+    - { action: sling-shot, threat: 18, cooldown: 110, range: 900 }
+    - { action: elbow-shove, threat: 12, cooldown: 90 }

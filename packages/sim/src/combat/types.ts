@@ -320,3 +320,129 @@ export const REJECT_TEXT: Record<number, string> = {
   [Reject.HandsFull]: 'both hands are on the weapon',
   [Reject.NoAmmo]: 'no rounds left: throw it instead',
 };
+
+// --- M7 enemies, difficulty and arenas ---------------------------------------------------
+
+/** An attack an enemy AI may start, with its authored threat cost (spec Appendix D.1). */
+export interface AiAttackDef {
+  /** Action id in the enemy's (possibly armed) kit. */
+  action: string;
+  threat: number;
+  /** Frames before the same attack may start again. */
+  cooldown: number;
+  /** Difficulty index (0 easy … 4 ultimate) from which it is available. */
+  minDifficulty: number;
+  /** Reach override (fixed point), 0 = the action's own reach. */
+  range: number;
+}
+
+/** Tiered Capability Profile (F&D §8): the defensive subset an archetype receives. */
+export interface AiDefenseDef {
+  tier: 'basic' | 'specialist' | 'elite' | 'boss';
+  /** Normal Block on `guardOf` out of every `guardEvery` chances (scaled by difficulty). */
+  guardEvery: number;
+  guardOf: number;
+  exact: boolean;
+  counter: boolean;
+  breaker: boolean;
+  /** Keeps a guard stance whenever a hero is near (Bridge Shield). */
+  stance: boolean;
+  guardHold: number;
+  /** Share (percent) of a normal guard's Defense cost. */
+  guardCost: number;
+  /** Frames between advanced defenses (exact block, counter, breaker). */
+  cooldown: number;
+  evadeEvery: number;
+  evadeOf: number;
+  /** Evasive action id ('' = none). */
+  evade: string;
+}
+
+export interface BossPhaseDef {
+  name: string;
+  /** Health percent at which this phase begins. */
+  from: number;
+  resolve: number;
+  look: number;
+  /** Weapon id the phase claims ('' = empty-handed). */
+  weapon: string;
+  counter: boolean;
+  breaker: boolean;
+  /** Enemy kit ids of the phase-authored support pair. */
+  supports: readonly string[];
+  /** Device kind the phase works ('' = none). */
+  device: string;
+  attacks: readonly AiAttackDef[];
+}
+
+export interface BossDef {
+  /** Reactions while Resolve remains: after this many flinches a combo only deals damage. */
+  flinchCap: number;
+  /** Boss-specific combo budgets (stun and juggle) during Stagger Break. */
+  budgets: { stun: number; juggle: number };
+  stagger: { telegraph: number; duration: number; reentry: number };
+  transition: { grace: number; carryCap: number; shift: number };
+  /** Threat budget kept for the boss; supports share the rest. */
+  share: number;
+  phases: readonly BossPhaseDef[];
+}
+
+/** An enemy kit's AI: tactical role, movement, defense profile, morale and boss data. */
+export interface EnemyProfile {
+  role: 'pressure' | 'defender' | 'flanker' | 'grappler' | 'ranged' | 'elite' | 'boss';
+  health: number;
+  walkX: number;
+  walkZ: number;
+  perception: number;
+  /** Waiting distance (fixed point) while it has no attack permission. */
+  ring: number;
+  defense: AiDefenseDef;
+  /** Morale breaks at this health percent (0 = never). */
+  breakAt: number;
+  /** Weapon-seeking policy: 0 never, 1 opportunistic, 2 preferred. */
+  weapons: number;
+  group: { action: string; threat: number; partnerThreat: number; telegraph: number } | null;
+  attacks: readonly AiAttackDef[];
+  boss: BossDef | null;
+}
+
+/** Difficulty profile (spec Appendix D.2, D.5). Pairs are [solo, co-op]. */
+export interface DifficultyDef {
+  id: string;
+  name: string;
+  budget: readonly [number, number];
+  cap: number;
+  perception: number;
+  attackers: readonly [number, number];
+  projectiles: readonly [number, number];
+  hardCC: number;
+  groupCooldown: number;
+  warning: number;
+  guardScale: number;
+}
+
+export interface ArenaEnemyDef {
+  kit: string;
+  /** Pixels. */
+  x: number;
+  z: number;
+  minDifficulty: number;
+  coop: boolean;
+}
+
+export interface ArenaDef {
+  id: string;
+  name: string;
+  area: string;
+  backdrop: 'layers' | 'plate';
+  /** Pixels. */
+  width: number;
+  heroX: number;
+  minDifficulty: number;
+  layout: string;
+  weaponSpot: { x: number; z: number } | null;
+  devices: readonly { kind: string; x: number; z: number; count: number }[];
+  surge: { z0: number; z1: number; warn: number; active: number; damage: number } | null;
+  waves: readonly { next: number; enemies: readonly ArenaEnemyDef[] }[];
+  substitutions: readonly { from: string; to: string; minDifficulty: number; count: number }[];
+}

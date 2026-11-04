@@ -1,0 +1,51 @@
+# Bridge Shield (spec §12.1): defense and lane control. Walks behind a raised shield that
+# blocks every frontal contact at half the Defense cost and exact-blocks slow strikes;
+# flank it or crush its guard. The bash denies a wide lane. M7 candidates.
+id: shield
+name: Bridge Shield
+bodyWidth: 80
+actions:
+  - id: shield-bash
+    name: Shield Bash
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 16, active: 4, recovery: 20, blockstun: 14 }
+    hitbox: { x: 15, w: 110, y: 100, h: 180, depth: 64 }
+    damage: 55
+    reaction: { kind: knockback, hitstun: 20, push: 8 }
+    costs: { stun: 12, scale: 10, starter: 10, guard: 20 }
+    meter: 0
+    tags: [counterable]
+
+  - id: shield-charge
+    name: Shield Charge
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 24, active: 10, recovery: 26, blockstun: 18 }
+    hitbox: { x: 15, w: 120, y: 80, h: 200, depth: 48 }
+    damage: 75
+    reaction: { kind: knockback, hitstun: 24, push: 10 }
+    costs: { stun: 15, scale: 12, starter: 10, guard: 35 }
+    meter: 0
+    tags: [guardPressure, uncounterable]
+    moves:
+      - { from: 20, to: 34, forward: 5 }
+
+profile:
+  role: defender
+  health: 420
+  walk: { x: 2, z: 2 }
+  perception: 4
+  ring: 260
+  defense:
+    tier: specialist
+    guard: { every: 1, of: 1 }
+    exact: true
+    stance: true
+    guardHold: 40
+    guardCost: 50
+    cooldown: 180
+  weapons: never
+  attacks:
+    - { action: shield-bash, threat: 18, cooldown: 80 }
+    - { action: shield-charge, threat: 32, cooldown: 200, minDifficulty: medium }

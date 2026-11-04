@@ -85,6 +85,22 @@ export interface FfpDebugHook {
   /** Lab: Dummy 1 fights with this weapon (null = unarmed). */
   armDummy(weapon: string | null): void;
   dummyToPillar(): void;
+  /** M7: starts an arena at a difficulty (ids), or the Lab again (null). */
+  startArena(arena: string | null, difficulty?: string): void;
+  /** M7: the encounter's state (null in the Lab). */
+  encounter(): DebugEncounter | null;
+}
+
+export interface DebugEncounter {
+  arena: string;
+  difficulty: string;
+  wave: number;
+  result: number;
+  viewMin: number;
+  enemies: { id: number; kit: string; state: number; health: number; threat: number }[];
+  boss: { phase: number; resolve: number; stagger: number; pending: boolean } | null;
+  threat: number;
+  budget: number;
 }
 
 declare global {

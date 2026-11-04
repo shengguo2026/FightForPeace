@@ -79,6 +79,15 @@ export const MoveState = {
   // --- M6 weapons ---
   /** Picking up an item (claimed on the first frame). */
   Pickup: 21,
+  // --- M7 enemies and boss ---
+  /** Morale broke: running for the nearest stage edge. Not a legal target. */
+  Flee: 22,
+  /** Surrendered (kneeling, hands raised). Not a legal target. */
+  Surrender: 23,
+  /** Defeated: down for good. Not a legal target. */
+  Defeated: 24,
+  /** Boss phase transition (queued phase change): protected, heroes separated. */
+  PhaseShift: 25,
 } as const;
 export type MoveState = (typeof MoveState)[keyof typeof MoveState];
 
@@ -254,6 +263,168 @@ export interface Fighter extends Body {
   weaponEvent: number;
   weaponDetail: number;
   weaponFrame: number;
+
+  // --- M7 enemies and boss -------------------------------------------------------------
+  /** Enemy AI mode (AiMode) and the frame it began. */
+  aiMode: number;
+  aiFrame: number;
+  /** Threat reserved by the current commitment (0 = none), its hero and kind bits (Threat). */
+  threat: number;
+  threatTarget: number;
+  threatFlags: number;
+  /** Index of the running AI attack in the profile's attack list (-1 = none). */
+  aiAttack: number;
+  /** No target switch before this frame (Role-Aware Target Scoring with Commitment). */
+  commitUntil: number;
+  /** The hero who last hit this fighter, and when. */
+  lastHitBy: number;
+  lastHitFrame: number;
+  /** Since when a hero has been threatening this enemy at close range (NO_FRAME = none). */
+  nearSince: number;
+  /** Deterministic rate accumulators for guard and evade chances. */
+  guardAcc: number;
+  evadeAcc: number;
+  /** Planned defense (DefPlan) and the frame to carry it out. */
+  defPlan: number;
+  defAt: number;
+  /** Incoming action already judged: attacker id and the frame its action started. */
+  seenId: number;
+  seenStart: number;
+  /** No advanced defense (exact block, counter, breaker, evade) before this frame. */
+  advUntil: number;
+  /** Keep the guard raised until this frame. */
+  guardUntil: number;
+  /** Per profile attack: the frame from which it may start again. */
+  readyAt: number[];
+  /** Health reached 0 (encounters only): goes down for good, or surrenders (boss). */
+  ko: boolean;
+  /** Off-screen warning: shown until this frame (0 = none). */
+  warnUntil: number;
+  /** Boss: flinches taken in the current combo while Resolve remains. */
+  flinches: number;
+  /** Group attack: partner id (0 = none) and the frame the shared telegraph ends. */
+  groupWith: number;
+  groupAt: number;
+}
+
+/** Enemy AI modes. Numbers are encoded; never renumber. */
+export const AiMode = {
+  Idle: 0,
+  /** Closing in on the target. */
+  Approach: 1,
+  /** Waiting for attack permission at the role's ring distance (circling, not idle). */
+  Hold: 2,
+  /** Flanker moving to the target's open side. */
+  Flank: 3,
+  /** Ranged role keeping its distance in the target's lane. */
+  Kite: 4,
+  /** Off-screen-capable attack: showing its warning. */
+  Warn: 5,
+  /** Group attack: shared telegraph, moving into the pincer. */
+  Group: 6,
+  /** Going for a weapon. */
+  Weapon: 7,
+  /** Boss: working the objective device. */
+  Objective: 8,
+  /** Entering the arena from outside the view. */
+  Enter: 9,
+} as const;
+
+/** Threat reservation kind bits. */
+export const Threat = { HardCC: 1, Projectile: 2, Unblockable: 4, Group: 8, Boss: 16 } as const;
+
+/** Planned enemy defenses. Numbers are encoded; never renumber. */
+export const DefPlan = { None: 0, Guard: 1, Exact: 2, Counter: 3, Evade: 4 } as const;
+
+/** Director verdicts for the Lab. Numbers are encoded; never renumber. */
+export const Verdict = {
+  Ok: 0,
+  /** Global threat budget would be exceeded. */
+  Budget: 1,
+  /** The target's per-hero pressure cap would be exceeded. */
+  Cap: 2,
+  /** Committed attacker limit. */
+  Attackers: 3,
+  /** Hostile projectile limit. */
+  Projectiles: 4,
+  /** Only one hard crowd-control source at a time. */
+  HardCC: 5,
+  /** No overlapping true unblockables. */
+  Unblockable: 6,
+  /** A group attack is in progress. */
+  Group: 7,
+  /** The attacker is outside the combat-safe zone. */
+  Hidden: 8,
+  /** Supports may not use the boss's share. */
+  BossShare: 9,
+} as const;
+
+/** Boss state (spec §12.3, F&D §8). */
+export interface BossState {
+  id: number;
+  phase: number;
+  resolve: number;
+  resolveMax: number;
+  /** Stagger Break: frames left of its window (0 = not staggered). */
+  stagger: number;
+  /** The window is closing: a knockdown or exhausted budget ended the combo. */
+  closing: boolean;
+  /** Stagger Breaks earned so far (Lab). */
+  breaks: number;
+  /** A phase threshold was crossed: the transition is queued. */
+  pending: boolean;
+  pendingSince: number;
+  /** Damage carried over into the next phase (capped). */
+  carry: number;
+  /** Frames left of the phase transition (0 = none). */
+  shift: number;
+}
+
+/** An objective device (the sluice winch): advanced only by completed hostile actions. */
+export interface Device {
+  id: number;
+  kind: string;
+  x: number;
+  z: number;
+  count: number;
+  progress: number;
+  /** The device is in play (its boss phase is active). */
+  active: boolean;
+  /** Hazard index it releases when the count is reached (-1 = none). */
+  hazard: number;
+}
+
+/** The last director decision, for the Lab. */
+export interface DirectorLog {
+  frame: number;
+  enemy: number;
+  /** Route code of the action asked for. */
+  code: number;
+  verdict: number;
+}
+
+/** Arena encounter state (M7): waves, director, visibility zone, boss and devices. */
+export interface Encounter {
+  arena: number;
+  difficulty: number;
+  wave: number;
+  /** Ids of the current wave's enemies. */
+  waveIds: number[];
+  nextId: number;
+  /** 0 running, 1 cleared, 2 defeated. */
+  result: number;
+  /** Combat visibility zone (fixed point x range), from the simulation, never the screen. */
+  viewMin: number;
+  viewMax: number;
+  /** No group attack before this frame. */
+  groupReadyAt: number;
+  boss: BossState | null;
+  devices: Device[];
+  log: DirectorLog;
+  /** Telemetry: peak committed attackers, warned off-screen attacks, unwarned off-screen hits. */
+  peakCommitted: number;
+  offscreenWarned: number;
+  offscreenUnwarned: number;
 }
 
 /**
@@ -634,4 +805,6 @@ export interface World {
   items: Item[];
   nextItem: number;
   environment: Environment;
+  /** M7 arena encounter (null in the Lab). */
+  encounter: Encounter | null;
 }

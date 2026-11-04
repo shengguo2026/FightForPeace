@@ -244,6 +244,147 @@ const Recipe = T.Object(
   { additionalProperties: false },
 );
 
+const DifficultyId = T.Union([
+  T.Literal('easy'),
+  T.Literal('medium'),
+  T.Literal('hard'),
+  T.Literal('extreme'),
+  T.Literal('ultimate'),
+]);
+const Rate = T.Object(
+  { every: T.Integer({ minimum: 1, maximum: 100 }), of: T.Integer({ minimum: 0, maximum: 100 }) },
+  { additionalProperties: false },
+);
+const AiAttack = T.Object(
+  {
+    action: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
+    /** Threat cost reserved on commitment (spec Appendix D.1). */
+    threat: T.Integer({ minimum: 1, maximum: 200 }),
+    /** Frames before this attack may start again. */
+    cooldown: T.Integer({ minimum: 0, maximum: 1200 }),
+    minDifficulty: T.Optional(DifficultyId),
+    /** Reach override in px (ranged attacks); default: the action's hitbox. */
+    range: T.Optional(T.Integer({ minimum: 1, maximum: 4000 })),
+  },
+  { additionalProperties: false },
+);
+const AiDefense = T.Object(
+  {
+    tier: T.Union([
+      T.Literal('basic'),
+      T.Literal('specialist'),
+      T.Literal('elite'),
+      T.Literal('boss'),
+    ]),
+    /** Normal Block: guard on `of` out of every `every` chances (scaled by difficulty). */
+    guard: T.Optional(Rate),
+    exact: T.Optional(T.Boolean()),
+    counter: T.Optional(T.Boolean()),
+    breaker: T.Optional(T.Boolean()),
+    /** Keeps the guard raised while a hero is near, even without a chance roll (Bridge Shield). */
+    stance: T.Optional(T.Boolean()),
+    guardHold: T.Optional(T.Integer({ minimum: 1, maximum: 600 })),
+    /** Share (percent) of a normal guard's Defense cost. */
+    guardCost: T.Optional(T.Integer({ minimum: 0, maximum: 200 })),
+    /** Frames between advanced defenses (exact block, counter, breaker). */
+    cooldown: T.Optional(T.Integer({ minimum: 0, maximum: 1200 })),
+    evade: T.Optional(
+      T.Object(
+        {
+          every: T.Integer({ minimum: 1, maximum: 100 }),
+          of: T.Integer({ minimum: 0, maximum: 100 }),
+          action: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+  },
+  { additionalProperties: false },
+);
+const BossPhase = T.Object(
+  {
+    name: T.String({ minLength: 1 }),
+    /** Health percent at which this phase begins (the first phase: 100). */
+    from: T.Integer({ minimum: 1, maximum: 100 }),
+    resolve: T.Integer({ minimum: 1, maximum: 10000 }),
+    /** Presentation: 1 = first look, 2 = second look (sheets with -P2). */
+    look: T.Optional(T.Integer({ minimum: 1, maximum: 2 })),
+    weapon: T.Optional(T.String({ pattern: '^[a-z][a-z0-9-]*$' })),
+    counter: T.Optional(T.Boolean()),
+    breaker: T.Optional(T.Boolean()),
+    supports: T.Optional(T.Array(T.String({ pattern: '^[a-z][a-z0-9-]*$' }), { maxItems: 2 })),
+    device: T.Optional(T.String({ pattern: '^[a-z][a-z0-9-]*$' })),
+    attacks: T.Array(AiAttack, { minItems: 1 }),
+  },
+  { additionalProperties: false },
+);
+const Profile = T.Object(
+  {
+    role: T.Union([
+      T.Literal('pressure'),
+      T.Literal('defender'),
+      T.Literal('flanker'),
+      T.Literal('grappler'),
+      T.Literal('ranged'),
+      T.Literal('elite'),
+      T.Literal('boss'),
+    ]),
+    health: T.Integer({ minimum: 1, maximum: 100000 }),
+    walk: T.Object({ x: Px, z: Px }, { additionalProperties: false }),
+    /** Frames added to the difficulty's perception floor. */
+    perception: T.Integer({ minimum: 0, maximum: 120 }),
+    /** Distance (px) at which it waits for attack permission. */
+    ring: T.Integer({ minimum: 0, maximum: 2000 }),
+    defense: AiDefense,
+    morale: T.Optional(
+      T.Object(
+        { breakAt: T.Integer({ minimum: 1, maximum: 99 }) },
+        { additionalProperties: false },
+      ),
+    ),
+    weapons: T.Union([T.Literal('never'), T.Literal('opportunistic'), T.Literal('preferred')]),
+    group: T.Optional(
+      T.Object(
+        {
+          action: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
+          threat: T.Integer({ minimum: 1, maximum: 200 }),
+          partnerThreat: T.Integer({ minimum: 1, maximum: 200 }),
+          telegraph: T.Integer({ minimum: 1, maximum: 300 }),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    attacks: T.Array(AiAttack),
+    boss: T.Optional(
+      T.Object(
+        {
+          flinchCap: T.Integer({ minimum: 1, maximum: 20 }),
+          budgets: T.Object(
+            {
+              stun: T.Integer({ minimum: 1, maximum: 100 }),
+              juggle: T.Integer({ minimum: 1, maximum: 100 }),
+            },
+            { additionalProperties: false },
+          ),
+          stagger: T.Object(
+            { telegraph: Frame1, duration: Frame1, reentry: Frame1 },
+            { additionalProperties: false },
+          ),
+          transition: T.Object(
+            { grace: Frame1, carryCap: T.Integer({ minimum: 0, maximum: 10000 }), shift: Frame1 },
+            { additionalProperties: false },
+          ),
+          /** Threat budget points kept for the boss; supports share the rest. */
+          share: T.Integer({ minimum: 0, maximum: 200 }),
+          phases: T.Array(BossPhase, { minItems: 1, maxItems: 6 }),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+  },
+  { additionalProperties: false },
+);
+
 export const HeroSchema = T.Object(
   {
     id: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
@@ -251,10 +392,13 @@ export const HeroSchema = T.Object(
     bodyWidth: T.Integer({ minimum: 20, maximum: 400 }),
     actions: T.Array(Action, { minItems: 1, maxItems: 32 }),
     recipes: T.Optional(T.Array(Recipe, { maxItems: 16 })),
+    /** Enemy kits (M7): role, AI, defense capability profile, morale and boss phases. */
+    profile: T.Optional(Profile),
   },
   { additionalProperties: false },
 );
 
+export type ProfileYaml = Static<typeof Profile>;
 export type HeroYaml = Static<typeof HeroSchema>;
 type ActionYaml = Static<typeof Action>;
 
@@ -402,7 +546,7 @@ export function loadHero(
       problems.push(`"${a.id}": the neutral slot holds a fixed signature move only`);
     if (a.grab && (kind === 'hero' || a.category !== 'grab'))
       problems.push(`"${a.id}": grab hold data is for enemy grabs`);
-    if (a.projectile && a.category !== 'special')
+    if (a.projectile && a.category !== 'special' && kind === 'hero')
       problems.push(`"${a.id}": only Specials launch projectiles`);
     if (a.category === 'throw' && a.input.context !== 'grabThrow')
       problems.push(`"${a.id}": throws use context grabThrow`);
@@ -425,6 +569,8 @@ export function loadHero(
     if (a.frames.landing && a.category !== 'aerial')
       problems.push(`"${a.id}": only aerial actions use landing recovery`);
   }
+  if (kind === 'hero' && hero.profile) problems.push('only enemy kits have an AI profile');
+  if (hero.profile) problems.push(...profileProblems(hero.profile, ids));
   if (kind === 'hero' && !slots.has('neutral/neutral'))
     problems.push('no neutral starter (context neutral, dir neutral)');
   if (kind === 'hero') {
@@ -453,6 +599,299 @@ export function loadHero(
   }
   if (problems.length > 0) throw new HeroDataError(problems.map((p) => `${file}: ${p}`).join('\n'));
   return hero;
+}
+
+const DIFFICULTY_ORDER = ['easy', 'medium', 'hard', 'extreme', 'ultimate'] as const;
+const WEAPON_POLICY = { never: 0, opportunistic: 1, preferred: 2 } as const;
+
+/** Profile checks that only need the kit's own action ids (boss phases: see generate). */
+function profileProblems(p: ProfileYaml, ids: ReadonlySet<string>): string[] {
+  const out: string[] = [];
+  for (const a of p.attacks)
+    if (!ids.has(a.action)) out.push(`profile attack "${a.action}" is not in the kit`);
+  if (p.group && !ids.has(p.group.action))
+    out.push(`profile group action "${p.group.action}" is not in the kit`);
+  if (p.defense.evade && !ids.has(p.defense.evade.action))
+    out.push(`profile evade action "${p.defense.evade.action}" is not in the kit`);
+  if (p.role === 'boss' && !p.boss) out.push('a boss profile needs boss phases');
+  if (p.boss) {
+    if (p.boss.phases[0]!.from !== 100) out.push('the first boss phase starts at 100');
+    for (let i = 1; i < p.boss.phases.length; i += 1)
+      if (p.boss.phases[i]!.from >= p.boss.phases[i - 1]!.from)
+        out.push('boss phase thresholds must fall');
+  }
+  if (p.attacks.length === 0 && !p.boss) out.push('an enemy profile needs at least one attack');
+  return out;
+}
+
+function compileAttack(a: Static<typeof AiAttack>): unknown {
+  return {
+    action: a.action,
+    threat: a.threat,
+    cooldown: a.cooldown,
+    minDifficulty: DIFFICULTY_ORDER.indexOf(a.minDifficulty ?? 'easy'),
+    range: fx(a.range ?? 0),
+  };
+}
+
+/** Converts an enemy profile into the simulation's EnemyProfile shape. */
+export function compileProfile(p: ProfileYaml): unknown {
+  const d = p.defense;
+  return {
+    role: p.role,
+    health: p.health,
+    walkX: fx(p.walk.x),
+    walkZ: fx(p.walk.z),
+    perception: p.perception,
+    ring: fx(p.ring),
+    defense: {
+      tier: d.tier,
+      guardEvery: d.guard?.every ?? 1,
+      guardOf: d.guard?.of ?? 0,
+      exact: d.exact ?? false,
+      counter: d.counter ?? false,
+      breaker: d.breaker ?? false,
+      stance: d.stance ?? false,
+      guardHold: d.guardHold ?? 20,
+      guardCost: d.guardCost ?? 100,
+      cooldown: d.cooldown ?? 150,
+      evadeEvery: d.evade?.every ?? 1,
+      evadeOf: d.evade?.of ?? 0,
+      evade: d.evade?.action ?? '',
+    },
+    breakAt: p.morale?.breakAt ?? 0,
+    weapons: WEAPON_POLICY[p.weapons],
+    group: p.group ?? null,
+    attacks: p.attacks.map(compileAttack),
+    boss: p.boss
+      ? {
+          flinchCap: p.boss.flinchCap,
+          budgets: p.boss.budgets,
+          stagger: p.boss.stagger,
+          transition: p.boss.transition,
+          share: p.boss.share,
+          phases: p.boss.phases.map((ph) => ({
+            name: ph.name,
+            from: ph.from,
+            resolve: ph.resolve,
+            look: ph.look ?? 1,
+            weapon: ph.weapon ?? '',
+            counter: ph.counter ?? false,
+            breaker: ph.breaker ?? false,
+            supports: ph.supports ?? [],
+            device: ph.device ?? '',
+            attacks: ph.attacks.map(compileAttack),
+          })),
+        }
+      : null,
+  };
+}
+
+const Pair = T.Tuple([
+  T.Integer({ minimum: 0, maximum: 1000 }),
+  T.Integer({ minimum: 0, maximum: 1000 }),
+]);
+export const DifficultySchema = T.Object(
+  {
+    difficulties: T.Array(
+      T.Object(
+        {
+          id: DifficultyId,
+          name: T.String({ minLength: 1 }),
+          budget: Pair,
+          cap: T.Integer({ minimum: 1, maximum: 1000 }),
+          perception: T.Integer({ minimum: 0, maximum: 120 }),
+          attackers: Pair,
+          projectiles: Pair,
+          hardCC: T.Integer({ minimum: 1, maximum: 10 }),
+          groupCooldown: T.Integer({ minimum: 0, maximum: 3600 }),
+          warning: T.Integer({ minimum: 1, maximum: 600 }),
+          guardScale: T.Integer({ minimum: 0, maximum: 400 }),
+        },
+        { additionalProperties: false },
+      ),
+      { minItems: 5, maxItems: 5 },
+    ),
+  },
+  { additionalProperties: false },
+);
+
+const KitId = T.String({ pattern: '^[a-z][a-z0-9-]*$' });
+export const ArenaSchema = T.Object(
+  {
+    arenas: T.Array(
+      T.Object(
+        {
+          id: KitId,
+          name: T.String({ minLength: 1 }),
+          /** Stage 1 area of environments/stage1 (fields, bridge, mill, canal, courtyard, sluice). */
+          area: T.Union([
+            T.Literal('fields'),
+            T.Literal('bridge'),
+            T.Literal('mill'),
+            T.Literal('canal'),
+            T.Literal('courtyard'),
+            T.Literal('sluice'),
+          ]),
+          backdrop: T.Optional(T.Union([T.Literal('layers'), T.Literal('plate')])),
+          width: T.Integer({ minimum: 1920, maximum: 7680 }),
+          heroX: T.Optional(T.Integer({ minimum: 0, maximum: 7680 })),
+          minDifficulty: T.Optional(DifficultyId),
+          /** Stage layout for weapons and scenery (mill: the Lab's mill corner). */
+          layout: T.Optional(T.Literal('mill')),
+          weaponSpot: T.Optional(
+            T.Object({ x: T.Integer(), z: T.Integer() }, { additionalProperties: false }),
+          ),
+          devices: T.Optional(
+            T.Array(
+              T.Object(
+                {
+                  kind: T.Literal('winch'),
+                  x: T.Integer(),
+                  z: T.Integer(),
+                  count: T.Integer({ minimum: 1, maximum: 20 }),
+                },
+                { additionalProperties: false },
+              ),
+            ),
+          ),
+          surge: T.Optional(
+            T.Object(
+              {
+                z0: T.Integer(),
+                z1: T.Integer(),
+                warn: Frame1,
+                active: Frame1,
+                damage: T.Integer({ minimum: 0, maximum: 1000 }),
+              },
+              { additionalProperties: false },
+            ),
+          ),
+          waves: T.Array(
+            T.Object(
+              {
+                enemies: T.Array(
+                  T.Object(
+                    {
+                      kit: KitId,
+                      x: T.Integer({ minimum: 0, maximum: 7680 }),
+                      z: T.Integer({ minimum: 0, maximum: 2000 }),
+                      minDifficulty: T.Optional(DifficultyId),
+                      coop: T.Optional(T.Boolean()),
+                    },
+                    { additionalProperties: false },
+                  ),
+                  { minItems: 1, maxItems: 8 },
+                ),
+                next: T.Optional(T.Integer({ minimum: 0, maximum: 8 })),
+              },
+              { additionalProperties: false },
+            ),
+            { minItems: 1 },
+          ),
+          substitutions: T.Optional(
+            T.Array(
+              T.Object(
+                {
+                  from: KitId,
+                  to: KitId,
+                  minDifficulty: DifficultyId,
+                  count: T.Integer({ minimum: 1, maximum: 8 }),
+                },
+                { additionalProperties: false },
+              ),
+            ),
+          ),
+        },
+        { additionalProperties: false },
+      ),
+      { minItems: 1 },
+    ),
+  },
+  { additionalProperties: false },
+);
+
+function validate<S extends Parameters<typeof Value.Errors>[0]>(
+  schema: S,
+  source: string,
+  file: string,
+): unknown {
+  const raw: unknown = parse(source);
+  const errors = [...Value.Errors(schema, raw)].map(
+    (e) => `${file}: ${e.path || '/'} ${e.message}`,
+  );
+  if (errors.length > 0) throw new HeroDataError(errors.slice(0, 10).join('\n'));
+  return raw;
+}
+
+/** Validates difficulty.yaml and converts it (order easy … ultimate). */
+export function loadDifficulties(source: string, file = 'difficulty.yaml'): unknown[] {
+  const d = validate(DifficultySchema, source, file) as Static<typeof DifficultySchema>;
+  const ids = d.difficulties.map((x) => x.id);
+  if (ids.join() !== DIFFICULTY_ORDER.join())
+    throw new HeroDataError(
+      `${file}: difficulties must be ${DIFFICULTY_ORDER.join(', ')} in order`,
+    );
+  return d.difficulties.map((x) => ({
+    ...x,
+    budget: [...x.budget],
+    attackers: [...x.attackers],
+    projectiles: [...x.projectiles],
+  }));
+}
+
+/** Validates arenas.yaml against the enemy kit ids and converts it to pixel data. */
+export function loadArenas(
+  source: string,
+  kits: readonly string[],
+  file = 'arenas.yaml',
+): unknown[] {
+  const d = validate(ArenaSchema, source, file) as Static<typeof ArenaSchema>;
+  const problems: string[] = [];
+  const seen = new Set<string>();
+  for (const a of d.arenas) {
+    if (seen.has(a.id)) problems.push(`duplicate arena "${a.id}"`);
+    seen.add(a.id);
+    for (const w of a.waves)
+      for (const e of w.enemies) {
+        if (!kits.includes(e.kit)) problems.push(`${a.id}: unknown enemy kit "${e.kit}"`);
+        if (e.x > a.width) problems.push(`${a.id}: an enemy starts outside the arena`);
+      }
+    for (const s of a.substitutions ?? [])
+      for (const k of [s.from, s.to])
+        if (!kits.includes(k)) problems.push(`${a.id}: unknown enemy kit "${k}"`);
+  }
+  if (problems.length > 0) throw new HeroDataError(problems.map((p) => `${file}: ${p}`).join('\n'));
+  const lvl = (x: string | undefined) => DIFFICULTY_ORDER.indexOf((x ?? 'easy') as never);
+  return d.arenas.map((a) => ({
+    id: a.id,
+    name: a.name,
+    area: a.area,
+    backdrop: a.backdrop ?? 'layers',
+    width: a.width,
+    heroX: a.heroX ?? 500,
+    minDifficulty: lvl(a.minDifficulty),
+    layout: a.layout ?? '',
+    weaponSpot: a.weaponSpot ?? null,
+    devices: a.devices ?? [],
+    surge: a.surge ?? null,
+    waves: a.waves.map((w) => ({
+      next: w.next ?? 0,
+      enemies: w.enemies.map((e) => ({
+        kit: e.kit,
+        x: e.x,
+        z: e.z,
+        minDifficulty: lvl(e.minDifficulty),
+        coop: e.coop ?? false,
+      })),
+    })),
+    substitutions: (a.substitutions ?? []).map((s) => ({
+      from: s.from,
+      to: s.to,
+      minDifficulty: lvl(s.minDifficulty),
+      count: s.count,
+    })),
+  }));
 }
 
 /** Compiles one action; `index` maps action ids to indices (links), `all` holds the targets. */
@@ -718,11 +1157,12 @@ export function heroFiles(dir = HEROES_DIR): string[] {
     .map((f) => join(dir, f));
 }
 
-/** Enemy kit files, by file name. */
+/** Enemy kit files: the training enemy first (kit 0, the Lab dummies), then by file name. */
 export function enemyFiles(dir = ENEMIES_DIR): string[] {
+  const rank = (f: string) => (f === 'trainer.yaml' ? 0 : 1);
   return readdirSync(dir)
     .filter((f) => f.endsWith('.yaml'))
-    .sort((a, b) => a.localeCompare(b))
+    .sort((a, b) => rank(a) - rank(b) || a.localeCompare(b))
     .map((f) => join(dir, f));
 }
 
@@ -732,37 +1172,75 @@ function order(file: string): number {
   return i === -1 ? ROSTER_ORDER.length : i;
 }
 
+const ENCOUNTERS_DIR = fileURLToPath(new URL('../encounters/', import.meta.url));
+
 /** Builds the source of heroes.gen.ts from the given hero, enemy and weapon files. */
 export function generate(
   files = heroFiles(),
   enemies = enemyFiles(),
   weapons = weaponFiles(),
+  encounters: string | null = ENCOUNTERS_DIR,
 ): string {
-  const compile = (f: string, kind: 'hero' | 'enemy') =>
-    compileHero(loadHero(readFileSync(f, 'utf8'), basename(f), kind), kind);
-  const roster = files.map((f) => compile(f, 'hero') as { id: string });
+  const load = (f: string, kind: 'hero' | 'enemy') =>
+    loadHero(readFileSync(f, 'utf8'), basename(f), kind);
+  const roster = files.map((f) => compileHero(load(f, 'hero'), 'hero') as { id: string });
   const heroes = JSON.stringify(roster, null, 2);
+  const enemyYaml = enemies.map((f) => load(f, 'enemy'));
   const kits = JSON.stringify(
-    enemies.map((f) => compile(f, 'enemy')),
+    enemyYaml.map((h) => compileHero(h, 'enemy')),
     null,
     2,
   );
   const heroIds = roster.map((h) => h.id);
-  const arms = JSON.stringify(
-    weapons.map((f) => compileWeapon(loadWeapon(readFileSync(f, 'utf8'), basename(f), heroIds))),
+  const weaponYaml = weapons.map((f) => loadWeapon(readFileSync(f, 'utf8'), basename(f), heroIds));
+  const arms = JSON.stringify(weaponYaml.map(compileWeapon), null, 2);
+  // Boss phases may use the actions of the weapon the phase claims.
+  const problems: string[] = [];
+  for (const k of enemyYaml) {
+    for (const ph of k.profile?.boss?.phases ?? []) {
+      const w = ph.weapon ? weaponYaml.find((x) => x.id === ph.weapon) : undefined;
+      if (ph.weapon && !w)
+        problems.push(`${k.id}: phase "${ph.name}" claims unknown weapon "${ph.weapon}"`);
+      const ids = new Set([...k.actions.map((a) => a.id), ...(w?.actions.map((a) => a.id) ?? [])]);
+      for (const a of ph.attacks)
+        if (!ids.has(a.action))
+          problems.push(`${k.id}: phase "${ph.name}" attack "${a.action}" is unknown`);
+      for (const s of ph.supports ?? [])
+        if (!enemyYaml.some((e) => e.id === s))
+          problems.push(`${k.id}: unknown support kit "${s}"`);
+    }
+  }
+  if (problems.length > 0) throw new HeroDataError(problems.join('\n'));
+  const profiles = JSON.stringify(
+    enemyYaml.map((h) => (h.profile ? compileProfile(h.profile) : null)),
     null,
     2,
   );
+  const kitIds = enemyYaml.map((e) => e.id);
+  const difficulty = encounters
+    ? loadDifficulties(readFileSync(join(encounters, 'difficulty.yaml'), 'utf8'))
+    : [];
+  const arenas = encounters
+    ? loadArenas(readFileSync(join(encounters, 'arenas.yaml'), 'utf8'), kitIds)
+    : [];
   return `// GENERATED by packages/data/src/generate.ts from packages/data/heroes/*.yaml,
-// packages/data/enemies/*.yaml and packages/data/weapons/*.yaml. Do not edit by hand:
-// change the YAML and run \`pnpm gen:heroes\`.
-import type { HeroDef, WeaponDef } from './types';
+// packages/data/enemies/*.yaml, packages/data/weapons/*.yaml and
+// packages/data/encounters/*.yaml. Do not edit by hand: change the YAML and run
+// \`pnpm gen:heroes\`.
+import type { ArenaDef, DifficultyDef, EnemyProfile, HeroDef, WeaponDef } from './types';
 
 export const HERO_DATA: readonly HeroDef[] = ${heroes};
 
 export const ENEMY_DATA: readonly HeroDef[] = ${kits};
 
+/** AI profiles aligned with ENEMY_DATA (null: the training enemy has none). */
+export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = ${profiles};
+
 export const WEAPON_DATA: readonly WeaponDef[] = ${arms};
+
+export const DIFFICULTY_DATA: readonly DifficultyDef[] = ${JSON.stringify(difficulty, null, 2)};
+
+export const ARENA_DATA: readonly ArenaDef[] = ${JSON.stringify(arenas, null, 2)};
 `;
 }
 

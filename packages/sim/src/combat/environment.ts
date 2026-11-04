@@ -1,4 +1,5 @@
 import { fx } from '../math/fixed';
+import { dealDamage } from './damage';
 import { BODY_HALF_D, BODY_HALF_W } from '../movement/profile';
 import {
   BreakState,
@@ -187,6 +188,8 @@ export function correctedRest(world: World, x: number, z: number): { x: number; 
 /** Hazard cycle: rest, a telegraphed warning, the active phase, then rest again. */
 export function stepHazards(world: World): void {
   for (const h of world.environment.hazards) {
+    // rest 0: a triggered hazard (the sluice surge) waits until a device releases it.
+    if (h.rest === 0 && h.phase === HazardPhase.Rest) continue;
     h.phaseFrame += 1;
     const len =
       h.phase === HazardPhase.Rest ? h.rest : h.phase === HazardPhase.Warn ? h.warn : h.active;
@@ -301,7 +304,7 @@ function impact(world: World, f: Fighter, s: World['environment']['surfaces'][nu
   );
   const raw = IMPACT.surfaceDamage + force;
   const dmg = Math.max(1, Math.trunc((raw * Math.max(DAMAGE_FLOOR, ctx.scale)) / 100));
-  f.health = Math.max(0, f.health - dmg);
+  dealDamage(world, f, dmg);
   ctx.damage += dmg;
   ctx.lastDamage = dmg;
   ctx.hits += 1;
@@ -365,7 +368,7 @@ export function hazardHits(world: World): void {
       const dmg = ctx.open
         ? Math.max(1, Math.trunc((h.damage * Math.max(DAMAGE_FLOOR, ctx.scale)) / 100))
         : h.damage;
-      t.health = Math.max(0, t.health - dmg);
+      dealDamage(world, t, dmg);
       if (ctx.open) {
         ctx.damage += dmg;
         ctx.lastDamage = dmg;

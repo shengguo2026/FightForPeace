@@ -1,0 +1,74 @@
+# Rope Overseer (spec §12.1): grabs and forced repositioning. A heavy committed aggressor
+# with a hook pole: a swing, a slow guard-pressure slam, a rope snare that restrains (a
+# partner frees you) and a drag-and-fling that throws you across the lane. M7 candidates.
+id: overseer
+name: Rope Overseer
+bodyWidth: 84
+actions:
+  - id: hook-swing
+    name: Hook Swing
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 18, active: 4, recovery: 22, blockstun: 14 }
+    hitbox: { x: 20, w: 140, y: 120, h: 140, depth: 36 }
+    damage: 60
+    reaction: { kind: knockback, hitstun: 20, push: 7 }
+    costs: { stun: 12, scale: 10, starter: 10, guard: 15 }
+    meter: 0
+    tags: [counterable]
+
+  - id: pole-slam
+    name: Pole Slam
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 28, active: 4, recovery: 28, blockstun: 20 }
+    hitbox: { x: 20, w: 150, y: 80, h: 200, depth: 40 }
+    damage: 90
+    reaction: { kind: knockdown, hitstun: 28, push: 6, lift: 5 }
+    costs: { stun: 18, scale: 15, starter: 10, guard: 35 }
+    meter: 0
+    tags: [guardPressure, counterable]
+
+  - id: rope-snare
+    name: Rope Snare
+    category: grab
+    input: { context: script, dir: neutral }
+    frames: { startup: 20, active: 3, recovery: 28 }
+    hitbox: { x: 20, w: 150, y: 100, h: 160, depth: 40 }
+    damage: 20
+    reaction: { kind: stagger, hitstun: 20 }
+    costs: { stun: 10, scale: 10, starter: 10 }
+    meter: 0
+    tags: [rescueInterruptible, restraint]
+    grab: { hold: 48, escapeFrom: 20, escapeWindow: 11, restraint: 150 }
+    moves:
+      - { from: 1, to: 18, forward: 1 }
+
+  - id: drag-fling
+    name: Drag and Fling
+    category: grab
+    input: { context: script, dir: neutral }
+    frames: { startup: 18, active: 3, recovery: 26 }
+    hitbox: { x: 20, w: 110, y: 100, h: 160, depth: 40 }
+    damage: 70
+    reaction: { kind: knockdown, hitstun: 30, push: 12, lift: 6 }
+    costs: { stun: 15, scale: 12, starter: 10 }
+    meter: 0
+    tags: [rescueInterruptible, terminalKnockdown]
+    grab: { hold: 44, escapeFrom: 18, escapeWindow: 11 }
+    moves:
+      - { from: 1, to: 16, forward: 1 }
+
+profile:
+  role: grappler
+  health: 400
+  walk: { x: 3, z: 2 }
+  perception: 4
+  ring: 280
+  defense: { tier: basic, guard: { every: 2, of: 1 }, guardHold: 24 }
+  weapons: opportunistic
+  attacks:
+    - { action: hook-swing, threat: 20, cooldown: 80 }
+    - { action: rope-snare, threat: 30, cooldown: 220 }
+    - { action: drag-fling, threat: 30, cooldown: 200, minDifficulty: medium }
+    - { action: pole-slam, threat: 32, cooldown: 240, minDifficulty: medium }

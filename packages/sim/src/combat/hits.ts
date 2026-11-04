@@ -1,4 +1,6 @@
 import { fx } from '../math/fixed';
+import { carryFull, dealDamage, nonCombatant } from './damage';
+import { bossBudgets, bossHit, bossResists } from '../enemies/boss';
 import {
   Bounce,
   type ComboContext,
@@ -60,7 +62,9 @@ export function strikes(a: ActionDef): boolean {
     a.projectile === null &&
     a.category !== 'grab' &&
     a.category !== 'grabStrike' &&
-    a.category !== 'throw'
+    a.category !== 'throw' &&
+    !a.tags.includes('evade') &&
+    !a.tags.includes('objective')
   );
 }
 
@@ -118,6 +122,7 @@ function overlaps(a: Box, b: Box): boolean {
  */
 export function canHit(att: Fighter, a: ActionDef, t: Fighter): boolean {
   if (t.team === att.team || t.protectedRecovery || t.cinematic) return false;
+  if (nonCombatant(t) || nonCombatant(att)) return false;
   if (t.state === MoveState.GetUp || t.state === MoveState.Recover) return false;
   // Held targets belong to their grabber's route; restrained heroes are out of the fight.
   if (t.state === MoveState.Grabbed || t.state === MoveState.Restrained) return false;
@@ -209,7 +214,11 @@ export function resolveHits(world: World): void {
         if (att.contactAt < 0) att.contactAt = att.stateFrame + 1;
         payContact(world, att, true);
         // A crushDisarm move that breaks the guard also knocks the weapon away.
-        if (t.state === MoveState.GuardCrush && a.tags.includes('crushDisarm'))
+        if (
+          t.state === MoveState.GuardCrush &&
+          a.tags.includes('crushDisarm') &&
+          !bossResists(world, t)
+        )
           tryDisarm(world, att, a, t);
         continue;
       }
@@ -218,12 +227,13 @@ export function resolveHits(world: World): void {
       payContact(world, att, false);
       if (armored(t, a)) {
         // Armor: the strike lands (damage) but causes no reaction and opens no combo.
-        t.health = Math.max(0, t.health - a.damage);
+        dealDamage(world, t, a.damage);
         if (t.team === 'hero') logDefense(world, t, DefEvent.Armored, 0, att);
         continue;
       }
       applyHit(world, sourceOf(att), a, seg, t);
-      tryDisarm(world, att, a, t);
+      // Resolve-gated: the boss keeps its weapon until its Stagger Break.
+      if (!bossResists(world, t)) tryDisarm(world, att, a, t);
       // Cinematic protection from the Ultimate's first valid contact until it ends.
       if (a.category === 'ultimate') att.cinematic = true;
     }
@@ -244,9 +254,15 @@ function lifts(a: ActionDef): boolean {
  * hit, deals scaled damage and starts the reaction.
  */
 export function applyHit(world: World, s: HitSource, a: ActionDef, seg: number, t: Fighter): void {
-  const ctx = t.ctx.open ? t.ctx : { ...emptyContext(), open: true };
+  const fresh = !t.ctx.open;
+  const ctx = fresh ? { ...emptyContext(), open: true } : t.ctx;
   t.ctx = ctx;
+  if (fresh) bossBudgets(world, t);
   t.thrownBy = 0;
+  if (s.owner.team !== t.team) {
+    t.lastHitBy = s.owner.id;
+    t.lastHitFrame = world.frame;
+  }
 
   const downed = t.state === MoveState.Down;
   const airborne = !downed && (t.y > 0 || t.state === MoveState.Launched);
@@ -269,7 +285,8 @@ export function applyHit(world: World, s: HitSource, a: ActionDef, seg: number, 
       ctx.juggleBudget = Math.max(0, ctx.juggleBudget - a.juggleCost);
       juggleOut = a.juggleCost > 0 && ctx.juggleBudget === 0;
     }
-    awardHitMeter(world, s.owner, a, ctx, k);
+    // A full carryover pool earns no self-refunding Attack meter (F&D §8).
+    if (!carryFull(world, t)) awardHitMeter(world, s.owner, a, ctx, k);
     const cost = ctx.actions === 0 ? a.starterProration : a.damageScaleCost;
     ctx.scale = Math.max(DAMAGE_FLOOR, ctx.scale - cost);
     ctx.actions += 1;
@@ -279,14 +296,17 @@ export function applyHit(world: World, s: HitSource, a: ActionDef, seg: number, 
     band = juggleBand(ctx.juggleBudget + a.juggleCost);
   }
   const dmg = splitDamage(a.damage, s.contactScales[k]!, seg, segmentCount(a));
-  t.health = Math.max(0, t.health - dmg);
+  dealDamage(world, t, dmg);
   ctx.damage += dmg;
   ctx.lastDamage = dmg;
   ctx.hits += 1;
 
   const last = seg === segmentCount(a) - 1;
   if (downed) groundReact(world, s, a, t, hitstun, last);
-  else {
+  else if (bossHit(world, a, t, dmg, pushDir(s, a, t))) {
+    // Resolve absorbed the control: a limited flinch, or the Stagger Break telegraph.
+    t.impactArmed = false;
+  } else {
     react(world, s, a, t, hitstun, band, juggleOut, airborne, last);
     // Environment eligibility of this hit: an impact surface may now slam the target.
     t.impactArmed = impactEligible(a);

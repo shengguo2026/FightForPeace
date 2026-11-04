@@ -1,0 +1,180 @@
+# Sluice Commander (spec §12.3, F&D §8): the multi-phase Stage 1 boss on the Sluice plate.
+# Visible Resolve absorbs extended control until depleted; depletion is a telegraphed
+# Stagger Break with boss budgets. Phase thresholds queue: the crossing hit resolves,
+# carryover is capped, and the next phase begins at a safe point once both heroes are
+# actionable. Phase 1: palm, kicks and a flying knee. Phase 2 (coat off): faster strikes,
+# the Sluice Parry counter, a Combo Breaker and the Iron Gate Handwheel. Phase 3: he works
+# the sluice winch, an authored, visible, interruptible hostile action; three completed
+# cranks release a flood surge across the back of the floor. Defeated, he surrenders.
+id: commander
+name: Sluice Commander
+bodyWidth: 84
+actions:
+  - id: palm-strike
+    name: Palm Strike
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 14, active: 3, recovery: 18, blockstun: 12 }
+    hitbox: { x: 20, w: 115, y: 150, h: 110, depth: 34 }
+    damage: 55
+    reaction: { kind: stagger, hitstun: 18, push: 4 }
+    costs: { stun: 12, scale: 10, starter: 10, guard: 12 }
+    meter: 0
+    tags: [counterable]
+
+  - id: roundhouse
+    name: High Roundhouse
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 18, active: 4, recovery: 22, blockstun: 16 }
+    hitbox: { x: 20, w: 140, y: 170, h: 110, depth: 36 }
+    damage: 75
+    reaction: { kind: knockback, hitstun: 22, push: 8 }
+    costs: { stun: 14, scale: 12, starter: 10, guard: 18 }
+    meter: 0
+    tags: [counterable]
+
+  - id: spin-back-kick
+    name: Spinning Back Kick
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 22, active: 4, recovery: 24, blockstun: 18 }
+    hitbox: { x: 20, w: 140, y: 120, h: 140, depth: 38 }
+    damage: 85
+    reaction: { kind: knockdown, hitstun: 26, push: 7, lift: 5 }
+    costs: { stun: 16, scale: 14, starter: 10, guard: 25 }
+    meter: 0
+    tags: [counterable]
+
+  - id: flying-knee
+    name: Flying Knee
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 34, active: 6, recovery: 26, blockstun: 20 }
+    hitbox: { x: 10, w: 130, y: 90, h: 170, depth: 40 }
+    damage: 110
+    reaction: { kind: knockdown, hitstun: 30, push: 8, lift: 6 }
+    costs: { stun: 20, scale: 16, starter: 10, guard: 35 }
+    meter: 0
+    tags: [leap, guardPressure, uncounterable]
+    moves:
+      - { from: 26, to: 40, forward: 8 }
+
+  - id: double-palm
+    name: Double Palm
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: [3, 4, 3], recovery: 20, blockstun: 12 }
+    hitbox: { x: 20, w: 115, y: 150, h: 110, depth: 34 }
+    damage: 80
+    reaction: { kind: stagger, hitstun: 20, push: 4 }
+    costs: { stun: 12, scale: 10, starter: 10, guard: 12 }
+    meter: 0
+    tags: [counterable, deflectBreak]
+
+  - id: rising-knee
+    name: Rising Knee
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 16, active: 4, recovery: 22, blockstun: 16 }
+    hitbox: { x: 15, w: 105, y: 80, h: 180, depth: 34 }
+    damage: 70
+    reaction: { kind: launch, hitstun: 26, push: 3, lift: 9 }
+    costs: { stun: 14, scale: 12, starter: 10, guard: 18 }
+    meter: 0
+    tags: [counterable]
+
+  - id: axe-kick
+    name: Jumping Axe Kick
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 28, active: 4, recovery: 26, blockstun: 20 }
+    hitbox: { x: 10, w: 130, y: 60, h: 220, depth: 40 }
+    damage: 100
+    reaction: { kind: knockdown, hitstun: 28, push: 6, lift: 5 }
+    costs: { stun: 18, scale: 15, starter: 10, guard: 35 }
+    meter: 0
+    tags: [leap, guardPressure, uncounterable]
+    moves:
+      - { from: 8, to: 30, forward: 4 }
+
+  - id: sluice-parry
+    name: Sluice Parry
+    category: counter
+    input: { context: counter, dir: neutral }
+    frames: { startup: 4, active: 4, recovery: 18 }
+    hitbox: { x: 15, w: 110, y: 80, h: 180, depth: 36 }
+    damage: 70
+    reaction: { kind: knockdown, hitstun: 26, push: 8, lift: 5 }
+    costs: { stun: 14, scale: 12, starter: 10 }
+    meter: 0
+    tags: [terminalKnockdown]
+
+  - id: winch-crank
+    name: Crank the Winch
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: 48, recovery: 10 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    tags: [objective]
+
+profile:
+  role: boss
+  health: 2400
+  walk: { x: 3, z: 2 }
+  perception: 0
+  ring: 300
+  defense:
+    tier: boss
+    guard: { every: 3, of: 1 }
+    exact: true
+    guardHold: 24
+    cooldown: 160
+  weapons: preferred
+  attacks: []
+  boss:
+    flinchCap: 3
+    budgets: { stun: 70, juggle: 70 }
+    stagger: { telegraph: 30, duration: 300, reentry: 40 }
+    transition: { grace: 180, carryCap: 120, shift: 90 }
+    share: 40
+    phases:
+      - name: Coat and command
+        from: 100
+        resolve: 240
+        look: 1
+        attacks:
+          - { action: palm-strike, threat: 12, cooldown: 60 }
+          - { action: roundhouse, threat: 20, cooldown: 100 }
+          - { action: spin-back-kick, threat: 26, cooldown: 150 }
+          - { action: flying-knee, threat: 40, cooldown: 260 }
+      - name: Iron Gate Handwheel
+        from: 66
+        resolve: 300
+        look: 2
+        weapon: handwheel
+        counter: true
+        breaker: true
+        supports: [recruit, recruit]
+        attacks:
+          - { action: double-palm, threat: 20, cooldown: 70 }
+          - { action: rising-knee, threat: 26, cooldown: 140 }
+          - { action: axe-kick, threat: 40, cooldown: 240 }
+          - { action: wheel-throw, threat: 18, cooldown: 160, range: 900 }
+      - name: Open the Sluice
+        from: 33
+        resolve: 360
+        look: 2
+        weapon: handwheel
+        counter: true
+        breaker: true
+        device: winch
+        attacks:
+          - { action: double-palm, threat: 20, cooldown: 70 }
+          - { action: rising-knee, threat: 26, cooldown: 140 }
+          - { action: axe-kick, threat: 40, cooldown: 220 }
+          - { action: wheel-throw, threat: 18, cooldown: 160, range: 900 }

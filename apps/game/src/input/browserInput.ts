@@ -2,7 +2,20 @@ import type { PadSnapshot } from '@ffp/platform';
 import type { GameSession } from '../game';
 
 /** Keys the Lab uses itself; they never reach gameplay. */
-export const LAB_KEYS = new Set(['F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10']);
+export const LAB_KEYS = new Set([
+  'F1',
+  'F2',
+  'F3',
+  'F4',
+  'F5',
+  'F6',
+  'F7',
+  'F8',
+  'F9',
+  'F10',
+  'Home',
+  'End',
+]);
 
 let fakePads: (PadSnapshot | null)[] = [];
 
