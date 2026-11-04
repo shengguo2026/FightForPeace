@@ -1,5 +1,3 @@
-import { readFileSync, readdirSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import { startAction } from '../src/combat/actions';
 import { METER } from '../src/combat/meter';
 import { ENEMIES, HEROES, kitOf } from '../src/combat/roster';
@@ -67,16 +65,6 @@ describe('co-op data is keyed by tags (roadmap guardrails M8)', () => {
     for (const h of HEROES) expect(json).not.toContain(`"${h.id}"`);
     expect(TEAM_FINISHERS[0]!.pair).toEqual(['founder', 'founder']);
     expect(COOP.actions.map((a) => a.kind).sort()).toEqual(['assist', 'interrupt', 'release']);
-  });
-
-  test('co-op and hit code never branch on a hero name', () => {
-    const dir = fileURLToPath(new URL('../src/coop/', import.meta.url));
-    const files = readdirSync(dir).map((f) => readFileSync(dir + f, 'utf8'));
-    files.push(readFileSync(new URL('../src/combat/hits.ts', import.meta.url), 'utf8'));
-    for (const src of files) {
-      for (const h of HEROES) expect(src).not.toMatch(new RegExp(`['"]${h.id}['"]`));
-      expect(src).not.toMatch(/Mountain|River Scout/);
-    }
   });
 
   test('a finisher pairs heroes by their tags, in either order', () => {

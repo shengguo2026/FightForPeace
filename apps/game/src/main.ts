@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { render, h } from 'preact';
-import { DEFAULT_KEYBOARD_P1, rebind } from '@ffp/platform';
+import { DEFAULT_KEYBOARD_P1, QualityGovernor, rebind } from '@ffp/platform';
 import { HEROES, equip, heroOf } from '@ffp/sim';
 import { GameSession } from './game';
 import { EQUIP_TEXT } from './text/en';
@@ -17,6 +17,7 @@ import {
   refreshRecipes,
   refreshTarget,
   refreshArena,
+  refreshCoop,
 } from './ui/views';
 import { captureNextKey, installKeyboard, readPads } from './input/browserInput';
 import { installDebugHook } from './debug';
@@ -27,6 +28,8 @@ const devBuild = import.meta.env.DEV || import.meta.env.MODE === 'e2e';
 const lab = createLabState(true);
 if (import.meta.env.MODE === 'e2e') lab.trainer.value = { ...lab.trainer.value, attackers: 0 };
 const session = new GameSession(1, lab.trainer.value);
+// M8 Fixed Simulation with Independent Adaptive Presentation: only drawing adapts.
+const quality = new QualityGovernor();
 
 new Phaser.Game({
   type: Phaser.AUTO,
@@ -42,6 +45,7 @@ new Phaser.Game({
     getSnapshot: () => session.snapshot(),
     showCollision: () => lab.showCollision.value,
     showLabels: () => lab.visible.value,
+    quality: () => quality.level,
     // The simulation starts once the art has loaded, so decoding sheets never stalls play.
     onReady: () => requestAnimationFrame(tick),
   }),
@@ -112,6 +116,7 @@ const actions: LabActions = {
     if (arena) lab.defenseOpen.value = false;
   },
   pickArena: (pick) => (lab.arenaPick.value = { ...lab.arenaPick.value, ...pick }),
+  setQuality: (setting) => quality.set(setting),
   practise: (slot, recipeId) => {
     const hero = heroOf(session.world, slot);
     const recipe = hero ? HEROES[hero.hero]?.recipes.find((r) => r.id === recipeId) : undefined;
@@ -141,7 +146,7 @@ installKeyboard(session, (code) => {
   if (code === 'End') actions.startArena(null);
 });
 
-if (devBuild) installDebugHook(session, lab);
+if (devBuild) installDebugHook(session, lab, quality);
 
 let last: number | undefined;
 let fpsFrames = 0;
@@ -157,6 +162,12 @@ function tick(now: number): void {
   lab.frame.value = report.frame;
   lab.hash.value = report.hash.toString(16).padStart(8, '0');
   lab.paused.value = report.paused;
+  lab.focusPaused.value = session.devices.focusPaused;
+  quality.sample(report.paused ? 0 : elapsed);
+  const q = lab.quality.value;
+  const ms = Math.round(quality.average * 10) / 10;
+  if (q.setting !== quality.setting || q.level !== quality.level || Math.abs(q.ms - ms) >= 0.5)
+    lab.quality.value = { setting: quality.setting, level: quality.level, ms };
   const waiting = session.devices.waitingSlots();
   if (waiting.join() !== lab.waiting.value.join()) lab.waiting.value = waiting;
   // Reading the label version here makes layout changes re-render the prompts.
@@ -168,6 +179,7 @@ function tick(now: number): void {
   refreshGrab(session, lab);
   refreshWeapons(session, lab);
   refreshArena(session, lab);
+  refreshCoop(session, lab);
   const held = heldKeys(session);
   if (held.join(' ') !== lab.heldKeys.value.join(' ')) lab.heldKeys.value = held;
 

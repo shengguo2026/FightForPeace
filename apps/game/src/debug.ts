@@ -14,13 +14,19 @@ import {
   DIFFICULTIES,
   budgetOf,
   usage,
+  MoveState,
 } from '@ffp/sim';
+import type { QualityGovernor } from '@ffp/platform';
 import type { GameSession } from './game';
 import type { LabState } from './ui/labState';
 import { setFakePads, useFakePads } from './input/browserInput';
 
 /** Installs window.__ffp for automated tests. Called in dev and e2e builds only. */
-export function installDebugHook(session: GameSession, lab: LabState): void {
+export function installDebugHook(
+  session: GameSession,
+  lab: LabState,
+  quality: QualityGovernor,
+): void {
   window.__ffp = {
     frame: () => session.world.frame,
     body: (id) => {
@@ -141,6 +147,31 @@ export function installDebugHook(session: GameSession, lab: LabState): void {
         budget: budgetOf(w),
       };
     },
+    coop: () => {
+      const c = session.world.coop;
+      return {
+        invite: c.invite
+          ? { from: c.invite.from, target: c.invite.target, until: c.invite.until }
+          : null,
+        log: { ...c.log },
+        handoffs: c.handoffs,
+        finishers: c.finishers,
+        assists: c.assists,
+        rescues: c.rescues,
+        bundles: c.bundles,
+      };
+    },
+    staggerDummy: (frames) => {
+      const d = session.world.bodies.find((b) => b.team === 'enemy');
+      if (!d) return;
+      d.state = MoveState.Hitstun;
+      d.stateFrame = 0;
+      d.stun = frames;
+      d.y = 0;
+      d.ctx.open = true;
+    },
+    quality: () => ({ setting: quality.setting, level: quality.level }),
+    focusPaused: () => session.devices.focusPaused,
   };
 }
 

@@ -46,6 +46,12 @@ export class DeviceHub {
   readonly pads = new Map<number, GamepadState>();
   readonly slots: SlotState[];
   userPaused = false;
+  /**
+   * The game window lost focus or was hidden (F&D §4 Deterministic Courtesy Hold, solo and
+   * same-device rule): gameplay pauses at once and resumes only when a player presses
+   * Pause on an assigned device; coming back to the tab never restarts combat by itself.
+   */
+  focusPaused = false;
   private padBindings: Bindings;
 
   constructor(opts: DeviceHubOptions) {
@@ -59,7 +65,15 @@ export class DeviceHub {
   }
 
   get paused(): boolean {
-    return this.userPaused || this.slots.some((s) => s.waiting);
+    return this.userPaused || this.focusPaused || this.slots.some((s) => s.waiting);
+  }
+
+  /** The window lost focus or became hidden: pause and release every held input. */
+  loseFocus(): void {
+    this.focusPaused = true;
+    this.keyboardP1.blur();
+    this.keyboardP2.blur();
+    for (const pad of this.pads.values()) pad.sample();
   }
 
   /** Slots whose controller is missing. */
@@ -165,7 +179,11 @@ export class DeviceHub {
     if (!this.slots.some((s) => s.waiting)) {
       for (const slot of this.slots) {
         if (slot.device && pressed(slot.device, Action.Pause)) {
-          this.userPaused = !this.userPaused;
+          // After a focus loss, Pause means "I am back": resume, do not toggle.
+          if (this.focusPaused) this.focusPaused = false;
+          else this.userPaused = !this.userPaused;
+          // Play resumes from neutral input: the Pause press itself is not gameplay.
+          this.source(slot.device)!.sample();
           break;
         }
       }

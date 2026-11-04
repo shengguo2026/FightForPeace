@@ -35,6 +35,10 @@ import {
   difficultyOf,
   profileOf,
   usage,
+  CoopEvent,
+  TEAM_FINISHERS,
+  handoffLeft,
+  inviteLeft,
 } from '@ffp/sim';
 import {
   ACTION_NAMES,
@@ -44,7 +48,15 @@ import {
   resolvePrompt,
 } from '@ffp/platform';
 import type { GameSession } from '../game';
-import { BREAKER_DENIED, DEFENSE_TEXT, GRAB_TEXT, VERDICT_TEXT, moveInputText } from '../text/en';
+import {
+  COOP_EVENT_TEXT,
+  TEAM_DENIED_TEXT,
+  BREAKER_DENIED,
+  DEFENSE_TEXT,
+  GRAB_TEXT,
+  VERDICT_TEXT,
+  moveInputText,
+} from '../text/en';
 import {
   type DefenseView,
   type GrabPlayerView,
@@ -736,4 +748,62 @@ export function refreshArena(session: GameSession, lab: LabState): void {
   const prev = lab.arena.value;
   if (prev.running && prev.lines.join('|') === lines.join('|')) return;
   lab.arena.value = { running: true, lines };
+}
+
+const TARGET_STATE_TEXT = ['', 'airborne', 'stagger', 'down'];
+
+/** M8 Co-op panel: invitation, open handoffs, the last bundle and event, telemetry. */
+export function refreshCoop(session: GameSession, lab: LabState): void {
+  const world = session.world;
+  const c = world.coop;
+  const who = (id: number) => {
+    const b = world.bodies.find((x) => x.id === id);
+    if (!b) return '?';
+    if (b.team === 'hero') return `P${b.slot + 1}`;
+    return kitOf(b)?.name ?? ENEMIES[b.hero]?.name ?? 'Dummy';
+  };
+  const inv = c.invite;
+  const from = inv ? world.bodies.find((b) => b.id === inv.from) : undefined;
+  const invite =
+    inv && from
+      ? {
+          from: from.slot,
+          to: 1 - from.slot,
+          left: inviteLeft(world),
+          name: TEAM_FINISHERS[inv.finisher]?.name ?? 'Team finisher',
+        }
+      : null;
+  const handoffs = world.bodies
+    .filter((b) => b.handoff > 0 && world.frame >= b.handoffAt)
+    .map(
+      (b) =>
+        `handoff on ${who(b.id)}: ${TARGET_STATE_TEXT[b.handoff] ?? '?'} from ${who(b.handoffFrom)}, ${handoffLeft(world, b)} frames left`,
+    );
+  const l = c.log;
+  const denied =
+    l.kind === CoopEvent.Unavailable || l.kind === CoopEvent.Invalid
+      ? ` (${TEAM_DENIED_TEXT[l.detail] ?? '?'})`
+      : '';
+  const last =
+    l.frame > 0
+      ? `last: ${COOP_EVENT_TEXT[l.kind] ?? '?'}${denied} · ${who(l.actor)} (f${l.frame})`
+      : 'last: none yet';
+  const bundle =
+    c.bundleFrame > 0
+      ? `last bundle: ${c.bundleHits} hits on ${who(c.bundleTarget)}, dominant ${routeAction(c.bundleDominant)?.name ?? '?'} (f${c.bundleFrame})`
+      : 'last bundle: none yet';
+  const lines = [
+    invite
+      ? `invitation: P${invite.from + 1} → P${invite.to + 1} confirm, ${invite.left} frames left`
+      : 'invitation: none',
+    ...(handoffs.length ? handoffs : ['handoff: none open']),
+    bundle,
+    last,
+    `handoffs ${c.handoffs} · team finishers ${c.finishers} · bundles ${c.bundles} · assists ${c.assists} · rescues ${c.rescues}`,
+  ];
+  const prev = lab.coop.value;
+  const same =
+    prev.lines.join('|') === lines.join('|') &&
+    JSON.stringify(prev.invite) === JSON.stringify(invite);
+  if (!same) lab.coop.value = { lines, invite };
 }

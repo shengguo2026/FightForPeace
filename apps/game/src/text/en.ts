@@ -23,6 +23,10 @@ export const TEXT = {
   restrained: 'RESTRAINED · partner: {action:Interact} next to them',
   joinKeyboard: 'Player 2: press {action:Attack} on the split keyboard to join',
   paused: 'Paused. Press {action:Pause} to continue.',
+  pausedFocus: 'Paused: the game window lost focus. Press {action:Pause} to continue.',
+  teamInvite: 'Team Attack! Press {action:TeamAttack} to join in',
+  teamWaiting: 'Team Attack: waiting for your partner',
+  hintTeam: 'Team {action:TeamAttack}',
   controllerLost: 'Player {player} lost their controller.',
   controllerReconnect:
     'Reconnect it, or press the Attack button on another controller or keyboard to continue with that one.',
@@ -210,3 +214,33 @@ export const VERDICT_TEXT = [
   'not visible (off screen)',
   'boss share reserved',
 ] as const;
+
+/** M8 co-op event words for the Lab's Co-op panel (index = CoopEvent). */
+export const COOP_EVENT_TEXT: readonly string[] = [
+  'none yet',
+  'handoff opened',
+  'handoff claimed by the partner',
+  'handoff closed unclaimed',
+  'Team Attack invitation waiting',
+  'both pressed Team Attack together: merged',
+  'partner confirmed: team finisher starts',
+  'invitation ran out: nothing spent',
+  'confirmation refused: nothing spent',
+  'team finisher connected',
+  'grab assist connected',
+  'rescue: restraint released',
+  'rescue: partner interrupted the grab',
+  'Combined Hit Bundle',
+  'Team Attack not available',
+];
+
+/** Why a Team Attack was refused (index = TeamDenied). */
+export const TEAM_DENIED_TEXT: readonly string[] = [
+  '',
+  'no partner on stage',
+  'this pair has no team finisher',
+  'no target in a team state in range',
+  'not enough meter (both need it)',
+  'a hero is busy',
+  'partner out of range',
+];
