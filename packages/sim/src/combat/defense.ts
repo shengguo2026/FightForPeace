@@ -2,8 +2,9 @@ import { fx } from '../math/fixed';
 import { type Axis, DefEvent, type Fighter, MoveState, Protect, type World } from '../world/types';
 import { selectAction, startAction } from './actions';
 import { awardGuardMeter } from './meter';
+import { guardCostFor } from './held';
 import { NO_FRAME, REACTION, enter, enterProtection, interrupt, recoil } from './reactions';
-import { routeCode, segmentCount } from './roster';
+import { routeCodeOf, segmentCount } from './roster';
 import { type ActionDef, Dir } from './types';
 
 /**
@@ -114,10 +115,10 @@ export function logDefense(
   t.defEvent = event;
   t.defOffset = offset;
   t.defFrame = world.frame;
-  t.defAction = att && att.action >= 0 ? routeCode(att.team, att.hero, att.action) : -1;
+  t.defAction = att && att.action >= 0 ? routeCodeOf(att) : -1;
 }
 
-function addDefense(world: World, f: Fighter, amount: number): void {
+export function addDefense(world: World, f: Fighter, amount: number): void {
   f.defense = Math.min(DEFENSE.max, f.defense + amount);
   if (world.infiniteDefense) f.defense = DEFENSE.max;
 }
@@ -212,12 +213,14 @@ function exactBlock(
   t.vz = 0;
 }
 
-function normalGuard(world: World, att: Fighter, a: ActionDef, t: Fighter): void {
+/** A normal guard of `a` (chip damage, Defense cost, block-stun or Guard Crush). */
+export function normalGuard(world: World, att: Fighter, a: ActionDef, t: Fighter): void {
   const c = world.frame;
   t.health = Math.max(0, t.health - Math.trunc((a.damage * DEFENSE.chipPercent) / 100));
   // Simultaneous guarded contacts add their guard damage but crush only once.
   if (t.state === MoveState.GuardCrush && t.defFrame === c) return;
-  const cost = world.infiniteDefense ? 0 : a.guardCost;
+  // A held guard-modifier item scales the cost (campaign guardrail M6).
+  const cost = world.infiniteDefense ? 0 : guardCostFor(world, t, a.guardCost);
   if (cost > 0 && cost >= t.defense) {
     t.defense = 0;
     interrupt(t);

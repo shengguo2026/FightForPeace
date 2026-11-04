@@ -31,7 +31,9 @@ import {
   tryBreaker,
 } from '../combat/defense';
 import { REACTION, enter, inReaction, stepReaction } from '../combat/reactions';
-import { resumeHold, startGrabAttempt, stepHeroHold, tryEscape } from '../combat/grabs';
+import { resumeHold, startGrabAttempt, stepHeroHold, tryEscape, tryRescue } from '../combat/grabs';
+import { requestPickup, stepPickup, weaponInteract } from '../combat/items';
+import { weaponGate } from '../combat/held';
 import { loadoutAction } from '../combat/loadout';
 import { type ActionDef, Dir, Reject } from '../combat/types';
 import type { MovementProfile } from './profile';
@@ -172,6 +174,7 @@ function stepHeroFrame(world: World, f: Fighter, frameInput: FrameInput, p: Move
   }
   if (f.state === MoveState.Grabbed && guardPressed) tryEscape(world, f);
 
+  if (f.state === MoveState.Pickup && stepPickup(f)) return;
   if (stepDefenseState(world, f, input, guardPressed, p)) return;
   if (inReaction(f)) {
     if (f.state === MoveState.GetUp && f.stateFrame === 0) getUpRoll(f, input);
@@ -640,8 +643,15 @@ function startAttack(
   const loadoutPress = action === ActionBit.Special || action === ActionBit.Ultimate;
   f.attackFromDash = fromDash;
   if (action === ActionBit.Interact) {
-    // Directional Contextual Grab (or freeing a restrained partner).
+    // Interact priority: freeing a restrained partner, then a weapon (throw or discard the
+    // held one, or pick one up), then the Directional Contextual Grab.
     f.targetId = 0;
+    if (f.item !== 0) {
+      weaponInteract(world, f, input);
+      return;
+    }
+    if (input.moveX === 0 && input.moveZ === 0 && tryRescue(world, f)) return;
+    if (requestPickup(world, f)) return;
     startGrabAttempt(world, f, input);
     return;
   }
@@ -691,7 +701,15 @@ function startAttack(
   }
   const context = low ? 'dashLow' : fromDash ? 'dash' : 'neutral';
   const index = selectAction(f, context, low || fromDash ? Dir.Neutral : resolveDir(f, input));
-  if (index >= 0) startAction(f, index);
+  if (index < 0) return;
+  const gate = weaponGate(world, f, index);
+  if (gate !== Reject.None) {
+    f.verdictTo = index;
+    f.verdictReject = gate;
+    f.verdictFrame = frame(world);
+    return;
+  }
+  startAction(f, index);
 }
 
 /**
@@ -713,6 +731,8 @@ function startLoadoutMove(
     f.verdictFrame = frame(world);
   };
   if (index < 0) return verdict(Reject.EmptySlot);
+  const gate = weaponGate(world, f, index);
+  if (gate !== Reject.None) return verdict(gate);
   if (kind === 'ultimate') {
     if (!fullMeter(world, f)) return verdict(Reject.NoMeter);
     spendUltimate(world, f);

@@ -76,6 +76,9 @@ export const MoveState = {
   Grabbed: 19,
   /** A hero tied up by a `restraint` grab: waits for a partner rescue or the time-out. */
   Restrained: 20,
+  // --- M6 weapons ---
+  /** Picking up an item (claimed on the first frame). */
+  Pickup: 21,
 } as const;
 export type MoveState = (typeof MoveState)[keyof typeof MoveState];
 
@@ -231,6 +234,202 @@ export interface Fighter extends Body {
   grabEvent: number;
   grabOffset: number;
   grabFrame: number;
+
+  // --- M6 weapons and environment ----------------------------------------------------
+  /** Id of the held item (0 = empty hands). */
+  item: number;
+  /** Weapon whose armed kit is active (-1 = own kit); kept until a running weapon action ends. */
+  wkit: number;
+  /** The held weapon's integrity ran out: it breaks once the current action has resolved. */
+  breakPending: boolean;
+  /** Opponent the running action instance already clashed with (0 = none). */
+  clashWith: number;
+  /** Scenery the running action instance already struck. */
+  propHits: number[];
+  /** The latest hit was environment-eligible: an impact surface may slam this fighter. */
+  impactArmed: boolean;
+  /** No hazard contact before this frame (anti-trapping). */
+  hazardSafeUntil: number;
+  /** Last weapon event for the Lab (WeaponEvent), its detail and frame. */
+  weaponEvent: number;
+  weaponDetail: number;
+  weaponFrame: number;
+}
+
+/**
+ * Weapon events for the Lab. Numbers are encoded; never renumber. Details: Clash 0 = even,
+ * 1 = won, 2 = lost; Break 0 = after an action, 1 = on a thrown impact, 2 = in a hazard.
+ */
+export const WeaponEvent = {
+  None: 0,
+  Pickup: 1,
+  Throw: 2,
+  Break: 3,
+  /** This fighter's weapon was knocked out of its hands. */
+  Disarmed: 4,
+  /** This fighter disarmed someone. */
+  Disarm: 5,
+  Clash: 6,
+  /** Picked up its own disarmed weapon inside the reclaim window. */
+  Reclaim: 7,
+  /** Lost a same-frame pickup. */
+  Contested: 8,
+  /** Exact-blocked a thrown weapon aside. */
+  Deflect: 9,
+  /** Countered a thrown weapon back at its thrower. */
+  Return: 10,
+  /** Guarded a thrown weapon. */
+  Blocked: 11,
+  NoAmmo: 12,
+  Discard: 13,
+  /** Struck a thrown weapon aside with a projectileDeflect attack. */
+  StruckAside: 14,
+  /** Two-handed weapon: a Special or Ultimate is unavailable. */
+  HandsFull: 15,
+} as const;
+
+/** Item lifecycle states. Numbers are encoded; never renumber. */
+export const ItemState = {
+  /** A stage pickup (neutral, or reserved for its former holder). */
+  Ground: 0,
+  Held: 1,
+  /** Thrown, deflected, returned or dropped, until it lands. */
+  Flying: 2,
+  /** Landing safety correction: non-damaging and not collectible. */
+  Settling: 3,
+  /** Broken or consumed. */
+  Gone: 4,
+} as const;
+
+/** How an item is flying. Only Throw and Returned flights can hit. */
+export const Flight = { Throw: 0, Drop: 1, Deflected: 2, Returned: 3 } as const;
+
+/** A weapon or fragment on the stage (spec §11, F&D §7.1). All values fixed point. */
+export interface Item {
+  id: number;
+  /** Weapon registry index. */
+  def: number;
+  state: number;
+  x: number;
+  z: number;
+  y: number;
+  vx: number;
+  vy: number;
+  integrity: number;
+  /** Rounds left (finite ammunition belongs to the physical weapon). */
+  ammo: number;
+  holder: number;
+  /** Last fighter who held it (reclaim, Lab). */
+  lastHolder: number;
+  /** Flying: the fighter whose attack it is, and that attack's route code. */
+  owner: number;
+  code: number;
+  flight: number;
+  /** Its throw emptied its integrity: it breaks once the collision or landing resolved. */
+  breakOnImpact: boolean;
+  /** This flight came from a disarm: reserve it for the former holder when it rests. */
+  disarmed: boolean;
+  /** Fighters this flight already met. */
+  hitIds: number[];
+  /** Short Reclaim Priority: reserved for this fighter until the frame (0 = neutral). */
+  reserveFor: number;
+  reserveUntil: number;
+  /** Settling towards (settleX, settleZ) for settleLeft more frames. */
+  settleX: number;
+  settleZ: number;
+  settleLeft: number;
+  /** Stage-authored recovery anchor in the same combat region. */
+  anchorX: number;
+  anchorZ: number;
+}
+
+/** An impact surface (the mill pillar). Solid. */
+export interface Surface {
+  id: number;
+  x: number;
+  z: number;
+  hw: number;
+  hd: number;
+  h: number;
+  /** Presentation state: cracked after its first damaging impact (persistent). */
+  cracked: boolean;
+  impacts: number;
+}
+
+/** Breakable states (spec §11.2). Numbers are encoded; never renumber. */
+export const BreakState = { Intact: 0, Loosened: 1, Critical: 2, Broken: 3 } as const;
+
+/** A multi-state breakable (the stacked sluice boards). Solid until broken. */
+export interface Breakable {
+  id: number;
+  x: number;
+  z: number;
+  hw: number;
+  hd: number;
+  h: number;
+  /** Accumulated breakPower and the state thresholds (Loosened, Critical, Broken). */
+  power: number;
+  thresholds: readonly [number, number, number];
+  state: number;
+  /** Weapon index of its one interactive fragment, and whether it was spawned. */
+  fragment: number;
+  spawned: boolean;
+}
+
+/** Hazard phases. Numbers are encoded; never renumber. */
+export const HazardPhase = { Rest: 0, Warn: 1, Active: 2 } as const;
+
+/** An active hazard (the mill cog): an authored, telegraphed, guardable action. */
+export interface Hazard {
+  id: number;
+  x: number;
+  z: number;
+  hw: number;
+  hd: number;
+  h: number;
+  phase: number;
+  phaseFrame: number;
+  rest: number;
+  warn: number;
+  active: number;
+  damage: number;
+}
+
+/** Environment events for the Lab. Numbers are encoded; never renumber. */
+export const EnvEvent = {
+  None: 0,
+  /** Full environmental damage; detail: 1 = wall rebound, 2 = terminal slam. */
+  Impact: 1,
+  /** Contact after the allowance was spent, or without force or eligibility: separation only. */
+  Separation: 2,
+  /** A breakable took breakPower; detail = its new state. */
+  Break: 3,
+  /** A breakable broke and released its fragment (detail = fragment item id). */
+  Fragment: 4,
+  HazardHit: 5,
+  HazardGuard: 6,
+  /** An item could not rest where it landed and was corrected (detail 1 = to its anchor). */
+  Corrected: 7,
+} as const;
+
+/** The last environment event, for the Lab (deterministic event identity: kind + frame). */
+export interface EnvLog {
+  kind: number;
+  frame: number;
+  /** Fighter or item id involved, and the scenery id. */
+  target: number;
+  prop: number;
+  /** Speed at contact (fixed point), damage dealt, kind-specific detail. */
+  force: number;
+  damage: number;
+  detail: number;
+}
+
+export interface Environment {
+  surfaces: Surface[];
+  breakables: Breakable[];
+  hazards: Hazard[];
+  log: EnvLog;
 }
 
 /**
@@ -371,6 +570,8 @@ export interface ComboContext {
   route: number[];
   /** The defender used its one Combo Breaker against this combo. */
   breakerUsed: boolean;
+  /** The one full environmental damage event of this combo was used (spec §11.2). */
+  environmentImpactUsed: boolean;
 }
 
 /** Why a target entered protected recovery (for the Lab). Numbers are encoded. */
@@ -404,6 +605,8 @@ export interface TrainerSettings {
   interval: number;
   /** Walk into range of the nearest hero before attacking. */
   approach: boolean;
+  /** Weapon Dummy 1 fights with and reclaims (-1 = unarmed). */
+  arm: number;
 }
 
 export interface World {
@@ -427,4 +630,8 @@ export interface World {
   playerLoadout: number[][];
   /** Projectiles in flight, in ascending owner id. */
   projectiles: Projectile[];
+  /** Weapons and fragments, in ascending id. */
+  items: Item[];
+  nextItem: number;
+  environment: Environment;
 }

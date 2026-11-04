@@ -92,6 +92,10 @@ export function startAction(f: Fighter, index: number): void {
   f.reqLink = -1;
   f.reqFrame = 0;
   f.rewardIds = [];
+  f.clashWith = 0;
+  f.propHits = [];
+  // Armed kits can pass 32 actions: the shift wraps (mod 32). Aliased bits only meet own
+  // Attack-graph actions, which a melee weapon's core has replaced.
   f.chainUsed |= 1 << index;
   f.ghost = a.tags.includes('passThrough');
   if (a.category === 'aerial') {

@@ -13,6 +13,10 @@ import { HURT_HALF_D, HURT_HALF_W } from './hits';
 import { kitOf, totalFrames } from './roster';
 import type { ActionDef } from './types';
 import { stepEnemyHold } from './grabs';
+import { WEAPONS } from './armory';
+import { ITEM, isWeaponAction } from './held';
+import { pickupEligible, requestPickup, stepPickup } from './items';
+import { ItemState } from '../world/types';
 
 const NO_INPUT: FrameInput = { moveX: 0, moveZ: 0, pressed: 0, held: 0, dirPressed: 0 };
 
@@ -21,7 +25,7 @@ export const TRAINER_INTERVALS = [40, 70, 100] as const;
 
 /** Default training-enemy script: dummies stand still until the Lab arms them. */
 export function defaultTrainer(): World['trainer'] {
-  return { attackers: 0, pattern: -1, interval: 70, approach: true };
+  return { attackers: 0, pattern: -1, interval: 70, approach: true, arm: -1 };
 }
 
 /** Does this dummy attack under the current Lab settings? */
@@ -33,13 +37,70 @@ export function trainerArmed(world: World, f: Fighter): boolean {
   return first?.id === f.id;
 }
 
+const STANDING = new Set(['neutral', 'chain', 'forward', 'backward', 'low', 'weaponThrow']);
+
+/**
+ * The attacks the dummy cycles through: its own kit without selectOnly actions; armed with a
+ * weapon, that weapon's standing core actions (and, for a weapon that does not replace the
+ * Attack graph, its own attacks too).
+ */
+export function trainerCycle(f: Fighter): number[] {
+  const kit = kitOf(f);
+  if (!kit) return [];
+  const out: number[] = [];
+  const melee = f.wkit >= 0 && WEAPONS[f.wkit]!.melee;
+  kit.actions.forEach((a, i) => {
+    if (a.tags.includes('selectOnly')) return;
+    if (isWeaponAction(f, i)) {
+      if (STANDING.has(a.category)) out.push(i);
+    } else if (!melee) out.push(i);
+  });
+  return out;
+}
+
 /** The attack the dummy uses next: the chosen one, or the next one in the cycle. */
 export function nextAttack(world: World, f: Fighter): number {
   const kit = kitOf(f);
   if (!kit) return -1;
   const p = world.trainer.pattern;
-  if (p >= 0 && p < kit.actions.length) return p;
-  return f.aiStep % kit.actions.length;
+  if (p >= 0 && p < kit.actions.length && f.wkit < 0) return p;
+  const cycle = trainerCycle(f);
+  return cycle.length === 0 ? -1 : cycle[f.aiStep % cycle.length]!;
+}
+
+/** Thrown weapons attack from range. */
+const THROW_REACH = fx(640);
+
+/**
+ * Dummy 1 armed by the Lab walks back to its weapon (Short Reclaim Priority after a
+ * disarm, or a thrown Handwheel) and picks it up. Returns true while it is busy doing so.
+ */
+function reclaim(world: World, f: Fighter): boolean {
+  const arm = world.trainer.arm;
+  if (arm < 0 || f.item !== 0 || f.wkit >= 0 || !trainerArmed(world, f)) return false;
+  const first = world.bodies.find((b) => b.team === 'enemy');
+  if (first?.id !== f.id) return false;
+  let best = null;
+  let bestD = 0;
+  for (const item of world.items) {
+    if (item.def !== arm || item.state === ItemState.Held || item.state === ItemState.Gone) continue;
+    if (item.state === ItemState.Ground && !pickupEligible(world, f, item)) continue;
+    const d = Math.abs(item.x - f.x) + Math.abs(item.z - f.z);
+    if (best === null || d < bestD) {
+      best = item;
+      bestD = d;
+    }
+  }
+  if (!best) return false;
+  if (best.state !== ItemState.Ground) return true;
+  const dx = best.x - f.x;
+  const dz = best.z - f.z;
+  if (Math.abs(dx) <= ITEM.reachX - fx(10) && Math.abs(dz) <= ITEM.reachZ - fx(6)) {
+    requestPickup(world, f);
+    return true;
+  }
+  walk(f, Math.abs(dx) > ITEM.reachX - fx(20) ? sign(dx) : 0, Math.abs(dz) > ITEM.reachZ - fx(10) ? sign(dz) : 0);
+  return true;
 }
 
 /**
@@ -57,9 +118,11 @@ export function stepTrainer(world: World, f: Fighter): void {
     stepEnemyAction(f);
     return;
   }
+  if (f.state === MoveState.Pickup && stepPickup(f)) return;
   f.vx = 0;
   f.vz = 0;
   f.state = MoveState.Idle;
+  if (reclaim(world, f)) return;
   const target = nearestHero(world, f);
   const armed = trainerArmed(world, f);
   if (!target || (!armed && !world.dummiesChase)) return;
@@ -73,6 +136,7 @@ export function stepTrainer(world: World, f: Fighter): void {
     return;
   }
   const index = nextAttack(world, f);
+  if (index < 0) return;
   const a = kitOf(f)!.actions[index]!;
   if (dx !== 0) f.facing = dx > 0 ? 1 : -1;
   // Wait while the hero is down, protected or out of the fight: an attack could not connect.
@@ -107,6 +171,7 @@ export function stepTrainer(world: World, f: Fighter): void {
  * grab measures centre to centre (its reach), so the trainer closes in further for it.
  */
 export function reach(a: ActionDef): { x: number; z: number } {
+  if (a.category === 'weaponThrow') return { x: THROW_REACH, z: a.hitbox.depth + HURT_HALF_D };
   if (a.category === 'grab') return { x: a.hitbox.x + a.hitbox.w - fx(10), z: a.hitbox.depth };
   return {
     x: a.hitbox.x + a.hitbox.w + HURT_HALF_W - fx(10),

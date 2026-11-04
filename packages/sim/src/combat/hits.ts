@@ -20,11 +20,13 @@ import {
 import { defend, defenseSnapshots, logDefense } from './defense';
 import { awardHitMeter } from './meter';
 import { REACTION, enter, enterProtection, exhaustJuggle, interrupt } from './reactions';
-import { activeSegment, kitOf, routeCode, segmentCount } from './roster';
+import { activeSegment, kitOf, routeCodeOf, segmentCount } from './roster';
 import type { ActionDef } from './types';
 import { DefEvent, type Facing } from '../world/types';
 import { hitProjectiles } from './projectiles';
 import { hitBodies } from './grabs';
+import { hitItems, payContact, strikeItems, tryDisarm } from './items';
+import { impactEligible, strikeScenery } from './environment';
 
 /** Target hurtbox (M2 candidate): half width, half depth, standing and low heights. */
 export const HURT_HALF_W = fx(40);
@@ -170,7 +172,7 @@ export function sourceOf(f: Fighter): HitSource {
     vx: f.vx,
     contactIds: f.contactIds,
     contactScales: f.contactScales,
-    code: routeCode(f.team, f.hero, f.action),
+    code: routeCodeOf(f),
   };
 }
 
@@ -194,6 +196,8 @@ export function resolveHits(world: World): void {
       att.hitIds = [];
     }
     const box = activeHitbox(att)!;
+    strikeScenery(world, att, a, box);
+    strikeItems(world, att, a, box);
     for (const t of bodies) {
       // A counter or deflect may have stopped this action part-way through the targets.
       if (runningAction(att) !== a) break;
@@ -203,10 +207,15 @@ export function resolveHits(world: World): void {
       if (snap && defend(world, att, a, seg, t, snap)) {
         att.hitIds.push(t.id);
         if (att.contactAt < 0) att.contactAt = att.stateFrame + 1;
+        payContact(world, att, true);
+        // A crushDisarm move that breaks the guard also knocks the weapon away.
+        if (t.state === MoveState.GuardCrush && a.tags.includes('crushDisarm'))
+          tryDisarm(world, att, a, t);
         continue;
       }
       att.hitIds.push(t.id);
       if (att.contactAt < 0) att.contactAt = att.stateFrame + 1;
+      payContact(world, att, false);
       if (armored(t, a)) {
         // Armor: the strike lands (damage) but causes no reaction and opens no combo.
         t.health = Math.max(0, t.health - a.damage);
@@ -214,11 +223,13 @@ export function resolveHits(world: World): void {
         continue;
       }
       applyHit(world, sourceOf(att), a, seg, t);
+      tryDisarm(world, att, a, t);
       // Cinematic protection from the Ultimate's first valid contact until it ends.
       if (a.category === 'ultimate') att.cinematic = true;
     }
   }
   hitProjectiles(world, bodies);
+  hitItems(world, bodies, snaps);
   hitBodies(world, bodies);
 }
 
@@ -275,11 +286,17 @@ export function applyHit(world: World, s: HitSource, a: ActionDef, seg: number, 
 
   const last = seg === segmentCount(a) - 1;
   if (downed) groundReact(world, s, a, t, hitstun, last);
-  else react(world, s, a, t, hitstun, band, juggleOut, airborne, last);
+  else {
+    react(world, s, a, t, hitstun, band, juggleOut, airborne, last);
+    // Environment eligibility of this hit: an impact surface may now slam the target.
+    t.impactArmed = impactEligible(a);
+  }
 }
 
 function pushDir(att: HitSource, a: ActionDef, t: Fighter): number {
   const away = t.x === att.x ? att.facing : t.x > att.x ? 1 : -1;
+  // A hook pulls the target towards the attacker.
+  if (a.pull > 0) return -away;
   // A side-switching move pushes towards the attacker's facing, whatever side the target is on.
   return a.tags.includes('sideSwitch') || a.tags.includes('carry') ? att.facing : away;
 }
@@ -297,6 +314,7 @@ function react(
 ): void {
   const r = a.reaction;
   const dir = pushDir(att, a, t);
+  const push = a.pull > 0 ? a.pull : r.push;
   const trip = r.counterTrip && world.dummy.counterHit;
   const ctx = t.ctx;
   interrupt(t);
@@ -337,7 +355,7 @@ function react(
   if (airborne) {
     t.state = MoveState.Launched;
     t.vy = bandLift(r.airPop !== 0 ? r.airPop : Math.max(t.vy, r.lift), band);
-    t.vx = dir * r.push;
+    t.vx = dir * push;
     t.vz = 0;
     t.airRecover = false;
     t.heavyFall = band === 40;
@@ -347,7 +365,7 @@ function react(
   }
 
   const kind = trip ? 'trip' : r.kind;
-  t.vx = dir * r.push;
+  t.vx = dir * push;
   t.vz = 0;
   if (kind === 'launch' || kind === 'knockdown' || kind === 'trip') {
     t.state = MoveState.Launched;

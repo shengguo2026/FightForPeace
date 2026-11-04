@@ -183,20 +183,30 @@ function wallCheck(world: World, f: Fighter): boolean {
   f.bounce &= ~Bounce.Wall;
   const ctx = f.ctx;
   if (!ctx.open || ctx.wallBounceUsed || Math.abs(f.vx) < REACTION.wallMinSpeed) return false;
+  f.x = right ? maxX : minX;
+  rebound(world, f, right ? -1 : 1);
+  return true;
+}
+
+/**
+ * A wall rebound away in direction `away` (stage edge or impact surface): spends the
+ * combo's one wall-rebound quota and its juggle cost.
+ */
+export function rebound(world: World, f: Fighter, away: 1 | -1): void {
+  const ctx = f.ctx;
   ctx.wallBounceUsed = true;
+  f.bounce &= ~Bounce.Wall;
   const band = juggleBand(ctx.juggleBudget);
   ctx.juggleBudget = Math.max(0, ctx.juggleBudget - WALL_BOUNCE_COST);
-  f.x = right ? maxX : minX;
   f.state = MoveState.Launched;
   f.stateFrame = 0;
-  f.vx = right ? -REACTION.wallRebound : REACTION.wallRebound;
+  f.vx = away * REACTION.wallRebound;
   f.vz = 0;
   f.vy = bandLift(REACTION.bounceLift, band);
   f.y = Math.max(f.y, 1);
   f.heavyFall = band === 40;
   f.airRecover = false;
   if (ctx.juggleBudget === 0) exhaustJuggle(world, f);
-  return true;
 }
 
 /** The juggle budget ran out: the target drifts down in protected air recovery. */
@@ -241,6 +251,7 @@ export function toActionable(f: Fighter): false {
   f.heavyFall = false;
   f.bounce = 0;
   f.groundWindow = 0;
+  f.impactArmed = false;
   return false;
 }
 

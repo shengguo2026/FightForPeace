@@ -1,6 +1,6 @@
 import type { Fighter, Projectile, World } from '../world/types';
 import { applyHit, canHit, hurtbox, runningAction, type HitSource } from './hits';
-import { routeAction, routeCode } from './roster';
+import { routeAction, routeCodeOf } from './roster';
 
 /**
  * Projectiles (Current Crescent): an action with `projectile` data launches one on its
@@ -14,7 +14,7 @@ export function stepProjectiles(world: World): void {
     const hb = a.hitbox;
     const p: Projectile = {
       owner: f.id,
-      code: routeCode(f.team, f.hero, f.action),
+      code: routeCodeOf(f),
       x: f.x + f.facing * (hb.x + Math.trunc(hb.w / 2)),
       z: f.z,
       y: f.y + hb.y,

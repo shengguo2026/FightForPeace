@@ -13,6 +13,7 @@ export type PlaceholderFamily =
   | 'grab'
   | 'grabStrike'
   | 'throw'
+  | 'weaponThrow'
   | 'idle'
   | 'panel'
   | 'sound'
@@ -39,6 +40,7 @@ const POSE_FAMILIES: readonly PlaceholderFamily[] = [
   'grab',
   'grabStrike',
   'throw',
+  'weaponThrow',
 ];
 
 /** The placeholder family a logical asset ID falls into. */

@@ -171,7 +171,9 @@ describe('Defense data (M4)', () => {
       'bell-hammer',
       'collar-grab',
       'rope-snare',
+      'disarming-swipe',
     ]);
+    expect(tags['disarming-swipe']).toEqual(expect.arrayContaining(['selectOnly']));
     expect(tags['jab']).toContain('counterable');
     expect(tags['club']).toContain('guardPressure');
     expect(tags['thrust']).toEqual(expect.arrayContaining(['guardPiercing', 'uncounterable']));
