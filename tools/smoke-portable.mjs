@@ -76,7 +76,9 @@ async function main() {
   console.log(`Unzipped to "${app}"; starting on port ${port}`);
   const args = ['--no-open', '--port', String(port)];
   const child = windows
-    ? spawn('cmd.exe', ['/d', '/s', '/c', `"${join(app, 'start.bat')}" ${args.join(' ')}`], {
+    ? // With /s, cmd strips the outermost pair of quotes, so the quoted path (it has a space)
+      // goes inside one more pair, as Explorer does when the player double-clicks start.bat.
+      spawn('cmd.exe', ['/d', '/s', '/c', `""${join(app, 'start.bat')}" ${args.join(' ')}"`], {
         cwd: app,
         windowsVerbatimArguments: true,
         stdio: ['ignore', 'pipe', 'pipe'],
