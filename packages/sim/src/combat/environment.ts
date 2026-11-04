@@ -51,7 +51,15 @@ export const HAZARD = {
   lift: fx(6),
 } as const;
 
-const NO_LOG = { kind: EnvEvent.None, frame: 0, target: 0, prop: 0, force: 0, damage: 0, detail: 0 };
+const NO_LOG = {
+  kind: EnvEvent.None,
+  frame: 0,
+  target: 0,
+  prop: 0,
+  force: 0,
+  damage: 0,
+  detail: 0,
+};
 
 export function emptyEnvironment(): Environment {
   return { surfaces: [], breakables: [], hazards: [], log: { ...NO_LOG } };
@@ -127,7 +135,7 @@ function overlapsFoot(a: Footprint, b: Footprint): boolean {
 }
 
 /** Solid scenery a footprint at (x, z) overlaps, below height y: the pillar or intact boards. */
-export function solidAt(world: World, foot: Footprint, y = 0): Footprint & { h: number } | null {
+export function solidAt(world: World, foot: Footprint, y = 0): (Footprint & { h: number }) | null {
   const env = world.environment;
   for (const s of env.surfaces) if (y < s.h && overlapsFoot(foot, s)) return s;
   for (const b of env.breakables)
@@ -135,7 +143,10 @@ export function solidAt(world: World, foot: Footprint, y = 0): Footprint & { h: 
   return null;
 }
 
-export function hazardAt(world: World, foot: Footprint): World['environment']['hazards'][number] | null {
+export function hazardAt(
+  world: World,
+  foot: Footprint,
+): World['environment']['hazards'][number] | null {
   for (const h of world.environment.hazards) if (overlapsFoot(foot, h)) return h;
   return null;
 }
@@ -177,10 +188,16 @@ export function correctedRest(world: World, x: number, z: number): { x: number; 
 export function stepHazards(world: World): void {
   for (const h of world.environment.hazards) {
     h.phaseFrame += 1;
-    const len = h.phase === HazardPhase.Rest ? h.rest : h.phase === HazardPhase.Warn ? h.warn : h.active;
+    const len =
+      h.phase === HazardPhase.Rest ? h.rest : h.phase === HazardPhase.Warn ? h.warn : h.active;
     if (h.phaseFrame < len) continue;
     h.phaseFrame = 0;
-    h.phase = h.phase === HazardPhase.Rest ? HazardPhase.Warn : h.phase === HazardPhase.Warn ? HazardPhase.Active : HazardPhase.Rest;
+    h.phase =
+      h.phase === HazardPhase.Rest
+        ? HazardPhase.Warn
+        : h.phase === HazardPhase.Warn
+          ? HazardPhase.Active
+          : HazardPhase.Rest;
   }
 }
 
@@ -232,7 +249,9 @@ export function addBreakPower(world: World, id: number, power: number, by: numbe
 
 /** Is this hit environment-eligible (an impact surface may slam its target)? */
 export function impactEligible(a: ActionDef): boolean {
-  return a.tags.includes('impact') || a.tags.includes('wallBounce') || a.reaction.push >= IMPACT.minPush;
+  return (
+    a.tags.includes('impact') || a.tags.includes('wallBounce') || a.reaction.push >= IMPACT.minPush
+  );
 }
 
 const REACTING = new Set<number>([MoveState.Hitstun, MoveState.Launched]);
@@ -276,7 +295,10 @@ function impact(world: World, f: Fighter, s: World['environment']['surfaces'][nu
     return;
   }
   ctx.environmentImpactUsed = true;
-  const force = Math.min(IMPACT.forceCap, Math.trunc((speed - IMPACT.minSpeed) / 256) * IMPACT.forcePerPx);
+  const force = Math.min(
+    IMPACT.forceCap,
+    Math.trunc((speed - IMPACT.minSpeed) / 256) * IMPACT.forcePerPx,
+  );
   const raw = IMPACT.surfaceDamage + force;
   const dmg = Math.max(1, Math.trunc((raw * Math.max(DAMAGE_FLOOR, ctx.scale)) / 100));
   f.health = Math.max(0, f.health - dmg);
@@ -340,7 +362,9 @@ export function hazardHits(world: World): void {
         continue;
       }
       const ctx = t.ctx;
-      const dmg = ctx.open ? Math.max(1, Math.trunc((h.damage * Math.max(DAMAGE_FLOOR, ctx.scale)) / 100)) : h.damage;
+      const dmg = ctx.open
+        ? Math.max(1, Math.trunc((h.damage * Math.max(DAMAGE_FLOOR, ctx.scale)) / 100))
+        : h.damage;
       t.health = Math.max(0, t.health - dmg);
       if (ctx.open) {
         ctx.damage += dmg;
@@ -363,4 +387,3 @@ export function hazardHits(world: World): void {
     }
   }
 }
-

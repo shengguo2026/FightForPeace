@@ -134,7 +134,10 @@ describe('weapon lifecycle', () => {
     const item = itemOf(w, STAFF);
     h.x = item.x - fx(200);
     h.z = item.z;
-    run(w, Array.from({ length: 60 }, () => inp({ moveX: 1 })));
+    run(
+      w,
+      Array.from({ length: 60 }, () => inp({ moveX: 1 })),
+    );
     expect(item.state).toBe(ItemState.Ground);
     expect(h.item).toBe(0);
   });
@@ -341,7 +344,10 @@ describe('thrown-weapon responses', () => {
     }
     const w = lab();
     const { h, d, item } = throwAt(w, 400);
-    run(w, Array.from({ length: contact - 3 }, () => idle));
+    run(
+      w,
+      Array.from({ length: contact - 3 }, () => idle),
+    );
     run(w, [press('Guard', { held: 8 }), inp({ held: 8 }), inp({ held: 8 })]);
     expect(h.weaponEvent).toBe(WeaponEvent.Deflect);
     expect(h.defEvent).toBe(DefEvent.Exact);
@@ -352,7 +358,7 @@ describe('thrown-weapon responses', () => {
     expect(d.health).toBe(dhp);
   });
 
-  test('a counter returns a counterReturnable weapon as the hero\'s own attack', () => {
+  test("a counter returns a counterReturnable weapon as the hero's own attack", () => {
     const probe = lab();
     const p = throwAt(probe, 400);
     let contact = 0;
@@ -362,7 +368,10 @@ describe('thrown-weapon responses', () => {
     }
     const w = lab();
     const { h, d, item } = throwAt(w, 400);
-    run(w, Array.from({ length: contact - 3 }, () => idle));
+    run(
+      w,
+      Array.from({ length: contact - 3 }, () => idle),
+    );
     // Counter towards the thrower (Guard + direction chord, set directly here).
     h.state = MoveState.Counter;
     h.stateFrame = 0;
@@ -553,7 +562,10 @@ describe('the environmental slice', () => {
     h.facing = 1;
     const hp = h.health;
     until(w, () => cog.phase === HazardPhase.Active, 400, inp({ held: 8 }));
-    run(w, Array.from({ length: 4 }, () => inp({ held: 8 })));
+    run(
+      w,
+      Array.from({ length: 4 }, () => inp({ held: 8 })),
+    );
     expect(h.health).toBe(hp);
   });
 });

@@ -6,3 +6,4 @@ export * from './input/devices';
 export * from './input/layout';
 export * from './input/prompts';
 export * from './assets/registry';
+export * from './assets/sprites';

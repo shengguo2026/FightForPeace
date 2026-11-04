@@ -208,11 +208,7 @@ export interface HeroDef {
 export const Clash = { None: 0, Light: 1, Heavy: 2, Crushing: 3 } as const;
 
 export type WeaponClass =
-  | 'temporaryMelee'
-  | 'recoverableThrown'
-  | 'improvisedDebris'
-  | 'firearm'
-  | 'guardModifier';
+  'temporaryMelee' | 'recoverableThrown' | 'improvisedDebris' | 'firearm' | 'guardModifier';
 
 /**
  * A weapon (spec §11.1, F&D §7.1): Authored Weapon-Lifecycle Profile plus its Weapon Core.
@@ -257,7 +253,10 @@ export interface WeaponDef {
   /** Weapon Core actions, in the hero action schema. */
   actions: readonly ActionDef[];
   /** Hero-affinity overrides: each replaces the core action at index `replaces`. */
-  affinity: readonly { hero: string; actions: readonly { replaces: number; action: ActionDef }[] }[];
+  affinity: readonly {
+    hero: string;
+    actions: readonly { replaces: number; action: ActionDef }[];
+  }[];
 }
 
 /** Category-tuned cancel timing (frames): early buffer before contact, window after it. */

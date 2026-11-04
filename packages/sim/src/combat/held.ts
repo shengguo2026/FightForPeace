@@ -1,12 +1,5 @@
 import { fx } from '../math/fixed';
-import {
-  type Fighter,
-  Flight,
-  type Item,
-  ItemState,
-  MoveState,
-  type World,
-} from '../world/types';
+import { type Fighter, Flight, type Item, ItemState, MoveState, type World } from '../world/types';
 import { WEAPONS } from './armory';
 import { baseKit } from './roster';
 import { Reject, type WeaponDef } from './types';

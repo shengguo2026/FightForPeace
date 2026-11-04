@@ -25,7 +25,7 @@ Stop the server with `Ctrl+C`.
 
 If `node --version` shows something older than 24, install Node.js 24 LTS from nodejs.org. If `pnpm` is missing, run `corepack enable` once in an administrator PowerShell.
 
-## Controls (M5)
+## Controls (M6)
 
 Keys are physical positions, so they stay in the same place on QWERTZ and AZERTY keyboards. The screen always shows the character printed on your key (for example Jump is `Z` on a German keyboard, `Y` on a US one), and a gamepad shows its own buttons.
 
@@ -56,7 +56,13 @@ Guard (hold) blocks in the direction you face; Guard + Ultimate is the Combo Bre
 
 **Grab escape (M5).** The training enemy has two grabs: Collar Grab and Rope Snare. When it holds you, "GRABBED" shows over your hero; press Guard while "ESCAPE!" shows (an 11-frame window) to break free with no damage. You get one attempt per grab: pressing too early or too late fails and the throw lands. Rope Snare restrains you instead ("RESTRAINED" with a countdown): wait it out, or let Player 2 stand next to you and press Interact to free you. Player 2 can also break any enemy grab by hitting the grabber. F9 shows the hold, the escape window and every grab outcome in frames.
 
-**Training enemy.** The dummies use a training kit: Straight Jab (counterable), Overhead Club (guard pressure: drains Defense fast), Piercing Thrust (goes through a held guard: Exact Block it), Two-Step (two hits), Pummel Barrage (five hits, practise the Combo Breaker), Bell Hammer (unblockable: move away), Collar Grab and Rope Snare (grabs: practise the Grab escape). The attack's name and profile appear above the dummy when it starts. F2 sets which dummies attack, which attack (or cycle through all), how many frames between attacks (40 / 70 / 100) and whether they walk into range.
+**Weapons (M6).** The Lab is a working mill corner with two weapons on the floor: the Canal Workstaff (two-handed) and the Iron Gate Handwheel (one-handed). Walking over a weapon never takes it: press Interact (the Grab key) next to it to pick it up. With the staff, Attack and its directions use the staff's own moves (thrust, sweep, overhead, lunge, hook that pulls the target in, rising launch, low sweep, air swing, ground strike, dash strike); each founder has one affinity move on Forward + Attack (Mountain: Weir Brace, armored; River: Vault Kick, passes through and switches sides). Two hands on the staff lock your Specials and Ultimates. The Handwheel keeps your normal moves and Specials. Interact while holding throws the weapon; Down + Interact drops it at your feet. Weapons wear down with use (the bar and the word over your hero: Ready, Worn, Critical) and break after the move that empties them, never in the middle of it. A thrown weapon can be guarded, deflected with an Exact Block, struck aside by the staff's sweep, and a Handwheel can be sent back with a Counter. Some hits knock a weapon out of the holder's hands ("DISARMED"); the holder gets 45 frames, from the moment it lands, to take it back before anyone else may (a green ring under it). Two weapon swings that meet clash ("CLASH"): equal strength, both recoil; otherwise the stronger one goes through.
+
+**Scenery (M6).** The stone pillar on the right is an impact surface: a strong hit (the staff overhead, Weir Brace, a knockback) that drives a dummy into it deals one extra environmental impact per combo ("IMPACT"), then the dummy rebounds or drops. The sluice boards on the left break in stages (loosened, critical, broken) under weapon strikes and thrown weapons; when they break, one timber board falls out and can be picked up as a weapon. The mill cog at the bottom right is an active hazard: its floor zone glows amber as a warning, then red while it turns; it hits anyone standing there (heroes and enemies), a Guard facing it blocks it, and after a hit there is no second cog hit for two seconds. Weapons never land inside scenery: a landing spot inside the pillar or the boards moves to the nearest free spot.
+
+**Art (M6).** The founders, the training dummies (the Pressed Recruit), the two weapons and the mill scenery are now drawn with their real sprite sheets; moves without a sheet of their own use a shared pose. F3 still shows the boxes on top.
+
+**Training enemy.** The dummies use a training kit: Straight Jab (counterable), Overhead Club (guard pressure: drains Defense fast), Piercing Thrust (goes through a held guard: Exact Block it), Two-Step (two hits), Pummel Barrage (five hits, practise the Combo Breaker), Bell Hammer (unblockable: move away), Collar Grab and Rope Snare (grabs: practise the Grab escape), and Disarming Swipe (knocks a held weapon away; chosen in F2 only, never in the cycle). The attack's name and profile appear above the dummy when it starts. F2 sets which dummies attack, which attack (or cycle through all), how many frames between attacks (40 / 70 / 100) and whether they walk into range.
 
 **Joining and devices.** Player 1 plays alone on the keyboard or on any gamepad: the device you touch last takes over. Player 2 joins by pressing Num 4 (Attack) on the split keyboard, or Start on a second gamepad. Once two players are in, a newly plugged-in gamepad does not take over anybody. Unplugging a player's gamepad pauses the game until it is plugged back in, or until that player presses Attack on another device.
 
@@ -72,6 +78,7 @@ Guard (hold) blocks in the direction you face; Guard + Ultimate is the Combo Bre
 | F6 | Slow motion (a quarter speed; the simulation itself is unchanged) |
 | F8 | Defense panel: per player the Defense meter, guard state, counts (exact, counter, guard, early, late, hit, crush, breaker) and a log of the last defensive results with timing in frames; below it the training enemy's attacks with their frame data and profile |
 | F9 | Grab panel: per player the grab state (hold time left, Grab escape window, restraint countdown) and a log of grab outcomes (throws, escapes with their timing in frames, rescues) |
+| F10 | Weapons and scenery panel: what each hero holds (condition, integrity, ammunition) and a log of weapon events; every weapon on stage (where, who holds it, reclaim time); the pillar, the sluice boards and the cog; the last environment event in words. Buttons: Dummy 1's weapon, Reset weapons, Reset scenery, Dummy to pillar |
 | F7 | Academy recipes (spec §8.3) for each joined hero, ticked off step by step on the dummy you are hitting, with a "performed" count and a **Practise** button that puts your hero in front of Dummy 1 (and turns on counter-hit dummies when the recipe needs them) |
 
 The Lab also shows, per player, the hero, the current move and its phase, the last combo-link verdict (and the reason a press was rejected), the attack meter and the dash bridge; and for the last dummy hit: health, hits, damage, damage scale, hit-stun budget, meter-gain budget, juggle budget and lift band, wall rebound and ground bounce, dash bridge, knockdown tag, ground route (window frames, extension, finisher), recovery (protected, and why the combo ended) and the route of moves that connected. F2 adds hero selection, the Special and Ultimate loadout per player, infinite attack meter, infinite Defense meter, the training enemy settings, counter-hit dummies, health refill and "Dummy 1 to the wall".
@@ -108,9 +115,29 @@ The first `pnpm e2e` on a new machine needs the browsers: `pnpm --filter @ffp/ga
 | `packages/platform` | Input layer: keyboard (two binding sets for split keyboard), gamepads (standard mapping, dead zone, pad family), player-to-device assignment, layout-aware key labels and the `PromptResolver` that turns an abstract action into the key or button a player has to press. |
 | `apps/game` | Vite + Phaser + Preact client. It only renders snapshots of the simulation. Player-facing text lives in `src/text/` and uses `{action:…}` tokens, never key letters (checked by `tests/lint/prompt-text.test.ts`). |
 | `packages/data` | Hero action data: one YAML file per hero in `heroes/`, a TypeBox schema and a generator. `pnpm gen:heroes` validates the YAML and writes `packages/sim/src/combat/heroes.gen.ts` (committed; a test fails if it is out of date). A new hero is a new YAML file, not new code. |
+| `packages/data/weapons` | Weapon data: one YAML file per weapon (lifecycle numbers, throw responses, its moves and the founders' affinity moves), compiled by `pnpm gen:heroes` with the heroes. |
+| `apps/game/public/art`, `tools/art` | Imported sprite sheets (WebP, 3x2 cells of 384 px) and the importer. With the pictures repository checked out next to this one, `python3 tools/art/import_art.py ../pictures/FightForPeace` re-imports every sheet and rewrites `packages/platform/src/assets/manifest.json` (needs Pillow). |
 | `tests/replays` | Golden replays. Each records an input log and the expected final state hash. `scripts.ts` holds the input scripts; `RECORD=1 pnpm vitest run tests/replays/record.test.ts` re-records them. |
 
 When a change alters simulation results on purpose, bump `RULES_VERSION` in `packages/sim/src/replay.ts` and re-record the golden replays in the same commit (see above). A replay recorded under another rules version fails loudly instead of silently producing a different hash.
+
+## M6 test checklist
+
+Press F10 for the Weapons and scenery panel. Player 1 is the Mountain Guardian; keys below are the Player 1 keyboard (QWERTY letters).
+
+1. Look at the stage: both heroes, the dummies, the staff and the Handwheel on the floor, the sluice boards, the stone pillar and the cog are drawn with the real art. Walk left and right: your hero turns and walks with the walk cycle.
+2. Walk onto the staff: nothing happens. Stand next to it and press J: your hero picks it up (F10: "Canal Workstaff · Ready 120/120 · two-handed").
+3. Walk to Dummy 1 and press T, T, T: Lock-Pole Thrust, Millrace Sweep, Weirpost Drop. Press A + T near the dummy: Canal Hook pulls it towards you. Press U: nothing happens (the P1 panel says "both hands are on the weapon").
+4. Press D + T: Weir Brace. Switch to the River Scout (F2) and do the same: Vault Kick passes through the dummy.
+5. Keep hitting until the bar over your hero turns yellow (Worn), then red (Critical). When it empties, the staff breaks after that swing ("WEAPON BREAK"). F10 → Reset weapons puts it back.
+6. Stand next to the Handwheel and press J, then walk away from Dummy 1 and press J again: the wheel flies, hits the dummy once and lands as a pickup. Press U while holding it: your Special still works.
+7. Hold the staff, then press S + J: it drops at your feet.
+8. F10 → Dummy 1 weapon: Iron Gate Handwheel, and F2 → Attacking dummies: Dummy 1. It throws the wheel at you: hold G to guard it, press G just before it arrives for "DEFLECT", or D + G towards it just before it arrives to send it back ("RETURNED") into the dummy. The dummy walks back to pick its wheel up.
+9. F10 → Dummy 1 weapon: Canal Workstaff. Pick up the other staff and swing into its swing: "CLASH". F2 → Attack: Disarming Swipe, let it hit you while you hold a staff: "DISARMED"; the staff lands with a green ring and only you can take it back for 45 frames.
+10. Hit the sluice boards with staff swings: F10 shows loosened, critical, broken; a timber board falls out. Pick it up with J and swing it.
+11. F10 → Dummy to pillar, then D + T (Weir Brace) or T, T, T into the pillar: "IMPACT" and the damage, once per combo; the pillar shows a crack.
+12. Stand on the cog's floor zone: it glows amber, then red and hits you once, then leaves you alone for two seconds. Hold G facing it: it is blocked.
+13. Portable build: run `pnpm release`, unzip `release\FightForPeace-0.6.0.zip` somewhere else, double-click `start.bat` and repeat step 1.
 
 ## M5 test checklist
 

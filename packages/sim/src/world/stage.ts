@@ -54,5 +54,7 @@ export const LAB_LAYOUT: StageLayout = {
       fragment: 'timber-board',
     },
   ],
-  hazards: [{ x: 1450, z: 970, hw: 80, hd: 28, h: 170, rest: 150, warn: 45, active: 30, damage: 60 }],
+  hazards: [
+    { x: 1450, z: 970, hw: 80, hd: 28, h: 170, rest: 150, warn: 45, active: 30, damage: 60 },
+  ],
 };

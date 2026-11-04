@@ -112,6 +112,20 @@ export interface TrainerView {
   pattern: number;
   interval: number;
   approach: boolean;
+  /** Weapon index Dummy 1 fights with (-1 = unarmed). */
+  arm: number;
+}
+
+/** F10: weapons and the environmental slice, in words. */
+export interface WeaponPanelView {
+  players: {
+    slot: number;
+    holding: string;
+    log: { frame: number; text: string; good: boolean }[];
+  }[];
+  items: string[];
+  scenery: string[];
+  lastEvent: string;
 }
 
 export interface LabState {
@@ -146,6 +160,8 @@ export interface LabState {
   grab: Signal<GrabPlayerView[]>;
   /** Last loadout change refused, in words ('' when it was accepted). */
   equipNote: Signal<string>;
+  weaponOpen: Signal<boolean>;
+  weapons: Signal<WeaponPanelView>;
 }
 
 export function createLabState(visible: boolean): LabState {
@@ -176,10 +192,12 @@ export function createLabState(visible: boolean): LabState {
     defenseOpen: signal(true),
     defense: signal([]),
     infiniteDefense: signal(false),
-    trainer: signal({ attackers: 1, pattern: 0, interval: 70, approach: true }),
+    trainer: signal({ attackers: 1, pattern: 0, interval: 70, approach: true, arm: -1 }),
     grabOpen: signal(false),
     grab: signal([]),
     equipNote: signal(''),
+    weaponOpen: signal(false),
+    weapons: signal({ players: [], items: [], scenery: [], lastEvent: '' }),
   };
 }
 

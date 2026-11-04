@@ -23,9 +23,33 @@ export type ResolvedAsset =
   | { kind: 'approved'; id: string; url: string }
   | { kind: 'placeholder'; id: string; family: PlaceholderFamily; label: string };
 
+/** One cell's opaque bounds in sheet-cell pixels; `foot` is the lowest opaque row. */
+export interface CellBox {
+  x0: number;
+  y0: number;
+  x1: number;
+  foot: number;
+}
+
+/** A sprite sheet: a cols x rows grid of square cells (null = empty cell). */
+export interface SheetMeta {
+  cols: number;
+  rows: number;
+  cell: number;
+  /** Ground line in cell pixels: the median foot of the sheet's cells. */
+  ground: number;
+  cells: (CellBox | null)[];
+}
+
+export interface ManifestEntry {
+  url: string;
+  status?: 'candidate' | 'approved';
+  sheet?: SheetMeta;
+}
+
 export interface AssetManifest {
   version: number;
-  assets: Record<string, { url: string; status?: 'candidate' | 'approved' }>;
+  assets: Record<string, ManifestEntry>;
 }
 
 const POSE_FAMILIES: readonly PlaceholderFamily[] = [
@@ -69,5 +93,19 @@ export class AssetRegistry {
     if (entry && entry.status !== 'candidate') return { kind: 'approved', id, url: entry.url };
     const label = id.split('.').pop() ?? id;
     return { kind: 'placeholder', id, family: familyOf(id), label };
+  }
+
+  /** An approved sprite sheet, if the manifest has one for this id. */
+  sheet(id: string): (ManifestEntry & { sheet: SheetMeta }) | undefined {
+    const entry = this.manifest.assets[id];
+    if (!entry || entry.status === 'candidate' || !entry.sheet) return undefined;
+    return entry as ManifestEntry & { sheet: SheetMeta };
+  }
+
+  /** Every approved sprite sheet (for preloading). */
+  sheets(): { id: string; url: string; sheet: SheetMeta }[] {
+    return Object.entries(this.manifest.assets).flatMap(([id, e]) =>
+      e.sheet && e.status !== 'candidate' ? [{ id, url: e.url, sheet: e.sheet }] : [],
+    );
   }
 }

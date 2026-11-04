@@ -7,6 +7,7 @@ import {
   TRAINER_INTERVALS,
   type TrainerSettings,
   compatibleMoves,
+  WEAPONS,
 } from '@ffp/sim';
 import type { KeyboardP2Preset, LayoutName } from '@ffp/platform';
 import { LINK_TEXT, TEXT, moveInputText, profileText } from '../text/en';
@@ -19,6 +20,7 @@ import type {
   PromptStyle,
   RecipePlayerView,
   TargetView,
+  WeaponPanelView,
 } from './labState';
 
 export interface LabActions {
@@ -40,6 +42,11 @@ export interface LabActions {
   setTrainer(settings: Partial<TrainerSettings>): void;
   /** Puts a move (action id, or null to empty) into a Special or Ultimate slot. */
   equip(slot: number, kind: 'special' | 'ultimate', dir: number, action: string | null): void;
+  /** Dummy 1 fights with a weapon (index, -1 = unarmed). */
+  armDummy(weapon: number): void;
+  resetArmory(): void;
+  resetEnvironment(): void;
+  dummyToPillar(): void;
 }
 
 const panel = {
@@ -310,6 +317,87 @@ function LoadoutSettings({ state, actions }: { state: LabState; actions: LabActi
           {state.equipNote.value}
         </div>
       ) : null}
+    </div>
+  );
+}
+
+const DUMMY_WEAPONS = [
+  'unarmed',
+  ...WEAPONS.filter((w) => w.id !== 'timber-board').map((w) => w.name),
+];
+
+function Button(props: { label: string; onClick: () => void; testId: string }) {
+  return (
+    <button
+      data-testid={props.testId}
+      style={{ marginRight: '6px', marginTop: '4px' }}
+      onClick={(e) => {
+        (e.target as HTMLElement).blur();
+        props.onClick();
+      }}
+    >
+      {props.label}
+    </button>
+  );
+}
+
+/** F10: weapons (what each hero holds, the items on stage) and the environmental slice. */
+function WeaponPanel(props: { view: WeaponPanelView; state: LabState; actions: LabActions }) {
+  const { view, actions } = props;
+  const arm = props.state.trainer.value.arm;
+  const armName = arm < 0 ? 'unarmed' : (WEAPONS[arm]?.name ?? 'unarmed');
+  return (
+    <div style={{ ...panel, maxWidth: '460px', pointerEvents: 'auto' }} data-testid="lab-weapons">
+      <div>Weapons and scenery · F10 to close</div>
+      {view.players.map((p) => (
+        <div style={{ marginTop: '6px' }} data-testid={`weapon-p${p.slot + 1}`}>
+          <div
+            style={{ color: PLAYER_COLORS[p.slot] }}
+            data-testid={`weapon-holding-p${p.slot + 1}`}
+          >
+            P{p.slot + 1} · {p.holding}
+          </div>
+          <div data-testid={`weapon-log-p${p.slot + 1}`}>
+            {p.log.map((e, i) => (
+              <div style={{ color: e.good ? '#9be89b' : '#f0a0a0', opacity: i === 0 ? 1 : 0.7 }}>
+                {String(e.frame).padStart(6, ' ')} {e.text}
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+      <div style={{ marginTop: '6px' }} data-testid="weapon-items">
+        {view.items.length === 0 ? <div style={{ opacity: 0.7 }}>no weapons on stage</div> : null}
+        {view.items.map((t) => (
+          <div>{t}</div>
+        ))}
+      </div>
+      <div style={{ marginTop: '6px' }} data-testid="weapon-scenery">
+        {view.scenery.map((t) => (
+          <div>{t}</div>
+        ))}
+        <div style={{ opacity: 0.85 }} data-testid="weapon-env-event">
+          {view.lastEvent}
+        </div>
+      </div>
+      <Select
+        label="Dummy 1 weapon"
+        value={armName}
+        options={DUMMY_WEAPONS}
+        onChange={(v) =>
+          actions.armDummy(v === 'unarmed' ? -1 : WEAPONS.findIndex((w) => w.name === v))
+        }
+        testId="set-dummy-weapon"
+      />
+      <div>
+        <Button label="Reset weapons" onClick={actions.resetArmory} testId="reset-weapons" />
+        <Button label="Reset scenery" onClick={actions.resetEnvironment} testId="reset-scenery" />
+        <Button label="Dummy to pillar" onClick={actions.dummyToPillar} testId="dummy-to-pillar" />
+      </div>
+      <div style={{ marginTop: '6px', opacity: 0.85 }}>
+        Interact (Grab key) next to a weapon picks it up · Interact while holding throws it · Down +
+        Interact drops it. The staff replaces your Attack moves; the Handwheel keeps them.
+      </div>
     </div>
   );
 }
@@ -654,7 +742,9 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
             position: 'absolute',
             top: '8px',
             left: '8px',
+            right: '8px',
             display: 'flex',
+            flexWrap: 'wrap',
             gap: '8px',
             alignItems: 'flex-start',
             pointerEvents: 'none',
@@ -665,7 +755,7 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
             <div>Lab · F1 hide · F2 settings</div>
             <div>
               F3 hitboxes · F5 moves · F6 slow{state.slowMotion.value ? ' (on)' : ''} · F7 recipes ·
-              F8 defense · F9 grabs
+              F8 defense · F9 grabs · F10 weapons
             </div>
             <div>
               frame <span data-testid="lab-frame">{state.frame.value}</span>
@@ -692,6 +782,9 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
             <DefensePanel views={state.defense.value} trainer={state.trainer} />
           ) : null}
           {state.grabOpen.value ? <GrabPanel views={state.grab.value} /> : null}
+          {state.weaponOpen.value ? (
+            <WeaponPanel view={state.weapons.value} state={state} actions={actions} />
+          ) : null}
         </div>
       ) : null}
       <GrabCues players={players} grab={state.grab.value} />

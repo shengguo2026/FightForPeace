@@ -184,7 +184,11 @@ function itemBox(item: Item, a: ActionDef): Box {
 
 function boxesMeet(a: Box, b: Box): boolean {
   return (
-    a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1 && Math.abs(a.z - b.z) <= a.depth + b.depth
+    a.x0 < b.x1 &&
+    b.x0 < a.x1 &&
+    a.y0 < b.y1 &&
+    b.y0 < a.y1 &&
+    Math.abs(a.z - b.z) <= a.depth + b.depth
   );
 }
 
@@ -556,7 +560,12 @@ function defendItem(
 }
 
 /** Lab: puts a fresh weapon in a fighter's hands (replacing nothing it already holds). */
-export function armFighter(world: World, f: Fighter, weapon: number, spawn: (def: number) => Item): void {
+export function armFighter(
+  world: World,
+  f: Fighter,
+  weapon: number,
+  spawn: (def: number) => Item,
+): void {
   if (f.item !== 0) return;
   claim(world, f, spawn(weapon));
 }

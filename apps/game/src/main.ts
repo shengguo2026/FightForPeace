@@ -12,6 +12,7 @@ import {
   heldKeys,
   refreshDefense,
   refreshGrab,
+  refreshWeapons,
   refreshPlayers,
   refreshRecipes,
   refreshTarget,
@@ -40,6 +41,8 @@ new Phaser.Game({
     getSnapshot: () => session.snapshot(),
     showCollision: () => lab.showCollision.value,
     showLabels: () => lab.visible.value,
+    // The simulation starts once the art has loaded, so decoding sheets never stalls play.
+    onReady: () => requestAnimationFrame(tick),
   }),
 });
 
@@ -95,6 +98,13 @@ const actions: LabActions = {
     lab.equipNote.value = EQUIP_TEXT[result] ?? '';
     refreshGrab(session, lab);
   },
+  armDummy: (weapon) => {
+    lab.trainer.value = { ...lab.trainer.value, arm: weapon };
+    session.armDummy(weapon);
+  },
+  resetArmory: () => session.resetArmory(),
+  resetEnvironment: () => session.resetEnvironment(),
+  dummyToPillar: () => session.dummyToPillar(),
   practise: (slot, recipeId) => {
     const hero = heroOf(session.world, slot);
     const recipe = hero ? HEROES[hero.hero]?.recipes.find((r) => r.id === recipeId) : undefined;
@@ -118,6 +128,7 @@ installKeyboard(session, (code) => {
   if (code === 'F7') lab.recipesOpen.value = !lab.recipesOpen.value;
   if (code === 'F8') lab.defenseOpen.value = !lab.defenseOpen.value;
   if (code === 'F9') lab.grabOpen.value = !lab.grabOpen.value;
+  if (code === 'F10') lab.weaponOpen.value = !lab.weaponOpen.value;
 });
 
 if (devBuild) installDebugHook(session, lab);
@@ -145,6 +156,7 @@ function tick(now: number): void {
   refreshRecipes(session, lab);
   refreshDefense(session, lab);
   refreshGrab(session, lab);
+  refreshWeapons(session, lab);
   const held = heldKeys(session);
   if (held.join(' ') !== lab.heldKeys.value.join(' ')) lab.heldKeys.value = held;
 
@@ -156,4 +168,3 @@ function tick(now: number): void {
   }
   requestAnimationFrame(tick);
 }
-requestAnimationFrame(tick);

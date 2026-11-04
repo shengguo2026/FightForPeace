@@ -20,7 +20,11 @@ export const CLASH = {
 
 function meet(a: Box, b: Box): boolean {
   return (
-    a.x0 < b.x1 && b.x0 < a.x1 && a.y0 < b.y1 && b.y0 < a.y1 && Math.abs(a.z - b.z) <= a.depth + b.depth
+    a.x0 < b.x1 &&
+    b.x0 < a.x1 &&
+    a.y0 < b.y1 &&
+    b.y0 < a.y1 &&
+    Math.abs(a.z - b.z) <= a.depth + b.depth
   );
 }
 

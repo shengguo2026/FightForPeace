@@ -84,7 +84,8 @@ function reclaim(world: World, f: Fighter): boolean {
   let best = null;
   let bestD = 0;
   for (const item of world.items) {
-    if (item.def !== arm || item.state === ItemState.Held || item.state === ItemState.Gone) continue;
+    if (item.def !== arm || item.state === ItemState.Held || item.state === ItemState.Gone)
+      continue;
     if (item.state === ItemState.Ground && !pickupEligible(world, f, item)) continue;
     const d = Math.abs(item.x - f.x) + Math.abs(item.z - f.z);
     if (best === null || d < bestD) {
@@ -100,7 +101,11 @@ function reclaim(world: World, f: Fighter): boolean {
     requestPickup(world, f);
     return true;
   }
-  walk(f, Math.abs(dx) > ITEM.reachX - fx(20) ? sign(dx) : 0, Math.abs(dz) > ITEM.reachZ - fx(10) ? sign(dz) : 0);
+  walk(
+    f,
+    Math.abs(dx) > ITEM.reachX - fx(20) ? sign(dx) : 0,
+    Math.abs(dz) > ITEM.reachZ - fx(10) ? sign(dz) : 0,
+  );
   return true;
 }
 

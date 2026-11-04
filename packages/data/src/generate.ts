@@ -455,7 +455,6 @@ export function loadHero(
   return hero;
 }
 
-
 /** Compiles one action; `index` maps action ids to indices (links), `all` holds the targets. */
 function compileAction(
   a: ActionYaml,

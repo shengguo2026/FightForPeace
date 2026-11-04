@@ -25,6 +25,10 @@ import {
   recipeDone,
   recipeProgress,
   stunBand,
+  EnvEvent,
+  WEAPONS,
+  WeaponEvent,
+  conditionOf,
 } from '@ffp/sim';
 import {
   ACTION_NAMES,
@@ -44,6 +48,7 @@ import {
   type PlayerView,
   type RecipePlayerView,
   type TargetView,
+  type WeaponPanelView,
 } from './labState';
 
 function stateName(state: number, attackKind: number, action = -1): string {
@@ -574,3 +579,98 @@ export function refreshGrab(session: GameSession, lab: LabState): void {
 }
 
 let lastWindow = 0;
+
+const WEAPON_TEXT: Record<number, { text: string; good: boolean }> = {
+  [WeaponEvent.Pickup]: { text: 'picked up', good: true },
+  [WeaponEvent.Throw]: { text: 'threw it', good: true },
+  [WeaponEvent.Break]: { text: 'weapon broke', good: false },
+  [WeaponEvent.Disarmed]: { text: 'disarmed: reclaim it within 45 f of it landing', good: false },
+  [WeaponEvent.Disarm]: { text: 'disarmed the target', good: true },
+  [WeaponEvent.Clash]: { text: 'clash', good: true },
+  [WeaponEvent.Reclaim]: { text: 'reclaimed (Short Reclaim Priority)', good: true },
+  [WeaponEvent.Contested]: { text: 'pickup contested: the other fighter was closer', good: false },
+  [WeaponEvent.Deflect]: { text: 'exact block deflected the thrown weapon', good: true },
+  [WeaponEvent.Return]: { text: 'counter returned the thrown weapon', good: true },
+  [WeaponEvent.Blocked]: { text: 'guarded the thrown weapon', good: true },
+  [WeaponEvent.Discard]: { text: 'dropped it', good: true },
+  [WeaponEvent.StruckAside]: { text: 'struck the thrown weapon aside', good: true },
+};
+const ITEM_STATE = ['on the floor', 'held', 'flying', 'settling', 'gone'];
+const BREAK_STATE = ['intact', 'loosened', 'critical', 'broken'];
+const HAZARD_PHASE = ['at rest', 'WARNING', 'ACTIVE'];
+const CONDITION = ['Ready', 'Worn', 'Critical'];
+const weaponLogs = new Map<number, { frame: number; text: string; good: boolean }[]>();
+const seenWeapon = new Map<number, string>();
+
+function envText(world: GameSession['world']): string {
+  const l = world.environment.log;
+  switch (l.kind) {
+    case EnvEvent.Impact:
+      return `frame ${l.frame}: IMPACT on the pillar, ${l.damage} damage (${l.detail === 1 ? 'wall rebound' : 'terminal slam'}); one per combo`;
+    case EnvEvent.Separation:
+      return `frame ${l.frame}: pillar contact, separation only (allowance spent, too slow or not eligible)`;
+    case EnvEvent.Break:
+      return `frame ${l.frame}: boards took ${l.damage} break power → ${BREAK_STATE[l.detail]}`;
+    case EnvEvent.Fragment:
+      return `frame ${l.frame}: a timber board fell out (a usable weapon)`;
+    case EnvEvent.Corrected:
+      return `frame ${l.frame}: landing corrected to ${l.detail === 1 ? 'its spawn spot' : 'the nearest legal spot'}`;
+    case EnvEvent.HazardHit:
+      return `frame ${l.frame}: the cog hit for ${l.damage}; 120 f hazard safety`;
+    case EnvEvent.HazardGuard:
+      return `frame ${l.frame}: guarded the cog`;
+    default:
+      return 'no environment event yet';
+  }
+}
+
+/** F10: what each hero holds, every item on stage and the scenery's state. */
+export function refreshWeapons(session: GameSession, lab: LabState): void {
+  if (!lab.weaponOpen.value) return;
+  const world = session.world;
+  const players: WeaponPanelView['players'] = [];
+  for (const slot of [0, 1]) {
+    const f = heroOf(world, slot);
+    if (!f) continue;
+    const item = world.items.find((i) => i.id === f.item);
+    const def = item ? WEAPONS[item.def] : undefined;
+    const holding =
+      item && def
+        ? `${def.name} · ${CONDITION[conditionOf(def, item.integrity)]} ${item.integrity}/${def.integrity.max}${def.ammo > 0 ? ` · ammo ${item.ammo}/${def.ammo}` : ''}${def.hands === 2 ? ' · two-handed: Specials and Ultimates locked' : ''}`
+        : 'empty hands · Interact next to a weapon picks it up';
+    let log = weaponLogs.get(slot) ?? [];
+    const key = `${f.weaponEvent}/${f.weaponFrame}`;
+    const t = WEAPON_TEXT[f.weaponEvent];
+    if (t && seenWeapon.get(slot) !== key) {
+      seenWeapon.set(slot, key);
+      log = [{ frame: f.weaponFrame, ...t }, ...log].slice(0, 8);
+    }
+    weaponLogs.set(slot, log);
+    players.push({ slot, holding, log });
+  }
+  const items = world.items.map((i) => {
+    const def = WEAPONS[i.def]!;
+    const who = i.holder
+      ? ` by ${i.holder < 100 ? `P${i.holder}` : `Dummy ${i.holder - 100}`}`
+      : '';
+    const reserved =
+      i.reserveFor && world.frame < i.reserveUntil
+        ? ` · reserved for ${i.reserveFor < 100 ? `P${i.reserveFor}` : `Dummy ${i.reserveFor - 100}`} ${i.reserveUntil - world.frame} f`
+        : '';
+    return `${def.name}: ${ITEM_STATE[i.state]}${who} · ${i.integrity}/${def.integrity.max}${reserved}`;
+  });
+  const env = world.environment;
+  const scenery = [
+    ...env.surfaces.map(
+      (s) => `Stone pillar: ${s.cracked ? 'cracked' : 'intact'} · ${s.impacts} impacts`,
+    ),
+    ...env.breakables.map(
+      (b) => `Sluice boards: ${BREAK_STATE[b.state]} · ${b.power}/${b.thresholds[2]} break power`,
+    ),
+    ...env.hazards.map((h) => {
+      const left = (h.phase === 0 ? h.rest : h.phase === 1 ? h.warn : h.active) - h.phaseFrame;
+      return `Mill cog: ${HAZARD_PHASE[h.phase]} · ${left} f · ${h.damage} damage`;
+    }),
+  ];
+  lab.weapons.value = { players, items, scenery, lastEvent: envText(world) };
+}

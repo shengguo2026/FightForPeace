@@ -14,6 +14,11 @@ import {
   escapeOpen,
   hashWorld,
   type Projectile,
+  type Item,
+  type Environment,
+  armDummy,
+  resetArmory,
+  resetEnvironment,
   setFacingMode,
   setHero,
   step,
@@ -43,6 +48,10 @@ export interface RenderSnapshot {
   escapeOpen: ReadonlySet<number>;
   /** Simulation frame of `current`. */
   frame: number;
+  /** Weapons and fragments (current state). */
+  items: readonly Item[];
+  /** Scenery: the pillar, the sluice boards and the cog (current state). */
+  environment: Environment;
 }
 
 export interface FrameReport {
@@ -71,7 +80,13 @@ export class GameSession {
   private alpha = 0;
 
   constructor(seed: number, trainer: Partial<TrainerSettings> = {}) {
-    this.world = createWorld(seed, { dummies: LAB_DUMMIES, trainer });
+    // M6: the Lab is the mill corner, with its two weapons and its scenery.
+    this.world = createWorld(seed, {
+      dummies: LAB_DUMMIES,
+      trainer,
+      armory: true,
+      environment: true,
+    });
     this.previous = cloneFighters(this.world.bodies);
   }
 
@@ -109,6 +124,8 @@ export class GameSession {
       projectiles: this.world.projectiles,
       escapeOpen: open,
       frame: this.world.frame,
+      items: this.world.items,
+      environment: this.world.environment,
     };
   }
 
@@ -141,6 +158,32 @@ export class GameSession {
     this.placeHero(slot, d, recipe.family === 'ground' ? 160 : 80);
     if (recipe.counterHit) this.world.dummy.counterHit = true;
     return this.world.dummy.counterHit;
+  }
+
+  /** Lab: Dummy 1 fights with a weapon (index, -1 = unarmed) and reclaims it. */
+  armDummy(weapon: number): void {
+    armDummy(this.world, weapon);
+  }
+
+  /** Lab: puts the stage's weapons back on their spots (and re-arms Dummy 1). */
+  resetArmory(): void {
+    resetArmory(this.world);
+  }
+
+  /** Lab: restores the pillar, the sluice boards and the cog. */
+  resetEnvironment(): void {
+    resetEnvironment(this.world);
+  }
+
+  /** Lab: Dummy 1 just in front of the stone pillar, Player 1 in front of the dummy. */
+  dummyToPillar(): void {
+    const d = this.world.bodies.find((b) => b.team === 'enemy');
+    const pillar = this.world.environment.surfaces[0];
+    if (!d || !pillar) return;
+    resetBody(d);
+    d.x = pillar.x - pillar.hw - fx(70);
+    d.z = pillar.z;
+    this.placeHero(0, d, 110);
   }
 
   private placeHero(slot: number, d: Fighter, gap: number): void {
@@ -185,6 +228,7 @@ function cloneFighters(bodies: readonly Fighter[]): Fighter[] {
     contactIds: [...b.contactIds],
     contactScales: [...b.contactScales],
     hitIds: [...b.hitIds],
+    propHits: [...b.propHits],
     rewardIds: [...b.rewardIds],
     loadout: [...b.loadout],
     ctx: { ...b.ctx, route: [...b.ctx.route] },

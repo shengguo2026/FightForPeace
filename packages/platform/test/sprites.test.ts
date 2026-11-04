@@ -1,0 +1,126 @@
+import {
+  ENEMIES,
+  type Fighter,
+  HEROES,
+  ItemState,
+  MoveState,
+  WEAPONS,
+  claim,
+  createWorld,
+  heroOf,
+  kitOf,
+  spawnItem,
+  startAction,
+  totalFrames,
+  weaponIndex,
+} from '@ffp/sim';
+import { AssetRegistry } from '../src/assets/registry';
+import { SpritePicker } from '../src/assets/sprites';
+
+const reg = new AssetRegistry();
+const pick = new SpritePicker(reg);
+
+function hero(id: string): Fighter {
+  const w = createWorld(1, { heroes: [id, 'river'] });
+  return heroOf(w, 0)!;
+}
+
+/** The picked cell exists in the sheet and is not empty. */
+function expectDrawable(f: Fighter, frame = 0): void {
+  const s = pick.fighter(f, frame);
+  expect(s, `state ${f.state} action ${f.action}`).not.toBeNull();
+  const meta = reg.sheet(s!.sheet)!.sheet;
+  expect(meta.cells[s!.cell], `${s!.sheet} cell ${s!.cell}`).toBeTruthy();
+}
+
+test('Stage 1 founder, dummy, weapon and prop sheets are in the manifest', () => {
+  const ids = reg.sheets().map((s) => s.id);
+  for (const h of ['mountain', 'river'])
+    for (const k of [
+      'idle',
+      'walk',
+      'jump',
+      'hurt',
+      'knockdown',
+      'guard',
+      'staff-a',
+      'staff-b',
+      'handwheel',
+    ])
+      expect(ids).toContain(`hero.${h}.sheet.${k}`);
+  for (const k of ['idle-walk', 'attack', 'react'])
+    expect(ids).toContain(`enemy.trainer.sheet.${k}`);
+  for (const p of ['workstaff', 'handwheel', 'sluiceboards', 'impact-hazard'])
+    expect(ids).toContain(`prop.${p}`);
+});
+
+test('every sheet is a 3x2 grid of 384 px cells', () => {
+  for (const s of reg.sheets())
+    expect([s.sheet.cols, s.sheet.rows, s.sheet.cell]).toEqual([3, 2, 384]);
+});
+
+test('character sheets share one ground line (aerial sheets are drawn in the air)', () => {
+  for (const s of reg.sheets()) {
+    if (s.id.startsWith('prop.') || s.id.includes('.pose.aerial.')) continue;
+    expect(s.sheet.ground, s.id).toBeGreaterThan(320);
+    expect(s.sheet.ground, s.id).toBeLessThan(370);
+  }
+});
+
+test('every movement and reaction state of both founders has a drawable pose', () => {
+  for (const h of HEROES) {
+    const f = hero(h.id);
+    for (const state of Object.values(MoveState)) {
+      f.state = state;
+      f.stateFrame = 0;
+      f.action = -1;
+      f.stun = 20;
+      for (const frame of [0, 7, 31, 59]) expectDrawable(f, frame);
+    }
+  }
+});
+
+test('every action of both founders, with and without a weapon, is drawable in every phase', () => {
+  for (const h of HEROES) {
+    for (const weapon of [-1, ...WEAPONS.map((_, i) => i)]) {
+      const w = createWorld(1, { heroes: [h.id, 'river'] });
+      const f = heroOf(w, 0)!;
+      if (weapon >= 0) claim(w, f, spawnItem(w, weapon, f.x, f.z));
+      const kit = kitOf(f)!;
+      kit.actions.forEach((a, i) => {
+        startAction(f, i);
+        for (let n = 0; n < totalFrames(a); n += 1) {
+          f.stateFrame = n;
+          expectDrawable(f);
+        }
+      });
+    }
+  }
+});
+
+test('the training dummy uses the recruit sheets', () => {
+  const w = createWorld(1, { dummies: 1 });
+  const d = w.bodies.find((b) => b.team === 'enemy')!;
+  expect(ENEMIES[d.hero]!.id).toBe('trainer');
+  expect(pick.fighter(d, 0)!.sheet).toBe('enemy.trainer.sheet.idle-walk');
+  for (const state of Object.values(MoveState)) {
+    d.state = state;
+    d.action = state === MoveState.Attack ? 0 : -1;
+    expectDrawable(d);
+  }
+});
+
+test('an armed founder stands with the staff; loose weapons show their condition', () => {
+  const w = createWorld(1);
+  const f = heroOf(w, 0)!;
+  const staff = spawnItem(w, weaponIndex('workstaff'), f.x, f.z);
+  expect(pick.item(staff, 0)).toEqual({ sheet: 'prop.workstaff', cell: 0 });
+  staff.integrity = 20;
+  expect(pick.item(staff, 0)!.cell).toBe(3);
+  claim(w, f, staff);
+  expect(pick.item(staff, 0)).toBeNull();
+  expect(pick.fighter(f, 0)).toEqual({ sheet: 'hero.mountain.sheet.staff-a', cell: 0 });
+  const wheel = spawnItem(w, weaponIndex('handwheel'), f.x, f.z);
+  wheel.state = ItemState.Flying;
+  expect([1, 2, 3]).toContain(pick.item(wheel, 5)!.cell);
+});

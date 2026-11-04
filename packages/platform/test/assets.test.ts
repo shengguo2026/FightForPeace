@@ -1,13 +1,13 @@
 import { HEROES } from '@ffp/sim';
 import { AssetRegistry, familyOf } from '../src/assets/registry';
 
-test('every hero action resolves to a placeholder of its own category (Review Focus 6)', () => {
+test('every hero action resolves to its approved sheet or a placeholder of its own category', () => {
   const reg = new AssetRegistry();
   for (const hero of HEROES) {
     for (const a of hero.actions) {
       const r = reg.resolve(a.pose);
-      expect(r.kind).toBe('placeholder');
       if (r.kind === 'placeholder') expect(r.family).toBe(a.category);
+      else expect(reg.sheet(a.pose)?.url).toMatch(/^art\/.+\.webp$/);
     }
   }
 });
