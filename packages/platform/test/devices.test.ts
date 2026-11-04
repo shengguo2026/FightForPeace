@@ -138,6 +138,15 @@ describe('focus and visibility pause (M8)', () => {
     expect(h.paused).toBe(true); // Attack does not resume either
   });
 
+  test('with the focus pause turned off, losing focus only releases held keys', () => {
+    const h = hub();
+    h.pauseOnFocusLoss = false;
+    h.keyboardP1.keyDown('KeyD');
+    h.loseFocus();
+    expect(h.paused).toBe(false);
+    expect(frame(h)[0]!.moveX).toBe(0);
+  });
+
   test('Pause on an assigned device resumes from neutral input, without toggling a user pause', () => {
     const h = hub();
     h.keyboardP1.keyDown('KeyD');

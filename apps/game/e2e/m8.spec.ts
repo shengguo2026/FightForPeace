@@ -80,6 +80,7 @@ test('an unanswered invitation shows the partner’s prompt, runs out and spends
 
 test('losing window focus pauses with a message; Pause resumes', async ({ page }, testInfo) => {
   await ready(page);
+  await page.evaluate(() => window.__ffp!.pauseOnFocusLoss(true));
   await page.evaluate(() => window.dispatchEvent(new Event('blur')));
   await page.waitForFunction(() => window.__ffp!.paused());
   await expect(page.getByTestId('pause-focus')).toContainText('lost focus');

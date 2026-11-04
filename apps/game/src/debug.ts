@@ -172,6 +172,7 @@ export function installDebugHook(
     },
     quality: () => ({ setting: quality.setting, level: quality.level }),
     focusPaused: () => session.devices.focusPaused,
+    pauseOnFocusLoss: (on) => (session.devices.pauseOnFocusLoss = on),
   };
 }
 

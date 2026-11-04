@@ -96,6 +96,8 @@ export interface FfpDebugHook {
   /** M8 Auto Quality: setting and the level being drawn. */
   quality(): { setting: string; level: string };
   focusPaused(): boolean;
+  /** M8: e2e builds start with the focus pause off (headless focus noise); this sets it. */
+  pauseOnFocusLoss(on: boolean): void;
 }
 
 export interface DebugCoop {

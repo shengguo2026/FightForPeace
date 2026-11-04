@@ -28,6 +28,9 @@ const devBuild = import.meta.env.DEV || import.meta.env.MODE === 'e2e';
 const lab = createLabState(true);
 if (import.meta.env.MODE === 'e2e') lab.trainer.value = { ...lab.trainer.value, attackers: 0 };
 const session = new GameSession(1, lab.trainer.value);
+// Browsers driven by automated tests send focus events of their own; the M8 focus test
+// turns the focus pause back on. Players' browsers never set navigator.webdriver.
+if (devBuild && navigator.webdriver) session.devices.pauseOnFocusLoss = false;
 // M8 Fixed Simulation with Independent Adaptive Presentation: only drawing adapts.
 const quality = new QualityGovernor();
 

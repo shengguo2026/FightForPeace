@@ -52,6 +52,12 @@ export class DeviceHub {
    * Pause on an assigned device; coming back to the tab never restarts combat by itself.
    */
   focusPaused = false;
+  /**
+   * Whether losing focus pauses (it always releases held inputs). Automated browser tests
+   * turn it off, because headless browsers send focus events of their own; the M8 test
+   * turns it back on.
+   */
+  pauseOnFocusLoss = true;
   private padBindings: Bindings;
 
   constructor(opts: DeviceHubOptions) {
@@ -70,7 +76,7 @@ export class DeviceHub {
 
   /** The window lost focus or became hidden: pause and release every held input. */
   loseFocus(): void {
-    this.focusPaused = true;
+    if (this.pauseOnFocusLoss) this.focusPaused = true;
     this.keyboardP1.blur();
     this.keyboardP2.blur();
     for (const pad of this.pads.values()) pad.sample();
