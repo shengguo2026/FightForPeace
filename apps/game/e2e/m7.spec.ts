@@ -11,6 +11,8 @@ test('the arena panel starts a trial on a Stage 1 backdrop, and End returns to t
   page,
 }, testInfo) => {
   await ready(page);
+  // M9 lists the Stage 1 journey first; pick the first trial.
+  await page.getByTestId('arena-pick').selectOption('Trial: Pressed Recruits');
   await page.getByTestId('arena-start').click();
   await page.waitForFunction(() => (window.__ffp!.encounter()?.enemies.length ?? 0) > 0);
   const enc = await page.evaluate(() => window.__ffp!.encounter()!);

@@ -9,6 +9,7 @@ import {
   compatibleMoves,
   WEAPONS,
   arenaNames,
+  stageNames,
   difficultyNames,
 } from '@ffp/sim';
 import type { KeyboardP2Preset, LayoutName, QualitySetting } from '@ffp/platform';
@@ -51,7 +52,7 @@ export interface LabActions {
   dummyToPillar(): void;
   /** M7: starts (or restarts) the picked arena; null goes back to the Lab. */
   startArena(arena: string | null): void;
-  pickArena(pick: Partial<{ arena: string; difficulty: string }>): void;
+  pickArena(pick: Partial<{ arena: string; difficulty: string; beat: number }>): void;
   /** M8 Auto Quality: auto, or a fixed presentation level. */
   setQuality(setting: QualitySetting): void;
 }
@@ -352,11 +353,23 @@ function Button(props: { label: string; onClick: () => void; testId: string }) {
 /** M7 arena mode: pick an arena and a difficulty, start, restart, and the director's numbers. */
 function ArenaPanel({ state, actions }: { state: LabState; actions: LabActions }) {
   const pick = state.arenaPick.value;
-  const arenas = arenaNames();
+  // M9: the stage journeys come first (all five difficulties), then the M7 arenas.
+  const stages = stageNames();
+  const arenas = [
+    ...stages.map((s, i) => ({
+      id: s.id,
+      name: `Stage ${i + 1}: ${s.name} (full journey)`,
+      minDifficulty: 0,
+      beats: s.beats,
+    })),
+    ...arenaNames().map((a) => ({ ...a, beats: [] as string[] })),
+  ];
   const diffs = difficultyNames();
   const arena = arenas.find((a) => a.id === pick.arena) ?? arenas[0]!;
   const diff = diffs.find((d) => d.id === pick.difficulty) ?? diffs[1]!;
-  const allowed = diffs.filter((_, i) => i >= arena.minDifficulty && i <= 2);
+  const isStage = arena.beats.length > 0;
+  const allowed = diffs.filter((_, i) => i >= arena.minDifficulty && (isStage || i <= 2));
+  const beatName = (b: string, i: number) => `${i + 1}. ${b}`;
   const view = state.arena.value;
   const button = (label: string, testId: string, run: () => void) => (
     <button
@@ -372,7 +385,7 @@ function ArenaPanel({ state, actions }: { state: LabState; actions: LabActions }
   );
   return (
     <div style={{ ...panel, maxWidth: '420px', pointerEvents: 'auto' }} data-testid="lab-arena">
-      <div>Arena · enemies and the Sluice Commander</div>
+      <div>Stage and arenas · Home restarts · End back to the Lab</div>
       <Select
         label="Arena"
         value={arena.name}
@@ -380,9 +393,16 @@ function ArenaPanel({ state, actions }: { state: LabState; actions: LabActions }
         onChange={(name) => {
           const a = arenas.find((x) => x.name === name)!;
           const d = diffs.findIndex((x) => x.id === pick.difficulty);
+          const tooHard = a.beats.length === 0 && d > 2;
           actions.pickArena({
             arena: a.id,
-            difficulty: d < a.minDifficulty ? diffs[a.minDifficulty]!.id : pick.difficulty,
+            difficulty:
+              d < a.minDifficulty
+                ? diffs[a.minDifficulty]!.id
+                : tooHard
+                  ? diffs[2]!.id
+                  : pick.difficulty,
+            beat: 0,
           });
         }}
         testId="arena-pick"
@@ -396,6 +416,17 @@ function ArenaPanel({ state, actions }: { state: LabState; actions: LabActions }
         }
         testId="arena-difficulty"
       />
+      {isStage ? (
+        <Select
+          label="Start at beat"
+          value={beatName(arena.beats[pick.beat] ?? arena.beats[0]!, pick.beat)}
+          options={arena.beats.map(beatName)}
+          onChange={(name) =>
+            actions.pickArena({ beat: Math.max(0, arena.beats.map(beatName).indexOf(name)) })
+          }
+          testId="arena-beat"
+        />
+      ) : null}
       <div style={{ margin: '4px 0' }}>
         {button(view.running ? 'Restart' : 'Start', 'arena-start', () =>
           actions.startArena(pick.arena),

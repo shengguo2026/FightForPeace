@@ -86,7 +86,15 @@ export interface FfpDebugHook {
   armDummy(weapon: string | null): void;
   dummyToPillar(): void;
   /** M7: starts an arena at a difficulty (ids), or the Lab again (null). */
-  startArena(arena: string | null, difficulty?: string): void;
+  startArena(arena: string | null, difficulty?: string, beat?: number): void;
+  /** M9 stage run: beat, phase, locks, continues, workers, evidence and counters. */
+  run(): DebugRun | null;
+  /** M9: moves the heroes' centre to beat x (pixels), e.g. next to a worker or a lock. */
+  moveHeroes(x: number, z?: number): void;
+  /** M9: defeats every enemy still fighting (testing the flow, not the combat). */
+  clearEnemies(): void;
+  /** M9: a hero's Health (0 defeats it). */
+  setHealth(slot: number, health: number): void;
   /** M7: the encounter's state (null in the Lab). */
   encounter(): DebugEncounter | null;
   /** M8: co-op state (invitation, last event, telemetry). */
@@ -122,7 +130,28 @@ export interface DebugEncounter {
   budget: number;
 }
 
+export interface DebugRun {
+  beat: number;
+  beatId: string;
+  phase: number;
+  locksDone: number;
+  locks: number;
+  continues: number;
+  continuesUsed: number;
+  checkpointBeat: number;
+  workers: { x: number; z: number; state: number }[];
+  clue: number;
+  evidence: number;
+  evidenceAt: { x: number; z: number } | null;
+  clueAt: { x: number; z: number } | null;
+  stats: Record<string, number>;
+  width: number;
+  bounds: { minX: number; maxX: number };
+}
+
 declare global {
+  /** The game version from the root package.json (vite.config.ts `define`). */
+  const __FFP_VERSION__: string;
   interface Window {
     __ffp?: FfpDebugHook;
   }

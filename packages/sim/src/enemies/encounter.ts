@@ -11,15 +11,16 @@ import { ENEMIES } from '../combat/roster';
 /** Frames before the first wave arrives (players can still join in that time). */
 export const FIRST_WAVE_AT = 30;
 /** Result codes. */
-export const Result = { Running: 0, Cleared: 1, Defeated: 2 } as const;
+export const Result = { Running: 0, Cleared: 1, Defeated: 2, Waiting: 3 } as const;
 /** Encounter enemy ids start here (Lab dummies use 101+, items 201+, scenery 301+). */
 export const ENEMY_ID_BASE = 401;
 /** Scenery id of the boss arena's surge hazard and devices. */
 const DEVICE_ID_BASE = 351;
 
-export function newEncounter(arena: number, difficulty: number): Encounter {
+export function newEncounter(arena: number, difficulty: number, start = 0): Encounter {
   return {
     arena,
+    start,
     difficulty,
     wave: -1,
     waveIds: [],
@@ -43,6 +44,16 @@ export function setupArena(world: World): void {
   const arena = ARENAS[enc.arena]!;
   world.bounds = { ...world.bounds, minX: 0, maxX: fx(arena.width) };
   world.dummy.refill = false;
+  setupDevices(world);
+  const p1 = world.bodies.find((b) => b.team === 'hero' && b.slot === 0);
+  if (p1) p1.x = fx(arena.heroX);
+  updateView(world);
+}
+
+/** The encounter arena's devices and its triggered surge hazard (arenas and stage locks). */
+export function setupDevices(world: World): void {
+  const enc = world.encounter!;
+  const arena = ARENAS[enc.arena]!;
   const s = arena.surge;
   let hazard = -1;
   if (s) {
@@ -75,9 +86,6 @@ export function setupArena(world: World): void {
       hazard,
     });
   });
-  const p1 = world.bodies.find((b) => b.team === 'hero' && b.slot === 0);
-  if (p1) p1.x = fx(arena.heroX);
-  updateView(world);
 }
 
 /** The stage layout an arena uses for weapons and scenery (the mill beat). */
@@ -165,7 +173,7 @@ export function stepEncounter(world: World): void {
   }
   const arena = ARENAS[enc.arena]!;
   if (enc.wave < 0) {
-    if (world.frame >= FIRST_WAVE_AT) spawnWave(world, 0);
+    if (world.frame >= enc.start + FIRST_WAVE_AT) spawnWave(world, 0);
     return;
   }
   const left = fighting(world).length;
@@ -181,7 +189,11 @@ export function stepEncounter(world: World): void {
 
 /** Names for the Lab and menus. */
 export function arenaNames(): { id: string; name: string; minDifficulty: number }[] {
-  return ARENAS.map((a) => ({ id: a.id, name: a.name, minDifficulty: a.minDifficulty }));
+  return ARENAS.filter((a) => !a.stage).map((a) => ({
+    id: a.id,
+    name: a.name,
+    minDifficulty: a.minDifficulty,
+  }));
 }
 
 export function difficultyNames(): { id: string; name: string }[] {

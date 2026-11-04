@@ -735,6 +735,71 @@ export const DifficultySchema = T.Object(
 );
 
 const KitId = T.String({ pattern: '^[a-z][a-z0-9-]*$' });
+/** Stage 1 area of environments/stage1 (fields, bridge, mill, canal, courtyard, sluice). */
+const AreaId = T.Union([
+  T.Literal('fields'),
+  T.Literal('bridge'),
+  T.Literal('mill'),
+  T.Literal('canal'),
+  T.Literal('courtyard'),
+  T.Literal('sluice'),
+]);
+const Backdrop = T.Union([T.Literal('layers'), T.Literal('plate')]);
+const Spot = T.Object({ x: T.Integer(), z: T.Integer() }, { additionalProperties: false });
+const Devices = T.Array(
+  T.Object(
+    {
+      kind: T.Literal('winch'),
+      x: T.Integer(),
+      z: T.Integer(),
+      count: T.Integer({ minimum: 1, maximum: 20 }),
+    },
+    { additionalProperties: false },
+  ),
+);
+const Surge = T.Object(
+  {
+    z0: T.Integer(),
+    z1: T.Integer(),
+    warn: Frame1,
+    active: Frame1,
+    damage: T.Integer({ minimum: 0, maximum: 1000 }),
+  },
+  { additionalProperties: false },
+);
+const Waves = T.Array(
+  T.Object(
+    {
+      enemies: T.Array(
+        T.Object(
+          {
+            kit: KitId,
+            x: T.Integer({ minimum: 0, maximum: 7680 }),
+            z: T.Integer({ minimum: 0, maximum: 2000 }),
+            minDifficulty: T.Optional(DifficultyId),
+            coop: T.Optional(T.Boolean()),
+          },
+          { additionalProperties: false },
+        ),
+        { minItems: 1, maxItems: 8 },
+      ),
+      next: T.Optional(T.Integer({ minimum: 0, maximum: 8 })),
+    },
+    { additionalProperties: false },
+  ),
+  { minItems: 1 },
+);
+const Substitutions = T.Array(
+  T.Object(
+    {
+      from: KitId,
+      to: KitId,
+      minDifficulty: DifficultyId,
+      count: T.Integer({ minimum: 1, maximum: 8 }),
+    },
+    { additionalProperties: false },
+  ),
+);
 export const ArenaSchema = T.Object(
   {
     arenas: T.Array(
@@ -742,84 +807,139 @@ export const ArenaSchema = T.Object(
         {
           id: KitId,
           name: T.String({ minLength: 1 }),
-          /** Stage 1 area of environments/stage1 (fields, bridge, mill, canal, courtyard, sluice). */
-          area: T.Union([
-            T.Literal('fields'),
-            T.Literal('bridge'),
-            T.Literal('mill'),
-            T.Literal('canal'),
-            T.Literal('courtyard'),
-            T.Literal('sluice'),
-          ]),
-          backdrop: T.Optional(T.Union([T.Literal('layers'), T.Literal('plate')])),
+          area: AreaId,
+          backdrop: T.Optional(Backdrop),
           width: T.Integer({ minimum: 1920, maximum: 7680 }),
           heroX: T.Optional(T.Integer({ minimum: 0, maximum: 7680 })),
           minDifficulty: T.Optional(DifficultyId),
           /** Stage layout for weapons and scenery (mill: the Lab's mill corner). */
           layout: T.Optional(T.Literal('mill')),
-          weaponSpot: T.Optional(
-            T.Object({ x: T.Integer(), z: T.Integer() }, { additionalProperties: false }),
-          ),
-          devices: T.Optional(
+          weaponSpot: T.Optional(Spot),
+          devices: T.Optional(Devices),
+          surge: T.Optional(Surge),
+          waves: Waves,
+          substitutions: T.Optional(Substitutions),
+        },
+        { additionalProperties: false },
+      ),
+      { minItems: 1 },
+    ),
+  },
+  { additionalProperties: false },
+);
+
+const Percent = T.Integer({ minimum: 1, maximum: 100 });
+const Pickup = T.Object(
+  {
+    x: T.Integer({ minimum: 0, maximum: 7680 }),
+    z: T.Integer({ minimum: 0, maximum: 2000 }),
+    heal: T.Integer({ minimum: 1, maximum: 1000 }),
+    /** Cell of the food sheet (PROP-FOOD) drawn for it. */
+    look: T.Integer({ minimum: 0, maximum: 5 }),
+  },
+  { additionalProperties: false },
+);
+const BeatX = T.Integer({ minimum: 0, maximum: 7680 });
+const BeatZ = T.Integer({ minimum: 0, maximum: 2000 });
+const Place = T.Object({ x: BeatX, z: BeatZ }, { additionalProperties: false });
+const Story = T.Object(
+  { x: BeatX, z: BeatZ, text: T.String({ minLength: 1 }) },
+  { additionalProperties: false },
+);
+const WorkerYaml = T.Object(
+  { x: BeatX, z: BeatZ, look: T.Union([T.Literal('a'), T.Literal('b')]) },
+  { additionalProperties: false },
+);
+/** A stage definition (M9): beats, camera locks, checkpoints, rescues, clues, evidence. */
+export const StageSchema = T.Object(
+  {
+    id: KitId,
+    name: T.String({ minLength: 1 }),
+    continues: T.Object(
+      {
+        easy: T.Integer({ minimum: 0, maximum: 9 }),
+        medium: T.Integer({ minimum: 0, maximum: 9 }),
+        hard: T.Integer({ minimum: 0, maximum: 9 }),
+        extreme: T.Integer({ minimum: 0, maximum: 9 }),
+        ultimate: T.Integer({ minimum: 0, maximum: 9 }),
+      },
+      { additionalProperties: false },
+    ),
+    rules: T.Object(
+      {
+        reviveFrames: Frame1,
+        revivePercent: Percent,
+        rejoinPercent: Percent,
+        continuePercent: Percent,
+        reachX: T.Integer({ minimum: 1, maximum: 600 }),
+        reachZ: T.Integer({ minimum: 1, maximum: 300 }),
+        workerFrames: Frame1,
+        clueFrames: Frame1,
+        evidenceFrames: Frame1,
+        pickupReachX: T.Integer({ minimum: 1, maximum: 300 }),
+        pickupReachZ: T.Integer({ minimum: 1, maximum: 300 }),
+        defeatHold: Frame1,
+        transition: Frame1,
+        exitMargin: T.Integer({ minimum: 0, maximum: 1000 }),
+      },
+      { additionalProperties: false },
+    ),
+    // A locked hero roster (only these heroes may play the stage) and guest heroes who
+    // join the roster for this stage only. Both are optional; Stage 1 declares neither.
+    roster: T.Optional(T.Array(KitId, { minItems: 1, maxItems: 8 })),
+    guests: T.Optional(T.Array(KitId, { maxItems: 4 })),
+    timePar: T.Tuple([
+      T.Integer({ minimum: 1 }),
+      T.Integer({ minimum: 1 }),
+      T.Integer({ minimum: 1 }),
+    ]),
+    beats: T.Array(
+      T.Object(
+        {
+          id: KitId,
+          name: T.String({ minLength: 1 }),
+          area: AreaId,
+          backdrop: T.Optional(Backdrop),
+          width: T.Integer({ minimum: 1920, maximum: 7680 }),
+          heroX: T.Optional(T.Integer({ minimum: 0, maximum: 7680 })),
+          layout: T.Optional(T.Literal('mill')),
+          checkpoint: T.Optional(T.Boolean()),
+          objective: T.String({ minLength: 1 }),
+          // Branches: the beats that may follow (default: the next beat in the file). With
+          // two, the heroes choose by the lane they leave on: the upper half of the floor
+          // takes the first, the lower half the second.
+          next: T.Optional(T.Array(KitId, { minItems: 1, maxItems: 2 })),
+          locks: T.Optional(
             T.Array(
               T.Object(
                 {
-                  kind: T.Literal('winch'),
-                  x: T.Integer(),
-                  z: T.Integer(),
-                  count: T.Integer({ minimum: 1, maximum: 20 }),
+                  at: T.Integer({ minimum: 0, maximum: 7680 }),
+                  view: T.Integer({ minimum: 0, maximum: 7680 }),
+                  weaponSpot: T.Optional(Spot),
+                  devices: T.Optional(Devices),
+                  surge: T.Optional(Surge),
+                  waves: Waves,
+                  substitutions: T.Optional(Substitutions),
                 },
                 { additionalProperties: false },
               ),
             ),
           ),
-          surge: T.Optional(
+          pickups: T.Optional(T.Array(Pickup)),
+          workers: T.Optional(T.Array(WorkerYaml, { maxItems: 4 })),
+          pen: T.Optional(Place),
+          cache: T.Optional(
             T.Object(
               {
-                z0: T.Integer(),
-                z1: T.Integer(),
-                warn: Frame1,
-                active: Frame1,
-                damage: T.Integer({ minimum: 0, maximum: 1000 }),
+                x: T.Integer({ minimum: 0, maximum: 7680 }),
+                z: T.Integer({ minimum: 0, maximum: 2000 }),
+                pickups: T.Array(Pickup, { minItems: 1 }),
               },
               { additionalProperties: false },
             ),
           ),
-          waves: T.Array(
-            T.Object(
-              {
-                enemies: T.Array(
-                  T.Object(
-                    {
-                      kit: KitId,
-                      x: T.Integer({ minimum: 0, maximum: 7680 }),
-                      z: T.Integer({ minimum: 0, maximum: 2000 }),
-                      minDifficulty: T.Optional(DifficultyId),
-                      coop: T.Optional(T.Boolean()),
-                    },
-                    { additionalProperties: false },
-                  ),
-                  { minItems: 1, maxItems: 8 },
-                ),
-                next: T.Optional(T.Integer({ minimum: 0, maximum: 8 })),
-              },
-              { additionalProperties: false },
-            ),
-            { minItems: 1 },
-          ),
-          substitutions: T.Optional(
-            T.Array(
-              T.Object(
-                {
-                  from: KitId,
-                  to: KitId,
-                  minDifficulty: DifficultyId,
-                  count: T.Integer({ minimum: 1, maximum: 8 }),
-                },
-                { additionalProperties: false },
-              ),
-            ),
-          ),
+          clue: T.Optional(Story),
+          evidence: T.Optional(Story),
         },
         { additionalProperties: false },
       ),
@@ -865,6 +985,19 @@ export function loadArenas(
   file = 'arenas.yaml',
 ): unknown[] {
   const d = validate(ArenaSchema, source, file) as Static<typeof ArenaSchema>;
+  return convertArenas(d.arenas, kits, file, false);
+}
+
+type ArenaYaml = Static<typeof ArenaSchema>['arenas'][number];
+
+/** Checks arena entries against the enemy kit ids and converts them to pixel data. */
+function convertArenas(
+  arenas: readonly ArenaYaml[],
+  kits: readonly string[],
+  file: string,
+  stage: boolean,
+): unknown[] {
+  const d = { arenas };
   const problems: string[] = [];
   const seen = new Set<string>();
   for (const a of d.arenas) {
@@ -909,7 +1042,131 @@ export function loadArenas(
       minDifficulty: lvl(s.minDifficulty),
       count: s.count,
     })),
+    stage,
   }));
+}
+
+const VIEW_W = 1920;
+
+/**
+ * Validates a stage file (M9) and converts it. Every beat gets a quiet base arena (no
+ * waves: the time between camera locks) and every camera lock an arena of its own, so the
+ * encounter engine runs locks exactly like the M7 arenas. Those arenas are appended to the
+ * arena table from index `firstArena` and marked `stage` (they are not Lab arenas).
+ */
+export function loadStage(
+  source: string,
+  kits: readonly string[],
+  firstArena: number,
+  file = 'stage.yaml',
+  heroes: readonly string[] = [],
+): { stage: unknown; arenas: unknown[] } {
+  const d = validate(StageSchema, source, file) as Static<typeof StageSchema>;
+  const problems: string[] = [];
+  const seen = new Set<string>();
+  const arenas: ArenaYaml[] = [];
+  const beats = d.beats.map((b, bi) => {
+    if (seen.has(b.id)) problems.push(`duplicate beat "${b.id}"`);
+    seen.add(b.id);
+    const inside = (what: string, x: number) => {
+      if (x > b.width) problems.push(`${b.id}: ${what} is outside the beat`);
+    };
+    const base = firstArena + arenas.length;
+    const shared = {
+      name: b.name,
+      area: b.area,
+      width: b.width,
+      ...(b.backdrop ? { backdrop: b.backdrop } : {}),
+      ...(b.layout ? { layout: b.layout } : {}),
+    };
+    arenas.push({ id: `${d.id}.${b.id}`, ...shared, waves: [] as never });
+    const locks = (b.locks ?? []).map((l, li) => {
+      if (l.view + VIEW_W > b.width) problems.push(`${b.id}: lock ${li + 1} view leaves the beat`);
+      inside(`lock ${li + 1}`, l.at);
+      for (const w of l.waves)
+        for (const e of w.enemies)
+          if (e.x < l.view || e.x > l.view + VIEW_W)
+            problems.push(`${b.id}: lock ${li + 1} enemy at ${e.x} starts outside its view`);
+      const arena = firstArena + arenas.length;
+      arenas.push({
+        id: `${d.id}.${b.id}.${li + 1}`,
+        ...shared,
+        waves: l.waves,
+        ...(l.weaponSpot ? { weaponSpot: l.weaponSpot } : {}),
+        ...(l.devices ? { devices: l.devices } : {}),
+        ...(l.surge ? { surge: l.surge } : {}),
+        ...(l.substitutions ? { substitutions: l.substitutions } : {}),
+      });
+      return { at: l.at, view: l.view, arena };
+    });
+    for (let i = 1; i < locks.length; i += 1)
+      if (locks[i]!.at <= locks[i - 1]!.at) problems.push(`${b.id}: locks must be in x order`);
+    for (const p of b.pickups ?? []) inside('a pickup', p.x);
+    for (const w of b.workers ?? []) inside('a worker', w.x);
+    if ((b.pen || b.cache) && !(b.workers ?? []).length)
+      problems.push(`${b.id}: a pen or cache needs workers`);
+    if (b.clue) inside('the clue', b.clue.x);
+    if (b.evidence) inside('the evidence', b.evidence.x);
+    return {
+      id: b.id,
+      name: b.name,
+      area: b.area,
+      backdrop: b.backdrop ?? 'layers',
+      width: b.width,
+      heroX: b.heroX ?? 300,
+      layout: b.layout ?? '',
+      checkpoint: b.checkpoint ?? false,
+      objective: b.objective,
+      base,
+      locks,
+      pickups: b.pickups ?? [],
+      workers: (b.workers ?? []).map((w) => ({ x: w.x, z: w.z, look: w.look === 'b' ? 1 : 0 })),
+      pen: b.pen ?? null,
+      cache: b.cache ?? null,
+      clue: b.clue ?? null,
+      evidence: b.evidence ?? null,
+      next: (b.next ?? (bi + 1 < d.beats.length ? [d.beats[bi + 1]!.id] : [])).map((id) => {
+        const n = d.beats.findIndex((x) => x.id === id);
+        if (n < 0) problems.push(`${b.id}: next beat "${id}" is unknown`);
+        else if (n <= bi) problems.push(`${b.id}: next beat "${id}" must come later in the file`);
+        return n;
+      }),
+    };
+  });
+  for (const [what, list] of [
+    ['roster', d.roster ?? []],
+    ['guest', d.guests ?? []],
+  ] as const)
+    for (const h of list)
+      if (heroes.length > 0 && !heroes.includes(h)) problems.push(`unknown ${what} hero "${h}"`);
+  // The stage ends on the sponsor evidence: a beat holds it exactly when no beat follows.
+  for (const b of beats) {
+    if (b.evidence && b.next.length > 0)
+      problems.push(`${b.id}: only a final beat (no next beat) may hold the sponsor evidence`);
+    if (!b.evidence && b.next.length === 0)
+      problems.push(`${b.id}: a final beat must hold the sponsor evidence (the stage ends on it)`);
+  }
+  // Every beat can be reached from the first one.
+  const reach = new Set([0]);
+  for (let i = 0; i < beats.length; i += 1)
+    if (reach.has(i)) for (const n of beats[i]!.next) if (n >= 0) reach.add(n);
+  for (let i = 0; i < beats.length; i += 1)
+    if (!reach.has(i)) problems.push(`${beats[i]!.id}: no beat leads here`);
+  if (problems.length > 0) throw new HeroDataError(problems.map((p) => `${file}: ${p}`).join('\n'));
+  const c = d.continues;
+  return {
+    stage: {
+      id: d.id,
+      name: d.name,
+      continues: [c.easy, c.medium, c.hard, c.extreme, c.ultimate],
+      rules: d.rules,
+      roster: d.roster ?? [],
+      guests: d.guests ?? [],
+      timePar: [...d.timePar],
+      beats,
+    },
+    arenas: convertArenas(arenas, kits, file, true),
+  };
 }
 
 /** Compiles one action; `index` maps action ids to indices (links), `all` holds the targets. */
@@ -1304,6 +1561,15 @@ export function compileCoop(c: CoopYaml): unknown {
 }
 
 const COOP_FILE = fileURLToPath(new URL('../coop/coop.yaml', import.meta.url));
+const STAGES_DIR = fileURLToPath(new URL('../stages/', import.meta.url));
+
+/** Stage files (M9), in file-name order (stage1.yaml first). */
+export function stageFileList(dir = STAGES_DIR): string[] {
+  return readdirSync(dir)
+    .filter((f) => f.endsWith('.yaml'))
+    .sort()
+    .map((f) => join(dir, f));
+}
 
 const WEAPONS_DIR = fileURLToPath(new URL('../weapons/', import.meta.url));
 
@@ -1355,6 +1621,7 @@ export function generate(
   weapons = weaponFiles(),
   encounters: string | null = ENCOUNTERS_DIR,
   coopFile: string | null = COOP_FILE,
+  stageFiles: readonly string[] = encounters === ENCOUNTERS_DIR ? stageFileList() : [],
 ): string {
   const load = (f: string, kind: 'hero' | 'enemy') =>
     loadHero(readFileSync(f, 'utf8'), basename(f), kind);
@@ -1399,12 +1666,19 @@ export function generate(
   const arenas = encounters
     ? loadArenas(readFileSync(join(encounters, 'arenas.yaml'), 'utf8'), kitIds)
     : [];
+  const stages: unknown[] = [];
+  for (const f of stageFiles) {
+    const out = loadStage(readFileSync(f, 'utf8'), kitIds, arenas.length, basename(f), heroIds);
+    stages.push(out.stage);
+    arenas.push(...out.arenas);
+  }
   const coop = coopFile
     ? compileCoop(loadCoop(readFileSync(coopFile, 'utf8'), heroYaml, basename(coopFile)))
     : { preBuffer: 0, handoffs: [], finishers: [], actions: [] };
   return `// GENERATED by packages/data/src/generate.ts from packages/data/heroes/*.yaml,
 // packages/data/enemies/*.yaml, packages/data/weapons/*.yaml,
-// packages/data/encounters/*.yaml and packages/data/coop/coop.yaml. Do not edit by hand:
+// packages/data/encounters/*.yaml, packages/data/stages/*.yaml and packages/data/coop/coop.yaml.
+// Do not edit by hand:
 // change the YAML and run \`pnpm gen:heroes\`.
 import type {
   ArenaDef,
@@ -1412,6 +1686,7 @@ import type {
   DifficultyDef,
   EnemyProfile,
   HeroDef,
+  StageDef,
   WeaponDef,
 } from './types';
 
@@ -1429,6 +1704,8 @@ export const DIFFICULTY_DATA: readonly DifficultyDef[] = ${JSON.stringify(diffic
 export const ARENA_DATA: readonly ArenaDef[] = ${JSON.stringify(arenas, null, 2)};
 
 export const COOP_DATA: CoopDef = ${JSON.stringify(coop, null, 2)};
+
+export const STAGE_DATA: readonly StageDef[] = ${JSON.stringify(stages, null, 2)};
 `;
 }
 

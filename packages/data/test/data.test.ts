@@ -10,6 +10,8 @@ import {
   heroFiles,
   loadCoop,
   loadHero,
+  loadStage,
+  stageFileList,
 } from '../src/generate';
 
 const files = heroFiles();
@@ -330,4 +332,89 @@ describe('co-op rules (M8)', () => {
     const bad = base.replace('category: team', 'category: special');
     expect(() => loadHero(bad)).toThrow(HeroDataError);
   });
+});
+
+// --- M9 stage definitions -----------------------------------------------------------------
+
+const KITS = [
+  'trainer',
+  'recruit',
+  'shield',
+  'runner',
+  'overseer',
+  'lookout',
+  'enforcer',
+  'commander',
+];
+const stage1 = () => readFileSync(stageFileList()[0]!, 'utf8');
+
+test('stage1.yaml compiles to eight beats with one arena per beat and per camera lock', () => {
+  const { stage, arenas } = loadStage(stage1(), KITS, 100) as {
+    stage: { beats: { base: number; locks: { arena: number }[] }[] };
+    arenas: { id: string; stage: boolean }[];
+  };
+  expect(stage.beats).toHaveLength(8);
+  const locks = stage.beats.reduce((n, b) => n + b.locks.length, 0);
+  expect(arenas).toHaveLength(8 + locks);
+  expect(arenas.every((a) => a.stage)).toBe(true);
+  expect(stage.beats[0]!.base).toBe(100);
+  expect(stage.beats[0]!.locks[0]!.arena).toBe(101);
+});
+
+test('a lock whose enemies start outside its view is rejected', () => {
+  const bad = stage1().replace(
+    '{ kit: recruit, x: 1500, z: 760 }',
+    '{ kit: recruit, x: 4000, z: 760 }',
+  );
+  expect(() => loadStage(bad, KITS, 0)).toThrow(/starts outside its view/);
+});
+
+test('an unknown enemy kit in a lock is rejected', () => {
+  const bad = stage1().replace(
+    '{ kit: shield, x: 4000, z: 820 }',
+    '{ kit: dragon, x: 4000, z: 820 }',
+  );
+  expect(() => loadStage(bad, KITS, 0)).toThrow(/unknown enemy kit "dragon"/);
+});
+
+test('the stage must end on the sponsor evidence', () => {
+  const bad = stage1().replace(/\n {4}# Appears when the Commander[\s\S]*$/, '\n');
+  expect(() => loadStage(bad, KITS, 0)).toThrow(/must hold the sponsor evidence/);
+});
+
+test('a stage may lock its roster and add guests; unknown heroes are rejected', () => {
+  const src = stage1().replace(
+    "name: 'The Broken Water Pact'",
+    "name: 'X'\nroster: [river]\nguests: [mountain]",
+  );
+  const { stage } = loadStage(src, KITS, 0, 's.yaml', ['mountain', 'river']) as {
+    stage: { roster: string[]; guests: string[] };
+  };
+  expect(stage.roster).toEqual(['river']);
+  expect(stage.guests).toEqual(['mountain']);
+  const bad = src.replace('roster: [river]', 'roster: [kael]');
+  expect(() => loadStage(bad, KITS, 0, 's.yaml', ['mountain', 'river'])).toThrow(
+    /unknown roster hero "kael"/,
+  );
+});
+
+test('beats follow in file order unless they branch with next', () => {
+  const { stage } = loadStage(stage1(), KITS, 0) as { stage: { beats: { next: number[] }[] } };
+  expect(stage.beats.map((b) => b.next)).toEqual([[1], [2], [3], [4], [5], [6], [7], []]);
+  const branch = stage1().replace(
+    "objective: 'Cross the dry fields toward the bridge'",
+    "objective: 'Cross the dry fields toward the bridge'\n    next: [bridge, rescue]",
+  );
+  const out = loadStage(branch, KITS, 0) as { stage: { beats: { next: number[] }[] } };
+  expect(out.stage.beats[0]!.next).toEqual([1, 2]);
+  const back = stage1().replace(
+    "objective: 'Break the formation on the bridge'",
+    "objective: 'Break the formation on the bridge'\n    next: [fields]",
+  );
+  expect(() => loadStage(back, KITS, 0)).toThrow(/must come later in the file/);
+  const skip = stage1().replace(
+    "objective: 'Cross the dry fields toward the bridge'",
+    "objective: 'Cross the dry fields toward the bridge'\n    next: [rescue]",
+  );
+  expect(() => loadStage(skip, KITS, 0)).toThrow(/bridge: no beat leads here/);
 });

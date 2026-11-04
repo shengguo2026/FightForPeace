@@ -89,7 +89,10 @@ BG_QUALITY = 80
 # Areas whose arena is drawn on the full plate (the Commander fights on the Sluice PLATE).
 PLATE_AREAS = {"sluice"}
 
-PROPS = ["WORKSTAFF", "HANDWHEEL", "SLUICEBOARDS", "IMPACT-HAZARD"]
+PROPS = ["WORKSTAFF", "HANDWHEEL", "SLUICEBOARDS", "IMPACT-HAZARD", "FOOD", "BARRICADE"]
+
+# M9 non-combatants: the two coerced workers of the Stage 1 rescue (pose sheets).
+NPCS = {"worker-a": "NPC-WORKER-A", "worker-b": "NPC-WORKER-B"}
 
 
 def action_ids(hero: str) -> list[tuple[str, str]]:
@@ -192,6 +195,12 @@ def main() -> None:
             missing.append(f"PROP-{prop}")
             continue
         assets[f"prop.{prop.lower()}"] = convert(p, f"prop-{prop.lower()}")
+    for key, stem in NPCS.items():
+        p = source(base, "npcs", stem)
+        if p is None:
+            missing.append(stem)
+            continue
+        assets[f"npc.{key}.sheet"] = convert(p, f"npc-{key}")
     for area in STAGE1_AREAS:
         for layer in STAGE1_LAYERS:
             stem = f"ENV-{area.upper()}-{layer}"

@@ -22,6 +22,7 @@ import defenseDrillsJson from './defense-drills.json';
 import specialsGrabsJson from './specials-grabs.json';
 import grabEscapeJson from './grab-escape.json';
 import coopDrillsJson from './coop-drills.json';
+import stageRescueJson from './stage-rescue.json';
 import { SCRIPTS } from './scripts';
 
 const LOGS: [string, ReplayLog][] = [
@@ -34,6 +35,7 @@ const LOGS: [string, ReplayLog][] = [
   ['specials-grabs', specialsGrabsJson as ReplayLog],
   ['grab-escape', grabEscapeJson as ReplayLog],
   ['coop-drills', coopDrillsJson as ReplayLog],
+  ['stage-rescue', stageRescueJson as ReplayLog],
 ];
 
 /** Plays a log and collects each hero's grab events and every action that connected. */

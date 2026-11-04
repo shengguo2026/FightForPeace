@@ -171,13 +171,17 @@ export interface LabState {
   weaponOpen: Signal<boolean>;
   weapons: Signal<WeaponPanelView>;
   /** Arena (name) and difficulty (name) picked in the arena panel. */
-  arenaPick: Signal<{ arena: string; difficulty: string }>;
+  arenaPick: Signal<{ arena: string; difficulty: string; beat: number }>;
   arena: Signal<ArenaPanelView>;
   /** M8: paused because the window lost focus (not a user or controller pause). */
   focusPaused: Signal<boolean>;
   coop: Signal<CoopPanelView>;
   /** M8 Auto Quality: the chosen setting and the level being drawn. */
   quality: Signal<{ setting: QualitySetting; level: QualityLevel; ms: number }>;
+  /** M9 stage journey: interaction prompts, story text and notices. */
+  stage: Signal<StageHudView>;
+  /** M9 results screen (null until the stage is complete). */
+  results: Signal<ResultsView | null>;
 }
 
 export function createLabState(visible: boolean): LabState {
@@ -214,11 +218,13 @@ export function createLabState(visible: boolean): LabState {
     equipNote: signal(''),
     weaponOpen: signal(false),
     weapons: signal({ players: [], items: [], scenery: [], lastEvent: '' }),
-    arenaPick: signal({ arena: 'trial-recruit', difficulty: 'medium' }),
+    arenaPick: signal({ arena: 'stage1', difficulty: 'medium', beat: 0 }),
     arena: signal({ running: false, lines: [] }),
     focusPaused: signal(false),
     coop: signal({ lines: [], invite: null }),
     quality: signal({ setting: 'auto', level: 'high', ms: 16.7 }),
+    stage: signal({ active: false, prompts: [], story: '', notice: '' }),
+    results: signal(null),
   };
 }
 
@@ -235,4 +241,31 @@ export interface CoopPanelView {
   lines: string[];
   /** The open invitation: who must confirm (slot), frames left, the finisher's name. */
   invite: { from: number; to: number; left: number; name: string } | null;
+}
+
+/** M9: one player's interaction prompt (text with action tokens) and hold progress. */
+export interface StagePrompt {
+  slot: number;
+  text: string;
+  /** 0–1 while holding, -1 when not holding. */
+  progress: number;
+}
+
+/** M9 stage HUD drawn by the interface (prompts show each player's own bindings). */
+export interface StageHudView {
+  active: boolean;
+  prompts: StagePrompt[];
+  /** A clue or the sponsor evidence, shown for a while after it was inspected. */
+  story: string;
+  /** A short notice such as "Checkpoint saved". */
+  notice: string;
+}
+
+/** M9 results screen. */
+export interface ResultsView {
+  title: string;
+  difficulty: string;
+  grades: { label: string; value: string; grade: string }[];
+  overall: string;
+  lines: string[];
 }

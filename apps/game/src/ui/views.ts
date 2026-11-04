@@ -39,6 +39,16 @@ import {
   TEAM_FINISHERS,
   handoffLeft,
   inviteLeft,
+  ChannelKind,
+  DIFFICULTIES,
+  RunEvent,
+  RunPhase,
+  STAGES,
+  beatOf,
+  clock,
+  interactionFor,
+  isDowned,
+  stageResults,
 } from '@ffp/sim';
 import {
   ACTION_NAMES,
@@ -49,6 +59,9 @@ import {
 } from '@ffp/platform';
 import type { GameSession } from '../game';
 import {
+  GRADE_TEXT,
+  STAGE_TEXT,
+  TEXT,
   COOP_EVENT_TEXT,
   TEAM_DENIED_TEXT,
   BREAKER_DENIED,
@@ -67,6 +80,9 @@ import {
   type RecipePlayerView,
   type TargetView,
   type WeaponPanelView,
+  type StageHudView,
+  type StagePrompt,
+  type ResultsView,
 } from './labState';
 
 function stateName(state: number, attackKind: number, action = -1): string {
@@ -118,6 +134,7 @@ const STATE_NAMES: Record<number, string> = {
   [MoveState.Surrender]: 'surrendered',
   [MoveState.Defeated]: 'defeated',
   [MoveState.PhaseShift]: 'phase change',
+  [MoveState.Channel]: 'holding Interact',
 };
 
 const PROTECT_TEXT: Record<number, string> = {
@@ -711,6 +728,117 @@ const AI_MODE = [
 ];
 
 /** M7 arena panel: budget used / total, pressure per hero, the director's last verdict. */
+const HOLD_TEXT: Partial<Record<number, string>> = {
+  [ChannelKind.Worker]: TEXT.holdWorker,
+  [ChannelKind.Revive]: TEXT.holdRevive,
+  [ChannelKind.Clue]: TEXT.holdClue,
+  [ChannelKind.Evidence]: TEXT.holdEvidence,
+};
+/** Frames a clue or the evidence text stays on screen; frames a notice stays. */
+const STORY_FRAMES = 600;
+const NOTICE_FRAMES = 150;
+/** The results screen opens this long after the evidence is secured. */
+export const RESULTS_DELAY = 150;
+
+/** M9: the stage's interaction prompts, story text, notices and the results screen. */
+export function refreshStage(session: GameSession, lab: LabState): void {
+  const world = session.world;
+  const run = world.run;
+  if (!run) {
+    if (lab.stage.value.active)
+      lab.stage.value = { active: false, prompts: [], story: '', notice: '' };
+    if (lab.results.value) lab.results.value = null;
+    return;
+  }
+  const beat = beatOf(world)!;
+  const prompts: StagePrompt[] = [];
+  for (const slot of [0, 1]) {
+    const h = heroOf(world, slot);
+    if (!h || run.phase === RunPhase.Complete) continue;
+    if (isDowned(h)) {
+      if (world.bodies.some((b) => b.team === 'hero' && b !== h && !b.ko))
+        prompts.push({ slot, text: TEXT.downedWait, progress: -1 });
+      continue;
+    }
+    const c = run.channel[slot];
+    if (h.state === MoveState.Channel && c && c.kind !== ChannelKind.None) {
+      prompts.push({
+        slot,
+        text: HOLD_TEXT[c.kind] ?? '',
+        progress: c.progress / Math.max(1, c.need),
+      });
+      continue;
+    }
+    const kind = interactionFor(world, h);
+    if (kind !== ChannelKind.None)
+      prompts.push({ slot, text: HOLD_TEXT[kind] ?? '', progress: -1 });
+  }
+  const e = run.event;
+  const age = world.frame - e.frame;
+  let story = '';
+  if (e.kind === RunEvent.Clue && age < STORY_FRAMES) story = beat.clue?.text ?? '';
+  if (e.kind === RunEvent.Complete) story = beat.evidence?.text ?? '';
+  const notices: Partial<Record<number, string>> = {
+    [RunEvent.Checkpoint]: STAGE_TEXT.checkpoint,
+    [RunEvent.WorkerFreed]: STAGE_TEXT.workerFreed,
+    [RunEvent.CacheOpen]: STAGE_TEXT.cacheOpen,
+    [RunEvent.ContinueUsed]: STAGE_TEXT.continued,
+    [RunEvent.StageRestart]: STAGE_TEXT.restarted,
+    [RunEvent.ExitOpen]: STAGE_TEXT.exitOpen,
+    [RunEvent.Revived]: STAGE_TEXT.revived.replace('{n}', String(e.detail + 1)),
+    [RunEvent.Rejoined]: STAGE_TEXT.rejoined.replace('{n}', String(e.detail + 1)),
+    [RunEvent.Downed]: STAGE_TEXT.downed.replace('{n}', String(e.detail + 1)),
+  };
+  const notice = age < NOTICE_FRAMES ? (notices[e.kind] ?? '') : '';
+  const next: StageHudView = { active: true, prompts, story, notice };
+  const prev = lab.stage.value;
+  if (JSON.stringify(prev) !== JSON.stringify(next)) lab.stage.value = next;
+  const done = run.phase === RunPhase.Complete && world.frame - run.phaseFrame >= RESULTS_DELAY;
+  if (!done) {
+    if (lab.results.value) lab.results.value = null;
+    return;
+  }
+  if (lab.results.value) return;
+  const r = stageResults(world)!;
+  const st = r.stats;
+  const view: ResultsView = {
+    title: STAGE_TEXT.resultsTitle,
+    difficulty:
+      (DIFFICULTIES[r.difficulty]?.name ?? '') +
+      (r.startBeat > 0 ? ` · ${STAGE_TEXT.practice.replace('{n}', String(r.startBeat + 1))}` : ''),
+    grades: r.grades.map((g) => ({
+      label: GRADE_TEXT[g.id] ?? g.id,
+      value: g.value,
+      grade: g.grade,
+    })),
+    overall: r.overall,
+    lines: [
+      `Time ${clock(st.frames)} · continues used ${r.continuesUsed}`,
+      `Enemies defeated ${st.defeated} · surrendered ${st.surrendered} · fled ${st.fled}`,
+      `Damage taken ${st.damageTaken} · food eaten ${st.food}`,
+      `Downs ${st.downs} · partner revives ${st.revives}`,
+      STAGE_TEXT.sponsorHook,
+    ],
+  };
+  lab.results.value = view;
+}
+
+/** M9 Arena panel lines for a stage run: beat, phase, locks, continues and checkpoint. */
+function stageLines(session: GameSession): string[] {
+  const world = session.world;
+  const run = world.run;
+  if (!run) return [];
+  const def = STAGES[run.stage]!;
+  const beat = def.beats[run.beat]!;
+  const phase = ['walking', 'camera lock', 'transition', 'defeated', 'complete'][run.phase] ?? '?';
+  const cp = run.checkpoint ? `beat ${run.checkpoint.beat + 1}` : 'none';
+  return [
+    `${def.name} · beat ${run.beat + 1}/${def.beats.length} ${beat.name} · ${phase}`,
+    `locks ${run.locksDone}/${beat.locks.length} · continues ${run.continues} (used ${run.continuesUsed}) · checkpoint ${cp}`,
+    `workers ${run.stats.workersFreed}/${run.workersTotal} · clues ${run.stats.clues + run.stats.evidence}/${run.cluesTotal} · time ${clock(run.stats.frames)}`,
+  ];
+}
+
 export function refreshArena(session: GameSession, lab: LabState): void {
   const world = session.world;
   const enc = world.encounter;
@@ -739,6 +867,7 @@ export function refreshArena(session: GameSession, lab: LabState): void {
       return `${ENEMIES[e.hero]?.name ?? '?'} ${e.health}/${e.maxHealth} · ${STATE_NAMES[e.state] ?? e.state} · ${mode}`;
     });
   const lines = [
+    ...stageLines(session),
     `threat ${u.total}/${budgetOf(world)} · attackers ${u.attackers}/${d.attackers[coopIndex(world)]} · projectiles ${u.projectiles}/${d.projectiles[coopIndex(world)]} · hard CC ${u.hardCC}/${d.hardCC}`,
     heroes.join(' · '),
     `peak committed ${enc.peakCommitted} · off-screen warned ${enc.offscreenWarned} · unwarned ${enc.offscreenUnwarned}`,

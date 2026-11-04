@@ -88,6 +88,9 @@ export const MoveState = {
   Defeated: 24,
   /** Boss phase transition (queued phase change): protected, heroes separated. */
   PhaseShift: 25,
+  // --- M9 stage journey ---
+  /** Holding Interact on a stage interaction (free a worker, revive, inspect): interruptible. */
+  Channel: 26,
 } as const;
 export type MoveState = (typeof MoveState)[keyof typeof MoveState];
 
@@ -420,12 +423,14 @@ export interface DirectorLog {
 /** Arena encounter state (M7): waves, director, visibility zone, boss and devices. */
 export interface Encounter {
   arena: number;
+  /** World frame the encounter began (its first wave arrives FIRST_WAVE_AT frames later). */
+  start: number;
   difficulty: number;
   wave: number;
   /** Ids of the current wave's enemies. */
   waveIds: number[];
   nextId: number;
-  /** 0 running, 1 cleared, 2 defeated. */
+  /** 0 running, 1 cleared, 2 defeated, 3 waiting (a stage beat between camera locks). */
   result: number;
   /** Combat visibility zone (fixed point x range), from the simulation, never the screen. */
   viewMin: number;
@@ -912,4 +917,138 @@ export interface World {
   encounter: Encounter | null;
   /** M8 same-device co-op: invitations, handoff and bundle log, telemetry. */
   coop: CoopState;
+  /** M9 stage journey (null in the Lab and the arenas). */
+  run: StageRun | null;
+}
+
+// --- M9 stage journey --------------------------------------------------------------------
+
+/** Phases of a stage run. Numbers are encoded; never renumber. */
+export const RunPhase = {
+  /** Crossing a beat between camera locks. */
+  Walk: 0,
+  /** A camera lock: the view and the heroes are held until its waves are cleared. */
+  Locked: 1,
+  /** Fade between two beats. */
+  Transition: 2,
+  /** Every hero is down: the DEFEATED banner, then a continue or the restart. */
+  Defeat: 3,
+  /** The sponsor evidence is secured: the results screen. */
+  Complete: 4,
+} as const;
+
+/** Coerced worker states. Numbers are encoded; never renumber. */
+export const WorkerState = { Bound: 0, Freed: 1, Leaving: 2, Safe: 3 } as const;
+
+/** What a hero's Channel works on. Numbers are encoded; never renumber. */
+export const ChannelKind = { None: 0, Worker: 1, Clue: 2, Evidence: 3, Revive: 4 } as const;
+
+/** Stage events for the HUD (the last one is kept). Numbers are encoded; never renumber. */
+export const RunEvent = {
+  None: 0,
+  BeatStart: 1,
+  Checkpoint: 2,
+  LockStart: 3,
+  LockClear: 4,
+  WorkerFreed: 5,
+  CacheOpen: 6,
+  Food: 7,
+  Clue: 8,
+  Downed: 9,
+  Revived: 10,
+  Rejoined: 11,
+  ContinueUsed: 12,
+  StageRestart: 13,
+  RiverRestored: 14,
+  Evidence: 15,
+  Complete: 16,
+  ExitOpen: 17,
+} as const;
+
+export interface RunWorker {
+  x: number;
+  z: number;
+  look: number;
+  state: number;
+  /** World frame the current state began. */
+  since: number;
+}
+
+export interface RunPickup {
+  x: number;
+  z: number;
+  heal: number;
+  look: number;
+  taken: boolean;
+}
+
+/** One hero's hold-to-interact progress (see MoveState.Channel). */
+export interface ChannelState {
+  kind: number;
+  /** Worker index, or the downed partner's slot for a revive. */
+  target: number;
+  progress: number;
+  /** Frames the interaction needs. */
+  need: number;
+}
+
+/** Counters for the results screen (all integers). */
+export interface RunStats {
+  /** Frames since the run (or its restart) began, until the evidence is secured. */
+  frames: number;
+  defeated: number;
+  surrendered: number;
+  fled: number;
+  damageTaken: number;
+  food: number;
+  downs: number;
+  revives: number;
+  workersFreed: number;
+  clues: number;
+  evidence: number;
+}
+
+/** What a checkpoint keeps: the beat to restart, each hero's meter and the counters. */
+export interface RunCheckpoint {
+  beat: number;
+  meter: number[];
+  stats: RunStats;
+}
+
+export interface StageRun {
+  /** STAGES index. */
+  stage: number;
+  difficulty: number;
+  /** Beat the run started at (0 = the stage start; later beats are Lab practice). */
+  startBeat: number;
+  beat: number;
+  phase: number;
+  /** World frame the phase began. */
+  phaseFrame: number;
+  /** Camera locks of this beat already cleared (locks run in order). */
+  locksDone: number;
+  /** Heroes cannot walk back further left than this (fixed point). */
+  floorX: number;
+  continues: number;
+  continuesUsed: number;
+  checkpoint: RunCheckpoint | null;
+  workers: RunWorker[];
+  pickups: RunPickup[];
+  cacheOpen: boolean;
+  /** 0 none in this beat, 1 waiting, 2 inspected. */
+  clue: number;
+  /** 0 not yet, 1 lying at the gate, 2 secured. */
+  evidence: number;
+  channel: ChannelState[];
+  /** Health per slot after the last frame (damage taken). */
+  lastHealth: number[];
+  /** World frame each slot's hero went down (-1 = up). */
+  downedAt: number[];
+  /** Enemy ids already counted as defeated, surrendered or fled in this lock. */
+  counted: number[];
+  stats: RunStats;
+  /** Totals of the stage (for the results). */
+  workersTotal: number;
+  cluesTotal: number;
+  event: { kind: number; frame: number; detail: number };
 }

@@ -33,6 +33,7 @@ import {
 import { REACTION, enter, inReaction, stepReaction } from '../combat/reactions';
 import { resumeHold, startGrabAttempt, stepHeroHold, tryEscape, tryRescue } from '../combat/grabs';
 import { requestPickup, stepPickup, weaponInteract } from '../combat/items';
+import { startChannel, stepChannel } from '../stage/run';
 import { weaponGate } from '../combat/held';
 import { loadoutAction } from '../combat/loadout';
 import { type ActionDef, Dir, Reject } from '../combat/types';
@@ -118,9 +119,15 @@ function actionable(f: Fighter): boolean {
 
 /** Advances one hero by one frame. Collision and hits run afterwards, for everyone at once. */
 export function stepHero(world: World, f: Fighter, input: FrameInput, p: MovementProfile): void {
-  // A defeated hero (arena) waits for the result screen (revive arrives with M9).
+  // A defeated hero waits: the arena's result screen, or (M9 stage) a revive or a continue.
   if (f.state === MoveState.Defeated) {
     f.stateFrame += 1;
+    return;
+  }
+  // M9 hold to interact (free a worker, revive a partner, inspect a clue or the evidence).
+  if (f.state === MoveState.Channel) {
+    stepChannel(world, f, input);
+    tickDefense(world, f);
     return;
   }
   stepHeroFrame(world, f, input, p);
@@ -651,6 +658,8 @@ function startAttack(
     // Interact priority: freeing a restrained partner, then a weapon (throw or discard the
     // held one, or pick one up), then the Directional Contextual Grab.
     f.targetId = 0;
+    const neutral = input.moveX === 0 && input.moveZ === 0;
+    if (neutral && startChannel(world, f)) return;
     if (f.item !== 0) {
       weaponInteract(world, f, input);
       return;

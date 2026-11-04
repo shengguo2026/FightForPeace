@@ -15,6 +15,7 @@ import {
   budgetOf,
   usage,
   MoveState,
+  beatOf,
 } from '@ffp/sim';
 import type { QualityGovernor } from '@ffp/platform';
 import type { GameSession } from './game';
@@ -112,9 +113,61 @@ export function installDebugHook(
       session.armDummy(index);
     },
     dummyToPillar: () => session.dummyToPillar(),
-    startArena: (arena, difficulty = 'medium') => {
-      if (arena) lab.arenaPick.value = { arena, difficulty };
-      session.startArena(arena, difficulty);
+    startArena: (arena, difficulty = 'medium', beat = 0) => {
+      if (arena) lab.arenaPick.value = { arena, difficulty, beat };
+      session.startArena(arena, difficulty, beat);
+    },
+    run: () => {
+      const w = session.world;
+      const r = w.run;
+      const beat = beatOf(w);
+      if (!r || !beat) return null;
+      return {
+        beat: r.beat,
+        beatId: beat.id,
+        phase: r.phase,
+        locksDone: r.locksDone,
+        locks: beat.locks.length,
+        continues: r.continues,
+        continuesUsed: r.continuesUsed,
+        checkpointBeat: r.checkpoint?.beat ?? -1,
+        workers: r.workers.map((k) => ({ x: k.x / 256, z: k.z / 256, state: k.state })),
+        clue: r.clue,
+        evidence: r.evidence,
+        evidenceAt: beat.evidence ? { x: beat.evidence.x, z: beat.evidence.z } : null,
+        clueAt: beat.clue ? { x: beat.clue.x, z: beat.clue.z } : null,
+        stats: { ...r.stats },
+        width: beat.width,
+        bounds: { minX: w.bounds.minX / 256, maxX: w.bounds.maxX / 256 },
+      };
+    },
+    moveHeroes: (x, z = 860) => {
+      for (const h of session.world.bodies)
+        if (h.team === 'hero') {
+          h.x = (x + h.slot * 60) * 256;
+          h.z = z * 256;
+        }
+    },
+    clearEnemies: () => {
+      for (const e of session.world.bodies)
+        if (e.team === 'enemy' && !e.ko) {
+          e.health = 0;
+          e.ko = true;
+          e.state = MoveState.Down;
+          e.stateFrame = 0;
+          e.stun = 1;
+        }
+    },
+    setHealth: (slot, health) => {
+      const h = heroOf(session.world, slot);
+      if (!h) return;
+      h.health = health;
+      if (health <= 0) {
+        h.ko = true;
+        h.state = MoveState.Down;
+        h.stateFrame = 0;
+        h.stun = 1;
+      }
     },
     encounter: () => {
       const w = session.world;

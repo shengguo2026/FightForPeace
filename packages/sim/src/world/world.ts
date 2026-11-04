@@ -31,6 +31,14 @@ import { encodeCoop, newCoopState } from '../coop/data';
 import { stepHandoffs } from '../coop/handoff';
 import { stepTeam } from '../coop/team';
 import {
+  installHeroFactory,
+  setupStage,
+  stageIndex,
+  stageHero,
+  stepRun,
+  stepRunLate,
+} from '../stage/run';
+import {
   type EquipResult,
   type LoadoutKind,
   defaultLoadout,
@@ -48,6 +56,7 @@ import {
   type Team,
   type World,
   type ComboContext,
+  type RunStats,
   type TrainerSettings,
 } from './types';
 
@@ -55,7 +64,7 @@ export const DUMMY_HEALTH = 1000;
 export const HERO_HEALTH = 1000;
 
 /** Version of the byte layout written by encodeWorld. Bump on any layout change. */
-export const STATE_FORMAT = 11;
+export const STATE_FORMAT = 12;
 
 /** Walking speeds (fixed point per frame), kept as exports for existing callers. */
 export const WALK_SPEED_X = ON_FOOT.walkX;
@@ -107,8 +116,12 @@ export interface WorldOptions {
   layout?: StageLayout;
   /** M7: an arena scenario id (ARENAS); the world becomes that encounter. */
   arena?: string;
-  /** M7: difficulty id for the arena (default medium). */
+  /** M7: difficulty id for the arena or the stage (default medium). */
   difficulty?: string;
+  /** M9: a stage id (STAGES); the world becomes a run through that stage's beats. */
+  stage?: string;
+  /** M9: practice from this beat (0 = the stage start). */
+  beat?: number;
 }
 
 export interface LoadoutChange {
@@ -285,7 +298,11 @@ installEnemyFactory(createEnemy);
 export function createWorld(seed: number, options: WorldOptions = {}): World {
   const facing = options.facing ?? [];
   const p1 = HERO_SPAWN[0]!;
-  const heroes = [0, 1].map((i) => heroIndex(options.heroes?.[i] ?? DEFAULT_HEROES[i]!));
+  const stage = options.stage !== undefined ? stageIndex(options.stage) : -1;
+  const heroes = [0, 1].map((i) => {
+    const pick = options.heroes?.[i] ?? DEFAULT_HEROES[i]!;
+    return heroIndex(stage >= 0 ? stageHero(stage, i, pick) : pick);
+  });
   const playerLoadout = heroes.map((h, slot) => {
     const loadout = defaultLoadout(kitOf({ team: 'hero', hero: h }));
     for (const c of options.loadouts?.[slot] ?? []) applyChange(loadout, h, c);
@@ -319,8 +336,14 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
     environment: emptyEnvironment(),
     encounter: null,
     coop: newCoopState(),
+    run: null,
   };
   world.bodies.sort((a, b) => a.id - b.id);
+  if (options.stage !== undefined) {
+    const diff = options.difficulty === undefined ? MEDIUM : difficultyIndex(options.difficulty);
+    setupStage(world, stage, diff, options.beat ?? 0);
+    return world;
+  }
   if (options.arena !== undefined) {
     const arena = arenaIndex(options.arena);
     const diff = options.difficulty === undefined ? MEDIUM : difficultyIndex(options.difficulty);
@@ -420,6 +443,8 @@ export function setFacingMode(world: World, slot: number, mode: FacingMode): voi
  * it is idle or walking; otherwise it switches when it next becomes actionable.
  */
 export function setHero(world: World, slot: number, id: string): void {
+  // A stage with a locked roster keeps its heroes.
+  if (world.run && stageHero(world.run.stage, slot, id) !== id) return;
   const hero = heroIndex(id);
   if (world.playerHero[slot] === hero) return;
   world.playerHero[slot] = hero;
@@ -430,14 +455,24 @@ export function heroOf(world: World, slot: number): Fighter | undefined {
   return world.bodies.find((b) => b.team === 'hero' && b.slot === slot);
 }
 
+function newHero(world: World, slot: number, x: number, z: number): Fighter {
+  const facing = world.playerFacing[slot] ?? 'manual';
+  const f = createFighter(slot + 1, 'hero', slot, x, z, facing, world.playerHero[slot] ?? 0);
+  f.loadout = [...(world.playerLoadout[slot] ?? f.loadout)];
+  return f;
+}
+installHeroFactory((world, slot) => {
+  const s = HERO_SPAWN[slot]!;
+  return newHero(world, slot, s.x, s.z);
+});
+
 function spawnHero(world: World, slot: number): void {
   const s = HERO_SPAWN[slot]!;
-  const facing = world.playerFacing[slot] ?? 'manual';
   // In an arena a joining hero appears beside its partner, inside the view.
   const partner = world.encounter ? world.bodies.find((b) => b.team === 'hero') : undefined;
   const x = partner ? Math.min(world.bounds.maxX, partner.x + fx(120)) : s.x;
-  const f = createFighter(slot + 1, 'hero', slot, x, s.z, facing, world.playerHero[slot] ?? 0);
-  f.loadout = [...(world.playerLoadout[slot] ?? f.loadout)];
+  const f = newHero(world, slot, x, partner ? partner.z : s.z);
+  if (world.run) world.run.lastHealth[slot] = f.health;
   world.bodies.push(f);
   world.bodies.sort((a, b) => a.id - b.id);
 }
@@ -450,6 +485,8 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
   for (let slot = 0; slot < Math.min(inputs.length, MAX_PLAYERS); slot += 1) {
     if (inputs[slot] && !heroOf(world, slot)) spawnHero(world, slot);
   }
+  // M9 stage flow (locks, exit, transitions, continues) before the encounter steps.
+  stepRun(world);
   stepEncounter(world);
   stepBoss(world);
   // Team Attack: invitations, confirmations and the atomic commit, before anyone moves.
@@ -484,6 +521,7 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
   hazardHits(world);
   stepHandoffs(world);
   for (const f of world.bodies) closeContextIfActionable(world, f);
+  stepRunLate(world);
   world.frame += 1;
 }
 
@@ -732,7 +770,82 @@ export function encodeWorld(world: World): Uint8Array {
   }
   encodeEncounter(w, world);
   encodeCoop(w, world.coop);
+  encodeRun(w, world);
   return w.bytes();
+}
+
+function encodeRun(w: ByteWriter, world: World): void {
+  const r = world.run;
+  w.u8(r ? 1 : 0);
+  if (!r) return;
+  w.u32(r.stage);
+  w.u32(r.difficulty);
+  w.u32(r.startBeat);
+  w.u32(r.beat);
+  w.u8(r.phase);
+  w.i32(r.phaseFrame);
+  w.u32(r.locksDone);
+  w.i32(r.floorX);
+  w.u32(r.continues);
+  w.u32(r.continuesUsed);
+  const cp = r.checkpoint;
+  w.u8(cp ? 1 : 0);
+  if (cp) {
+    w.u32(cp.beat);
+    w.u32(cp.meter.length);
+    for (const m of cp.meter) w.u32(m);
+    encodeStats(w, cp.stats);
+  }
+  w.u32(r.workers.length);
+  for (const k of r.workers) {
+    w.i32(k.x);
+    w.i32(k.z);
+    w.u8(k.look);
+    w.u8(k.state);
+    w.i32(k.since);
+  }
+  w.u32(r.pickups.length);
+  for (const p of r.pickups) {
+    w.i32(p.x);
+    w.i32(p.z);
+    w.u32(p.heal);
+    w.u8(p.look);
+    w.u8(p.taken ? 1 : 0);
+  }
+  w.u8(r.cacheOpen ? 1 : 0);
+  w.u8(r.clue);
+  w.u8(r.evidence);
+  w.u32(r.channel.length);
+  for (const c of r.channel) {
+    w.u8(c.kind);
+    w.u32(c.target);
+    w.u32(c.progress);
+    w.u32(c.need);
+  }
+  for (const h of r.lastHealth) w.i32(h);
+  for (const d of r.downedAt) w.i32(d);
+  w.u32(r.counted.length);
+  for (const id of r.counted) w.u32(id);
+  encodeStats(w, r.stats);
+  w.u32(r.workersTotal);
+  w.u32(r.cluesTotal);
+  w.u8(r.event.kind);
+  w.i32(r.event.frame);
+  w.i32(r.event.detail);
+}
+
+function encodeStats(w: ByteWriter, s: RunStats): void {
+  w.u32(s.frames);
+  w.u32(s.defeated);
+  w.u32(s.surrendered);
+  w.u32(s.fled);
+  w.u32(s.damageTaken);
+  w.u32(s.food);
+  w.u32(s.downs);
+  w.u32(s.revives);
+  w.u32(s.workersFreed);
+  w.u32(s.clues);
+  w.u32(s.evidence);
 }
 
 function encodeEncounter(w: ByteWriter, world: World): void {
@@ -740,6 +853,7 @@ function encodeEncounter(w: ByteWriter, world: World): void {
   w.u8(e ? 1 : 0);
   if (!e) return;
   w.u32(e.arena);
+  w.i32(e.start);
   w.u32(e.difficulty);
   w.i32(e.wave);
   w.u32(e.waveIds.length);

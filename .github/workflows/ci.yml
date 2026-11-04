@@ -28,6 +28,16 @@ jobs:
       - name: End-to-end tests (Chromium, Firefox, WebKit)
         run: pnpm e2e
       - run: pnpm build
+      - name: Portable zip
+        run: node tools/release.mjs
+      - name: Portable smoke test (unzip and start)
+        run: pnpm smoke:portable
+      - name: Upload portable zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: FightForPeace-portable
+          path: release/FightForPeace-*.zip
+          if-no-files-found: error
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -42,3 +52,18 @@ jobs:
           name: playwright-report
           path: apps/game/playwright-report
           if-no-files-found: ignore
+
+  portable-windows:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm release
+      - name: Portable smoke test with start.bat
+        run: pnpm smoke:portable

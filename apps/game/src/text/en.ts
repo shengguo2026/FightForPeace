@@ -28,6 +28,12 @@ export const TEXT = {
   teamWaiting: 'Team Attack: waiting for your partner',
   hintTeam: 'Team {action:TeamAttack}',
   controllerLost: 'Player {player} lost their controller.',
+  // --- M9 stage journey (hold Interact next to something) ---
+  holdWorker: 'Hold {action:Interact} to free the worker',
+  holdRevive: 'Hold {action:Interact} to help your partner up',
+  holdClue: 'Hold {action:Interact} to look closer',
+  holdEvidence: 'Hold {action:Interact} to secure the evidence',
+  downedWait: 'Down: your partner can help you up, or you return when this fight ends',
   controllerReconnect:
     'Reconnect it, or press the Attack button on another controller or keyboard to continue with that one.',
 } as const;
@@ -244,3 +250,44 @@ export const TEAM_DENIED_TEXT: readonly string[] = [
   'a hero is busy',
   'partner out of range',
 ];
+
+/** M9 stage journey: HUD words, notices and the results screen. */
+export const STAGE_TEXT = {
+  stage: 'Stage',
+  beat: 'Beat',
+  continues: 'Continues',
+  checkpoint: 'Checkpoint saved',
+  go: 'GO',
+  lockClear: 'CLEAR',
+  defeated: 'DEFEATED',
+  continueLeft: 'Continue from the checkpoint · {n} left',
+  noContinues: 'No continues left: the stage starts again',
+  restarted: 'The stage starts again',
+  continued: 'Continue used',
+  workerFreed: 'Worker freed',
+  cacheOpen: 'Recovery cache opened',
+  food: 'Food',
+  downed: 'P{n} is down',
+  revived: 'P{n} is back up',
+  rejoined: 'P{n} rejoins',
+  riverRestored: 'THE RIVER FLOWS AGAIN',
+  exitOpen: 'The way ahead is open',
+  complete: 'STAGE COMPLETE',
+  objectiveDone: 'Done',
+  workers: 'Workers freed',
+  resultsTitle: 'Stage 1 complete · The Broken Water Pact',
+  overall: 'Overall',
+  practice: 'practice run from beat {n}',
+  playAgain: 'Play again',
+  backToLab: 'Back to the Lab',
+  sponsorHook:
+    'The faction is beaten, but the machined parts point to someone outside the valley. Who is paying for this?',
+} as const;
+
+/** Grade category names (StageResults grade ids). */
+export const GRADE_TEXT: Record<string, string> = {
+  rescue: 'Rescue (workers freed)',
+  evidence: 'Investigation (clue and sponsor evidence)',
+  continues: 'Continues used',
+  time: 'Time',
+};
