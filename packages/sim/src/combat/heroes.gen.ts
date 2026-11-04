@@ -9437,7 +9437,7 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "backdrop": "layers",
     "width": 2880,
     "heroX": 500,
-    "minDifficulty": 2,
+    "minDifficulty": 0,
     "layout": "",
     "weaponSpot": null,
     "devices": [],
@@ -9457,7 +9457,7 @@ export const ARENA_DATA: readonly ArenaDef[] = [
             "kit": "recruit",
             "x": 1700,
             "z": 720,
-            "minDifficulty": 0,
+            "minDifficulty": 2,
             "coop": false
           },
           {

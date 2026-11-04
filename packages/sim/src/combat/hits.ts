@@ -214,7 +214,11 @@ export function resolveHits(world: World): void {
         if (att.contactAt < 0) att.contactAt = att.stateFrame + 1;
         payContact(world, att, true);
         // A crushDisarm move that breaks the guard also knocks the weapon away.
-        if (t.state === MoveState.GuardCrush && a.tags.includes('crushDisarm') && !bossResists(world, t))
+        if (
+          t.state === MoveState.GuardCrush &&
+          a.tags.includes('crushDisarm') &&
+          !bossResists(world, t)
+        )
           tryDisarm(world, att, a, t);
         continue;
       }

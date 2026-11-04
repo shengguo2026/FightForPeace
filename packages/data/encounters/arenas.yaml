@@ -58,15 +58,16 @@ arenas:
           - { kit: lookout, x: 3100, z: 900, minDifficulty: medium }
           - { kit: lookout, x: 300, z: 760, coop: true }
 
+  # In the campaign the Enforcer is a Hard+ substitution (beat-courtyard); its own trial
+  # is open at every difficulty so it can be practised and tested at Easy and Medium too.
   - id: trial-enforcer
     name: 'Trial: Black-Iron Enforcer'
     area: courtyard
     width: 2880
-    minDifficulty: hard
     waves:
       - enemies:
           - { kit: enforcer, x: 1500, z: 820 }
-          - { kit: recruit, x: 1700, z: 720 }
+          - { kit: recruit, x: 1700, z: 720, minDifficulty: hard }
           - { kit: recruit, x: 1700, z: 920, coop: true }
 
   - id: beat-bridge

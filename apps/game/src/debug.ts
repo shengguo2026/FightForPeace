@@ -10,6 +10,10 @@ import {
   runReplay,
   WEAPONS,
   weaponIndex,
+  ARENAS,
+  DIFFICULTIES,
+  budgetOf,
+  usage,
 } from '@ffp/sim';
 import type { GameSession } from './game';
 import type { LabState } from './ui/labState';
@@ -102,6 +106,41 @@ export function installDebugHook(session: GameSession, lab: LabState): void {
       session.armDummy(index);
     },
     dummyToPillar: () => session.dummyToPillar(),
+    startArena: (arena, difficulty = 'medium') => {
+      if (arena) lab.arenaPick.value = { arena, difficulty };
+      session.startArena(arena, difficulty);
+    },
+    encounter: () => {
+      const w = session.world;
+      const enc = w.encounter;
+      if (!enc) return null;
+      return {
+        arena: ARENAS[enc.arena]?.id ?? '?',
+        difficulty: DIFFICULTIES[enc.difficulty]?.id ?? '?',
+        wave: enc.wave,
+        result: enc.result,
+        viewMin: enc.viewMin / 256,
+        enemies: w.bodies
+          .filter((b) => b.team === 'enemy')
+          .map((b) => ({
+            id: b.id,
+            kit: kitOf(b)?.id ?? '?',
+            state: b.state,
+            health: b.health,
+            threat: b.threat,
+          })),
+        boss: enc.boss
+          ? {
+              phase: enc.boss.phase,
+              resolve: enc.boss.resolve,
+              stagger: enc.boss.stagger,
+              pending: enc.boss.pending,
+            }
+          : null,
+        threat: usage(w).total,
+        budget: budgetOf(w),
+      };
+    },
   };
 }
 

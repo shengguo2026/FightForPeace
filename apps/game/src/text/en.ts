@@ -178,3 +178,35 @@ export function parseText(s: string, values: Record<string, string | number> = {
   if (last < s.length) parts.push({ kind: 'text', text: s.slice(last) });
   return parts;
 }
+
+/** M7 arena HUD words. */
+export const ARENA_TEXT = {
+  wave: 'Wave',
+  left: 'left',
+  cleared: 'ARENA CLEARED',
+  defeated: 'DEFEATED',
+  restart: 'F1 Lab → Arena → Restart',
+  stagger: 'STAGGER BREAK',
+  phaseShift: 'phase change',
+  phaseQueued: 'phase change queued',
+  phase: 'Phase',
+  resolve: 'Resolve',
+  incoming: 'INCOMING',
+  teamAttack: 'TEAM ATTACK',
+  flee: 'flees',
+  surrender: 'surrenders',
+} as const;
+
+/** Director verdicts (Verdict numbers) for the Lab's encounter panel. */
+export const VERDICT_TEXT = [
+  'allowed',
+  'over the threat budget',
+  'over the pressure cap',
+  'too many attackers',
+  'too many projectiles',
+  'one hard crowd control at a time',
+  'no overlapping unblockables',
+  'group attack in progress',
+  'not visible (off screen)',
+  'boss share reserved',
+] as const;

@@ -8,6 +8,8 @@ import {
   type TrainerSettings,
   compatibleMoves,
   WEAPONS,
+  arenaNames,
+  difficultyNames,
 } from '@ffp/sim';
 import type { KeyboardP2Preset, LayoutName } from '@ffp/platform';
 import { LINK_TEXT, TEXT, moveInputText, profileText } from '../text/en';
@@ -47,6 +49,9 @@ export interface LabActions {
   resetArmory(): void;
   resetEnvironment(): void;
   dummyToPillar(): void;
+  /** M7: starts (or restarts) the picked arena; null goes back to the Lab. */
+  startArena(arena: string | null): void;
+  pickArena(pick: Partial<{ arena: string; difficulty: string }>): void;
 }
 
 const panel = {
@@ -342,6 +347,68 @@ function Button(props: { label: string; onClick: () => void; testId: string }) {
 }
 
 /** F10: weapons (what each hero holds, the items on stage) and the environmental slice. */
+/** M7 arena mode: pick an arena and a difficulty, start, restart, and the director's numbers. */
+function ArenaPanel({ state, actions }: { state: LabState; actions: LabActions }) {
+  const pick = state.arenaPick.value;
+  const arenas = arenaNames();
+  const diffs = difficultyNames();
+  const arena = arenas.find((a) => a.id === pick.arena) ?? arenas[0]!;
+  const diff = diffs.find((d) => d.id === pick.difficulty) ?? diffs[1]!;
+  const allowed = diffs.filter((_, i) => i >= arena.minDifficulty && i <= 2);
+  const view = state.arena.value;
+  const button = (label: string, testId: string, run: () => void) => (
+    <button
+      data-testid={testId}
+      style={{ marginRight: '6px' }}
+      onClick={(e) => {
+        (e.target as HTMLElement).blur();
+        run();
+      }}
+    >
+      {label}
+    </button>
+  );
+  return (
+    <div style={{ ...panel, maxWidth: '420px', pointerEvents: 'auto' }} data-testid="lab-arena">
+      <div>Arena · enemies and the Sluice Commander</div>
+      <Select
+        label="Arena"
+        value={arena.name}
+        options={arenas.map((a) => a.name)}
+        onChange={(name) => {
+          const a = arenas.find((x) => x.name === name)!;
+          const d = diffs.findIndex((x) => x.id === pick.difficulty);
+          actions.pickArena({
+            arena: a.id,
+            difficulty: d < a.minDifficulty ? diffs[a.minDifficulty]!.id : pick.difficulty,
+          });
+        }}
+        testId="arena-pick"
+      />
+      <Select
+        label="Difficulty"
+        value={diff.name}
+        options={allowed.map((d) => d.name)}
+        onChange={(name) =>
+          actions.pickArena({ difficulty: diffs.find((x) => x.name === name)!.id })
+        }
+        testId="arena-difficulty"
+      />
+      <div style={{ margin: '4px 0' }}>
+        {button(view.running ? 'Restart' : 'Start', 'arena-start', () =>
+          actions.startArena(pick.arena),
+        )}
+        {view.running ? button('Back to Lab', 'arena-leave', () => actions.startArena(null)) : null}
+      </div>
+      <div data-testid="arena-diagnostics">
+        {view.lines.map((l) => (
+          <div>{l}</div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function WeaponPanel(props: { view: WeaponPanelView; state: LabState; actions: LabActions }) {
   const { view, actions } = props;
   const arm = props.state.trainer.value.arm;
@@ -773,6 +840,7 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
             <PlayerPanel p={p} />
           ))}
           <TargetPanel t={state.target.value} />
+          <ArenaPanel state={state} actions={actions} />
           {state.settingsOpen.value ? <Settings state={state} actions={actions} /> : null}
           {state.moveListOpen.value ? <MoveList players={players} /> : null}
           {state.recipesOpen.value ? (

@@ -29,6 +29,12 @@ import {
   WEAPONS,
   WeaponEvent,
   conditionOf,
+  ENEMIES,
+  budgetOf,
+  coopIndex,
+  difficultyOf,
+  profileOf,
+  usage,
 } from '@ffp/sim';
 import {
   ACTION_NAMES,
@@ -38,7 +44,7 @@ import {
   resolvePrompt,
 } from '@ffp/platform';
 import type { GameSession } from '../game';
-import { BREAKER_DENIED, DEFENSE_TEXT, GRAB_TEXT, moveInputText } from '../text/en';
+import { BREAKER_DENIED, DEFENSE_TEXT, GRAB_TEXT, VERDICT_TEXT, moveInputText } from '../text/en';
 import {
   type DefenseView,
   type GrabPlayerView,
@@ -96,6 +102,10 @@ const STATE_NAMES: Record<number, string> = {
   [MoveState.Grabbing]: 'holding a grab',
   [MoveState.Grabbed]: 'grabbed',
   [MoveState.Restrained]: 'RESTRAINED',
+  [MoveState.Flee]: 'fleeing',
+  [MoveState.Surrender]: 'surrendered',
+  [MoveState.Defeated]: 'defeated',
+  [MoveState.PhaseShift]: 'phase change',
 };
 
 const PROTECT_TEXT: Record<number, string> = {
@@ -673,4 +683,57 @@ export function refreshWeapons(session: GameSession, lab: LabState): void {
     }),
   ];
   lab.weapons.value = { players, items, scenery, lastEvent: envText(world) };
+}
+
+const AI_MODE = [
+  'idle',
+  'approach',
+  'hold',
+  'flank',
+  'kite',
+  'warning',
+  'group',
+  'weapon',
+  'objective',
+  'enter',
+];
+
+/** M7 arena panel: budget used / total, pressure per hero, the director's last verdict. */
+export function refreshArena(session: GameSession, lab: LabState): void {
+  const world = session.world;
+  const enc = world.encounter;
+  if (!enc) {
+    if (lab.arena.value.running || lab.arena.value.lines.length === 0)
+      lab.arena.value = { running: false, lines: ['Lab mode: pick an arena and press Start.'] };
+    return;
+  }
+  if (!lab.visible.value && lab.arena.value.running) return;
+  const d = difficultyOf(world);
+  const u = usage(world);
+  const heroes = [0, 1].flatMap((slot) => {
+    const h = heroOf(world, slot);
+    return h ? [`P${slot + 1} pressure ${u.pressure.get(h.id) ?? 0}/${d.cap}`] : [];
+  });
+  const l = enc.log;
+  const who = world.bodies.find((b) => b.id === l.enemy);
+  const verdict =
+    l.frame > 0 && who
+      ? `last: ${ENEMIES[who.hero]?.name ?? '?'} ${routeAction(l.code)?.name ?? ''} → ${VERDICT_TEXT[l.verdict] ?? '?'} (f${l.frame})`
+      : 'last: no decision yet';
+  const enemies = world.bodies
+    .filter((b) => b.team === 'enemy' && profileOf(b))
+    .map((e) => {
+      const mode = e.threat > 0 ? `commits ${e.threat}` : (AI_MODE[e.aiMode] ?? '');
+      return `${ENEMIES[e.hero]?.name ?? '?'} ${e.health}/${e.maxHealth} · ${STATE_NAMES[e.state] ?? e.state} · ${mode}`;
+    });
+  const lines = [
+    `threat ${u.total}/${budgetOf(world)} · attackers ${u.attackers}/${d.attackers[coopIndex(world)]} · projectiles ${u.projectiles}/${d.projectiles[coopIndex(world)]} · hard CC ${u.hardCC}/${d.hardCC}`,
+    heroes.join(' · '),
+    `peak committed ${enc.peakCommitted} · off-screen warned ${enc.offscreenWarned} · unwarned ${enc.offscreenUnwarned}`,
+    verdict,
+    ...enemies.slice(0, 8),
+  ];
+  const prev = lab.arena.value;
+  if (prev.running && prev.lines.join('|') === lines.join('|')) return;
+  lab.arena.value = { running: true, lines };
 }

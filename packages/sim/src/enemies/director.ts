@@ -1,11 +1,5 @@
 import { fx } from '../math/fixed';
-import {
-  type Fighter,
-  MoveState,
-  Threat,
-  Verdict,
-  type World,
-} from '../world/types';
+import { type Fighter, MoveState, Threat, Verdict, type World } from '../world/types';
 import type { ActionDef } from '../combat/types';
 import { routeCodeOf } from '../combat/roster';
 import { difficultyOf, livingHeroes, profileOf } from './data';
@@ -136,7 +130,8 @@ export function judge(
   }
   if ((u.pressure.get(target) ?? 0) + total > d.cap) return Verdict.Cap;
   if (u.attackers + (extra > 0 ? 2 : 1) > d.attackers[co]) return Verdict.Attackers;
-  if (flags & Threat.Projectile && u.projectiles + 1 > d.projectiles[co]) return Verdict.Projectiles;
+  if (flags & Threat.Projectile && u.projectiles + 1 > d.projectiles[co])
+    return Verdict.Projectiles;
   if (flags & Threat.HardCC && u.hardCC + 1 > d.hardCC) return Verdict.HardCC;
   if (flags & Threat.Unblockable && u.unblockable > 0) return Verdict.Unblockable;
   return Verdict.Ok;
@@ -150,7 +145,13 @@ export function logDecision(world: World, e: Fighter, index: number, verdict: nu
 }
 
 /** Reserve: the enemy commits `cost` on `target`. */
-export function reserve(world: World, e: Fighter, a: ActionDef, cost: number, target: number): void {
+export function reserve(
+  world: World,
+  e: Fighter,
+  a: ActionDef,
+  cost: number,
+  target: number,
+): void {
   e.threat = cost;
   e.threatTarget = target;
   e.threatFlags = threatFlags(a, isBoss(world, e));

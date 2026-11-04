@@ -360,7 +360,10 @@ const Profile = T.Object(
         {
           flinchCap: T.Integer({ minimum: 1, maximum: 20 }),
           budgets: T.Object(
-            { stun: T.Integer({ minimum: 1, maximum: 100 }), juggle: T.Integer({ minimum: 1, maximum: 100 }) },
+            {
+              stun: T.Integer({ minimum: 1, maximum: 100 }),
+              juggle: T.Integer({ minimum: 1, maximum: 100 }),
+            },
             { additionalProperties: false },
           ),
           stagger: T.Object(
@@ -684,7 +687,10 @@ export function compileProfile(p: ProfileYaml): unknown {
   };
 }
 
-const Pair = T.Tuple([T.Integer({ minimum: 0, maximum: 1000 }), T.Integer({ minimum: 0, maximum: 1000 })]);
+const Pair = T.Tuple([
+  T.Integer({ minimum: 0, maximum: 1000 }),
+  T.Integer({ minimum: 0, maximum: 1000 }),
+]);
 export const DifficultySchema = T.Object(
   {
     difficulties: T.Array(
@@ -805,7 +811,11 @@ export const ArenaSchema = T.Object(
   { additionalProperties: false },
 );
 
-function validate<S extends Parameters<typeof Value.Errors>[0]>(schema: S, source: string, file: string): unknown {
+function validate<S extends Parameters<typeof Value.Errors>[0]>(
+  schema: S,
+  source: string,
+  file: string,
+): unknown {
   const raw: unknown = parse(source);
   const errors = [...Value.Errors(schema, raw)].map(
     (e) => `${file}: ${e.path || '/'} ${e.message}`,
@@ -819,12 +829,23 @@ export function loadDifficulties(source: string, file = 'difficulty.yaml'): unkn
   const d = validate(DifficultySchema, source, file) as Static<typeof DifficultySchema>;
   const ids = d.difficulties.map((x) => x.id);
   if (ids.join() !== DIFFICULTY_ORDER.join())
-    throw new HeroDataError(`${file}: difficulties must be ${DIFFICULTY_ORDER.join(', ')} in order`);
-  return d.difficulties.map((x) => ({ ...x, budget: [...x.budget], attackers: [...x.attackers], projectiles: [...x.projectiles] }));
+    throw new HeroDataError(
+      `${file}: difficulties must be ${DIFFICULTY_ORDER.join(', ')} in order`,
+    );
+  return d.difficulties.map((x) => ({
+    ...x,
+    budget: [...x.budget],
+    attackers: [...x.attackers],
+    projectiles: [...x.projectiles],
+  }));
 }
 
 /** Validates arenas.yaml against the enemy kit ids and converts it to pixel data. */
-export function loadArenas(source: string, kits: readonly string[], file = 'arenas.yaml'): unknown[] {
+export function loadArenas(
+  source: string,
+  kits: readonly string[],
+  file = 'arenas.yaml',
+): unknown[] {
   const d = validate(ArenaSchema, source, file) as Static<typeof ArenaSchema>;
   const problems: string[] = [];
   const seen = new Set<string>();
@@ -1178,12 +1199,15 @@ export function generate(
   for (const k of enemyYaml) {
     for (const ph of k.profile?.boss?.phases ?? []) {
       const w = ph.weapon ? weaponYaml.find((x) => x.id === ph.weapon) : undefined;
-      if (ph.weapon && !w) problems.push(`${k.id}: phase "${ph.name}" claims unknown weapon "${ph.weapon}"`);
+      if (ph.weapon && !w)
+        problems.push(`${k.id}: phase "${ph.name}" claims unknown weapon "${ph.weapon}"`);
       const ids = new Set([...k.actions.map((a) => a.id), ...(w?.actions.map((a) => a.id) ?? [])]);
       for (const a of ph.attacks)
-        if (!ids.has(a.action)) problems.push(`${k.id}: phase "${ph.name}" attack "${a.action}" is unknown`);
+        if (!ids.has(a.action))
+          problems.push(`${k.id}: phase "${ph.name}" attack "${a.action}" is unknown`);
       for (const s of ph.supports ?? [])
-        if (!enemyYaml.some((e) => e.id === s)) problems.push(`${k.id}: unknown support kit "${s}"`);
+        if (!enemyYaml.some((e) => e.id === s))
+          problems.push(`${k.id}: unknown support kit "${s}"`);
     }
   }
   if (problems.length > 0) throw new HeroDataError(problems.join('\n'));

@@ -16,6 +16,8 @@ import {
   type Projectile,
   type Item,
   type Environment,
+  type Encounter,
+  HEROES,
   armDummy,
   resetArmory,
   resetEnvironment,
@@ -52,6 +54,12 @@ export interface RenderSnapshot {
   items: readonly Item[];
   /** Scenery: the pillar, the sluice boards and the cog (current state). */
   environment: Environment;
+  /** M7 arena mode: the encounter (waves, view, boss, devices), or null in the Lab. */
+  encounter: Encounter | null;
+  /** Stage width in pixels (the arena width; 1920 in the Lab). */
+  stageWidth: number;
+  /** Changes whenever the session replaces its world (arena start, restart, Lab). */
+  generation: number;
 }
 
 export interface FrameReport {
@@ -68,7 +76,7 @@ export interface FrameReport {
  * (user pause or a lost controller) the simulation does not step at all.
  */
 export class GameSession {
-  readonly world: World;
+  world: World;
   readonly labels = new KeyLabelSource();
   readonly devices = new DeviceHub({
     keyboardP1: DEFAULT_KEYBOARD_P1,
@@ -78,16 +86,40 @@ export class GameSession {
   private readonly accumulator = createAccumulator({ hz: SIM_HZ, maxSteps: MAX_STEPS_PER_FRAME });
   private previous: Fighter[];
   private alpha = 0;
+  private generation = 0;
 
-  constructor(seed: number, trainer: Partial<TrainerSettings> = {}) {
-    // M6: the Lab is the mill corner, with its two weapons and its scenery.
-    this.world = createWorld(seed, {
+  constructor(
+    private readonly seed: number,
+    private readonly trainer: Partial<TrainerSettings> = {},
+  ) {
+    this.world = this.labWorld();
+    this.previous = cloneFighters(this.world.bodies);
+    this.generation += 1;
+  }
+
+  /** M6: the Lab is the mill corner, with its two weapons and its scenery. */
+  private labWorld(): World {
+    return createWorld(this.seed, {
       dummies: LAB_DUMMIES,
-      trainer,
+      trainer: this.trainer,
       armory: true,
       environment: true,
     });
+  }
+
+  /**
+   * M7 arena mode: a fresh world for `arena` at `difficulty` (ids from the arena table),
+   * or the Lab again when `arena` is null. Player heroes keep their selection.
+   */
+  startArena(arena: string | null, difficulty = 'medium'): void {
+    const heroes = [0, 1].map((slot) => heroOf(this.world, slot)?.hero);
+    this.world = arena ? createWorld(this.seed, { arena, difficulty }) : this.labWorld();
+    heroes.forEach((h, slot) => {
+      const id = h === undefined ? undefined : HEROES[h]?.id;
+      if (id && heroOf(this.world, slot)) setHero(this.world, slot, id);
+    });
     this.previous = cloneFighters(this.world.bodies);
+    this.generation += 1;
   }
 
   /** Lab: the training enemy's script (who attacks, which attack, how often). */
@@ -126,6 +158,9 @@ export class GameSession {
       frame: this.world.frame,
       items: this.world.items,
       environment: this.world.environment,
+      encounter: this.world.encounter,
+      stageWidth: Math.round(this.world.bounds.maxX / 256),
+      generation: this.generation,
     };
   }
 

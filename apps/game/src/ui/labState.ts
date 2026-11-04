@@ -162,6 +162,9 @@ export interface LabState {
   equipNote: Signal<string>;
   weaponOpen: Signal<boolean>;
   weapons: Signal<WeaponPanelView>;
+  /** Arena (name) and difficulty (name) picked in the arena panel. */
+  arenaPick: Signal<{ arena: string; difficulty: string }>;
+  arena: Signal<ArenaPanelView>;
 }
 
 export function createLabState(visible: boolean): LabState {
@@ -198,7 +201,15 @@ export function createLabState(visible: boolean): LabState {
     equipNote: signal(''),
     weaponOpen: signal(false),
     weapons: signal({ players: [], items: [], scenery: [], lastEvent: '' }),
+    arenaPick: signal({ arena: 'trial-recruit', difficulty: 'medium' }),
+    arena: signal({ running: false, lines: [] }),
   };
 }
 
 export const HISTORY_LENGTH = 12;
+
+/** M7 arena panel: the chosen arena and difficulty, and the director's numbers. */
+export interface ArenaPanelView {
+  running: boolean;
+  lines: string[];
+}

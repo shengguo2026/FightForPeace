@@ -1,10 +1,4 @@
-import {
-  type BossState,
-  type Fighter,
-  ItemState,
-  MoveState,
-  type World,
-} from '../world/types';
+import { type BossState, type Fighter, ItemState, MoveState, type World } from '../world/types';
 import type { ActionDef } from '../combat/types';
 import { emptyContext } from '../combat/context';
 import { enter, interrupt, toActionable } from '../combat/reactions';
@@ -184,7 +178,8 @@ export function stepBoss(world: World): void {
     return;
   }
   if (!b.pending) return;
-  const safe = f.state === MoveState.Idle || f.state === MoveState.Walk || f.state === MoveState.Guard;
+  const safe =
+    f.state === MoveState.Idle || f.state === MoveState.Walk || f.state === MoveState.Guard;
   if (safe || world.frame - b.pendingSince >= prof.transition.grace) beginShift(world, f);
 }
 
@@ -286,7 +281,12 @@ export function startPhase(world: World, f: Fighter, n: number): void {
     if (!inPlay) spawnItem(world, w, fx(spot.x), fx(spot.z));
   }
   ph.supports.forEach((kit, i) => {
-    spawnEnemy(world, enemyKitIndex(kit), i === 0 ? world.bounds.minX + fx(60) : world.bounds.maxX - fx(60), fx(760 + i * 140));
+    spawnEnemy(
+      world,
+      enemyKitIndex(kit),
+      i === 0 ? world.bounds.minX + fx(60) : world.bounds.maxX - fx(60),
+      fx(760 + i * 140),
+    );
   });
 }
 
@@ -317,4 +317,3 @@ export function bossLook(world: World, f: Fighter): number {
   const prof = PROFILES[f.hero]?.boss;
   return prof?.phases[b.phase]?.look ?? 1;
 }
-

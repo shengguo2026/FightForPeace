@@ -25,14 +25,7 @@ import { WEAPONS } from '../combat/armory';
 import { ITEM, heldItem } from '../combat/held';
 import { pickupEligible, requestPickup, stepPickup } from '../combat/items';
 import { nonCombatant } from '../combat/damage';
-import {
-  actionIndex,
-  attacksOf,
-  bossPhase,
-  difficultyOf,
-  livingHeroes,
-  profileOf,
-} from './data';
+import { actionIndex, attacksOf, bossPhase, difficultyOf, livingHeroes, profileOf } from './data';
 import {
   holdsReservation,
   judge,
@@ -303,7 +296,8 @@ function capable(world: World, f: Fighter, kind: 'exact' | 'counter' | 'breaker'
 function planDefense(world: World, f: Fighter, prof: EnemyProfile): boolean {
   const d = difficultyOf(world);
   const perception = d.perception + prof.perception;
-  const actionable = f.state === MoveState.Idle || f.state === MoveState.Walk || f.state === MoveState.Guard;
+  const actionable =
+    f.state === MoveState.Idle || f.state === MoveState.Walk || f.state === MoveState.Guard;
   if (!actionable) return false;
   // Carry out a plan that is due.
   if (f.defPlan !== DefPlan.None && world.frame >= f.defAt) {
@@ -372,10 +366,16 @@ function planDefense(world: World, f: Fighter, prof: EnemyProfile): boolean {
     } else if (!unblockable && capable(world, f, 'exact')) {
       f.defPlan = DefPlan.Exact;
       f.defAt = when;
-    } else if (prof.defense.evade && rate(evadeAcc, prof.defense.evadeEvery, prof.defense.evadeOf, 100)) {
+    } else if (
+      prof.defense.evade &&
+      rate(evadeAcc, prof.defense.evadeEvery, prof.defense.evadeOf, 100)
+    ) {
       f.defPlan = DefPlan.Evade;
       f.defAt = world.frame;
-    } else if (!unblockable && rate(guardAcc, prof.defense.guardEvery, prof.defense.guardOf, scale)) {
+    } else if (
+      !unblockable &&
+      rate(guardAcc, prof.defense.guardEvery, prof.defense.guardOf, scale)
+    ) {
       f.defPlan = DefPlan.Guard;
       f.defAt = world.frame;
     }
@@ -487,7 +487,14 @@ function stepAiAction(world: World, f: Fighter): void {
 }
 
 /** Starts attack slot `slot` (action index `index`) on `target`, reserving its threat. */
-function commit(world: World, f: Fighter, slot: number, at: AiAttackDef, index: number, target: Fighter): void {
+function commit(
+  world: World,
+  f: Fighter,
+  slot: number,
+  at: AiAttackDef,
+  index: number,
+  target: Fighter,
+): void {
   const a = kitOf(f)!.actions[index]!;
   reserve(world, f, a, at.threat, target.id);
   face(f, target.x);
@@ -592,7 +599,8 @@ function tryGroup(world: World, f: Fighter, prof: EnemyProfile, target: Fighter)
   let best = 0;
   for (const e of world.bodies) {
     if (e.team !== 'enemy' || e.id === f.id || e.threat > 0 || e.ko || nonCombatant(e)) continue;
-    if (isBoss(world, e) || profileOf(e)?.role === 'elite' || profileOf(e)?.role === 'ranged') continue;
+    if (isBoss(world, e) || profileOf(e)?.role === 'elite' || profileOf(e)?.role === 'ranged')
+      continue;
     if (e.state !== MoveState.Idle && e.state !== MoveState.Walk) continue;
     const d = Math.abs(e.x - target.x) + Math.abs(e.z - target.z);
     if (d > fx(900)) continue;
@@ -608,7 +616,8 @@ function tryGroup(world: World, f: Fighter, prof: EnemyProfile, target: Fighter)
   if (verdict !== Verdict.Ok) return false;
   reserve(world, f, a, g.threat, target.id);
   f.threatFlags |= Threat.Group;
-  const pa = kitOf(partner)!.actions[actionIndex(partner, attacksOf(world, partner)[0]?.action ?? '')];
+  const pa =
+    kitOf(partner)!.actions[actionIndex(partner, attacksOf(world, partner)[0]?.action ?? '')];
   reserve(world, partner, pa ?? a, g.partnerThreat, target.id);
   partner.threatFlags |= Threat.Group;
   f.groupWith = partner.id;
@@ -691,7 +700,10 @@ function seekWeapon(world: World, f: Fighter, prof: EnemyProfile): boolean {
   }
   if (!best) return false;
   f.aiMode = AiMode.Weapon;
-  if (Math.abs(best.x - f.x) <= ITEM.reachX - fx(10) && Math.abs(best.z - f.z) <= ITEM.reachZ - fx(6)) {
+  if (
+    Math.abs(best.x - f.x) <= ITEM.reachX - fx(10) &&
+    Math.abs(best.z - f.z) <= ITEM.reachZ - fx(6)
+  ) {
     return requestPickup(world, f);
   }
   walkTo(f, prof, best.x, best.z, ITEM.reachX - fx(20), ITEM.reachZ - fx(10));
@@ -742,8 +754,7 @@ function completeObjective(world: World, f: Fighter): void {
 function tactical(world: World, f: Fighter, prof: EnemyProfile, t: Fighter): void {
   const dx = t.x - f.x;
   const side = sign(-dx) || 1;
-  const strafe =
-    Math.trunc((world.frame + f.id * 37) / AI.strafePeriod) % 2 === 0 ? 1 : -1;
+  const strafe = Math.trunc((world.frame + f.id * 37) / AI.strafePeriod) % 2 === 0 ? 1 : -1;
   const lane = t.z + strafe * AI.strafeDepth * ((f.id % 3) - 1);
   const ring = prof.ring;
   let x = t.x + side * ring;
@@ -796,9 +807,9 @@ export function sweepBodies(world: World): number[] {
   world.bodies = world.bodies.filter((b) => {
     if (b.team !== 'enemy') return true;
     const fled =
-      b.state === MoveState.Flee &&
-      (b.x <= world.bounds.minX || b.x >= world.bounds.maxX);
-    const cleared = b.state === MoveState.Defeated && b.stateFrame >= AI.defeatedFrames && !isBoss(world, b);
+      b.state === MoveState.Flee && (b.x <= world.bounds.minX || b.x >= world.bounds.maxX);
+    const cleared =
+      b.state === MoveState.Defeated && b.stateFrame >= AI.defeatedFrames && !isBoss(world, b);
     if (fled || cleared) gone.push(b.id);
     return !(fled || cleared);
   });

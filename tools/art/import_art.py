@@ -62,7 +62,32 @@ HERO_COMMON = {
     "handwheel": "HANDWHEEL",
 }
 
-ENEMIES = {"trainer": ("enemies/recruit", "ENM-RECRUIT", ["IDLE-WALK", "ATTACK", "REACT"])}
+# The training dummy and the Pressed Recruit share the recruit sheets (key "trainer").
+ENEMIES = {
+    "trainer": ("enemies/recruit", "ENM-RECRUIT", ["IDLE-WALK", "ATTACK", "REACT", "EXIT"]),
+    "shield": ("enemies/shield", "ENM-SHIELD", ["IDLE-WALK", "ATTACK", "GUARD", "REACT", "EXIT"]),
+    "runner": ("enemies/runner", "ENM-RUNNER", ["IDLE-WALK", "ATTACK", "AIR", "REACT", "EXIT"]),
+    "overseer": ("enemies/overseer", "ENM-OVERSEER", ["IDLE-WALK", "ATTACK", "GRAB", "REACT", "EXIT"]),
+    "lookout": ("enemies/lookout", "ENM-LOOKOUT", ["IDLE-WALK", "ATTACK", "REPOSITION", "REACT", "EXIT"]),
+    "enforcer": (
+        "enemies/enforcer",
+        "ENM-ENFORCER",
+        ["IDLE-WALK", "ATTACK-A", "ATTACK-B", "ARMOR", "REACT", "EXIT"],
+    ),
+    "commander": (
+        "enemies/commander",
+        "ENM-COMMANDER",
+        ["IDLE-WALK", "ATTACK-A", "ATTACK-B", "ATTACK-C", "PHASE", "STAGGER", "REACT", "REACT-P2", "EXIT", "EXIT-P2"],
+    ),
+}
+
+# Stage 1 areas (environments/stage1): far, middle, floor and foreground layers, plus the
+# full plate. A seamless `_tiled` variant is used where one was delivered.
+STAGE1_AREAS = ["fields", "bridge", "mill", "canal", "courtyard", "sluice"]
+STAGE1_LAYERS = ["FAR", "MID", "FLOOR", "FG", "PLATE"]
+BG_QUALITY = 80
+# Areas whose arena is drawn on the full plate (the Commander fights on the Sluice PLATE).
+PLATE_AREAS = {"sluice"}
 
 PROPS = ["WORKSTAFF", "HANDWHEEL", "SLUICEBOARDS", "IMPACT-HAZARD"]
 
@@ -116,6 +141,20 @@ def convert(src: Path, name: str) -> dict:
     }
 
 
+def convert_layer(src: Path, name: str, tiled: bool) -> dict:
+    img = Image.open(src).convert("RGBA")
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    out = OUT_DIR / f"{name}.webp"
+    opaque = img.getchannel("A").getextrema()[0] == 255
+    img.save(out, "WEBP", quality=BG_QUALITY, alpha_quality=85, method=6, exact=not opaque)
+    box = img.getchannel("A").point(lambda v: 255 if v >= ALPHA_MIN else 0).getbbox()
+    top, bottom = (box[1], box[3]) if box else (0, img.size[1])
+    return {
+        "url": f"art/{name}.webp",
+        "layer": {"w": img.size[0], "h": img.size[1], "top": top, "bottom": bottom, "tiled": tiled},
+    }
+
+
 def source(base: Path, folder: str, stem: str) -> Path | None:
     name = APPROVED.get(stem, f"{stem}.png")
     p = base / folder / name
@@ -153,6 +192,20 @@ def main() -> None:
             missing.append(f"PROP-{prop}")
             continue
         assets[f"prop.{prop.lower()}"] = convert(p, f"prop-{prop.lower()}")
+    for area in STAGE1_AREAS:
+        for layer in STAGE1_LAYERS:
+            stem = f"ENV-{area.upper()}-{layer}"
+            folder = "environments/stage1"
+            if layer == "PLATE" and area not in PLATE_AREAS:
+                continue
+            tiled = source(base, folder, f"{stem}_tiled") if layer != "PLATE" else None
+            p = tiled or source(base, folder, stem)
+            if p is None:
+                if layer != "PLATE":
+                    missing.append(stem)
+                continue
+            key = f"bg.stage1.{area}.{layer.lower()}"
+            assets[key] = convert_layer(p, f"bg-{area}-{layer.lower()}", tiled is not None)
     manifest = {"version": 2, "assets": dict(sorted(assets.items()))}
     MANIFEST.write_text(json.dumps(manifest, indent=1) + "\n", encoding="utf-8")
     # Keep the manifest in the repository's Prettier style (best effort).

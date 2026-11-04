@@ -41,10 +41,22 @@ export interface SheetMeta {
   cells: (CellBox | null)[];
 }
 
+/** A background layer image (Stage areas): size, opaque rows and whether it tiles. */
+export interface LayerMeta {
+  w: number;
+  h: number;
+  /** First and last opaque rows (a middle layer's landmark band). */
+  top: number;
+  bottom: number;
+  /** Seamless horizontally: drawn repeated across the arena. */
+  tiled: boolean;
+}
+
 export interface ManifestEntry {
   url: string;
   status?: 'candidate' | 'approved';
   sheet?: SheetMeta;
+  layer?: LayerMeta;
 }
 
 export interface AssetManifest {
@@ -100,6 +112,20 @@ export class AssetRegistry {
     const entry = this.manifest.assets[id];
     if (!entry || entry.status === 'candidate' || !entry.sheet) return undefined;
     return entry as ManifestEntry & { sheet: SheetMeta };
+  }
+
+  /** An approved background layer, if the manifest has one for this id. */
+  layer(id: string): (ManifestEntry & { layer: LayerMeta }) | undefined {
+    const entry = this.manifest.assets[id];
+    if (!entry || entry.status === 'candidate' || !entry.layer) return undefined;
+    return entry as ManifestEntry & { layer: LayerMeta };
+  }
+
+  /** Every approved background layer (for preloading). */
+  layers(): { id: string; url: string; layer: LayerMeta }[] {
+    return Object.entries(this.manifest.assets).flatMap(([id, e]) =>
+      e.layer && e.status !== 'candidate' ? [{ id, url: e.url, layer: e.layer }] : [],
+    );
   }
 
   /** Every approved sprite sheet (for preloading). */

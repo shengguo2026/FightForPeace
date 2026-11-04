@@ -10,6 +10,7 @@ import {
   HazardPhase,
   type Item,
   ItemState,
+  ENEMIES,
   WEAPONS,
   WeaponEvent,
   conditionOf,
@@ -28,6 +29,7 @@ import {
 import { profileText } from '../text/en';
 import { AssetRegistry, type PlaceholderFamily, SpritePicker } from '@ffp/platform';
 import type { RenderSnapshot } from '../game';
+import { ArenaView } from './arenaView';
 
 export const VIEW_WIDTH = 1920;
 export const VIEW_HEIGHT = 1080;
@@ -128,6 +130,11 @@ export class StageScene extends Phaser.Scene {
   private weaponTags = new Map<number, Phaser.GameObjects.Text>();
   private lastWeapon = new Map<number, string>();
   private lastEnv = '';
+  private boss: ReturnType<ArenaView['bossView']>;
+  private worldKey = '';
+  private inArena = false;
+  private readonly arena = new ArenaView(this, this.assets);
+  private labFloor!: Phaser.GameObjects.Graphics;
 
   constructor(private readonly opts: StageOptions) {
     super('stage');
@@ -137,10 +144,12 @@ export class StageScene extends Phaser.Scene {
   preload(): void {
     for (const s of this.assets.sheets())
       this.load.spritesheet(s.id, s.url, { frameWidth: s.sheet.cell, frameHeight: s.sheet.cell });
+    this.arena.preload();
   }
 
   create(): void {
     const bg = this.add.graphics();
+    this.labFloor = bg;
     bg.fillStyle(0x1b1d22, 1);
     bg.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
     bg.fillStyle(0x4a4d55, 1);
@@ -150,6 +159,7 @@ export class StageScene extends Phaser.Scene {
     this.gfx = this.add.graphics();
     this.overlay = this.add.graphics();
     this.overlay.setDepth(8);
+    this.arena.create();
     this.opts.onReady?.();
   }
 
@@ -164,6 +174,15 @@ export class StageScene extends Phaser.Scene {
     g.clear();
     this.overlay.clear();
     const collision = this.opts.showCollision();
+    const worldKey = `${snap.generation}`;
+    if (worldKey !== this.worldKey) {
+      this.worldKey = worldKey;
+      this.forgetWorld();
+    }
+    this.arena.update(snap.encounter, current, snap.frame, snap.stageWidth);
+    this.labFloor.setVisible(snap.encounter === null);
+    this.boss = this.arena.bossView(snap.encounter);
+    this.inArena = snap.encounter !== null;
     this.drawScenery(snap.environment, snap.frame, collision);
     this.drawItems(snap.items, snap.frame);
     // Ground-Opportunity Focus: a ring under each marked target a hero is focused on.
@@ -196,6 +215,29 @@ export class StageScene extends Phaser.Scene {
     this.updatePopups(time);
   }
 
+  /** A new world (arena start, restart, back to the Lab): drop every per-id object. */
+  private forgetWorld(): void {
+    for (const map of [this.sprites, this.itemSprites, this.propSprites]) {
+      for (const sp of map.values()) sp.destroy();
+      map.clear();
+    }
+    for (const map of [
+      this.labels,
+      this.moveLabels,
+      this.comboLabels,
+      this.cues,
+      this.weaponTags,
+      this.ready,
+    ]) {
+      for (const t of map.values()) t.destroy();
+      map.clear();
+    }
+    this.lastHits.clear();
+    this.lastDefense.clear();
+    this.lastGrab.clear();
+    this.lastWeapon.clear();
+  }
+
   /** Depth of anything standing on the floor at screen row z (bodies, items, scenery). */
   private depthAt(z: number): number {
     return 1 + z / 2000;
@@ -224,7 +266,7 @@ export class StageScene extends Phaser.Scene {
    * when this fighter has no art yet (the greybox body is drawn instead).
    */
   private drawSprite(f: Fighter, p: Pos, frame: number): number | null {
-    const pick = this.picker.fighter(f, frame);
+    const pick = this.picker.fighter(f, frame, this.boss);
     const meta = pick ? this.assets.sheet(pick.sheet)?.sheet : undefined;
     if (!pick || !meta || !this.textures.exists(pick.sheet)) {
       this.sprites.get(f.id)?.setVisible(false);
@@ -233,7 +275,7 @@ export class StageScene extends Phaser.Scene {
     const sp = this.sprite(this.sprites, f.id, pick.sheet);
     sp.setVisible(true);
     sp.setTexture(pick.sheet, pick.cell);
-    sp.setFlipX(f.facing === -1);
+    sp.setFlipX(pick.drawnLeft ? f.facing === 1 : f.facing === -1);
     sp.setOrigin(0.5, meta.ground / meta.cell);
     sp.setPosition(p.x, p.z - p.y);
     sp.setDepth(this.depthAt(p.z));
@@ -330,6 +372,14 @@ export class StageScene extends Phaser.Scene {
         const pulse = active ? 0.55 : 0.25 + 0.25 * Math.abs(Math.sin(hz.phaseFrame / 4));
         g.fillStyle(active ? 0xff3b30 : 0xffb020, pulse);
         g.fillEllipse(x!, z!, hw! * 2.4, hd! * 3);
+      }
+      // A triggered hazard (rest 0) is the boss arena's sluice surge: a water band.
+      if (hz.rest === 0) {
+        if (hz.phase === HazardPhase.Active) {
+          g.fillStyle(0x6fc3ff, 0.55);
+          g.fillRect(x! - hw!, z! - hd!, hw! * 2, hd! * 2);
+        }
+        continue;
       }
       const speed = hz.phase === HazardPhase.Active ? 2 : hz.phase === HazardPhase.Warn ? 6 : 0;
       const cell = 2 + (speed === 0 ? 0 : Math.floor(frame / speed) % 4);
@@ -552,7 +602,12 @@ export class StageScene extends Phaser.Scene {
     let t = this.labels.get(f.id);
     if (!t) {
       const name = HEROES[f.hero]?.name.split(' ')[0] ?? '';
-      const text = f.team === 'hero' ? `P${f.slot + 1} · ${name}` : `Dummy ${f.id - 100}`;
+      const text =
+        f.team === 'hero'
+          ? `P${f.slot + 1} · ${name}`
+          : this.inArena
+            ? (ENEMIES[f.hero]?.name ?? '')
+            : `Dummy ${f.id - 100}`;
       t = this.add.text(0, 0, text, { fontFamily: 'system-ui, sans-serif', fontSize: '26px' });
       t.setOrigin(0.5, 1);
       t.setDepth(10);

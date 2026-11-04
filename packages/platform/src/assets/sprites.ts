@@ -24,6 +24,17 @@ export interface SpriteFrame {
   /** Logical asset id of the sheet (a manifest key). */
   sheet: string;
   cell: number;
+  /** The cell is drawn facing left (flee runs): mirror the usual flip. */
+  drawnLeft?: boolean;
+}
+
+/** Boss state the picker needs (from the encounter; rendering only). */
+export interface BossView {
+  id: number;
+  phase: number;
+  stagger: number;
+  shift: number;
+  shiftFrames: number;
 }
 
 type Phased = readonly [startup: number, active: number, recovery: number];
@@ -57,7 +68,61 @@ const CATEGORY_POSES: Partial<Record<string, { sheet: string; cells: Phased }>> 
 };
 
 /** The training dummy (Pressed Recruit) attack sheet: raise, contact, recover; rush. */
-const RUSH = new Set(['two-step', 'barrage']);
+const RUSH = new Set(['two-step', 'barrage', 'wild-rush']);
+
+/**
+ * M7 enemy action poses: sheet suffix and the cells for startup, active and recovery, as
+ * delivered in the Stage 1 sheets (codex_prompts_stage1.md).
+ */
+const ENEMY_POSES: Record<string, Record<string, { sheet: string; cells: Phased }>> = {
+  shield: {
+    'shield-bash': { sheet: 'attack', cells: [0, 1, 2] },
+    'shield-charge': { sheet: 'attack', cells: [3, 4, 5] },
+  },
+  runner: {
+    'palm-lunge': { sheet: 'attack', cells: [0, 1, 4] },
+    'slide-kick': { sheet: 'attack', cells: [0, 2, 4] },
+    'flying-kick': { sheet: 'air', cells: [0, 1, 4] },
+    backflip: { sheet: 'air', cells: [5, 5, 4] },
+  },
+  overseer: {
+    'hook-swing': { sheet: 'attack', cells: [0, 1, 2] },
+    'pole-slam': { sheet: 'attack', cells: [3, 4, 5] },
+    'rope-snare': { sheet: 'grab', cells: [0, 1, 2] },
+    'drag-fling': { sheet: 'grab', cells: [3, 4, 4] },
+  },
+  lookout: {
+    'sling-shot': { sheet: 'attack', cells: [1, 3, 4] },
+    'elbow-shove': { sheet: 'attack', cells: [5, 5, 4] },
+    backstep: { sheet: 'reposition', cells: [0, 0, 1] },
+  },
+  enforcer: {
+    'gauntlet-punch': { sheet: 'attack-a', cells: [0, 1, 2] },
+    'backhand-sweep': { sheet: 'attack-a', cells: [3, 4, 5] },
+    'anvil-slam': { sheet: 'attack-b', cells: [0, 1, 2] },
+    'iron-hug': { sheet: 'attack-b', cells: [3, 4, 5] },
+    'anvil-shove': { sheet: 'attack-b', cells: [0, 1, 2] },
+  },
+  commander: {
+    'palm-strike': { sheet: 'attack-a', cells: [0, 1, 5] },
+    roundhouse: { sheet: 'attack-a', cells: [0, 2, 5] },
+    'spin-back-kick': { sheet: 'attack-a', cells: [3, 4, 5] },
+    'flying-knee': { sheet: 'attack-b', cells: [1, 3, 4] },
+    'double-palm': { sheet: 'attack-c', cells: [0, 0, 5] },
+    'rising-knee': { sheet: 'attack-c', cells: [1, 1, 5] },
+    'axe-kick': { sheet: 'attack-c', cells: [4, 4, 5] },
+    'wheel-throw': { sheet: 'attack-c', cells: [2, 3, 5] },
+    'winch-crank': { sheet: 'attack-c', cells: [2, 2, 2] },
+    'sluice-parry': { sheet: 'attack-a', cells: [0, 0, 5] },
+  },
+};
+
+/** Exit sheet cells: surrender (standing), kneeling, and the two flee-run cells (left). */
+const EXIT_CELLS: Record<string, { surrender: number; kneel: number; flee: [number, number] }> = {
+  trainer: { surrender: 0, kneel: 2, flee: [3, 4] },
+  commander: { surrender: 0, kneel: 1, flee: [2, 3] },
+};
+const EXIT_DEFAULT = { surrender: 0, kneel: 1, flee: [2, 3] as [number, number] };
 
 const PHASE_INDEX = { startup: 0, active: 1, recovery: 2 } as const;
 
@@ -81,8 +146,8 @@ export class SpritePicker {
   constructor(private readonly assets: AssetRegistry) {}
 
   /** Sheet and cell for a fighter on simulation frame `frame`, or null (no art: greybox). */
-  fighter(f: Fighter, frame: number): SpriteFrame | null {
-    return f.team === 'hero' ? this.hero(f, frame) : this.enemy(f, frame);
+  fighter(f: Fighter, frame: number, boss?: BossView): SpriteFrame | null {
+    return f.team === 'hero' ? this.hero(f, frame) : this.enemy(f, frame, boss);
   }
 
   private has(id: string): SheetMeta | undefined {
@@ -175,41 +240,80 @@ export class SpritePicker {
         return s('knockdown', f.stateFrame < f.stun / 2 ? 4 : 5);
       case MoveState.Recover:
         return s('jump', 4);
+      case MoveState.Defeated:
+        return s('knockdown', 2);
       default:
         return s('idle', 0);
     }
   }
 
-  private enemy(f: Fighter, frame: number): SpriteFrame | null {
+  private enemy(f: Fighter, frame: number, boss?: BossView): SpriteFrame | null {
     const kit = ENEMIES[f.hero];
     if (!kit) return null;
-    const base = `enemy.${kit.id}.sheet`;
-    const s = (key: string, cell: number): SpriteFrame | null =>
-      this.has(`${base}.${key}`) ? { sheet: `${base}.${key}`, cell } : null;
+    // The Pressed Recruit wears the training dummy's sheets.
+    const art = kit.id === 'recruit' ? 'trainer' : kit.id;
+    const base = `enemy.${art}.sheet`;
+    const s = (key: string, cell: number, drawnLeft = false): SpriteFrame | null =>
+      this.has(`${base}.${key}`) ? { sheet: `${base}.${key}`, cell, drawnLeft } : null;
+    const isBoss = boss !== undefined && boss.id === f.id;
+    const p2 = isBoss && boss.phase >= 1;
+    const react = p2 && this.has(`${base}.react-p2`) ? 'react-p2' : 'react';
+    const exitSheet = p2 && this.has(`${base}.exit-p2`) ? 'exit-p2' : 'exit';
+    const exit = EXIT_CELLS[art] ?? EXIT_DEFAULT;
+    if (isBoss && boss.shift > 0) {
+      // Phase transition: the PHASE sheet plays through once over the shift.
+      const n = Math.min(5, Math.floor(((boss.shiftFrames - boss.shift) * 6) / boss.shiftFrames));
+      return s('phase', Math.max(0, n)) ?? s('idle-walk', 0);
+    }
+    if (isBoss && boss.stagger > 0 && f.state !== MoveState.Launched && f.state !== MoveState.Down)
+      return s('stagger', f.stateFrame < 20 ? 0 : loop(undefined, frame, 3, [1, 2]));
     switch (f.state) {
       case MoveState.Idle:
       case MoveState.Pickup:
         return s('idle-walk', loop(undefined, frame, 3, [0, 1]));
       case MoveState.Walk:
         return s('idle-walk', loop(undefined, frame, 8, [2, 3, 4, 5]));
+      case MoveState.Guard:
+        return s('guard', 0) ?? s('armor', 0) ?? s('idle-walk', 0);
       case MoveState.Attack:
-      case MoveState.Grabbing: {
+      case MoveState.Grabbing:
+      case MoveState.Counter: {
         const a = f.action >= 0 ? kitOf(f)?.actions[f.action] : undefined;
         const p = a ? phase(f, a) : 1;
+        const own = a ? ENEMY_POSES[art]?.[a.id] : undefined;
+        if (own) {
+          // The lookout loads the sling before it aims (the warning pose).
+          if (a?.id === 'sling-shot' && p === 0 && f.stateFrame < 12) return s('attack', 0);
+          return s(own.sheet, own.cells[p]) ?? s('idle-walk', 0);
+        }
+        if (a && WEAPON_POSES[a.id]) return s('attack-c', [2, 3, 5][p]!) ?? s('attack', p);
         return s('attack', (a && RUSH.has(a.id) ? 3 : 0) + p);
       }
+      case MoveState.Blockstun:
+        return s('guard', 1) ?? s('armor', 1) ?? s(react, 0);
+      case MoveState.GuardCrush:
+        return s('guard', f.stateFrame < f.stun / 2 ? 4 : 5) ?? s(react, 1);
       case MoveState.Hitstun:
       case MoveState.Recoil:
-      case MoveState.Blockstun:
-      case MoveState.GuardCrush:
-        return s('react', f.stun > 20 ? 1 : 0);
+      case MoveState.Grabbed:
+      case MoveState.Restrained:
+        return s(react, f.stun > 20 ? 1 : 0);
       case MoveState.Launched:
-        return s('react', 2);
+        return s(react, 2);
       case MoveState.Down:
-        return s('react', 3);
+      case MoveState.Defeated:
+        return s(react, 3);
       case MoveState.GetUp:
       case MoveState.Recover:
-        return s('react', f.stateFrame < f.stun / 2 ? 4 : 5);
+        return s(react, f.stateFrame < f.stun / 2 ? 4 : 5);
+      case MoveState.Flee: {
+        const cell = loop(undefined, frame, 8, exit.flee);
+        return s(exitSheet, cell, true) ?? s('idle-walk', 2);
+      }
+      case MoveState.Surrender:
+        return s(exitSheet, f.stateFrame < 40 ? exit.surrender : exit.kneel) ?? s(react, 3);
+      case MoveState.PhaseShift:
+        return s('phase', 0) ?? s('idle-walk', 0);
       default:
         return s('idle-walk', 0);
     }

@@ -25,11 +25,15 @@ export function botInput(w: World, slot = 0, guardEvery = 2): FrameInput {
   if (!best) return idle;
   const dx = Math.trunc((best.x - h.x) / 256);
   const dz = Math.trunc((best.z - h.z) / 256);
-  const threatening =
-    best.state === MoveState.Attack && Math.abs(dx) < 260 && Math.abs(dz) < 50;
+  const threatening = best.state === MoveState.Attack && Math.abs(dx) < 260 && Math.abs(dz) < 50;
   if (threatening && (w.frame >> 4) % guardEvery === 0) {
     const toward = dx > 0 ? 1 : -1;
-    return { ...idle, held: ActionBit.Guard, pressed: h.state === MoveState.Guard ? 0 : ActionBit.Guard, moveX: toward as 1 | -1 };
+    return {
+      ...idle,
+      held: ActionBit.Guard,
+      pressed: h.state === MoveState.Guard ? 0 : ActionBit.Guard,
+      moveX: toward as 1 | -1,
+    };
   }
   const moveX = Math.abs(dx) > 120 ? (dx > 0 ? 1 : -1) : 0;
   const moveZ = Math.abs(dz) > 10 ? (dz > 0 ? 1 : -1) : 0;

@@ -25,7 +25,7 @@ Stop the server with `Ctrl+C`.
 
 If `node --version` shows something older than 24, install Node.js 24 LTS from nodejs.org. If `pnpm` is missing, run `corepack enable` once in an administrator PowerShell.
 
-## Controls (M6)
+## Controls (M7)
 
 Keys are physical positions, so they stay in the same place on QWERTZ and AZERTY keyboards. The screen always shows the character printed on your key (for example Jump is `Z` on a German keyboard, `Y` on a US one), and a gamepad shows its own buttons.
 
@@ -61,6 +61,8 @@ Guard (hold) blocks in the direction you face; Guard + Ultimate is the Combo Bre
 **Scenery (M6).** The stone pillar on the right is an impact surface: a strong hit (the staff overhead, Weir Brace, a knockback) that drives a dummy into it deals one extra environmental impact per combo ("IMPACT"), then the dummy rebounds or drops. The sluice boards on the left break in stages (loosened, critical, broken) under weapon strikes and thrown weapons; when they break, one timber board falls out and can be picked up as a weapon. The mill cog at the bottom right is an active hazard: its floor zone glows amber as a warning, then red while it turns; it hits anyone standing there (heroes and enemies), a Guard facing it blocks it, and after a hit there is no second cog hit for two seconds. Weapons never land inside scenery: a landing spot inside the pillar or the boards moves to the nearest free spot.
 
 **Art (M6).** The founders, the training dummies (the Pressed Recruit), the two weapons and the mill scenery are now drawn with their real sprite sheets; moves without a sheet of their own use a shared pose. F3 still shows the boxes on top.
+
+**Arena mode (M7).** The Lab's **Arena** panel picks an arena and a difficulty (Easy, Medium, Hard) and starts it; **Restart** (or the Home key) starts it again, **Back to Lab** (or End) returns to the training room. Press F1 after starting to hide the Lab panels. Each arena is drawn on a Stage 1 area (fields, bridge, mill, canal, courtyard) with parallax layers, and the camera follows you across it; the Sluice Commander fights on the Sluice plate. Arenas: one trial per enemy type (Pressed Recruits, Bridge Shield, Canal Runners, Rope Overseer, Sling Lookouts, Black-Iron Enforcer), four mixed beats (Bridge, Mill, Canal, Courtyard; at Hard one courtyard recruit becomes an Enforcer) and the boss. At the top: the arena, the difficulty, the wave and how many enemies are left; a red bar over each enemy is its Health. Enemies never all attack at once: a director lets only a few commit at a time (the Arena panel shows the threat budget, each hero's pressure, and why the last attack was allowed or held back). Shields guard and Exact Block, runners evade and flank, overseers rope and drag you, lookouts keep their distance and sling stones (from off screen only after a warning: an arrow at the screen edge, INCOMING and a beep). Beaten enemies flee while their friends still fight, and the last one surrenders. The Enforcer keeps punching through light hits (ARMOR), and with a partner it announces a TEAM ATTACK. The **Sluice Commander** has a Health bar with phase ticks and a blue Resolve bar: while Resolve lasts he only flinches; empty it for a **STAGGER BREAK**, when full combos work. At two thirds he changes phase (the bar pauses at the tick; extra damage is kept, shown light red, and applied in the next phase), takes the Iron Gate Handwheel and calls two recruits; at one third he goes for the sluice winch: three completed cranks (the pips above the winch) release a water surge across the floor. Hitting him interrupts a crank.
 
 **Training enemy.** The dummies use a training kit: Straight Jab (counterable), Overhead Club (guard pressure: drains Defense fast), Piercing Thrust (goes through a held guard: Exact Block it), Two-Step (two hits), Pummel Barrage (five hits, practise the Combo Breaker), Bell Hammer (unblockable: move away), Collar Grab and Rope Snare (grabs: practise the Grab escape), and Disarming Swipe (knocks a held weapon away; chosen in F2 only, never in the cycle). The attack's name and profile appear above the dummy when it starts. F2 sets which dummies attack, which attack (or cycle through all), how many frames between attacks (40 / 70 / 100) and whether they walk into range.
 
@@ -117,9 +119,14 @@ The first `pnpm e2e` on a new machine needs the browsers: `pnpm --filter @ffp/ga
 | `packages/data` | Hero action data: one YAML file per hero in `heroes/`, a TypeBox schema and a generator. `pnpm gen:heroes` validates the YAML and writes `packages/sim/src/combat/heroes.gen.ts` (committed; a test fails if it is out of date). A new hero is a new YAML file, not new code. |
 | `packages/data/weapons` | Weapon data: one YAML file per weapon (lifecycle numbers, throw responses, its moves and the founders' affinity moves), compiled by `pnpm gen:heroes` with the heroes. |
 | `apps/game/public/art`, `tools/art` | Imported sprite sheets (WebP, 3x2 cells of 384 px) and the importer. With the pictures repository checked out next to this one, `python3 tools/art/import_art.py ../pictures/FightForPeace` re-imports every sheet and rewrites `packages/platform/src/assets/manifest.json` (needs Pillow). |
+| `packages/data/enemies`, `packages/data/encounters` | Enemy kits with their AI profile (role, defenses, morale, attack list, boss phases), the difficulty table and the arena scenarios (waves, substitutions, devices). New enemies, phases and arenas are data. |
 | `tests/replays` | Golden replays. Each records an input log and the expected final state hash. `scripts.ts` holds the input scripts; `RECORD=1 pnpm vitest run tests/replays/record.test.ts` re-records them. |
 
 When a change alters simulation results on purpose, bump `RULES_VERSION` in `packages/sim/src/replay.ts` and re-record the golden replays in the same commit (see above). A replay recorded under another rules version fails loudly instead of silently producing a different hash.
+
+## M7 test checklist
+
+The numbered steps are in [`Guo_tests.md`](Guo_tests.md) (section M7).
 
 ## M6 test checklist
 

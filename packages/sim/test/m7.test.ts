@@ -116,7 +116,13 @@ test('morale: a broken recruit flees while allies fight, the last one surrenders
 
 test('Sluice Commander: Resolve, Stagger Break, queued phases with capped carry, surrender', () => {
   const w = createWorld(1, { arena: 'boss-commander', difficulty: 'medium' });
-  const seen = { stagger: false, pending: false, phases: new Set<number>(), carry: 0, shift: false };
+  const seen = {
+    stagger: false,
+    pending: false,
+    phases: new Set<number>(),
+    carry: 0,
+    shift: false,
+  };
   run(w, 9000, (w) => {
     const b = w.encounter!.boss;
     if (!b) return;

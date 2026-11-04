@@ -106,7 +106,9 @@ export function updateView(world: World): void {
 
 /** Enemies of the current wave still in the fight. */
 export function fighting(world: World): Fighter[] {
-  return world.bodies.filter((b) => b.team === 'enemy' && profileOf(b) && !b.ko && !nonCombatant(b));
+  return world.bodies.filter(
+    (b) => b.team === 'enemy' && profileOf(b) && !b.ko && !nonCombatant(b),
+  );
 }
 
 function kitFor(world: World, kit: string, used: Map<string, number>): number {
