@@ -37,6 +37,8 @@ async function pickUp(page: Page, weapon: string) {
   await page.waitForFunction(() => window.__ffp!.hero(0)!.state === 0);
   await key(page, 'KeyJ');
   await page.waitForFunction((w) => window.__ffp!.hero(0)!.weapon === w, weapon);
+  // The pickup takes a few frames; presses during it are not buffered.
+  await page.waitForFunction(() => window.__ffp!.hero(0)!.state === 0);
 }
 
 test('the Lab shows real art: founder, dummy, weapon and scenery sheets load', async ({
