@@ -1,7 +1,6 @@
 import { type Fighter, MoveState, type World } from '../world/types';
 import { difficultyOf, livingHeroes, profileOf } from './data';
 import { usage } from './director';
-import { isBoss } from './boss';
 
 /**
  * Role-Aware Target Scoring with Commitment (F&D §8). Each enemy scores the valid heroes
@@ -63,7 +62,6 @@ export function scoreTarget(world: World, e: Fighter, h: Fighter): number {
   if (e.lastHitBy === h.id && world.frame - e.lastHitFrame < TARGETING.recentFrames)
     score -= TARGETING.recentBonus;
   if (e.targetId === h.id) score -= TARGETING.keepBonus;
-  if (isBoss(world, e)) score -= 0;
   return score;
 }
 

@@ -15,6 +15,7 @@ import {
   heroOf,
   step,
 } from '@ffp/sim';
+import { botInput } from '../../packages/sim/test/arenaBot';
 
 type Dir = 'up' | 'down' | 'left' | 'right';
 type Act = keyof typeof ActionBit;
@@ -542,6 +543,26 @@ export const weaponsEnvironmentScript: ReplayScript = {
   frames: weaponsEnvironment(),
 };
 
+/** M7: a full Medium trial with the deterministic arena bot (director, AI, morale). */
+function arenaTrial(): FrameInput[][] {
+  const options: WorldOptions = { arena: 'trial-recruit', difficulty: 'medium' };
+  const w = createWorld(41, options);
+  const frames: FrameInput[][] = [];
+  for (let i = 0; i < 1500; i += 1) {
+    const input = botInput(w);
+    frames.push([input]);
+    step(w, [input]);
+  }
+  return frames;
+}
+
+export const arenaTrialScript: ReplayScript = {
+  name: 'arena-trial',
+  seed: 41,
+  options: { arena: 'trial-recruit', difficulty: 'medium' },
+  frames: arenaTrial(),
+};
+
 export const SCRIPTS = [
   walkSquare,
   dashJump,
@@ -552,6 +573,7 @@ export const SCRIPTS = [
   specialsGrabsScript,
   grabEscapeScript,
   weaponsEnvironmentScript,
+  arenaTrialScript,
 ];
 
 export type { ReplayLog };
