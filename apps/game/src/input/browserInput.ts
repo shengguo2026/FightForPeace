@@ -81,11 +81,9 @@ export function installKeyboard(session: GameSession, onLabKey: (code: string) =
     keyboardP1.keyUp(e.code);
     keyboardP2.keyUp(e.code);
   });
-  // Lost focus means lost keyup events: release everything so nothing stays held.
-  const release = () => {
-    keyboardP1.blur();
-    keyboardP2.blur();
-  };
+  // Lost focus means lost keyup events: release everything so nothing stays held, and
+  // (M8) pause while anyone is playing, until a player presses Pause.
+  const release = () => session.devices.loseFocus();
   window.addEventListener('blur', release);
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) release();

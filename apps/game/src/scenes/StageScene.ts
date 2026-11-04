@@ -1,5 +1,8 @@
 import * as Phaser from 'phaser';
 import {
+  CoopEvent,
+  type CoopState,
+  TEAM_FINISHERS,
   BODY_HALF_D,
   BODY_HALF_W,
   BreakState,
@@ -27,7 +30,12 @@ import {
   phaseOf,
 } from '@ffp/sim';
 import { profileText } from '../text/en';
-import { AssetRegistry, type PlaceholderFamily, SpritePicker } from '@ffp/platform';
+import {
+  AssetRegistry,
+  type PlaceholderFamily,
+  type QualityLevel,
+  SpritePicker,
+} from '@ffp/platform';
 import type { RenderSnapshot } from '../game';
 import { ArenaView } from './arenaView';
 
@@ -52,6 +60,7 @@ export const STRIKE_COLORS: Record<string, number> = {
   grab: 0xc8a2ff,
   grabStrike: 0xc8a2ff,
   throw: 0xc8a2ff,
+  team: 0x7dffb0,
 };
 const PROJECTILE_COLOR = 0x8fe3ff;
 const RECOVERY_COLOR = 0x8a8f99;
@@ -96,6 +105,8 @@ export interface StageOptions {
   getSnapshot: () => RenderSnapshot;
   showCollision: () => boolean;
   showLabels: () => boolean;
+  /** M8 Auto Quality: the presentation level to draw with (decorative layers only). */
+  quality?: () => QualityLevel;
   /** Called once the sprite sheets have loaded and the stage is drawn. */
   onReady?: () => void;
 }
@@ -130,6 +141,8 @@ export class StageScene extends Phaser.Scene {
   private weaponTags = new Map<number, Phaser.GameObjects.Text>();
   private lastWeapon = new Map<number, string>();
   private lastEnv = '';
+  private lastCoop = '';
+  private teamWord: Phaser.GameObjects.Text | undefined;
   private boss: ReturnType<ArenaView['bossView']>;
   private worldKey = '';
   private inArena = false;
@@ -179,7 +192,13 @@ export class StageScene extends Phaser.Scene {
       this.worldKey = worldKey;
       this.forgetWorld();
     }
-    this.arena.update(snap.encounter, current, snap.frame, snap.stageWidth);
+    this.arena.update(
+      snap.encounter,
+      current,
+      snap.frame,
+      snap.stageWidth,
+      this.opts.quality?.() ?? 'high',
+    );
     this.labFloor.setVisible(snap.encounter === null);
     this.boss = this.arena.bossView(snap.encounter);
     this.inArena = snap.encounter !== null;
@@ -207,12 +226,85 @@ export class StageScene extends Phaser.Scene {
       this.grabCue(f, p, top, time, snap.escapeOpen.has(f.id));
     }
     this.drawTethers(drawn);
+    this.coopCues(snap.coop, drawn, snap.frame, time);
     for (const pr of snap.projectiles) this.drawProjectile(pr);
     // Boxes go on top of every body, so a hitbox inside a target stays visible.
     if (collision) for (const { f, p } of drawn) this.drawBoxes(f, p);
     this.dropStale(this.sprites, new Set(current.map((b) => b.id)));
     this.environmentCallout(snap.environment, time);
     this.updatePopups(time);
+  }
+
+  /**
+   * M8 co-op cues: a handoff ring in the receiving partner's colour under an open target,
+   * a TEAM? ring and word over the invitation's target, and callouts for the team
+   * finisher, grab assists and rescues.
+   */
+  private coopCues(
+    coop: CoopState,
+    drawn: readonly { f: Fighter; p: Pos }[],
+    frame: number,
+    time: number,
+  ): void {
+    const g = this.overlay;
+    const byId = new Map(drawn.map((d) => [d.f.id, d]));
+    const partnerColor = (sender: number) => {
+      const s = byId.get(sender)?.f;
+      return HERO_COLORS[s ? 1 - s.slot : 0] ?? 0xffffff;
+    };
+    for (const { f, p } of drawn) {
+      if (f.handoff === 0 || frame < f.handoffAt) continue;
+      const left = Math.max(0, f.handoffUntil - frame);
+      const pulse = 0.55 + 0.45 * Math.abs(Math.sin(frame / 5));
+      g.lineStyle(5, partnerColor(f.handoffFrom), pulse);
+      g.strokeEllipse(p.x, p.z - 6, 220 + left, 40 + left / 4);
+    }
+    const inv = coop.invite;
+    const target = inv ? byId.get(inv.target) : undefined;
+    if (inv && target) {
+      g.lineStyle(6, partnerColor(inv.from), 0.95);
+      g.strokeEllipse(target.p.x, target.p.z - 6, 320, 58);
+      if (!this.teamWord) {
+        this.teamWord = this.add.text(0, 0, 'TEAM?', {
+          fontFamily: 'system-ui, sans-serif',
+          fontSize: '34px',
+          fontStyle: 'bold',
+          color: '#7dffb0',
+          stroke: '#000000',
+          strokeThickness: 6,
+        });
+        this.teamWord.setOrigin(0.5, 1).setDepth(13);
+      }
+      const top = target.p.z - fxToPixels(BODY_HALF_D) - 300;
+      this.teamWord.setPosition(target.p.x, top).setVisible(true);
+      this.teamWord.setText(`TEAM? ${Math.max(0, inv.until - frame + 1)}`);
+    } else this.teamWord?.setVisible(false);
+    const l = coop.log;
+    const key = `${l.kind}/${l.frame}`;
+    if (key === this.lastCoop) return;
+    this.lastCoop = key;
+    if (l.frame === 0) return;
+    const finisher = TEAM_FINISHERS[0]?.name.toUpperCase() ?? 'TEAM FINISHER';
+    const words: Partial<Record<number, [string, string, number]>> = {
+      [CoopEvent.Finisher]: [finisher, '#7dffb0', l.target],
+      [CoopEvent.Assist]: ['ASSIST', '#7ddc7d', l.target],
+      [CoopEvent.Release]: ['RESCUE', '#7ddc7d', l.partner || l.actor],
+      [CoopEvent.Interrupt]: ['RESCUE', '#7ddc7d', l.partner || l.target],
+      [CoopEvent.HandoffClaim]: ['HANDOFF', '#7dffb0', l.target],
+    };
+    const word = words[l.kind];
+    const at = word ? byId.get(word[2]) : undefined;
+    if (!word || !at) return;
+    const t = this.add.text(at.p.x, at.p.z - 340, word[0], {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: l.kind === CoopEvent.Finisher ? '52px' : '38px',
+      fontStyle: 'bold',
+      color: word[1],
+      stroke: '#000000',
+      strokeThickness: 6,
+    });
+    t.setOrigin(0.5, 1).setDepth(13);
+    this.popups.push({ text: t, born: time + (CALLOUT_MS - POPUP_MS) });
   }
 
   /** A new world (arena start, restart, back to the Lab): drop every per-id object. */

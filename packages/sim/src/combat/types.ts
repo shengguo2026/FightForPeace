@@ -18,7 +18,9 @@ export type ActionCategory =
   | 'grabStrike'
   | 'throw'
   /** A held weapon's throw: releases the item on its first active frame. */
-  | 'weaponThrow';
+  | 'weaponThrow'
+  /** A team-finisher part (M8): started only by a confirmed Team Attack invitation. */
+  | 'team';
 export type InputContext =
   | 'neutral'
   | 'chain'
@@ -41,7 +43,9 @@ export type InputContext =
   | 'grabThrow'
   | 'grabSpecial'
   /** Interact while holding a weapon. */
-  | 'weaponThrow';
+  | 'weaponThrow'
+  /** Team finisher part (M8). */
+  | 'team';
 export type ReactionKind = 'stagger' | 'knockback' | 'launch' | 'knockdown' | 'trip';
 export type CancelCategory =
   'chain' | 'air' | 'jumpChase' | 'dashBridge' | 'special' | 'ultimate' | 'grab';
@@ -200,6 +204,8 @@ export interface HeroDef {
   name: string;
   /** Placeholder silhouette width in pixels (presentation only). */
   bodyWidth: number;
+  /** Hero tags (M8): team finishers name their pairs by these. */
+  tags: readonly string[];
   actions: readonly ActionDef[];
   recipes: readonly RecipeDef[];
 }
@@ -445,4 +451,57 @@ export interface ArenaDef {
   surge: { z0: number; z1: number; warn: number; active: number; damage: number } | null;
   waves: readonly { next: number; enemies: readonly ArenaEnemyDef[] }[];
   substitutions: readonly { from: string; to: string; minDifficulty: number; count: number }[];
+}
+
+// --- M8 same-device co-op ----------------------------------------------------------------
+
+/** Target states a handoff or team finisher asks for. Numbers are encoded; never renumber. */
+export const TargetState = { None: 0, Airborne: 1, Stagger: 2, Down: 3 } as const;
+
+/** One handoff state: sender tag, the target state it needs, its window and receiver tags. */
+export interface HandoffDef {
+  tag: string;
+  state: number;
+  window: number;
+  receivers: readonly string[];
+}
+
+/** An authored team finisher (Invite and Confirm with Equal Meter Contribution). */
+export interface TeamFinisherDef {
+  id: string;
+  name: string;
+  /** Hero tags of the supported pair (either order). */
+  pair: readonly string[];
+  /** TargetState codes the target may be in. */
+  targets: readonly number[];
+  /** Team-move action id each participant's kit provides. */
+  move: string;
+  rangeX: number;
+  rangeZ: number;
+  /** Authored reposition: distance of each hero from the target (fixed point). */
+  place: number;
+  /** Attack-meter percent each hero spends. */
+  cost: number;
+  /** Confirmation window (frames). */
+  confirm: number;
+  /** Damage-scale floor of the finisher (percent). */
+  minScale: number;
+}
+
+/** A tagged co-op action: restraint release, partner interrupt or grab assist. */
+export interface CoopActionDef {
+  id: string;
+  kind: 'release' | 'interrupt' | 'assist';
+  /** Interrupt: the enemy grab tag a partner's strike breaks. Assist: the action tag. */
+  tag: string;
+  reachX: number;
+  reachZ: number;
+  recovery: number;
+}
+
+export interface CoopDef {
+  preBuffer: number;
+  handoffs: readonly HandoffDef[];
+  finishers: readonly TeamFinisherDef[];
+  actions: readonly CoopActionDef[];
 }

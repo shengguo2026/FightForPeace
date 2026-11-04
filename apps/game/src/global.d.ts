@@ -89,6 +89,25 @@ export interface FfpDebugHook {
   startArena(arena: string | null, difficulty?: string): void;
   /** M7: the encounter's state (null in the Lab). */
   encounter(): DebugEncounter | null;
+  /** M8: co-op state (invitation, last event, telemetry). */
+  coop(): DebugCoop;
+  /** M8: holds the first enemy in Hitstun with its combo open (a Stagger target). */
+  staggerDummy(frames: number): void;
+  /** M8 Auto Quality: setting and the level being drawn. */
+  quality(): { setting: string; level: string };
+  focusPaused(): boolean;
+  /** M8: e2e builds start with the focus pause off (headless focus noise); this sets it. */
+  pauseOnFocusLoss(on: boolean): void;
+}
+
+export interface DebugCoop {
+  invite: { from: number; target: number; until: number } | null;
+  log: { kind: number; frame: number; actor: number; target: number; detail: number };
+  handoffs: number;
+  finishers: number;
+  assists: number;
+  rescues: number;
+  bundles: number;
 }
 
 export interface DebugEncounter {

@@ -8,6 +8,7 @@ import {
   enemyFiles,
   generate,
   heroFiles,
+  loadCoop,
   loadHero,
 } from '../src/generate';
 
@@ -298,5 +299,35 @@ describe('Specials, Ultimates and grabs (M5)', () => {
     expect(collar.tags).toContain('rescueInterruptible');
     expect(snare.tags).toEqual(expect.arrayContaining(['restraint', 'rescueInterruptible']));
     expect(snare.grab?.restraint).toBe(150);
+  });
+});
+
+describe('co-op rules (M8)', () => {
+  const coopPath = new URL('../coop/coop.yaml', import.meta.url);
+  // CRLF-safe: a Windows checkout may have CRLF endings; YAML parsing does not care.
+  const coop = readFileSync(coopPath, 'utf8');
+  const heroes = () => files.map((f) => loadHero(readFileSync(f, 'utf8'), basename(f)));
+
+  test('coop.yaml loads against both founders and names no hero', () => {
+    const c = loadCoop(coop, heroes());
+    expect(c.teamFinishers[0]!.pair).toEqual(['founder', 'founder']);
+    expect(coop).not.toMatch(/\bmountain\b|\briver\b/);
+  });
+
+  test('a hero action with an undeclared handoff tag fails', () => {
+    const hs = heroes();
+    hs[0]!.actions[0]!.tags = ['handoffSomewhere'];
+    expect(() => loadCoop(coop, hs)).toThrow(/handoff tag handoffSomewhere is not declared/);
+  });
+
+  test('a paired hero without the team move fails', () => {
+    const hs = heroes();
+    hs[1]!.actions = hs[1]!.actions.filter((a) => a.category !== 'team');
+    expect(() => loadCoop(coop, hs)).toThrow(/river has no team move "confluence-strike"/);
+  });
+
+  test('team finisher parts use category and context team together', () => {
+    const bad = base.replace('category: team', 'category: special');
+    expect(() => loadHero(bad)).toThrow(HeroDataError);
   });
 });

@@ -1,6 +1,14 @@
 import { type Signal, signal } from '@preact/signals';
 import type { FacingMode } from '@ffp/sim';
-import type { KeyboardP2Preset, LayoutName, PadFamily, Prompt, PromptContext } from '@ffp/platform';
+import type {
+  KeyboardP2Preset,
+  LayoutName,
+  PadFamily,
+  Prompt,
+  PromptContext,
+  QualityLevel,
+  QualitySetting,
+} from '@ffp/platform';
 
 export type PromptStyle = 'auto' | PadFamily;
 
@@ -165,6 +173,11 @@ export interface LabState {
   /** Arena (name) and difficulty (name) picked in the arena panel. */
   arenaPick: Signal<{ arena: string; difficulty: string }>;
   arena: Signal<ArenaPanelView>;
+  /** M8: paused because the window lost focus (not a user or controller pause). */
+  focusPaused: Signal<boolean>;
+  coop: Signal<CoopPanelView>;
+  /** M8 Auto Quality: the chosen setting and the level being drawn. */
+  quality: Signal<{ setting: QualitySetting; level: QualityLevel; ms: number }>;
 }
 
 export function createLabState(visible: boolean): LabState {
@@ -203,6 +216,9 @@ export function createLabState(visible: boolean): LabState {
     weapons: signal({ players: [], items: [], scenery: [], lastEvent: '' }),
     arenaPick: signal({ arena: 'trial-recruit', difficulty: 'medium' }),
     arena: signal({ running: false, lines: [] }),
+    focusPaused: signal(false),
+    coop: signal({ lines: [], invite: null }),
+    quality: signal({ setting: 'auto', level: 'high', ms: 16.7 }),
   };
 }
 
@@ -212,4 +228,11 @@ export const HISTORY_LENGTH = 12;
 export interface ArenaPanelView {
   running: boolean;
   lines: string[];
+}
+
+/** M8 Co-op panel and the invited partner's prompt. */
+export interface CoopPanelView {
+  lines: string[];
+  /** The open invitation: who must confirm (slot), frames left, the finisher's name. */
+  invite: { from: number; to: number; left: number; name: string } | null;
 }

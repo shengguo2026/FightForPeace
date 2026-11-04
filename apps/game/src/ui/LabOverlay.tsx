@@ -11,7 +11,7 @@ import {
   arenaNames,
   difficultyNames,
 } from '@ffp/sim';
-import type { KeyboardP2Preset, LayoutName } from '@ffp/platform';
+import type { KeyboardP2Preset, LayoutName, QualitySetting } from '@ffp/platform';
 import { LINK_TEXT, TEXT, moveInputText, profileText } from '../text/en';
 import { InputPrompt, PLAYER_COLORS, PromptText } from './InputPrompt';
 import type {
@@ -52,6 +52,8 @@ export interface LabActions {
   /** M7: starts (or restarts) the picked arena; null goes back to the Lab. */
   startArena(arena: string | null): void;
   pickArena(pick: Partial<{ arena: string; difficulty: string }>): void;
+  /** M8 Auto Quality: auto, or a fixed presentation level. */
+  setQuality(setting: QualitySetting): void;
 }
 
 const panel = {
@@ -405,6 +407,35 @@ function ArenaPanel({ state, actions }: { state: LabState; actions: LabActions }
           <div>{l}</div>
         ))}
       </div>
+    </div>
+  );
+}
+
+const QUALITY_OPTIONS = ['auto', 'high', 'medium', 'low'] as const;
+
+/** M8 same-device co-op: invitation, handoffs, bundles, telemetry, quality and focus pause. */
+function CoopPanel({ state, actions }: { state: LabState; actions: LabActions }) {
+  const view = state.coop.value;
+  const q = state.quality.value;
+  return (
+    <div style={{ ...panel, maxWidth: '460px', pointerEvents: 'auto' }} data-testid="coop-panel">
+      <div>Co-op · handoffs, Team Attack, rescue</div>
+      <div data-testid="coop-lines">
+        {view.lines.map((l) => (
+          <div>{l}</div>
+        ))}
+      </div>
+      <Select
+        label="Quality"
+        value={q.setting}
+        options={QUALITY_OPTIONS}
+        onChange={(v) => actions.setQuality(v)}
+        testId="quality-setting"
+      />
+      <div data-testid="quality-level">
+        drawing {q.level} · frame {q.ms.toFixed(1)} ms
+      </div>
+      <div data-testid="focus-pause">focus pause {state.focusPaused.value ? 'on' : 'off'}</div>
     </div>
   );
 }
@@ -841,6 +872,7 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
           ))}
           <TargetPanel t={state.target.value} />
           <ArenaPanel state={state} actions={actions} />
+          <CoopPanel state={state} actions={actions} />
           {state.settingsOpen.value ? <Settings state={state} actions={actions} /> : null}
           {state.moveListOpen.value ? <MoveList players={players} /> : null}
           {state.recipesOpen.value ? (
@@ -856,6 +888,7 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
         </div>
       ) : null}
       <GrabCues players={players} grab={state.grab.value} />
+      <TeamCue state={state} />
       <HintBar players={players} />
     </>
   );
@@ -898,6 +931,7 @@ function HintBar({ players }: { players: PlayerView[] }) {
                 TEXT.hintUltimate,
                 TEXT.hintGrab,
                 TEXT.hintEscape,
+                TEXT.hintTeam,
               ].map((t) => (
                 <span style={{ marginRight: '12px' }}>
                   <PromptText text={t} ctx={p.ctx} color={color} />
@@ -954,6 +988,46 @@ function GrabCues({ players, grab }: { players: PlayerView[]; grab: GrabPlayerVi
           </div>
         );
       })}
+    </div>
+  );
+}
+
+/**
+ * M8 Team Attack: the invited partner sees their own Team Attack prompt and a countdown;
+ * the inviter sees that the request is waiting.
+ */
+function TeamCue({ state }: { state: LabState }) {
+  const inv = state.coop.value.invite;
+  if (!inv) return null;
+  const players = state.players.value;
+  const to = players[inv.to];
+  const from = players[inv.from];
+  if (!to || !from) return null;
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: '38%',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        pointerEvents: 'none',
+        font: '22px/1.6 system-ui, sans-serif',
+        color: '#e8e8e8',
+        textAlign: 'center',
+      }}
+    >
+      <div
+        style={{ ...panel, font: 'inherit', fontWeight: 'bold', border: '2px solid #7dffb0' }}
+        data-testid="team-invite"
+      >
+        <span style={{ color: PLAYER_COLORS[inv.to] }}>P{inv.to + 1}</span>{' '}
+        <PromptText text={TEXT.teamInvite} ctx={to.ctx} color={PLAYER_COLORS[inv.to]} />{' '}
+        <span data-testid="team-invite-left">{inv.left}</span>
+        <div style={{ fontWeight: 'normal', fontSize: '16px' }}>
+          {inv.name} · <span style={{ color: PLAYER_COLORS[inv.from] }}>P{inv.from + 1}</span>{' '}
+          <PromptText text={TEXT.teamWaiting} ctx={from.ctx} />
+        </div>
+      </div>
     </div>
   );
 }

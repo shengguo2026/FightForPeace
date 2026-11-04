@@ -1,0 +1,59 @@
+# Same-device co-op rules (M8): F&D §6.5 Cooperative combat and §6.7 grab assists and
+# rescue; roadmap guardrails M8. Everything here is keyed by tags, never by hero names, so
+# later pairs (Reciprocal Handoffs, Twin Guardians' Accord) are new rows, not new code.
+# Every number is a candidate for Combat Lab tuning. Frames at 60 Hz, pixels.
+
+# Organic Tagged Handoffs with Authored Target-State Windows plus a Short Pre-Input Buffer.
+# A sender action tagged `tag` opens a handoff on its target when the hit leaves it in
+# `state`; the partner claims it when an action carrying one of `receivers` physically
+# connects inside `window` while the target is still in that state. The receiving action
+# may have been started up to `preBuffer` frames before the window opened.
+handoff:
+  preBuffer: 7
+  states:
+    - tag: handoffAirborne
+      state: airborne
+      window: 36
+      receivers: [receiveAirborne]
+    - tag: handoffStagger
+      state: stagger
+      window: 24
+      receivers: [receiveStagger]
+    - tag: handoffDown
+      state: down
+      window: 30
+      receivers: [receiveDown]
+
+# Authored Team Finishers with Invite and Confirm and Equal Meter Contribution. `pair`
+# names hero tags (either order); each hero performs its own kit's `move`. The target must
+# be in one of `targets` with an open combo; both heroes within `range` of it; `cost` is
+# each hero's Attack-meter percent, committed atomically on confirmation. `place` is the
+# authored reposition (both players opted in): each hero this far from the target, on
+# opposite sides. `minScale` is the finisher's authored damage-scale floor (percent).
+teamFinishers:
+  - id: confluence
+    name: Confluence Strike
+    pair: [founder, founder]
+    targets: [stagger, airborne]
+    move: confluence-strike
+    range: { x: 380, z: 110 }
+    place: 110
+    cost: 50
+    confirm: 30
+    minScale: 50
+
+# Tagged co-op actions (roadmap campaign guardrail M8).
+coopActions:
+  # Neutral Interact next to a restrained partner frees them at once.
+  - id: restraint-release
+    kind: release
+    reach: { x: 140, z: 40 }
+    recovery: 10
+  # A partner's strike on an enemy whose running grab carries this tag breaks the grab.
+  - id: partner-interrupt
+    kind: interrupt
+    tag: rescueInterruptible
+  # One Tagged Partner Assist on a hero-held enemy: one action with this tag that connects.
+  - id: grab-assist
+    kind: assist
+    tag: grabAssistEligible

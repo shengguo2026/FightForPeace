@@ -24,6 +24,7 @@ import {
   setFacingMode,
   setHero,
   step,
+  type CoopState,
 } from '@ffp/sim';
 import {
   DEFAULT_GAMEPAD,
@@ -60,6 +61,8 @@ export interface RenderSnapshot {
   stageWidth: number;
   /** Changes whenever the session replaces its world (arena start, restart, Lab). */
   generation: number;
+  /** M8 co-op: the invitation, the last co-op event and telemetry (current state). */
+  coop: CoopState;
 }
 
 export interface FrameReport {
@@ -161,6 +164,7 @@ export class GameSession {
       encounter: this.world.encounter,
       stageWidth: Math.round(this.world.bounds.maxX / 256),
       generation: this.generation,
+      coop: this.world.coop,
     };
   }
 

@@ -12,7 +12,7 @@ import {
   fxToPixels,
   nonCombatant,
 } from '@ffp/sim';
-import type { AssetRegistry, BossView } from '@ffp/platform';
+import type { AssetRegistry, BossView, QualityLevel } from '@ffp/platform';
 import { ARENA_TEXT } from '../text/en';
 
 const VIEW_W = 1920;
@@ -28,6 +28,8 @@ const PLATE_FLOOR = 0.62;
 interface Layer {
   obj: Phaser.GameObjects.TileSprite | Phaser.GameObjects.Image;
   factor: number;
+  /** Which Stage 1 layer this is (Auto Quality drops or freezes decorative ones). */
+  name: 'far' | 'mid' | 'floor' | 'fg' | 'plate';
 }
 
 /**
@@ -116,6 +118,7 @@ export class ArenaView {
     bodies: readonly Fighter[],
     frame: number,
     stageWidth: number,
+    quality: QualityLevel = 'high',
   ): void {
     const arena = enc ? ARENAS[enc.arena] : undefined;
     const key = arena ? `${arena.id}` : 'lab';
@@ -131,11 +134,18 @@ export class ArenaView {
       this.camX = 0;
       cam.setScroll(0, 0);
     }
+    // M8 Auto Quality: medium drops the decorative foreground; low also holds the far and
+    // middle backdrops still. The floor, bodies, telegraphs and HUD are never reduced.
+    const still = quality === 'low';
     for (const l of this.layers) {
+      if (l.name === 'fg') l.obj.setVisible(quality === 'high');
+      const frozen = still && (l.name === 'far' || l.name === 'mid');
       if (l.obj instanceof Phaser.GameObjects.TileSprite) {
         // Tiled layers stay on screen and scroll their texture at the layer's rate.
         l.obj.setPosition(cam.scrollX, l.obj.y);
-        l.obj.tilePositionX = (cam.scrollX * l.factor) / l.obj.tileScaleX;
+        if (!frozen) l.obj.tilePositionX = (cam.scrollX * l.factor) / l.obj.tileScaleX;
+      } else if (l.name === 'far' || l.name === 'mid') {
+        l.obj.setScrollFactor(frozen ? 0 : l.factor, 1);
       }
     }
     this.drawHud(enc, bodies, frame);
@@ -160,7 +170,7 @@ export class ArenaView {
       const img = this.scene.add.image(0, Math.min(0, y), id('plate')).setOrigin(0, 0);
       img.setScale(Math.max(scale, stageWidth / meta.w));
       img.setScrollFactor(1).setDepth(0.05);
-      this.layers.push({ obj: img, factor: 1 });
+      this.layers.push({ obj: img, factor: 1, name: 'plate' });
       return;
     }
     const range = Math.max(0, stageWidth - VIEW_W);
@@ -181,7 +191,7 @@ export class ArenaView {
         const t = this.scene.add.tileSprite(0, y, VIEW_W, h, id(name));
         t.setOrigin(0, 0).setScrollFactor(0, 1).setDepth(depth);
         t.setTileScale(scale, scale);
-        this.layers.push({ obj: t, factor: PARALLAX[name] });
+        this.layers.push({ obj: t, factor: PARALLAX[name], name });
         return;
       }
       const s = Math.max(scale, VIEW_W / meta.w);
@@ -190,7 +200,7 @@ export class ArenaView {
       const img = this.scene.add.image(0, y, id(name)).setOrigin(0, 0).setScale(s);
       img.setScrollFactor(factor, 1).setDepth(depth);
       if (name === 'floor') img.setCrop(0, 0, meta.w, h / s);
-      this.layers.push({ obj: img, factor });
+      this.layers.push({ obj: img, factor, name });
     };
     const far = this.assets.layer(id('far'))?.layer;
     if (far) layer('far', 0, VIEW_H, VIEW_H / far.h, 0.01);

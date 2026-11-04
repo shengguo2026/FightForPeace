@@ -123,3 +123,51 @@ test('Pause on an assigned device toggles the user pause and drops inputs meanwh
   expect(h.paused).toBe(false);
   expect(h.sampleFrame()[0]!.pressed & Action.Attack).toBe(0);
 });
+
+describe('focus and visibility pause (M8)', () => {
+  test('losing focus pauses at once and releases held keys', () => {
+    const h = hub();
+    h.keyboardP1.keyDown('KeyD');
+    expect(frame(h)[0]!.moveX).toBe(1);
+    h.loseFocus();
+    expect(h.paused).toBe(true);
+    h.poll();
+    expect(h.paused).toBe(true); // coming back alone never resumes
+    h.keyboardP1.keyDown('KeyT');
+    h.poll();
+    expect(h.paused).toBe(true); // Attack does not resume either
+  });
+
+  test('with the focus pause turned off, losing focus only releases held keys', () => {
+    const h = hub();
+    h.pauseOnFocusLoss = false;
+    h.keyboardP1.keyDown('KeyD');
+    h.loseFocus();
+    expect(h.paused).toBe(false);
+    expect(frame(h)[0]!.moveX).toBe(0);
+  });
+
+  test('Pause on an assigned device resumes from neutral input, without toggling a user pause', () => {
+    const h = hub();
+    h.keyboardP1.keyDown('KeyD');
+    frame(h);
+    h.loseFocus();
+    h.keyboardP1.keyDown('Escape');
+    h.poll();
+    expect(h.paused).toBe(false);
+    expect(h.userPaused).toBe(false);
+    h.keyboardP1.keyUp('Escape');
+    const f = h.sampleFrame()[0]!;
+    expect(f.moveX).toBe(0); // the key held before the blur is released
+    expect(f.pressed).toBe(0);
+  });
+
+  test('a pause on a hidden tab is the same pause (no second toggle needed)', () => {
+    const h = hub();
+    h.loseFocus();
+    h.loseFocus();
+    h.keyboardP1.keyDown('Escape');
+    h.poll();
+    expect(h.paused).toBe(false);
+  });
+});

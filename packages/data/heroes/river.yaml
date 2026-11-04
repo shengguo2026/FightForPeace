@@ -4,6 +4,8 @@
 # Hitbox x/w run forward from the hero's centre; y/h run up from the hero's feet.
 id: river
 name: River Scout
+# Hero tags (M8): team finishers name the pairs they support by tag, never by hero id.
+tags: [founder]
 bodyWidth: 60
 actions:
   - id: reed-tap
@@ -16,6 +18,7 @@ actions:
     reaction: { kind: stagger, hitstun: 16, push: 1.5 }
     costs: { stun: 9, scale: 10, starter: 20 }
     meter: 3
+    tags: [receiveStagger, grabAssistEligible]
     links:
       - { to: turning-current, category: chain, on: [hit, guard] }
       - { to: rapids-step, category: chain, on: [hit, guard] }
@@ -32,6 +35,7 @@ actions:
     reaction: { kind: stagger, hitstun: 18, push: 2 }
     costs: { stun: 10, scale: 10 }
     meter: 3
+    tags: [grabAssistEligible]
     moves:
       - { from: 1, to: 6, forward: 1.5 }
     links:
@@ -49,7 +53,7 @@ actions:
     reaction: { kind: knockback, hitstun: 24, push: 12 }
     costs: { stun: 16, scale: 15 }
     meter: 6
-    tags: [wallBounce]
+    tags: [wallBounce, handoffStagger]
     moves:
       - { from: 1, to: 9, forward: 1.5 }
     links:
@@ -66,7 +70,7 @@ actions:
     reaction: { kind: stagger, hitstun: 20, push: 5 }
     costs: { stun: 12, scale: 12 }
     meter: 4
-    tags: [carry]
+    tags: [carry, handoffStagger, receiveStagger]
     moves:
       - { from: 1, to: 11, forward: 6 }
     links:
@@ -83,7 +87,7 @@ actions:
     reaction: { kind: stagger, hitstun: 20, push: 2 }
     costs: { stun: 10, scale: 10, starter: 10 }
     meter: 3
-    tags: [whiffPunish]
+    tags: [whiffPunish, receiveStagger, grabAssistEligible]
     moves:
       - { from: 1, to: 7, forward: -4 }
     links:
@@ -99,6 +103,7 @@ actions:
     reaction: { kind: launch, hitstun: 30, push: 1.5, lift: 14 }
     costs: { stun: 14, scale: 12, juggle: 30 }
     meter: 5
+    tags: [handoffAirborne, receiveAirborne]
     moves:
       - { from: 1, to: 8, depth: -3, depthFrom: fixed }
     links:
@@ -114,7 +119,7 @@ actions:
     reaction: { kind: stagger, hitstun: 20, push: 1 }
     costs: { stun: 12, scale: 10 }
     meter: 4
-    tags: [passThrough]
+    tags: [passThrough, handoffDown]
     moves:
       - { from: 1, to: 15, forward: 3, depth: 3, depthFrom: fixed }
     links:
@@ -131,6 +136,7 @@ actions:
     reaction: { kind: stagger, hitstun: 16, push: 2, airPop: 7 }
     costs: { stun: 9, scale: 10, juggle: 10 }
     meter: 3
+    tags: [receiveAirborne]
     links:
       - { to: current-chase, category: air, on: [hit] }
       - { to: bank-switch-arc, category: air, on: [hit] }
@@ -146,7 +152,7 @@ actions:
     reaction: { kind: knockback, hitstun: 24, push: 6, lift: 3, airPop: 5 }
     costs: { stun: 15, scale: 12, juggle: 20 }
     meter: 5
-    tags: [carry, wallBounce]
+    tags: [carry, wallBounce, receiveAirborne]
     moves:
       - { from: 1, to: 12, forward: 5 }
     links:
@@ -162,6 +168,7 @@ actions:
     reaction: { kind: stagger, hitstun: 20, push: 2, airPop: 6 }
     costs: { stun: 12, scale: 10, juggle: 15 }
     meter: 4
+    tags: [receiveAirborne]
     moves:
       - { from: 1, to: 14, depth: 5, depthFrom: input }
     links:
@@ -177,6 +184,7 @@ actions:
     reaction: { kind: knockback, hitstun: 20, push: 6, airPop: 4 }
     costs: { stun: 10, scale: 10, juggle: 10 }
     meter: 3
+    tags: [receiveAirborne]
     moves:
       - { from: 1, to: 10, forward: -2 }
     links:
@@ -192,7 +200,7 @@ actions:
     reaction: { kind: stagger, hitstun: 18 }
     costs: { stun: 10, scale: 10 }
     meter: 3
-    tags: [groundExtension]
+    tags: [groundExtension, receiveDown]
     note: Needs Ground-Opportunity Focus.
     links:
       - { to: rising-eddy, category: chain, on: [hit] }
@@ -207,7 +215,7 @@ actions:
     reaction: { kind: launch, hitstun: 30, lift: 12 }
     costs: { stun: 18, scale: 15, juggle: 35 }
     meter: 5
-    tags: [relaunch, groundFinisher, sideSwitch]
+    tags: [relaunch, groundFinisher, sideSwitch, receiveDown]
     note: Needs Ground-Opportunity Focus.
 
   - id: rapid-crossing
@@ -326,6 +334,7 @@ actions:
     reaction: { kind: launch, hitstun: 30, push: 1, lift: 14, airPop: 12 }
     costs: { stun: 14, scale: 12, starter: 15, juggle: 30 }
     meter: 5
+    tags: [handoffAirborne]
     moves:
       - { from: 1, to: 17, depth: 3, depthFrom: input }
     links:
@@ -421,6 +430,20 @@ actions:
     meter: 6
     links:
       - { to: jump, input: neutral, category: jumpChase, on: [hit] }
+
+  # Team finisher part (M8, coop/coop.yaml "confluence"). Never an input of its own: a
+  # confirmed Team Attack invitation starts it for both heroes at once.
+  - id: confluence-strike
+    name: Confluence Strike
+    category: team
+    input: { context: team, dir: neutral }
+    frames: { startup: 14, active: 4, recovery: 30 }
+    hitbox: { x: 0, w: 170, y: 40, h: 260, depth: 60 }
+    damage: 150
+    reaction: { kind: knockdown, hitstun: 30, push: 9, lift: 10 }
+    costs: { stun: 10, scale: 10 }
+    meter: 0
+    tags: [teamFinisher, terminalKnockdown]
 
 # Academy representative recipes (spec §8.3). Steps name actions; "a|b" accepts either;
 # "jump" is a hint shown between steps and is not matched.

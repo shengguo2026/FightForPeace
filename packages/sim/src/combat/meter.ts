@@ -36,7 +36,7 @@ export function crowdShare(nth: number): number {
 
 /** Ultimates and cinematic actions never feed the meter they spend. */
 function earnsMeter(a: ActionDef): boolean {
-  return a.category !== 'ultimate';
+  return a.category !== 'ultimate' && a.category !== 'team';
 }
 
 /**
@@ -50,9 +50,11 @@ export function awardHitMeter(
   a: ActionDef,
   ctx: ComboContext,
   nth: number,
+  /** Combined Hit Bundle: the meter-gain budget at the frame's start sets every band. */
+  bandBudget = ctx.meterBudget,
 ): number {
   if (!earnsMeter(a)) return 0;
-  const band = gainBand(ctx.meterBudget);
+  const band = gainBand(bandBudget);
   ctx.meterBudget = Math.max(0, ctx.meterBudget - a.meterDecay);
   const gain = Math.trunc((a.meterGain * METER.unit * crowdShare(nth) * band) / 10000);
   return addMeter(world, owner, gain);

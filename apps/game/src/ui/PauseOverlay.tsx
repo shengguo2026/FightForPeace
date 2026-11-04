@@ -2,7 +2,10 @@ import { TEXT } from '../text/en';
 import { PLAYER_COLORS, PromptText } from './InputPrompt';
 import type { LabState } from './labState';
 
-/** Shown while gameplay is paused: a lost controller, or a pause the player asked for. */
+/**
+ * Shown while gameplay is paused: a lost controller, the window losing focus, or a pause
+ * the player asked for.
+ */
 export function PauseOverlay({ state }: { state: LabState }) {
   if (!state.paused.value) return null;
   const players = state.players.value;
@@ -35,6 +38,10 @@ export function PauseOverlay({ state }: { state: LabState }) {
               <PromptText text={TEXT.controllerReconnect} ctx={ctx} />
             </div>
           ))
+        ) : state.focusPaused.value ? (
+          <div data-testid="pause-focus">
+            <PromptText text={TEXT.pausedFocus} ctx={players[0]!.ctx} />
+          </div>
         ) : (
           <PromptText text={TEXT.paused} ctx={players[0]!.ctx} />
         )}

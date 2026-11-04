@@ -70,6 +70,7 @@ const ATTACK_KIND: Partial<Record<ActionDef['category'], number>> = {
   grab: ActionBit.Interact,
   grabStrike: ActionBit.Interact,
   throw: ActionBit.Interact,
+  team: ActionBit.TeamAttack,
 };
 
 /** Starts an action. Aerial actions keep the current momentum; ground actions root the hero. */

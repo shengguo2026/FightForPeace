@@ -97,6 +97,16 @@ export function bossBudgets(world: World, t: Fighter): void {
  * Depleting Resolve starts the telegraphed Stagger Break. Returns true when the boss
  * resisted (the caller skips the ordinary reaction).
  */
+/**
+ * Resolve damage of a non-dominant hit in a Combined Hit Bundle: it wears Resolve down but
+ * causes no reaction of its own (the dominant hit's bossHit starts any Stagger Break).
+ */
+export function bossResolve(world: World, a: ActionDef, t: Fighter, dmg: number): void {
+  const b = world.encounter?.boss;
+  if (!b || b.id !== t.id || b.shift > 0 || b.stagger > 0) return;
+  b.resolve = Math.max(0, b.resolve - resolveDamage(a, dmg));
+}
+
 export function bossHit(world: World, a: ActionDef, t: Fighter, dmg: number, dir: number): boolean {
   const b = world.encounter?.boss;
   if (!b || b.id !== t.id || b.shift > 0) return false;

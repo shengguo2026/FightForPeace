@@ -117,6 +117,8 @@ const Action = T.Object(
       T.Literal('throw'),
       /** A held weapon's throw (weapon files only): releases the item on its first active frame. */
       T.Literal('weaponThrow'),
+      /** A team-finisher part (M8): started only by a confirmed Team Attack invitation. */
+      T.Literal('team'),
     ]),
     input: T.Object(
       {
@@ -138,6 +140,8 @@ const Action = T.Object(
           T.Literal('grabSpecial'),
           /** Interact while holding a weapon (weapon files only). */
           T.Literal('weaponThrow'),
+          /** Team finisher part (M8): never an input of its own; see coop/coop.yaml. */
+          T.Literal('team'),
         ]),
         dir: Dir,
       },
@@ -390,6 +394,8 @@ export const HeroSchema = T.Object(
     id: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
     name: T.String({ minLength: 1 }),
     bodyWidth: T.Integer({ minimum: 20, maximum: 400 }),
+    /** Hero tags (M8): team finishers name the pairs they support by these, never by hero id. */
+    tags: T.Optional(T.Array(T.String({ pattern: '^[a-z][A-Za-z0-9]*$' }))),
     actions: T.Array(Action, { minItems: 1, maxItems: 32 }),
     recipes: T.Optional(T.Array(Recipe, { maxItems: 16 })),
     /** Enemy kits (M7): role, AI, defense capability profile, morale and boss phases. */
@@ -558,7 +564,19 @@ export function loadHero(
     )
       problems.push(`"${a.id}": weapon throws, ammunition and replaces belong in weapon files`);
     if (a.armed && !loadout) problems.push(`"${a.id}": only Specials and Ultimates declare armed`);
-    if (a.input.context === 'chain' || a.input.context === 'script' || a.catalogue) continue;
+    if ((a.category === 'team') !== (a.input.context === 'team'))
+      problems.push(`"${a.id}": team finisher parts use category and context team together`);
+    if (a.category === 'team' && kind !== 'hero')
+      problems.push(`"${a.id}": team finisher parts are for heroes`);
+    if (a.category === 'team' && (a.links ?? []).length > 0)
+      problems.push(`"${a.id}": team finisher parts have no links`);
+    if (
+      a.input.context === 'chain' ||
+      a.input.context === 'script' ||
+      a.input.context === 'team' ||
+      a.catalogue
+    )
+      continue;
     const dirs = a.input.dir === 'vertical' ? ['up', 'down'] : [a.input.dir];
     for (const d of dirs) {
       const key = `${a.input.context}/${d}`;
@@ -998,6 +1016,7 @@ export function compileHero(hero: HeroYaml, kind: 'hero' | 'enemy' = 'hero'): un
     id: hero.id,
     name: hero.name,
     bodyWidth: hero.bodyWidth,
+    tags: [...(hero.tags ?? [])].sort(),
     actions: hero.actions.map((a) =>
       compileAction(a, index, hero.actions, `${kind}.${hero.id}.pose.${a.category}.${a.id}`),
     ),
@@ -1131,6 +1150,161 @@ export function compileWeapon(w: WeaponYaml): unknown {
   };
 }
 
+// --- M8 same-device co-op ---------------------------------------------------------------
+
+const Tag = T.String({ pattern: '^[a-z][A-Za-z0-9]*$' });
+const TargetState = T.Union([T.Literal('airborne'), T.Literal('stagger'), T.Literal('down')]);
+const STATE_CODE = { airborne: 1, stagger: 2, down: 3 } as const;
+const Reach = T.Object(
+  { x: T.Integer({ minimum: 1, maximum: 2000 }), z: T.Integer({ minimum: 1, maximum: 1000 }) },
+  { additionalProperties: false },
+);
+
+/**
+ * Co-op rules (F&D §6.5, §6.7; roadmap guardrails M8): handoff states keyed by sender and
+ * receiver action tags, team finishers keyed by hero tags, and the tagged co-op actions.
+ */
+export const CoopSchema = T.Object(
+  {
+    handoff: T.Object(
+      {
+        preBuffer: T.Integer({ minimum: 0, maximum: 20 }),
+        states: T.Array(
+          T.Object(
+            {
+              tag: Tag,
+              state: TargetState,
+              window: Frame1,
+              receivers: T.Array(Tag, { minItems: 1 }),
+            },
+            { additionalProperties: false },
+          ),
+          { minItems: 1 },
+        ),
+      },
+      { additionalProperties: false },
+    ),
+    teamFinishers: T.Array(
+      T.Object(
+        {
+          id: KitId,
+          name: T.String({ minLength: 1 }),
+          pair: T.Tuple([Tag, Tag]),
+          targets: T.Array(TargetState, { minItems: 1 }),
+          move: KitId,
+          range: Reach,
+          place: T.Integer({ minimum: 0, maximum: 1000 }),
+          cost: T.Integer({ minimum: 0, maximum: 100 }),
+          confirm: Frame1,
+          minScale: T.Integer({ minimum: 0, maximum: 100 }),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    coopActions: T.Array(
+      T.Union([
+        T.Object(
+          {
+            id: KitId,
+            kind: T.Literal('release'),
+            reach: Reach,
+            recovery: Frames,
+          },
+          { additionalProperties: false },
+        ),
+        T.Object(
+          { id: KitId, kind: T.Union([T.Literal('interrupt'), T.Literal('assist')]), tag: Tag },
+          { additionalProperties: false },
+        ),
+      ]),
+    ),
+  },
+  { additionalProperties: false },
+);
+export type CoopYaml = Static<typeof CoopSchema>;
+
+/**
+ * Validates coop.yaml against the hero kits: every sender or receiver tag on a hero action
+ * is declared, every hero a finisher pairs has that finisher's team move, and each kind of
+ * co-op action exists once.
+ */
+export function loadCoop(
+  source: string,
+  heroes: readonly HeroYaml[],
+  file = 'coop.yaml',
+): CoopYaml {
+  const c = validate(CoopSchema, source, file) as CoopYaml;
+  const problems: string[] = [];
+  const senders = new Set(c.handoff.states.map((s) => s.tag));
+  const receivers = new Set(c.handoff.states.flatMap((s) => s.receivers));
+  for (const h of heroes)
+    for (const a of h.actions)
+      for (const t of a.tags ?? []) {
+        if (t.startsWith('handoff') && !senders.has(t))
+          problems.push(`${h.id}/${a.id}: handoff tag ${t} is not declared`);
+        if (t.startsWith('receive') && !receivers.has(t))
+          problems.push(`${h.id}/${a.id}: receiver tag ${t} is not declared`);
+      }
+  const ids = new Set<string>();
+  for (const f of c.teamFinishers) {
+    if (ids.has(f.id)) problems.push(`duplicate team finisher "${f.id}"`);
+    ids.add(f.id);
+    const paired = heroes.filter((h) => f.pair.some((t) => (h.tags ?? []).includes(t)));
+    if (paired.length === 0)
+      problems.push(`team finisher "${f.id}": no hero carries its pair tags`);
+    for (const h of paired) {
+      const move = h.actions.find((a) => a.id === f.move);
+      if (!move || move.category !== 'team')
+        problems.push(`team finisher "${f.id}": ${h.id} has no team move "${f.move}"`);
+    }
+  }
+  for (const kind of ['release', 'interrupt', 'assist'])
+    if (c.coopActions.filter((a) => a.kind === kind).length !== 1)
+      problems.push(`exactly one co-op action of kind ${kind} is needed`);
+  if (problems.length > 0) throw new HeroDataError(problems.map((p) => `${file}: ${p}`).join('\n'));
+  return c;
+}
+
+/** Converts coop.yaml to the simulation's CoopDef (fixed point, state codes). */
+export function compileCoop(c: CoopYaml): unknown {
+  return {
+    preBuffer: c.handoff.preBuffer,
+    handoffs: c.handoff.states.map((s) => ({
+      tag: s.tag,
+      state: STATE_CODE[s.state],
+      window: s.window,
+      receivers: [...s.receivers].sort(),
+    })),
+    finishers: c.teamFinishers.map((f) => ({
+      id: f.id,
+      name: f.name,
+      pair: [...f.pair],
+      targets: f.targets.map((t) => STATE_CODE[t]),
+      move: f.move,
+      rangeX: fx(f.range.x),
+      rangeZ: fx(f.range.z),
+      place: fx(f.place),
+      cost: f.cost,
+      confirm: f.confirm,
+      minScale: f.minScale,
+    })),
+    actions: c.coopActions.map((a) =>
+      a.kind === 'release'
+        ? {
+            id: a.id,
+            kind: a.kind,
+            tag: '',
+            reachX: fx(a.reach.x),
+            reachZ: fx(a.reach.z),
+            recovery: a.recovery,
+          }
+        : { id: a.id, kind: a.kind, tag: a.tag, reachX: 0, reachZ: 0, recovery: 0 },
+    ),
+  };
+}
+
+const COOP_FILE = fileURLToPath(new URL('../coop/coop.yaml', import.meta.url));
+
 const WEAPONS_DIR = fileURLToPath(new URL('../weapons/', import.meta.url));
 
 /** Weapon files in registry order: the Stage 1 pair first, then by file name. */
@@ -1180,10 +1354,12 @@ export function generate(
   enemies = enemyFiles(),
   weapons = weaponFiles(),
   encounters: string | null = ENCOUNTERS_DIR,
+  coopFile: string | null = COOP_FILE,
 ): string {
   const load = (f: string, kind: 'hero' | 'enemy') =>
     loadHero(readFileSync(f, 'utf8'), basename(f), kind);
-  const roster = files.map((f) => compileHero(load(f, 'hero'), 'hero') as { id: string });
+  const heroYaml = files.map((f) => load(f, 'hero'));
+  const roster = heroYaml.map((h) => compileHero(h, 'hero') as { id: string });
   const heroes = JSON.stringify(roster, null, 2);
   const enemyYaml = enemies.map((f) => load(f, 'enemy'));
   const kits = JSON.stringify(
@@ -1223,11 +1399,21 @@ export function generate(
   const arenas = encounters
     ? loadArenas(readFileSync(join(encounters, 'arenas.yaml'), 'utf8'), kitIds)
     : [];
+  const coop = coopFile
+    ? compileCoop(loadCoop(readFileSync(coopFile, 'utf8'), heroYaml, basename(coopFile)))
+    : { preBuffer: 0, handoffs: [], finishers: [], actions: [] };
   return `// GENERATED by packages/data/src/generate.ts from packages/data/heroes/*.yaml,
-// packages/data/enemies/*.yaml, packages/data/weapons/*.yaml and
-// packages/data/encounters/*.yaml. Do not edit by hand: change the YAML and run
-// \`pnpm gen:heroes\`.
-import type { ArenaDef, DifficultyDef, EnemyProfile, HeroDef, WeaponDef } from './types';
+// packages/data/enemies/*.yaml, packages/data/weapons/*.yaml,
+// packages/data/encounters/*.yaml and packages/data/coop/coop.yaml. Do not edit by hand:
+// change the YAML and run \`pnpm gen:heroes\`.
+import type {
+  ArenaDef,
+  CoopDef,
+  DifficultyDef,
+  EnemyProfile,
+  HeroDef,
+  WeaponDef,
+} from './types';
 
 export const HERO_DATA: readonly HeroDef[] = ${heroes};
 
@@ -1241,6 +1427,8 @@ export const WEAPON_DATA: readonly WeaponDef[] = ${arms};
 export const DIFFICULTY_DATA: readonly DifficultyDef[] = ${JSON.stringify(difficulty, null, 2)};
 
 export const ARENA_DATA: readonly ArenaDef[] = ${JSON.stringify(arenas, null, 2)};
+
+export const COOP_DATA: CoopDef = ${JSON.stringify(coop, null, 2)};
 `;
 }
 

@@ -21,6 +21,7 @@ import academyRecipesJson from './academy-recipes.json';
 import defenseDrillsJson from './defense-drills.json';
 import specialsGrabsJson from './specials-grabs.json';
 import grabEscapeJson from './grab-escape.json';
+import coopDrillsJson from './coop-drills.json';
 import { SCRIPTS } from './scripts';
 
 const LOGS: [string, ReplayLog][] = [
@@ -32,6 +33,7 @@ const LOGS: [string, ReplayLog][] = [
   ['defense-drills', defenseDrillsJson as ReplayLog],
   ['specials-grabs', specialsGrabsJson as ReplayLog],
   ['grab-escape', grabEscapeJson as ReplayLog],
+  ['coop-drills', coopDrillsJson as ReplayLog],
 ];
 
 /** Plays a log and collects each hero's grab events and every action that connected. */
@@ -182,4 +184,16 @@ describe.each(LOGS)('%s: render rate does not change the result', (_name, log) =
     }
     expect(hashWorld(world)).toBe(log.expectedHash);
   });
+});
+
+test('coop-drills: an airborne handoff, a team finisher bundle and one grab assist', () => {
+  const log = coopDrillsJson as ReplayLog;
+  const world = createWorld(log.seed, log.options);
+  for (const f of log.frames) step(world, f);
+  const c = world.coop;
+  expect(c.handoffs).toBe(1);
+  expect(c.finishers).toBe(1);
+  expect(c.bundles).toBe(1);
+  expect(c.bundleHits).toBe(2);
+  expect(c.assists).toBe(1);
 });

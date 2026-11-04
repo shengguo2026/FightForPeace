@@ -563,6 +563,59 @@ export const arenaTrialScript: ReplayScript = {
   frames: arenaTrial(),
 };
 
+/**
+ * M8: same-device co-op drills on Dummy 1: an airborne handoff (launcher, partner's
+ * receiving launcher), a team finisher (Invite and Confirm) and a partner grab assist.
+ */
+function coopDrills(): FrameInput[][] {
+  const r = new Recorder(51, COOP_OPTIONS);
+  r.tick(1); // Player 2 joins
+  const dz = Math.trunc(r.body(101).z / 256);
+  const dx = () => Math.trunc(r.body(101).x / 256);
+  // Walk round the dummy (a lane further down-stage), then step into its lane.
+  const around = (slot: number, offset: number) => {
+    r.walkTo(slot, dx() + offset, dz + 110, offset < 0 ? 1 : -1);
+    r.walkTo(slot, dx() + offset, dz, offset < 0 ? 1 : -1);
+  };
+  around(1, 90);
+  around(0, -90);
+  // Handoff: Player 1 launches, Player 2's Northbank Arc claims the airborne window.
+  r.tick(0, ['up'], ['Attack']);
+  r.wait(() => r.contact(0), 30);
+  r.tick(1, ['up'], ['Attack']);
+  r.wait(() => r.free(0) && r.free(1), 90);
+  r.settle(101);
+  // Team finisher: Player 1 staggers the dummy and invites, Player 2 confirms.
+  around(1, 90);
+  around(0, -90);
+  r.tick(0, [], ['Attack']);
+  r.wait(() => r.contact(0), 20);
+  r.tick(0, [], ['TeamAttack']);
+  r.idle(1, 4).tick(1, [], ['TeamAttack']);
+  r.wait(() => r.free(0) && r.free(1), 120);
+  r.settle(101);
+  // Grab assist: Player 1 holds the dummy, Player 2 strikes it from behind once.
+  around(0, -80);
+  around(1, 95);
+  r.tick(0, [], ['Interact']);
+  r.wait(() => r.body(101).state === MoveState.Grabbed, 20);
+  r.tick(1, [], ['Attack']);
+  r.idle(1, 12);
+  r.tick(0, [], ['Interact']);
+  r.wait(() => r.free(0) && r.free(1), 120);
+  r.idle(0, 60);
+  return r.frames;
+}
+
+const COOP_OPTIONS: WorldOptions = { dummies: 1, infiniteMeter: true };
+
+export const coopDrillsScript: ReplayScript = {
+  name: 'coop-drills',
+  seed: 51,
+  options: COOP_OPTIONS,
+  frames: coopDrills(),
+};
+
 export const SCRIPTS = [
   walkSquare,
   dashJump,
@@ -574,6 +627,7 @@ export const SCRIPTS = [
   grabEscapeScript,
   weaponsEnvironmentScript,
   arenaTrialScript,
+  coopDrillsScript,
 ];
 
 export type { ReplayLog };

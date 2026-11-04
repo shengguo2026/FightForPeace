@@ -27,6 +27,9 @@ import { arenaLayout, newEncounter, setupArena, stepEncounter } from '../enemies
 import { installEnemyFactory, stepBoss } from '../enemies/boss';
 import { enemyBreaker, stepEnemy } from '../enemies/ai';
 import { NO_FRAME } from '../combat/reactions';
+import { encodeCoop, newCoopState } from '../coop/data';
+import { stepHandoffs } from '../coop/handoff';
+import { stepTeam } from '../coop/team';
 import {
   type EquipResult,
   type LoadoutKind,
@@ -52,7 +55,7 @@ export const DUMMY_HEALTH = 1000;
 export const HERO_HEALTH = 1000;
 
 /** Version of the byte layout written by encodeWorld. Bump on any layout change. */
-export const STATE_FORMAT = 10;
+export const STATE_FORMAT = 11;
 
 /** Walking speeds (fixed point per frame), kept as exports for existing callers. */
 export const WALK_SPEED_X = ON_FOOT.walkX;
@@ -250,6 +253,12 @@ export function createFighter(
     flinches: 0,
     groupWith: 0,
     groupAt: 0,
+    handoff: 0,
+    handoffFrom: 0,
+    handoffAt: 0,
+    handoffUntil: 0,
+    assist: 0,
+    releasedAt: NO_FRAME,
   };
 }
 
@@ -309,6 +318,7 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
     nextItem: ITEM_ID_BASE,
     environment: emptyEnvironment(),
     encounter: null,
+    coop: newCoopState(),
   };
   world.bodies.sort((a, b) => a.id - b.id);
   if (options.arena !== undefined) {
@@ -442,6 +452,8 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
   }
   stepEncounter(world);
   stepBoss(world);
+  // Team Attack: invitations, confirmations and the atomic commit, before anyone moves.
+  stepTeam(world, inputs);
   const before: PositionLog = new Map();
   for (const f of world.bodies) before.set(f.id, { x: f.x, z: f.z });
   // Heroes (low ids) move first, then enemies, always in id order.
@@ -470,6 +482,7 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
   sceneryCollide(world);
   holdPositions(world);
   hazardHits(world);
+  stepHandoffs(world);
   for (const f of world.bodies) closeContextIfActionable(world, f);
   world.frame += 1;
 }
@@ -710,8 +723,15 @@ export function encodeWorld(world: World): Uint8Array {
     w.u32(b.flinches);
     w.u32(b.groupWith);
     w.i32(b.groupAt);
+    w.u8(b.handoff);
+    w.u32(b.handoffFrom);
+    w.i32(b.handoffAt);
+    w.i32(b.handoffUntil);
+    w.u8(b.assist);
+    w.i32(b.releasedAt);
   }
   encodeEncounter(w, world);
+  encodeCoop(w, world.coop);
   return w.bytes();
 }
 
