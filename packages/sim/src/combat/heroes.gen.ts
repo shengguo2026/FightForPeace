@@ -5496,7 +5496,9 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
-        "tags": [],
+        "tags": [
+          "projectileDeflect"
+        ],
         "links": [
           {
             "kind": "action",

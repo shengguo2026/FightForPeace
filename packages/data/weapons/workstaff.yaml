@@ -45,6 +45,7 @@ actions:
     meter: 4
     clash: heavy
     breakPower: 40
+    tags: [projectileDeflect]
     links:
       - { to: staff-overhead, category: chain, on: [hit, guard] }
 

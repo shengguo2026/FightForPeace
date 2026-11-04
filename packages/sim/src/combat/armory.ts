@@ -50,8 +50,13 @@ export function armedKit(base: HeroDef, kitKey: string, weapon: number): HeroDef
   const overrides = new Map(
     (w.affinity.find((x) => x.hero === base.id)?.actions ?? []).map((o) => [o.replaces, o.action]),
   );
+  // Any other core takes over only the exact inputs it defines (a revolver's neutral shot).
+  const taken = (a: ActionDef) =>
+    w.actions.some((c) => c.context === a.context && c.dir === a.dir && c.context !== 'weaponThrow');
   const own = base.actions.map((a): ActionDef =>
-    w.melee && ATTACK_CONTEXTS.includes(a.context) ? { ...a, context: 'script' } : a,
+    (w.melee && ATTACK_CONTEXTS.includes(a.context)) || (!w.melee && taken(a))
+      ? { ...a, context: 'script' }
+      : a,
   );
   const core = w.actions.map((a, i): ActionDef => {
     const src = overrides.get(i) ?? a;

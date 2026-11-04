@@ -37,7 +37,7 @@ export function trainerArmed(world: World, f: Fighter): boolean {
   return first?.id === f.id;
 }
 
-const STANDING = new Set(['neutral', 'chain', 'forward', 'backward', 'low', 'weaponThrow']);
+const STANDING = new Set(['standing', 'low']);
 
 /**
  * The attacks the dummy cycles through: its own kit without selectOnly actions; armed with a
@@ -52,7 +52,8 @@ export function trainerCycle(f: Fighter): number[] {
   kit.actions.forEach((a, i) => {
     if (a.tags.includes('selectOnly')) return;
     if (isWeaponAction(f, i)) {
-      if (STANDING.has(a.category)) out.push(i);
+      // A melee weapon fights with its standing core; any other weapon is thrown.
+      if (melee ? STANDING.has(a.category) : a.category === 'weaponThrow') out.push(i);
     } else if (!melee) out.push(i);
   });
   return out;
