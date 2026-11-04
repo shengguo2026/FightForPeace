@@ -29,6 +29,8 @@ test('roster order puts the founders first', () => {
   expect(files.map((f) => basename(f))).toEqual(['mountain.yaml', 'river.yaml']);
 });
 
+const NORMAL = ['standing', 'aerial', 'ground', 'dash', 'low'];
+
 const SAR: Record<string, [number, number | number[], number]> = {
   'masons-touch': [5, 3, 9],
   'brace-elbow': [7, 3, 12],
@@ -67,8 +69,9 @@ test.each([
   ['river.yaml', { standing: 7, aerial: 4, ground: 2, dash: 1, low: 1 }],
 ])('%s has 15 actions with the §10.2 category split and Appendix B frame data', (file, split) => {
   const hero = load(file);
-  // Counters are counted separately from the 15 normal actions (F&D §13).
-  const normals = hero.actions.filter((a) => a.category !== 'counter');
+  // Counters, Specials, Ultimates and grab moves are counted separately from the 15
+  // normal actions (F&D §13).
+  const normals = hero.actions.filter((a) => NORMAL.includes(a.category));
   expect(normals).toHaveLength(15);
   const counts: Record<string, number> = {};
   for (const a of normals) counts[a.category] = (counts[a.category] ?? 0) + 1;
@@ -79,7 +82,8 @@ test.each([
   }
 });
 
-const base = readFileSync(files[0]!, 'utf8');
+// A Windows checkout may have CRLF line endings: edits below match LF text.
+const base = readFileSync(files[0]!, 'utf8').replace(/\r\n/g, '\n');
 
 test('a missing link target fails with a readable message', () => {
   const bad = base.replace('to: brace-elbow,', 'to: brace-elbo,');
@@ -149,7 +153,7 @@ describe('Defense data (M4)', () => {
       const hero = load(file);
       const counters = hero.actions.filter((a) => a.category === 'counter');
       expect(counters).toHaveLength(1);
-      expect(hero.actions.at(-1)!.category).toBe('counter');
+      expect(hero.actions[15]!.category).toBe('counter');
       expect(counters[0]!.input.context).toBe('counter');
     },
   );
@@ -165,6 +169,8 @@ describe('Defense data (M4)', () => {
       'two-step',
       'barrage',
       'bell-hammer',
+      'collar-grab',
+      'rope-snare',
     ]);
     expect(tags['jab']).toContain('counterable');
     expect(tags['club']).toContain('guardPressure');
@@ -199,5 +205,96 @@ describe('Defense data (M4)', () => {
       'input: { context: neutral, dir: neutral }',
     );
     expect(() => loadHero(bad)).toThrow(/counter actions use category and context counter/);
+  });
+});
+
+describe('Specials, Ultimates and grabs (M5)', () => {
+  const B3: Record<string, [number, number | number[], number]> = {
+    'stonewake-palm': [12, 4, 22],
+    'gatebreaker-advance': [16, 8, 28],
+    'rising-rampart': [7, 8, 30],
+    'rivergate-oath': [10, [3, 4, 3, 4, 3, 4, 3], 42],
+    'current-crescent': [10, 3, 20],
+    'gale-wheel': [8, [3, 1, 2, 1, 3, 1, 2, 1, 4], 23],
+    'ebbstep-return': [6, 4, 26],
+    'tempest-crossing': [8, [3, 3, 3, 2, 3, 2, 3, 2, 5], 40],
+  };
+  const span = (a: number | number[]) => (Array.isArray(a) ? a.reduce((s, n) => s + n, 0) : a);
+
+  test.each([
+    [
+      'mountain.yaml',
+      ['stonewake-palm', 'gatebreaker-advance', 'rising-rampart'],
+      'rivergate-oath',
+    ],
+    ['river.yaml', ['current-crescent', 'gale-wheel', 'ebbstep-return'], 'tempest-crossing'],
+  ])('%s: core Specials and signature Ultimate with Appendix B.3 frames', (file, specials, ult) => {
+    const hero = load(file);
+    const core = hero.actions.filter((a) => a.category === 'special' && !a.catalogue);
+    expect(core.map((a) => a.id)).toEqual(specials);
+    expect(core.map((a) => a.input.dir)).toEqual(['neutral', 'forward', 'backward']);
+    const ults = hero.actions.filter((a) => a.category === 'ultimate' && !a.catalogue);
+    expect(ults.map((a) => [a.id, a.input.dir])).toEqual([[ult, 'neutral']]);
+    for (const a of [...core, ...ults]) {
+      expect([a.frames.startup, a.frames.active, a.frames.recovery]).toEqual(B3[a.id]);
+    }
+    // Ultimates: 24 (Mountain) and 26 (River) active frames, as in B.3.
+    expect(span(ults[0]!.frames.active)).toBe(file === 'mountain.yaml' ? 24 : 26);
+  });
+
+  test.each(['mountain.yaml', 'river.yaml'])(
+    '%s has two catalogue moves and the six grab-route moves',
+    (file) => {
+      const hero = load(file);
+      const cat = hero.actions.filter((a) => a.catalogue);
+      expect(cat.map((a) => a.category).sort()).toEqual(['special', 'ultimate']);
+      const ctx = hero.actions
+        .filter((a) => a.input.context.startsWith('grab'))
+        .map((a) => `${a.input.context}/${a.input.dir}`)
+        .sort();
+      expect(ctx).toEqual([
+        'grab/neutral',
+        'grabExtension/neutral',
+        'grabRelease/neutral',
+        'grabSpecial/neutral',
+        'grabThrow/backward',
+        'grabThrow/neutral',
+      ]);
+      expect(hero.actions.length).toBeLessThanOrEqual(32);
+    },
+  );
+
+  test('the neutral slot holds a fixed signature only', () => {
+    const bad = base.replace(
+      'input: { context: special, dir: neutral }\n    frames: { startup: 12',
+      'input: { context: special, dir: neutral }\n    catalogue: true\n    frames: { startup: 12',
+    );
+    expect(() => loadHero(bad)).toThrow(/neutral slot holds a fixed signature/);
+  });
+
+  test('a hero kit without a grab fails', () => {
+    const bad = base.replace(
+      'input: { context: grab, dir: neutral }',
+      'input: { context: grab, dir: up }',
+    );
+    expect(() => loadHero(bad)).toThrow(/no grab move/);
+  });
+
+  test('restraint is an enemy-only outcome', () => {
+    const bad = base.replace(
+      'tags: [opensGroundWindow]\n',
+      'tags: [opensGroundWindow, restraint]\n',
+    );
+    expect(() => loadHero(bad)).toThrow(/tag restraint is for enemies only/);
+  });
+
+  test("the training enemy's grabs carry their hold data and tags", () => {
+    const t = loadHero(readFileSync(enemyFiles()[0]!, 'utf8'), 'trainer.yaml', 'enemy');
+    const collar = t.actions.find((a) => a.id === 'collar-grab')!;
+    const snare = t.actions.find((a) => a.id === 'rope-snare')!;
+    expect(collar.grab).toEqual({ hold: 48, escapeFrom: 20, escapeWindow: 11 });
+    expect(collar.tags).toContain('rescueInterruptible');
+    expect(snare.tags).toEqual(expect.arrayContaining(['restraint', 'rescueInterruptible']));
+    expect(snare.grab?.restraint).toBe(150);
   });
 });

@@ -1,4 +1,14 @@
-import { type Fighter, hashWorld, heroOf, kitOf, routeAction, runReplay } from '@ffp/sim';
+import {
+  type Fighter,
+  METER,
+  equip,
+  escapeOpen,
+  hashWorld,
+  heroOf,
+  kitOf,
+  routeAction,
+  runReplay,
+} from '@ffp/sim';
 import type { GameSession } from './game';
 import type { LabState } from './ui/labState';
 import { setFakePads, useFakePads } from './input/browserInput';
@@ -39,6 +49,16 @@ export function installDebugHook(session: GameSession, lab: LabState): void {
       const h = heroOf(session.world, slot);
       if (h) h.defense = value;
     },
+    setMeter: (slot, percent) => {
+      const h = heroOf(session.world, slot);
+      if (h) h.meter = percent * METER.unit;
+    },
+    equip: (slot, kind, dir, action) => equip(session.world, slot, kind, dir, action),
+    escapeOpen: (slot) => {
+      const h = heroOf(session.world, slot);
+      return h ? escapeOpen(session.world, h) : false;
+    },
+    projectiles: () => session.world.projectiles.length,
   };
 }
 
@@ -54,7 +74,7 @@ function view(b: Fighter) {
     category: b.action >= 0 ? (kitOf(b)?.actions[b.action]?.category ?? null) : null,
     stateFrame: b.stateFrame,
     hero: kitOf(b)?.id ?? null,
-    meter: b.meter,
+    meter: Math.trunc(b.meter / METER.unit),
     health: b.health,
     combo: { open: b.ctx.open, hits: b.ctx.hits, damage: b.ctx.damage, scale: b.ctx.scale },
     juggle: b.ctx.juggleBudget,
@@ -69,5 +89,10 @@ function view(b: Fighter) {
     defOffset: b.defOffset,
     defFrame: b.defFrame,
     aiStep: b.aiStep,
+    grabbedBy: b.grabbedBy,
+    grabId: b.grabId,
+    grabEvent: b.grabEvent,
+    grabOffset: b.grabOffset,
+    loadout: [...b.loadout],
   };
 }

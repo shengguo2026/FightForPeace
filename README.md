@@ -25,7 +25,7 @@ Stop the server with `Ctrl+C`.
 
 If `node --version` shows something older than 24, install Node.js 24 LTS from nodejs.org. If `pnpm` is missing, run `corepack enable` once in an administrator PowerShell.
 
-## Controls (M4)
+## Controls (M5)
 
 Keys are physical positions, so they stay in the same place on QWERTZ and AZERTY keyboards. The screen always shows the character printed on your key (for example Jump is `Z` on a German keyboard, `Y` on a US one), and a gamepad shows its own buttons.
 
@@ -42,7 +42,7 @@ Keys are physical positions, so they stay in the same place on QWERTZ and AZERTY
 | Team Attack | B | Num 0 | . | LB / L1 |
 | Pause | Esc | — | — | Start / Options |
 
-Guard (hold) blocks in the direction you face; Guard + Ultimate is the Combo Breaker (see Defense below). Special and Ultimate on their own show a placeholder pose (M5). Grab and Team Attack have no effect yet.
+Guard (hold) blocks in the direction you face; Guard + Ultimate is the Combo Breaker (see Defense below). Special and Ultimate (with or without a direction) fire the moves in your loadout; Grab / Interact grabs. Team Attack has no effect yet.
 
 **Heroes.** Player 1 is the Mountain Guardian (blue, wide), Player 2 the River Scout (orange, slim); the Lab settings (F2) switch either one. Each has 15 normal attacks: a three-hit neutral string (Attack, Attack, Attack), Forward/Backward/Up/Down + Attack routes, aerial attacks (jump, then Attack with or without a direction), a dash attack (dash, then Attack) and a low attack (dash, then Attack + Guard together, or the optional Low Attack binding). Forward and Backward count from the way the hero is facing when you press Attack: holding the opposite direction performs the Backward move, it does not turn you around. F5 lists every move with its input, frame data and combo links.
 
@@ -50,7 +50,13 @@ Guard (hold) blocks in the direction you face; Guard + Ultimate is the Combo Bre
 
 **Defense (M4).** Hold Guard to block attacks from the front (a 150° arc); a held guard drains the Defense meter (the bar above your hero) and takes 20 % chip damage. The meter refills after 1.5 s without defending. If it runs out while you block, you suffer a **Guard Crush** (a long stagger). **Exact Block**: press Guard at most 4 frames before the hit lands (a 5-frame window): no damage, no meter loss, +15 Defense, and the attacker staggers. **Predictive Counter**: press a direction towards the attacker and Guard together (either order, within 3 frames) at most 2 frames before contact (a 3-frame window): your hero dodges and answers with a counter move (Bedrock Return for the Mountain Guardian, Eddy Return for the River Scout). A counter that meets nothing leaves you open for a moment. **Combo Breaker**: Guard + Ultimate while you are being hit, juggled or lying in a ground window: costs 75 % Defense, pushes enemies within 260 px away and protects you for half a second; once per combo. Pressing too early, too late or against the wrong attack is explained in the F8 panel in frames.
 
-**Training enemy.** The dummies use a training kit: Straight Jab (counterable), Overhead Club (guard pressure: drains Defense fast), Piercing Thrust (goes through a held guard: Exact Block it), Two-Step (two hits), Pummel Barrage (five hits, practise the Combo Breaker) and Bell Hammer (unblockable: move away). The attack's name and profile appear above the dummy when it starts. F2 sets which dummies attack, which attack (or cycle through all), how many frames between attacks (40 / 70 / 100) and whether they walk into range.
+**Specials, Ultimates and the attack meter (M5).** Special plus a direction (neutral, Forward, Backward, Up, Down) fires the Special in that loadout slot; Ultimate plus a direction fires an Ultimate and needs a full attack meter (the orange bar under the Defense bar; "ULTIMATE READY" shows when it is full), which it spends completely. Landing hits fills the meter by each move's authored amount; within one combo the gain drops in bands (100 %, 60 %, 25 %, 0 %) as the combo's meter-gain budget runs down, a guarded hit earns a quarter, and Ultimates earn nothing. Mountain Guardian: Stonewake Palm (neutral, wall rebound), Gatebreaker Advance (Forward, armored: absorbs a hit without flinching, "ARMOR"), Rising Rampart (Backward, briefly invulnerable launcher) and the Ultimate Rivergate Oath. River Scout: Current Crescent (neutral, a projectile; a new one replaces the old), Gale Wheel (Forward, multi-hit), Ebbstep Return (Backward, evasive) and the Ultimate Tempest Crossing. The Up and Down slots start empty: an empty slot does nothing (it never falls back to another move). F2 → Loadout fills them from the catalogue (Skybreak Column, Waterspout Rise, the catalogue Ultimates Still Mountain and Floodline Passage); the neutral slots hold the fixed signature moves.
+
+**Grabs (M5).** Grab / Interact grabs the nearest enemy in front of you (with a direction, the enemy in that direction; your hero turns to it). While you hold, the bottom of the screen shows your options: Attack for one extension and then Attack again for the release strike, Interact to throw forward, Backward + Interact to throw behind you, or Special for the grab finisher. Choose within 45 frames or your hero shoves the enemy away. A thrown enemy flies as a body projectile and hits other enemies it crosses (never your partner). Grabbing nobody leaves you open for a moment; if both heroes grab the same enemy on the same frame, one gets it and the other recovers quickly. A hit on your hero while you hold breaks the grab.
+
+**Grab escape (M5).** The training enemy has two grabs: Collar Grab and Rope Snare. When it holds you, "GRABBED" shows over your hero; press Guard while "ESCAPE!" shows (an 11-frame window) to break free with no damage. You get one attempt per grab: pressing too early or too late fails and the throw lands. Rope Snare restrains you instead ("RESTRAINED" with a countdown): wait it out, or let Player 2 stand next to you and press Interact to free you. Player 2 can also break any enemy grab by hitting the grabber. F9 shows the hold, the escape window and every grab outcome in frames.
+
+**Training enemy.** The dummies use a training kit: Straight Jab (counterable), Overhead Club (guard pressure: drains Defense fast), Piercing Thrust (goes through a held guard: Exact Block it), Two-Step (two hits), Pummel Barrage (five hits, practise the Combo Breaker), Bell Hammer (unblockable: move away), Collar Grab and Rope Snare (grabs: practise the Grab escape). The attack's name and profile appear above the dummy when it starts. F2 sets which dummies attack, which attack (or cycle through all), how many frames between attacks (40 / 70 / 100) and whether they walk into range.
 
 **Joining and devices.** Player 1 plays alone on the keyboard or on any gamepad: the device you touch last takes over. Player 2 joins by pressing Num 4 (Attack) on the split keyboard, or Start on a second gamepad. Once two players are in, a newly plugged-in gamepad does not take over anybody. Unplugging a player's gamepad pauses the game until it is plugged back in, or until that player presses Attack on another device.
 
@@ -65,9 +71,10 @@ Guard (hold) blocks in the direction you face; Guard + Ultimate is the Combo Bre
 | F5 | Move list for each joined hero: input, startup/active/recovery frames, damage, combo links and their conditions |
 | F6 | Slow motion (a quarter speed; the simulation itself is unchanged) |
 | F8 | Defense panel: per player the Defense meter, guard state, counts (exact, counter, guard, early, late, hit, crush, breaker) and a log of the last defensive results with timing in frames; below it the training enemy's attacks with their frame data and profile |
+| F9 | Grab panel: per player the grab state (hold time left, Grab escape window, restraint countdown) and a log of grab outcomes (throws, escapes with their timing in frames, rescues) |
 | F7 | Academy recipes (spec §8.3) for each joined hero, ticked off step by step on the dummy you are hitting, with a "performed" count and a **Practise** button that puts your hero in front of Dummy 1 (and turns on counter-hit dummies when the recipe needs them) |
 
-The Lab also shows, per player, the hero, the current move and its phase, the last combo-link verdict (and the reason a press was rejected), the attack meter and the dash bridge; and for the last dummy hit: health, hits, damage, damage scale, hit-stun budget, meter-gain budget, juggle budget and lift band, wall rebound and ground bounce, dash bridge, knockdown tag, ground route (window frames, extension, finisher), recovery (protected, and why the combo ended) and the route of moves that connected. F2 adds hero selection, infinite attack meter, infinite Defense meter, the training enemy settings, counter-hit dummies, health refill and "Dummy 1 to the wall".
+The Lab also shows, per player, the hero, the current move and its phase, the last combo-link verdict (and the reason a press was rejected), the attack meter and the dash bridge; and for the last dummy hit: health, hits, damage, damage scale, hit-stun budget, meter-gain budget, juggle budget and lift band, wall rebound and ground bounce, dash bridge, knockdown tag, ground route (window frames, extension, finisher), recovery (protected, and why the combo ended) and the route of moves that connected. F2 adds hero selection, the Special and Ultimate loadout per player, infinite attack meter, infinite Defense meter, the training enemy settings, counter-hit dummies, health refill and "Dummy 1 to the wall".
 
 ## Portable build (no installation)
 
@@ -104,6 +111,23 @@ The first `pnpm e2e` on a new machine needs the browsers: `pnpm --filter @ffp/ga
 | `tests/replays` | Golden replays. Each records an input log and the expected final state hash. `scripts.ts` holds the input scripts; `RECORD=1 pnpm vitest run tests/replays/record.test.ts` re-records them. |
 
 When a change alters simulation results on purpose, bump `RULES_VERSION` in `packages/sim/src/replay.ts` and re-record the golden replays in the same commit (see above). A replay recorded under another rules version fails loudly instead of silently producing a different hash.
+
+## M5 test checklist
+
+Press F9 for the Grab panel. Player 1 is the Mountain Guardian; keys below are the Player 1 keyboard (QWERTY letters).
+
+1. Walk up to Dummy 1 and press U: Stonewake Palm. Hit it into the stage edge (F2 → "Dummy 1 to the wall") and it rebounds.
+2. Press D + U: Gatebreaker Advance. F2, Attack: Straight Jab, and use it into the jab: "ARMOR" shows, you take the damage but keep going.
+3. Press A + U (away from the dummy): Rising Rampart; a jab during its first frames passes through you.
+4. Land a few hits: the orange meter bar fills and the P1 panel shows the meter in %. Keep one long combo going and watch the gain shrink (the target panel's meter-gain budget drops). F2 → "Infinite attack meter", then press H: Rivergate Oath plays its multi-hit Ultimate and the bar empties; the dummy gets up protected. Turn the setting off again: with less than a full bar, H does nothing (the P1 panel says why).
+5. Press W + U: nothing happens (empty Up slot). F2 → Loadout → P1 Specials up: Skybreak Column. Press W + U again: Skybreak Column.
+6. Stand next to the dummy and press J: your hero holds it and the option line appears at the bottom. Press J: Sluicegate Toss throws it forward ("THROW"). Grab again and press A + J: Turning Weir throws it behind you. Grab again and press T, then T: Keystone Knee, then Lintel Drop. Grab and wait: after 45 frames your hero shoves it away.
+7. Grab Dummy 1 and throw it into Dummy 2: Dummy 2 is hit by the flying body.
+8. Press J with nobody in front: a short whiff. Press T twice near the dummy, then J as the second hit (Brace Elbow) lands: the combo continues into the grab.
+9. F2, Attack: Collar Grab. Let the dummy grab you, wait for "ESCAPE!" and press G: "ESCAPED", no damage (F9: "Grab escape ✓ pressed on frame N of the 11 f window"). Press G right away when grabbed instead: "too early", and the throw lands. Turn on F6 slow motion to see the window clearly.
+10. F2, Attack: Rope Snare. Get caught: "RESTRAINED" counts down and you are freed when it ends. Join Player 2 (Num 4), stand next to Player 1 while restrained and press Num 3: "FREED" / "RESCUE". With Collar Grab, Player 2 can also hit the grabbing dummy to free Player 1.
+11. Switch Player 1 to the River Scout (F2): U shoots Current Crescent across the stage, D + U is the spinning Gale Wheel, H with a full bar is Tempest Crossing. J then A + J throws behind (Eddy Swing).
+12. Portable build: run `pnpm release`, unzip `release\FightForPeace-0.5.0.zip` somewhere else, double-click `start.bat` and repeat step 1.
 
 ## M4 test checklist
 

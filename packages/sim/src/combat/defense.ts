@@ -1,6 +1,7 @@
 import { fx } from '../math/fixed';
 import { type Axis, DefEvent, type Fighter, MoveState, Protect, type World } from '../world/types';
 import { selectAction, startAction } from './actions';
+import { awardGuardMeter } from './meter';
 import { NO_FRAME, REACTION, enter, enterProtection, interrupt, recoil } from './reactions';
 import { routeCode, segmentCount } from './roster';
 import { type ActionDef, Dir } from './types';
@@ -103,7 +104,13 @@ export function inArc(dx: Axis, dz: Axis, vx: number, vz: number): boolean {
   return dot * dot * 10000 >= DEFENSE.arcCos2 * 65536 * (px * px + pz * pz);
 }
 
-function log(world: World, t: Fighter, event: number, offset: number, att?: Fighter): void {
+export function logDefense(
+  world: World,
+  t: Fighter,
+  event: number,
+  offset: number,
+  att?: Fighter,
+): void {
   t.defEvent = event;
   t.defOffset = offset;
   t.defFrame = world.frame;
@@ -139,11 +146,11 @@ export function defend(
   if (s.state === MoveState.Counter && t.state === MoveState.Counter) {
     const counterable = tags.includes('counterable') && !tags.includes('uncounterable');
     if (!counterable) {
-      log(world, t, DefEvent.CounterUncounterable, c - s.counterFrame, att);
+      logDefense(world, t, DefEvent.CounterUncounterable, c - s.counterFrame, att);
       return false;
     }
     if (!inArc(s.counterX, s.counterZ, vx, vz)) {
-      log(world, t, DefEvent.CounterWrongDir, c - s.counterFrame, att);
+      logDefense(world, t, DefEvent.CounterWrongDir, c - s.counterFrame, att);
       return false;
     }
     counterSuccess(world, att, t, c - s.counterFrame);
@@ -163,13 +170,15 @@ export function defend(
   // Normal guard (Committed Directional Guard).
   if (s.guarding && inGuardArc && !unblockable && !tags.includes('guardPiercing')) {
     normalGuard(world, att, a, t);
+    // A guarded contact earns the attacker a quarter of the action's gain, once.
+    if (seg === 0) awardGuardMeter(world, att, a);
     return true;
   }
 
-  if (unblockable) log(world, t, DefEvent.Unblockable, 0, att);
-  else if (s.guarding && !inGuardArc) log(world, t, DefEvent.Behind, 0, att);
-  else if (s.guarding) log(world, t, DefEvent.Pierced, 0, att);
-  else log(world, t, DefEvent.Hit, 0, att);
+  if (unblockable) logDefense(world, t, DefEvent.Unblockable, 0, att);
+  else if (s.guarding && !inGuardArc) logDefense(world, t, DefEvent.Behind, 0, att);
+  else if (s.guarding) logDefense(world, t, DefEvent.Pierced, 0, att);
+  else logDefense(world, t, DefEvent.Hit, 0, att);
   return false;
 }
 
@@ -189,7 +198,7 @@ function exactBlock(
   t.exactFrame = NO_FRAME;
   const n = segmentCount(a);
   const breaks = a.tags.includes('deflectBreak') && n > 1 && seg === n - 1;
-  log(world, t, breaks ? DefEvent.ExactBreak : DefEvent.Exact, offset, att);
+  logDefense(world, t, breaks ? DefEvent.ExactBreak : DefEvent.Exact, offset, att);
   if (n === 1 || breaks) {
     recoil(att, breaks ? DEFENSE.deflectBreakRecoil : DEFENSE.deflectRecoil);
   }
@@ -215,7 +224,7 @@ function normalGuard(world: World, att: Fighter, a: ActionDef, t: Fighter): void
     enter(t, MoveState.GuardCrush, DEFENSE.guardCrushFrames);
     t.vx = 0;
     t.vz = 0;
-    log(world, t, DefEvent.GuardCrush, 0, att);
+    logDefense(world, t, DefEvent.GuardCrush, 0, att);
     return;
   }
   t.defense -= cost;
@@ -225,14 +234,15 @@ function normalGuard(world: World, att: Fighter, a: ActionDef, t: Fighter): void
   t.vx = dir * Math.max(fx(1), Math.trunc(a.reaction.push / 2));
   t.vz = 0;
   const early = c - t.lastGuardFrame;
-  if (early < DEFENSE.exactWindow && early >= 0) log(world, t, DefEvent.Cooldown, early, att);
-  else if (early < DEFENSE.earlyReport) log(world, t, DefEvent.ExactEarly, early, att);
-  else log(world, t, DefEvent.Guard, 0, att);
+  if (early < DEFENSE.exactWindow && early >= 0)
+    logDefense(world, t, DefEvent.Cooldown, early, att);
+  else if (early < DEFENSE.earlyReport) logDefense(world, t, DefEvent.ExactEarly, early, att);
+  else logDefense(world, t, DefEvent.Guard, 0, att);
 }
 
 function counterSuccess(world: World, att: Fighter, t: Fighter, offset: number): void {
   addDefense(world, t, DEFENSE.counterReward);
-  log(world, t, DefEvent.Counter, offset, att);
+  logDefense(world, t, DefEvent.Counter, offset, att);
   recoil(att, DEFENSE.counterRecoil);
   t.counterFrame = NO_FRAME;
   if (att.x !== t.x) t.facing = att.x > t.x ? 1 : -1;
@@ -258,15 +268,15 @@ export function tryBreaker(world: World, f: Fighter): boolean {
       (f.state === MoveState.Launched && !f.airRecover) ||
       (f.state === MoveState.Down && f.groundWindow > 0));
   if (!trapped) {
-    log(world, f, DefEvent.BreakerDenied, 2);
+    logDefense(world, f, DefEvent.BreakerDenied, 2);
     return false;
   }
   if (f.ctx.breakerUsed) {
-    log(world, f, DefEvent.BreakerDenied, 3);
+    logDefense(world, f, DefEvent.BreakerDenied, 3);
     return false;
   }
   if (!world.infiniteDefense && f.defense < DEFENSE.breakerCost) {
-    log(world, f, DefEvent.BreakerDenied, 1);
+    logDefense(world, f, DefEvent.BreakerDenied, 1);
     return false;
   }
   if (!world.infiniteDefense) f.defense -= DEFENSE.breakerCost;
@@ -281,7 +291,7 @@ export function tryBreaker(world: World, f: Fighter): boolean {
   f.heavyFall = false;
   f.bufAction = 0;
   f.bufFrame = 0;
-  log(world, f, DefEvent.Breaker, 0);
+  logDefense(world, f, DefEvent.Breaker, 0);
   const r2 = DEFENSE.breakerRadius / 256;
   for (const e of world.bodies) {
     if (e.team === f.team) continue;
@@ -347,7 +357,7 @@ export function noteLatePress(world: World, f: Fighter): void {
 
 /** Records a counter attempt that met no contact in its window. */
 export function counterMissed(world: World, f: Fighter): void {
-  log(world, f, DefEvent.CounterMiss, 0);
+  logDefense(world, f, DefEvent.CounterMiss, 0);
   f.counterFrame = NO_FRAME;
   enter(f, MoveState.CounterMiss, DEFENSE.counterMissFrames);
 }

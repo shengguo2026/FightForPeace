@@ -17,10 +17,14 @@ import {
   scaledHitstun,
   splitDamage,
 } from './context';
-import { defend, defenseSnapshots } from './defense';
+import { defend, defenseSnapshots, logDefense } from './defense';
+import { awardHitMeter } from './meter';
 import { REACTION, enter, enterProtection, exhaustJuggle, interrupt } from './reactions';
 import { activeSegment, kitOf, routeCode, segmentCount } from './roster';
 import type { ActionDef } from './types';
+import { DefEvent, type Facing } from '../world/types';
+import { hitProjectiles } from './projectiles';
+import { hitBodies } from './grabs';
 
 /** Target hurtbox (M2 candidate): half width, half depth, standing and low heights. */
 export const HURT_HALF_W = fx(40);
@@ -29,6 +33,9 @@ export const HURT_H = fx(300);
 export const HURT_H_LOW = fx(180);
 /** A downed fighter's hurtbox height. */
 export const HURT_H_DOWN = fx(60);
+/** Hold between the hits of a finalReaction move: hit-stun on the ground, a small lift in the air. */
+const HOLD_STUN = 24;
+const HOLD_LIFT = fx(2);
 
 export interface Box {
   x0: number;
@@ -45,10 +52,25 @@ export function runningAction(f: Fighter): ActionDef | undefined {
   return kitOf(f)?.actions[f.action];
 }
 
+/** Does this action strike with its own hitbox (not a grab, a grab-route move or a projectile)? */
+export function strikes(a: ActionDef): boolean {
+  return (
+    a.projectile === null &&
+    a.category !== 'grab' &&
+    a.category !== 'grabStrike' &&
+    a.category !== 'throw'
+  );
+}
+
+/** Is action frame n inside the inclusive range [from, to]? */
+function within(r: readonly [number, number], n: number): boolean {
+  return n >= r[0] && n <= r[1];
+}
+
 /** World-space hitbox of a fighter's action on its current frame, or null when not active. */
 export function activeHitbox(f: Fighter): Box | null {
   const a = runningAction(f);
-  if (!a || activeSegment(a, f.stateFrame + 1) < 0) return null;
+  if (!a || !strikes(a) || activeSegment(a, f.stateFrame + 1) < 0) return null;
   const hb = a.hitbox;
   const x0 = f.facing === 1 ? f.x + hb.x : f.x - hb.x - hb.w;
   return { x0, x1: x0 + hb.w, y0: f.y + hb.y, y1: f.y + hb.y + hb.h, z: f.z, depth: hb.depth };
@@ -59,11 +81,16 @@ export function activeHitbox(f: Fighter): Box | null {
  * downed fighter lies on the floor.
  */
 export function hurtbox(f: Fighter): Box {
-  const low = runningAction(f)?.hurtbox === 'low';
+  const a = runningAction(f);
+  const low = a?.hurtbox === 'low';
   const h = f.state === MoveState.Down ? HURT_H_DOWN : low ? HURT_H_LOW : HURT_H;
+  // A retreating hurtbox (Ebbstep Return) shifts backwards for its authored frames.
+  const n = f.stateFrame + 1;
+  const shift = a?.hurtShift && n >= a.hurtShift.from && n <= a.hurtShift.to ? a.hurtShift.x : 0;
+  const cx = f.x - f.facing * shift;
   return {
-    x0: f.x - HURT_HALF_W,
-    x1: f.x + HURT_HALF_W,
+    x0: cx - HURT_HALF_W,
+    x1: cx + HURT_HALF_W,
     y0: f.y,
     y1: f.y + h,
     z: f.z,
@@ -88,8 +115,14 @@ function overlaps(a: Box, b: Box): boolean {
  * targets.
  */
 export function canHit(att: Fighter, a: ActionDef, t: Fighter): boolean {
-  if (t.team === att.team || t.protectedRecovery) return false;
+  if (t.team === att.team || t.protectedRecovery || t.cinematic) return false;
   if (t.state === MoveState.GetUp || t.state === MoveState.Recover) return false;
+  // Held targets belong to their grabber's route; restrained heroes are out of the fight.
+  if (t.state === MoveState.Grabbed || t.state === MoveState.Restrained) return false;
+  const ta = runningAction(t);
+  if (ta && within(ta.invulnerable, t.stateFrame + 1)) return false;
+  // An enemy grab that is not rescue-interruptible is a protected phase.
+  if (t.state === MoveState.Grabbing && t.team === 'enemy' && !grabInterruptible(t)) return false;
   const downed = t.state === MoveState.Down;
   if (a.category !== 'ground') return !downed;
   if (!downed || t.groundWindow <= 0 || !t.ctx.open) return false;
@@ -100,6 +133,45 @@ export function canHit(att: Fighter, a: ActionDef, t: Fighter): boolean {
 export function groundAllows(ctx: ComboContext, a: ActionDef): boolean {
   if (ctx.groundFinUsed) return false;
   return !(a.tags.includes('groundExtension') && ctx.groundExtUsed);
+}
+
+/** An enemy's running grab may be broken by a partner's strike. */
+function grabInterruptible(t: Fighter): boolean {
+  const a = kitOf(t)?.actions[t.action];
+  return a?.tags.includes('rescueInterruptible') ?? false;
+}
+
+/** Armor (Gatebreaker Advance): the defender's action absorbs this strike on this frame. */
+export function armored(t: Fighter, a: ActionDef): boolean {
+  const ta = runningAction(t);
+  return !!ta && within(ta.armor, t.stateFrame + 1) && !a.tags.includes('guardPiercing');
+}
+
+/**
+ * Where a hit comes from: a fighter's running action, a projectile or a thrown body. The
+ * owner earns the meter; contact lists lock the damage scale per target for one action.
+ */
+export interface HitSource {
+  owner: Fighter;
+  x: number;
+  facing: Facing;
+  vx: number;
+  contactIds: number[];
+  contactScales: number[];
+  /** Route-log code of the action. */
+  code: number;
+}
+
+export function sourceOf(f: Fighter): HitSource {
+  return {
+    owner: f,
+    x: f.x,
+    facing: f.facing,
+    vx: f.vx,
+    contactIds: f.contactIds,
+    contactScales: f.contactScales,
+    code: routeCode(f.team, f.hero, f.action),
+  };
 }
 
 /**
@@ -113,7 +185,7 @@ export function resolveHits(world: World): void {
   const snaps = defenseSnapshots(bodies);
   for (const att of bodies) {
     const a = runningAction(att);
-    if (!a) continue;
+    if (!a || !strikes(a)) continue;
     const n = att.stateFrame + 1;
     const seg = activeSegment(a, n);
     if (seg < 0) continue;
@@ -133,9 +205,21 @@ export function resolveHits(world: World): void {
         if (att.contactAt < 0) att.contactAt = att.stateFrame + 1;
         continue;
       }
-      applyHit(world, att, a, seg, t);
+      att.hitIds.push(t.id);
+      if (att.contactAt < 0) att.contactAt = att.stateFrame + 1;
+      if (armored(t, a)) {
+        // Armor: the strike lands (damage) but causes no reaction and opens no combo.
+        t.health = Math.max(0, t.health - a.damage);
+        if (t.team === 'hero') logDefense(world, t, DefEvent.Armored, 0, att);
+        continue;
+      }
+      applyHit(world, sourceOf(att), a, seg, t);
+      // Cinematic protection from the Ultimate's first valid contact until it ends.
+      if (a.category === 'ultimate') att.cinematic = true;
     }
   }
+  hitProjectiles(world, bodies);
+  hitBodies(world, bodies);
 }
 
 function lifts(a: ActionDef): boolean {
@@ -143,24 +227,28 @@ function lifts(a: ActionDef): boolean {
   return k === 'launch' || k === 'knockdown' || k === 'trip';
 }
 
-function applyHit(world: World, att: Fighter, a: ActionDef, seg: number, t: Fighter): void {
+/**
+ * Applies one hit of action `a` (active segment `seg`) from source `s` to target `t`:
+ * opens or continues the target's combo context, pays the budgets on the action's first
+ * hit, deals scaled damage and starts the reaction.
+ */
+export function applyHit(world: World, s: HitSource, a: ActionDef, seg: number, t: Fighter): void {
   const ctx = t.ctx.open ? t.ctx : { ...emptyContext(), open: true };
   t.ctx = ctx;
-  att.hitIds.push(t.id);
-  if (att.contactAt < 0) att.contactAt = att.stateFrame + 1;
+  t.thrownBy = 0;
 
   const downed = t.state === MoveState.Down;
   const airborne = !downed && (t.y > 0 || t.state === MoveState.Launched);
-  let k = att.contactIds.indexOf(t.id);
+  let k = s.contactIds.indexOf(t.id);
   const first = k === -1;
   let hitstun: number;
   let band = juggleBand(ctx.juggleBudget);
   let juggleOut = false;
   if (first) {
     // Budgets and meter are paid once per offensive action, on its first hit.
-    k = att.contactIds.length;
-    att.contactIds.push(t.id);
-    att.contactScales.push(ctx.scale);
+    k = s.contactIds.length;
+    s.contactIds.push(t.id);
+    s.contactScales.push(ctx.scale);
     hitstun = scaledHitstun(a.reaction.hitstun, ctx.stunBudget);
     ctx.stunBudget = Math.max(0, ctx.stunBudget - a.stunDecayCost);
     if (ctx.stunBudget === 0) ctx.exhausted = true;
@@ -170,28 +258,27 @@ function applyHit(world: World, att: Fighter, a: ActionDef, seg: number, t: Figh
       ctx.juggleBudget = Math.max(0, ctx.juggleBudget - a.juggleCost);
       juggleOut = a.juggleCost > 0 && ctx.juggleBudget === 0;
     }
-    const gain = Math.min(a.meterGain, ctx.meterBudget);
-    ctx.meterBudget -= gain;
-    att.meter = Math.min(100, att.meter + gain);
+    awardHitMeter(world, s.owner, a, ctx, k);
     const cost = ctx.actions === 0 ? a.starterProration : a.damageScaleCost;
     ctx.scale = Math.max(DAMAGE_FLOOR, ctx.scale - cost);
     ctx.actions += 1;
-    if (ctx.route.length < ROUTE_CAP) ctx.route.push(routeCode(att.team, att.hero, att.action));
+    if (ctx.route.length < ROUTE_CAP) ctx.route.push(s.code);
   } else {
     hitstun = scaledHitstun(a.reaction.hitstun, ctx.stunBudget + a.stunDecayCost);
     band = juggleBand(ctx.juggleBudget + a.juggleCost);
   }
-  const dmg = splitDamage(a.damage, att.contactScales[k]!, seg, segmentCount(a));
+  const dmg = splitDamage(a.damage, s.contactScales[k]!, seg, segmentCount(a));
   t.health = Math.max(0, t.health - dmg);
   ctx.damage += dmg;
   ctx.lastDamage = dmg;
   ctx.hits += 1;
 
-  if (downed) groundReact(world, att, a, t, hitstun, seg === segmentCount(a) - 1);
-  else react(world, att, a, t, hitstun, band, juggleOut, airborne);
+  const last = seg === segmentCount(a) - 1;
+  if (downed) groundReact(world, s, a, t, hitstun, last);
+  else react(world, s, a, t, hitstun, band, juggleOut, airborne, last);
 }
 
-function pushDir(att: Fighter, a: ActionDef, t: Fighter): number {
+function pushDir(att: HitSource, a: ActionDef, t: Fighter): number {
   const away = t.x === att.x ? att.facing : t.x > att.x ? 1 : -1;
   // A side-switching move pushes towards the attacker's facing, whatever side the target is on.
   return a.tags.includes('sideSwitch') || a.tags.includes('carry') ? att.facing : away;
@@ -199,13 +286,14 @@ function pushDir(att: Fighter, a: ActionDef, t: Fighter): number {
 
 function react(
   world: World,
-  att: Fighter,
+  att: HitSource,
   a: ActionDef,
   t: Fighter,
   hitstun: number,
   band: number,
   juggleOut: boolean,
   airborne: boolean,
+  last: boolean,
 ): void {
   const r = a.reaction;
   const dir = pushDir(att, a, t);
@@ -223,6 +311,20 @@ function react(
     } else {
       enter(t, MoveState.Hitstun, REACTION.separationHitstun);
       enterProtection(world, t, Protect.SoftReset);
+    }
+    return;
+  }
+
+  // A multi-hit Special or Ultimate holds its target until the final hit, carrying it along.
+  if (!last && a.tags.includes('finalReaction')) {
+    t.vx = att.vx;
+    t.vz = 0;
+    if (airborne) {
+      t.state = MoveState.Launched;
+      t.vy = Math.max(t.vy, HOLD_LIFT);
+    } else {
+      t.state = MoveState.Hitstun;
+      t.stun = Math.max(hitstun, HOLD_STUN);
     }
     return;
   }
@@ -272,7 +374,7 @@ function react(
  */
 function groundReact(
   world: World,
-  att: Fighter,
+  att: HitSource,
   a: ActionDef,
   t: Fighter,
   hitstun: number,

@@ -4,6 +4,10 @@ import {
   DEFENSE,
   DefEvent,
   kitOf,
+  loadoutAction,
+  meterPercent,
+  escapeOpen,
+  holdFrame,
   routeAction,
   type Fighter,
   type FrameInput,
@@ -30,9 +34,10 @@ import {
   resolvePrompt,
 } from '@ffp/platform';
 import type { GameSession } from '../game';
-import { BREAKER_DENIED, DEFENSE_TEXT, moveInputText } from '../text/en';
+import { BREAKER_DENIED, DEFENSE_TEXT, GRAB_TEXT, moveInputText } from '../text/en';
 import {
   type DefenseView,
+  type GrabPlayerView,
   HISTORY_LENGTH,
   type HistoryEntry,
   type LabState,
@@ -45,10 +50,24 @@ function stateName(state: number, attackKind: number, action = -1): string {
   if (state !== MoveState.Attack) return STATE_NAMES[state] ?? '?';
   if (action >= 0) return 'action';
   if (attackKind === ActionBit.LowAttack) return 'low attack';
-  if (attackKind === ActionBit.Special) return 'special (stub)';
-  if (attackKind === ActionBit.Ultimate) return 'ultimate (stub)';
   return 'attack';
 }
+
+/** State name of a fighter, naming the category of the running action. */
+function fighterState(f: Fighter): string {
+  if (f.state !== MoveState.Attack || f.action < 0)
+    return stateName(f.state, f.attackKind, f.action);
+  const a = kitOf(f)?.actions[f.action];
+  return a ? (CATEGORY_NAMES[a.category] ?? 'action') : 'action';
+}
+
+const CATEGORY_NAMES: Record<string, string> = {
+  special: 'Special',
+  ultimate: 'ULTIMATE',
+  grab: 'grab attempt',
+  grabStrike: 'grab strike',
+  throw: 'throw',
+};
 
 const STATE_NAMES: Record<number, string> = {
   [MoveState.Idle]: 'idle',
@@ -69,6 +88,9 @@ const STATE_NAMES: Record<number, string> = {
   [MoveState.CounterMiss]: 'counter missed',
   [MoveState.Breaker]: 'COMBO BREAKER',
   [MoveState.Recoil]: 'recoil',
+  [MoveState.Grabbing]: 'holding a grab',
+  [MoveState.Grabbed]: 'grabbed',
+  [MoveState.Restrained]: 'RESTRAINED',
 };
 
 const PROTECT_TEXT: Record<number, string> = {
@@ -99,6 +121,7 @@ function destName(f: Fighter, to: number): string {
   if (to === VerdictTo.Dash) return 'dash bridge';
   if (to === VerdictTo.Special) return 'Special';
   if (to === VerdictTo.Ultimate) return 'Ultimate';
+  if (to === VerdictTo.Grab) return 'grab';
   return 'press';
 }
 
@@ -188,14 +211,14 @@ export function refreshPlayers(session: GameSession, lab: LabState, steps: Frame
       device: deviceLabel(session, slot),
       waiting: slotState.waiting,
       state: hero
-        ? `${stateName(hero.state, hero.attackKind, hero.action)} ${hero.state === MoveState.Idle || hero.state === MoveState.Walk ? '' : hero.stateFrame}`.trim()
+        ? `${fighterState(hero)} ${hero.state === MoveState.Idle || hero.state === MoveState.Walk ? '' : hero.stateFrame}`.trim()
         : '—',
       hero: HEROES[session.world.playerHero[slot] ?? 0]?.name ?? '—',
       heroId: HEROES[session.world.playerHero[slot] ?? 0]?.id ?? 'mountain',
       action: hero && hero.action >= 0 ? (kitOf(hero)?.actions[hero.action]?.name ?? '—') : '—',
       phase: hero ? phaseText(hero) : '—',
       verdict: hero ? verdictText(hero) : '—',
-      meter: hero ? hero.meter : 0,
+      meter: hero ? meterPercent(hero) : 0,
       bridge: hero ? (hero.bridged ? 'bridged dash' : '—') : '—',
       speed: hero ? speed(hero.vx, hero.vz, hero.vy) : '—',
       facing: hero ? (hero.facing === 1 ? 'right' : 'left') : '—',
@@ -469,3 +492,85 @@ export function refreshDefense(session: GameSession, lab: LabState): void {
     lab.defense.value = views;
   }
 }
+
+const grabLogs = new Map<number, GrabPlayerView['log']>();
+const seenGrab = new Map<number, string>();
+let lastGrabSig = '';
+
+/** The Lab text for a hero's last grab outcome. */
+export function grabText(f: Fighter, window = 0): string {
+  const t = GRAB_TEXT[f.grabEvent];
+  if (!t) return '';
+  return t.replace('{o}', String(f.grabOffset)).replace('{w}', String(window));
+}
+
+const GOOD_GRAB = new Set([1, 4, 5, 6, 9, 14, 16, 18, 19]);
+
+/** Names in each Special and Ultimate slot of a fighter (neutral, forward, backward, up, down). */
+function slotNames(f: Fighter, kind: 'special' | 'ultimate'): string[] {
+  return [0, 1, 2, 3, 4].map((dir) => {
+    const i = loadoutAction(f, kind, dir);
+    return i >= 0 ? (kitOf(f)?.actions[i]?.name ?? '?') : '—';
+  });
+}
+
+/** F9: each joined hero's grab state, Grab escape window and loadout. */
+export function refreshGrab(session: GameSession, lab: LabState): void {
+  const world = session.world;
+  const views: GrabPlayerView[] = [];
+  for (const slot of [0, 1]) {
+    const f = heroOf(world, slot);
+    if (!f) continue;
+    const grabber = f.grabbedBy ? world.bodies.find((b) => b.id === f.grabbedBy) : undefined;
+    const ga = grabber && grabber.action >= 0 ? kitOf(grabber)?.actions[grabber.action] : undefined;
+    const window = ga?.grab?.escapeWindow ?? 0;
+    let log = grabLogs.get(slot) ?? [];
+    const key = `${f.grabEvent}/${f.grabFrame}`;
+    if (f.grabEvent !== 0 && seenGrab.get(slot) !== key) {
+      seenGrab.set(slot, key);
+      log = [
+        {
+          frame: f.grabFrame,
+          text: grabText(f, window || lastWindow),
+          good: GOOD_GRAB.has(f.grabEvent),
+        },
+        ...log,
+      ].slice(0, 8);
+    }
+    if (window) lastWindow = window;
+    grabLogs.set(slot, log);
+    let hold = '—';
+    if (f.state === MoveState.Grabbing) {
+      const left = f.stun - holdFrame(world, f);
+      hold = `holding · ${Math.max(0, left)} f to choose`;
+    } else if (f.state === MoveState.Grabbed && grabber && ga?.grab) {
+      const h = holdFrame(world, grabber);
+      const from = ga.grab.escapeFrom;
+      hold = escapeOpen(world, f)
+        ? `held by ${ga.name} · ESCAPE open (${from + ga.grab.escapeWindow - h} f left)`
+        : h < from
+          ? `held by ${ga.name} · escape window in ${from - h} f`
+          : `held by ${ga.name} · window passed`;
+      if (f.escapeTried) hold += ' · attempt used';
+    } else if (f.state === MoveState.Grabbed) hold = 'held';
+    else if (f.state === MoveState.Restrained)
+      hold = `restrained · ${Math.max(0, f.stun - f.stateFrame)} f left`;
+    views.push({
+      slot,
+      state: fighterState(f),
+      hold,
+      escape: escapeOpen(world, f),
+      log,
+      specials: slotNames(f, 'special'),
+      ultimates: slotNames(f, 'ultimate'),
+      meter: meterPercent(f),
+    });
+  }
+  const sig = JSON.stringify(views);
+  if (sig !== lastGrabSig) {
+    lastGrabSig = sig;
+    lab.grab.value = views;
+  }
+}
+
+let lastWindow = 0;

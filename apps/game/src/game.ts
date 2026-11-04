@@ -11,7 +11,9 @@ import {
   type World,
   createAccumulator,
   createWorld,
+  escapeOpen,
   hashWorld,
+  type Projectile,
   setFacingMode,
   setHero,
   step,
@@ -35,6 +37,12 @@ export interface RenderSnapshot {
   previous: readonly Fighter[];
   current: readonly Fighter[];
   alpha: number;
+  /** Projectiles in flight (current state; they are not interpolated). */
+  projectiles: readonly Projectile[];
+  /** Held heroes whose Grab escape window is open this frame (the telegraph). */
+  escapeOpen: ReadonlySet<number>;
+  /** Simulation frame of `current`. */
+  frame: number;
 }
 
 export interface FrameReport {
@@ -92,7 +100,16 @@ export class GameSession {
   }
 
   snapshot(): RenderSnapshot {
-    return { previous: this.previous, current: this.world.bodies, alpha: this.alpha };
+    const open = new Set<number>();
+    for (const b of this.world.bodies) if (escapeOpen(this.world, b)) open.add(b.id);
+    return {
+      previous: this.previous,
+      current: this.world.bodies,
+      alpha: this.alpha,
+      projectiles: this.world.projectiles,
+      escapeOpen: open,
+      frame: this.world.frame,
+    };
   }
 
   setFacingMode(slot: number, mode: FacingMode): void {
@@ -155,6 +172,10 @@ function resetBody(d: Fighter): void {
   d.airRecover = false;
   d.ctx.open = false;
   d.health = d.maxHealth;
+  d.cinematic = false;
+  d.grabId = 0;
+  d.grabbedBy = 0;
+  d.thrownBy = 0;
 }
 
 function cloneFighters(bodies: readonly Fighter[]): Fighter[] {
@@ -165,6 +186,7 @@ function cloneFighters(bodies: readonly Fighter[]): Fighter[] {
     contactScales: [...b.contactScales],
     hitIds: [...b.hitIds],
     rewardIds: [...b.rewardIds],
+    loadout: [...b.loadout],
     ctx: { ...b.ctx, route: [...b.ctx.route] },
   }));
 }

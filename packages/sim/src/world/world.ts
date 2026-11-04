@@ -8,6 +8,16 @@ import { resolveHits } from '../combat/hits';
 import { closeContextIfActionable, stepReaction } from '../combat/reactions';
 import { HEROES, TRAINER_KIT, heroIndex } from '../combat/roster';
 import { defaultTrainer, stepTrainer } from '../combat/trainer';
+import { grabIntegrity, holdPositions, resolveGrabs } from '../combat/grabs';
+import { stepProjectiles } from '../combat/projectiles';
+import {
+  type EquipResult,
+  type LoadoutKind,
+  defaultLoadout,
+  emptyLoadout,
+  equipMove,
+} from '../combat/loadout';
+import { kitOf } from '../combat/roster';
 import { NO_TAP, stepHero } from '../movement/controller';
 import { ON_FOOT } from '../movement/profile';
 import {
@@ -25,7 +35,7 @@ export const DUMMY_HEALTH = 1000;
 export const HERO_HEALTH = 1000;
 
 /** Version of the byte layout written by encodeWorld. Bump on any layout change. */
-export const STATE_FORMAT = 7;
+export const STATE_FORMAT = 8;
 
 /** Walking speeds (fixed point per frame), kept as exports for existing callers. */
 export const WALK_SPEED_X = ON_FOOT.walkX;
@@ -64,6 +74,17 @@ export interface WorldOptions {
   infiniteDefense?: boolean;
   /** Lab: the training enemy's script (default: dummies never attack). */
   trainer?: Partial<TrainerSettings>;
+  /**
+   * Loadout changes per player slot, applied over the hero's default loadout: Special and
+   * Ultimate slot (0 neutral … 4 down) to an action id, or null to empty it.
+   */
+  loadouts?: readonly LoadoutChange[][];
+}
+
+export interface LoadoutChange {
+  kind: LoadoutKind;
+  dir: number;
+  action: string | null;
 }
 
 const DEFAULT_HEROES = ['mountain', 'river'];
@@ -153,6 +174,21 @@ export function createFighter(
     defAction: -1,
     aiTimer: 0,
     aiStep: 0,
+    loadout: team === 'hero' ? defaultLoadout(kitOf({ team, hero })) : emptyLoadout(),
+    cinematic: false,
+    grabId: 0,
+    grabbedBy: 0,
+    grabStart: 0,
+    grabExtUsed: false,
+    grabX: team === 'hero' ? 1 : -1,
+    grabZ: 0,
+    regrabUntil: 0,
+    escapeTried: false,
+    thrownBy: 0,
+    thrownCode: 0,
+    grabEvent: 0,
+    grabOffset: 0,
+    grabFrame: 0,
   };
 }
 
@@ -164,9 +200,15 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
   const facing = options.facing ?? [];
   const p1 = HERO_SPAWN[0]!;
   const heroes = [0, 1].map((i) => heroIndex(options.heroes?.[i] ?? DEFAULT_HEROES[i]!));
+  const playerLoadout = heroes.map((h, slot) => {
+    const loadout = defaultLoadout(kitOf({ team: 'hero', hero: h }));
+    for (const c of options.loadouts?.[slot] ?? []) applyChange(loadout, h, c);
+    return loadout;
+  });
   const bodies: Fighter[] = [
     createFighter(1, 'hero', 0, p1.x, p1.z, facing[0] ?? 'manual', heroes[0]),
   ];
+  bodies[0]!.loadout = [...playerLoadout[0]!];
   const dummies = Math.min(options.dummies ?? 0, DUMMY_SPAWN.length);
   for (let i = 0; i < dummies; i += 1) {
     const s = DUMMY_SPAWN[i]!;
@@ -184,9 +226,38 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
     infiniteMeter: options.infiniteMeter ?? false,
     infiniteDefense: options.infiniteDefense ?? false,
     trainer: { ...defaultTrainer(), ...options.trainer },
+    playerLoadout,
+    projectiles: [],
   };
   world.bodies.sort((a, b) => a.id - b.id);
   return world;
+}
+
+function applyChange(loadout: number[], hero: number, c: LoadoutChange): EquipResult {
+  const kit = kitOf({ team: 'hero', hero })!;
+  const index = c.action === null ? -1 : kit.actions.findIndex((a) => a.id === c.action);
+  if (c.action !== null && index < 0) return 'unknown';
+  return equipMove(loadout, kit, c.kind, c.dir, index);
+}
+
+/**
+ * Lab loadout: puts a move (action id, or null to empty the slot) into a Special or
+ * Ultimate slot of a player. Applies to the hero on stage and to later spawns.
+ */
+export function equip(
+  world: World,
+  slot: number,
+  kind: LoadoutKind,
+  dir: number,
+  action: string | null,
+): EquipResult {
+  const hero = world.playerHero[slot] ?? 0;
+  const loadout = world.playerLoadout[slot];
+  if (!loadout) return 'unknown';
+  const result = applyChange(loadout, hero, { kind, dir, action });
+  const f = heroOf(world, slot);
+  if (result === 'ok' && f && f.hero === hero) f.loadout = [...loadout];
+  return result;
 }
 
 /** Changes a player's facing mode (Lab or settings), for the hero and any later spawn. */
@@ -201,7 +272,10 @@ export function setFacingMode(world: World, slot: number, mode: FacingMode): voi
  * it is idle or walking; otherwise it switches when it next becomes actionable.
  */
 export function setHero(world: World, slot: number, id: string): void {
-  world.playerHero[slot] = heroIndex(id);
+  const hero = heroIndex(id);
+  if (world.playerHero[slot] === hero) return;
+  world.playerHero[slot] = hero;
+  world.playerLoadout[slot] = defaultLoadout(kitOf({ team: 'hero', hero }));
 }
 
 export function heroOf(world: World, slot: number): Fighter | undefined {
@@ -211,9 +285,9 @@ export function heroOf(world: World, slot: number): Fighter | undefined {
 function spawnHero(world: World, slot: number): void {
   const s = HERO_SPAWN[slot]!;
   const facing = world.playerFacing[slot] ?? 'manual';
-  world.bodies.push(
-    createFighter(slot + 1, 'hero', slot, s.x, s.z, facing, world.playerHero[slot] ?? 0),
-  );
+  const f = createFighter(slot + 1, 'hero', slot, s.x, s.z, facing, world.playerHero[slot] ?? 0);
+  f.loadout = [...(world.playerLoadout[slot] ?? f.loadout)];
+  world.bodies.push(f);
   world.bodies.sort((a, b) => a.id - b.id);
 }
 
@@ -237,8 +311,12 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
       stepTrainer(world, f);
     }
   }
+  stepProjectiles(world);
+  resolveGrabs(world);
   resolveHits(world);
+  grabIntegrity(world);
   collide(world, before);
+  holdPositions(world);
   for (const f of world.bodies) closeContextIfActionable(world, f);
   world.frame += 1;
 }
@@ -249,6 +327,7 @@ function applyHeroChoice(world: World, f: Fighter): void {
   if (f.state !== MoveState.Idle && f.state !== MoveState.Walk) return;
   f.hero = want;
   f.chainUsed = 0;
+  f.loadout = [...(world.playerLoadout[f.slot] ?? defaultLoadout(kitOf(f)))];
 }
 
 /** Accepts M0-shaped inputs (without held/dirPressed) so old callers keep working. */
@@ -292,6 +371,24 @@ export function encodeWorld(world: World): Uint8Array {
   w.i32(world.trainer.pattern);
   w.u32(world.trainer.interval);
   w.u8(world.trainer.approach ? 1 : 0);
+  w.u32(world.playerLoadout.length);
+  for (const l of world.playerLoadout) {
+    w.u32(l.length);
+    for (const a of l) w.i32(a);
+  }
+  w.u32(world.projectiles.length);
+  for (const p of world.projectiles) {
+    w.u32(p.owner);
+    w.u32(p.code);
+    w.i32(p.x);
+    w.i32(p.z);
+    w.i32(p.y);
+    w.i32(p.vx);
+    w.i32(p.life);
+    w.i32(p.hw);
+    w.i32(p.h);
+    w.i32(p.depth);
+  }
   const bodies = [...world.bodies].sort((a, b) => a.id - b.id);
   w.u32(bodies.length);
   for (const b of bodies) {
@@ -375,6 +472,22 @@ export function encodeWorld(world: World): Uint8Array {
     w.i32(b.defAction);
     w.i32(b.aiTimer);
     w.u32(b.aiStep);
+    w.u32(b.loadout.length);
+    for (const a of b.loadout) w.i32(a);
+    w.u8(b.cinematic ? 1 : 0);
+    w.u32(b.grabId);
+    w.u32(b.grabbedBy);
+    w.i32(b.grabStart);
+    w.u8(b.grabExtUsed ? 1 : 0);
+    w.i32(b.grabX);
+    w.i32(b.grabZ);
+    w.i32(b.regrabUntil);
+    w.u8(b.escapeTried ? 1 : 0);
+    w.u32(b.thrownBy);
+    w.u32(b.thrownCode);
+    w.u8(b.grabEvent);
+    w.i32(b.grabOffset);
+    w.u32(b.grabFrame);
   }
   return w.bytes();
 }

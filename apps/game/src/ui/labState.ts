@@ -92,6 +92,20 @@ export interface DefenseView {
   >;
 }
 
+/** One player's grabs and loadout, for the F9 panel. */
+export interface GrabPlayerView {
+  slot: number;
+  state: string;
+  /** Hold, Grab escape window or restraint, in words. */
+  hold: string;
+  escape: boolean;
+  log: { frame: number; text: string; good: boolean }[];
+  /** Move names per slot: neutral, forward, backward, up, down. */
+  specials: string[];
+  ultimates: string[];
+  meter: number;
+}
+
 /** Training-enemy script as the Lab edits it. */
 export interface TrainerView {
   attackers: number;
@@ -128,6 +142,10 @@ export interface LabState {
   defense: Signal<DefenseView[]>;
   infiniteDefense: Signal<boolean>;
   trainer: Signal<TrainerView>;
+  grabOpen: Signal<boolean>;
+  grab: Signal<GrabPlayerView[]>;
+  /** Last loadout change refused, in words ('' when it was accepted). */
+  equipNote: Signal<string>;
 }
 
 export function createLabState(visible: boolean): LabState {
@@ -159,6 +177,9 @@ export function createLabState(visible: boolean): LabState {
     defense: signal([]),
     infiniteDefense: signal(false),
     trainer: signal({ attackers: 1, pattern: 0, interval: 70, approach: true }),
+    grabOpen: signal(false),
+    grab: signal([]),
+    equipNote: signal(''),
   };
 }
 

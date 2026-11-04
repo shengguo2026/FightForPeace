@@ -13,6 +13,14 @@ export const TEXT = {
   hintGuard: 'Guard {action:Guard}',
   hintCounter: 'Counter {dir:Forward}+{action:Guard} just before contact',
   hintBreaker: 'Combo Breaker {action:Guard}+{action:Ultimate} while being hit',
+  hintSpecial: 'Special {action:Special}',
+  hintUltimate: 'Ultimate {action:Ultimate} (full bar)',
+  hintGrab: 'Grab {action:Interact}',
+  hintEscape: 'Grab escape {action:Guard} when ESCAPE shows',
+  grabRoute:
+    'Holding: {action:Attack} extension, then {action:Attack} release strike · {action:Interact} throw ({dir:Backward}+{action:Interact} behind) · {action:Special} finisher',
+  escapeNow: 'ESCAPE! {action:Guard}',
+  restrained: 'RESTRAINED · partner: {action:Interact} next to them',
   joinKeyboard: 'Player 2: press {action:Attack} on the split keyboard to join',
   paused: 'Paused. Press {action:Pause} to continue.',
   controllerLost: 'Player {player} lost their controller.',
@@ -49,6 +57,20 @@ export function moveInputText(context: string, dir: number): string {
       return `near a downed target: ${d}{action:Attack}`;
     case 'counter':
       return 'toward the attacker: {dir:Forward}+{action:Guard} just before contact';
+    case 'special':
+      return `${d}{action:Special}`;
+    case 'ultimate':
+      return `${d}{action:Ultimate} with a full bar`;
+    case 'grab':
+      return '{action:Interact} (a direction picks the side)';
+    case 'grabExtension':
+      return 'holding: {action:Attack}';
+    case 'grabRelease':
+      return 'holding, after the extension: {action:Attack}';
+    case 'grabThrow':
+      return `holding: ${d}{action:Interact}`;
+    case 'grabSpecial':
+      return 'holding: {action:Special}';
     default:
       return '';
   }
@@ -60,6 +82,7 @@ export const LINK_TEXT = {
   dash: '{action:Dash} or {dir:Forward}{dir:Forward}',
   special: 'Special {action:Special}',
   ultimate: 'Ultimate {action:Ultimate}',
+  grab: 'Grab {action:Interact}',
 } as const;
 
 /**
@@ -84,6 +107,41 @@ export const DEFENSE_TEXT: Record<number, string> = {
   15: 'Counter ✗ {a} cannot be countered',
   16: 'Hit by {a}',
   17: 'Guarded {a}: pressed {o} f before contact, but inside the precision cooldown',
+  18: 'Armor absorbed {a} (damage, no stagger)',
+};
+
+/**
+ * Grab readouts (Lab F9), by GrabEvent code. `{o}` is the offset in frames, `{w}` the
+ * Grab escape window.
+ */
+export const GRAB_TEXT: Record<number, string> = {
+  1: 'Grab ✓ holding: choose within the decision window',
+  2: 'Grab ✗ nobody in reach (whiff recovery)',
+  3: 'Grab ✗ the other hero grabbed first (short recovery)',
+  4: 'Throw ✓',
+  5: 'Release strike ✓',
+  6: 'Special finisher ✓',
+  7: 'Decision window over: shove (no damage)',
+  8: 'Grab broken: the grabber was hit',
+  9: 'Grab escape ✓ pressed on frame {o} of the {w} f window',
+  10: 'Grab escape ✗ too early: {o} f before the window (one attempt per grab)',
+  11: 'Grab escape ✗ too late: {o} f after the window',
+  12: 'Thrown: no escape attempt',
+  13: 'Restrained: wait for the partner, or the rope gives way',
+  14: 'Freed ✓',
+  15: 'Struggled free (restraint over)',
+  16: 'Body throw ✓ the thrown enemy hit another',
+  17: 'Grabbed! Watch for ESCAPE',
+  18: 'Extension ✓',
+  19: 'Partner freed ✓',
+};
+
+/** Why a loadout change was refused (Lab F2). */
+export const EQUIP_TEXT: Record<string, string> = {
+  fixed: 'the neutral slot is the fixed signature move',
+  incompatible: 'that move does not fit this slot',
+  unknown: 'unknown move',
+  ok: '',
 };
 
 export const BREAKER_DENIED: Record<number, string> = {

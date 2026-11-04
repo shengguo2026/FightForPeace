@@ -7,6 +7,7 @@ const PRIORITY = [
   ActionBit.Attack,
   ActionBit.Special,
   ActionBit.Ultimate,
+  ActionBit.Interact,
   ActionBit.Jump,
 ];
 

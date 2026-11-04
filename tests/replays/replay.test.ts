@@ -1,5 +1,6 @@
 import {
   DefEvent,
+  GrabEvent,
   HEROES,
   RULES_VERSION,
   type ReplayLog,
@@ -8,6 +9,7 @@ import {
   createWorld,
   hashWorld,
   recipeDone,
+  routeAction,
   runReplay,
   step,
 } from '@ffp/sim';
@@ -17,6 +19,8 @@ import crowdJson from './crowd.json';
 import comboRoutesJson from './combo-routes.json';
 import academyRecipesJson from './academy-recipes.json';
 import defenseDrillsJson from './defense-drills.json';
+import specialsGrabsJson from './specials-grabs.json';
+import grabEscapeJson from './grab-escape.json';
 import { SCRIPTS } from './scripts';
 
 const LOGS: [string, ReplayLog][] = [
@@ -26,7 +30,58 @@ const LOGS: [string, ReplayLog][] = [
   ['combo-routes', comboRoutesJson as ReplayLog],
   ['academy-recipes', academyRecipesJson as ReplayLog],
   ['defense-drills', defenseDrillsJson as ReplayLog],
+  ['specials-grabs', specialsGrabsJson as ReplayLog],
+  ['grab-escape', grabEscapeJson as ReplayLog],
 ];
+
+/** Plays a log and collects each hero's grab events and every action that connected. */
+function playM5(log: ReplayLog): { events: number[]; connected: Set<string> } {
+  const world = createWorld(log.seed, log.options);
+  const events: number[] = [];
+  const connected = new Set<string>();
+  const seen = new Set<string>();
+  for (const f of log.frames) {
+    step(world, f);
+    for (const b of world.bodies) {
+      for (const c of b.ctx.route) connected.add(routeAction(c)?.id ?? '?');
+      const key = `${b.id}/${b.grabFrame}`;
+      if (b.team === 'hero' && b.grabEvent !== GrabEvent.None && !seen.has(key)) {
+        seen.add(key);
+        events.push(b.grabEvent);
+      }
+    }
+  }
+  return { events, connected };
+}
+
+test('specials-grabs lands Specials, both throws, a grab route and the Ultimate', () => {
+  const { events, connected } = playM5(specialsGrabsJson as ReplayLog);
+  for (const id of [
+    'stonewake-palm',
+    'gatebreaker-advance',
+    'sluicegate-toss',
+    'keystone-knee',
+    'lintel-drop',
+    'rivergate-oath',
+    'current-crescent',
+    'eddy-swing',
+  ])
+    expect(connected).toContain(id);
+  expect(events).toEqual(
+    expect.arrayContaining([GrabEvent.Hold, GrabEvent.Throw, GrabEvent.Extension]),
+  );
+});
+
+test('grab-escape: one Grab escape inside the window, then an early press that is thrown', () => {
+  const { events } = playM5(grabEscapeJson as ReplayLog);
+  expect(events).toEqual([
+    GrabEvent.Grabbed,
+    GrabEvent.Escape,
+    GrabEvent.Grabbed,
+    GrabEvent.EscapeEarly,
+    GrabEvent.Thrown,
+  ]);
+});
 
 test('defense-drills performs exact block, guard, counter and breaker against the trainer', () => {
   const log = defenseDrillsJson as ReplayLog;

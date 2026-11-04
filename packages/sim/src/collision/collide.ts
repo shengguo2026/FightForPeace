@@ -45,6 +45,7 @@ export function collide(world: World, before: PositionLog): void {
 
 function resolvePair(a: Fighter, b: Fighter, touchingEnemy: Set<number>): void {
   if (a.y > 0 || b.y > 0) return; // airborne fighters pass over
+  if (a.grabId === b.id || b.grabId === a.id) return; // a grab places its target itself
   const dx = b.x - a.x;
   const dz = b.z - a.z;
   const px = FULL_W - Math.abs(dx);

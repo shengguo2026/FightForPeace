@@ -25,6 +25,15 @@ const Dir = T.Union([
   T.Literal('vertical'),
 ]);
 const Frames = T.Integer({ minimum: 0, maximum: 600 });
+const Frame1 = T.Integer({ minimum: 1, maximum: 600 });
+const FrameRange = T.Object({ from: Frame1, to: Frame1 }, { additionalProperties: false });
+const SlotDir = T.Union([
+  T.Literal('neutral'),
+  T.Literal('forward'),
+  T.Literal('backward'),
+  T.Literal('up'),
+  T.Literal('down'),
+]);
 const Px = T.Number({ minimum: -2000, maximum: 2000 });
 
 const Hitbox = T.Object(
@@ -80,6 +89,7 @@ const Link = T.Object(
       T.Literal('dashBridge'),
       T.Literal('special'),
       T.Literal('ultimate'),
+      T.Literal('grab'),
     ]),
     on: T.Array(T.Union([T.Literal('hit'), T.Literal('guard'), T.Literal('whiff')]), {
       minItems: 1,
@@ -100,6 +110,11 @@ const Action = T.Object(
       T.Literal('dash'),
       T.Literal('low'),
       T.Literal('counter'),
+      T.Literal('special'),
+      T.Literal('ultimate'),
+      T.Literal('grab'),
+      T.Literal('grabStrike'),
+      T.Literal('throw'),
     ]),
     input: T.Object(
       {
@@ -112,6 +127,13 @@ const Action = T.Object(
           T.Literal('dashLow'),
           T.Literal('counter'),
           T.Literal('script'),
+          T.Literal('special'),
+          T.Literal('ultimate'),
+          T.Literal('grab'),
+          T.Literal('grabExtension'),
+          T.Literal('grabRelease'),
+          T.Literal('grabThrow'),
+          T.Literal('grabSpecial'),
         ]),
         dir: Dir,
       },
@@ -143,10 +165,45 @@ const Action = T.Object(
         juggle: T.Optional(T.Integer({ minimum: 0, maximum: 100 })),
         /** Defense-meter percent a normal guard of this action costs (default 10). */
         guard: T.Optional(T.Integer({ minimum: 0, maximum: 100 })),
+        /** Meter-gain budget points this action spends on a target's combo (default 10). */
+        meterDecay: T.Optional(T.Integer({ minimum: 0, maximum: 100 })),
       },
       { additionalProperties: false },
     ),
     meter: T.Integer({ minimum: 0, maximum: 100 }),
+    /** Loadout slots a Special or Ultimate may be equipped in (default: its input direction). */
+    slots: T.Optional(T.Array(SlotDir, { minItems: 1 })),
+    /** Owned in the Lab but not equipped by default (spec Appendix A). */
+    catalogue: T.Optional(T.Boolean()),
+    /** Action frames that absorb strikes (damage, no reaction); grabs and guardPiercing win. */
+    armor: T.Optional(FrameRange),
+    /** Action frames that strikes cannot hit (grabs still connect). */
+    invulnerable: T.Optional(FrameRange),
+    /** Action frames with the hurtbox shifted `x` px backwards. */
+    hurtShift: T.Optional(
+      T.Object({ from: Frame1, to: Frame1, x: Px }, { additionalProperties: false }),
+    ),
+    /** The first active frame launches a projectile (the hitbox is its box) instead of striking. */
+    projectile: T.Optional(
+      T.Object(
+        { speed: T.Number({ exclusiveMinimum: 0, maximum: 100 }), life: Frame1 },
+        { additionalProperties: false },
+      ),
+    ),
+    /** Enemy grabs: hold length, Grab Escape window and restraint length (frames). */
+    grab: T.Optional(
+      T.Object(
+        {
+          hold: Frame1,
+          escapeFrom: T.Integer({ minimum: 0, maximum: 600 }),
+          escapeWindow: Frame1,
+          restraint: T.Optional(Frame1),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    /** Throws tagged bodyProjectile: damage the thrown body deals to the enemy it hits. */
+    bodyDamage: T.Optional(T.Integer({ minimum: 0, maximum: 10000 })),
     moves: T.Optional(T.Array(Move)),
     tags: T.Optional(T.Array(T.String({ pattern: '^[a-z][A-Za-z0-9]*$' }))),
     links: T.Optional(T.Array(Link)),
@@ -183,8 +240,25 @@ export const HeroSchema = T.Object(
 export type HeroYaml = Static<typeof HeroSchema>;
 
 /** Defense-profile tags only an enemy kit may use (heroes' attacks stay guardable). */
-const ENEMY_ONLY_TAGS = ['unblockable', 'guardPiercing'];
+const ENEMY_ONLY_TAGS = ['unblockable', 'guardPiercing', 'restraint', 'rescueInterruptible'];
+/** Contexts every hero kit fills exactly once with a neutral entry (M5 full kits). */
+const REQUIRED_NEUTRAL = [
+  'special',
+  'ultimate',
+  'grab',
+  'grabExtension',
+  'grabRelease',
+  'grabThrow',
+];
+const LOADOUT_CONTEXTS = ['special', 'ultimate'];
 const DEFAULT_GUARD_COST = 10;
+const DEFAULT_METER_DECAY = 10;
+/** Link targets that are not action ids: a jump, a dash, a loadout slot or the grab. */
+const LINK_KINDS = ['jump', 'dash', 'special', 'ultimate', 'grab'];
+
+/** Frame range as [from, to]; [0, -1] when absent (never matches). */
+const range = (r: { from: number; to: number } | undefined): [number, number] =>
+  r ? [r.from, r.to] : [0, -1];
 
 const DIR_CODE = { neutral: 0, forward: 1, backward: 2, up: 3, down: 4, vertical: 5 } as const;
 const FX = 256;
@@ -221,7 +295,23 @@ export function loadHero(
     }
     if ((a.category === 'counter') !== (a.input.context === 'counter'))
       problems.push(`"${a.id}": counter actions use category and context counter together`);
-    if (a.input.context === 'chain' || a.input.context === 'script') continue;
+    const loadout = LOADOUT_CONTEXTS.includes(a.input.context);
+    if (loadout && a.category !== a.input.context)
+      problems.push(`"${a.id}": ${a.input.context} moves use category ${a.input.context}`);
+    if ((a.slots || a.catalogue) && !loadout)
+      problems.push(`"${a.id}": only Specials and Ultimates have loadout slots`);
+    const slotList = a.slots ?? (a.input.dir === 'vertical' ? [] : [a.input.dir]);
+    if (loadout && !slotList.includes(a.input.dir as never))
+      problems.push(`"${a.id}": its input direction must be one of its slots`);
+    if (loadout && slotList.includes('neutral') && (slotList.length > 1 || a.catalogue))
+      problems.push(`"${a.id}": the neutral slot holds a fixed signature move only`);
+    if (a.grab && (kind === 'hero' || a.category !== 'grab'))
+      problems.push(`"${a.id}": grab hold data is for enemy grabs`);
+    if (a.projectile && a.category !== 'special')
+      problems.push(`"${a.id}": only Specials launch projectiles`);
+    if (a.category === 'throw' && a.input.context !== 'grabThrow')
+      problems.push(`"${a.id}": throws use context grabThrow`);
+    if (a.input.context === 'chain' || a.input.context === 'script' || a.catalogue) continue;
     const dirs = a.input.dir === 'vertical' ? ['up', 'down'] : [a.input.dir];
     for (const d of dirs) {
       const key = `${a.input.context}/${d}`;
@@ -234,9 +324,13 @@ export function loadHero(
   }
   if (kind === 'hero' && !slots.has('neutral/neutral'))
     problems.push('no neutral starter (context neutral, dir neutral)');
+  if (kind === 'hero') {
+    for (const c of REQUIRED_NEUTRAL)
+      if (!slots.has(`${c}/neutral`)) problems.push(`no ${c} move (context ${c}, dir neutral)`);
+  }
   for (const a of hero.actions) {
     for (const l of a.links ?? []) {
-      const special = ['jump', 'dash', 'special', 'ultimate'].includes(l.to);
+      const special = LINK_KINDS.includes(l.to);
       if (!special && !ids.has(l.to)) problems.push(`"${a.id}" links to unknown action "${l.to}"`);
     }
     for (const m of a.moves ?? []) {
@@ -301,6 +395,28 @@ export function compileHero(hero: HeroYaml, kind: 'hero' | 'enemy' = 'hero'): un
         juggleCost: a.costs.juggle ?? 0,
         guardCost: a.costs.guard ?? DEFAULT_GUARD_COST,
         meterGain: a.meter,
+        meterDecay: a.costs.meterDecay ?? DEFAULT_METER_DECAY,
+        slots: LOADOUT_CONTEXTS.includes(a.input.context)
+          ? (a.slots ?? [a.input.dir]).map((d) => DIR_CODE[d])
+          : [],
+        catalogue: a.catalogue ?? false,
+        armor: range(a.armor),
+        invulnerable: range(a.invulnerable),
+        hurtShift: a.hurtShift
+          ? { from: a.hurtShift.from, to: a.hurtShift.to, x: fx(a.hurtShift.x) }
+          : null,
+        projectile: a.projectile
+          ? { speed: fx(a.projectile.speed), life: a.projectile.life }
+          : null,
+        grab: a.grab
+          ? {
+              hold: a.grab.hold,
+              escapeFrom: a.grab.escapeFrom,
+              escapeWindow: a.grab.escapeWindow,
+              restraint: a.grab.restraint ?? 0,
+            }
+          : null,
+        bodyDamage: a.bodyDamage ?? 0,
         moves: (a.moves ?? []).map((m) => ({
           from: m.from,
           to: m.to,
@@ -311,7 +427,7 @@ export function compileHero(hero: HeroYaml, kind: 'hero' | 'enemy' = 'hero'): un
         })),
         tags: [...(a.tags ?? [])].sort(),
         links: (a.links ?? []).map((l) => {
-          const kind = ['jump', 'dash', 'special', 'ultimate'].includes(l.to) ? l.to : 'action';
+          const kind = LINK_KINDS.includes(l.to) ? l.to : 'action';
           const to = kind === 'action' ? index.get(l.to)! : -1;
           const target = kind === 'action' ? hero.actions[to]! : undefined;
           const dir = l.input ?? (target ? target.input.dir : 'neutral');

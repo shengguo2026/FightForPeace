@@ -6,12 +6,14 @@ import {
   type HeroDef,
   TRAINER_INTERVALS,
   type TrainerSettings,
+  compatibleMoves,
 } from '@ffp/sim';
 import type { KeyboardP2Preset, LayoutName } from '@ffp/platform';
 import { LINK_TEXT, TEXT, moveInputText, profileText } from '../text/en';
 import { InputPrompt, PLAYER_COLORS, PromptText } from './InputPrompt';
 import type {
   DefenseView,
+  GrabPlayerView,
   LabState,
   PlayerView,
   PromptStyle,
@@ -36,6 +38,8 @@ export interface LabActions {
   practise(slot: number, recipeId: string): void;
   setInfiniteDefense(on: boolean): void;
   setTrainer(settings: Partial<TrainerSettings>): void;
+  /** Puts a move (action id, or null to empty) into a Special or Ultimate slot. */
+  equip(slot: number, kind: 'special' | 'ultimate', dir: number, action: string | null): void;
 }
 
 const panel = {
@@ -237,6 +241,7 @@ function Settings({ state, actions }: { state: LabState; actions: LabActions }) 
         onChange={actions.setInfiniteDefense}
         testId="set-defense"
       />
+      <LoadoutSettings state={state} actions={actions} />
       <TrainerSettingsView state={state} actions={actions} />
       <div style={{ margin: '4px 0' }}>
         <button
@@ -248,6 +253,98 @@ function Settings({ state, actions }: { state: LabState; actions: LabActions }) 
         >
           Dummy 1 to the wall
         </button>
+      </div>
+    </div>
+  );
+}
+
+const SLOT_NAMES = ['neutral', 'forward', 'backward', 'up', 'down'] as const;
+const EMPTY = '— empty —';
+
+/** F2: the five-slot Special and Ultimate loadout of each joined player. */
+function LoadoutSettings({ state, actions }: { state: LabState; actions: LabActions }) {
+  const views = state.grab.value;
+  return (
+    <div
+      style={{ marginTop: '6px', borderTop: '1px solid #555', paddingTop: '4px' }}
+      data-testid="lab-loadout"
+    >
+      <div>Loadout (direction + Special or Ultimate)</div>
+      {views.map((v) => {
+        const p = state.players.value[v.slot];
+        const hero = HEROES.find((h) => h.id === p?.heroId);
+        if (!hero) return null;
+        return (['special', 'ultimate'] as const).map((kind) => {
+          const names = kind === 'special' ? v.specials : v.ultimates;
+          return (
+            <div style={{ marginTop: '2px' }}>
+              <div style={{ color: PLAYER_COLORS[v.slot] }}>
+                P{v.slot + 1} {kind === 'special' ? 'Specials' : 'Ultimates'} · neutral {names[0]}{' '}
+                (fixed)
+              </div>
+              {[1, 2, 3, 4].map((dir) => {
+                const options = compatibleMoves(hero, kind, dir).map((i) => hero.actions[i]!);
+                return (
+                  <Select
+                    label={`  ${SLOT_NAMES[dir]}`}
+                    value={names[dir] === '—' ? EMPTY : names[dir]!}
+                    options={[EMPTY, ...options.map((a) => a.name)]}
+                    onChange={(name) =>
+                      actions.equip(
+                        v.slot,
+                        kind,
+                        dir,
+                        options.find((a) => a.name === name)?.id ?? null,
+                      )
+                    }
+                    testId={`loadout-p${v.slot + 1}-${kind}-${SLOT_NAMES[dir]}`}
+                  />
+                );
+              })}
+            </div>
+          );
+        });
+      })}
+      {state.equipNote.value ? (
+        <div style={{ color: '#f0a0a0' }} data-testid="loadout-note">
+          {state.equipNote.value}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+/** F9: holds, Grab escape windows and grab outcomes per player. */
+function GrabPanel({ views }: { views: GrabPlayerView[] }) {
+  return (
+    <div style={{ ...panel, maxWidth: '420px' }} data-testid="lab-grab">
+      <div>Grabs · F9 to close</div>
+      {views.map((v) => (
+        <div style={{ marginTop: '6px' }} data-testid={`grab-p${v.slot + 1}`}>
+          <div style={{ color: PLAYER_COLORS[v.slot] }}>
+            P{v.slot + 1} · {v.state} · meter {v.meter}%
+          </div>
+          <div data-testid={`grab-hold-p${v.slot + 1}`}>{v.hold}</div>
+          <div data-testid={`grab-log-p${v.slot + 1}`} style={{ marginTop: '2px' }}>
+            {v.log.length === 0 ? (
+              <div style={{ opacity: 0.7 }}>no grabs yet</div>
+            ) : (
+              v.log.map((e, i) => (
+                <div style={{ color: e.good ? '#9be89b' : '#f0a0a0', opacity: i === 0 ? 1 : 0.7 }}>
+                  {String(e.frame).padStart(6, ' ')} {e.text}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      ))}
+      <div style={{ marginTop: '6px', opacity: 0.85 }}>
+        Training enemy grabs:{' '}
+        {TRAINER.actions
+          .filter((a) => a.grab)
+          .map((a) => a.name)
+          .join(', ')}{' '}
+        (F2 attack list)
       </div>
     </div>
   );
@@ -433,9 +530,8 @@ function linkLabel(hero: HeroDef, l: HeroDef['actions'][number]['links'][number]
   const t = CANCEL_TIMING[l.category];
   const timing = `${t.buffer}f before, ${t.window}f after contact`;
   const cost = l.premium > 0 ? `, ${l.premium}% meter` : '';
-  const later = l.kind === 'special' || l.kind === 'ultimate' ? ' — M5' : '';
   const text = l.kind === 'action' ? hero.actions[l.to]!.name : LINK_TEXT[l.kind];
-  return { text, note: `(${when}; ${timing}${cost})${later}` };
+  return { text, note: `(${when}; ${timing}${cost})` };
 }
 
 /** F5: every action of each joined hero, with input, frame data, damage and cancels. */
@@ -458,7 +554,9 @@ function MoveList({ players }: { players: PlayerView[] }) {
               </div>
               {hero.actions.map((a) => (
                 <div style={{ margin: '3px 0' }}>
-                  <b>{a.name}</b> [{a.category}]{' '}
+                  <b>{a.name}</b> [{a.category}
+                  {a.catalogue ? ', catalogue' : ''}
+                  {a.category === 'ultimate' ? ', full bar' : ''}]{' '}
                   <PromptText text={moveInputText(a.context, a.dir)} ctx={p.ctx} color={color} /> ·{' '}
                   {a.startup}/{a.active.join('+')}/{a.recovery}
                   {a.landing ? ' landing' : ''} · {a.damage} dmg
@@ -567,7 +665,7 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
             <div>Lab · F1 hide · F2 settings</div>
             <div>
               F3 hitboxes · F5 moves · F6 slow{state.slowMotion.value ? ' (on)' : ''} · F7 recipes ·
-              F8 defense
+              F8 defense · F9 grabs
             </div>
             <div>
               frame <span data-testid="lab-frame">{state.frame.value}</span>
@@ -593,8 +691,10 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
           {state.defenseOpen.value ? (
             <DefensePanel views={state.defense.value} trainer={state.trainer} />
           ) : null}
+          {state.grabOpen.value ? <GrabPanel views={state.grab.value} /> : null}
         </div>
       ) : null}
+      <GrabCues players={players} grab={state.grab.value} />
       <HintBar players={players} />
     </>
   );
@@ -633,6 +733,10 @@ function HintBar({ players }: { players: PlayerView[] }) {
                 TEXT.hintGuard,
                 TEXT.hintCounter,
                 TEXT.hintBreaker,
+                TEXT.hintSpecial,
+                TEXT.hintUltimate,
+                TEXT.hintGrab,
+                TEXT.hintEscape,
               ].map((t) => (
                 <span style={{ marginRight: '12px' }}>
                   <PromptText text={t} ctx={p.ctx} color={color} />
@@ -641,6 +745,54 @@ function HintBar({ players }: { players: PlayerView[] }) {
             </div>
           );
         })}
+    </div>
+  );
+}
+
+/**
+ * Grab cues over the stage: the hold route while a hero holds, the ESCAPE prompt while the
+ * Grab escape window is open, and the rescue prompt while restrained. Prompts use each
+ * player's own bindings.
+ */
+function GrabCues({ players, grab }: { players: PlayerView[]; grab: GrabPlayerView[] }) {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        bottom: '72px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        pointerEvents: 'none',
+        font: '18px/1.6 system-ui, sans-serif',
+        color: '#e8e8e8',
+        textAlign: 'center',
+      }}
+    >
+      {grab.map((v) => {
+        const p = players[v.slot];
+        if (!p) return null;
+        const color = PLAYER_COLORS[v.slot];
+        let text = '';
+        if (v.escape) text = TEXT.escapeNow;
+        else if (v.state === 'RESTRAINED') text = TEXT.restrained;
+        else if (v.state === 'holding a grab') text = TEXT.grabRoute;
+        if (!text) return null;
+        return (
+          <div
+            style={{
+              ...panel,
+              font: 'inherit',
+              margin: '4px 0',
+              fontWeight: v.escape ? 'bold' : 'normal',
+              border: v.escape ? '2px solid #ffd166' : 'none',
+            }}
+            data-testid={`grab-cue-p${v.slot + 1}`}
+          >
+            <span style={{ color }}>P{v.slot + 1}</span>{' '}
+            <PromptText text={text} ctx={p.ctx} color={color} />
+          </div>
+        );
+      })}
     </div>
   );
 }

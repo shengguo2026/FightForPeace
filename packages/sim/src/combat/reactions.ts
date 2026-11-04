@@ -1,6 +1,7 @@
 import { fx } from '../math/fixed';
 import { Bounce, type Fighter, GroundTag, MoveState, Protect, type World } from '../world/types';
 import { GROUND_BOUNCE_COST, WALL_BOUNCE_COST, bandLift, juggleBand } from './context';
+import { stepRestraint } from './grabs';
 
 /** Candidate reaction constants (frames, fixed point). */
 export const REACTION = {
@@ -34,7 +35,9 @@ export function inReaction(f: Fighter): boolean {
     f.state === MoveState.Down ||
     f.state === MoveState.GetUp ||
     f.state === MoveState.Recover ||
-    f.state === MoveState.Recoil
+    f.state === MoveState.Recoil ||
+    f.state === MoveState.Grabbed ||
+    f.state === MoveState.Restrained
   );
 }
 
@@ -52,6 +55,7 @@ export function interrupt(f: Fighter): void {
   f.counterFrame = NO_FRAME;
   f.pivotAt = NO_FRAME;
   f.defIdle = 0;
+  f.cinematic = false;
 }
 
 /** An attacker deflected, countered or pushed: no hit, no combo, just lost time. */
@@ -116,6 +120,12 @@ export function stepReaction(world: World, f: Fighter): boolean {
       if (f.state === MoveState.Recoil) f.vx = decay(f.vx);
       if (f.stateFrame >= f.stun) return toActionable(f);
       return true;
+    case MoveState.Grabbed:
+      // Held: the grabber places this fighter every frame.
+      f.stateFrame += 1;
+      return true;
+    case MoveState.Restrained:
+      return stepRestraint(world, f);
     default:
       return false;
   }
@@ -124,6 +134,7 @@ export function stepReaction(world: World, f: Fighter): boolean {
 /** Touchdown of a launched fighter: protected landing, ground bounce, ground window or get-up. */
 function land(world: World, f: Fighter): void {
   const ctx = f.ctx;
+  f.thrownBy = 0;
   f.y = 0;
   f.vy = 0;
   if (f.airRecover) {

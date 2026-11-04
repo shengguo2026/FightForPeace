@@ -3,7 +3,20 @@
  * fixed point (1/256 px); all times are 60 Hz frames.
  */
 
-export type ActionCategory = 'standing' | 'aerial' | 'ground' | 'dash' | 'low' | 'counter';
+export type ActionCategory =
+  | 'standing'
+  | 'aerial'
+  | 'ground'
+  | 'dash'
+  | 'low'
+  | 'counter'
+  | 'special'
+  | 'ultimate'
+  /** Grab attempt (heroes) or a whole enemy grab with its hold. */
+  | 'grab'
+  /** Grab-route strike on the held target (extension, release strike, Special finisher). */
+  | 'grabStrike'
+  | 'throw';
 export type InputContext =
   | 'neutral'
   | 'chain'
@@ -14,10 +27,21 @@ export type InputContext =
   /** Started by a successful Directional Predictive Counter. */
   | 'counter'
   /** Picked by the training enemy's script, never by an input. */
-  | 'script';
+  | 'script'
+  /** Loadout moves: Special or Ultimate plus a direction (the loadout decides). */
+  | 'special'
+  | 'ultimate'
+  /** Interact with empty hands. */
+  | 'grab'
+  /** While holding: Attack (extension), Attack after the extension, Interact, Special. */
+  | 'grabExtension'
+  | 'grabRelease'
+  | 'grabThrow'
+  | 'grabSpecial';
 export type ReactionKind = 'stagger' | 'knockback' | 'launch' | 'knockdown' | 'trip';
-export type CancelCategory = 'chain' | 'air' | 'jumpChase' | 'dashBridge' | 'special' | 'ultimate';
-export type LinkKind = 'action' | 'jump' | 'dash' | 'special' | 'ultimate';
+export type CancelCategory =
+  'chain' | 'air' | 'jumpChase' | 'dashBridge' | 'special' | 'ultimate' | 'grab';
+export type LinkKind = 'action' | 'jump' | 'dash' | 'special' | 'ultimate' | 'grab';
 
 /** Input direction codes. Numbers are part of the encoded state; never renumber. */
 export const Dir = {
@@ -106,7 +130,26 @@ export interface ActionDef {
   juggleCost: number;
   /** Defense-meter percent a normal guard of this action costs. */
   guardCost: number;
+  /** Attack meter gain in percent on a confirmed hit (F&D §6.6). */
   meterGain: number;
+  /** Meter-gain budget points spent on the target's combo, once per action. */
+  meterDecay: number;
+  /** Loadout slots (Dir codes) a Special or Ultimate may occupy; empty for other actions. */
+  slots: readonly number[];
+  /** Owned (in the Lab) but not equipped by default. */
+  catalogue: boolean;
+  /** Action frames [from, to] that absorb strikes; [0, -1] = none. */
+  armor: readonly [number, number];
+  /** Action frames [from, to] strikes cannot hit; [0, -1] = none. */
+  invulnerable: readonly [number, number];
+  /** Action frames with the hurtbox shifted x (fixed point) backwards. */
+  hurtShift: { from: number; to: number; x: number } | null;
+  /** The first active frame launches a projectile with the hitbox as its box. */
+  projectile: { speed: number; life: number } | null;
+  /** Enemy grab: hold length, Grab Escape window, restraint length (0 = a throw). */
+  grab: { hold: number; escapeFrom: number; escapeWindow: number; restraint: number } | null;
+  /** Throws: damage of the thrown body on the enemy it hits. */
+  bodyDamage: number;
   moves: readonly MoveSample[];
   /**
    * Open tag set (opensGroundWindow, terminalKnockdown, passThrough, …) including the
@@ -153,6 +196,7 @@ export const CANCEL_TIMING: Record<CancelCategory, { buffer: number; window: num
   dashBridge: { buffer: 6, window: 12 },
   special: { buffer: 7, window: 10 },
   ultimate: { buffer: 7, window: 12 },
+  grab: { buffer: 6, window: 12 },
 };
 
 /** Why a cancel request was turned down. Numbers are encoded; never renumber. */
@@ -171,6 +215,12 @@ export const Reject = {
   JuggleExhausted: 11,
   Protected: 12,
   GroundSpent: 13,
+  /** The loadout slot for this direction is empty (never falls back). */
+  EmptySlot: 14,
+  /** No grabbable enemy in reach: grab whiff. */
+  NoTarget: 15,
+  /** Another hero grabbed the same target on the same frame. */
+  Contested: 16,
 } as const;
 export type Reject = (typeof Reject)[keyof typeof Reject];
 
@@ -184,9 +234,12 @@ export const REJECT_TEXT: Record<number, string> = {
   [Reject.NoMeter]: 'not enough attack meter',
   [Reject.BridgeSpent]: 'dash bridge already used in this combo',
   [Reject.StunExhausted]: 'hit-stun budget exhausted',
-  [Reject.NotYet]: 'arrives in M5',
+  [Reject.NotYet]: 'not available yet',
   [Reject.QueueFull]: 'a valid follow-up is already queued',
   [Reject.JuggleExhausted]: 'juggle budget exhausted',
   [Reject.Protected]: 'target is in protected recovery',
   [Reject.GroundSpent]: 'ground route already used',
+  [Reject.EmptySlot]: 'nothing equipped in that slot',
+  [Reject.NoTarget]: 'nobody to grab in reach',
+  [Reject.Contested]: 'the other hero grabbed first',
 };

@@ -27,4 +27,9 @@ export const DirBit = {
 
 /** Offensive actions: the only ones that use the input buffer. Movement is never buffered. */
 export const OFFENSIVE_MASK =
-  ActionBit.Attack | ActionBit.Jump | ActionBit.Special | ActionBit.Ultimate | ActionBit.LowAttack;
+  ActionBit.Attack |
+  ActionBit.Jump |
+  ActionBit.Special |
+  ActionBit.Ultimate |
+  ActionBit.LowAttack |
+  ActionBit.Interact;

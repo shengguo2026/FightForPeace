@@ -8,6 +8,11 @@ export type PlaceholderFamily =
   | 'ground'
   | 'dash'
   | 'counter'
+  | 'special'
+  | 'ultimate'
+  | 'grab'
+  | 'grabStrike'
+  | 'throw'
   | 'idle'
   | 'panel'
   | 'sound'
@@ -29,6 +34,11 @@ const POSE_FAMILIES: readonly PlaceholderFamily[] = [
   'ground',
   'dash',
   'counter',
+  'special',
+  'ultimate',
+  'grab',
+  'grabStrike',
+  'throw',
 ];
 
 /** The placeholder family a logical asset ID falls into. */

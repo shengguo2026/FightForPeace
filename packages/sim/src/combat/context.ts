@@ -3,7 +3,8 @@ import { type ComboContext, GroundTag, Protect } from '../world/types';
 /** Candidate budget sizes (Features_Decisions §10.2, spec §7.7). */
 export const STUN_BUDGET = 100;
 export const JUGGLE_BUDGET = 100;
-export const METER_BUDGET = 30;
+/** Meter-gain budget points per combo (F&D §6.6; bands in combat/meter.ts). */
+export const METER_BUDGET = 100;
 export const DAMAGE_FLOOR = 30;
 /** Juggle points spent by an ordinary wall rebound and an ordinary ground bounce. */
 export const WALL_BOUNCE_COST = 15;
