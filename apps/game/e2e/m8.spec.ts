@@ -101,7 +101,10 @@ test('losing window focus pauses with a message; Pause resumes', async ({ page }
     Object.defineProperty(document, 'hidden', { configurable: true, get: () => false });
     document.dispatchEvent(new Event('visibilitychange'));
   });
-  expect(await page.evaluate(() => window.__ffp!.paused())).toBe(true);
+  // Coming back alone never resumes (the Lab's paused flag updates on the next render frame).
+  await page.waitForFunction(() => window.__ffp!.paused());
+  await page.waitForTimeout(200);
+  expect(await page.evaluate(() => window.__ffp!.focusPaused())).toBe(true);
   await page.keyboard.press('Escape');
   await page.waitForFunction(() => !window.__ffp!.paused());
 });
