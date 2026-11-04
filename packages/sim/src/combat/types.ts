@@ -451,6 +451,85 @@ export interface ArenaDef {
   surge: { z0: number; z1: number; warn: number; active: number; damage: number } | null;
   waves: readonly { next: number; enemies: readonly ArenaEnemyDef[] }[];
   substitutions: readonly { from: string; to: string; minDifficulty: number; count: number }[];
+  /** M9: a stage beat's arena (a camera lock or the quiet time between locks), not a Lab arena. */
+  stage: boolean;
+}
+
+// --- M9 stage journey --------------------------------------------------------------------
+
+/** A food pickup: Health it restores and the PROP-FOOD cell it is drawn with. */
+export interface PickupDef {
+  x: number;
+  z: number;
+  heal: number;
+  look: number;
+}
+
+/** A camera lock: starts when the heroes' centre reaches `at`; holds the view at `view`. */
+export interface LockDef {
+  at: number;
+  view: number;
+  /** Arena (ARENAS index) that holds this lock's waves, devices and surge. */
+  arena: number;
+}
+
+export interface BeatDef {
+  id: string;
+  name: string;
+  area: string;
+  backdrop: 'layers' | 'plate';
+  width: number;
+  heroX: number;
+  layout: string;
+  /** A checkpoint is taken when this beat begins. */
+  checkpoint: boolean;
+  objective: string;
+  /** Arena (ARENAS index) of the beat between camera locks (no waves). */
+  base: number;
+  locks: readonly LockDef[];
+  pickups: readonly PickupDef[];
+  /** Coerced workers to free; look 0 = worker A, 1 = worker B. */
+  workers: readonly { x: number; z: number; look: number }[];
+  pen: { x: number; z: number } | null;
+  /** The recovery cache: opens when every worker of the beat is safe. */
+  cache: { x: number; z: number; pickups: readonly PickupDef[] } | null;
+  clue: { x: number; z: number; text: string } | null;
+  evidence: { x: number; z: number; text: string } | null;
+  /** Beats that may follow (indices); two are a branch chosen by the exit lane; none ends. */
+  next: readonly number[];
+}
+
+export interface StageRules {
+  reviveFrames: number;
+  revivePercent: number;
+  rejoinPercent: number;
+  continuePercent: number;
+  reachX: number;
+  reachZ: number;
+  workerFrames: number;
+  clueFrames: number;
+  evidenceFrames: number;
+  pickupReachX: number;
+  pickupReachZ: number;
+  defeatHold: number;
+  transition: number;
+  exitMargin: number;
+}
+
+/** A stage definition file (packages/data/stages): Stage 2 is a second file. */
+export interface StageDef {
+  id: string;
+  name: string;
+  /** Continues per difficulty index (easy … ultimate). */
+  continues: readonly number[];
+  rules: StageRules;
+  /** Locked hero roster (hero ids); empty: every hero. */
+  roster: readonly string[];
+  /** Guest heroes who may also play this stage (hero ids). */
+  guests: readonly string[];
+  /** Medium clear-time thresholds in seconds for the Time grade (S, A, B). */
+  timePar: readonly number[];
+  beats: readonly BeatDef[];
 }
 
 // --- M8 same-device co-op ----------------------------------------------------------------

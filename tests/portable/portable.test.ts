@@ -158,6 +158,7 @@ describe('release zip', () => {
         `${root}/start.bat`,
         `${root}/start.sh`,
         `${root}/README.txt`,
+        `${root}/THIRD-PARTY-NOTICES.txt`,
         `${root}/VERSION`,
         `${root}/runtime.json`,
         `${root}/server/server.mjs`,
@@ -182,6 +183,17 @@ describe('release zip', () => {
     expect(sh.mode).toBe(0o755);
     expect(body('server/server.mjs').text).not.toContain('\r');
     expect(body('VERSION').text).toBe('9.9.9\n');
+    const readme = body('README.txt').text;
+    expect(readme).toContain('Fight For Peace 9.9.9');
+    expect(readme).not.toContain('@VERSION@');
+    const notices = body('THIRD-PARTY-NOTICES.txt').text;
+    for (const pkg of ['phaser', 'preact', '@preact/signals', '@preact/signals-core']) {
+      expect(notices).toMatch(
+        new RegExp(`^${pkg.replace('/', '\\/')} \\d+\\.\\d+\\.\\d+ \\(MIT\\)`, 'm'),
+      );
+    }
+    expect(notices).toContain('Permission is hereby granted');
+    expect(notices).toContain('Node.js');
     const runtime = JSON.parse(body('runtime.json').text) as { node: string };
     expect(runtime.node).toMatch(/^24\./);
   });

@@ -29,7 +29,7 @@ test('M7 data: 7 enemy kits with profiles, 5 difficulties, every arena valid', (
     expect(ENEMIES.some((k) => k.id === id)).toBe(true);
   expect(PROFILES.filter((p) => p).length).toBe(7);
   expect(DIFFICULTIES.map((d) => d.id)).toEqual(['easy', 'medium', 'hard', 'extreme', 'ultimate']);
-  expect(arenaNames().length).toBe(ARENAS.length);
+  expect(arenaNames().length).toBe(ARENAS.filter((a) => !a.stage).length);
   const boss = PROFILES.find((p) => p?.boss)!;
   expect(boss.boss!.phases.map((p) => p.from)).toEqual([100, 66, 33]);
   expect(kitName(-1)).toBe('?');

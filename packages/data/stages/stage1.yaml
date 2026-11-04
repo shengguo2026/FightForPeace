@@ -1,0 +1,214 @@
+# Stage 1 · The Broken Water Pact (spec §13, Module 19, Appendix D.3; review decision D8).
+# The whole stage as data: eight beats, each on a delivered Stage 1 area. A beat is a strip
+# `width` px wide that the heroes cross from left to right. A camera lock starts when the
+# heroes' centre reaches `at`: the camera and the heroes are held in the 1920 px window
+# that starts at `view` until its waves are cleared (wave rules as in arenas.yaml:
+# `minDifficulty`, `coop`, `next`, substitutions). Every x is in beat pixels.
+#
+# Checkpoints are taken when a beat with `checkpoint: true` begins (beats 3, 5 and the boss
+# beat). Workers, clues and the sponsor evidence are freed or inspected by holding
+# Interact next to them; food is eaten by walking over it while hurt. The exit at the right
+# edge opens when every lock is cleared and every worker is free; the last beat ends when
+# the sponsor evidence is secured. All numbers are Combat Lab candidates.
+id: stage1
+name: 'The Broken Water Pact'
+# Continues per difficulty (D8 candidate): easy, medium, hard, extreme, ultimate.
+continues: { easy: 5, medium: 3, hard: 2, extreme: 1, ultimate: 0 }
+rules:
+  # Co-op revive (D8): hold Interact next to a downed partner for about two seconds.
+  reviveFrames: 120
+  revivePercent: 40
+  # A downed hero nobody revived returns at the next encounter boundary with this Health.
+  rejoinPercent: 30
+  # A continue restores the latest checkpoint with this Health for every hero.
+  continuePercent: 100
+  reachX: 150
+  reachZ: 70
+  workerFrames: 45
+  clueFrames: 30
+  evidenceFrames: 45
+  pickupReachX: 70
+  pickupReachZ: 45
+  # Frames the DEFEATED banner shows before the continue (or the restart) happens.
+  defeatHold: 120
+  # Frames of the fade between two beats.
+  transition: 40
+  # The exit opens this many px before the beat's right edge.
+  exitMargin: 200
+# Clear time (seconds) for the Time grade on Medium: S, A, B; slower is C.
+timePar: [600, 840, 1140]
+beats:
+  - id: fields
+    name: 'Dry Fields'
+    area: fields
+    width: 4800
+    heroX: 300
+    objective: 'Cross the dry fields toward the bridge'
+    locks:
+      - at: 700
+        view: 300
+        waves:
+          - enemies:
+              - { kit: recruit, x: 1500, z: 760 }
+              - { kit: recruit, x: 1650, z: 900 }
+              - { kit: recruit, x: 1800, z: 820, minDifficulty: medium }
+              - { kit: recruit, x: 1700, z: 700, coop: true }
+      - at: 2900
+        view: 2600
+        waves:
+          - enemies:
+              - { kit: recruit, x: 3700, z: 760 }
+              - { kit: recruit, x: 3850, z: 900, minDifficulty: medium }
+              - { kit: shield, x: 4000, z: 820 }
+              - { kit: recruit, x: 3800, z: 700, coop: true }
+    pickups:
+      - { x: 4300, z: 880, heal: 250, look: 0 }
+
+  - id: bridge
+    name: 'Occupied Bridge'
+    area: bridge
+    width: 3600
+    heroX: 300
+    objective: 'Break the formation on the bridge'
+    locks:
+      - at: 900
+        view: 700
+        waves:
+          - enemies:
+              - { kit: recruit, x: 2100, z: 760 }
+              - { kit: recruit, x: 2250, z: 900 }
+              - { kit: shield, x: 2400, z: 820 }
+              - { kit: recruit, x: 2300, z: 700, coop: true }
+            next: 1
+          - enemies:
+              - { kit: runner, x: 2580, z: 820 }
+    pickups:
+      - { x: 3000, z: 900, heal: 250, look: 1 }
+
+  - id: rescue
+    name: 'Worker Rescue'
+    area: mill
+    width: 3200
+    heroX: 300
+    checkpoint: true
+    objective: 'Free the coerced workers'
+    locks:
+      - at: 800
+        view: 600
+        waves:
+          - enemies:
+              - { kit: recruit, x: 1500, z: 760 }
+              - { kit: recruit, x: 1650, z: 900, minDifficulty: medium }
+              - { kit: overseer, x: 1900, z: 820 }
+              - { kit: recruit, x: 1700, z: 700, coop: true }
+    workers:
+      - { x: 2020, z: 690, look: a }
+      - { x: 2200, z: 730, look: b }
+    pen: { x: 2110, z: 660 }
+    # The first recovery cache opens once every worker is safe.
+    cache:
+      x: 2720
+      z: 700
+      pickups:
+        - { x: 2640, z: 860, heal: 300, look: 2 }
+        - { x: 2800, z: 900, heal: 300, look: 4 }
+
+  - id: mill
+    name: 'Working Mill'
+    area: mill
+    width: 2880
+    heroX: 300
+    layout: mill
+    objective: 'Get through the working mill'
+    locks:
+      - at: 0
+        view: 0
+        waves:
+          - enemies:
+              - { kit: shield, x: 1400, z: 820 }
+              - { kit: runner, x: 1650, z: 720 }
+              - { kit: overseer, x: 1800, z: 900 }
+              - { kit: runner, x: 1900, z: 860, coop: true }
+    pickups:
+      - { x: 2400, z: 900, heal: 250, look: 3 }
+
+  - id: investigation
+    name: 'Investigation'
+    area: canal
+    width: 3000
+    heroX: 300
+    checkpoint: true
+    objective: 'Look around the dry canal'
+    clue:
+      x: 1500
+      z: 700
+      text: 'The canal is bone dry: the water was turned away at the sluice gate upstream.'
+    pickups:
+      - { x: 2200, z: 880, heal: 250, look: 5 }
+
+  - id: canal
+    name: 'Canal Route'
+    area: canal
+    width: 4000
+    heroX: 300
+    objective: 'Follow the canal toward the gate'
+    locks:
+      - at: 1000
+        view: 800
+        waves:
+          - enemies:
+              - { kit: shield, x: 2200, z: 820 }
+              - { kit: runner, x: 2450, z: 720 }
+              - { kit: lookout, x: 2680, z: 880 }
+              - { kit: runner, x: 1100, z: 860, coop: true }
+            next: 1
+          - enemies:
+              - { kit: overseer, x: 2650, z: 820 }
+    pickups:
+      - { x: 3300, z: 880, heal: 250, look: 0 }
+
+  - id: courtyard
+    name: 'Gate Courtyard'
+    area: courtyard
+    width: 3200
+    heroX: 300
+    objective: 'Clear the gate courtyard'
+    locks:
+      - at: 800
+        view: 600
+        waves:
+          - enemies:
+              - { kit: recruit, x: 2000, z: 760 }
+              - { kit: recruit, x: 2100, z: 900 }
+              - { kit: shield, x: 2250, z: 820 }
+              - { kit: runner, x: 2400, z: 720 }
+              - { kit: lookout, x: 2500, z: 880 }
+              - { kit: runner, x: 700, z: 860, coop: true }
+        substitutions:
+          - { from: recruit, to: enforcer, minDifficulty: hard, count: 1 }
+    pickups:
+      - { x: 2900, z: 880, heal: 250, look: 1 }
+
+  - id: sluice
+    name: 'Sluice Commander'
+    area: sluice
+    backdrop: plate
+    width: 1920
+    heroX: 420
+    checkpoint: true
+    objective: 'Stop the Sluice Commander and open the river'
+    locks:
+      - at: 0
+        view: 0
+        weaponSpot: { x: 1500, z: 700 }
+        devices:
+          - { kind: winch, x: 1480, z: 660, count: 3 }
+        surge: { z0: 620, z1: 790, warn: 60, active: 36, damage: 80 }
+        waves:
+          - enemies:
+              - { kit: commander, x: 1400, z: 820 }
+    # Appears when the Commander surrenders and the river runs again.
+    evidence:
+      x: 1150
+      z: 690
+      text: 'An iron crate of precisely machined brass gears, unlike any village craft: someone outside is equipping the faction.'

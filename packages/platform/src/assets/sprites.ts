@@ -215,6 +215,9 @@ export class SpritePicker {
         return s('breaker-pickup', f.stateFrame < 10 ? 0 : 1);
       case MoveState.Pickup:
         return s('breaker-pickup', f.stateFrame < f.stun / 2 ? 3 : 4);
+      // M9 hold to interact (untying a worker, helping a partner up): the low reach pose.
+      case MoveState.Channel:
+        return s('breaker-pickup', 4);
       case MoveState.Grabbing:
         return s('grab-throw', 1);
       default:

@@ -24,6 +24,11 @@ import {
   type Projectile,
   activeHitbox,
   fxToPixels,
+  type StageRun,
+  STAGES,
+  WorkerState,
+  RunPhase,
+  ChannelKind,
   groundFocus,
   hurtbox,
   kitOf,
@@ -138,6 +143,8 @@ export class StageScene extends Phaser.Scene {
   private sprites = new Map<number, Phaser.GameObjects.Sprite>();
   private itemSprites = new Map<number, Phaser.GameObjects.Sprite>();
   private propSprites = new Map<number, Phaser.GameObjects.Sprite>();
+  /** M9 stage objects: workers, their pen, food, the cache, the clue and the evidence. */
+  private runSprites = new Map<number, Phaser.GameObjects.Sprite>();
   private weaponTags = new Map<number, Phaser.GameObjects.Text>();
   private lastWeapon = new Map<number, string>();
   private lastEnv = '';
@@ -198,12 +205,14 @@ export class StageScene extends Phaser.Scene {
       snap.frame,
       snap.stageWidth,
       this.opts.quality?.() ?? 'high',
+      snap.run,
     );
     this.labFloor.setVisible(snap.encounter === null);
     this.boss = this.arena.bossView(snap.encounter);
     this.inArena = snap.encounter !== null;
     this.drawScenery(snap.environment, snap.frame, collision);
     this.drawItems(snap.items, snap.frame);
+    this.drawRun(snap.run, current, snap.frame);
     // Ground-Opportunity Focus: a ring under each marked target a hero is focused on.
     const focused = new Set<number>();
     for (const f of current) {
@@ -309,7 +318,7 @@ export class StageScene extends Phaser.Scene {
 
   /** A new world (arena start, restart, back to the Lab): drop every per-id object. */
   private forgetWorld(): void {
-    for (const map of [this.sprites, this.itemSprites, this.propSprites]) {
+    for (const map of [this.sprites, this.itemSprites, this.propSprites, this.runSprites]) {
       for (const sp of map.values()) sp.destroy();
       map.clear();
     }
@@ -385,6 +394,125 @@ export class StageScene extends Phaser.Scene {
     const head = cell ? meta.ground - cell.y0 : BODY_H;
     if (f.state === MoveState.Down) return p.z - 90;
     return p.z - p.y - Math.max(head, 140);
+  }
+
+  /**
+   * M9 stage objects, drawn with the delivered art where it exists (worker pose sheets,
+   * PROP-FOOD, PROP-BARRICADE) and as labelled shapes otherwise: the coerced workers and
+   * their rope pen, food, the recovery cache, the clue, the sponsor evidence, and a hold
+   * ring over every hero who is holding Interact.
+   */
+  private drawRun(run: StageRun | null, bodies: readonly Fighter[], frame: number): void {
+    const keep = new Set<number>();
+    if (!run) {
+      this.dropStale(this.runSprites, keep);
+      return;
+    }
+    const beat = STAGES[run.stage]!.beats[run.beat]!;
+    const g = this.gfx;
+    const prop = (key: number, sheet: string, cell: number, x: number, z: number, h: number) => {
+      const meta = this.assets.sheet(sheet)?.sheet;
+      const c = meta?.cells[cell];
+      keep.add(key);
+      if (!meta || !c || !this.textures.exists(sheet)) {
+        g.fillStyle(0x9a7b4f, 1);
+        g.fillRect(x - 40, z - h, 80, h);
+        return null;
+      }
+      const sp = this.sprite(this.runSprites, key, sheet);
+      sp.setVisible(true);
+      sp.setTexture(sheet, cell);
+      sp.setOrigin(0.5, c.foot / meta.cell);
+      sp.setScale(Math.max(0.1, h / Math.max(1, c.foot - c.y0)));
+      sp.setPosition(x, z);
+      sp.setDepth(this.depthAt(z));
+      sp.setFlipX(false);
+      return sp;
+    };
+    const anyBound = run.workers.some((w) => w.state === WorkerState.Bound);
+    if (beat.pen && anyBound) prop(900, 'prop.barricade', 2, beat.pen.x, beat.pen.z, 150);
+    run.workers.forEach((w, i) => {
+      const x = fxToPixels(w.x);
+      const z = fxToPixels(w.z);
+      if (w.state === WorkerState.Safe) return;
+      const age = frame - w.since;
+      // Poses: 0 carrying, 1 burdened walk, 2 cowering, 3 freed, 4 cheering, 5 running home.
+      const fighting = run.phase === RunPhase.Locked;
+      const cell =
+        w.state === WorkerState.Bound
+          ? fighting
+            ? 2
+            : Math.floor(frame / 40) % 2 === 0
+              ? 0
+              : 1
+          : w.state === WorkerState.Freed
+            ? age < 20
+              ? 3
+              : 4
+            : 5;
+      const sheet = w.look === 1 ? 'npc.worker-b.sheet' : 'npc.worker-a.sheet';
+      const meta = this.assets.sheet(sheet)?.sheet;
+      keep.add(910 + i);
+      g.fillStyle(0x000000, 0.3);
+      g.fillEllipse(x, z, 110, 20);
+      if (!meta || !this.textures.exists(sheet)) {
+        g.fillStyle(0xd8cfb8, 1);
+        g.fillRect(x - 30, z - 250, 60, 250);
+        return;
+      }
+      const sp = this.sprite(this.runSprites, 910 + i, sheet);
+      sp.setVisible(true);
+      sp.setTexture(sheet, cell);
+      sp.setOrigin(0.5, meta.ground / meta.cell);
+      sp.setScale(0.95);
+      sp.setPosition(x, z);
+      sp.setDepth(this.depthAt(z));
+      // The sheets face right; a worker running home runs left.
+      sp.setFlipX(w.state === WorkerState.Leaving);
+    });
+    if (beat.cache) prop(920, 'prop.barricade', 3, beat.cache.x, beat.cache.z, 120);
+    run.pickups.forEach((p, i) => {
+      if (p.taken) return;
+      const x = fxToPixels(p.x);
+      const z = fxToPixels(p.z);
+      g.fillStyle(0x000000, 0.3);
+      g.fillEllipse(x, z, 80, 14);
+      const bob = Math.sin(frame / 12) * 4;
+      prop(930 + i, 'prop.food', p.look, x, z - 6 + bob, 64);
+    });
+    if (beat.clue) prop(960, 'prop.barricade', 5, beat.clue.x, beat.clue.z, 130);
+    if (beat.evidence && run.evidence >= 1)
+      prop(961, 'prop.barricade', 4, beat.evidence.x, beat.evidence.z, 120);
+    // Interactable spots glow softly until they are done.
+    const glow = 0.35 + 0.25 * Math.abs(Math.sin(frame / 10));
+    g.lineStyle(4, 0xffd166, glow);
+    if (beat.clue && run.clue === 1) g.strokeEllipse(beat.clue.x, beat.clue.z, 200, 44);
+    if (beat.evidence && run.evidence === 1)
+      g.strokeEllipse(beat.evidence.x, beat.evidence.z, 200, 44);
+    for (const w of run.workers)
+      if (w.state === WorkerState.Bound) g.strokeEllipse(fxToPixels(w.x), fxToPixels(w.z), 160, 36);
+    // Hold rings over heroes holding Interact, and a marker over downed heroes.
+    for (const f of bodies) {
+      if (f.team !== 'hero') continue;
+      const x = fxToPixels(f.x);
+      const z = fxToPixels(f.z);
+      const c = run.channel[f.slot];
+      if (f.state === MoveState.Channel && c && c.kind !== ChannelKind.None) {
+        const t = Math.min(1, c.progress / Math.max(1, c.need));
+        const top = z - 340;
+        this.overlay.lineStyle(8, 0x333333, 0.8);
+        this.overlay.strokeCircle(x, top, 26);
+        this.overlay.lineStyle(8, HERO_COLORS[f.slot] ?? 0xffffff, 1);
+        this.overlay.beginPath();
+        this.overlay.arc(x, top, 26, -Math.PI / 2, -Math.PI / 2 + t * Math.PI * 2);
+        this.overlay.strokePath();
+      }
+      if (f.ko && f.state === MoveState.Defeated) {
+        this.overlay.lineStyle(4, HERO_COLORS[f.slot] ?? 0xffffff, 0.6 + 0.4 * glow);
+        this.overlay.strokeEllipse(x, z - 6, 240, 50);
+      }
+    }
+    this.dropStale(this.runSprites, keep);
   }
 
   /** Loose and flying weapons; held weapons are part of the holder's pose art. */

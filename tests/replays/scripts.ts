@@ -16,6 +16,7 @@ import {
   step,
 } from '@ffp/sim';
 import { botInput } from '../../packages/sim/test/arenaBot';
+import { stageBotInput } from '../../packages/sim/test/stageBot';
 
 type Dir = 'up' | 'down' | 'left' | 'right';
 type Act = keyof typeof ActionBit;
@@ -616,6 +617,35 @@ export const coopDrillsScript: ReplayScript = {
   frames: coopDrills(),
 };
 
+/**
+ * M9: the Worker Rescue beat of Stage 1 practised on Easy with the deterministic stage bot:
+ * the camera lock, the fight, freeing both workers (hold Interact), the recovery cache and
+ * the exit into the Working Mill.
+ */
+const STAGE_OPTIONS: WorldOptions = { stage: 'stage1', difficulty: 'easy', beat: 2 };
+function stageRescue(): FrameInput[][] {
+  const w = createWorld(61, STAGE_OPTIONS);
+  const frames: FrameInput[][] = [];
+  for (let i = 0; i < 6000 && w.run!.beat === 2; i += 1) {
+    const input = stageBotInput(w);
+    frames.push([input]);
+    step(w, [input]);
+  }
+  for (let i = 0; i < 60; i += 1) {
+    frames.push([IDLE_FRAME]);
+    step(w, [IDLE_FRAME]);
+  }
+  return frames;
+}
+const IDLE_FRAME: FrameInput = { moveX: 0, moveZ: 0, pressed: 0, held: 0, dirPressed: 0 };
+
+export const stageRescueScript: ReplayScript = {
+  name: 'stage-rescue',
+  seed: 61,
+  options: STAGE_OPTIONS,
+  frames: stageRescue(),
+};
+
 export const SCRIPTS = [
   walkSquare,
   dashJump,
@@ -628,6 +658,7 @@ export const SCRIPTS = [
   weaponsEnvironmentScript,
   arenaTrialScript,
   coopDrillsScript,
+  stageRescueScript,
 ];
 
 export type { ReplayLog };

@@ -11,9 +11,13 @@ import {
   Threat,
   fxToPixels,
   nonCombatant,
+  RunEvent,
+  RunPhase,
+  STAGES,
+  type StageRun,
 } from '@ffp/sim';
 import type { AssetRegistry, BossView, QualityLevel } from '@ffp/platform';
-import { ARENA_TEXT } from '../text/en';
+import { ARENA_TEXT, STAGE_TEXT } from '../text/en';
 
 const VIEW_W = 1920;
 const VIEW_H = 1080;
@@ -32,6 +36,11 @@ interface Layer {
   name: 'far' | 'mid' | 'floor' | 'fg' | 'plate';
 }
 
+/** The exit is open (the beat's locks are done and another beat follows). */
+function exitOpenRun(run: StageRun): boolean {
+  const beat = STAGES[run.stage]!.beats[run.beat]!;
+  return beat.next.length > 0 && run.locksDone >= beat.locks.length;
+}
 /**
  * M7 arena presentation: the Stage 1 area backdrop drawn through the asset manifest (four
  * parallax layers, or the full plate for the boss), the camera following the
@@ -46,6 +55,10 @@ export class ArenaView {
   private title!: Phaser.GameObjects.Text;
   private bossName!: Phaser.GameObjects.Text;
   private banner!: Phaser.GameObjects.Text;
+  private objective!: Phaser.GameObjects.Text;
+  private go!: Phaser.GameObjects.Text;
+  /** Full-screen black for the fade between two beats. */
+  private fade!: Phaser.GameObjects.Graphics;
   private warnTexts: Phaser.GameObjects.Text[] = [];
   private tags = new Map<number, Phaser.GameObjects.Text>();
   private beeped = new Set<number>();
@@ -85,6 +98,17 @@ export class ArenaView {
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(22);
+    this.objective = this.scene.add.text(VIEW_W / 2, 54, '', { ...style, fontSize: '22px' });
+    this.objective.setOrigin(0.5, 0).setScrollFactor(0).setDepth(21);
+    this.go = this.scene.add.text(VIEW_W - 40, 470, '', {
+      ...style,
+      fontSize: '64px',
+      fontStyle: 'bold',
+      color: '#ffd166',
+      strokeThickness: 8,
+    });
+    this.go.setOrigin(1, 0.5).setScrollFactor(0).setDepth(21);
+    this.fade = this.scene.add.graphics().setScrollFactor(0).setDepth(30);
     for (let i = 0; i < 2; i += 1) {
       const t = this.scene.add.text(0, 0, '', { ...style, fontSize: '30px', color: '#ffb020' });
       t.setScrollFactor(0).setDepth(21);
@@ -119,9 +143,11 @@ export class ArenaView {
     frame: number,
     stageWidth: number,
     quality: QualityLevel = 'high',
+    run: StageRun | null = null,
   ): void {
     const arena = enc ? ARENAS[enc.arena] : undefined;
-    const key = arena ? `${arena.id}` : 'lab';
+    // Keyed by what is drawn, so the camera locks of one stage beat share one backdrop.
+    const key = arena ? `${arena.area}/${arena.backdrop}/${arena.width}` : 'lab';
     if (key !== this.key) this.rebuild(arena, stageWidth);
     const cam = this.scene.cameras.main;
     if (enc) {
@@ -142,13 +168,99 @@ export class ArenaView {
       const frozen = still && (l.name === 'far' || l.name === 'mid');
       if (l.obj instanceof Phaser.GameObjects.TileSprite) {
         // Tiled layers stay on screen and scroll their texture at the layer's rate.
-        l.obj.setPosition(cam.scrollX, l.obj.y);
+        // (Scroll factor 0 on x: the tile sprite stays on screen; only its texture moves.)
         if (!frozen) l.obj.tilePositionX = (cam.scrollX * l.factor) / l.obj.tileScaleX;
       } else if (l.name === 'far' || l.name === 'mid') {
         l.obj.setScrollFactor(frozen ? 0 : l.factor, 1);
       }
     }
     this.drawHud(enc, bodies, frame);
+    this.drawStage(run, frame);
+  }
+
+  /**
+   * M9 stage HUD on the canvas: stage, beat and continues, the objective, banners for the
+   * beat title, a cleared lock, defeat and the river, the GO arrow and the beat fade.
+   */
+  private drawStage(run: StageRun | null, frame: number): void {
+    this.fade.clear();
+    if (!run) {
+      this.objective.setText('');
+      this.go.setText('');
+      return;
+    }
+    const def = STAGES[run.stage]!;
+    const beat = def.beats[run.beat]!;
+    const diff = DIFFICULTIES[run.difficulty]!;
+    this.title.setText(
+      `${STAGE_TEXT.stage} ${run.stage + 1} · ${STAGE_TEXT.beat} ${run.beat + 1}/${def.beats.length}: ${beat.name} · ${diff.name} · ${STAGE_TEXT.continues} ${run.continues}`,
+    );
+    const workers = run.workers.length
+      ? ` · ${STAGE_TEXT.workers} ${run.workers.filter((w) => w.state !== 0).length}/${run.workers.length}`
+      : '';
+    this.objective.setText(run.phase === RunPhase.Complete ? '' : `${beat.objective}${workers}`);
+    // The boss bar takes the line under the title while the Commander fights.
+    this.objective.setVisible(this.bossName.text === '');
+    const e = run.event;
+    const age = frame - e.frame;
+    let banner = '';
+    let color = '#ffffff';
+    if (run.phase === RunPhase.Defeat) {
+      banner = `${STAGE_TEXT.defeated}
+${
+  run.continues > 0
+    ? STAGE_TEXT.continueLeft.replace('{n}', String(run.continues))
+    : STAGE_TEXT.noContinues
+}`;
+      color = '#ff6b6b';
+    } else if (run.phase === RunPhase.Complete) {
+      banner = STAGE_TEXT.complete;
+      color = '#7ddc7d';
+    } else if (e.kind === RunEvent.RiverRestored && age < 180) {
+      banner = STAGE_TEXT.riverRestored;
+      color = '#8fe3ff';
+    } else if (e.kind === RunEvent.BeatStart && age < 120 && run.phase !== RunPhase.Transition) {
+      banner = `${STAGE_TEXT.beat} ${run.beat + 1} · ${beat.name}`;
+    } else if (e.kind === RunEvent.LockClear && age < 60) {
+      banner = STAGE_TEXT.lockClear;
+      color = '#7ddc7d';
+    }
+    this.banner.setText(banner);
+    this.banner.setColor(color);
+    this.banner.setAlign('center');
+    // GO: the way on to the right is free (the next lock or the exit).
+    const ahead =
+      run.phase === RunPhase.Walk &&
+      run.workers.every((w) => w.state !== 0) &&
+      (run.locksDone < beat.locks.length || exitOpenRun(run));
+    const blink = Math.floor(frame / 20) % 2 === 0;
+    this.go.setText(ahead && blink && banner === '' ? `${STAGE_TEXT.go} →` : '');
+    // The river runs again (placeholder until the ending clips arrive in M13): water
+    // flows back into the dry bed on the plate's left side once the Commander yields.
+    if (beat.evidence && run.evidence >= 1) {
+      const since = e.kind === RunEvent.RiverRestored ? frame - e.frame : 600;
+      const fill = Math.min(1, since / 180);
+      const w = this.world;
+      const top = 350;
+      const bottom = 612;
+      const right = 120 + 560 * fill;
+      w.fillStyle(0x4aa8e8, 0.42 * fill);
+      w.fillTriangle(0, top, right, bottom, 0, bottom);
+      w.fillStyle(0xbfe8ff, 0.5 * fill);
+      for (let i = 0; i < 7; i += 1) {
+        const t = ((frame * 2 + i * 90) % 600) / 600;
+        const x = t * right * 0.9;
+        const y = top + (bottom - top) * (0.35 + 0.6 * t) - (i % 3) * 18;
+        if (x < right - 40) w.fillRect(x, y, 46, 4);
+      }
+    }
+    if (run.phase === RunPhase.Transition) {
+      const t = frame - run.phaseFrame;
+      const half = def.rules.transition / 2;
+      const a = t < half ? t / half : Math.max(0, 1 - (t - half) / half);
+      this.fade.fillStyle(0x000000, Math.min(1, a));
+      this.fade.fillRect(0, 0, VIEW_W, VIEW_H);
+    }
   }
 
   private rebuild(arena: (typeof ARENAS)[number] | undefined, stageWidth: number): void {
@@ -234,12 +346,19 @@ export class ArenaView {
     this.title.setText(
       `${arena.name} · ${diff.name} · ${ARENA_TEXT.wave} ${Math.max(1, enc.wave + 1)}/${waves} · ${left} ${ARENA_TEXT.left}`,
     );
-    this.drawBoss(enc, bodies);
+    // A stage lock's boss bar goes once the lock is cleared (the Commander has surrendered).
+    if (arena.stage && enc.result !== 0) this.bossName.setText('');
+    else this.drawBoss(enc, bodies);
     this.drawDevices(enc);
     this.drawWarnings(enc, bodies, frame);
     this.drawTags(enc, bodies);
     const result =
       enc.result === 1 ? ARENA_TEXT.cleared : enc.result === 2 ? ARENA_TEXT.defeated : '';
+    // Stage beats (M9) draw their own banners in drawStage.
+    if (arena.stage) {
+      this.banner.setText('');
+      return;
+    }
     this.banner.setText(result ? `${result}\n${ARENA_TEXT.restart}` : '');
     this.banner.setColor(enc.result === 1 ? '#7ddc7d' : '#ff6b6b');
     this.banner.setAlign('center');

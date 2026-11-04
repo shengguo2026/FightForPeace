@@ -25,6 +25,8 @@ import {
   setHero,
   step,
   type CoopState,
+  type StageRun,
+  STAGES,
 } from '@ffp/sim';
 import {
   DEFAULT_GAMEPAD,
@@ -63,6 +65,8 @@ export interface RenderSnapshot {
   generation: number;
   /** M8 co-op: the invitation, the last co-op event and telemetry (current state). */
   coop: CoopState;
+  /** M9 stage journey: beat, locks, workers, food, checkpoint and counters (or null). */
+  run: StageRun | null;
 }
 
 export interface FrameReport {
@@ -114,9 +118,15 @@ export class GameSession {
    * M7 arena mode: a fresh world for `arena` at `difficulty` (ids from the arena table),
    * or the Lab again when `arena` is null. Player heroes keep their selection.
    */
-  startArena(arena: string | null, difficulty = 'medium'): void {
+  startArena(arena: string | null, difficulty = 'medium', beat = 0): void {
     const heroes = [0, 1].map((slot) => heroOf(this.world, slot)?.hero);
-    this.world = arena ? createWorld(this.seed, { arena, difficulty }) : this.labWorld();
+    // M9: a stage id starts the stage journey (from `beat` when practising a later beat).
+    const stage = arena !== null && STAGES.some((s) => s.id === arena);
+    this.world = stage
+      ? createWorld(this.seed, { stage: arena, difficulty, beat })
+      : arena
+        ? createWorld(this.seed, { arena, difficulty })
+        : this.labWorld();
     heroes.forEach((h, slot) => {
       const id = h === undefined ? undefined : HEROES[h]?.id;
       if (id && heroOf(this.world, slot)) setHero(this.world, slot, id);
@@ -165,6 +175,7 @@ export class GameSession {
       stageWidth: Math.round(this.world.bounds.maxX / 256),
       generation: this.generation,
       coop: this.world.coop,
+      run: this.world.run,
     };
   }
 

@@ -1,6 +1,6 @@
 {
   "name": "fightforpeace",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@10.28.0",
@@ -16,6 +16,7 @@
     "build": "pnpm --filter @ffp/game build",
     "preview": "pnpm --filter @ffp/game preview",
     "release": "pnpm build && node tools/release.mjs",
+    "smoke:portable": "node tools/smoke-portable.mjs",
     "e2e": "pnpm --filter @ffp/game e2e",
     "gen:heroes": "node --experimental-strip-types packages/data/src/generate.ts"
   },

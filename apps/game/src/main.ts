@@ -1,12 +1,13 @@
 import * as Phaser from 'phaser';
 import { render, h } from 'preact';
 import { DEFAULT_KEYBOARD_P1, QualityGovernor, rebind } from '@ffp/platform';
-import { HEROES, equip, heroOf } from '@ffp/sim';
+import { HEROES, STAGES, equip, heroOf } from '@ffp/sim';
 import { GameSession } from './game';
 import { EQUIP_TEXT } from './text/en';
 import { StageScene, VIEW_HEIGHT, VIEW_WIDTH } from './scenes/StageScene';
 import { LabOverlay, type LabActions } from './ui/LabOverlay';
 import { PauseOverlay } from './ui/PauseOverlay';
+import { ResultsOverlay, StageHud, VersionTag } from './ui/StageOverlay';
 import { createLabState } from './ui/labState';
 import {
   heldKeys,
@@ -18,6 +19,7 @@ import {
   refreshTarget,
   refreshArena,
   refreshCoop,
+  refreshStage,
 } from './ui/views';
 import { captureNextKey, installKeyboard, readPads } from './input/browserInput';
 import { installDebugHook } from './debug';
@@ -114,7 +116,7 @@ const actions: LabActions = {
   resetEnvironment: () => session.resetEnvironment(),
   dummyToPillar: () => session.dummyToPillar(),
   startArena: (arena) => {
-    session.startArena(arena, lab.arenaPick.value.difficulty);
+    session.startArena(arena, lab.arenaPick.value.difficulty, lab.arenaPick.value.beat);
     // Arena play needs the screen: the Defense panel closes (F8 opens it again).
     if (arena) lab.defenseOpen.value = false;
   },
@@ -129,9 +131,37 @@ const actions: LabActions = {
 
 const root = document.getElementById('lab')!;
 render(
-  h('div', null, h(LabOverlay, { state: lab, actions }), h(PauseOverlay, { state: lab })),
+  h(
+    'div',
+    null,
+    h(StageHud, { state: lab }),
+    h(LabOverlay, { state: lab, actions }),
+    h(PauseOverlay, { state: lab }),
+    h(ResultsOverlay, {
+      state: lab,
+      onAgain: () => actions.startArena(lab.arenaPick.value.arena),
+      onLab: () => actions.startArena(null),
+    }),
+    h(VersionTag, { version: __FFP_VERSION__ }),
+  ),
   root,
 );
+
+// M9: `?stage=stage1` (optionally `&difficulty=easy&beat=3`) opens the stage journey at once.
+const params = new URLSearchParams(location.search);
+const stageParam = params.get('stage');
+const stageId = stageParam && /^\d+$/.test(stageParam) ? `stage${stageParam}` : stageParam;
+if (stageId && STAGES.some((s) => s.id === stageId)) {
+  const id = stageId;
+  const beat = Math.max(0, Number(params.get('beat') ?? '1') - 1) || 0;
+  lab.arenaPick.value = {
+    arena: id,
+    difficulty: params.get('difficulty') ?? lab.arenaPick.value.difficulty,
+    beat,
+  };
+  actions.startArena(id);
+  lab.visible.value = false;
+}
 
 installKeyboard(session, (code) => {
   if (code === 'F1') lab.visible.value = !lab.visible.value;
@@ -183,6 +213,7 @@ function tick(now: number): void {
   refreshWeapons(session, lab);
   refreshArena(session, lab);
   refreshCoop(session, lab);
+  refreshStage(session, lab);
   const held = heldKeys(session);
   if (held.join(' ') !== lab.heldKeys.value.join(' ')) lab.heldKeys.value = held;
 

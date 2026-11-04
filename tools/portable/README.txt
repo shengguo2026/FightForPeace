@@ -1,5 +1,8 @@
-Fight For Peace - portable Combat Lab
-=====================================
+Fight For Peace @VERSION@ - portable build
+==========================================
+
+Stage 1 "The Broken Water Pact" (milestone M9, greybox) and the Combat Lab, played in
+your browser from this folder. The version is shown in the lower right corner of the game.
 
 Start
 -----
@@ -28,11 +31,25 @@ the browser on the running game.
 
 Logs: the "logs" folder (server.log, last-port.txt).
 
-Combat Lab (milestone M4)
--------------------------
+Playing Stage 1
+---------------
+The game opens on the Lab overlay with "Stage 1" selected in the Arena panel: pick a
+difficulty and press Start. Add ?stage=1 to the address to start the stage directly
+(also &difficulty=easy|medium|hard|extreme|ultimate and &beat=1..8 for a practice run).
+Hold Interact next to a worker, a clue, the sponsor evidence or a downed partner.
+Continues: Easy 5, Medium 3, Hard 2, Extreme 1, Ultimate none. A defeat spends one and
+restores the latest checkpoint (beats 3, 5 and the boss); with none left the stage
+restarts. End returns to the Lab.
+
+Combat Lab
+----------
 F1 Lab overlay, F2 settings (training enemy, Defense switches), F3 hitboxes, F5 move
 list, F6 slow motion, F7 recipes, F8 Defense panel with timing readouts.
 Dummy 1 attacks Player 1 with the Straight Jab; choose other attacks in F2.
+
+Licences
+--------
+THIRD-PARTY-NOTICES.txt lists the open-source packages inside the game and their licences.
 
 Updating
 --------

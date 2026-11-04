@@ -1,0 +1,38 @@
+name: Release
+
+# Pushing a tag such as v0.9.0 builds the portable zip, smoke-tests it and publishes it as
+# a GitHub Release. The tag must match the version in package.json.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Check the tag matches package.json
+        run: |
+          version=$(node -p "require('./package.json').version")
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match package.json version $version"; exit 1
+          fi
+      - run: pnpm test
+      - run: pnpm release
+      - run: pnpm smoke:portable
+      - name: Publish the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" release/FightForPeace-*.zip \
+            --title "Fight For Peace $GITHUB_REF_NAME" --generate-notes
