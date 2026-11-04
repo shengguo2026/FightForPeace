@@ -14,6 +14,29 @@ async function holdInteract(page: Page, done: () => boolean) {
   await page.keyboard.up('KeyJ');
 }
 
+/**
+ * Starts a hold on Interact once the hero can act, and keeps J down while `seen` is not yet
+ * true; a press the hero could not take (still busy, or the window briefly lost focus) is
+ * released and tried again.
+ */
+async function startHold(page: Page, seen: () => boolean) {
+  for (let attempt = 0; attempt < 6; attempt += 1) {
+    if (await page.evaluate(() => window.__ffp!.focusPaused())) await page.keyboard.press('Escape');
+    await page.waitForFunction(() => {
+      const h = window.__ffp!.hero(0);
+      return !window.__ffp!.paused() && !!h && h.state <= 1 && h.action === null;
+    });
+    await page.keyboard.down('KeyJ');
+    try {
+      await page.waitForFunction(seen, null, { polling: 'raf', timeout: 1500 });
+      return;
+    } catch {
+      await page.keyboard.up('KeyJ');
+    }
+  }
+  throw new Error('the hold on Interact never started');
+}
+
 test('the Stage 1 journey starts from the arena panel with the version shown', async ({
   page,
 }, testInfo) => {
@@ -58,21 +81,22 @@ test('worker rescue: hold Interact frees a worker, both open the cache and the e
     await expect(page.getByTestId('stage-prompt-p1')).toContainText('to free the worker');
     if (i === 0) {
       // The bar only lives for the 0.75 s hold: look for it on every animation frame.
-      await page.keyboard.down('KeyJ');
-      await page.waitForFunction(
+      await startHold(
+        page,
         () => document.querySelector('[data-testid="stage-progress-p1"]') !== null,
-        null,
-        { polling: 'raf', timeout: 10_000 },
       );
       await page.screenshot({ path: `test-results/m9-rescue-${testInfo.project.name}.png` });
       await page.keyboard.up('KeyJ');
     }
-    await page.keyboard.down('KeyJ');
-    await page.waitForFunction(
-      (n) => window.__ffp!.run()!.workers.filter((k) => k.state !== 0).length > n,
-      i,
-      { timeout: 20_000 },
-    );
+    const freed = (n: number) =>
+      window.__ffp!.run()!.workers.filter((k) => k.state !== 0).length > n;
+    if (!(await page.evaluate(freed, i))) {
+      await startHold(
+        page,
+        () => document.querySelector('[data-testid="stage-progress-p1"]') !== null,
+      );
+      await page.waitForFunction(freed, i, { timeout: 20_000 });
+    }
     await page.keyboard.up('KeyJ');
   }
   expect(await page.evaluate(() => window.__ffp!.run()!.stats.workersFreed)).toBe(2);
