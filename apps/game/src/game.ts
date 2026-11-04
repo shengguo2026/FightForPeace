@@ -23,6 +23,7 @@ import {
   resetEnvironment,
   setFacingMode,
   setHero,
+  applyHeroChoices,
   step,
   type CoopState,
   type StageRun,
@@ -206,6 +207,8 @@ export class GameSession {
   startStage(stage: string, difficulty: string, beat: number, heroes: readonly string[]): void {
     this.startArena(stage, difficulty, beat);
     heroes.forEach((id, slot) => setHero(this.world, slot, id));
+    // The stage opens with the chosen heroes, not the previous ones for a first step.
+    applyHeroChoices(this.world);
     this.previous = cloneFighters(this.world.bodies);
   }
 

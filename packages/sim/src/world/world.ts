@@ -555,6 +555,14 @@ function koPass(world: World): void {
   }
 }
 
+/**
+ * Puts every pending hero choice into effect now (where the hero is idle or walking), as
+ * the next step would. Hero selection uses it so the stage opens with the chosen heroes.
+ */
+export function applyHeroChoices(world: World): void {
+  for (const f of world.bodies) if (f.team === 'hero') applyHeroChoice(world, f);
+}
+
 function applyHeroChoice(world: World, f: Fighter): void {
   const want = world.playerHero[f.slot] ?? f.hero;
   if (want === f.hero) return;
