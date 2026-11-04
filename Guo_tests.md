@@ -167,3 +167,75 @@ As in M8. Player 1: move W A S D, Attack T, Jump Y, Guard G, **Grab and Interact
 15. In co-op, Player 2 can free workers and inspect the clue too (hold Num 3); the two heroes cannot walk out of the locked screen away from each other.
 16. **Practice beats:** F1 opens the Lab. In the Arena panel "Stage 1: The Broken Water Pact (full journey)" is first, with a difficulty and **Start at beat** (1–8). Start at beat 5: the stage starts there; the results later say "practice run from beat 5". End returns to the Lab; the trials from M7 are still in the list.
 17. **Portable:** start the unzipped `start.bat`. The browser opens on `http://localhost:6006`, the version tag shows v0.9.0, and `?stage=1` works there too. In the folder: `README.txt` (explains Stage 1 and the options) and `THIRD-PARTY-NOTICES.txt` (Phaser, Preact and Preact Signals with their MIT licence texts, and a note on Node.js).
+
+## M10 · Village menu, play flow, settings, saves and three languages
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+Open `http://localhost:5173` (if Vite prints another port, use that one). The game now opens on the **first-launch setup** instead of the Lab. `?lab` opens the Lab directly as before, `?stage=1` starts Stage 1 directly. Stop the server with `Ctrl+C`.
+
+To start again as a brand-new player (first launch), open the browser's developer tools (F12) → Application → Storage → **Clear site data**, then reload. In the portable build, delete the `saves` folder instead.
+
+To test the branch before it is merged instead of `main`:
+
+```powershell
+git fetch origin claude/project-thread-shb2ul
+git checkout claude/project-thread-shb2ul
+pnpm install
+pnpm dev
+```
+
+The portable build:
+
+```powershell
+pnpm release
+pnpm smoke:portable
+```
+
+`pnpm release` writes `release\FightForPeace-0.10.0.zip`. Unzip it into a folder with a space in its name (for example `C:\Games\Fight For Peace`) and double-click `start.bat`.
+
+Optional, the automated checks (they also run on GitHub):
+
+```powershell
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm e2e
+```
+
+### Keys
+
+In the game as in M9 (Player 1: W A S D, Attack T, Jump Y, Guard G, Interact J, Special U, Ultimate H, Team Attack B, Pause Esc). In the **menus**: arrows or W A S D move, Enter / Space / T confirm, Esc / Backspace go back. A gamepad works too (D-pad or stick, A/Cross confirms, B/Circle goes back), and so does the mouse.
+
+### Steps
+
+1. **First launch:** "Welcome to Fight For Peace", step 1 of 4. Pick **简体中文**: the whole setup switches to Chinese at once. (You can switch back later in Settings → Language.)
+2. Step 2: subtitle size and background, reduced flashing, reduced camera shake, high contrast, HUD size. Change one with the arrow keys left/right. Next.
+3. Step 3: keyboard layout (QWERTY, QWERTZ, AZERTY). Pick yours.
+4. Step 4: "Press any key or button". Press a key (or a gamepad button): it shows Keyboard (or Gamepad). Type a profile name and finish.
+5. **Village:** the illustrated village with the title (和平之战 in Chinese, "Fight For Peace" in English and German), the menu Play, Academy, Village Store, Collection and Records, Guide, Settings with painted icons, and a detail panel on the right. Bottom right: your profile name, where saves are kept ("this browser", or "game folder" in the portable build) and Version 0.10.0. Move through the menu with the arrows only; Enter opens.
+6. **Store and Guide** say they open in a later update; Esc returns. **Records** shows Stage 1 "Not cleared yet".
+7. **Play → Solo:** the players screen shows Player 1 with your profile and Keyboard. Press T: ready, and it moves on by itself.
+8. **Stage and difficulty:** Stage 1 · The Broken Water Pact; change the difficulty with left/right (the continues change: Easy 5 … Ultimate 0). Next.
+9. **Heroes:** the two heroes with their art (in Chinese 山神 and 河神). A/D switch, T confirms.
+10. **Intro:** six painted story pictures with subtitles (Narrator). T goes to the next one, Esc skips. **Briefing:** the elder speaks line by line (his pose changes); Esc jumps to the summary with the objective, your loadout with your own keys, and the full transcript. Next.
+11. **Ready?** Press T: Stage 1 starts with the hero you picked.
+12. **HUD:** top left your portrait, name, Health, Defense and Attack bars and "Continues". The objective stays in the top banner. In co-op Player 2's cluster appears top right.
+13. **Pause menu:** press Esc. Left: Resume, Move List, How to Play, Controls, Accessibility and Audio, Current Objective, Restart from Checkpoint, Return to Village. Moving down shows each one's details on the right (How to Play uses your own keys). Controls and Accessibility open the settings and come back to the pause menu with Esc. Esc resumes.
+14. **Checkpoint and Continue:** play to Beat 3 ("Checkpoint saved"), Esc → Return to Village → Yes. The village now shows **Continue** at the top with "Stage 1 · beat 3 · …" in the detail panel. Continue starts at Beat 3.
+15. **Results:** finish the stage (the Continue from step 14 is the quickest way). The results show "Play again" and "Return to Village"; after a Continue the line says "continued from beat 3". Back in the village, Records shows the clear, best grade, time and highest difficulty, and the run under Recent runs.
+16. **Co-op:** Play → Same-device co-op. Player 2 joins by pressing Num 4 (or a gamepad button), picks a profile or Guest with left/right, and both press Attack to be ready. On the hero screen each player picks their own hero (the same hero cannot be taken twice). In the pause menu, Restart and Return to Village need both players to confirm.
+17. **Settings:** the category rail on the left, each setting shows its scope (Profile or Device). Language switches everything at once, including stage names, objectives, results, banners and move names; after a reload the language stays. Display → Interface size asks "Keep this size?" and changes back after 10 seconds unless you press Keep. Accessibility → Reduced flashing: hits no longer flash the figure white. Audio → Sound effects at 0 % silences the warning beeps.
+18. **Remap:** Settings → Controls → Remap controls. Pick Attack, press Y (Jump's key): "Y is already used for Jump" with Replace / Swap / Cancel. Swap, Apply ("Saved."). Turn on the Live tester and hold Y: it shows "Attack". In the game Y now attacks and T jumps. Reset everything restores the defaults. The Player 2 keyboard tab has the numpad and laptop presets.
+19. **Profile Data:** rename the profile, create a second profile, switch between them. **Export** downloads a `.ffpsave` file; **Import a backup** with that file first shows what it holds, then "Add them" adds a copy (nothing is overwritten). Daily backups can be restored.
+20. **Two tabs:** open the game in a second tab: the village says this profile is open in another tab and changes there are not saved.
+21. **Portable:** in the unzipped portable game, finish the setup, then look in the game folder: a `saves` folder with `profile.….json`, `device.json` and a daily backup. Close the console, start again: the village opens with your profile.

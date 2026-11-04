@@ -265,6 +265,8 @@ export interface StageHudView {
 export interface ResultsView {
   title: string;
   difficulty: string;
+  /** Beat the run started from (0 = the whole stage). */
+  startBeat: number;
   grades: { label: string; value: string; grade: string }[];
   overall: string;
   lines: string[];

@@ -70,6 +70,14 @@ export interface FfpDebugHook {
   onStep(hook: () => boolean | void): void;
   /** Pauses at once (as Esc would); called from a step hook, no further step runs. */
   pauseNow(): void;
+  /** M10 game shell: the open screen, the active profile and the saves. */
+  shell: {
+    screen(): string;
+    profile(): unknown;
+    storage(): string;
+    flush(): Promise<void>;
+    exportText(): Promise<string>;
+  };
   runReplay(log: ReplayLog): number;
   /** Replaces real gamepads with these virtual ones from now on. */
   fakePads(pads: (PadSnapshot | null)[]): void;

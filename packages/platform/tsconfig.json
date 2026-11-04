@@ -3,6 +3,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "dist-types",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "types": ["vitest/globals"]
   },
   "include": ["src", "src/**/*.json", "test"],

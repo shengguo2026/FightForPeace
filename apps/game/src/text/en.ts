@@ -285,9 +285,9 @@ export const STAGE_TEXT = {
 } as const;
 
 /** Grade category names (StageResults grade ids). */
-export const GRADE_TEXT: Record<string, string> = {
+export const GRADE_TEXT = {
   rescue: 'Rescue (workers freed)',
   evidence: 'Investigation (clue and sponsor evidence)',
   continues: 'Continues used',
   time: 'Time',
-};
+} as const;

@@ -100,6 +100,11 @@ export class GameSession {
    * that returns true is removed.
    */
   readonly stepHooks: (() => boolean | void)[] = [];
+  /**
+   * M10: while a shell screen (menus, briefing, results) is open the simulation does not
+   * step at all; the world waits exactly where it is.
+   */
+  held = false;
 
   constructor(
     private readonly seed: number,
@@ -151,7 +156,7 @@ export class GameSession {
   /** Advances by the wall time since the last render frame. Pads must be polled first. */
   advance(elapsedMs: number): FrameReport {
     this.devices.poll();
-    const paused = this.devices.paused;
+    const paused = this.devices.paused || this.held;
     // While paused the accumulator is not fed, so no time debt builds up.
     const { steps, alpha } = this.accumulator.advance(paused ? 0 : elapsedMs);
     const inputs: FrameInput[][] = [];
@@ -164,7 +169,12 @@ export class GameSession {
       step(this.world, frame);
     }
     if (!paused) this.alpha = alpha;
-    return { frame: this.world.frame, hash: hashWorld(this.world), paused, inputs };
+    return {
+      frame: this.world.frame,
+      hash: hashWorld(this.world),
+      paused: this.devices.paused,
+      inputs,
+    };
   }
 
   private runStepHooks(): void {
@@ -190,6 +200,13 @@ export class GameSession {
       coop: this.world.coop,
       run: this.world.run,
     };
+  }
+
+  /** M10: a stage from the shell, with each player's chosen hero. */
+  startStage(stage: string, difficulty: string, beat: number, heroes: readonly string[]): void {
+    this.startArena(stage, difficulty, beat);
+    heroes.forEach((id, slot) => setHero(this.world, slot, id));
+    this.previous = cloneFighters(this.world.bodies);
   }
 
   setFacingMode(slot: number, mode: FacingMode): void {

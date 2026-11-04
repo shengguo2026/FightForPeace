@@ -1,4 +1,4 @@
-import { STAGE_TEXT } from '../text/en';
+import { t } from '../text/i18n';
 import { PLAYER_COLORS, PromptText } from './InputPrompt';
 import type { LabState } from './labState';
 
@@ -113,16 +113,25 @@ export function ResultsOverlay({
   state,
   onAgain,
   onLab,
+  village,
+  continuedFrom,
 }: {
   state: LabState;
   onAgain: () => void;
   onLab: () => void;
+  /** M10: started from the village, so the second button returns there. */
+  village?: () => boolean;
+  /** M10: the beat (0-based) a Continue started from, or null. */
+  continuedFrom?: () => number | null;
 }) {
   const r = state.results.value;
   if (!r) return null;
+  const toVillage = village?.() ?? false;
+  const cont = continuedFrom?.() ?? null;
   const button = (label: string, testId: string, run: () => void) => (
     <button
       data-testid={testId}
+      data-nav
       style={{ font: '18px system-ui, sans-serif', padding: '8px 18px', marginRight: '12px' }}
       onClick={(e) => {
         (e.target as HTMLElement).blur();
@@ -135,6 +144,7 @@ export function ResultsOverlay({
   return (
     <div
       data-testid="results"
+      data-shell-screen
       style={{
         position: 'absolute',
         inset: 0,
@@ -149,7 +159,11 @@ export function ResultsOverlay({
     >
       <div style={{ ...box, padding: '24px 32px', minWidth: '560px', maxWidth: '820px' }}>
         <div style={{ fontSize: '30px', fontWeight: 'bold' }}>{r.title}</div>
-        <div style={{ opacity: 0.8, marginBottom: '12px' }}>{r.difficulty}</div>
+        <div style={{ opacity: 0.8, marginBottom: '12px' }} data-testid="results-difficulty">
+          {cont !== null && toVillage
+            ? `${r.difficulty.split(' · ')[0]} · ${t('results.continued', { n: cont + 1 })}`
+            : r.difficulty}
+        </div>
         <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '12px' }}>
           <tbody>
             {r.grades.map((g) => (
@@ -169,7 +183,7 @@ export function ResultsOverlay({
               </tr>
             ))}
             <tr>
-              <td style={{ paddingTop: '8px', fontWeight: 'bold' }}>{STAGE_TEXT.overall}</td>
+              <td style={{ paddingTop: '8px', fontWeight: 'bold' }}>{t('run.overall')}</td>
               <td />
               <td
                 data-testid="results-overall"
@@ -189,8 +203,10 @@ export function ResultsOverlay({
           <div style={{ fontSize: '17px' }}>{l}</div>
         ))}
         <div style={{ marginTop: '16px' }}>
-          {button(STAGE_TEXT.playAgain, 'results-again', onAgain)}
-          {button(STAGE_TEXT.backToLab, 'results-lab', onLab)}
+          {button(t('results.again'), 'results-again', onAgain)}
+          {toVillage
+            ? button(t('results.village'), 'results-village', onLab)
+            : button(t('run.backToLab'), 'results-lab', onLab)}
         </div>
       </div>
     </div>

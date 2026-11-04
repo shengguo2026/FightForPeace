@@ -3,8 +3,13 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "../dist-types/tests",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "types": ["vitest/globals", "node"]
   },
   "include": ["**/*.ts", "replays/*.json"],
-  "references": [{ "path": "../packages/sim" }]
+  "references": [
+    { "path": "../packages/sim" },
+    { "path": "../packages/platform" },
+    { "path": "../apps/game" }
+  ]
 }

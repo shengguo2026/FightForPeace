@@ -1,3 +1,4 @@
+import { dt, difficultyName, t, type TextId } from '../text/i18n';
 import {
   ActionBit,
   type ComboContext,
@@ -59,9 +60,6 @@ import {
 } from '@ffp/platform';
 import type { GameSession } from '../game';
 import {
-  GRADE_TEXT,
-  STAGE_TEXT,
-  TEXT,
   COOP_EVENT_TEXT,
   TEAM_DENIED_TEXT,
   BREAKER_DENIED,
@@ -728,11 +726,15 @@ const AI_MODE = [
 ];
 
 /** M7 arena panel: budget used / total, pressure per hero, the director's last verdict. */
-const HOLD_TEXT: Partial<Record<number, string>> = {
-  [ChannelKind.Worker]: TEXT.holdWorker,
-  [ChannelKind.Revive]: TEXT.holdRevive,
-  [ChannelKind.Clue]: TEXT.holdClue,
-  [ChannelKind.Evidence]: TEXT.holdEvidence,
+const HOLD_TEXT: Partial<Record<number, TextId>> = {
+  [ChannelKind.Worker]: 'prompt.holdWorker',
+  [ChannelKind.Revive]: 'prompt.holdRevive',
+  [ChannelKind.Clue]: 'prompt.holdClue',
+  [ChannelKind.Evidence]: 'prompt.holdEvidence',
+};
+const holdText = (kind: number) => {
+  const k = HOLD_TEXT[kind];
+  return k ? t(k) : '';
 };
 /** Frames a clue or the evidence text stays on screen; frames a notice stays. */
 const STORY_FRAMES = 600;
@@ -757,37 +759,39 @@ export function refreshStage(session: GameSession, lab: LabState): void {
     if (!h || run.phase === RunPhase.Complete) continue;
     if (isDowned(h)) {
       if (world.bodies.some((b) => b.team === 'hero' && b !== h && !b.ko))
-        prompts.push({ slot, text: TEXT.downedWait, progress: -1 });
+        prompts.push({ slot, text: t('prompt.downedWait'), progress: -1 });
       continue;
     }
     const c = run.channel[slot];
     if (h.state === MoveState.Channel && c && c.kind !== ChannelKind.None) {
       prompts.push({
         slot,
-        text: HOLD_TEXT[c.kind] ?? '',
+        text: holdText(c.kind),
         progress: c.progress / Math.max(1, c.need),
       });
       continue;
     }
     const kind = interactionFor(world, h);
-    if (kind !== ChannelKind.None)
-      prompts.push({ slot, text: HOLD_TEXT[kind] ?? '', progress: -1 });
+    if (kind !== ChannelKind.None) prompts.push({ slot, text: holdText(kind), progress: -1 });
   }
   const e = run.event;
   const age = world.frame - e.frame;
   let story = '';
-  if (e.kind === RunEvent.Clue && age < STORY_FRAMES) story = beat.clue?.text ?? '';
-  if (e.kind === RunEvent.Complete) story = beat.evidence?.text ?? '';
+  const beatKey = `stage.${STAGES[run.stage]!.id}.beat.${beat.id}`;
+  if (e.kind === RunEvent.Clue && age < STORY_FRAMES && beat.clue)
+    story = dt(`${beatKey}.clue`, beat.clue.text);
+  if (e.kind === RunEvent.Complete && beat.evidence)
+    story = dt(`${beatKey}.evidence`, beat.evidence.text);
   const notices: Partial<Record<number, string>> = {
-    [RunEvent.Checkpoint]: STAGE_TEXT.checkpoint,
-    [RunEvent.WorkerFreed]: STAGE_TEXT.workerFreed,
-    [RunEvent.CacheOpen]: STAGE_TEXT.cacheOpen,
-    [RunEvent.ContinueUsed]: STAGE_TEXT.continued,
-    [RunEvent.StageRestart]: STAGE_TEXT.restarted,
-    [RunEvent.ExitOpen]: STAGE_TEXT.exitOpen,
-    [RunEvent.Revived]: STAGE_TEXT.revived.replace('{n}', String(e.detail + 1)),
-    [RunEvent.Rejoined]: STAGE_TEXT.rejoined.replace('{n}', String(e.detail + 1)),
-    [RunEvent.Downed]: STAGE_TEXT.downed.replace('{n}', String(e.detail + 1)),
+    [RunEvent.Checkpoint]: t('run.checkpoint'),
+    [RunEvent.WorkerFreed]: t('run.workerFreed'),
+    [RunEvent.CacheOpen]: t('run.cacheOpen'),
+    [RunEvent.ContinueUsed]: t('run.continued'),
+    [RunEvent.StageRestart]: t('run.restarted'),
+    [RunEvent.ExitOpen]: t('run.exitOpen'),
+    [RunEvent.Revived]: t('run.revived', { n: e.detail + 1 }),
+    [RunEvent.Rejoined]: t('run.rejoined', { n: e.detail + 1 }),
+    [RunEvent.Downed]: t('run.downed', { n: e.detail + 1 }),
   };
   const notice = age < NOTICE_FRAMES ? (notices[e.kind] ?? '') : '';
   const next: StageHudView = { active: true, prompts, story, notice };
@@ -802,22 +806,23 @@ export function refreshStage(session: GameSession, lab: LabState): void {
   const r = stageResults(world)!;
   const st = r.stats;
   const view: ResultsView = {
-    title: STAGE_TEXT.resultsTitle,
+    title: t('run.resultsTitle'),
     difficulty:
-      (DIFFICULTIES[r.difficulty]?.name ?? '') +
-      (r.startBeat > 0 ? ` · ${STAGE_TEXT.practice.replace('{n}', String(r.startBeat + 1))}` : ''),
+      difficultyName(DIFFICULTIES[r.difficulty]?.id ?? '') +
+      (r.startBeat > 0 ? ` · ${t('run.practice', { n: r.startBeat + 1 })}` : ''),
+    startBeat: r.startBeat,
     grades: r.grades.map((g) => ({
-      label: GRADE_TEXT[g.id] ?? g.id,
+      label: dt(`grade.${g.id}`, g.id),
       value: g.value,
       grade: g.grade,
     })),
     overall: r.overall,
     lines: [
-      `Time ${clock(st.frames)} · continues used ${r.continuesUsed}`,
-      `Enemies defeated ${st.defeated} · surrendered ${st.surrendered} · fled ${st.fled}`,
-      `Damage taken ${st.damageTaken} · food eaten ${st.food}`,
-      `Downs ${st.downs} · partner revives ${st.revives}`,
-      STAGE_TEXT.sponsorHook,
+      t('results.line1', { time: clock(st.frames), n: r.continuesUsed }),
+      t('results.line2', { defeated: st.defeated, surrendered: st.surrendered, fled: st.fled }),
+      t('results.line3', { damage: st.damageTaken, food: st.food }),
+      t('results.line4', { downs: st.downs, revives: st.revives }),
+      t('run.sponsorHook'),
     ],
   };
   lab.results.value = view;

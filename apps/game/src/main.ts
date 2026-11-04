@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { render, h } from 'preact';
 import { DEFAULT_KEYBOARD_P1, QualityGovernor, rebind } from '@ffp/platform';
-import { HEROES, STAGES, equip, heroOf } from '@ffp/sim';
+import { HEROES, STAGES, equip, heroOf, stageResults } from '@ffp/sim';
 import { GameSession } from './game';
 import { EQUIP_TEXT } from './text/en';
 import { StageScene, VIEW_HEIGHT, VIEW_WIDTH } from './scenes/StageScene';
@@ -23,6 +23,12 @@ import {
 } from './ui/views';
 import { captureNextKey, installKeyboard, readPads } from './input/browserInput';
 import { installDebugHook } from './debug';
+import { Shell, applyUiScale } from './shell/shell';
+import { ShellRoot, menuPaused } from './shell/ShellRoot';
+import { refreshHud } from './shell/screens/Hud';
+import { injectShellStyles } from './shell/ui';
+import { PadNav, dispatchNav, keyNav } from './shell/nav';
+import { setLocale } from './text/i18n';
 
 const devBuild = import.meta.env.DEV || import.meta.env.MODE === 'e2e';
 // M4: the Lab is the playable build, so it is visible everywhere and Dummy 1 attacks with
@@ -129,6 +135,21 @@ const actions: LabActions = {
   },
 };
 
+// M10: the game shell (first launch, the village, the play flow, settings and saves).
+// Automated tests of earlier milestones open the Lab directly, as do `?lab` and
+// `?stage=`; `?shell` always opens the shell.
+const params = new URLSearchParams(location.search);
+const stageParam = params.get('stage');
+const useShell =
+  params.has('shell') || !((devBuild && navigator.webdriver) || params.has('lab') || stageParam);
+const shell = new Shell(session, lab, __FFP_VERSION__);
+shell.onQuality = (setting) => quality.set(setting);
+injectShellStyles();
+if (useShell) {
+  session.held = true;
+  lab.visible.value = false;
+} else shell.go('lab');
+
 const root = document.getElementById('lab')!;
 render(
   h(
@@ -136,20 +157,27 @@ render(
     null,
     h(StageHud, { state: lab }),
     h(LabOverlay, { state: lab, actions }),
-    h(PauseOverlay, { state: lab }),
+    h(PauseOverlay, { state: lab, menu: () => useShell }),
     h(ResultsOverlay, {
       state: lab,
-      onAgain: () => actions.startArena(lab.arenaPick.value.arena),
-      onLab: () => actions.startArena(null),
+      village: () => useShell && shell.fromShell.value,
+      continuedFrom: () => shell.continued.value?.beat ?? null,
+      onAgain: () => {
+        if (useShell && shell.fromShell.value) shell.startStage();
+        else actions.startArena(lab.arenaPick.value.arena);
+      },
+      onLab: () => {
+        if (useShell && shell.fromShell.value) shell.returnToVillage();
+        else actions.startArena(null);
+      },
     }),
+    useShell ? h(ShellRoot, { shell, state: lab }) : null,
     h(VersionTag, { version: __FFP_VERSION__ }),
   ),
   root,
 );
 
 // M9: `?stage=stage1` (optionally `&difficulty=easy&beat=3`) opens the stage journey at once.
-const params = new URLSearchParams(location.search);
-const stageParam = params.get('stage');
 const stageId = stageParam && /^\d+$/.test(stageParam) ? `stage${stageParam}` : stageParam;
 if (stageId && STAGES.some((s) => s.id === stageId)) {
   const id = stageId;
@@ -161,25 +189,61 @@ if (stageId && STAGES.some((s) => s.id === stageId)) {
   };
   actions.startArena(id);
   lab.visible.value = false;
+  shell.go('game');
 }
 
-installKeyboard(session, (code) => {
-  if (code === 'F1') lab.visible.value = !lab.visible.value;
-  if (code === 'F2') lab.settingsOpen.value = !lab.settingsOpen.value;
-  if (code === 'F3') actions.setShowCollision(!lab.showCollision.value);
-  if (code === 'F4') actions.setDummiesChase(!lab.dummiesChase.value);
-  if (code === 'F5') lab.moveListOpen.value = !lab.moveListOpen.value;
-  if (code === 'F6') lab.slowMotion.value = !lab.slowMotion.value;
-  if (code === 'F7') lab.recipesOpen.value = !lab.recipesOpen.value;
-  if (code === 'F8') lab.defenseOpen.value = !lab.defenseOpen.value;
-  if (code === 'F9') lab.grabOpen.value = !lab.grabOpen.value;
-  if (code === 'F10') lab.weaponOpen.value = !lab.weaponOpen.value;
-  // M7 arena mode: Home restarts the picked arena, End goes back to the Lab.
-  if (code === 'Home') actions.startArena(lab.arenaPick.value.arena);
-  if (code === 'End') actions.startArena(null);
-});
+/** The shell wants menu input: a menu screen, or the pause menu or results over play. */
+const shellInput = () => useShell && (!shell.live || menuPaused(lab) || lab.results.value !== null);
+const padNav = new PadNav();
+const TYPING_KEYS = new Set(['Escape', 'Enter', 'NumpadEnter', 'ArrowUp', 'ArrowDown', 'Tab']);
 
-if (devBuild) installDebugHook(session, lab, quality);
+installKeyboard(
+  session,
+  (code) => {
+    // The Lab's function keys work only in the Lab (and in the earlier milestones' tests).
+    if (useShell && shell.screen.value !== 'lab') return;
+    if (code === 'F1') lab.visible.value = !lab.visible.value;
+    if (code === 'F2') lab.settingsOpen.value = !lab.settingsOpen.value;
+    if (code === 'F3') actions.setShowCollision(!lab.showCollision.value);
+    if (code === 'F4') actions.setDummiesChase(!lab.dummiesChase.value);
+    if (code === 'F5') lab.moveListOpen.value = !lab.moveListOpen.value;
+    if (code === 'F6') lab.slowMotion.value = !lab.slowMotion.value;
+    if (code === 'F7') lab.recipesOpen.value = !lab.recipesOpen.value;
+    if (code === 'F8') lab.defenseOpen.value = !lab.defenseOpen.value;
+    if (code === 'F9') lab.grabOpen.value = !lab.grabOpen.value;
+    if (code === 'F10') lab.weaponOpen.value = !lab.weaponOpen.value;
+    // M7 arena mode: Home restarts the picked arena, End goes back to the Lab.
+    if (code === 'Home') actions.startArena(lab.arenaPick.value.arena);
+    if (code === 'End') actions.startArena(null);
+  },
+  (e) => {
+    if (!shellInput()) return false;
+    const target = e.target as HTMLElement | null;
+    // Text fields keep their keys (names); only leaving them navigates.
+    if (
+      target &&
+      (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') &&
+      !TYPING_KEYS.has(e.code)
+    )
+      return true;
+    if (e.code === 'Tab') return false;
+    e.preventDefault();
+    if (e.type !== 'keydown' || e.repeat) return true;
+    const p2 = session.devices.keyboardP2.bindings;
+    const ev = keyNav(e.code, session.devices.keyboardP1.bindings, p2);
+    if (ev) dispatchNav(ev);
+    return true;
+  },
+);
+
+if (useShell) {
+  const d = new URLSearchParams(location.search);
+  if (d.has('lang')) setLocale(d.get('lang') as 'en');
+  void shell.boot().then(() => applyUiScale(shell.device.value?.uiScale ?? 100));
+  window.addEventListener('beforeunload', () => void shell.flushSave());
+}
+
+if (devBuild) installDebugHook(session, lab, quality, shell);
 
 let last: number | undefined;
 let fpsFrames = 0;
@@ -188,7 +252,11 @@ let fpsSince = 0;
 function tick(now: number): void {
   const elapsed = last === undefined ? 0 : now - last;
   last = now;
-  session.devices.pollPads(readPads());
+  const pads = readPads();
+  if (shellInput()) {
+    for (const ev of padNav.poll(pads)) dispatchNav(ev);
+  } else padNav.reset(pads);
+  session.devices.pollPads(pads);
   // Slow motion is render-side only: the simulation still steps 1/60 s at a time.
   const report = session.advance(lab.slowMotion.value ? elapsed / 4 : elapsed);
 
@@ -214,6 +282,10 @@ function tick(now: number): void {
   refreshArena(session, lab);
   refreshCoop(session, lab);
   refreshStage(session, lab);
+  if (useShell && shell.screen.value === 'game') {
+    refreshHud(session);
+    shell.watchRun(lab.results.value ? stageResults(session.world) : null);
+  }
   const held = heldKeys(session);
   if (held.join(' ') !== lab.heldKeys.value.join(' ')) lab.heldKeys.value = held;
 
