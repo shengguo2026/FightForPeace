@@ -12,7 +12,7 @@ import { takeBuffered } from './buffer';
 import { VerdictTo, resolveDir, selectAction, startAction } from './actions';
 import { applyHit, canHit, hurtbox, runningAction, sourceOf, type HitSource } from './hits';
 import { enter, interrupt, recoil, toActionable } from './reactions';
-import { activeSegment, activeSpan, kitOf, routeAction, routeCode, segmentCount } from './roster';
+import { activeSegment, activeSpan, kitOf, routeAction, routeCodeOf, segmentCount } from './roster';
 import { type ActionDef, Dir, Reject } from './types';
 
 /**
@@ -316,7 +316,7 @@ function routeHit(world: World, g: Fighter, t: Fighter, a: ActionDef, seg: numbe
     applyHit(world, sourceOf(g), a, seg, t);
     if (a.tags.includes('bodyProjectile') && t.state === MoveState.Launched) {
       t.thrownBy = g.id;
-      t.thrownCode = routeCode(g.team, g.hero, g.action);
+      t.thrownCode = routeCodeOf(g);
     }
     logGrab(world, g, GrabEvent.Throw);
     return;

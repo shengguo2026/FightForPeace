@@ -1,0 +1,43 @@
+# Timber board: the one interactive fragment of the stacked sluice boards (spec §11.2).
+# Improvised debris of the "long" profile: one shared strike plus a throw, and little
+# integrity. M6 candidates.
+id: timber-board
+name: Timber Board
+class: improvisedDebris
+debris: long
+hands: 2
+integrity: { max: 30, worn: 20, critical: 10, hit: 10, guard: 5, clash: 10, throw: 30 }
+gripResistance: 20
+pickup: 10
+hazardDestructible: true
+throw:
+  speed: 10
+  lift: 3
+  responses: [blockable, exactDeflectable, strikeDeflectable]
+actions:
+  - id: board-swing
+    name: Board Swing
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 12, active: 4, recovery: 20 }
+    hitbox: { x: 15, w: 150, y: 90, h: 170, depth: 38 }
+    damage: 60
+    reaction: { kind: knockback, hitstun: 24, push: 11 }
+    costs: { stun: 15, scale: 12, starter: 10 }
+    meter: 4
+    clash: heavy
+    breakPower: 50
+    tags: [wallBounce, impact]
+
+  - id: board-throw
+    name: Board Throw
+    category: weaponThrow
+    input: { context: weaponThrow, dir: neutral }
+    frames: { startup: 12, active: 1, recovery: 16 }
+    hitbox: { x: 0, w: 110, y: 100, h: 50, depth: 32 }
+    damage: 50
+    reaction: { kind: knockdown, hitstun: 28, push: 6, lift: 5 }
+    costs: { stun: 15, scale: 12 }
+    meter: 3
+    breakPower: 40
+    tags: [impact]

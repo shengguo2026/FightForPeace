@@ -8,6 +8,8 @@ import {
   kitOf,
   routeAction,
   runReplay,
+  WEAPONS,
+  weaponIndex,
 } from '@ffp/sim';
 import type { GameSession } from './game';
 import type { LabState } from './ui/labState';
@@ -59,6 +61,47 @@ export function installDebugHook(session: GameSession, lab: LabState): void {
       return h ? escapeOpen(session.world, h) : false;
     },
     projectiles: () => session.world.projectiles.length,
+    items: () =>
+      session.world.items.map((i) => ({
+        id: i.id,
+        weapon: WEAPONS[i.def]?.id ?? '?',
+        state: i.state,
+        holder: i.holder,
+        integrity: i.integrity,
+        x: i.x / 256,
+        z: i.z / 256,
+        reserveFor: i.reserveFor,
+      })),
+    scenery: () => {
+      const env = session.world.environment;
+      const p = env.surfaces[0];
+      const b = env.breakables[0];
+      const c = env.hazards[0];
+      return {
+        pillar: { cracked: p?.cracked ?? false, impacts: p?.impacts ?? 0 },
+        boards: { state: b?.state ?? 0, power: b?.power ?? 0 },
+        cog: { phase: c?.phase ?? 0, phaseFrame: c?.phaseFrame ?? 0 },
+        log: {
+          kind: env.log.kind,
+          frame: env.log.frame,
+          damage: env.log.damage,
+          detail: env.log.detail,
+        },
+      };
+    },
+    placeAt: (slot, x, z) => {
+      const h = heroOf(session.world, slot);
+      if (!h) return;
+      h.x = x * 256;
+      h.z = z * 256;
+      h.facing = 1;
+    },
+    armDummy: (weapon) => {
+      const index = weapon === null ? -1 : weaponIndex(weapon);
+      lab.trainer.value = { ...lab.trainer.value, arm: index };
+      session.armDummy(index);
+    },
+    dummyToPillar: () => session.dummyToPillar(),
   };
 }
 
@@ -94,5 +137,7 @@ function view(b: Fighter) {
     grabEvent: b.grabEvent,
     grabOffset: b.grabOffset,
     loadout: [...b.loadout],
+    weapon: b.item !== 0 ? (WEAPONS[b.wkit]?.id ?? null) : null,
+    weaponEvent: b.weaponEvent,
   };
 }

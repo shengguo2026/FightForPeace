@@ -1,0 +1,210 @@
+# Canal Workstaff (spec §11.1, F&D §7.1): Stage 1's complete melee Weapon Core. Every hero
+# can use the core; the founders each override one directional branch (Mountain: bracing,
+# River: vaulting and redirection). Frame data and lifecycle numbers are M6 candidates for
+# Combat Lab tuning. Units: frames at 60 Hz, pixels, pixels per frame; hitbox x/w run
+# forward from the holder's centre, y/h up from the feet. `clash` is the clash strength,
+# `disarmPower` meets the holder's grip resistance, `breakPower` damages scenery.
+id: workstaff
+name: Canal Workstaff
+class: temporaryMelee
+hands: 2
+integrity: { max: 120, worn: 70, critical: 30, hit: 6, guard: 3, clash: 10, throw: 20, deflect: 4 }
+gripResistance: 40
+pickup: 8
+hazardDestructible: true
+throw:
+  speed: 15
+  lift: 1
+  responses: [blockable, exactDeflectable, strikeDeflectable]
+actions:
+  - id: staff-thrust
+    name: Lock-Pole Thrust
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 7, active: 3, recovery: 13 }
+    hitbox: { x: 20, w: 150, y: 150, h: 80, depth: 34 }
+    damage: 40
+    reaction: { kind: stagger, hitstun: 18, push: 3 }
+    costs: { stun: 10, scale: 10, starter: 15 }
+    meter: 3
+    clash: light
+    breakPower: 25
+    links:
+      - { to: staff-sweep, category: chain, on: [hit, guard] }
+      - { to: staff-rise, category: chain, on: [hit, guard] }
+
+  - id: staff-sweep
+    name: Millrace Sweep
+    category: standing
+    input: { context: chain, dir: neutral }
+    frames: { startup: 9, active: 4, recovery: 15 }
+    hitbox: { x: 10, w: 165, y: 80, h: 150, depth: 38 }
+    damage: 50
+    reaction: { kind: stagger, hitstun: 22, push: 4 }
+    costs: { stun: 12, scale: 10 }
+    meter: 4
+    clash: heavy
+    breakPower: 40
+    tags: [projectileDeflect]
+    links:
+      - { to: staff-overhead, category: chain, on: [hit, guard] }
+
+  - id: staff-overhead
+    name: Weirpost Drop
+    category: standing
+    input: { context: chain, dir: neutral }
+    frames: { startup: 13, active: 4, recovery: 20 }
+    hitbox: { x: 20, w: 160, y: 100, h: 200, depth: 36 }
+    damage: 75
+    reaction: { kind: knockback, hitstun: 26, push: 12 }
+    costs: { stun: 18, scale: 15 }
+    meter: 6
+    clash: heavy
+    disarmPower: 60
+    breakPower: 60
+    tags: [wallBounce, impact]
+
+  - id: staff-lunge
+    name: Towpath Lunge
+    category: standing
+    input: { context: neutral, dir: forward }
+    frames: { startup: 12, active: 4, recovery: 18 }
+    hitbox: { x: 20, w: 185, y: 140, h: 80, depth: 30 }
+    damage: 55
+    reaction: { kind: knockback, hitstun: 24, push: 9 }
+    costs: { stun: 15, scale: 12 }
+    meter: 5
+    clash: light
+    tags: [impact]
+    moves:
+      - { from: 1, to: 12, forward: 4 }
+
+  - id: staff-hook
+    name: Canal Hook
+    category: standing
+    input: { context: neutral, dir: backward }
+    frames: { startup: 10, active: 4, recovery: 16 }
+    hitbox: { x: 40, w: 160, y: 60, h: 120, depth: 34 }
+    damage: 35
+    reaction: { kind: stagger, hitstun: 24 }
+    costs: { stun: 12, scale: 10 }
+    meter: 4
+    clash: light
+    disarmPower: 45
+    pull: 7
+    note: The hook draws the target in and can pull a weapon out of its hands.
+
+  - id: staff-rise
+    name: Sluice Lift
+    category: standing
+    input: { context: neutral, dir: up }
+    frames: { startup: 10, active: 5, recovery: 20 }
+    hitbox: { x: 15, w: 140, y: 120, h: 200, depth: 40 }
+    damage: 50
+    reaction: { kind: launch, hitstun: 30, push: 1.5, lift: 15 }
+    costs: { stun: 15, scale: 12, juggle: 30 }
+    meter: 5
+    clash: light
+    links:
+      - { to: jump, input: neutral, category: jumpChase, on: [hit] }
+
+  - id: staff-low
+    name: Reedbed Sweep
+    category: low
+    input: { context: neutral, dir: down }
+    frames: { startup: 9, active: 4, recovery: 18 }
+    hitbox: { x: 15, w: 165, y: 0, h: 80, depth: 40 }
+    damage: 45
+    reaction: { kind: knockdown, hitstun: 30, push: 3, lift: 5 }
+    costs: { stun: 20, scale: 12 }
+    meter: 5
+    breakPower: 30
+    tags: [opensGroundWindow]
+
+  - id: staff-air
+    name: Bargepole Arc
+    category: aerial
+    input: { context: air, dir: neutral }
+    frames: { startup: 6, active: 4, recovery: 9, landing: true }
+    hitbox: { x: 10, w: 160, y: -10, h: 150, depth: 36 }
+    damage: 40
+    reaction: { kind: stagger, hitstun: 18, push: 3, airPop: 7 }
+    costs: { stun: 10, scale: 10, juggle: 10 }
+    meter: 3
+    clash: light
+
+  - id: staff-ground
+    name: Mooring Strike
+    category: ground
+    input: { context: groundFocus, dir: neutral }
+    frames: { startup: 9, active: 3, recovery: 16 }
+    hitbox: { x: 10, w: 170, y: 0, h: 70, depth: 36 }
+    damage: 45
+    reaction: { kind: knockdown, hitstun: 28 }
+    costs: { stun: 15, scale: 12 }
+    meter: 4
+    tags: [terminalKnockdown, groundFinisher]
+
+  - id: staff-dash
+    name: Running Pole
+    category: dash
+    input: { context: dash, dir: neutral }
+    frames: { startup: 8, active: 4, recovery: 16 }
+    hitbox: { x: 15, w: 175, y: 120, h: 100, depth: 36 }
+    damage: 50
+    reaction: { kind: knockback, hitstun: 24, push: 9 }
+    costs: { stun: 15, scale: 12 }
+    meter: 5
+    clash: light
+    tags: [impact]
+    moves:
+      - { from: 1, to: 8, forward: 6 }
+
+  - id: staff-throw
+    name: Workstaff Throw
+    category: weaponThrow
+    input: { context: weaponThrow, dir: neutral }
+    frames: { startup: 10, active: 1, recovery: 14 }
+    hitbox: { x: 0, w: 120, y: 120, h: 40, depth: 30 }
+    damage: 60
+    reaction: { kind: knockdown, hitstun: 30, push: 6, lift: 5 }
+    costs: { stun: 15, scale: 12 }
+    meter: 4
+    breakPower: 40
+    tags: [impact]
+
+affinity:
+  mountain:
+    - id: weir-brace
+      name: Weir Brace
+      replaces: staff-lunge
+      category: standing
+      input: { context: neutral, dir: forward }
+      frames: { startup: 12, active: 5, recovery: 20 }
+      hitbox: { x: 15, w: 150, y: 100, h: 180, depth: 38 }
+      damage: 60
+      reaction: { kind: knockback, hitstun: 26, push: 13 }
+      costs: { stun: 15, scale: 12 }
+      meter: 5
+      clash: heavy
+      armor: { from: 4, to: 10 }
+      tags: [guardPressure, wallBounce, impact]
+      note: Mountain affinity. The planted staff braces him; he drives the target into the scenery.
+      moves:
+        - { from: 1, to: 12, forward: 3 }
+  river:
+    - id: vault-kick
+      name: Vaulting Kick
+      replaces: staff-lunge
+      category: standing
+      input: { context: neutral, dir: forward }
+      frames: { startup: 10, active: 5, recovery: 18 }
+      hitbox: { x: 10, w: 130, y: 140, h: 140, depth: 36 }
+      damage: 55
+      reaction: { kind: knockback, hitstun: 24, push: 8 }
+      costs: { stun: 15, scale: 12 }
+      meter: 5
+      tags: [passThrough, sideSwitch]
+      note: River affinity. She vaults over the target and kicks it the other way (redirection).
+      moves:
+        - { from: 1, to: 10, forward: 8 }

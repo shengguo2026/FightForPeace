@@ -120,3 +120,18 @@ actions:
     grab: { hold: 48, escapeFrom: 20, escapeWindow: 11, restraint: 150 }
     moves:
       - { from: 1, to: 18, forward: 1 }
+
+  # M6: a tagged disarming strike (F&D §7.1 Tagged Impact Disarming). Never part of the
+  # "cycle through all" script (selectOnly); the Lab picks it by name.
+  - id: disarming-swipe
+    name: Disarming Swipe
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 16, active: 4, recovery: 22, blockstun: 14 }
+    hitbox: { x: 20, w: 125, y: 100, h: 160, depth: 36 }
+    damage: 40
+    reaction: { kind: stagger, hitstun: 22, push: 4 }
+    costs: { stun: 12, scale: 10, starter: 10, guard: 15 }
+    meter: 0
+    disarmPower: 50
+    tags: [counterable, selectOnly]

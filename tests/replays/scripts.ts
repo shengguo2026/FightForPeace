@@ -499,6 +499,49 @@ export const grabEscapeScript: ReplayScript = {
   frames: grabEscape(),
 };
 
+const ARMORY_OPTIONS: WorldOptions = {
+  dummies: 1,
+  armory: true,
+  environment: true,
+  trainer: { attackers: 1, pattern: 8, interval: 100, approach: true },
+};
+
+/**
+ * M6 weapons and the mill corner: pick up the Workstaff, break the sluice boards, a staff
+ * string on the dummy (which answers with its Disarming Swipe), drop the staff, then take
+ * the Handwheel and throw it. The cog keeps cycling throughout.
+ */
+function weaponsEnvironment(): FrameInput[][] {
+  const r = new Recorder(31, ARMORY_OPTIONS);
+  r.walkTo(0, 570, 860, 1);
+  r.pressWhen(0, () => r.free(0), ['Interact']);
+  r.wait(() => r.free(0), 40);
+  r.walkTo(0, 560, 715, 1);
+  for (let i = 0; i < 6; i += 1) r.pressWhen(0, () => r.free(0), ['Attack']);
+  r.wait(() => r.free(0), 60);
+  const d = r.body(101);
+  r.walkTo(0, Math.trunc(d.x / 256) - 150, Math.trunc(d.z / 256), 1);
+  r.pressWhen(0, () => r.free(0), ['Attack']);
+  r.idle(0, 12).tick(0, [], ['Attack']);
+  r.idle(0, 14).tick(0, [], ['Attack']);
+  r.wait(() => r.free(0), 120);
+  r.tick(0, ['down'], ['Interact']);
+  r.wait(() => r.free(0), 60);
+  r.walkTo(0, 730, 950, 1);
+  r.pressWhen(0, () => r.free(0), ['Interact']);
+  r.wait(() => r.free(0), 40);
+  r.pressWhen(0, () => r.free(0), ['Interact']);
+  r.idle(0, 150);
+  return r.frames;
+}
+
+export const weaponsEnvironmentScript: ReplayScript = {
+  name: 'weapons-environment',
+  seed: 31,
+  options: ARMORY_OPTIONS,
+  frames: weaponsEnvironment(),
+};
+
 export const SCRIPTS = [
   walkSquare,
   dashJump,
@@ -508,6 +551,7 @@ export const SCRIPTS = [
   defenseDrillsScript,
   specialsGrabsScript,
   grabEscapeScript,
+  weaponsEnvironmentScript,
 ];
 
 export type { ReplayLog };

@@ -1,1 +1,2963 @@
-{ "version": 1, "assets": {} }
+{
+  "version": 2,
+  "assets": {
+    "enemy.trainer.sheet.attack": {
+      "url": "art/trainer-attack.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 355,
+        "cells": [
+          {
+            "x0": 98,
+            "y0": 46,
+            "x1": 286,
+            "foot": 355
+          },
+          {
+            "x0": 68,
+            "y0": 116,
+            "x1": 317,
+            "foot": 354
+          },
+          {
+            "x0": 71,
+            "y0": 114,
+            "x1": 313,
+            "foot": 355
+          },
+          {
+            "x0": 69,
+            "y0": 112,
+            "x1": 316,
+            "foot": 355
+          },
+          {
+            "x0": 19,
+            "y0": 113,
+            "x1": 366,
+            "foot": 355
+          },
+          {
+            "x0": 75,
+            "y0": 122,
+            "x1": 308,
+            "foot": 354
+          }
+        ]
+      }
+    },
+    "enemy.trainer.sheet.idle-walk": {
+      "url": "art/trainer-idle-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 355,
+        "cells": [
+          {
+            "x0": 107,
+            "y0": 54,
+            "x1": 278,
+            "foot": 355
+          },
+          {
+            "x0": 107,
+            "y0": 61,
+            "x1": 278,
+            "foot": 355
+          },
+          {
+            "x0": 88,
+            "y0": 63,
+            "x1": 296,
+            "foot": 354
+          },
+          {
+            "x0": 109,
+            "y0": 59,
+            "x1": 276,
+            "foot": 355
+          },
+          {
+            "x0": 85,
+            "y0": 70,
+            "x1": 301,
+            "foot": 355
+          },
+          {
+            "x0": 112,
+            "y0": 54,
+            "x1": 274,
+            "foot": 354
+          }
+        ]
+      }
+    },
+    "enemy.trainer.sheet.react": {
+      "url": "art/trainer-react.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 80,
+            "y0": 64,
+            "x1": 304,
+            "foot": 354
+          },
+          {
+            "x0": 100,
+            "y0": 101,
+            "x1": 285,
+            "foot": 355
+          },
+          {
+            "x0": 40,
+            "y0": 82,
+            "x1": 344,
+            "foot": 315
+          },
+          {
+            "x0": 12,
+            "y0": 258,
+            "x1": 373,
+            "foot": 354
+          },
+          {
+            "x0": 61,
+            "y0": 203,
+            "x1": 323,
+            "foot": 355
+          },
+          {
+            "x0": 87,
+            "y0": 144,
+            "x1": 297,
+            "foot": 354
+          }
+        ]
+      }
+    },
+    "hero.mountain.pose.aerial.cornerstone-sweep": {
+      "url": "art/mountain-cornerstone-sweep.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 333,
+        "cells": [
+          {
+            "x0": 68,
+            "y0": 47,
+            "x1": 316,
+            "foot": 333
+          },
+          {
+            "x0": 11,
+            "y0": 54,
+            "x1": 373,
+            "foot": 315
+          },
+          {
+            "x0": 85,
+            "y0": 44,
+            "x1": 300,
+            "foot": 337
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.aerial.rafter-palm": {
+      "url": "art/mountain-rafter-palm.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 330,
+        "cells": [
+          {
+            "x0": 57,
+            "y0": 27,
+            "x1": 328,
+            "foot": 330
+          },
+          {
+            "x0": 47,
+            "y0": 23,
+            "x1": 338,
+            "foot": 308
+          },
+          {
+            "x0": 89,
+            "y0": 14,
+            "x1": 295,
+            "foot": 345
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.aerial.stonefall-knee": {
+      "url": "art/mountain-stonefall-knee.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 333,
+        "cells": [
+          {
+            "x0": 40,
+            "y0": 27,
+            "x1": 345,
+            "foot": 323
+          },
+          {
+            "x0": 12,
+            "y0": 12,
+            "x1": 373,
+            "foot": 333
+          },
+          {
+            "x0": 43,
+            "y0": 121,
+            "x1": 341,
+            "foot": 354
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.dash.rampart-charge": {
+      "url": "art/mountain-rampart-charge.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 34,
+            "y0": 24,
+            "x1": 350,
+            "foot": 354
+          },
+          {
+            "x0": 12,
+            "y0": 41,
+            "x1": 373,
+            "foot": 352
+          },
+          {
+            "x0": 51,
+            "y0": 7,
+            "x1": 334,
+            "foot": 354
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.ground.foundation-rise": {
+      "url": "art/mountain-foundation-rise.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 96,
+            "y0": 160,
+            "x1": 288,
+            "foot": 354
+          },
+          {
+            "x0": 88,
+            "y0": 93,
+            "x1": 298,
+            "foot": 354
+          },
+          {
+            "x0": 90,
+            "y0": 5,
+            "x1": 295,
+            "foot": 354
+          },
+          {
+            "x0": 88,
+            "y0": 59,
+            "x1": 296,
+            "foot": 354
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.ground.lockgate-press": {
+      "url": "art/mountain-lockgate-press.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 24,
+            "y0": 10,
+            "x1": 362,
+            "foot": 354
+          },
+          {
+            "x0": 25,
+            "y0": 68,
+            "x1": 359,
+            "foot": 354
+          },
+          {
+            "x0": 24,
+            "y0": 87,
+            "x1": 360,
+            "foot": 354
+          },
+          {
+            "x0": 40,
+            "y0": 5,
+            "x1": 345,
+            "foot": 353
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.ground.settling-palm": {
+      "url": "art/mountain-settling-palm.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 34,
+            "y0": 9,
+            "x1": 351,
+            "foot": 354
+          },
+          {
+            "x0": 51,
+            "y0": 102,
+            "x1": 334,
+            "foot": 354
+          },
+          {
+            "x0": 55,
+            "y0": 4,
+            "x1": 329,
+            "foot": 354
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.low.faultline-reap": {
+      "url": "art/mountain-faultline-reap.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 50,
+            "y0": 117,
+            "x1": 335,
+            "foot": 354
+          },
+          {
+            "x0": 12,
+            "y0": 166,
+            "x1": 373,
+            "foot": 353
+          },
+          {
+            "x0": 60,
+            "y0": 112,
+            "x1": 325,
+            "foot": 354
+          },
+          {
+            "x0": 72,
+            "y0": 49,
+            "x1": 312,
+            "foot": 354
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.special.gatebreaker-advance": {
+      "url": "art/mountain-gatebreaker-advance.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 347,
+        "cells": [
+          {
+            "x0": 51,
+            "y0": 30,
+            "x1": 333,
+            "foot": 347
+          },
+          {
+            "x0": 38,
+            "y0": 36,
+            "x1": 345,
+            "foot": 348
+          },
+          {
+            "x0": 28,
+            "y0": 37,
+            "x1": 356,
+            "foot": 347
+          },
+          {
+            "x0": 27,
+            "y0": 52,
+            "x1": 356,
+            "foot": 347
+          },
+          {
+            "x0": 59,
+            "y0": 31,
+            "x1": 324,
+            "foot": 348
+          },
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.special.rising-rampart": {
+      "url": "art/mountain-rising-rampart.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 348,
+        "cells": [
+          {
+            "x0": 56,
+            "y0": 124,
+            "x1": 328,
+            "foot": 348
+          },
+          {
+            "x0": 73,
+            "y0": 52,
+            "x1": 311,
+            "foot": 348
+          },
+          {
+            "x0": 93,
+            "y0": 15,
+            "x1": 291,
+            "foot": 333
+          },
+          {
+            "x0": 62,
+            "y0": 78,
+            "x1": 322,
+            "foot": 348
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.special.skybreak-column": {
+      "url": "art/mountain-skybreak-column.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 82,
+            "y0": 175,
+            "x1": 302,
+            "foot": 354
+          },
+          {
+            "x0": 82,
+            "y0": 83,
+            "x1": 301,
+            "foot": 354
+          },
+          {
+            "x0": 96,
+            "y0": 8,
+            "x1": 287,
+            "foot": 354
+          },
+          {
+            "x0": 97,
+            "y0": 15,
+            "x1": 286,
+            "foot": 351
+          },
+          {
+            "x0": 76,
+            "y0": 110,
+            "x1": 308,
+            "foot": 352
+          },
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.special.stonewake-palm": {
+      "url": "art/mountain-stonewake-palm.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 350,
+        "cells": [
+          {
+            "x0": 40,
+            "y0": 19,
+            "x1": 344,
+            "foot": 351
+          },
+          {
+            "x0": 32,
+            "y0": 32,
+            "x1": 352,
+            "foot": 350
+          },
+          {
+            "x0": 55,
+            "y0": 26,
+            "x1": 329,
+            "foot": 350
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.standing.anchor-hook": {
+      "url": "art/mountain-anchor-hook.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 74,
+            "y0": 55,
+            "x1": 311,
+            "foot": 354
+          },
+          {
+            "x0": 66,
+            "y0": 57,
+            "x1": 319,
+            "foot": 354
+          },
+          {
+            "x0": 65,
+            "y0": 53,
+            "x1": 318,
+            "foot": 354
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.standing.brace-elbow": {
+      "url": "art/mountain-brace-elbow.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 58,
+            "y0": 53,
+            "x1": 326,
+            "foot": 353
+          },
+          {
+            "x0": 62,
+            "y0": 54,
+            "x1": 323,
+            "foot": 354
+          },
+          {
+            "x0": 65,
+            "y0": 53,
+            "x1": 319,
+            "foot": 354
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.standing.gatepost-hammer": {
+      "url": "art/mountain-gatepost-hammer.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 98,
+            "y0": 18,
+            "x1": 287,
+            "foot": 354
+          },
+          {
+            "x0": 86,
+            "y0": 63,
+            "x1": 298,
+            "foot": 354
+          },
+          {
+            "x0": 73,
+            "y0": 89,
+            "x1": 311,
+            "foot": 354
+          },
+          {
+            "x0": 106,
+            "y0": 53,
+            "x1": 279,
+            "foot": 354
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.standing.high-bank-lift": {
+      "url": "art/mountain-high-bank-lift.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 84,
+            "y0": 112,
+            "x1": 301,
+            "foot": 354
+          },
+          {
+            "x0": 97,
+            "y0": 5,
+            "x1": 287,
+            "foot": 354
+          },
+          {
+            "x0": 102,
+            "y0": 9,
+            "x1": 282,
+            "foot": 354
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.standing.low-bank-sweep": {
+      "url": "art/mountain-low-bank-sweep.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 32,
+            "y0": 89,
+            "x1": 352,
+            "foot": 353
+          },
+          {
+            "x0": 11,
+            "y0": 135,
+            "x1": 372,
+            "foot": 354
+          },
+          {
+            "x0": 54,
+            "y0": 49,
+            "x1": 331,
+            "foot": 354
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.standing.masons-touch": {
+      "url": "art/mountain-masons-touch.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 353,
+        "cells": [
+          {
+            "x0": 52,
+            "y0": 54,
+            "x1": 333,
+            "foot": 353
+          },
+          {
+            "x0": 44,
+            "y0": 54,
+            "x1": 341,
+            "foot": 353
+          },
+          {
+            "x0": 59,
+            "y0": 51,
+            "x1": 325,
+            "foot": 353
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.standing.stone-shoulder": {
+      "url": "art/mountain-stone-shoulder.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 69,
+            "y0": 65,
+            "x1": 316,
+            "foot": 354
+          },
+          {
+            "x0": 57,
+            "y0": 96,
+            "x1": 327,
+            "foot": 353
+          },
+          {
+            "x0": 59,
+            "y0": 105,
+            "x1": 325,
+            "foot": 353
+          },
+          {
+            "x0": 80,
+            "y0": 53,
+            "x1": 304,
+            "foot": 354
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.pose.ultimate.rivergate-oath": {
+      "url": "art/mountain-rivergate-oath.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 348,
+        "cells": [
+          {
+            "x0": 70,
+            "y0": 83,
+            "x1": 313,
+            "foot": 348
+          },
+          {
+            "x0": 48,
+            "y0": 100,
+            "x1": 335,
+            "foot": 348
+          },
+          {
+            "x0": 83,
+            "y0": 30,
+            "x1": 301,
+            "foot": 348
+          },
+          {
+            "x0": 56,
+            "y0": 79,
+            "x1": 327,
+            "foot": 349
+          },
+          {
+            "x0": 49,
+            "y0": 115,
+            "x1": 334,
+            "foot": 348
+          },
+          {
+            "x0": 119,
+            "y0": 56,
+            "x1": 264,
+            "foot": 349
+          }
+        ]
+      }
+    },
+    "hero.mountain.sheet.breaker-pickup": {
+      "url": "art/mountain-breaker-pickup.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 350,
+        "cells": [
+          {
+            "x0": 32,
+            "y0": 19,
+            "x1": 352,
+            "foot": 350
+          },
+          {
+            "x0": 35,
+            "y0": 21,
+            "x1": 349,
+            "foot": 350
+          },
+          {
+            "x0": 63,
+            "y0": 150,
+            "x1": 321,
+            "foot": 351
+          },
+          {
+            "x0": 36,
+            "y0": 115,
+            "x1": 348,
+            "foot": 350
+          },
+          {
+            "x0": 61,
+            "y0": 61,
+            "x1": 323,
+            "foot": 350
+          },
+          null
+        ]
+      }
+    },
+    "hero.mountain.sheet.dash": {
+      "url": "art/mountain-dash.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 35,
+            "y0": 86,
+            "x1": 349,
+            "foot": 354
+          },
+          {
+            "x0": 48,
+            "y0": 64,
+            "x1": 337,
+            "foot": 342
+          },
+          {
+            "x0": 41,
+            "y0": 67,
+            "x1": 344,
+            "foot": 354
+          },
+          {
+            "x0": 38,
+            "y0": 80,
+            "x1": 346,
+            "foot": 340
+          },
+          {
+            "x0": 39,
+            "y0": 68,
+            "x1": 345,
+            "foot": 352
+          },
+          {
+            "x0": 68,
+            "y0": 53,
+            "x1": 317,
+            "foot": 354
+          }
+        ]
+      }
+    },
+    "hero.mountain.sheet.exact-counter": {
+      "url": "art/mountain-exact-counter.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 353,
+        "cells": [
+          {
+            "x0": 36,
+            "y0": 25,
+            "x1": 348,
+            "foot": 354
+          },
+          {
+            "x0": 50,
+            "y0": 22,
+            "x1": 335,
+            "foot": 353
+          },
+          {
+            "x0": 31,
+            "y0": 27,
+            "x1": 354,
+            "foot": 354
+          },
+          {
+            "x0": 32,
+            "y0": 25,
+            "x1": 352,
+            "foot": 353
+          },
+          {
+            "x0": 45,
+            "y0": 24,
+            "x1": 339,
+            "foot": 353
+          },
+          null
+        ]
+      }
+    },
+    "hero.mountain.sheet.grab-throw": {
+      "url": "art/mountain-grab-throw.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 350,
+        "cells": [
+          {
+            "x0": 28,
+            "y0": 49,
+            "x1": 356,
+            "foot": 351
+          },
+          {
+            "x0": 60,
+            "y0": 48,
+            "x1": 323,
+            "foot": 350
+          },
+          {
+            "x0": 23,
+            "y0": 34,
+            "x1": 362,
+            "foot": 350
+          },
+          {
+            "x0": 41,
+            "y0": 19,
+            "x1": 343,
+            "foot": 350
+          },
+          {
+            "x0": 47,
+            "y0": 45,
+            "x1": 337,
+            "foot": 350
+          },
+          {
+            "x0": 52,
+            "y0": 38,
+            "x1": 332,
+            "foot": 350
+          }
+        ]
+      }
+    },
+    "hero.mountain.sheet.guard": {
+      "url": "art/mountain-guard.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 41,
+            "y0": 37,
+            "x1": 343,
+            "foot": 354
+          },
+          {
+            "x0": 50,
+            "y0": 54,
+            "x1": 334,
+            "foot": 354
+          },
+          {
+            "x0": 48,
+            "y0": 108,
+            "x1": 338,
+            "foot": 354
+          },
+          {
+            "x0": 42,
+            "y0": 61,
+            "x1": 342,
+            "foot": 353
+          },
+          {
+            "x0": 16,
+            "y0": 71,
+            "x1": 369,
+            "foot": 354
+          },
+          {
+            "x0": 72,
+            "y0": 61,
+            "x1": 313,
+            "foot": 352
+          }
+        ]
+      }
+    },
+    "hero.mountain.sheet.handwheel": {
+      "url": "art/mountain-handwheel.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 348,
+        "cells": [
+          {
+            "x0": 94,
+            "y0": 51,
+            "x1": 289,
+            "foot": 348
+          },
+          {
+            "x0": 70,
+            "y0": 76,
+            "x1": 314,
+            "foot": 348
+          },
+          {
+            "x0": 18,
+            "y0": 71,
+            "x1": 366,
+            "foot": 348
+          },
+          {
+            "x0": 62,
+            "y0": 68,
+            "x1": 322,
+            "foot": 348
+          },
+          {
+            "x0": 67,
+            "y0": 61,
+            "x1": 317,
+            "foot": 348
+          },
+          null
+        ]
+      }
+    },
+    "hero.mountain.sheet.hurt": {
+      "url": "art/mountain-hurt.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 356,
+        "cells": [
+          {
+            "x0": 56,
+            "y0": 25,
+            "x1": 328,
+            "foot": 357
+          },
+          {
+            "x0": 69,
+            "y0": 46,
+            "x1": 314,
+            "foot": 356
+          },
+          {
+            "x0": 37,
+            "y0": 46,
+            "x1": 347,
+            "foot": 356
+          },
+          {
+            "x0": 51,
+            "y0": 71,
+            "x1": 333,
+            "foot": 325
+          },
+          {
+            "x0": 54,
+            "y0": 86,
+            "x1": 329,
+            "foot": 320
+          },
+          {
+            "x0": 15,
+            "y0": 150,
+            "x1": 369,
+            "foot": 340
+          }
+        ]
+      }
+    },
+    "hero.mountain.sheet.idle": {
+      "url": "art/mountain-idle.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 352,
+        "cells": [
+          {
+            "x0": 89,
+            "y0": 56,
+            "x1": 294,
+            "foot": 352
+          },
+          {
+            "x0": 96,
+            "y0": 56,
+            "x1": 288,
+            "foot": 352
+          },
+          {
+            "x0": 86,
+            "y0": 56,
+            "x1": 297,
+            "foot": 353
+          },
+          {
+            "x0": 72,
+            "y0": 56,
+            "x1": 311,
+            "foot": 352
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.mountain.sheet.jump": {
+      "url": "art/mountain-jump.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 84,
+            "y0": 140,
+            "x1": 300,
+            "foot": 354
+          },
+          {
+            "x0": 102,
+            "y0": 32,
+            "x1": 282,
+            "foot": 333
+          },
+          {
+            "x0": 101,
+            "y0": 91,
+            "x1": 283,
+            "foot": 298
+          },
+          {
+            "x0": 65,
+            "y0": 52,
+            "x1": 319,
+            "foot": 328
+          },
+          {
+            "x0": 60,
+            "y0": 157,
+            "x1": 324,
+            "foot": 354
+          },
+          {
+            "x0": 82,
+            "y0": 97,
+            "x1": 303,
+            "foot": 354
+          }
+        ]
+      }
+    },
+    "hero.mountain.sheet.knockdown": {
+      "url": "art/mountain-knockdown.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 351,
+        "cells": [
+          {
+            "x0": 44,
+            "y0": 137,
+            "x1": 340,
+            "foot": 351
+          },
+          {
+            "x0": 43,
+            "y0": 131,
+            "x1": 341,
+            "foot": 334
+          },
+          {
+            "x0": 15,
+            "y0": 264,
+            "x1": 368,
+            "foot": 351
+          },
+          {
+            "x0": 17,
+            "y0": 272,
+            "x1": 367,
+            "foot": 351
+          },
+          {
+            "x0": 61,
+            "y0": 167,
+            "x1": 323,
+            "foot": 351
+          },
+          {
+            "x0": 72,
+            "y0": 81,
+            "x1": 312,
+            "foot": 351
+          }
+        ]
+      }
+    },
+    "hero.mountain.sheet.staff-a": {
+      "url": "art/mountain-staff-a.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 348,
+        "cells": [
+          {
+            "x0": 75,
+            "y0": 79,
+            "x1": 308,
+            "foot": 348
+          },
+          {
+            "x0": 83,
+            "y0": 85,
+            "x1": 301,
+            "foot": 348
+          },
+          {
+            "x0": 50,
+            "y0": 105,
+            "x1": 333,
+            "foot": 348
+          },
+          {
+            "x0": 18,
+            "y0": 113,
+            "x1": 366,
+            "foot": 348
+          },
+          {
+            "x0": 28,
+            "y0": 115,
+            "x1": 357,
+            "foot": 348
+          },
+          {
+            "x0": 60,
+            "y0": 59,
+            "x1": 324,
+            "foot": 349
+          }
+        ]
+      }
+    },
+    "hero.mountain.sheet.staff-b": {
+      "url": "art/mountain-staff-b.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 349,
+        "cells": [
+          {
+            "x0": 74,
+            "y0": 62,
+            "x1": 309,
+            "foot": 349
+          },
+          {
+            "x0": 17,
+            "y0": 78,
+            "x1": 367,
+            "foot": 334
+          },
+          {
+            "x0": 51,
+            "y0": 132,
+            "x1": 332,
+            "foot": 348
+          },
+          {
+            "x0": 74,
+            "y0": 84,
+            "x1": 309,
+            "foot": 349
+          },
+          {
+            "x0": 46,
+            "y0": 45,
+            "x1": 337,
+            "foot": 354
+          },
+          {
+            "x0": 66,
+            "y0": 160,
+            "x1": 317,
+            "foot": 349
+          }
+        ]
+      }
+    },
+    "hero.mountain.sheet.walk": {
+      "url": "art/mountain-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 89,
+            "y0": 58,
+            "x1": 296,
+            "foot": 354
+          },
+          {
+            "x0": 90,
+            "y0": 60,
+            "x1": 294,
+            "foot": 354
+          },
+          {
+            "x0": 92,
+            "y0": 52,
+            "x1": 293,
+            "foot": 354
+          },
+          {
+            "x0": 87,
+            "y0": 63,
+            "x1": 299,
+            "foot": 354
+          },
+          {
+            "x0": 93,
+            "y0": 68,
+            "x1": 292,
+            "foot": 354
+          },
+          {
+            "x0": 90,
+            "y0": 60,
+            "x1": 294,
+            "foot": 353
+          }
+        ]
+      }
+    },
+    "hero.river.pose.aerial.bank-switch-arc": {
+      "url": "art/river-bank-switch-arc.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 330,
+        "cells": [
+          {
+            "x0": 64,
+            "y0": 81,
+            "x1": 321,
+            "foot": 330
+          },
+          {
+            "x0": 15,
+            "y0": 20,
+            "x1": 369,
+            "foot": 330
+          },
+          {
+            "x0": 71,
+            "y0": 25,
+            "x1": 313,
+            "foot": 330
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.river.pose.aerial.current-chase": {
+      "url": "art/river-current-chase.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 330,
+        "cells": [
+          {
+            "x0": 69,
+            "y0": 14,
+            "x1": 315,
+            "foot": 330
+          },
+          {
+            "x0": 46,
+            "y0": 45,
+            "x1": 339,
+            "foot": 330
+          },
+          {
+            "x0": 79,
+            "y0": 150,
+            "x1": 306,
+            "foot": 354
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.river.pose.aerial.ebbturn-heel": {
+      "url": "art/river-ebbturn-heel.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 330,
+        "cells": [
+          {
+            "x0": 98,
+            "y0": 44,
+            "x1": 286,
+            "foot": 330
+          },
+          {
+            "x0": 15,
+            "y0": 52,
+            "x1": 369,
+            "foot": 330
+          },
+          {
+            "x0": 74,
+            "y0": 24,
+            "x1": 311,
+            "foot": 330
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.river.pose.aerial.reedwing-tap": {
+      "url": "art/river-reedwing-tap.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 322,
+        "cells": [
+          {
+            "x0": 78,
+            "y0": 19,
+            "x1": 307,
+            "foot": 322
+          },
+          {
+            "x0": 28,
+            "y0": 31,
+            "x1": 356,
+            "foot": 322
+          },
+          {
+            "x0": 86,
+            "y0": 7,
+            "x1": 298,
+            "foot": 323
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.river.pose.dash.rapid-crossing": {
+      "url": "art/river-rapid-crossing.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 55,
+            "y0": 101,
+            "x1": 329,
+            "foot": 354
+          },
+          {
+            "x0": 15,
+            "y0": 92,
+            "x1": 369,
+            "foot": 354
+          },
+          {
+            "x0": 52,
+            "y0": 98,
+            "x1": 332,
+            "foot": 354
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.river.pose.ground.rising-eddy": {
+      "url": "art/river-rising-eddy.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 84,
+            "y0": 118,
+            "x1": 301,
+            "foot": 354
+          },
+          {
+            "x0": 24,
+            "y0": 15,
+            "x1": 360,
+            "foot": 354
+          },
+          {
+            "x0": 69,
+            "y0": 83,
+            "x1": 315,
+            "foot": 354
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.river.pose.ground.skipping-current": {
+      "url": "art/river-skipping-current.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 330,
+        "cells": [
+          {
+            "x0": 65,
+            "y0": 13,
+            "x1": 318,
+            "foot": 330
+          },
+          {
+            "x0": 75,
+            "y0": 23,
+            "x1": 309,
+            "foot": 354
+          },
+          {
+            "x0": 72,
+            "y0": 34,
+            "x1": 312,
+            "foot": 330
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.river.pose.low.undertow-slide": {
+      "url": "art/river-undertow-slide.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 56,
+            "y0": 146,
+            "x1": 329,
+            "foot": 354
+          },
+          {
+            "x0": 15,
+            "y0": 179,
+            "x1": 369,
+            "foot": 354
+          },
+          {
+            "x0": 66,
+            "y0": 170,
+            "x1": 319,
+            "foot": 354
+          },
+          {
+            "x0": 95,
+            "y0": 103,
+            "x1": 289,
+            "foot": 354
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.river.pose.special.current-crescent": {
+      "url": "art/river-current-crescent.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 348,
+        "cells": [
+          {
+            "x0": 63,
+            "y0": 32,
+            "x1": 320,
+            "foot": 348
+          },
+          {
+            "x0": 52,
+            "y0": 36,
+            "x1": 332,
+            "foot": 348
+          },
+          {
+            "x0": 88,
+            "y0": 30,
+            "x1": 296,
+            "foot": 348
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.river.pose.special.ebbstep-return": {
+      "url": "art/river-ebbstep-return.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 347,
+        "cells": [
+          {
+            "x0": 45,
+            "y0": 63,
+            "x1": 338,
+            "foot": 348
+          },
+          {
+            "x0": 49,
+            "y0": 76,
+            "x1": 334,
+            "foot": 348
+          },
+          {
+            "x0": 50,
+            "y0": 10,
+            "x1": 334,
+            "foot": 327
+          },
+          {
+            "x0": 32,
+            "y0": 40,
+            "x1": 351,
+            "foot": 347
+          },
+          {
+            "x0": 76,
+            "y0": 31,
+            "x1": 307,
+            "foot": 347
+          },
+          null
+        ]
+      }
+    },
+    "hero.river.pose.special.gale-wheel": {
+      "url": "art/river-gale-wheel.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 348,
+        "cells": [
+          {
+            "x0": 65,
+            "y0": 110,
+            "x1": 318,
+            "foot": 348
+          },
+          {
+            "x0": 40,
+            "y0": 38,
+            "x1": 344,
+            "foot": 348
+          },
+          {
+            "x0": 43,
+            "y0": 15,
+            "x1": 341,
+            "foot": 333
+          },
+          {
+            "x0": 27,
+            "y0": 29,
+            "x1": 358,
+            "foot": 273
+          },
+          {
+            "x0": 54,
+            "y0": 68,
+            "x1": 330,
+            "foot": 348
+          },
+          {
+            "x0": 72,
+            "y0": 51,
+            "x1": 312,
+            "foot": 348
+          }
+        ]
+      }
+    },
+    "hero.river.pose.special.waterspout-rise": {
+      "url": "art/river-waterspout-rise.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 39,
+            "y0": 104,
+            "x1": 345,
+            "foot": 354
+          },
+          {
+            "x0": 61,
+            "y0": 18,
+            "x1": 324,
+            "foot": 371
+          },
+          {
+            "x0": 40,
+            "y0": 18,
+            "x1": 344,
+            "foot": 376
+          },
+          {
+            "x0": 89,
+            "y0": 19,
+            "x1": 294,
+            "foot": 263
+          },
+          {
+            "x0": 77,
+            "y0": 56,
+            "x1": 307,
+            "foot": 354
+          },
+          null
+        ]
+      }
+    },
+    "hero.river.pose.standing.ebb-heel": {
+      "url": "art/river-ebb-heel.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 57,
+            "y0": 17,
+            "x1": 327,
+            "foot": 353
+          },
+          {
+            "x0": 16,
+            "y0": 15,
+            "x1": 368,
+            "foot": 354
+          },
+          {
+            "x0": 75,
+            "y0": 20,
+            "x1": 310,
+            "foot": 354
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.river.pose.standing.northbank-arc": {
+      "url": "art/river-northbank-arc.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 75,
+            "y0": 140,
+            "x1": 310,
+            "foot": 354
+          },
+          {
+            "x0": 75,
+            "y0": 15,
+            "x1": 309,
+            "foot": 354
+          },
+          {
+            "x0": 58,
+            "y0": 56,
+            "x1": 326,
+            "foot": 354
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.river.pose.standing.open-channel-kick": {
+      "url": "art/river-open-channel-kick.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 96,
+            "y0": 5,
+            "x1": 288,
+            "foot": 354
+          },
+          {
+            "x0": 28,
+            "y0": 15,
+            "x1": 356,
+            "foot": 354
+          },
+          {
+            "x0": 99,
+            "y0": 6,
+            "x1": 285,
+            "foot": 354
+          },
+          {
+            "x0": 81,
+            "y0": 45,
+            "x1": 303,
+            "foot": 354
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.river.pose.standing.rapids-step": {
+      "url": "art/river-rapids-step.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 58,
+            "y0": 94,
+            "x1": 325,
+            "foot": 354
+          },
+          {
+            "x0": 50,
+            "y0": 16,
+            "x1": 335,
+            "foot": 328
+          },
+          {
+            "x0": 87,
+            "y0": 23,
+            "x1": 298,
+            "foot": 354
+          },
+          {
+            "x0": 78,
+            "y0": 54,
+            "x1": 307,
+            "foot": 354
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.river.pose.standing.reed-tap": {
+      "url": "art/river-reed-tap.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 71,
+            "y0": 5,
+            "x1": 313,
+            "foot": 354
+          },
+          {
+            "x0": 51,
+            "y0": 6,
+            "x1": 334,
+            "foot": 354
+          },
+          {
+            "x0": 73,
+            "y0": 5,
+            "x1": 311,
+            "foot": 354
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.river.pose.standing.southbank-slide": {
+      "url": "art/river-southbank-slide.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 78,
+            "y0": 169,
+            "x1": 306,
+            "foot": 354
+          },
+          {
+            "x0": 16,
+            "y0": 188,
+            "x1": 369,
+            "foot": 354
+          },
+          {
+            "x0": 88,
+            "y0": 134,
+            "x1": 297,
+            "foot": 354
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.river.pose.standing.turning-current": {
+      "url": "art/river-turning-current.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 48,
+            "y0": 5,
+            "x1": 337,
+            "foot": 354
+          },
+          {
+            "x0": 41,
+            "y0": 5,
+            "x1": 342,
+            "foot": 354
+          },
+          {
+            "x0": 66,
+            "y0": 13,
+            "x1": 319,
+            "foot": 354
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.river.pose.ultimate.floodline-passage": {
+      "url": "art/river-floodline-passage.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 50,
+            "y0": 95,
+            "x1": 334,
+            "foot": 354
+          },
+          {
+            "x0": 7,
+            "y0": 83,
+            "x1": 376,
+            "foot": 354
+          },
+          {
+            "x0": 7,
+            "y0": 43,
+            "x1": 376,
+            "foot": 353
+          },
+          {
+            "x0": 7,
+            "y0": 35,
+            "x1": 377,
+            "foot": 354
+          },
+          {
+            "x0": 14,
+            "y0": 63,
+            "x1": 369,
+            "foot": 320
+          },
+          {
+            "x0": 11,
+            "y0": 95,
+            "x1": 372,
+            "foot": 354
+          }
+        ]
+      }
+    },
+    "hero.river.pose.ultimate.tempest-crossing": {
+      "url": "art/river-tempest-crossing.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 328,
+        "cells": [
+          {
+            "x0": 58,
+            "y0": 109,
+            "x1": 326,
+            "foot": 348
+          },
+          {
+            "x0": 22,
+            "y0": 41,
+            "x1": 362,
+            "foot": 286
+          },
+          {
+            "x0": 67,
+            "y0": 15,
+            "x1": 316,
+            "foot": 328
+          },
+          {
+            "x0": 30,
+            "y0": 53,
+            "x1": 354,
+            "foot": 279
+          },
+          {
+            "x0": 64,
+            "y0": 35,
+            "x1": 320,
+            "foot": 301
+          },
+          {
+            "x0": 60,
+            "y0": 121,
+            "x1": 324,
+            "foot": 348
+          }
+        ]
+      }
+    },
+    "hero.river.sheet.breaker-pickup": {
+      "url": "art/river-breaker-pickup.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 351,
+        "cells": [
+          {
+            "x0": 44,
+            "y0": 19,
+            "x1": 340,
+            "foot": 351
+          },
+          {
+            "x0": 56,
+            "y0": 29,
+            "x1": 327,
+            "foot": 351
+          },
+          {
+            "x0": 62,
+            "y0": 147,
+            "x1": 320,
+            "foot": 351
+          },
+          {
+            "x0": 58,
+            "y0": 86,
+            "x1": 327,
+            "foot": 350
+          },
+          {
+            "x0": 65,
+            "y0": 44,
+            "x1": 319,
+            "foot": 350
+          },
+          null
+        ]
+      }
+    },
+    "hero.river.sheet.dash": {
+      "url": "art/river-dash.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 31,
+            "y0": 88,
+            "x1": 353,
+            "foot": 354
+          },
+          {
+            "x0": 45,
+            "y0": 4,
+            "x1": 339,
+            "foot": 326
+          },
+          {
+            "x0": 41,
+            "y0": 2,
+            "x1": 343,
+            "foot": 334
+          },
+          {
+            "x0": 12,
+            "y0": 114,
+            "x1": 372,
+            "foot": 354
+          },
+          {
+            "x0": 23,
+            "y0": 58,
+            "x1": 361,
+            "foot": 354
+          },
+          {
+            "x0": 68,
+            "y0": 17,
+            "x1": 317,
+            "foot": 354
+          }
+        ]
+      }
+    },
+    "hero.river.sheet.exact-counter": {
+      "url": "art/river-exact-counter.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 350,
+        "cells": [
+          {
+            "x0": 57,
+            "y0": 20,
+            "x1": 326,
+            "foot": 350
+          },
+          {
+            "x0": 59,
+            "y0": 24,
+            "x1": 324,
+            "foot": 350
+          },
+          {
+            "x0": 66,
+            "y0": 37,
+            "x1": 318,
+            "foot": 350
+          },
+          {
+            "x0": 31,
+            "y0": 28,
+            "x1": 353,
+            "foot": 350
+          },
+          {
+            "x0": 77,
+            "y0": 29,
+            "x1": 307,
+            "foot": 351
+          },
+          null
+        ]
+      }
+    },
+    "hero.river.sheet.grab-throw": {
+      "url": "art/river-grab-throw.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 351,
+        "cells": [
+          {
+            "x0": 29,
+            "y0": 39,
+            "x1": 355,
+            "foot": 351
+          },
+          {
+            "x0": 96,
+            "y0": 19,
+            "x1": 288,
+            "foot": 350
+          },
+          {
+            "x0": 24,
+            "y0": 42,
+            "x1": 359,
+            "foot": 351
+          },
+          {
+            "x0": 66,
+            "y0": 92,
+            "x1": 317,
+            "foot": 351
+          },
+          {
+            "x0": 62,
+            "y0": 47,
+            "x1": 322,
+            "foot": 350
+          },
+          {
+            "x0": 73,
+            "y0": 44,
+            "x1": 311,
+            "foot": 351
+          }
+        ]
+      }
+    },
+    "hero.river.sheet.guard": {
+      "url": "art/river-guard.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 351,
+        "cells": [
+          {
+            "x0": 57,
+            "y0": 35,
+            "x1": 326,
+            "foot": 351
+          },
+          {
+            "x0": 19,
+            "y0": 44,
+            "x1": 365,
+            "foot": 351
+          },
+          {
+            "x0": 72,
+            "y0": 82,
+            "x1": 311,
+            "foot": 351
+          },
+          {
+            "x0": 60,
+            "y0": 39,
+            "x1": 324,
+            "foot": 350
+          },
+          {
+            "x0": 15,
+            "y0": 29,
+            "x1": 368,
+            "foot": 350
+          },
+          {
+            "x0": 108,
+            "y0": 33,
+            "x1": 276,
+            "foot": 327
+          }
+        ]
+      }
+    },
+    "hero.river.sheet.handwheel": {
+      "url": "art/river-handwheel.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 348,
+        "cells": [
+          {
+            "x0": 77,
+            "y0": 30,
+            "x1": 306,
+            "foot": 348
+          },
+          {
+            "x0": 63,
+            "y0": 34,
+            "x1": 322,
+            "foot": 348
+          },
+          {
+            "x0": 24,
+            "y0": 54,
+            "x1": 359,
+            "foot": 347
+          },
+          {
+            "x0": 56,
+            "y0": 43,
+            "x1": 328,
+            "foot": 348
+          },
+          {
+            "x0": 69,
+            "y0": 59,
+            "x1": 315,
+            "foot": 348
+          },
+          null
+        ]
+      }
+    },
+    "hero.river.sheet.hurt": {
+      "url": "art/river-hurt.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 350,
+        "cells": [
+          {
+            "x0": 75,
+            "y0": 20,
+            "x1": 309,
+            "foot": 351
+          },
+          {
+            "x0": 79,
+            "y0": 42,
+            "x1": 304,
+            "foot": 350
+          },
+          {
+            "x0": 47,
+            "y0": 41,
+            "x1": 334,
+            "foot": 350
+          },
+          {
+            "x0": 57,
+            "y0": 55,
+            "x1": 327,
+            "foot": 323
+          },
+          {
+            "x0": 75,
+            "y0": 112,
+            "x1": 309,
+            "foot": 312
+          },
+          {
+            "x0": 31,
+            "y0": 159,
+            "x1": 352,
+            "foot": 340
+          }
+        ]
+      }
+    },
+    "hero.river.sheet.idle": {
+      "url": "art/river-idle.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 95,
+            "y0": 51,
+            "x1": 289,
+            "foot": 354
+          },
+          {
+            "x0": 118,
+            "y0": 27,
+            "x1": 265,
+            "foot": 338
+          },
+          {
+            "x0": 113,
+            "y0": 66,
+            "x1": 271,
+            "foot": 354
+          },
+          {
+            "x0": 105,
+            "y0": 60,
+            "x1": 279,
+            "foot": 354
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.river.sheet.jump": {
+      "url": "art/river-jump.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 353,
+        "cells": [
+          {
+            "x0": 87,
+            "y0": 119,
+            "x1": 297,
+            "foot": 353
+          },
+          {
+            "x0": 66,
+            "y0": 4,
+            "x1": 320,
+            "foot": 341
+          },
+          {
+            "x0": 50,
+            "y0": 31,
+            "x1": 334,
+            "foot": 315
+          },
+          {
+            "x0": 63,
+            "y0": 14,
+            "x1": 321,
+            "foot": 337
+          },
+          {
+            "x0": 60,
+            "y0": 119,
+            "x1": 325,
+            "foot": 353
+          },
+          {
+            "x0": 93,
+            "y0": 45,
+            "x1": 291,
+            "foot": 354
+          }
+        ]
+      }
+    },
+    "hero.river.sheet.knockdown": {
+      "url": "art/river-knockdown.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 351,
+        "cells": [
+          {
+            "x0": 27,
+            "y0": 120,
+            "x1": 357,
+            "foot": 350
+          },
+          {
+            "x0": 36,
+            "y0": 134,
+            "x1": 347,
+            "foot": 333
+          },
+          {
+            "x0": 15,
+            "y0": 250,
+            "x1": 369,
+            "foot": 351
+          },
+          {
+            "x0": 18,
+            "y0": 264,
+            "x1": 366,
+            "foot": 351
+          },
+          {
+            "x0": 62,
+            "y0": 196,
+            "x1": 322,
+            "foot": 351
+          },
+          {
+            "x0": 105,
+            "y0": 61,
+            "x1": 278,
+            "foot": 326
+          }
+        ]
+      }
+    },
+    "hero.river.sheet.staff-a": {
+      "url": "art/river-staff-a.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 348,
+        "cells": [
+          {
+            "x0": 112,
+            "y0": 35,
+            "x1": 271,
+            "foot": 348
+          },
+          {
+            "x0": 73,
+            "y0": 54,
+            "x1": 311,
+            "foot": 348
+          },
+          {
+            "x0": 44,
+            "y0": 95,
+            "x1": 339,
+            "foot": 348
+          },
+          {
+            "x0": 22,
+            "y0": 107,
+            "x1": 362,
+            "foot": 348
+          },
+          {
+            "x0": 60,
+            "y0": 75,
+            "x1": 324,
+            "foot": 348
+          },
+          {
+            "x0": 56,
+            "y0": 46,
+            "x1": 328,
+            "foot": 348
+          }
+        ]
+      }
+    },
+    "hero.river.sheet.staff-b": {
+      "url": "art/river-staff-b.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 45,
+            "y0": 3,
+            "x1": 354,
+            "foot": 355
+          },
+          {
+            "x0": 53,
+            "y0": 3,
+            "x1": 349,
+            "foot": 352
+          },
+          {
+            "x0": 20,
+            "y0": 58,
+            "x1": 361,
+            "foot": 355
+          },
+          {
+            "x0": 27,
+            "y0": 1,
+            "x1": 357,
+            "foot": 354
+          },
+          {
+            "x0": 16,
+            "y0": 9,
+            "x1": 368,
+            "foot": 354
+          },
+          {
+            "x0": 37,
+            "y0": 26,
+            "x1": 354,
+            "foot": 354
+          }
+        ]
+      }
+    },
+    "hero.river.sheet.walk": {
+      "url": "art/river-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 69,
+            "y0": 6,
+            "x1": 315,
+            "foot": 353
+          },
+          {
+            "x0": 100,
+            "y0": 9,
+            "x1": 284,
+            "foot": 354
+          },
+          {
+            "x0": 112,
+            "y0": 6,
+            "x1": 273,
+            "foot": 354
+          },
+          {
+            "x0": 66,
+            "y0": 12,
+            "x1": 318,
+            "foot": 353
+          },
+          {
+            "x0": 98,
+            "y0": 13,
+            "x1": 286,
+            "foot": 354
+          },
+          {
+            "x0": 108,
+            "y0": 12,
+            "x1": 276,
+            "foot": 354
+          }
+        ]
+      }
+    },
+    "prop.handwheel": {
+      "url": "art/prop-handwheel.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 346,
+        "cells": [
+          {
+            "x0": 22,
+            "y0": 109,
+            "x1": 363,
+            "foot": 275
+          },
+          {
+            "x0": 38,
+            "y0": 38,
+            "x1": 345,
+            "foot": 346
+          },
+          {
+            "x0": 85,
+            "y0": 36,
+            "x1": 299,
+            "foot": 347
+          },
+          {
+            "x0": 148,
+            "y0": 35,
+            "x1": 236,
+            "foot": 348
+          },
+          {
+            "x0": 41,
+            "y0": 38,
+            "x1": 343,
+            "foot": 346
+          },
+          {
+            "x0": 40,
+            "y0": 37,
+            "x1": 344,
+            "foot": 346
+          }
+        ]
+      }
+    },
+    "prop.impact-hazard": {
+      "url": "art/prop-impact-hazard.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 66,
+            "y0": 56,
+            "x1": 318,
+            "foot": 328
+          },
+          {
+            "x0": 66,
+            "y0": 56,
+            "x1": 318,
+            "foot": 328
+          },
+          {
+            "x0": 34,
+            "y0": 30,
+            "x1": 349,
+            "foot": 354
+          },
+          {
+            "x0": 33,
+            "y0": 32,
+            "x1": 349,
+            "foot": 354
+          },
+          {
+            "x0": 31,
+            "y0": 33,
+            "x1": 349,
+            "foot": 357
+          },
+          {
+            "x0": 28,
+            "y0": 33,
+            "x1": 351,
+            "foot": 356
+          }
+        ]
+      }
+    },
+    "prop.sluiceboards": {
+      "url": "art/prop-sluiceboards.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 351,
+        "cells": [
+          {
+            "x0": 44,
+            "y0": 31,
+            "x1": 341,
+            "foot": 353
+          },
+          {
+            "x0": 39,
+            "y0": 33,
+            "x1": 345,
+            "foot": 351
+          },
+          {
+            "x0": 27,
+            "y0": 30,
+            "x1": 357,
+            "foot": 354
+          },
+          {
+            "x0": 20,
+            "y0": 70,
+            "x1": 368,
+            "foot": 313
+          },
+          {
+            "x0": 34,
+            "y0": 100,
+            "x1": 349,
+            "foot": 283
+          },
+          {
+            "x0": 73,
+            "y0": 142,
+            "x1": 311,
+            "foot": 242
+          }
+        ]
+      }
+    },
+    "prop.workstaff": {
+      "url": "art/prop-workstaff.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 347,
+        "cells": [
+          {
+            "x0": 39,
+            "y0": 129,
+            "x1": 347,
+            "foot": 255
+          },
+          {
+            "x0": 181,
+            "y0": 32,
+            "x1": 202,
+            "foot": 352
+          },
+          {
+            "x0": 102,
+            "y0": 37,
+            "x1": 282,
+            "foot": 347
+          },
+          {
+            "x0": 60,
+            "y0": 36,
+            "x1": 323,
+            "foot": 348
+          },
+          {
+            "x0": 29,
+            "y0": 146,
+            "x1": 355,
+            "foot": 237
+          },
+          {
+            "x0": 108,
+            "y0": 120,
+            "x1": 277,
+            "foot": 264
+          }
+        ]
+      }
+    }
+  }
+}

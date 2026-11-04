@@ -32,6 +32,27 @@ export interface DebugBody {
   grabEvent: number;
   grabOffset: number;
   loadout: number[];
+  /** Weapon id held (null = empty hands), and the last weapon event (WeaponEvent). */
+  weapon: string | null;
+  weaponEvent: number;
+}
+
+export interface DebugItem {
+  id: number;
+  weapon: string;
+  state: number;
+  holder: number;
+  integrity: number;
+  x: number;
+  z: number;
+  reserveFor: number;
+}
+
+export interface DebugScenery {
+  pillar: { cracked: boolean; impacts: number };
+  boards: { state: number; power: number };
+  cog: { phase: number; phaseFrame: number };
+  log: { kind: number; frame: number; damage: number; detail: number };
 }
 
 /** Test hook, installed in dev and e2e builds only (see debug.ts). */
@@ -56,6 +77,14 @@ export interface FfpDebugHook {
   /** Is this player's Grab escape window open (the ESCAPE telegraph)? */
   escapeOpen(slot: number): boolean;
   projectiles(): number;
+  /** M6: weapons and fragments on stage. */
+  items(): DebugItem[];
+  scenery(): DebugScenery;
+  /** Puts a player's hero at a stage position (pixels), facing right. */
+  placeAt(slot: number, x: number, z: number): void;
+  /** Lab: Dummy 1 fights with this weapon (null = unarmed). */
+  armDummy(weapon: string | null): void;
+  dummyToPillar(): void;
 }
 
 declare global {

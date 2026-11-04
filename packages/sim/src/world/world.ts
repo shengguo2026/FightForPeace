@@ -10,6 +10,18 @@ import { HEROES, TRAINER_KIT, heroIndex } from '../combat/roster';
 import { defaultTrainer, stepTrainer } from '../combat/trainer';
 import { grabIntegrity, holdPositions, resolveGrabs } from '../combat/grabs';
 import { stepProjectiles } from '../combat/projectiles';
+import { resolveClashes } from '../combat/clash';
+import { stepItems } from '../combat/items';
+import { claim, spawnItem } from '../combat/held';
+import { weaponIndex } from '../combat/armory';
+import {
+  createEnvironment,
+  emptyEnvironment,
+  hazardHits,
+  sceneryCollide,
+  stepHazards,
+} from '../combat/environment';
+import { LAB_LAYOUT, type StageLayout } from './stage';
 import {
   type EquipResult,
   type LoadoutKind,
@@ -35,7 +47,7 @@ export const DUMMY_HEALTH = 1000;
 export const HERO_HEALTH = 1000;
 
 /** Version of the byte layout written by encodeWorld. Bump on any layout change. */
-export const STATE_FORMAT = 8;
+export const STATE_FORMAT = 9;
 
 /** Walking speeds (fixed point per frame), kept as exports for existing callers. */
 export const WALK_SPEED_X = ON_FOOT.walkX;
@@ -79,6 +91,12 @@ export interface WorldOptions {
    * Ultimate slot (0 neutral … 4 down) to an action id, or null to empty it.
    */
   loadouts?: readonly LoadoutChange[][];
+  /** M6: place the stage's weapons (default off, so older replays keep their rules). */
+  armory?: boolean;
+  /** M6: build the stage's impact surface, breakable and hazard (default off). */
+  environment?: boolean;
+  /** Stage layout for `armory` and `environment` (default: the Lab's mill corner). */
+  layout?: StageLayout;
 }
 
 export interface LoadoutChange {
@@ -189,6 +207,16 @@ export function createFighter(
     grabEvent: 0,
     grabOffset: 0,
     grabFrame: 0,
+    item: 0,
+    wkit: -1,
+    breakPending: false,
+    clashWith: 0,
+    propHits: [],
+    impactArmed: false,
+    hazardSafeUntil: 0,
+    weaponEvent: 0,
+    weaponDetail: 0,
+    weaponFrame: 0,
   };
 }
 
@@ -228,9 +256,57 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
     trainer: { ...defaultTrainer(), ...options.trainer },
     playerLoadout,
     projectiles: [],
+    items: [],
+    nextItem: ITEM_ID_BASE,
+    environment: emptyEnvironment(),
   };
   world.bodies.sort((a, b) => a.id - b.id);
+  const layout = options.layout ?? LAB_LAYOUT;
+  if (options.environment) world.environment = createEnvironment(layout);
+  if (options.armory) placeItems(world, layout);
+  if (world.trainer.arm >= 0) armDummy(world, world.trainer.arm);
   return world;
+}
+
+/** Item ids start here (fighters use 1–2 and 101+, scenery 301+). */
+export const ITEM_ID_BASE = 201;
+
+function placeItems(world: World, layout: StageLayout): void {
+  for (const i of layout.items) spawnItem(world, weaponIndex(i.weapon), fx(i.x), fx(i.z));
+}
+
+/**
+ * Lab: Dummy 1 fights with weapon `weapon` (index, -1 = unarmed). A fresh copy goes into
+ * its hands; it reclaims that weapon after a disarm.
+ */
+export function armDummy(world: World, weapon: number): void {
+  world.trainer.arm = weapon;
+  const d = world.bodies.find((b) => b.id === DUMMY_ID_BASE);
+  if (!d) return;
+  if (d.item !== 0) {
+    world.items = world.items.filter((i) => i.id !== d.item);
+    d.item = 0;
+    d.wkit = -1;
+    d.breakPending = false;
+  }
+  if (weapon >= 0) claim(world, d, spawnItem(world, weapon, d.x, d.z));
+}
+
+/** Lab: removes every item and puts the stage's weapons back on their spots. */
+export function resetArmory(world: World, layout: StageLayout = LAB_LAYOUT): void {
+  for (const b of world.bodies) {
+    b.item = 0;
+    if (!(b.state === MoveState.Attack && b.wkit >= 0)) b.wkit = -1;
+    b.breakPending = false;
+  }
+  world.items = [];
+  placeItems(world, layout);
+  if (world.trainer.arm >= 0) armDummy(world, world.trainer.arm);
+}
+
+/** Lab: restores the scenery (pillar, boards, cog) to its starting state. */
+export function resetEnvironment(world: World, layout: StageLayout = LAB_LAYOUT): void {
+  world.environment = createEnvironment(layout);
 }
 
 function applyChange(loadout: number[], hero: number, c: LoadoutChange): EquipResult {
@@ -311,12 +387,17 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
       stepTrainer(world, f);
     }
   }
+  stepItems(world);
+  stepHazards(world);
   stepProjectiles(world);
+  resolveClashes(world);
   resolveGrabs(world);
   resolveHits(world);
   grabIntegrity(world);
   collide(world, before);
+  sceneryCollide(world);
   holdPositions(world);
+  hazardHits(world);
   for (const f of world.bodies) closeContextIfActionable(world, f);
   world.frame += 1;
 }
@@ -371,6 +452,7 @@ export function encodeWorld(world: World): Uint8Array {
   w.i32(world.trainer.pattern);
   w.u32(world.trainer.interval);
   w.u8(world.trainer.approach ? 1 : 0);
+  w.i32(world.trainer.arm);
   w.u32(world.playerLoadout.length);
   for (const l of world.playerLoadout) {
     w.u32(l.length);
@@ -389,6 +471,8 @@ export function encodeWorld(world: World): Uint8Array {
     w.i32(p.h);
     w.i32(p.depth);
   }
+  encodeItems(w, world);
+  encodeEnvironment(w, world);
   const bodies = [...world.bodies].sort((a, b) => a.id - b.id);
   w.u32(bodies.length);
   for (const b of bodies) {
@@ -488,8 +572,105 @@ export function encodeWorld(world: World): Uint8Array {
     w.u8(b.grabEvent);
     w.i32(b.grabOffset);
     w.u32(b.grabFrame);
+    w.u32(b.item);
+    w.i32(b.wkit);
+    w.u8(b.breakPending ? 1 : 0);
+    w.u32(b.clashWith);
+    w.u32(b.propHits.length);
+    for (const id of b.propHits) w.u32(id);
+    w.u8(b.impactArmed ? 1 : 0);
+    w.i32(b.hazardSafeUntil);
+    w.u8(b.weaponEvent);
+    w.i32(b.weaponDetail);
+    w.u32(b.weaponFrame);
   }
   return w.bytes();
+}
+
+function encodeItems(w: ByteWriter, world: World): void {
+  w.u32(world.nextItem);
+  const items = [...world.items].sort((a, b) => a.id - b.id);
+  w.u32(items.length);
+  for (const i of items) {
+    w.u32(i.id);
+    w.u32(i.def);
+    w.u8(i.state);
+    w.i32(i.x);
+    w.i32(i.z);
+    w.i32(i.y);
+    w.i32(i.vx);
+    w.i32(i.vy);
+    w.i32(i.integrity);
+    w.i32(i.ammo);
+    w.u32(i.holder);
+    w.u32(i.lastHolder);
+    w.u32(i.owner);
+    w.u32(i.code);
+    w.u8(i.flight);
+    w.u8(i.breakOnImpact ? 1 : 0);
+    w.u8(i.disarmed ? 1 : 0);
+    w.u32(i.hitIds.length);
+    for (const id of i.hitIds) w.u32(id);
+    w.u32(i.reserveFor);
+    w.i32(i.reserveUntil);
+    w.i32(i.settleX);
+    w.i32(i.settleZ);
+    w.i32(i.settleLeft);
+    w.i32(i.anchorX);
+    w.i32(i.anchorZ);
+  }
+}
+
+function encodeEnvironment(w: ByteWriter, world: World): void {
+  const env = world.environment;
+  w.u32(env.surfaces.length);
+  for (const s of env.surfaces) {
+    w.u32(s.id);
+    w.i32(s.x);
+    w.i32(s.z);
+    w.i32(s.hw);
+    w.i32(s.hd);
+    w.i32(s.h);
+    w.u8(s.cracked ? 1 : 0);
+    w.u32(s.impacts);
+  }
+  w.u32(env.breakables.length);
+  for (const b of env.breakables) {
+    w.u32(b.id);
+    w.i32(b.x);
+    w.i32(b.z);
+    w.i32(b.hw);
+    w.i32(b.hd);
+    w.i32(b.h);
+    w.i32(b.power);
+    for (const t of b.thresholds) w.i32(t);
+    w.u8(b.state);
+    w.i32(b.fragment);
+    w.u8(b.spawned ? 1 : 0);
+  }
+  w.u32(env.hazards.length);
+  for (const h of env.hazards) {
+    w.u32(h.id);
+    w.i32(h.x);
+    w.i32(h.z);
+    w.i32(h.hw);
+    w.i32(h.hd);
+    w.i32(h.h);
+    w.u8(h.phase);
+    w.u32(h.phaseFrame);
+    w.u32(h.rest);
+    w.u32(h.warn);
+    w.u32(h.active);
+    w.u32(h.damage);
+  }
+  const l = env.log;
+  w.u8(l.kind);
+  w.u32(l.frame);
+  w.u32(l.target);
+  w.u32(l.prop);
+  w.i32(l.force);
+  w.i32(l.damage);
+  w.i32(l.detail);
 }
 
 export function hashWorld(world: World): number {
@@ -518,6 +699,7 @@ function encodeContext(w: ByteWriter, c: ComboContext): void {
   w.u32(c.route.length);
   for (const r of c.route) w.u32(r);
   w.u8(c.breakerUsed ? 1 : 0);
+  w.u8(c.environmentImpactUsed ? 1 : 0);
 }
 
 /** Names of the heroes in roster order, for menus and the Lab. */

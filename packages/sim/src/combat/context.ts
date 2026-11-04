@@ -32,6 +32,7 @@ export function emptyContext(): ComboContext {
     ended: Protect.None,
     route: [],
     breakerUsed: false,
+    environmentImpactUsed: false,
   };
 }
 

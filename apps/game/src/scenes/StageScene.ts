@@ -2,8 +2,17 @@ import * as Phaser from 'phaser';
 import {
   BODY_HALF_D,
   BODY_HALF_W,
+  BreakState,
   DefEvent,
+  EnvEvent,
+  type Environment,
   type Fighter,
+  HazardPhase,
+  type Item,
+  ItemState,
+  WEAPONS,
+  WeaponEvent,
+  conditionOf,
   GrabEvent,
   HEROES,
   METER,
@@ -17,7 +26,7 @@ import {
   phaseOf,
 } from '@ffp/sim';
 import { profileText } from '../text/en';
-import { AssetRegistry, type PlaceholderFamily } from '@ffp/platform';
+import { AssetRegistry, type PlaceholderFamily, SpritePicker } from '@ffp/platform';
 import type { RenderSnapshot } from '../game';
 
 export const VIEW_WIDTH = 1920;
@@ -44,6 +53,20 @@ export const STRIKE_COLORS: Record<string, number> = {
 };
 const PROJECTILE_COLOR = 0x8fe3ff;
 const RECOVERY_COLOR = 0x8a8f99;
+/** Words drawn over a fighter for weapon events. */
+const WEAPON_CALLOUTS: Partial<Record<number, { text: string; color: string }>> = {
+  [WeaponEvent.Clash]: { text: 'CLASH', color: '#ffe066' },
+  [WeaponEvent.Disarmed]: { text: 'DISARMED', color: '#ff8f6b' },
+  [WeaponEvent.Disarm]: { text: 'DISARM', color: '#ffd166' },
+  [WeaponEvent.Break]: { text: 'WEAPON BREAK', color: '#ff6b6b' },
+  [WeaponEvent.Reclaim]: { text: 'RECLAIMED', color: '#7ddc7d' },
+  [WeaponEvent.Contested]: { text: 'contested', color: '#bbbbbb' },
+  [WeaponEvent.Deflect]: { text: 'DEFLECT', color: '#7df9ff' },
+  [WeaponEvent.Return]: { text: 'RETURNED', color: '#ffd166' },
+  [WeaponEvent.StruckAside]: { text: 'STRUCK ASIDE', color: '#7df9ff' },
+};
+const CONDITION_TEXT = ['Ready', 'Worn', 'Critical'];
+const CONDITION_COLOR = [0x7ddc7d, 0xe0c050, 0xe05050];
 const POPUP_MS = 700;
 const CALLOUT_MS = 900;
 /** Words drawn over a hero for defensive outcomes (shape and text, not colour alone). */
@@ -71,6 +94,8 @@ export interface StageOptions {
   getSnapshot: () => RenderSnapshot;
   showCollision: () => boolean;
   showLabels: () => boolean;
+  /** Called once the sprite sheets have loaded and the stage is drawn. */
+  onReady?: () => void;
 }
 
 interface Popup {
@@ -94,9 +119,24 @@ export class StageScene extends Phaser.Scene {
   private cues = new Map<number, Phaser.GameObjects.Text>();
   private popups: Popup[] = [];
   private readonly assets = new AssetRegistry();
+  private readonly picker = new SpritePicker(this.assets);
+  /** Drawn above every body: hitboxes, projectiles, tethers. */
+  private overlay!: Phaser.GameObjects.Graphics;
+  private sprites = new Map<number, Phaser.GameObjects.Sprite>();
+  private itemSprites = new Map<number, Phaser.GameObjects.Sprite>();
+  private propSprites = new Map<number, Phaser.GameObjects.Sprite>();
+  private weaponTags = new Map<number, Phaser.GameObjects.Text>();
+  private lastWeapon = new Map<number, string>();
+  private lastEnv = '';
 
   constructor(private readonly opts: StageOptions) {
     super('stage');
+  }
+
+  /** Approved sprite sheets from the asset manifest (M6: the first real art). */
+  preload(): void {
+    for (const s of this.assets.sheets())
+      this.load.spritesheet(s.id, s.url, { frameWidth: s.sheet.cell, frameHeight: s.sheet.cell });
   }
 
   create(): void {
@@ -108,6 +148,9 @@ export class StageScene extends Phaser.Scene {
     bg.lineStyle(2, 0x6b6f78, 1);
     for (let x = 0; x <= VIEW_WIDTH; x += 120) bg.lineBetween(x, FLOOR_TOP, x, FLOOR_BOTTOM);
     this.gfx = this.add.graphics();
+    this.overlay = this.add.graphics();
+    this.overlay.setDepth(8);
+    this.opts.onReady?.();
   }
 
   override update(time: number): void {
@@ -119,7 +162,10 @@ export class StageScene extends Phaser.Scene {
       .sort((a, b) => a.p.z - b.p.z || a.f.id - b.f.id);
     const g = this.gfx;
     g.clear();
+    this.overlay.clear();
     const collision = this.opts.showCollision();
+    this.drawScenery(snap.environment, snap.frame, collision);
+    this.drawItems(snap.items, snap.frame);
     // Ground-Opportunity Focus: a ring under each marked target a hero is focused on.
     const focused = new Set<number>();
     for (const f of current) {
@@ -134,8 +180,9 @@ export class StageScene extends Phaser.Scene {
       }
       this.drawShadow(p);
       if (f.state === MoveState.Guard || f.state === MoveState.Blockstun) this.drawGuard(f, p);
-      const top = this.drawBody(f, p);
+      const top = this.drawSprite(f, p, snap.frame) ?? this.drawBody(f, p);
       this.label(f, p, top);
+      this.weapon(f, p, top, time, snap.items);
       this.feedback(f, p, top, time);
       this.defense(f, p, top, time);
       this.grabCue(f, p, top, time, snap.escapeOpen.has(f.id));
@@ -144,7 +191,227 @@ export class StageScene extends Phaser.Scene {
     for (const pr of snap.projectiles) this.drawProjectile(pr);
     // Boxes go on top of every body, so a hitbox inside a target stays visible.
     if (collision) for (const { f, p } of drawn) this.drawBoxes(f, p);
+    this.dropStale(this.sprites, new Set(current.map((b) => b.id)));
+    this.environmentCallout(snap.environment, time);
     this.updatePopups(time);
+  }
+
+  /** Depth of anything standing on the floor at screen row z (bodies, items, scenery). */
+  private depthAt(z: number): number {
+    return 1 + z / 2000;
+  }
+
+  private sprite(map: Map<number, Phaser.GameObjects.Sprite>, id: number, sheet: string) {
+    let sp = map.get(id);
+    if (!sp) {
+      sp = this.add.sprite(0, 0, sheet, 0);
+      map.set(id, sp);
+    }
+    return sp;
+  }
+
+  private dropStale(map: Map<number, Phaser.GameObjects.Sprite>, keep: Set<number>): void {
+    for (const [id, sp] of map) {
+      if (keep.has(id)) continue;
+      sp.destroy();
+      map.delete(id);
+    }
+  }
+
+  /**
+   * The fighter's sprite-sheet pose: cell chosen from simulation state, mirrored for
+   * facing left, feet on the ground line. Returns the top of the drawn figure, or null
+   * when this fighter has no art yet (the greybox body is drawn instead).
+   */
+  private drawSprite(f: Fighter, p: Pos, frame: number): number | null {
+    const pick = this.picker.fighter(f, frame);
+    const meta = pick ? this.assets.sheet(pick.sheet)?.sheet : undefined;
+    if (!pick || !meta || !this.textures.exists(pick.sheet)) {
+      this.sprites.get(f.id)?.setVisible(false);
+      return null;
+    }
+    const sp = this.sprite(this.sprites, f.id, pick.sheet);
+    sp.setVisible(true);
+    sp.setTexture(pick.sheet, pick.cell);
+    sp.setFlipX(f.facing === -1);
+    sp.setOrigin(0.5, meta.ground / meta.cell);
+    sp.setPosition(p.x, p.z - p.y);
+    sp.setDepth(this.depthAt(p.z));
+    sp.setAlpha(f.protectedRecovery ? 0.55 : f.state === MoveState.Dash ? 0.85 : 1);
+    // Hit flash: the first frames of hit-stun draw the figure solid white.
+    if (f.state === MoveState.Hitstun && f.stateFrame < 4) {
+      sp.setTint(0xffffff);
+      sp.setTintMode(Phaser.TintModes.FILL);
+    } else {
+      sp.setTintMode(Phaser.TintModes.MULTIPLY);
+      if (f.team === 'hero' && f.slot === 1) sp.setTint(0xffe2c4);
+      else sp.clearTint();
+    }
+    const cell = meta.cells[pick.cell];
+    const head = cell ? meta.ground - cell.y0 : BODY_H;
+    if (f.state === MoveState.Down) return p.z - 90;
+    return p.z - p.y - Math.max(head, 140);
+  }
+
+  /** Loose and flying weapons; held weapons are part of the holder's pose art. */
+  private drawItems(items: readonly Item[], frame: number): void {
+    const g = this.gfx;
+    const keep = new Set<number>();
+    for (const item of items) {
+      if (item.state === ItemState.Held || item.state === ItemState.Gone) continue;
+      keep.add(item.id);
+      const x = fxToPixels(item.x);
+      const z = fxToPixels(item.z);
+      const y = fxToPixels(item.y);
+      g.fillStyle(0x000000, 0.3);
+      g.fillEllipse(x, z, 90, 16);
+      // Short Reclaim Priority: a ring in the reserved holder's colour while it lasts.
+      if (item.state === ItemState.Ground && item.reserveFor !== 0 && frame < item.reserveUntil) {
+        g.lineStyle(4, 0x7ddc7d, 0.8);
+        g.strokeEllipse(x, z, 120, 30);
+      }
+      const pick = this.picker.item(item, frame);
+      const meta = pick ? this.assets.sheet(pick.sheet)?.sheet : undefined;
+      if (!pick || !meta || !this.textures.exists(pick.sheet)) {
+        g.fillStyle(0xc89b5a, 1);
+        g.fillRect(x - 40, z - y - 10, 80, 10);
+        continue;
+      }
+      const sp = this.sprite(this.itemSprites, item.id, pick.sheet);
+      sp.setTexture(pick.sheet, pick.cell);
+      const cell = meta.cells[pick.cell];
+      sp.setOrigin(0.5, cell ? cell.foot / meta.cell : 1);
+      sp.setScale(0.6);
+      sp.setPosition(x, z - y);
+      sp.setDepth(this.depthAt(z));
+      const flying = item.state === ItemState.Flying;
+      const spin = WEAPONS[item.def]?.id === 'workstaff' && flying;
+      sp.setRotation(spin ? (frame % 24) * ((2 * Math.PI) / 24) : 0);
+      sp.setFlipX(item.vx < 0);
+    }
+    this.dropStale(this.itemSprites, keep);
+  }
+
+  /** The pillar, the sluice boards (by state) and the cog (telegraph ring by phase). */
+  private drawScenery(env: Environment, frame: number, collision: boolean): void {
+    const g = this.gfx;
+    const place = (id: number, sheet: string, cell: number, x: number, z: number, h: number) => {
+      const meta = this.assets.sheet(sheet)?.sheet;
+      const c = meta?.cells[cell];
+      if (!meta || !c || !this.textures.exists(sheet)) return false;
+      const sp = this.sprite(this.propSprites, id, sheet);
+      sp.setTexture(sheet, cell);
+      sp.setOrigin(0.5, c.foot / meta.cell);
+      sp.setScale(Math.max(0.4, h / Math.max(1, c.foot - c.y0)));
+      sp.setPosition(x, z);
+      sp.setDepth(this.depthAt(z));
+      return true;
+    };
+    for (const s of env.surfaces) {
+      const [x, z, hw, hd, h] = [s.x, s.z, s.hw, s.hd, s.h].map(fxToPixels) as number[];
+      if (!place(s.id, 'prop.impact-hazard', s.cracked ? 1 : 0, x!, z! + hd!, h!) || collision) {
+        g.fillStyle(0x6d6a66, collision ? 0.35 : 1);
+        g.fillRect(x! - hw!, z! - h!, hw! * 2, h!);
+      }
+    }
+    for (const b of env.breakables) {
+      const [x, z, hw, hd, h] = [b.x, b.z, b.hw, b.hd, b.h].map(fxToPixels) as number[];
+      const height = b.state === BreakState.Broken ? h! * 0.45 : h!;
+      if (!place(b.id, 'prop.sluiceboards', b.state, x!, z! + hd!, height) || collision) {
+        g.fillStyle(0x8b5a2b, collision ? 0.35 : 1);
+        g.fillRect(x! - hw!, z! - height, hw! * 2, height);
+      }
+    }
+    for (const hz of env.hazards) {
+      const [x, z, hw, hd, h] = [hz.x, hz.z, hz.hw, hz.hd, hz.h].map(fxToPixels) as number[];
+      // Telegraph: the danger zone on the floor, amber while warning, red while active.
+      if (hz.phase !== HazardPhase.Rest) {
+        const active = hz.phase === HazardPhase.Active;
+        const pulse = active ? 0.55 : 0.25 + 0.25 * Math.abs(Math.sin(hz.phaseFrame / 4));
+        g.fillStyle(active ? 0xff3b30 : 0xffb020, pulse);
+        g.fillEllipse(x!, z!, hw! * 2.4, hd! * 3);
+      }
+      const speed = hz.phase === HazardPhase.Active ? 2 : hz.phase === HazardPhase.Warn ? 6 : 0;
+      const cell = 2 + (speed === 0 ? 0 : Math.floor(frame / speed) % 4);
+      place(hz.id, 'prop.impact-hazard', cell, x!, z! + hd!, h!);
+    }
+  }
+
+  /** IMPACT (or a separation) and break call-outs at the scenery. */
+  private environmentCallout(env: Environment, time: number): void {
+    const l = env.log;
+    const key = `${l.kind}/${l.frame}/${l.target}`;
+    if (key === this.lastEnv) return;
+    this.lastEnv = key;
+    const text =
+      l.kind === EnvEvent.Impact
+        ? `IMPACT ${l.damage}`
+        : l.kind === EnvEvent.Break && l.detail === BreakState.Broken
+          ? 'BROKEN'
+          : '';
+    if (!text || l.frame === 0) return;
+    const prop = [...env.surfaces, ...env.breakables].find((s) => s.id === l.prop);
+    if (!prop) return;
+    const t = this.add.text(fxToPixels(prop.x), fxToPixels(prop.z - prop.h) - 20, text, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '40px',
+      fontStyle: 'bold',
+      color: '#ffb347',
+      stroke: '#000000',
+      strokeThickness: 6,
+    });
+    t.setOrigin(0.5, 1);
+    t.setDepth(13);
+    this.popups.push({ text: t, born: time + (CALLOUT_MS - POPUP_MS) });
+  }
+
+  /** Weapon HUD (Layered Information Display): integrity gauge, condition word, ammo. */
+  private weapon(f: Fighter, p: Pos, top: number, time: number, items: readonly Item[]): void {
+    let tag = this.weaponTags.get(f.id);
+    if (!tag) {
+      tag = this.add.text(0, 0, '', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '18px',
+        color: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 4,
+      });
+      tag.setOrigin(0.5, 1);
+      tag.setDepth(12);
+      this.weaponTags.set(f.id, tag);
+    }
+    const item = f.item !== 0 ? items.find((i) => i.id === f.item) : undefined;
+    const def = item ? WEAPONS[item.def] : undefined;
+    if (item && def) {
+      const cond = conditionOf(def, item.integrity);
+      const g = this.overlay;
+      const w = 90;
+      const y = top - 120;
+      g.fillStyle(0x222222, 0.8);
+      g.fillRect(p.x - w / 2, y, w, 6);
+      g.fillStyle(CONDITION_COLOR[cond]!, 1);
+      g.fillRect(p.x - w / 2, y, (w * item.integrity) / def.integrity.max, 6);
+      const ammo = def.ammo > 0 ? ` · ${item.ammo}/${def.ammo}` : '';
+      tag.setText(`${def.name} · ${CONDITION_TEXT[cond]}${ammo}`);
+      tag.setPosition(p.x, y - 2);
+      tag.setVisible(true);
+    } else tag.setVisible(false);
+    const key = `${f.weaponEvent}/${f.weaponFrame}`;
+    if (this.lastWeapon.get(f.id) === key) return;
+    this.lastWeapon.set(f.id, key);
+    const c = WEAPON_CALLOUTS[f.weaponEvent];
+    if (!c || f.weaponFrame === 0) return;
+    const t = this.add.text(p.x, top - 150, c.text, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '34px',
+      fontStyle: 'bold',
+      color: c.color,
+      stroke: '#000000',
+      strokeThickness: 6,
+    });
+    t.setOrigin(0.5, 1);
+    t.setDepth(13);
+    this.popups.push({ text: t, born: time + (CALLOUT_MS - POPUP_MS) });
   }
 
   private drawShadow(p: Pos): void {
@@ -247,7 +514,7 @@ export class StageScene extends Phaser.Scene {
   }
 
   private drawBoxes(f: Fighter, p: Pos): void {
-    const g = this.gfx;
+    const g = this.overlay;
     const hw = fxToPixels(BODY_HALF_W);
     const hd = fxToPixels(BODY_HALF_D);
     g.lineStyle(2, f.passEnemies || f.ghost ? 0xff4040 : 0x40ff80, 0.9);
@@ -432,7 +699,7 @@ export class StageScene extends Phaser.Scene {
   /** A line from each grabber to the fighter it holds. */
   private drawTethers(drawn: { f: Fighter; p: Pos }[]): void {
     const at = new Map(drawn.map((d) => [d.f.id, d.p]));
-    const g = this.gfx;
+    const g = this.overlay;
     for (const { f, p } of drawn) {
       if (!f.grabbedBy) continue;
       const q = at.get(f.grabbedBy);
@@ -443,7 +710,7 @@ export class StageScene extends Phaser.Scene {
   }
 
   private drawProjectile(pr: Projectile): void {
-    const g = this.gfx;
+    const g = this.overlay;
     const x = fxToPixels(pr.x);
     const z = fxToPixels(pr.z);
     const y = fxToPixels(pr.y);

@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "rulesVersion": "m5.1",
+  "rulesVersion": "m6.1",
   "seed": 11,
   "options": {
     "dummies": 1,
     "infiniteMeter": true,
     "counterHit": true
   },
-  "expectedHash": 2363790357,
+  "expectedHash": 560406902,
   "frames": [
     [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":8}],
     [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],

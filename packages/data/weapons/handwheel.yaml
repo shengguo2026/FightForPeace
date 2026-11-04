@@ -1,0 +1,28 @@
+# Iron Gate Handwheel (spec §11.1, F&D §7.1): a recoverable throwable. It keeps the
+# holder's own Attack graph; Interact throws it. Its throw can be blocked, exact-deflected,
+# counter-returned and struck aside. It lands as a pickup again until its integrity runs
+# out. One-handed: Specials and Ultimates stay available. M6 candidates.
+id: handwheel
+name: Iron Gate Handwheel
+class: recoverableThrown
+hands: 1
+integrity: { max: 60, worn: 40, critical: 20, hit: 0, guard: 0, clash: 0, throw: 15, deflect: 5 }
+gripResistance: 30
+pickup: 6
+throw:
+  speed: 11
+  lift: 4
+  responses: [blockable, exactDeflectable, counterReturnable, strikeDeflectable]
+actions:
+  - id: wheel-throw
+    name: Handwheel Throw
+    category: weaponThrow
+    input: { context: weaponThrow, dir: neutral }
+    frames: { startup: 12, active: 1, recovery: 16, blockstun: 14 }
+    hitbox: { x: 0, w: 70, y: 100, h: 70, depth: 32 }
+    damage: 55
+    reaction: { kind: knockdown, hitstun: 30, push: 5, lift: 6 }
+    costs: { stun: 15, scale: 12, guard: 15 }
+    meter: 4
+    breakPower: 45
+    tags: [impact]
