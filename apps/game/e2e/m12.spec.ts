@@ -82,8 +82,10 @@ test('two games join over the room server and play Stage 1 in lockstep', async (
   browser,
   browserName,
 }) => {
-  // Two games rendering at once are slow in CI browsers: Chromium and Firefox run this.
-  test.skip(browserName === 'webkit', 'Chromium and Firefox only (CI time)');
+  // Two games rendering at once: in CI, Firefox and WebKit run out of runner resources
+  // (the runner shut down twice when Firefox started this test). Chromium runs it; the
+  // golden replays prove the same simulation hashes in every browser.
+  test.skip(browserName !== 'chromium', 'Chromium only (two games at once)');
   const { h, g } = await startTogether(browser);
   await expect(h.getByTestId('net-badge')).toContainText('Wi-Fi');
   const hs = await net(h);
@@ -112,7 +114,7 @@ test('two games join over the room server and play Stage 1 in lockstep', async (
 });
 
 // The longer scenarios run in Chromium only, to keep the CI job inside its time limit;
-// the lockstep test above runs in Chromium and Firefox.
+// all M12 two-game tests run in Chromium only.
 test('a courtesy hold stops both games on one frame, resumes after readiness, a desync is repaired, and the end is safe', async ({
   browser,
   browserName,
