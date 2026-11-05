@@ -121,3 +121,6 @@ export function phaseOf(a: ActionDef, n: number): { phase: Phase; at: number; of
   if (n <= a.startup + span) return { phase: 'active', at: n - a.startup, of: span };
   return { phase: 'recovery', at: n - a.startup - span, of: a.recovery };
 }
+
+/** M11 progression data: store, payout, Hero Mastery, achievements, the Academy route. */
+export { PROGRESSION_DATA as PROGRESSION } from './heroes.gen';

@@ -15,6 +15,7 @@ import {
   MIGRATIONS,
   migrate,
   STORY_STAGE1,
+  emptyProgress,
 } from '../src/index';
 
 const DAY = 86_400_000;
@@ -82,7 +83,13 @@ test('migrations run step by step from the stored version, on a copy', () => {
   };
   try {
     const old = { id: 'p1', title: 'Old' };
-    expect(migrate(old, 0)).toEqual({ id: 'p1', name: 'Old' });
+    // 0 → 1 (this test's step) → 2 (M11: progress and cheat preferences).
+    expect(migrate(old, 0)).toEqual({
+      id: 'p1',
+      name: 'Old',
+      cheats: { heroPrefs: {} },
+      progress: emptyProgress(),
+    });
     expect(old).toEqual({ id: 'p1', title: 'Old' });
     expect(() => migrate(old, -1)).toThrow('no migration from save version -1');
   } finally {
@@ -179,7 +186,7 @@ test('device record defaults and round-trips', async () => {
   const { store } = setup();
   expect((await store.device()).setupDone).toBe(false);
   await store.saveDevice({ version: 1, setupDone: true, lastProfile: 'x', locale: 'de', uiScale: 125 });
-  expect(await store.device()).toEqual({ version: 1, setupDone: true, lastProfile: 'x', locale: 'de', uiScale: 125 });
+  expect(await store.device()).toEqual({ version: SAVE_VERSION, setupDone: true, lastProfile: 'x', locale: 'de', uiScale: 125 });
 });
 
 test('mission records keep the best grade, time and difficulty', () => {

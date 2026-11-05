@@ -1639,6 +1639,273 @@ export function compileCoop(c: CoopYaml): unknown {
   };
 }
 
+
+// --- M11 progression ---------------------------------------------------------------------
+
+const ContentId = T.String({ pattern: '^[a-z0-9]+(\\.[a-z0-9-]+)+$' });
+const Credits = T.Integer({ minimum: 0, maximum: 100000 });
+const RankLetter = T.Union([T.Literal('S'), T.Literal('A'), T.Literal('B'), T.Literal('C')]);
+const GoalName = T.Union(
+  ['walk', 'jump', 'dash', 'recipe', 'guard', 'exact', 'counter', 'special', 'ultimate'].map((g) =>
+    T.Literal(g),
+  ),
+);
+const LessonPhase = T.Object(
+  {
+    goals: T.Array(GoalName, { minItems: 1, maxItems: 4 }),
+    count: T.Integer({ minimum: 1, maximum: 10 }),
+    frames: T.Integer({ minimum: 0, maximum: 36000 }),
+  },
+  { additionalProperties: false },
+);
+
+const ProgressionYaml = T.Object(
+  {
+    bands: T.Object({ low: Credits, medium: Credits, high: Credits }, { additionalProperties: false }),
+    payout: T.Object(
+      {
+        completion: Credits,
+        difficulty: T.Tuple([Credits, Credits, Credits, Credits, Credits]),
+        rank: T.Object({ C: Credits, B: Credits, A: Credits, S: Credits }, { additionalProperties: false }),
+        once: T.Object(
+          {
+            firstClear: Credits,
+            firstRank: T.Object({ B: Credits, A: Credits, S: Credits }, { additionalProperties: false }),
+            allClues: Credits,
+          },
+          { additionalProperties: false },
+        ),
+        academy: T.Object({ certified: Credits, mastered: Credits }, { additionalProperties: false }),
+        masteryLevel: Credits,
+      },
+      { additionalProperties: false },
+    ),
+    mastery: T.Object(
+      {
+        clear: Credits,
+        perRank: Credits,
+        perLevel: T.Integer({ minimum: 1, maximum: 100000 }),
+        maxLevel: T.Integer({ minimum: 1, maximum: 100 }),
+      },
+      { additionalProperties: false },
+    ),
+    store: T.Array(
+      T.Object(
+        {
+          id: ContentId,
+          group: T.Union([
+            T.Literal('wardrobe'),
+            T.Literal('training'),
+            T.Literal('technique'),
+            T.Literal('collection'),
+          ]),
+          hero: T.Optional(KitId),
+          kind: T.Union([
+            T.Literal('special'),
+            T.Literal('ultimate'),
+            T.Literal('outfit'),
+            T.Literal('badge'),
+          ]),
+          action: T.Optional(KitId),
+          name: T.Optional(T.String({ minLength: 1 })),
+          tint: T.Optional(T.String({ pattern: '^#[0-9a-f]{6}$' })),
+          band: T.Union([T.Literal('low'), T.Literal('medium'), T.Literal('high')]),
+          reveal: T.Union([
+            T.Literal('always'),
+            T.Object({ clear: ContentId }, { additionalProperties: false }),
+          ]),
+          requires: T.Optional(T.Object({ achievement: ContentId }, { additionalProperties: false })),
+          mastery: T.Optional(T.Integer({ minimum: 1, maximum: 100 })),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    achievements: T.Array(
+      T.Object(
+        {
+          id: ContentId,
+          group: T.Union(
+            [
+              'story',
+              'stageMastery',
+              'heroMastery',
+              'combatTechnique',
+              'discovery',
+              'coop',
+              'academy',
+              'difficulty',
+            ].map((g) => T.Literal(g)),
+          ),
+          name: T.String({ minLength: 1 }),
+          credits: Credits,
+          narrative: T.Optional(T.Boolean()),
+          rule: T.Object(
+            {
+              kind: T.Union([
+                T.Literal('clear'),
+                T.Literal('heroes'),
+                T.Literal('stat'),
+                T.Literal('academy'),
+              ]),
+              content: T.Optional(ContentId),
+              rank: T.Optional(RankLetter),
+              difficulty: T.Optional(T.Union(DIFFICULTY_ORDER.map((d) => T.Literal(d)))),
+              count: T.Optional(T.Integer({ minimum: 1, maximum: 100 })),
+              stat: T.Optional(
+                T.Union([T.Literal('bestHits'), T.Literal('revives'), T.Literal('allClues')]),
+              ),
+              min: T.Optional(T.Integer({ minimum: 1, maximum: 100000 })),
+              coop: T.Optional(T.Boolean()),
+              state: T.Optional(T.Union([T.Literal('certified'), T.Literal('mastered')])),
+            },
+            { additionalProperties: false },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    academy: T.Array(
+      T.Object(
+        {
+          id: ContentId,
+          name: T.String({ minLength: 1 }),
+          lessons: T.Array(
+            T.Object(
+              {
+                id: ContentId,
+                course: T.Union(
+                  ['orientation', 'foundations', 'defense', 'conversion', 'resources', 'specialization', 'mastery'].map(
+                    (c) => T.Literal(c),
+                  ),
+                ),
+                name: T.String({ minLength: 1 }),
+                demo: T.Optional(KitId),
+                recipe: T.Optional(KitId),
+                trainer: T.Optional(T.Boolean()),
+                meter: T.Optional(T.Integer({ minimum: 0, maximum: 100 })),
+                guided: T.Array(GoalName, { minItems: 1, maxItems: 4 }),
+                trial: LessonPhase,
+                mastery: LessonPhase,
+              },
+              { additionalProperties: false },
+            ),
+            { minItems: 1 },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+  },
+  { additionalProperties: false },
+);
+type ProgressionYaml = Static<typeof ProgressionYaml>;
+
+/** Validates progression.yaml against the heroes it names. */
+export function loadProgression(
+  source: string,
+  heroes: readonly { id: string; actions: readonly { id: string; category: string; catalogue?: boolean }[]; recipes?: readonly { id: string }[] }[],
+  file = 'progression.yaml',
+): unknown {
+  const d = validate(ProgressionYaml, source, file) as ProgressionYaml;
+  const problems: string[] = [];
+  const ids = new Set<string>();
+  const unique = (id: string) => {
+    if (ids.has(id)) problems.push(`id "${id}" repeats`);
+    ids.add(id);
+  };
+  const achievements = new Set(d.achievements.map((a) => a.id));
+  for (const e of d.store) {
+    unique(e.id);
+    const hero = e.hero ? heroes.find((h) => h.id === e.hero) : undefined;
+    if (e.hero && !hero) problems.push(`${e.id}: unknown hero "${e.hero}"`);
+    if (e.kind === 'special' || e.kind === 'ultimate') {
+      if (e.group !== 'technique') problems.push(`${e.id}: techniques belong to the technique group`);
+      const a = hero?.actions.find((x) => x.id === e.action);
+      if (!a) problems.push(`${e.id}: unknown action "${e.action}"`);
+      else if (a.category !== e.kind || !a.catalogue)
+        problems.push(`${e.id}: "${e.action}" is not a catalogue ${e.kind}`);
+    } else if (e.action) problems.push(`${e.id}: only techniques name an action`);
+    if ((e.kind === 'outfit' || e.kind === 'badge') && !e.name) problems.push(`${e.id}: needs a name`);
+    if (e.kind === 'outfit' && (!hero || e.group !== 'wardrobe'))
+      problems.push(`${e.id}: an outfit is a wardrobe entry of one hero`);
+    if (e.requires && !achievements.has(e.requires.achievement))
+      problems.push(`${e.id}: unknown achievement "${e.requires.achievement}"`);
+  }
+  for (const a of d.achievements) unique(a.id);
+  for (const r of d.academy) {
+    unique(r.id);
+    for (const l of r.lessons) {
+      unique(l.id);
+      const usesRecipe = [...l.guided, ...l.trial.goals, ...l.mastery.goals].includes('recipe');
+      if (usesRecipe && !l.recipe) problems.push(`${l.id}: a recipe goal needs a recipe`);
+      for (const name of [l.recipe, l.demo])
+        if (name)
+          for (const h of heroes)
+            if (!(h.recipes ?? []).some((x) => x.id === name))
+              problems.push(`${l.id}: ${h.id} has no recipe "${name}"`);
+    }
+  }
+  if (problems.length > 0) throw new HeroDataError(problems.map((p) => `${file}: ${p}`).join('\n'));
+  return {
+    bands: d.bands,
+    payout: {
+      ...d.payout,
+      difficulty: [...d.payout.difficulty],
+    },
+    mastery: d.mastery,
+    store: d.store.map((e) => ({
+      id: e.id,
+      group: e.group,
+      hero: e.hero ?? null,
+      kind: e.kind,
+      action: e.action ?? null,
+      name: e.name ?? null,
+      tint: e.tint ?? null,
+      price: d.bands[e.band],
+      band: e.band,
+      reveal: e.reveal === 'always' ? null : e.reveal.clear,
+      requires: e.requires?.achievement ?? null,
+      mastery: e.mastery ?? 0,
+    })),
+    achievements: d.achievements.map((a) => ({
+      id: a.id,
+      group: a.group,
+      name: a.name,
+      credits: a.credits,
+      narrative: a.narrative ?? false,
+      rule: {
+        kind: a.rule.kind,
+        content: a.rule.content ?? null,
+        rank: a.rule.rank ?? null,
+        difficulty: a.rule.difficulty ?? null,
+        count: a.rule.count ?? 1,
+        stat: a.rule.stat ?? null,
+        min: a.rule.min ?? 1,
+        coop: a.rule.coop ?? false,
+        state: a.rule.state ?? null,
+      },
+    })),
+    academy: d.academy.map((r) => ({
+      id: r.id,
+      name: r.name,
+      lessons: r.lessons.map((l) => ({
+        id: l.id,
+        course: l.course,
+        name: l.name,
+        demo: l.demo ?? null,
+        recipe: l.recipe ?? null,
+        trainer: l.trainer ?? false,
+        meter: l.meter ?? 0,
+        guided: [...l.guided],
+        trial: { ...l.trial, goals: [...l.trial.goals] },
+        mastery: { ...l.mastery, goals: [...l.mastery.goals] },
+      })),
+    })),
+  };
+}
+
+const PROGRESSION_FILE = fileURLToPath(new URL('../progression/progression.yaml', import.meta.url));
+
 const COOP_FILE = fileURLToPath(new URL('../coop/coop.yaml', import.meta.url));
 const STAGES_DIR = fileURLToPath(new URL('../stages/', import.meta.url));
 
@@ -1701,6 +1968,7 @@ export function generate(
   encounters: string | null = ENCOUNTERS_DIR,
   coopFile: string | null = COOP_FILE,
   stageFiles: readonly string[] = encounters === ENCOUNTERS_DIR ? stageFileList() : [],
+  progressionFile: string | null = encounters === ENCOUNTERS_DIR ? PROGRESSION_FILE : null,
 ): string {
   const load = (f: string, kind: 'hero' | 'enemy') =>
     loadHero(readFileSync(f, 'utf8'), basename(f), kind);
@@ -1751,12 +2019,16 @@ export function generate(
     stages.push(out.stage);
     arenas.push(...out.arenas);
   }
+  const progression = progressionFile
+    ? loadProgression(readFileSync(progressionFile, 'utf8'), heroYaml, basename(progressionFile))
+    : { bands: { low: 0, medium: 0, high: 0 }, payout: null, mastery: null, store: [], achievements: [], academy: [] };
   const coop = coopFile
     ? compileCoop(loadCoop(readFileSync(coopFile, 'utf8'), heroYaml, basename(coopFile)))
     : { preBuffer: 0, handoffs: [], finishers: [], actions: [] };
   return `// GENERATED by packages/data/src/generate.ts from packages/data/heroes/*.yaml,
 // packages/data/enemies/*.yaml, packages/data/weapons/*.yaml,
-// packages/data/encounters/*.yaml, packages/data/stages/*.yaml and packages/data/coop/coop.yaml.
+// packages/data/encounters/*.yaml, packages/data/stages/*.yaml, packages/data/coop/coop.yaml
+// and packages/data/progression/progression.yaml.
 // Do not edit by hand:
 // change the YAML and run \`pnpm gen:heroes\`.
 import type {
@@ -1765,6 +2037,7 @@ import type {
   DifficultyDef,
   EnemyProfile,
   HeroDef,
+  ProgressionDef,
   StageDef,
   WeaponDef,
 } from './types';
@@ -1785,6 +2058,8 @@ export const ARENA_DATA: readonly ArenaDef[] = ${JSON.stringify(arenas, null, 2)
 export const COOP_DATA: CoopDef = ${JSON.stringify(coop, null, 2)};
 
 export const STAGE_DATA: readonly StageDef[] = ${JSON.stringify(stages, null, 2)};
+
+export const PROGRESSION_DATA: ProgressionDef = ${JSON.stringify(progression, null, 2)};
 `;
 }
 

@@ -618,3 +618,116 @@ export interface CoopDef {
   finishers: readonly TeamFinisherDef[];
   actions: readonly CoopActionDef[];
 }
+
+// --- M11 progression (generated from packages/data/progression/progression.yaml) ---------
+
+export type StoreGroup = 'wardrobe' | 'training' | 'technique' | 'collection';
+export type StoreKind = 'special' | 'ultimate' | 'outfit' | 'badge';
+
+export interface StoreItemDef {
+  /** Stable content ID, e.g. `store.technique.mountain.skybreak-column`. */
+  id: string;
+  group: StoreGroup;
+  hero: string | null;
+  kind: StoreKind;
+  /** Technique: the catalogue action id. */
+  action: string | null;
+  /** Outfit or badge: its English name (localized by key). */
+  name: string | null;
+  /** Outfit placeholder treatment: the colour the sprite is tinted with. */
+  tint: string | null;
+  price: number;
+  band: 'low' | 'medium' | 'high';
+  /** Content ID whose first clear reveals the entry (null: visible from first launch). */
+  reveal: string | null;
+  /** Achievement needed before the entry can be bought (null: none). */
+  requires: string | null;
+  /** Hero Mastery level that grants a technique without Credits (0: no such path). */
+  mastery: number;
+}
+
+export type AchievementGroup =
+  | 'story'
+  | 'stageMastery'
+  | 'heroMastery'
+  | 'combatTechnique'
+  | 'discovery'
+  | 'coop'
+  | 'academy'
+  | 'difficulty';
+
+export interface AchievementDef {
+  id: string;
+  group: AchievementGroup;
+  name: string;
+  credits: number;
+  /** Tests story occurrence only: allowed in Cheat-Assisted runs (without Credits). */
+  narrative: boolean;
+  rule: {
+    kind: 'clear' | 'heroes' | 'stat' | 'academy';
+    content: string | null;
+    rank: string | null;
+    difficulty: string | null;
+    count: number;
+    stat: 'bestHits' | 'revives' | 'allClues' | null;
+    min: number;
+    coop: boolean;
+    state: 'certified' | 'mastered' | null;
+  };
+}
+
+export type LessonGoal =
+  | 'walk'
+  | 'jump'
+  | 'dash'
+  | 'recipe'
+  | 'guard'
+  | 'exact'
+  | 'counter'
+  | 'special'
+  | 'ultimate';
+
+export interface LessonPhaseDef {
+  goals: readonly LessonGoal[];
+  count: number;
+  /** Time limit in frames (0: none). */
+  frames: number;
+}
+
+export interface LessonDef {
+  id: string;
+  course: string;
+  name: string;
+  /** Recipe the Demonstration plays through the hero (null: a described demonstration). */
+  demo: string | null;
+  recipe: string | null;
+  /** The training enemy attacks (defense lessons). */
+  trainer: boolean;
+  /** Attack meter the lesson starts with, in percent. */
+  meter: number;
+  guided: readonly LessonGoal[];
+  trial: LessonPhaseDef;
+  mastery: LessonPhaseDef;
+}
+
+export interface AcademyRouteDef {
+  id: string;
+  name: string;
+  lessons: readonly LessonDef[];
+}
+
+export interface ProgressionDef {
+  bands: { low: number; medium: number; high: number };
+  payout: {
+    completion: number;
+    difficulty: readonly number[];
+    rank: Record<'C' | 'B' | 'A' | 'S', number>;
+    once: { firstClear: number; firstRank: Record<'B' | 'A' | 'S', number>; allClues: number };
+    academy: { certified: number; mastered: number };
+    masteryLevel: number;
+  };
+  mastery: { clear: number; perRank: number; perLevel: number; maxLevel: number };
+  store: readonly StoreItemDef[];
+  achievements: readonly AchievementDef[];
+  academy: readonly AcademyRouteDef[];
+}

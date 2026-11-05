@@ -10,6 +10,8 @@ export * from './assets/sprites';
 export * from './render/quality';
 export * from './i18n/i18n';
 export * from './save/schema';
+export * from './save/progress';
 export * from './save/codec';
 export * from './save/backends';
 export * from './save/store';
+export * from './progress/economy';
