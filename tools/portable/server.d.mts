@@ -1,4 +1,5 @@
 import type { Server } from 'node:http';
+import type { RoomService } from './room.mjs';
 export const FIRST_PORT: number;
 export const LAST_PORT: number;
 export const HOST: string;
@@ -18,6 +19,8 @@ export function startServer(o: {
   info?: Record<string, unknown>;
   /** Folder for the M10 save API; without it the API is off. */
   saves?: string;
+  /** M12 LAN room service; without it /__ffp/room is off. */
+  rooms?: RoomService;
 }): Promise<{ server: Server; port: number; url: string }>;
 export function parseArgs(
   argv: string[],

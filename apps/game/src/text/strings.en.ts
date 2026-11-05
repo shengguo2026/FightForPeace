@@ -1,5 +1,6 @@
 import { ARENA_TEXT, GRADE_TEXT, STAGE_TEXT, TEXT } from './en';
 import { M11_EN } from './strings.m11';
+import { M12_EN } from './strings.m12';
 
 /**
  * M10 English base catalogue. Every key here must exist in strings.zh-CN.ts and
@@ -73,8 +74,6 @@ const SHELL = {
   'play.soloDetail': 'One hero, one player.',
   'play.coop': 'Same-device co-op',
   'play.coopDetail': 'Two players on this computer: keyboard halves or gamepads.',
-  'play.wifi': 'Local Wi-Fi co-op',
-  'play.wifiDetail': 'Two computers on the same network. Opens in a later update.',
   'play.lobbyTitle': 'Players',
   'play.lobbyJoin':
     'Player 2: press {action:Attack} on the other keyboard half or a free gamepad to join',
@@ -305,6 +304,7 @@ const SHELL = {
 export const EN = {
   ...SHELL,
   ...M11_EN,
+  ...M12_EN,
   ...prefixed('prompt.', TEXT),
   ...prefixed('run.', STAGE_TEXT),
   ...prefixed('arena.', ARENA_TEXT),

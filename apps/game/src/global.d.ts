@@ -58,7 +58,37 @@ export interface DebugScenery {
 }
 
 /** Test hook, installed in dev and e2e builds only (see debug.ts). */
+/** M12: the Wi-Fi session as tests see it. */
+export interface DebugNet {
+  status: string;
+  role: string;
+  error: string | null;
+  room: { code: string; port: number; addresses: string[] } | null;
+  lobby: unknown;
+  phase: string | null;
+  hold: { kind: string; by: number } | null;
+  ready: boolean[];
+  frame: number;
+  delay: number;
+  matched: number;
+  resyncs: number;
+  ended: string | null;
+  hashes: [number, number][];
+}
+
 export interface FfpDebugHook {
+  /** M12 Wi-Fi co-op hooks. */
+  net: {
+    state(): DebugNet;
+    /** Pretend to be another game version (lobby mismatch test). */
+    fakeVersion(v: string | null): void;
+    /** First launch with the defaults and this name (the M10 tests cover the real one). */
+    quickSetup(name: string): Promise<void>;
+    /** Request a courtesy hold as if this window lost focus. */
+    loseFocus(): void;
+    /** Make this game's world differ from the partner's (resync test). */
+    corrupt(): void;
+  };
   frame(): number;
   body(id: number): DebugBody | undefined;
   hero(slot: number): DebugBody | undefined;

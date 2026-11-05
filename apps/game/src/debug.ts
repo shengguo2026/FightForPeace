@@ -33,6 +33,35 @@ export function installDebugHook(
   shell: Shell,
 ): void {
   window.__ffp = {
+    net: {
+      state: () => {
+        const n = shell.net;
+        const lock = n.lock;
+        return {
+          status: n.status.value,
+          role: n.role.value,
+          error: n.error.value,
+          room: n.room.value,
+          lobby: n.lobby.value ? structuredClone(n.lobby.value) : null,
+          phase: lock?.phase ?? null,
+          hold: lock?.hold ? { kind: lock.hold.kind, by: lock.hold.by } : null,
+          ready: lock ? [...lock.ready] : [],
+          frame: session.world.frame,
+          delay: lock?.delay ?? 0,
+          matched: lock?.stats.matched ?? 0,
+          resyncs: lock?.stats.resyncs ?? 0,
+          ended: lock?.ended?.reason ?? null,
+          hashes: lock?.hashes() ?? [],
+        };
+      },
+      fakeVersion: (v) => (shell.net.versionOverride = v),
+      quickSetup: (name) => shell.finishSetup({ name, locale: 'en', settings: {} }),
+      loseFocus: () => shell.net.requestHold('focus'),
+      corrupt: () => {
+        const h = heroOf(session.world, 0);
+        if (h) h.health = Math.max(1, h.health - 13);
+      },
+    },
     shell: {
       screen: () => shell.screen.value,
       profile: () => (shell.active.value ? structuredClone(shell.active.value) : null),

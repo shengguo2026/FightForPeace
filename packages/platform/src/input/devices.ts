@@ -58,6 +58,8 @@ export class DeviceHub {
    * turns it back on.
    */
   pauseOnFocusLoss = true;
+  /** M12 Wi-Fi play: the partner plays on their own computer, so nobody joins here. */
+  joinLocked = false;
   private padBindings: Bindings;
 
   constructor(opts: DeviceHubOptions) {
@@ -190,7 +192,7 @@ export class DeviceHub {
 
     const p1 = this.slots[0]!;
     const p2 = this.slots[1]!;
-    if (!p2.joined && !p1.waiting) {
+    if (!p2.joined && !p1.waiting && !this.joinLocked) {
       // Join Player 2: Attack on the split keyboard, or Start on a pad P1 is not using.
       const join = ids.find(
         (id) =>

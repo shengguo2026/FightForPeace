@@ -118,9 +118,12 @@ export function ResultsOverlay({
   village,
   continuedFrom,
   settlement,
+  again,
 }: {
   state: LabState;
   onAgain: () => void;
+  /** M12: whether Play again is offered (not in a Wi-Fi game). */
+  again?: () => boolean;
   onLab: () => void;
   /** M10: started from the village, so the second button returns there. */
   village?: () => boolean;
@@ -234,7 +237,7 @@ export function ResultsOverlay({
           s ? <Payout s={s} slot={slot} many={settled.length > 1} /> : null,
         )}
         <div style={{ marginTop: '16px' }}>
-          {button(t('results.again'), 'results-again', onAgain)}
+          {(again?.() ?? true) ? button(t('results.again'), 'results-again', onAgain) : null}
           {toVillage
             ? button(t('results.village'), 'results-village', onLab)
             : button(t('run.backToLab'), 'results-lab', onLab)}

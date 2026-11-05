@@ -314,3 +314,71 @@ As in M10 (Player 1: W A S D, Attack T, Jump Y, Guard G, Interact J, Special U, 
 24. **Hero Mastery grant:** keep playing Stage 1 with one hero. When that hero reaches Mastery level 3 (Records → Hero Mastery), the results say "Hero Mastery unlocked: …" and the store shows the Special as Owned without spending Credits.
 25. **Continue keeps the mark:** start a Cheat-Assisted run, play to Beat 3 (checkpoint), Return to Village, then Continue. The HUD still shows Cheat-Assisted, and finishing pays 0 Credits.
 26. **Guest:** play as Guest (co-op Player 2, or a Guest profile): the results show what the run would pay, but the Guest keeps nothing, and the store says Guests cannot buy items.
+
+## M12 · LAN co-op (lockstep) over your home Wi-Fi
+
+You need two computers on the same home network (not a guest network). PC 1 is your development PC with the repository; PC 2 only needs the portable zip.
+
+### Get and start the build
+
+On PC 1:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm release
+```
+
+`pnpm release` writes `release\FightForPeace-0.12.0.zip`. Copy that zip to PC 2 (USB stick or a shared folder), unzip it anywhere there, and double-click `start.bat`.
+
+On PC 1 either start the same zip (unzip `release\FightForPeace-0.12.0.zip` and double-click `start.bat`) or run the development server:
+
+```powershell
+pnpm dev
+```
+
+and open `http://localhost:5173`. Both ways host rooms. Both computers must run the same version (0.12.0), otherwise the lobby refuses to join (that is test step 10).
+
+To test the branch before it is merged instead of `main`:
+
+```powershell
+git fetch origin claude/project-thread-aaru51
+git checkout claude/project-thread-aaru51
+pnpm install
+pnpm release
+```
+
+Optional, the automated checks (they also run on GitHub):
+
+```powershell
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm e2e
+pnpm smoke:portable
+```
+
+### Keys
+
+As in M10 on each computer (W A S D, Attack T, Jump Y, Guard G, Interact J, Special U, Ultimate H, Team Attack B, Pause Esc). Each computer's player uses that computer's keyboard or gamepad. Menus: arrows, Enter, Esc, or the mouse.
+
+### Steps
+
+1. **Host:** on PC 1, Village → Play → **Wi-Fi co-op** (it is no longer greyed out) → **Host a game**. The screen shows **Address** (for example 192.168.1.23), **Port** (7350) and a four-letter **Room code**, plus the Windows Firewall hint. If the computer has more than one network address, the others are listed underneath.
+2. **Firewall:** the first time, Windows shows "Windows Defender Firewall has blocked some features of Node.js". Tick **Private networks** and press **Allow access**. (If you pressed Cancel by mistake: Windows Security → Firewall → Allow an app → Node.js → tick Private.)
+3. **Join:** on PC 2, Play → Wi-Fi co-op → **Join a game**. Type PC 1's address, the port and the code (lower case and spaces are fine) → **Join**. Both computers now show the **Wi-Fi lobby**: Player 1 · Host and Player 2 · Guest with both names.
+4. **Lobby:** each player changes only their own hero (click the Hero line or use left/right). You cannot pick the hero the other player has. Only the host can change the difficulty; when the host changes it, both "Ready" marks are cleared. The guest sees the difficulty and "The host chooses the difficulty."
+5. **Start:** both press **Ready**. Stage 1 starts on both computers at the same moment. Both heroes appear on both screens, both HUD clusters (Player 1 left, Player 2 right) show, and under the stage title a small line says **Wi-Fi · input delay 2 frames · … ms** (2 or 3 frames on a normal home network).
+6. **Play together:** walk, fight and free a worker together through Beat 1 and Beat 2. Each player controls only their own hero. Both screens should show the same thing (same enemy positions, same health bars). The game should feel like same-device play with a tiny delay.
+7. **Courtesy hold:** on PC 2 click another window (or Alt+Tab). Both games stop at once. PC 1 shows "Player 2 left the game window.", "✓ Player 1: ready", "Player 2: not ready yet" and after 3 seconds "Waiting for Player 2 to come back: 60 s, then the session ends." Coming back to the game window on PC 2 does **not** start play by itself: PC 2 shows "You left the game window." and **Ready to continue**. Press it (or Esc): both show "Play resumes in 3, 2, 1", then play continues on both from the same moment.
+8. **Pause:** press Esc on PC 1. Both games pause: "Player 1 paused the game." Open **Settings (this computer only)**, change the volume or the HUD size, go back. Press **Ready to continue** on PC 1: PC 1 now shows "✓ Player 1: ready" and waits; press it on PC 2 too, then the countdown starts.
+9. **End session:** pause again, then **End session** on PC 2. PC 2 returns to the village; PC 1 shows "Session ended · Player 2 left the session." and "Wi-Fi games keep no checkpoint…". Back to the village: **Continue** is not offered for this run.
+10. **Wrong code / other version:** host again on PC 1; on PC 2 type a wrong code → "That room code is not right…". Type a wrong address (for example 192.168.1.250) → after a few seconds "No game answered at that address and port…". (If you still have the 0.11.0 zip, a 0.11.0 game cannot join at all; the version check itself is covered by the automated test.)
+11. **Firewall blocked (optional):** if PC 2 cannot reach PC 1 at all, check step 2 and that both are on the same Wi-Fi. "AP isolation" or a guest network blocks computers from seeing each other.
+12. **Finish the stage together:** play all of Stage 1 to the results. Each computer shows the results; each computer's player gets their Credits and records on their own profile (look at the Credits in each village). Back to the village on one computer ends the session on the other ("Player 1 returned to the village.").
+13. **Lost connection:** start a new Wi-Fi game, then close the black server window on PC 1 (or turn off PC 1's Wi-Fi). Within about 10 seconds PC 2 shows "Session ended · The connection to the other computer was lost."
+14. **Languages:** switch PC 2 to 简体中文 or Deutsch: the Wi-Fi screens, lobby and hold panels are translated.
+15. **Solo and same-device co-op still work:** Play → Solo and Play → Same-device co-op behave exactly as in M11.

@@ -54,8 +54,12 @@ export function ModeScreen({ shell }: { shell: Shell }) {
         <Button
           label={t('play.wifi')}
           detail={t('play.wifiDetail')}
-          onPress={() => undefined}
-          disabled
+          onPress={() => {
+            shell.fromShell.value = true;
+            shell.go('wifi');
+          }}
+          icon={2}
+          testId="mode-wifi"
         />
         <Button label={t('common.back')} onPress={() => shell.go('village')} />
       </Panel>

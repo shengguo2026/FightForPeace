@@ -4,6 +4,7 @@
 //
 //   node server/server.mjs [--port 7000] [--no-open]      (also: FFP_PORT=7000)
 //
+// M12: the host's game opens a LAN room through /__ffp/room (room.mjs).
 // M10: profiles are saved by this server into ../saves (one JSON file per record), so they
 // do not depend on the port or the browser; copying the game folder copies the saves.
 import { spawn } from 'node:child_process';
@@ -22,6 +23,7 @@ import {
 import http from 'node:http';
 import { dirname, extname, join, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { ROOM_API, createRoomService } from './room.mjs';
 
 export const FIRST_PORT = 6006;
 export const LAST_PORT = 6105;
@@ -163,8 +165,13 @@ function savesHandler(savesDir, req, res) {
   json(405, { error: 'method' });
 }
 
-function handler(root, info, savesDir) {
+function handler(root, info, savesDir, rooms) {
   return (req, res) => {
+    // M12: the LAN room (opened by the host's game on its own server).
+    if (rooms && (req.url ?? '').split('?')[0] === ROOM_API) {
+      rooms.handleApi(req, res);
+      return;
+    }
     if (savesDir && (req.url ?? '').startsWith(SAVES_PATH)) {
       savesHandler(savesDir, req, res);
       return;
@@ -232,8 +239,11 @@ export async function startServer({
   last = LAST_PORT,
   info = {},
   saves,
+  rooms,
 }) {
-  const server = http.createServer(handler(root, { app: 'fight-for-peace', ...info }, saves));
+  const server = http.createServer(
+    handler(root, { app: 'fight-for-peace', ...info, rooms: Boolean(rooms) }, saves, rooms),
+  );
   const candidates = port ? [port] : Array.from({ length: last - first + 1 }, (_, i) => first + i);
   for (const p of candidates) {
     try {
@@ -331,6 +341,8 @@ async function main() {
     port: args.port,
     info: { folder: id, version },
     saves: join(appDir, 'saves'),
+    // M12: Host a Wi-Fi game opens a room listener on the local network (port 7350+).
+    rooms: createRoomService({ log }),
   });
   writeFileSync(portFile, `${port}\n`);
   log(`Fight For Peace ${version} running at ${url}`);

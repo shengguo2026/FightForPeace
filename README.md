@@ -95,6 +95,8 @@ The Lab also shows, per player, the hero, the current move and its phase, the la
 
 If Node.js 24 is not installed, the first start downloads a pinned Node.js 24 into the `runtime` folder next to `start.bat` and checks its SHA-256 checksum (internet needed once). Starting again while the game runs just opens the browser on the running copy. Problems are written to `logs/server.log`. On macOS or Linux run `./start.sh` instead.
 
+**Wi-Fi co-op (M12):** each computer runs its own copy (the zip, or `pnpm dev`). The host chooses Play → Wi-Fi co-op → Host a game and reads out the address, port (7350 or the next free one) and room code; the guest chooses Join a game and types them. The first time, Windows Firewall asks whether Node.js may communicate: allow it on private networks. Details: `tools/portable/README.txt` and `docs/superpowers/plans/2026-11-05-m12-lan-coop-lockstep.md`.
+
 ## Developer commands
 
 | Command | What it does |

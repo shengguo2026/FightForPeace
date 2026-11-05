@@ -163,6 +163,7 @@ render(
       village: () => useShell && shell.fromShell.value,
       continuedFrom: () => shell.continued.value?.beat ?? null,
       settlement: () => (useShell ? shell.settlement.value : []),
+      again: () => !shell.net.active,
       onAgain: () => {
         if (useShell && shell.fromShell.value) shell.startStage();
         else actions.startArena(lab.arenaPick.value.arena);
@@ -194,7 +195,8 @@ if (stageId && STAGES.some((s) => s.id === stageId)) {
 }
 
 /** The shell wants menu input: a menu screen, or the pause menu or results over play. */
-const shellInput = () => useShell && (!shell.live || menuPaused(lab) || lab.results.value !== null);
+const shellInput = () =>
+  useShell && (!shell.live || menuPaused(lab) || lab.results.value !== null || shell.net.menuOpen);
 const padNav = new PadNav();
 const TYPING_KEYS = new Set(['Escape', 'Enter', 'NumpadEnter', 'ArrowUp', 'ArrowDown', 'Tab']);
 

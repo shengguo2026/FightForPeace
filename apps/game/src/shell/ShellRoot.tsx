@@ -25,6 +25,7 @@ import { StoreScreen } from './screens/Store';
 import { SettingsScreen } from './screens/Settings';
 import { SetupScreen } from './screens/Setup';
 import { VillageScreen } from './screens/Village';
+import { NetLobbyScreen, NetOverlay, WifiScreen } from './screens/Wifi';
 
 /** Whether the pause the player asked for is showing (not a focus or controller pause). */
 export function menuPaused(state: LabState): boolean {
@@ -46,6 +47,7 @@ export function ShellRoot({ shell, state }: { shell: Shell; state: LabState }) {
         {screen === 'game' && !state.results.value ? <HudClusters /> : null}
         {screen === 'lesson' ? <LessonHud shell={shell} /> : null}
         {screen === 'practice' ? <PracticeHud shell={shell} /> : null}
+        {screen === 'game' && shell.net.active ? <NetOverlay shell={shell} /> : null}
         {menuPaused(state) && !state.results.value ? (
           <PauseMenu shell={shell} state={state} />
         ) : null}
@@ -91,6 +93,10 @@ export function ShellRoot({ shell, state }: { shell: Shell; state: LabState }) {
         return <PracticeSetupScreen shell={shell} />;
       case 'combos':
         return <CombosScreen shell={shell} />;
+      case 'wifi':
+        return <WifiScreen shell={shell} />;
+      case 'netLobby':
+        return <NetLobbyScreen shell={shell} />;
     }
   })();
   return (

@@ -1,5 +1,6 @@
 import type { Catalog } from '@ffp/platform';
 import { M11_DE } from './strings.m11';
+import { M12_DE } from './strings.m12';
 
 /** M10 catalogue (de). Keys mirror strings.en.ts and the generated data names. */
 export const DE: Catalog = {
@@ -239,8 +240,6 @@ export const DE: Catalog = {
   'play.soloDetail': 'Ein Held, ein Spieler.',
   'play.coop': 'Koop am selben Gerät',
   'play.coopDetail': 'Zwei Spieler an diesem Computer: Tastaturhälften oder Gamepads.',
-  'play.wifi': 'Koop im lokalen WLAN',
-  'play.wifiDetail': 'Zwei Computer im selben Netzwerk. Kommt mit einem späteren Update.',
   'play.lobbyTitle': 'Spieler',
   'play.lobbyJoin':
     'Spieler 2: {action:Attack} auf der anderen Tastaturhälfte oder einem freien Gamepad, um beizutreten',
@@ -548,4 +547,5 @@ export const DE: Catalog = {
   'grade.continues': 'Genutzte Fortsetzungen',
   'grade.time': 'Zeit',
   ...M11_DE,
+  ...M12_DE,
 };

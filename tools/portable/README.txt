@@ -1,7 +1,7 @@
 Fight For Peace @VERSION@ - portable build
 ==========================================
 
-Stage 1 "The Broken Water Pact", the village menu and the Combat Lab (milestone M10),
+Stage 1 "The Broken Water Pact", the village menu and the Combat Lab (milestone M12),
 played in your browser from this folder. Menus and subtitles in English, Simplified
 Chinese and German. The version is shown in the lower right corner of the game.
 
@@ -18,7 +18,7 @@ and no administrator rights are needed.
 
 The game then runs on a small local server at http://localhost:6006 (or the next free
 port up to 6105) and opens in your default browser. The server only listens on this
-computer (127.0.0.1), so Windows Firewall does not ask anything.
+computer (127.0.0.1), so Windows Firewall does not ask anything when you play alone.
 
 Stop the game by closing the console window (or pressing Ctrl+C in it).
 
@@ -46,6 +46,20 @@ Hold Interact next to a worker, a clue, the sponsor evidence or a downed partner
 Continues: Easy 5, Medium 3, Hard 2, Extreme 1, Ultimate none. A defeat spends one and
 restores the latest checkpoint (beats 3, 5 and the boss); with none left the stage
 restarts. End returns to the Lab.
+
+Playing together over Wi-Fi (local network)
+--------------------------------------------
+Both computers run the game from their own copy of this zip, on the same home Wi-Fi.
+1. Host: Play > Wi-Fi co-op > Host a game. The screen shows this computer's address,
+   the port (7350 or the next free one) and a four-letter room code.
+   The first time, Windows Firewall asks whether Node.js may communicate on networks:
+   tick "Private networks" and press Allow. (Without it the guest cannot connect.)
+2. Guest: Play > Wi-Fi co-op > Join a game, type the host's address, port and code.
+3. Both pick a hero and press Ready; the host picks the difficulty. The stage starts on
+   both computers at the same time.
+Esc pauses both games; both players confirm before play resumes. A Wi-Fi game keeps no
+checkpoint to continue later. Guest networks or "AP isolation" on some routers block
+computers from seeing each other: then use the home network instead.
 
 Combat Lab
 ----------
