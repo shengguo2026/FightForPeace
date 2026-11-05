@@ -124,8 +124,11 @@ export interface WorldOptions {
   stage?: string;
   /** M9: practice from this beat (0 = the stage start). */
   beat?: number;
-  /** M11: cheats accepted before the run (hero masks per slot, session mask). */
-  cheats?: { hero: readonly number[]; session: number };
+  /**
+   * M11: cheats accepted before the run (hero masks per slot, session mask). `marked`
+   * carries an earlier mark over (Continue, restart from a checkpoint of a marked run).
+   */
+  cheats?: { hero: readonly number[]; session: number; marked?: boolean; firstBeat?: number };
 }
 
 export interface LoadoutChange {
@@ -352,7 +355,16 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
       world.cheats.session = options.cheats.session;
     }
     setupStage(world, stage, diff, options.beat ?? 0);
-    if (options.cheats) setCheats(world, options.cheats.hero, options.cheats.session);
+    if (options.cheats) {
+      setCheats(world, options.cheats.hero, options.cheats.session);
+      if (options.cheats.marked && options.cheats.firstBeat !== undefined)
+        world.cheats.firstBeat = options.cheats.firstBeat;
+      if (options.cheats.marked && !world.cheats.marked) {
+        world.cheats.marked = true;
+        world.cheats.firstFrame = 0;
+        world.cheats.firstBeat = options.cheats.firstBeat ?? options.beat ?? 0;
+      }
+    }
     return world;
   }
   if (options.arena !== undefined) {

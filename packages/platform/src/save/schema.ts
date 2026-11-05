@@ -68,6 +68,17 @@ export interface CheckpointRecord {
   heroes: string[];
   players: number;
   savedAt: number;
+  /** M11: the run's cheats (canonical codes) and its Cheat-Assisted mark, or null. */
+  cheats?: CheckpointCheats | null;
+  /** M11: Standard (default) or Open run: the store ids of equipped techniques per slot. */
+  loadout?: string[][];
+}
+
+export interface CheckpointCheats {
+  hero: string[][];
+  session: string[];
+  marked: boolean;
+  firstBeat: number;
 }
 
 /** Per content ID (e.g. `story.stage1.broken-water-pact`). */
@@ -275,6 +286,27 @@ export function normalizeProfile(raw: unknown): Profile {
               : [],
             players: clamp(Math.round(num(cp.players, 1)), 1, 2),
             savedAt: num(cp.savedAt, 0),
+            cheats: isObj(cp.cheats)
+              ? {
+                  hero: Array.isArray(cp.cheats.hero)
+                    ? cp.cheats.hero
+                        .slice(0, 2)
+                        .map((l) =>
+                          Array.isArray(l) ? l.filter((c): c is string => typeof c === 'string') : [],
+                        )
+                    : [],
+                  session: Array.isArray(cp.cheats.session)
+                    ? cp.cheats.session.filter((c): c is string => typeof c === 'string')
+                    : [],
+                  marked: bool(cp.cheats.marked, false),
+                  firstBeat: Math.round(num(cp.cheats.firstBeat, -1)),
+                }
+              : null,
+            loadout: Array.isArray(cp.loadout)
+              ? cp.loadout
+                  .slice(0, 2)
+                  .map((l) => (Array.isArray(l) ? l.filter((c): c is string => typeof c === 'string') : []))
+              : [],
           }
         : null,
     missions: record(raw.missions, (v) =>

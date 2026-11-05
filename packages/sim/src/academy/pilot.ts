@@ -60,7 +60,7 @@ export function inputFor(a: ActionDef, facing: number, dash = false): FrameInput
     (moveX < 0 ? DirBit.left : 0) |
     (moveZ < 0 ? DirBit.up : 0) |
     (moveZ > 0 ? DirBit.down : 0);
-  let bit: number = ActionBit.Attack;
+  let bit: number;
   switch (a.context) {
     case 'special':
       bit = ActionBit.Special;

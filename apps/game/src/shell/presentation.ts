@@ -7,4 +7,6 @@ export const presentation = {
   effects: 1,
   reducedFlashing: false,
   reducedShake: false,
+  /** M11: each player's worn outfit as a sprite tint (null: default clothes). */
+  outfitTint: [] as (number | null)[],
 };
