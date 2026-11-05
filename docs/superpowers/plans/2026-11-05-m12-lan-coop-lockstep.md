@@ -34,7 +34,7 @@
 - [x] Room server with WebSocket framing, codes, host token, refusals, relay; portable server and Vite plugin mount it; `server/room.mjs` in the zip; README and portable README sections; the smoke test opens and closes a room from the unzipped build.
 - [x] Protocol, `Transport`, `Lockstep` with holds, ready, countdown, grace, heartbeat, end and snapshot resync (`packages/platform/test/net.test.ts`: lockstep equals hot-seat play on the same inputs under uneven timing; desync repaired once; hold stops both on one frame; pause needs both; grace ends safely; silence and Leave end the session).
 - [x] Game: Wi-Fi mode button, Host/Join screens with the firewall hint and precise errors, network lobby, `GameSession.advanceNet`, device join lock, HUD for both players, the network badge and panels, results and saves per computer, no checkpoint; EN/ZH-CN/DE text.
-- [x] Browser tests (`apps/game/e2e/m12.spec.ts`), two browser contexts through the dev server's room: lockstep play with equal hashes (all browsers); hold, resume, repaired desync, pause and safe end; version mismatch, wrong code and readiness cleared by a rule change (Chromium only, for CI time). Every wait is on game state.
+- [x] Browser tests (`apps/game/e2e/m12.spec.ts`), two browser contexts through the dev server's room: lockstep play with equal hashes (Chromium and Firefox; two games rendering at once are too slow for the CI job in WebKit); hold, resume, repaired desync, pause and safe end; version mismatch, wrong code and readiness cleared by a rule change (Chromium only, for CI time). Every wait is on game state.
 
 ## Known limits
 
