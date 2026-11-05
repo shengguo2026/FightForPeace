@@ -304,6 +304,7 @@ function view(b: Fighter) {
     grabEvent: b.grabEvent,
     grabOffset: b.grabOffset,
     loadout: [...b.loadout],
+    loadoutIds: b.loadout.map((i) => (i >= 0 ? (kitOf(b)?.actions[i]?.id ?? null) : null)),
     weapon: b.item !== 0 ? (WEAPONS[b.wkit]?.id ?? null) : null,
     weaponEvent: b.weaponEvent,
   };

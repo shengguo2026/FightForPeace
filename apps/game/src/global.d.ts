@@ -32,6 +32,8 @@ export interface DebugBody {
   grabEvent: number;
   grabOffset: number;
   loadout: number[];
+  /** M11: the action ids in the loadout slots (null: empty). */
+  loadoutIds: (string | null)[];
   /** Weapon id held (null = empty hands), and the last weapon event (WeaponEvent). */
   weapon: string | null;
   weaponEvent: number;
