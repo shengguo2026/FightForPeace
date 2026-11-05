@@ -2,9 +2,11 @@ import type { Bindings, BindableInput } from '../input/actions';
 import { ACTION_NAMES, DIRECTIONS } from '../input/actions';
 import type { LayoutName } from '../input/layout';
 import { isLocale, type Locale } from '../i18n/i18n';
+import { emptyProgress, normalizeProgress, type ProgressRecord } from './progress';
 
 /**
- * M10 profile schema (spec §15.1). Version 1. Every change to this shape bumps
+ * Profile schema (spec §15.1). Version 1 (M10); version 2 (M11) adds `progress` and the
+ * cheat preference fields. Every change to this shape bumps
  * SAVE_VERSION and adds a migration in migrate.ts; old saves are migrated on load and the
  * original is kept until the migrated copy is written.
  *
@@ -13,7 +15,7 @@ import { isLocale, type Locale } from '../i18n/i18n';
  * `curated.<name>`, `chronicle.<name>`), a Run Archive slot, and reserved Museum, Sponsor
  * Dossier and research-milestone records.
  */
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 export type PromptStyle = 'auto' | 'xbox' | 'playstation' | 'nintendo' | 'generic';
 export type FacingPreference = 'manual' | 'assisted';
@@ -66,6 +68,17 @@ export interface CheckpointRecord {
   heroes: string[];
   players: number;
   savedAt: number;
+  /** M11: the run's cheats (canonical codes) and its Cheat-Assisted mark, or null. */
+  cheats?: CheckpointCheats | null;
+  /** M11: Standard (default) or Open run: the store ids of equipped techniques per slot. */
+  loadout?: string[][];
+}
+
+export interface CheckpointCheats {
+  hero: string[][];
+  session: string[];
+  marked: boolean;
+  firstBeat: number;
 }
 
 /** Per content ID (e.g. `story.stage1.broken-water-pact`). */
@@ -107,8 +120,14 @@ export interface Profile {
   museum: Record<string, unknown>;
   sponsorDossier: Record<string, unknown>;
   research: Record<string, unknown>;
-  /** Versioned cheat-registry state (Elder's Secrets, M11). */
-  cheats: { registryVersion: number; enabled: string[] };
+  /**
+   * Versioned cheat-registry state (Elder's Secrets, M11): reusable hero-scoped
+   * preferences per hero id (canonical codes). A new run starts without them unless the
+   * player chooses to reuse them.
+   */
+  cheats: { registryVersion: number; enabled: string[]; heroPrefs: Record<string, string[]> };
+  /** M11: Credits, store, Hero Mastery, achievements, records, Academy, My Combos. */
+  progress: ProgressRecord;
 }
 
 /** Saved on the device, not in a profile: which profile was last used, first-launch done. */
@@ -156,7 +175,8 @@ export function createProfile(name: string, locale: Locale, now = Date.now()): P
     museum: {},
     sponsorDossier: {},
     research: {},
-    cheats: { registryVersion: 1, enabled: [] },
+    cheats: { registryVersion: 1, enabled: [], heroPrefs: {} },
+    progress: emptyProgress(),
   };
 }
 
@@ -266,6 +286,27 @@ export function normalizeProfile(raw: unknown): Profile {
               : [],
             players: clamp(Math.round(num(cp.players, 1)), 1, 2),
             savedAt: num(cp.savedAt, 0),
+            cheats: isObj(cp.cheats)
+              ? {
+                  hero: Array.isArray(cp.cheats.hero)
+                    ? cp.cheats.hero
+                        .slice(0, 2)
+                        .map((l) =>
+                          Array.isArray(l) ? l.filter((c): c is string => typeof c === 'string') : [],
+                        )
+                    : [],
+                  session: Array.isArray(cp.cheats.session)
+                    ? cp.cheats.session.filter((c): c is string => typeof c === 'string')
+                    : [],
+                  marked: bool(cp.cheats.marked, false),
+                  firstBeat: Math.round(num(cp.cheats.firstBeat, -1)),
+                }
+              : null,
+            loadout: Array.isArray(cp.loadout)
+              ? cp.loadout
+                  .slice(0, 2)
+                  .map((l) => (Array.isArray(l) ? l.filter((c): c is string => typeof c === 'string') : []))
+              : [],
           }
         : null,
     missions: record(raw.missions, (v) =>
@@ -300,7 +341,11 @@ export function normalizeProfile(raw: unknown): Profile {
       enabled: Array.isArray(cheats.enabled)
         ? cheats.enabled.filter((c): c is string => typeof c === 'string')
         : [],
+      heroPrefs: record(cheats.heroPrefs, (v) =>
+        Array.isArray(v) ? v.filter((c): c is string => typeof c === 'string').slice(0, 12) : undefined,
+      ),
     },
+    progress: normalizeProgress(raw.progress),
   };
 }
 

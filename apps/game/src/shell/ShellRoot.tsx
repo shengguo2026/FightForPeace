@@ -12,7 +12,16 @@ import {
   ReadyScreen,
   StageScreen,
 } from './screens/PlayFlow';
-import { LaterScreen, RecordsScreen } from './screens/Records';
+import { RecordsScreen } from './screens/Records';
+import {
+  AcademyScreen,
+  CombosScreen,
+  LessonHud,
+  PracticeHud,
+  PracticeSetupScreen,
+} from './screens/Academy';
+import { GuideScreen, SecretsScreen } from './screens/Guide';
+import { StoreScreen } from './screens/Store';
 import { SettingsScreen } from './screens/Settings';
 import { SetupScreen } from './screens/Setup';
 import { VillageScreen } from './screens/Village';
@@ -31,10 +40,12 @@ export function ShellRoot({ shell, state }: { shell: Shell; state: LabState }) {
       {shell.toast.value}
     </div>
   ) : null;
-  if (screen === 'game' || screen === 'lab') {
+  if (screen === 'game' || screen === 'lab' || screen === 'lesson' || screen === 'practice') {
     return (
       <>
         {screen === 'game' && !state.results.value ? <HudClusters /> : null}
+        {screen === 'lesson' ? <LessonHud shell={shell} /> : null}
+        {screen === 'practice' ? <PracticeHud shell={shell} /> : null}
         {menuPaused(state) && !state.results.value ? (
           <PauseMenu shell={shell} state={state} />
         ) : null}
@@ -69,8 +80,17 @@ export function ShellRoot({ shell, state }: { shell: Shell; state: LabState }) {
       case 'records':
         return <RecordsScreen shell={shell} />;
       case 'store':
+        return <StoreScreen shell={shell} />;
       case 'guide':
-        return <LaterScreen shell={shell} which={screen} />;
+        return <GuideScreen shell={shell} />;
+      case 'secrets':
+        return <SecretsScreen shell={shell} />;
+      case 'academy':
+        return <AcademyScreen shell={shell} />;
+      case 'practiceSetup':
+        return <PracticeSetupScreen shell={shell} />;
+      case 'combos':
+        return <CombosScreen shell={shell} />;
     }
   })();
   return (

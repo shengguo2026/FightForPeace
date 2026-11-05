@@ -21,11 +21,28 @@ import {
   type QualitySetting,
   type SaveBackend,
 } from '@ffp/platform';
-import { DIFFICULTIES, STAGES, type StageResults } from '@ffp/sim';
+import {
+  DIFFICULTIES,
+  STAGES,
+  cheatMask,
+  codesOf,
+  setCheats,
+  type StageResults,
+  type WorldOptions,
+} from '@ffp/sim';
+import {
+  contentIdOf,
+  equippedTechniques,
+  loadoutChanges,
+  outfitTint,
+  settleRun,
+  type Settlement,
+} from '@ffp/platform';
 import type { GameSession } from '../game';
 import type { LabState } from '../ui/labState';
-import { setLocale } from '../text/i18n';
+import { setLocale, t } from '../text/i18n';
 import { presentation } from './presentation';
+import { Academy } from '../academy/runner';
 
 /**
  * M10 game shell: which screen is open, the profiles and their saves, and the play flow
@@ -48,10 +65,22 @@ export type Screen =
   | 'settings'
   | 'records'
   | 'store'
-  | 'guide';
+  | 'guide'
+  | 'secrets'
+  | 'academy'
+  | 'lesson'
+  | 'practiceSetup'
+  | 'practice'
+  | 'combos';
 
 /** Screens during which the simulation runs. */
-const LIVE: ReadonlySet<Screen> = new Set(['game', 'lab']);
+const LIVE: ReadonlySet<Screen> = new Set(['game', 'lab', 'lesson', 'practice']);
+
+/** Cheats chosen for the next run (canonical codes): hero codes per player, session codes. */
+export interface CheatDraft {
+  hero: string[][];
+  session: string[];
+}
 
 export interface LobbyPlayer {
   device: DeviceId;
@@ -98,6 +127,24 @@ export class Shell {
   readonly toast = signal('');
   /** The device that confirmed first launch, offered as Player 1's controls. */
   readonly setupDevice = signal<'keyboard' | 'gamepad' | null>(null);
+  // --- M11 ---
+  /** Each player's settlement of the last results (null: a Guest or no shell run). */
+  readonly settlement = signal<(Settlement | null)[]>([]);
+  /** Cheats for the next run, and which players accepted the Cheat-Assisted consequence. */
+  readonly cheatDraft = signal<CheatDraft>({ hero: [[], []], session: [] });
+  readonly cheatConsent = signal<boolean[]>([]);
+  /** Where Elder's Secrets and the Guide return to. */
+  readonly secretsFrom = signal<Screen>('guide');
+  readonly guideFrom = signal<Screen>('village');
+  readonly guideChapter = signal<string>('start');
+  /** Academy lessons, Free Practice and My Combos. */
+  readonly academy = new Academy(this);
+  /** Free Practice set-up: hero, trial techniques (store ids), Cheat Practice codes. */
+  readonly practice = signal<{ hero: string; trial: string[]; cheats: string[] }>({
+    hero: 'mountain',
+    trial: [],
+    cheats: [],
+  });
   store: ProfileStore | null = null;
   /** Sets the presentation quality (wired to the quality governor by main). */
   onQuality: (setting: QualitySetting) => void = () => {};
@@ -416,21 +463,94 @@ export class Shell {
     return this.heroPicks.value.map((p) => HERO_ROSTER[p.cursor]!);
   }
 
+  /** The profile playing slot `slot` (Player 1: the active profile). */
+  profileOf(slot: number): Profile | null {
+    return slot === 0 ? this.active.value : this.partner.value;
+  }
+
+  /** Each player's owned loadout changes for their hero (Standard when none). */
+  loadoutsFor(heroes: readonly string[]): NonNullable<WorldOptions['loadouts']> {
+    return heroes.map((h, slot) => loadoutChanges(this.profileOf(slot), h));
+  }
+
+  /** The draft as simulation masks, or undefined when nothing is selected. */
+  draftCheats(): WorldOptions['cheats'] {
+    const d = this.cheatDraft.value;
+    const hero = [0, 1].map((s) => cheatMask(d.hero[s] ?? [], 'hero'));
+    const session = cheatMask(d.session, 'session');
+    if (session === 0 && hero.every((m) => m === 0)) return undefined;
+    return { hero, session };
+  }
+
+  /** Outfit colours of the heroes for the renderer (presentation only). */
+  applyOutfits(heroes: readonly string[]): void {
+    presentation.outfitTint = heroes.map((h, slot) => {
+      const c = outfitTint(this.profileOf(slot), h);
+      return c ? Number.parseInt(c.slice(1), 16) : null;
+    });
+  }
+
   /** Starts the picked stage (from beat 0, or the checkpoint for Continue). */
   startStage(from?: CheckpointRecord): void {
     const pick = this.stagePick.value;
     const heroes = from ? from.heroes : this.chosenHeroes();
     this.continued.value = from ?? null;
     this.resultsRecorded = false;
+    this.settlement.value = [];
     this.lastCheckpointKey = '';
     this.lab.visible.value = false;
+    let cheats = this.draftCheats();
+    if (from?.cheats) {
+      const c = from.cheats;
+      cheats = {
+        hero: [0, 1].map((s) => cheatMask(c.hero[s] ?? [], 'hero')),
+        session: cheatMask(c.session, 'session'),
+        marked: c.marked,
+        firstBeat: c.firstBeat,
+      };
+    }
+    this.applyOutfits(heroes);
     this.session.startStage(
       from?.stage ?? pick.stage,
       from?.difficulty ?? pick.difficulty,
       from?.beat ?? 0,
       heroes,
+      { loadouts: this.loadoutsFor(heroes), cheats },
     );
     this.go('game');
+  }
+
+  /**
+   * Applies the cheat draft to the running stage (solo pause, or co-op after both players
+   * confirmed). The first accepted cheat marks the run for good.
+   */
+  applyCheatsNow(): void {
+    const c = this.draftCheats();
+    setCheats(this.session.world, c?.hero ?? [0, 0], c?.session ?? 0);
+    this.saveHeroPrefs();
+  }
+
+  /** Remembers each player's hero-scoped codes as reusable preferences for that hero. */
+  saveHeroPrefs(): void {
+    const d = this.cheatDraft.value;
+    const heroes = this.chosenHeroes();
+    [0, 1].forEach((slot) => {
+      const hero = heroes[slot];
+      if (!hero || !this.profileOf(slot)) return;
+      this.update((p) => (p.cheats.heroPrefs[hero] = [...(d.hero[slot] ?? [])]), slot);
+    });
+  }
+
+  /** The running world's cheats as canonical codes (checkpoint records, Continue). */
+  worldCheats(): CheckpointRecord['cheats'] {
+    const c = this.session.world.cheats;
+    if (!c.marked) return null;
+    return {
+      hero: c.hero.map((m) => codesOf(m)),
+      session: codesOf(c.session),
+      marked: true,
+      firstBeat: c.firstBeat,
+    };
   }
 
   /** Continue from the village: the saved checkpoint, solo with Player 1's device. */
@@ -443,6 +563,9 @@ export class Shell {
     const device = this.session.devices.slots[0]?.device ?? 'kb:p1';
     this.session.devices.assignPlayers([device, null]);
     this.stagePick.value = { stage: cp.stage, difficulty: cp.difficulty };
+    this.heroPicks.value = [
+      { cursor: Math.max(0, HERO_ROSTER.indexOf(cp.heroes[0] as 'mountain')), confirmed: true },
+    ];
     this.startStage({ ...cp, heroes: cp.heroes.slice(0, 1) });
   }
 
@@ -460,6 +583,12 @@ export class Shell {
     this.session.devices.assignPlayers([this.session.devices.slots[0]?.device ?? 'kb:p1', null]);
     this.partner.value = null;
     this.continued.value = null;
+    this.session.pilot = null;
+    this.session.afterStep.length = 0;
+    // Session-scoped cheats are chosen again for every run.
+    this.cheatDraft.value = { hero: [[], []], session: [] };
+    this.cheatConsent.value = [];
+    presentation.outfitTint = [];
     this.go('village');
   }
 
@@ -475,7 +604,14 @@ export class Shell {
       .map((h) => HERO_ROSTER[h] ?? 'mountain');
     this.pauseConfirm.value = null;
     this.session.devices.userPaused = false;
-    this.session.startStage(STAGES[run.stage]!.id, pick.difficulty, beat, heroes);
+    const c = this.session.world.cheats;
+    const loadouts = this.loadoutsFor(heroes);
+    this.session.startStage(STAGES[run.stage]!.id, pick.difficulty, beat, heroes, {
+      loadouts,
+      cheats: c.marked
+        ? { hero: c.hero, session: c.session, marked: true, firstBeat: c.firstBeat }
+        : undefined,
+    });
     this.session.devices.flush();
   }
 
@@ -511,14 +647,23 @@ export class Shell {
               heroes,
               players: this.session.devices.joinedCount(),
               savedAt: Date.now(),
+              cheats: this.worldCheats(),
+              loadout: heroes.map((h, slot) => equippedTechniques(this.profileOf(slot), h)),
             }),
         );
       }
     }
     if (results && !this.resultsRecorded) {
       this.resultsRecorded = true;
-      const heroes = this.session.world.playerHero.map((h) => HERO_ROSTER[h] ?? 'mountain');
+      const heroes = this.session.world.playerHero
+        .slice(0, this.session.devices.joinedCount() || 1)
+        .map((h) => HERO_ROSTER[h] ?? 'mountain');
       const record = (x: Profile) => {
+        // A practice run from a later beat or a Cheat-Assisted run is not a clear record.
+        if (results.startBeat > 0 || results.cheatAssisted) {
+          x.checkpoint = null;
+          return;
+        }
         recordClear(
           x,
           stage.id === 'stage1' ? STORY_STAGE1 : `story.${stage.id}`,
@@ -534,7 +679,57 @@ export class Shell {
       };
       this.update(record);
       if (this.partner.value && !this.partner.value.guest) this.update(record, 1);
+      this.settle(results, heroes);
     }
+  }
+
+  /** M11: payout, records, Hero Mastery and achievements for every player of the run. */
+  private settle(results: StageResults, heroes: string[]): void {
+    const stage = STAGES.find((s) => s.id === results.stage);
+    const mode = heroes.length > 1 ? 'coop' : 'solo';
+    const loadout = heroes.flatMap((h, slot) => equippedTechniques(this.profileOf(slot), h));
+    const out: (Settlement | null)[] = [];
+    heroes.forEach((hero, slot) => {
+      const p = this.profileOf(slot);
+      if (!p) {
+        out.push(null);
+        return;
+      }
+      const report = {
+        contentId: contentIdOf(stage?.id ?? results.stage),
+        results,
+        mode,
+        heroes,
+        hero,
+        loadout,
+        gameVersion: this.gameVersion,
+      } as const;
+      // A Guest sees what the run is worth but keeps nothing.
+      if (p.guest) {
+        out.push(settleRun(structuredClone(p), report));
+        return;
+      }
+      let s: Settlement | null = null;
+      this.update((x) => (s = settleRun(x, report)), slot);
+      out.push(s);
+    });
+    this.settlement.value = out;
+  }
+
+  /** A lesson state was reached: say so, with the Credits it paid. */
+  announceLesson(state: string, credits: number): void {
+    const key =
+      state === 'mastered'
+        ? 'lesson.mastered'
+        : state === 'certified'
+          ? 'lesson.certified'
+          : 'lesson.practiced';
+    this.showToast(t(key, { n: credits }));
+  }
+
+  /** The default name of the n-th saved combo. */
+  comboName(n: number): string {
+    return t('combos.defaultName', { n });
   }
 
   showToast(text: string): void {

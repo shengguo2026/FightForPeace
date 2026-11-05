@@ -28,7 +28,11 @@ import {
   type CoopState,
   type StageRun,
   STAGES,
+  METER,
+  type WorldOptions,
 } from '@ffp/sim';
+
+const IDLE: FrameInput = { moveX: 0, moveZ: 0, pressed: 0, held: 0, dirPressed: 0 };
 import {
   DEFAULT_GAMEPAD,
   DEFAULT_KEYBOARD_P1,
@@ -106,12 +110,48 @@ export class GameSession {
    * step at all; the world waits exactly where it is.
    */
   held = false;
+  /**
+   * M11 recipe playback: while set, Player 1's input comes from this pilot (Academy
+   * demonstrations, My Combos playback); the player's own input is still sampled and
+   * passed in, so a press can stop the playback.
+   */
+  pilot: ((world: World, own: FrameInput) => FrameInput) | null = null;
+  /** M11: run after every simulation step (Academy lesson goals). */
+  readonly afterStep: ((world: World) => void)[] = [];
 
   constructor(
     private readonly seed: number,
     private readonly trainer: Partial<TrainerSettings> = {},
   ) {
     this.world = this.labWorld();
+    this.previous = cloneFighters(this.world.bodies);
+    this.generation += 1;
+  }
+
+  /**
+   * M11 Academy and Free Practice: the Lab's mill corner with one training enemy in front
+   * of Player 1, the hero and loadout picked, and (Cheat Practice only) cheats.
+   */
+  startPractice(options: {
+    hero: string;
+    loadout?: WorldOptions['loadouts'];
+    cheats?: WorldOptions['cheats'];
+    trainer?: Partial<TrainerSettings>;
+    meter?: number;
+  }): void {
+    this.world = createWorld(this.seed, {
+      dummies: 1,
+      armory: true,
+      environment: true,
+      heroes: [options.hero],
+      loadouts: options.loadout,
+      cheats: options.cheats,
+      trainer: { ...this.trainer, ...options.trainer },
+    });
+    const h = heroOf(this.world, 0);
+    const d = this.world.bodies.find((b) => b.team === 'enemy');
+    if (h && d) this.placeHero(0, d, 160);
+    if (h && options.meter) h.meter = Math.trunc((METER.max * options.meter) / 100);
     this.previous = cloneFighters(this.world.bodies);
     this.generation += 1;
   }
@@ -130,19 +170,26 @@ export class GameSession {
    * M7 arena mode: a fresh world for `arena` at `difficulty` (ids from the arena table),
    * or the Lab again when `arena` is null. Player heroes keep their selection.
    */
-  startArena(arena: string | null, difficulty = 'medium', beat = 0): void {
+  startArena(
+    arena: string | null,
+    difficulty = 'medium',
+    beat = 0,
+    extra: Pick<WorldOptions, 'loadouts' | 'cheats' | 'heroes'> = {},
+  ): void {
     const heroes = [0, 1].map((slot) => heroOf(this.world, slot)?.hero);
     // M9: a stage id starts the stage journey (from `beat` when practising a later beat).
     const stage = arena !== null && STAGES.some((s) => s.id === arena);
     this.world = stage
-      ? createWorld(this.seed, { stage: arena, difficulty, beat })
+      ? createWorld(this.seed, { stage: arena, difficulty, beat, ...extra })
       : arena
-        ? createWorld(this.seed, { arena, difficulty })
+        ? createWorld(this.seed, { arena, difficulty, ...extra })
         : this.labWorld();
-    heroes.forEach((h, slot) => {
-      const id = h === undefined ? undefined : HEROES[h]?.id;
-      if (id && heroOf(this.world, slot)) setHero(this.world, slot, id);
-    });
+    // The heroes carry over from the previous world unless the caller chose them.
+    if (!extra.heroes)
+      heroes.forEach((h, slot) => {
+        const id = h === undefined ? undefined : HEROES[h]?.id;
+        if (id && heroOf(this.world, slot)) setHero(this.world, slot, id);
+      });
     this.previous = cloneFighters(this.world.bodies);
     this.generation += 1;
   }
@@ -166,8 +213,10 @@ export class GameSession {
       if (this.devices.paused) break; // a test hook paused the game on this exact step
       this.previous = cloneFighters(this.world.bodies);
       const frame = this.devices.sampleFrame();
+      if (this.pilot) frame[0] = this.pilot(this.world, frame[0] ?? IDLE);
       inputs.push(frame);
       step(this.world, frame);
+      for (const after of this.afterStep) after(this.world);
     }
     if (!paused) this.alpha = alpha;
     return {
@@ -203,9 +252,18 @@ export class GameSession {
     };
   }
 
-  /** M10: a stage from the shell, with each player's chosen hero. */
-  startStage(stage: string, difficulty: string, beat: number, heroes: readonly string[]): void {
-    this.startArena(stage, difficulty, beat);
+  /**
+   * M10: a stage from the shell, with each player's chosen hero. M11: each player's owned
+   * loadout changes and the accepted cheats start with the run.
+   */
+  startStage(
+    stage: string,
+    difficulty: string,
+    beat: number,
+    heroes: readonly string[],
+    extra: Pick<WorldOptions, 'loadouts' | 'cheats'> = {},
+  ): void {
+    this.startArena(stage, difficulty, beat, { ...extra, heroes });
     heroes.forEach((id, slot) => setHero(this.world, slot, id));
     // The stage opens with the chosen heroes, not the previous ones for a first step.
     applyHeroChoices(this.world);

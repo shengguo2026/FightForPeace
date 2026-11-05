@@ -1,0 +1,179 @@
+# M11 progression (spec §14.2, §15.2–15.4; Features_Decisions §9, §10.3; review D10).
+# Everything is keyed by stable content IDs, so later stages add entries without a new
+# engine. All numbers are candidates for the creator's playtests.
+
+# Store price bands: small cosmetics and profile items low; outfits, combat styles and
+# Specials medium; directional Ultimates and prestige cosmetics high. Prices never change
+# with what the player bought before.
+bands: { low: 300, medium: 800, high: 1500 }
+
+# Layered Result Payout: itemized; score only counts through the rank. Repeat clears pay
+# completion, difficulty and rank again; the `once` items are paid one time per profile.
+payout:
+  completion: 300
+  difficulty: [0, 100, 200, 300, 400]
+  rank: { C: 0, B: 100, A: 200, S: 300 }
+  once:
+    firstClear: 1000
+    # First time a stage reaches each rank (an S clear also pays the B and A steps).
+    firstRank: { B: 100, A: 200, S: 400 }
+    allClues: 200
+  academy: { certified: 100, mastered: 150 }
+  masteryLevel: 100
+
+# Hero Mastery: non-spendable, one track per hero, earned only by the hero actually used.
+mastery:
+  clear: 100
+  # Extra points per rank step above C (B 25, A 50, S 75).
+  perRank: 25
+  perLevel: 300
+  maxLevel: 10
+
+# The bounded slice store (D10): one Special, one directional Ultimate and one outfit per
+# founder, and two profile badges. `reveal` is when an entry becomes visible; `mastery`
+# is the Hero Mastery level that also grants a technique without Credits (dual path).
+store:
+  - id: store.technique.mountain.skybreak-column
+    group: technique
+    hero: mountain
+    kind: special
+    action: skybreak-column
+    band: medium
+    reveal: always
+    mastery: 3
+  - id: store.technique.mountain.still-mountain
+    group: technique
+    hero: mountain
+    kind: ultimate
+    action: still-mountain
+    band: high
+    reveal: { clear: story.stage1.broken-water-pact }
+    mastery: 5
+  - id: store.technique.river.waterspout-rise
+    group: technique
+    hero: river
+    kind: special
+    action: waterspout-rise
+    band: medium
+    reveal: always
+    mastery: 3
+  - id: store.technique.river.floodline-passage
+    group: technique
+    hero: river
+    kind: ultimate
+    action: floodline-passage
+    band: high
+    reveal: { clear: story.stage1.broken-water-pact }
+    mastery: 5
+  - id: store.wardrobe.mountain.millwright
+    group: wardrobe
+    hero: mountain
+    kind: outfit
+    name: Millwright’s Coat
+    # Placeholder treatment until the outfit art exists: a colour shift of the sprite.
+    tint: '#c7d9a6'
+    band: medium
+    reveal: always
+  - id: store.wardrobe.river.reed-courier
+    group: wardrobe
+    hero: river
+    kind: outfit
+    name: Reed Courier
+    tint: '#f2c9a0'
+    band: medium
+    reveal: always
+  - id: store.collection.badge.village-lantern
+    group: collection
+    kind: badge
+    name: Village Lantern
+    band: low
+    reveal: always
+  - id: store.collection.badge.open-sluice
+    group: collection
+    kind: badge
+    name: Open Sluice
+    band: low
+    reveal: always
+    requires: { achievement: ach.stage1.river-flows }
+
+# Achievement foundation: data-defined tracks by group, keyed by content ID. Only
+# `narrative` achievements can be earned in a Cheat-Assisted run, and then without Credits.
+achievements:
+  - id: ach.stage1.river-flows
+    group: story
+    name: The River Flows Again
+    credits: 150
+    narrative: true
+    rule: { kind: clear, content: story.stage1.broken-water-pact }
+  - id: ach.stage1.pact-restored
+    group: stageMastery
+    name: Pact Restored
+    credits: 300
+    rule: { kind: clear, content: story.stage1.broken-water-pact, rank: S }
+  - id: ach.stage1.steady-hands
+    group: difficulty
+    name: Steady Under Pressure
+    credits: 250
+    rule: { kind: clear, content: story.stage1.broken-water-pact, difficulty: hard }
+  - id: ach.stage1.two-guardians
+    group: heroMastery
+    name: Two Guardians
+    credits: 200
+    rule: { kind: heroes, content: story.stage1.broken-water-pact, count: 2 }
+  - id: ach.stage1.flowing-chain
+    group: combatTechnique
+    name: Flowing Chain
+    credits: 150
+    rule: { kind: stat, content: story.stage1.broken-water-pact, stat: bestHits, min: 12 }
+  - id: ach.stage1.every-clue
+    group: discovery
+    name: Nothing Hidden
+    credits: 150
+    rule: { kind: stat, content: story.stage1.broken-water-pact, stat: allClues, min: 1 }
+  - id: ach.stage1.hand-up
+    group: coop
+    name: A Hand Up
+    credits: 150
+    rule: { kind: stat, content: story.stage1.broken-water-pact, stat: revives, min: 1, coop: true }
+  - id: ach.academy.first-lesson
+    group: academy
+    name: First Lesson
+    credits: 100
+    rule: { kind: academy, state: certified, count: 1 }
+
+# One representative Academy route (spec §14.2): every lesson runs Demonstration, Guided
+# Practice, Independent Trial and an optional Mastery Goal. Goals: walk, jump, dash,
+# recipe (the hero's recipe id), guard, exact, counter, special, ultimate. `frames` is a
+# time limit (0 = none); `count` how many times the goal must be met.
+academy:
+  - id: academy.first-steps
+    name: First Steps
+    lessons:
+      - id: academy.first-steps.move
+        course: orientation
+        name: Move, jump and dash
+        guided: [walk, jump, dash]
+        trial: { goals: [walk, jump, dash], count: 1, frames: 900 }
+        mastery: { goals: [walk, jump, dash], count: 1, frames: 300 }
+      - id: academy.first-steps.chain
+        course: foundations
+        name: Your first chain
+        demo: foundation
+        guided: [recipe]
+        recipe: foundation
+        trial: { goals: [recipe], count: 3, frames: 0 }
+        mastery: { goals: [recipe], count: 3, frames: 900 }
+      - id: academy.first-steps.guard
+        course: defense
+        name: Guard and Exact Block
+        trainer: true
+        guided: [guard]
+        trial: { goals: [exact], count: 2, frames: 0 }
+        mastery: { goals: [counter], count: 1, frames: 0 }
+      - id: academy.first-steps.resources
+        course: resources
+        name: Special and Ultimate
+        meter: 100
+        guided: [special]
+        trial: { goals: [ultimate], count: 1, frames: 0 }
+        mastery: { goals: [special, ultimate], count: 1, frames: 600 }

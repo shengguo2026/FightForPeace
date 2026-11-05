@@ -391,7 +391,10 @@ export class StageScene extends Phaser.Scene {
       sp.setTintMode(presentation.reducedFlashing ? Phaser.TintModes.MULTIPLY : Phaser.TintModes.FILL);
     } else {
       sp.setTintMode(Phaser.TintModes.MULTIPLY);
-      if (f.team === 'hero' && f.slot === 1) sp.setTint(0xffe2c4);
+      // M11: a worn outfit (placeholder treatment) tints the hero's sprite.
+      const outfit = f.team === 'hero' ? presentation.outfitTint[f.slot] : null;
+      if (outfit !== null && outfit !== undefined) sp.setTint(outfit);
+      else if (f.team === 'hero' && f.slot === 1) sp.setTint(0xffe2c4);
       else sp.clearTint();
     }
     const cell = meta.cells[pick.cell];

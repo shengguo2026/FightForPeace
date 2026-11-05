@@ -1,4 +1,5 @@
 import { ARENA_DATA, DIFFICULTY_DATA, ENEMY_PROFILES } from '../combat/heroes.gen';
+import { Cheat, sessionCheat } from '../cheats/cheats';
 import { ENEMIES, kitOf } from '../combat/roster';
 import type {
   AiAttackDef,
@@ -42,7 +43,33 @@ export function profileOf(f: { team: string; hero: number }): EnemyProfile | nul
 }
 
 export function difficultyOf(world: World): DifficultyDef {
-  return DIFFICULTIES[world.encounter?.difficulty ?? MEDIUM]!;
+  const d = DIFFICULTIES[world.encounter?.difficulty ?? MEDIUM]!;
+  return sessionCheat(world, Cheat.QUIETCROWD) ? quietCrowd(d) : d;
+}
+
+const quiet = new Map<string, DifficultyDef>();
+
+/**
+ * QUIETCROWD: the selected profile with Easy's commitment and concurrency limits (threat
+ * budget, per-hero cap, attackers, projectiles, hard control, group cooldown). Perception,
+ * warnings, guard choices, roster, variants, phases and objectives stay as selected.
+ */
+function quietCrowd(d: DifficultyDef): DifficultyDef {
+  let q = quiet.get(d.id);
+  if (!q) {
+    const e = DIFFICULTIES[0]!;
+    q = {
+      ...d,
+      budget: e.budget,
+      cap: e.cap,
+      attackers: e.attackers,
+      projectiles: e.projectiles,
+      hardCC: e.hardCC,
+      groupCooldown: Math.max(d.groupCooldown, e.groupCooldown),
+    };
+    quiet.set(d.id, q);
+  }
+  return q;
 }
 
 /** The boss phase a fighter is in, if it is the encounter's boss. */

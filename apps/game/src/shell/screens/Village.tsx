@@ -3,6 +3,8 @@ import { locale, difficultyName, stageName, t } from '../../text/i18n';
 import type { Shell } from '../shell';
 import { useNav } from '../hooks';
 import { ART, MenuIcon, Panel, Screen, hoverFocus } from '../ui';
+import { STORE } from '@ffp/platform';
+import { itemName } from './Store';
 
 type Item = 'continue' | 'play' | 'academy' | 'store' | 'records' | 'guide' | 'settings';
 
@@ -26,9 +28,9 @@ export function VillageScreen({ shell }: { shell: Shell }) {
       : '',
     play: t('play.modeTitle'),
     academy: t('menu.academyDetail'),
-    store: t('common.later'),
+    store: t('menu.storeDetail'),
     records: t('records.collection'),
-    guide: t('common.later'),
+    guide: t('menu.guideDetail'),
     settings: t('settings.title'),
   };
   const item = (
@@ -53,6 +55,8 @@ export function VillageScreen({ shell }: { shell: Shell }) {
       <span style={{ fontSize: '22px' }}>{label}</span>
     </button>
   );
+  const badgeItem = STORE.find((s) => s.id === p?.progress.badge);
+  const badge = badgeItem ? itemName(badgeItem) : '';
   const storage =
     shell.storage.value === 'server'
       ? t('menu.storageServer')
@@ -79,10 +83,13 @@ export function VillageScreen({ shell }: { shell: Shell }) {
             ? item('continue', t('menu.continue'), 2, () => shell.continueRun(), 'icons-hud')
             : null}
           {item('play', t('menu.play'), 0, () => shell.startPlay())}
-          {item('academy', t('menu.academy'), 1, () => shell.openLab())}
+          {item('academy', t('menu.academy'), 1, () => shell.go('academy'))}
           {item('store', t('menu.store'), 2, () => shell.go('store'))}
           {item('records', t('menu.records'), 3, () => shell.go('records'))}
-          {item('guide', t('menu.guide'), 4, () => shell.go('guide'))}
+          {item('guide', t('menu.guide'), 4, () => {
+            shell.guideFrom.value = 'village';
+            shell.go('guide');
+          })}
           {item('settings', t('menu.settings'), 5, () => {
             shell.settingsFrom.value = 'village';
             shell.go('settings');
@@ -108,7 +115,13 @@ export function VillageScreen({ shell }: { shell: Shell }) {
           pointerEvents: 'none',
         }}
       >
-        <span data-testid="menu-profile">{t('menu.profile', { name: p?.name ?? '—' })}</span>
+        <span data-testid="menu-profile">
+          {t('menu.profile', { name: p?.name ?? '—' })}
+          {badge ? ` · ${badge}` : ''}
+        </span>
+        <span data-testid="menu-credits">
+          {t('store.credits', { n: p?.progress.credits ?? 0 })}
+        </span>
         <span data-testid="menu-storage">{storage}</span>
         <span>{t('menu.version', { v: shell.gameVersion })}</span>
       </div>

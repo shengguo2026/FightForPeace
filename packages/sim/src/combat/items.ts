@@ -1,4 +1,5 @@
 import { fx } from '../math/fixed';
+import { Cheat, heroCheat } from '../cheats/cheats';
 import {
   DefEvent,
   EnvEvent,
@@ -226,7 +227,8 @@ function release(world: World, f: Fighter, item: Item, a: ActionDef): void {
   item.vy = def.throw.lift;
   // A recoverable weapon pays its throw cost now; if that empties it, it breaks only
   // after this throw's collision or landing has resolved.
-  item.integrity = Math.max(0, item.integrity - def.integrity.throw);
+  if (!heroCheat(world, f, Cheat.TRUSTYTOOLS))
+    item.integrity = Math.max(0, item.integrity - def.integrity.throw);
   item.breakOnImpact = item.integrity === 0;
   logWeapon(world, f, WeaponEvent.Throw, item.id);
 }

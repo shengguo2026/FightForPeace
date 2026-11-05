@@ -1,4 +1,5 @@
 import type { Catalog } from '@ffp/platform';
+import { M11_ZH } from './strings.m11';
 
 /** M10 catalogue (zh-CN). Keys mirror strings.en.ts and the generated data names. */
 export const ZH_CN: Catalog = {
@@ -513,4 +514,5 @@ export const ZH_CN: Catalog = {
   'grade.evidence': '调查（线索和幕后证据）',
   'grade.continues': '使用续关',
   'grade.time': '用时',
+  ...M11_ZH,
 };

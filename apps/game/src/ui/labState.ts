@@ -270,4 +270,11 @@ export interface ResultsView {
   grades: { label: string; value: string; grade: string }[];
   overall: string;
   lines: string[];
+  /** M11: the 100-point total, the capping category, the run score and the loadout. */
+  points: number;
+  capped: string | null;
+  score: number;
+  standard: boolean;
+  cheatAssisted: boolean;
+  cheatCodes: string[];
 }

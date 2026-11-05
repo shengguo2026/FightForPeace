@@ -162,6 +162,7 @@ render(
       state: lab,
       village: () => useShell && shell.fromShell.value,
       continuedFrom: () => shell.continued.value?.beat ?? null,
+      settlement: () => (useShell ? shell.settlement.value : []),
       onAgain: () => {
         if (useShell && shell.fromShell.value) shell.startStage();
         else actions.startArena(lab.arenaPick.value.arena);

@@ -3,6 +3,7 @@ import {
   normalizeProfile,
   type Profile,
 } from './schema';
+import { emptyProgress } from './progress';
 
 /**
  * Save envelopes: canonical JSON (sorted keys) of the data plus a CRC-32 checksum, the
@@ -75,7 +76,14 @@ export type DecodeResult =
 
 /** Older schema versions, upgraded one step at a time (version n → n + 1). */
 export const MIGRATIONS: Record<number, (data: Record<string, unknown>) => Record<string, unknown>> =
-  {};
+  {
+    // 1 → 2 (M11): the progress record and per-hero cheat preferences. Existing stage
+    // clears keep their mission records; their Credits are not paid out retroactively.
+    1: (d) => {
+      const cheats = (d.cheats ?? {}) as Record<string, unknown>;
+      return { ...d, cheats: { ...cheats, heroPrefs: {} }, progress: emptyProgress() };
+    },
+  };
 
 export function migrate(data: unknown, from: number): unknown {
   let d = data as Record<string, unknown>;

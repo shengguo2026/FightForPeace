@@ -1,3 +1,4 @@
+import type { CheatState } from '../cheats/cheats';
 import type { RngState } from '../math/rng';
 
 export type Facing = 1 | -1;
@@ -919,6 +920,8 @@ export interface World {
   coop: CoopState;
   /** M9 stage journey (null in the Lab and the arenas). */
   run: StageRun | null;
+  /** M11 Elder's Secrets: active cheats and the Cheat-Assisted mark. */
+  cheats: CheatState;
 }
 
 // --- M9 stage journey --------------------------------------------------------------------
@@ -1006,6 +1009,9 @@ export interface RunStats {
   workersFreed: number;
   clues: number;
   evidence: number;
+  /** M11: most hits and most damage of one hero combo on one enemy. */
+  bestHits: number;
+  bestDamage: number;
 }
 
 /** What a checkpoint keeps: the beat to restart, each hero's meter and the counters. */

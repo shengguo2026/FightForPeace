@@ -1,4 +1,5 @@
 import { fx } from '../math/fixed';
+import { Cheat, heroCheat } from '../cheats/cheats';
 import { profileOf } from '../enemies/data';
 import { type Fighter, Flight, type Item, ItemState, MoveState, type World } from '../world/types';
 import { WEAPONS } from './armory';
@@ -84,6 +85,8 @@ export function logWeapon(world: World, f: Fighter | undefined, event: number, d
 export function payIntegrity(world: World, f: Fighter, amount: number): void {
   const item = heldItem(world, f);
   if (!item || amount <= 0) return;
+  // TRUSTYTOOLS: the hero's weapons lose no integrity (throws, drops and disarms remain).
+  if (heroCheat(world, f, Cheat.TRUSTYTOOLS)) return;
   item.integrity = Math.max(0, item.integrity - amount);
   if (item.integrity === 0) f.breakPending = true;
 }

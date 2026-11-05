@@ -19,9 +19,11 @@ export interface HudView {
   players: HudPlayer[];
   continues: number | null;
   objective: string;
+  /** M11: the run is Cheat-Assisted. */
+  cheat: boolean;
 }
 
-export const hud = signal<HudView>({ players: [], continues: null, objective: '' });
+export const hud = signal<HudView>({ players: [], continues: null, objective: '', cheat: false });
 let lastKey = '';
 
 /** Reads the HUD values from the world (presentation only), once per render frame. */
@@ -48,6 +50,7 @@ export function refreshHud(session: GameSession): void {
   const view: HudView = {
     players,
     continues: run ? run.continues : null,
+    cheat: world.cheats.marked,
     objective:
       stage && beat ? dt(`stage.${stage.id}.beat.${beat.id}.objective`, beat.objective) : '',
   };
@@ -108,6 +111,11 @@ export function HudClusters() {
                 ? t('hud.ready')
                 : `${t('hud.health')} · ${t('hud.defense')} · ${t('hud.attack')}`}
             </div>
+            {p.slot === 0 && v.cheat ? (
+              <div data-testid="hud-cheat" style={{ fontSize: '15px', color: '#ffb36b' }}>
+                {t('hud.cheatAssisted')}
+              </div>
+            ) : null}
             {p.slot === 0 && v.continues !== null ? (
               <div data-testid="hud-continues" style={{ fontSize: '15px' }}>
                 {t('hud.continues', { n: v.continues })}

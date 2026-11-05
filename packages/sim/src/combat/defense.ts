@@ -1,5 +1,6 @@
 import { fx } from '../math/fixed';
 import { dealDamage } from './damage';
+import { Cheat, heroCheat, outgoingDamage } from '../cheats/cheats';
 import { profileOf } from '../enemies/data';
 import { type Axis, DefEvent, type Fighter, MoveState, Protect, type World } from '../world/types';
 import { selectAction, startAction } from './actions';
@@ -219,11 +220,12 @@ function exactBlock(
 /** A normal guard of `a` (chip damage, Defense cost, block-stun or Guard Crush). */
 export function normalGuard(world: World, att: Fighter, a: ActionDef, t: Fighter): void {
   const c = world.frame;
-  dealDamage(world, t, Math.trunc((a.damage * DEFENSE.chipPercent) / 100));
+  dealDamage(world, t, outgoingDamage(world, att, Math.trunc((a.damage * DEFENSE.chipPercent) / 100)));
   // Simultaneous guarded contacts add their guard damage but crush only once.
   if (t.state === MoveState.GuardCrush && t.defFrame === c) return;
   // A held guard-modifier item scales the cost (campaign guardrail M6).
-  const cost = world.infiniteDefense && t.team === 'hero' ? 0 : guardCostFor(world, t, a.guardCost);
+  const free = (world.infiniteDefense && t.team === 'hero') || heroCheat(world, t, Cheat.IRONGUARD);
+  const cost = free ? 0 : guardCostFor(world, t, a.guardCost);
   if (cost > 0 && cost >= t.defense) {
     t.defense = 0;
     interrupt(t);
@@ -281,11 +283,12 @@ export function tryBreaker(world: World, f: Fighter): boolean {
     logDefense(world, f, DefEvent.BreakerDenied, 3);
     return false;
   }
-  if (!world.infiniteDefense && f.defense < DEFENSE.breakerCost) {
+  const free = world.infiniteDefense || heroCheat(world, f, Cheat.IRONGUARD);
+  if (!free && f.defense < DEFENSE.breakerCost) {
     logDefense(world, f, DefEvent.BreakerDenied, 1);
     return false;
   }
-  if (!world.infiniteDefense) f.defense -= DEFENSE.breakerCost;
+  if (!free) f.defense -= DEFENSE.breakerCost;
   f.ctx.breakerUsed = true;
   interrupt(f);
   enterProtection(world, f, Protect.Breaker);
