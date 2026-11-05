@@ -55,6 +55,7 @@ export function installDebugHook(
         };
       },
       fakeVersion: (v) => (shell.net.versionOverride = v),
+      quickSetup: (name) => shell.finishSetup({ name, locale: 'en', settings: {} }),
       loseFocus: () => shell.net.requestHold('focus'),
       corrupt: () => {
         const h = heroOf(session.world, 0);

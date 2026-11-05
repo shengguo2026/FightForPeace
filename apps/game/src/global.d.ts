@@ -82,6 +82,8 @@ export interface FfpDebugHook {
     state(): DebugNet;
     /** Pretend to be another game version (lobby mismatch test). */
     fakeVersion(v: string | null): void;
+    /** First launch with the defaults and this name (the M10 tests cover the real one). */
+    quickSetup(name: string): Promise<void>;
     /** Request a courtesy hold as if this window lost focus. */
     loseFocus(): void;
     /** Make this game's world differ from the partner's (resync test). */
