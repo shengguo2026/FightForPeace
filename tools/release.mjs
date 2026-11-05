@@ -127,6 +127,7 @@ export function assemble({
     'THIRD-PARTY-NOTICES.txt': crlf(noticeText),
     VERSION: `${version}\n`,
     'server/server.mjs': lf(read('server.mjs')),
+    'server/room.mjs': lf(read('room.mjs')),
     'server/get-node.ps1': crlf(read('get-node.ps1')),
   };
   for (const [file, body] of Object.entries(text)) writeFileSync(join(stage, file), body);

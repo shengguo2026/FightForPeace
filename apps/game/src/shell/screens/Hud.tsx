@@ -31,7 +31,8 @@ export function refreshHud(session: GameSession): void {
   const world = session.world;
   const players: HudPlayer[] = [];
   for (let slot = 0; slot < 2; slot += 1) {
-    if (slot > 0 && !session.devices.slots[slot]?.joined) continue;
+    // M12: in a Wi-Fi game the partner plays on the other computer (slot 1 has a hero).
+    if (slot > 0 && !session.devices.slots[slot]?.joined && !session.net) continue;
     const f = heroOf(world, slot);
     if (!f) continue;
     players.push({

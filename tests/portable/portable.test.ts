@@ -96,7 +96,7 @@ describe('portable server', () => {
     const js = await fetch(`${base}/assets/main.js`);
     expect(js.headers.get('content-type')).toMatch(/^text\/javascript/);
     const id = (await (await fetch(`${base}${ID_PATH}`)).json()) as Record<string, string>;
-    expect(id).toEqual({ app: 'fight-for-peace', folder: 'abc', saves: false });
+    expect(id).toEqual({ app: 'fight-for-peace', folder: 'abc', saves: false, rooms: false });
     // fetch() would normalise "..", so send the raw path.
     expect(await rawStatus(port, '/../secret.txt')).toBe(400);
     expect(await rawStatus(port, '/%2e%2e/secret.txt')).toBe(400);
@@ -123,7 +123,9 @@ describe('portable server', () => {
       'profile.p1',
     ]);
     expect(await (await fetch(`${base}${SAVES_PATH}`)).json()).toEqual(['device', 'profile.p1']);
-    expect((await fetch(`${base}${SAVES_PATH}Bad%20Name`, { method: 'PUT', body: 'x' })).status).toBe(400);
+    expect(
+      (await fetch(`${base}${SAVES_PATH}Bad%20Name`, { method: 'PUT', body: 'x' })).status,
+    ).toBe(400);
     expect(await rawStatus(port, `${SAVES_PATH}..%2Fescape`)).toBe(400);
     const foreign = await fetch(`${base}${SAVES_PATH}profile.p1`, {
       method: 'PUT',
@@ -194,6 +196,7 @@ describe('release zip', () => {
         `${root}/VERSION`,
         `${root}/runtime.json`,
         `${root}/server/server.mjs`,
+        `${root}/server/room.mjs`,
         `${root}/server/get-node.ps1`,
         `${root}/game/index.html`,
         `${root}/game/assets/main.js`,

@@ -15,3 +15,6 @@ export * from './save/codec';
 export * from './save/backends';
 export * from './save/store';
 export * from './progress/economy';
+export * from './net/protocol';
+export * from './net/transport';
+export * from './net/lockstep';

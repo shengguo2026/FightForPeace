@@ -110,6 +110,21 @@ async function main() {
     if (!js.includes(version)) throw new Error(`the game script does not carry version ${version}`);
     const id = JSON.parse(await get('/__ffp/id'));
     if (id.version !== version) throw new Error(`the server reports version ${id.version}`);
+    // M12: the LAN room opens (a code, a port, the host token) and closes again.
+    const res = await fetch(`http://127.0.0.1:${port}/__ffp/room`, {
+      method: 'POST',
+      signal: AbortSignal.timeout(5000),
+    });
+    const room = await res.json();
+    if (!res.ok || !/^[A-Z2-9]{4}$/.test(room.code ?? '') || !room.port || !room.token)
+      throw new Error(`the room API answered ${res.status} ${JSON.stringify(room)}`);
+    const ping = await fetch(`http://127.0.0.1:${room.port}/ffp-room/ping`, {
+      signal: AbortSignal.timeout(3000),
+    });
+    if ((await ping.json()).app !== 'fight-for-peace-room')
+      throw new Error('the room listener does not answer');
+    await fetch(`http://127.0.0.1:${port}/__ffp/room`, { method: 'DELETE' });
+    console.log(`Room ${room.code} opened on port ${room.port} and closed again`);
     const last = readFileSync(join(app, 'logs', 'last-port.txt'), 'utf8').trim();
     if (last !== String(port)) throw new Error(`logs/last-port.txt says ${last}`);
     console.log(`Portable smoke test passed: Fight For Peace ${version} on port ${port}`);

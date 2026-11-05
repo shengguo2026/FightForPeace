@@ -1,5 +1,6 @@
 import type { Catalog } from '@ffp/platform';
 import { M11_ZH } from './strings.m11';
+import { M12_ZH } from './strings.m12';
 
 /** M10 catalogue (zh-CN). Keys mirror strings.en.ts and the generated data names. */
 export const ZH_CN: Catalog = {
@@ -232,8 +233,6 @@ export const ZH_CN: Catalog = {
   'play.soloDetail': '一位英雄，一名玩家。',
   'play.coop': '同屏合作',
   'play.coopDetail': '两名玩家共用这台电脑：各用半个键盘或手柄。',
-  'play.wifi': '局域网合作',
-  'play.wifiDetail': '同一网络中的两台电脑。将在之后的更新中开放。',
   'play.lobbyTitle': '玩家',
   'play.lobbyJoin': '玩家2：在另一半键盘或空闲手柄上按{action:Attack}加入',
   'play.lobbyProfile': '档案',
@@ -515,4 +514,5 @@ export const ZH_CN: Catalog = {
   'grade.continues': '使用续关',
   'grade.time': '用时',
   ...M11_ZH,
+  ...M12_ZH,
 };

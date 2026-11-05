@@ -43,6 +43,9 @@ import type { LabState } from '../ui/labState';
 import { setLocale, t } from '../text/i18n';
 import { presentation } from './presentation';
 import { Academy } from '../academy/runner';
+import { NetPlay } from '../net/netplay';
+import { setFacingMode } from '@ffp/sim';
+import type { StartInfo } from '@ffp/platform';
 
 /**
  * M10 game shell: which screen is open, the profiles and their saves, and the play flow
@@ -71,7 +74,9 @@ export type Screen =
   | 'lesson'
   | 'practiceSetup'
   | 'practice'
-  | 'combos';
+  | 'combos'
+  | 'wifi'
+  | 'netLobby';
 
 /** Screens during which the simulation runs. */
 const LIVE: ReadonlySet<Screen> = new Set(['game', 'lab', 'lesson', 'practice']);
@@ -139,6 +144,8 @@ export class Shell {
   readonly guideChapter = signal<string>('start');
   /** Academy lessons, Free Practice and My Combos. */
   readonly academy = new Academy(this);
+  /** M12 local-Wi-Fi co-op (room, lobby, lockstep session). */
+  readonly net = new NetPlay(this);
   /** Free Practice set-up: hero, trial techniques (store ids), Cheat Practice codes. */
   readonly practice = signal<{ hero: string; trial: string[]; cheats: string[] }>({
     hero: 'mountain',
@@ -465,7 +472,62 @@ export class Shell {
 
   /** The profile playing slot `slot` (Player 1: the active profile). */
   profileOf(slot: number): Profile | null {
-    return slot === 0 ? this.active.value : this.partner.value;
+    const own = this.profileSlot(slot);
+    return own === 0 ? this.active.value : own === 1 ? this.partner.value : null;
+  }
+
+  /**
+   * Which local profile plays world slot `slot`: 0 the active profile, 1 Player 2's, -1
+   * none (M12 Wi-Fi: the partner's profile lives on their own computer).
+   */
+  profileSlot(slot: number): number {
+    if (this.net.active) return slot === this.net.localSlot ? 0 : -1;
+    return slot;
+  }
+
+  /** Players in the running game (Wi-Fi: both computers' players). */
+  playerCount(): number {
+    return this.net.active ? 2 : this.session.devices.joinedCount();
+  }
+
+  /** M12: starts the Wi-Fi stage the host sent (the same first frame on both computers). */
+  startNetStage(start: StartInfo): void {
+    this.fromShell.value = true;
+    this.mode.value = 'coop';
+    this.partner.value = null;
+    this.continued.value = null;
+    this.resultsRecorded = false;
+    this.settlement.value = [];
+    this.lastCheckpointKey = '';
+    this.cheatDraft.value = { hero: [[], []], session: [] };
+    this.lab.visible.value = false;
+    this.stagePick.value = { stage: start.stage, difficulty: start.difficulty };
+    const hub = this.session.devices;
+    hub.assignPlayers([hub.slots[0]?.device ?? 'kb:p1', null]);
+    hub.joinLocked = true;
+    hub.userPaused = false;
+    hub.focusPaused = false;
+    const local = this.net.localSlot;
+    this.heroPicks.value = start.heroes.map((h) => ({
+      cursor: Math.max(0, HERO_ROSTER.indexOf(h as (typeof HERO_ROSTER)[number])),
+      confirmed: true,
+    }));
+    presentation.outfitTint = start.heroes.map((h, slot) => {
+      const c = slot === local ? outfitTint(this.active.value, h) : null;
+      return c ? Number.parseInt(c.slice(1), 16) : null;
+    });
+    this.session.startStage(
+      start.stage,
+      start.difficulty,
+      0,
+      start.heroes,
+      {
+        loadouts: start.loadouts,
+      },
+      start.seed,
+    );
+    start.facing.forEach((f, slot) => setFacingMode(this.session.world, slot, f));
+    this.go('game');
   }
 
   /** Each player's owned loadout changes for their hero (Standard when none). */
@@ -577,6 +639,9 @@ export class Shell {
   }
 
   returnToVillage(): void {
+    // M12: leaving a Wi-Fi game ends it for both players (results: it was finished).
+    if (this.net.status.value !== 'idle')
+      this.net.leave(this.lab.results.value ? 'finished' : 'left');
     this.pauseConfirm.value = null;
     this.session.devices.userPaused = false;
     this.session.startArena(null);
@@ -630,7 +695,8 @@ export class Shell {
     const p = this.active.value;
     if (!run || !p || !this.fromShell.value) return;
     const stage = STAGES[run.stage]!;
-    if (run.checkpoint) {
+    // Local-Wi-Fi co-op keeps no continuable checkpoint (decision log, 2026-10-31).
+    if (run.checkpoint && !this.net.active) {
       const key = `${stage.id}:${run.checkpoint.beat}`;
       if (key !== this.lastCheckpointKey) {
         this.lastCheckpointKey = key;
@@ -656,7 +722,7 @@ export class Shell {
     if (results && !this.resultsRecorded) {
       this.resultsRecorded = true;
       const heroes = this.session.world.playerHero
-        .slice(0, this.session.devices.joinedCount() || 1)
+        .slice(0, this.playerCount() || 1)
         .map((h) => HERO_ROSTER[h] ?? 'mountain');
       const record = (x: Profile) => {
         // A practice run from a later beat or a Cheat-Assisted run is not a clear record.
@@ -691,6 +757,7 @@ export class Shell {
     const out: (Settlement | null)[] = [];
     heroes.forEach((hero, slot) => {
       const p = this.profileOf(slot);
+      const own = this.profileSlot(slot);
       if (!p) {
         out.push(null);
         return;
@@ -710,7 +777,7 @@ export class Shell {
         return;
       }
       let s: Settlement | null = null;
-      this.update((x) => (s = settleRun(x, report)), slot);
+      this.update((x) => (s = settleRun(x, report)), own);
       out.push(s);
     });
     this.settlement.value = out;

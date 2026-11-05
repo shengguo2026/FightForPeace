@@ -48,3 +48,4 @@ export * from './stage/run';
 export * from './cheats/cheats';
 export * from './academy/pilot';
 export * from './academy/lesson';
+export * from './net/snapshot';

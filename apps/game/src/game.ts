@@ -74,6 +74,24 @@ export interface RenderSnapshot {
   run: StageRun | null;
 }
 
+/**
+ * M12 LAN co-op: while set, the session steps in lockstep with the partner's game (see
+ * apps/game/src/net/netplay.ts). This game's player is always the local Player 1 device;
+ * in the world it plays slot `localSlot` (host 0, guest 1).
+ */
+export interface NetDriver {
+  readonly localSlot: number;
+  /** Once per render frame before stepping: timers, and pause or focus requests. */
+  poll(): void;
+  wantsInput(frame: number): boolean;
+  submit(frame: number, input: FrameInput): void;
+  canStep(frame: number): boolean;
+  inputsFor(frame: number): FrameInput[];
+  stepped(frame: number): void;
+  stalled(): void;
+  catchUp(frame: number): number;
+}
+
 export interface FrameReport {
   frame: number;
   hash: number;
@@ -118,6 +136,8 @@ export class GameSession {
   pilot: ((world: World, own: FrameInput) => FrameInput) | null = null;
   /** M11: run after every simulation step (Academy lesson goals). */
   readonly afterStep: ((world: World) => void)[] = [];
+  /** M12: the Wi-Fi lockstep driver (null: solo and same-device play). */
+  net: NetDriver | null = null;
 
   constructor(
     private readonly seed: number,
@@ -175,14 +195,15 @@ export class GameSession {
     difficulty = 'medium',
     beat = 0,
     extra: Pick<WorldOptions, 'loadouts' | 'cheats' | 'heroes'> = {},
+    seed = this.seed,
   ): void {
     const heroes = [0, 1].map((slot) => heroOf(this.world, slot)?.hero);
     // M9: a stage id starts the stage journey (from `beat` when practising a later beat).
     const stage = arena !== null && STAGES.some((s) => s.id === arena);
     this.world = stage
-      ? createWorld(this.seed, { stage: arena, difficulty, beat, ...extra })
+      ? createWorld(seed, { stage: arena, difficulty, beat, ...extra })
       : arena
-        ? createWorld(this.seed, { arena, difficulty, ...extra })
+        ? createWorld(seed, { arena, difficulty, ...extra })
         : this.labWorld();
     // The heroes carry over from the previous world unless the caller chose them.
     if (!extra.heroes)
@@ -203,6 +224,7 @@ export class GameSession {
 
   /** Advances by the wall time since the last render frame. Pads must be polled first. */
   advance(elapsedMs: number): FrameReport {
+    if (this.net) return this.advanceNet(this.net, elapsedMs);
     this.devices.poll();
     const paused = this.devices.paused || this.held;
     // While paused the accumulator is not fed, so no time debt builds up.
@@ -225,6 +247,42 @@ export class GameSession {
       paused: this.devices.paused,
       inputs,
     };
+  }
+
+  /**
+   * M12 lockstep: a frame is stepped only when both players' inputs for it are known; the
+   * local input is stamped `delay` frames ahead. A game that fell behind its partner may
+   * take a couple of extra steps. Pauses are network holds (the driver handles them).
+   */
+  private advanceNet(net: NetDriver, elapsedMs: number): FrameReport {
+    this.devices.poll();
+    net.poll();
+    const { steps, alpha } = this.accumulator.advance(this.held ? 0 : elapsedMs);
+    const want = this.held ? 0 : steps + (steps > 0 ? net.catchUp(this.world.frame) : 0);
+    const inputs: FrameInput[][] = [];
+    for (let i = 0; i < want; i += 1) {
+      this.runStepHooks();
+      const f = this.world.frame;
+      if (net.wantsInput(f)) net.submit(f, this.devices.sampleFrame()[0] ?? IDLE);
+      if (!net.canStep(f)) {
+        net.stalled();
+        break;
+      }
+      this.previous = cloneFighters(this.world.bodies);
+      const frame = net.inputsFor(f);
+      inputs.push(frame);
+      step(this.world, frame);
+      net.stepped(this.world.frame);
+    }
+    this.alpha = alpha;
+    return { frame: this.world.frame, hash: hashWorld(this.world), paused: false, inputs };
+  }
+
+  /** M12: the partner's snapshot replaces the world (resynchronisation). */
+  replaceWorld(world: World): void {
+    this.world = world;
+    this.previous = cloneFighters(world.bodies);
+    this.generation += 1;
   }
 
   private runStepHooks(): void {
@@ -262,8 +320,9 @@ export class GameSession {
     beat: number,
     heroes: readonly string[],
     extra: Pick<WorldOptions, 'loadouts' | 'cheats'> = {},
+    seed = this.seed,
   ): void {
-    this.startArena(stage, difficulty, beat, { ...extra, heroes });
+    this.startArena(stage, difficulty, beat, { ...extra, heroes }, seed);
     heroes.forEach((id, slot) => setHero(this.world, slot, id));
     // The stage opens with the chosen heroes, not the previous ones for a first step.
     applyHeroChoices(this.world);
