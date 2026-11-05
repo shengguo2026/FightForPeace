@@ -1,4 +1,6 @@
-import { t } from '../text/i18n';
+import { ACHIEVEMENTS, STORE, type Settlement } from '@ffp/platform';
+import { HEROES } from '@ffp/sim';
+import { dt, heroName, t, type TextId } from '../text/i18n';
 import { PLAYER_COLORS, PromptText } from './InputPrompt';
 import type { LabState } from './labState';
 
@@ -115,6 +117,7 @@ export function ResultsOverlay({
   onLab,
   village,
   continuedFrom,
+  settlement,
 }: {
   state: LabState;
   onAgain: () => void;
@@ -123,11 +126,14 @@ export function ResultsOverlay({
   village?: () => boolean;
   /** M10: the beat (0-based) a Continue started from, or null. */
   continuedFrom?: () => number | null;
+  /** M11: each player's payout, records and achievements (null: not settled). */
+  settlement?: () => readonly (Settlement | null)[];
 }) {
   const r = state.results.value;
   if (!r) return null;
   const toVillage = village?.() ?? false;
   const cont = continuedFrom?.() ?? null;
+  const settled = settlement?.() ?? [];
   const button = (label: string, testId: string, run: () => void) => (
     <button
       data-testid={testId}
@@ -157,7 +163,16 @@ export function ResultsOverlay({
         pointerEvents: 'auto',
       }}
     >
-      <div style={{ ...box, padding: '24px 32px', minWidth: '560px', maxWidth: '820px' }}>
+      <div
+        style={{
+          ...box,
+          padding: '24px 32px',
+          minWidth: '560px',
+          maxWidth: '820px',
+          maxHeight: '94vh',
+          overflowY: 'auto',
+        }}
+      >
         <div style={{ fontSize: '30px', fontWeight: 'bold' }}>{r.title}</div>
         <div style={{ opacity: 0.8, marginBottom: '12px' }} data-testid="results-difficulty">
           {cont !== null && toVillage
@@ -199,9 +214,25 @@ export function ResultsOverlay({
             </tr>
           </tbody>
         </table>
+        <div data-testid="results-points" style={{ fontSize: '17px' }}>
+          {t('results.points', { n: r.points })}
+          {r.capped ? ` · ${t('results.capped', { category: r.capped })}` : ''}
+        </div>
+        <div data-testid="results-score" style={{ fontSize: '17px' }}>
+          {t('results.score', { n: r.score.toLocaleString() })} ·{' '}
+          {r.standard ? t('results.standard') : t('results.open')}
+        </div>
+        {r.cheatAssisted ? (
+          <div data-testid="results-cheat" style={{ color: '#ffb36b', fontSize: '17px' }}>
+            {t('results.cheatAssisted', { codes: r.cheatCodes.join(', ') })}
+          </div>
+        ) : null}
         {r.lines.map((l) => (
           <div style={{ fontSize: '17px' }}>{l}</div>
         ))}
+        {settled.map((s, slot) =>
+          s ? <Payout s={s} slot={slot} many={settled.length > 1} /> : null,
+        )}
         <div style={{ marginTop: '16px' }}>
           {button(t('results.again'), 'results-again', onAgain)}
           {toVillage
@@ -209,6 +240,91 @@ export function ResultsOverlay({
             : button(t('run.backToLab'), 'results-lab', onLab)}
         </div>
       </div>
+    </div>
+  );
+}
+
+const PAY_KEY: Record<string, TextId> = {
+  completion: 'pay.completion',
+  difficulty: 'pay.difficulty',
+  rank: 'pay.rank',
+  firstClear: 'pay.firstClear',
+  'firstRank.B': 'pay.firstRank',
+  'firstRank.A': 'pay.firstRank',
+  'firstRank.S': 'pay.firstRank',
+  allClues: 'pay.allClues',
+  achievement: 'pay.achievement',
+  mastery: 'pay.mastery',
+};
+
+/** One player's payout: Credits lines (struck through when suppressed), records, mastery. */
+function Payout({ s, slot, many }: { s: Settlement; slot: number; many: boolean }) {
+  const achName = (id: string) =>
+    dt(`${id}.name`, ACHIEVEMENTS.find((a) => a.id === id)?.name ?? id);
+  return (
+    <div
+      data-testid={`results-payout-p${slot + 1}`}
+      style={{
+        marginTop: '10px',
+        paddingTop: '8px',
+        borderTop: '1px solid rgba(255,255,255,0.2)',
+        fontSize: '17px',
+      }}
+    >
+      <b>
+        {many ? `${t('common.player', { n: slot + 1 })} · ` : ''}
+        {s.practice ? t('pay.practice') : t('pay.total', { n: s.total })}
+      </b>
+      {s.cheatAssisted ? <div style={{ color: '#ffb36b' }}>{t('pay.suppressed')}</div> : null}
+      {s.lines.map((l) => (
+        <div
+          data-testid="results-pay-line"
+          style={{
+            textDecoration: l.suppressed ? 'line-through' : undefined,
+            opacity: l.suppressed ? 0.6 : 1,
+          }}
+        >
+          {t(PAY_KEY[l.id] ?? 'pay.completion', {
+            name:
+              l.id === 'achievement' && l.ref
+                ? achName(l.ref)
+                : l.id.startsWith('firstRank')
+                  ? l.id.slice(-1)
+                  : (l.ref ?? ''),
+          })}{' '}
+          +{l.amount}
+        </div>
+      ))}
+      {s.newBest ? <div data-testid="results-best">{t('pay.newBest')}</div> : null}
+      {s.achievements.length > 0 ? (
+        <div data-testid="results-achievements">
+          {t('pay.achievements', { names: s.achievements.map(achName).join(', ') })}
+        </div>
+      ) : null}
+      {s.mastery.gained > 0 ? (
+        <div data-testid="results-mastery">
+          {t('pay.masteryGain', {
+            hero: heroName(s.mastery.hero),
+            n: s.mastery.gained,
+            level: s.mastery.to,
+          })}
+        </div>
+      ) : null}
+      {s.granted.length > 0 ? (
+        <div data-testid="results-granted">
+          {t('pay.granted', {
+            names: s.granted
+              .map((id) => {
+                const item = STORE.find((x) => x.id === id);
+                const a = HEROES.find((h) => h.id === item?.hero)?.actions.find(
+                  (x) => x.id === item?.action,
+                );
+                return a ? dt(`hero.${item!.hero}.action.${a.id}`, a.name) : id;
+              })
+              .join(', '),
+          })}
+        </div>
+      ) : null}
     </div>
   );
 }

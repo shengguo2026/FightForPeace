@@ -817,6 +817,12 @@ export function refreshStage(session: GameSession, lab: LabState): void {
       grade: g.grade,
     })),
     overall: r.overall,
+    points: r.points,
+    capped: r.capped ? dt(`grade.${r.capped}`, r.capped) : null,
+    score: r.score,
+    standard: r.standard,
+    cheatAssisted: r.cheatAssisted,
+    cheatCodes: r.cheatCodes,
     lines: [
       t('results.line1', { time: clock(st.frames), n: r.continuesUsed }),
       t('results.line2', { defeated: st.defeated, surrendered: st.surrendered, fled: st.fled }),

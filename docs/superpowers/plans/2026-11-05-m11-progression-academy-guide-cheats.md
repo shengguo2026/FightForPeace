@@ -39,12 +39,12 @@
 
 ## Tasks
 
-- [ ] Cheat registry, parser and effects in the simulation; Cheat-Assisted marking in the run (tests).
-- [ ] Data-defined 100-point grade, ranks, caps and run score; best combo counters (tests).
-- [ ] Progression data (store, bands, payout, mastery, achievements, Academy route) compiled from YAML (tests).
-- [ ] Save schema v2 with a v1 → v2 migration; payout, store, achievements, mastery, records, My Combos and Academy states (tests).
-- [ ] Results screen: score, rank, payout ledger, records, achievements, Standard/Open and Cheat-Assisted marking.
-- [ ] Village Store with Wardrobe, Training Hall, Technique Library and Profile Collection; outfits drawn in the game; briefing loadout with owned moves.
-- [ ] Academy: the route, lessons with current-binding prompts, Free Practice and Cheat Practice, technique trials, My Combos.
-- [ ] Guide chapters with search and control cards; Elder's Secrets cheat cards with typed and selected activation; Cheat-Assisted in HUD, pause, readiness and results.
-- [ ] EN / ZH-CN / DE text, browser tests (`e2e/m11.spec.ts`), Guo_tests.md M11 section, version 0.11.0.
+- [x] Cheat registry, parser and effects in the simulation; Cheat-Assisted marking in the run (tests).
+- [x] Data-defined 100-point grade, ranks, caps and run score; best combo counters (tests).
+- [x] Progression data (store, bands, payout, mastery, achievements, Academy route) compiled from YAML (tests).
+- [x] Save schema v2 with a v1 → v2 migration; payout, store, achievements, mastery, records, My Combos and Academy states (tests).
+- [x] Results screen: score, rank, payout ledger, records, achievements, Standard/Open and Cheat-Assisted marking.
+- [x] Village Store with Wardrobe, Training Hall, Technique Library and Profile Collection; outfits drawn in the game; briefing loadout with owned moves.
+- [x] Academy: the route, lessons with current-binding prompts, Free Practice and Cheat Practice, technique trials, My Combos.
+- [x] Guide chapters with search and control cards; Elder's Secrets cheat cards with typed and selected activation; Cheat-Assisted in HUD, pause, readiness and results.
+- [x] EN / ZH-CN / DE text, browser tests (`e2e/m11.spec.ts`), Guo_tests.md M11 section, version 0.11.0.

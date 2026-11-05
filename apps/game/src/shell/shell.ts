@@ -40,8 +40,9 @@ import {
 } from '@ffp/platform';
 import type { GameSession } from '../game';
 import type { LabState } from '../ui/labState';
-import { setLocale } from '../text/i18n';
+import { setLocale, t } from '../text/i18n';
 import { presentation } from './presentation';
+import { Academy } from '../academy/runner';
 
 /**
  * M10 game shell: which screen is open, the profiles and their saves, and the play flow
@@ -136,6 +137,8 @@ export class Shell {
   readonly secretsFrom = signal<Screen>('guide');
   readonly guideFrom = signal<Screen>('village');
   readonly guideChapter = signal<string>('start');
+  /** Academy lessons, Free Practice and My Combos. */
+  readonly academy = new Academy(this);
   /** Free Practice set-up: hero, trial techniques (store ids), Cheat Practice codes. */
   readonly practice = signal<{ hero: string; trial: string[]; cheats: string[] }>({
     hero: 'mountain',
@@ -560,7 +563,9 @@ export class Shell {
     const device = this.session.devices.slots[0]?.device ?? 'kb:p1';
     this.session.devices.assignPlayers([device, null]);
     this.stagePick.value = { stage: cp.stage, difficulty: cp.difficulty };
-    this.heroPicks.value = [{ cursor: Math.max(0, HERO_ROSTER.indexOf(cp.heroes[0] as 'mountain')), confirmed: true }];
+    this.heroPicks.value = [
+      { cursor: Math.max(0, HERO_ROSTER.indexOf(cp.heroes[0] as 'mountain')), confirmed: true },
+    ];
     this.startStage({ ...cp, heroes: cp.heroes.slice(0, 1) });
   }
 
@@ -603,7 +608,9 @@ export class Shell {
     const loadouts = this.loadoutsFor(heroes);
     this.session.startStage(STAGES[run.stage]!.id, pick.difficulty, beat, heroes, {
       loadouts,
-      cheats: c.marked ? { hero: c.hero, session: c.session, marked: true, firstBeat: c.firstBeat } : undefined,
+      cheats: c.marked
+        ? { hero: c.hero, session: c.session, marked: true, firstBeat: c.firstBeat }
+        : undefined,
     });
     this.session.devices.flush();
   }
@@ -707,6 +714,22 @@ export class Shell {
       out.push(s);
     });
     this.settlement.value = out;
+  }
+
+  /** A lesson state was reached: say so, with the Credits it paid. */
+  announceLesson(state: string, credits: number): void {
+    const key =
+      state === 'mastered'
+        ? 'lesson.mastered'
+        : state === 'certified'
+          ? 'lesson.certified'
+          : 'lesson.practiced';
+    this.showToast(t(key, { n: credits }));
+  }
+
+  /** The default name of the n-th saved combo. */
+  comboName(n: number): string {
+    return t('combos.defaultName', { n });
   }
 
   showToast(text: string): void {

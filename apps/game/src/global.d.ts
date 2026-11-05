@@ -77,6 +77,13 @@ export interface FfpDebugHook {
     storage(): string;
     flush(): Promise<void>;
     exportText(): Promise<string>;
+    grantCredits(n: number): void;
+    /** Ends the running stage as if the evidence had been secured. */
+    finishStage(): void;
+    lesson(): { phase: string; met: string[]; done: number; count: number } | null;
+    lastCombo(): { steps: string[]; hits: number } | null;
+    cheats(): { hero: string[][]; session: string[]; marked: boolean };
+    pilotActive(): boolean;
   };
   runReplay(log: ReplayLog): number;
   /** Replaces real gamepads with these virtual ones from now on. */

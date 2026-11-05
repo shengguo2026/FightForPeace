@@ -1,7 +1,7 @@
 import { CALLOUT_WORDS, calloutKey } from './callouts';
 import { signal } from '@preact/signals';
 import { Translator, format, type Catalog, type Locale } from '@ffp/platform';
-import { ARENAS, COOP, DIFFICULTIES, ENEMIES, HEROES, PROFILES, STAGES } from '@ffp/sim';
+import { ARENAS, COOP, DIFFICULTIES, ENEMIES, HEROES, PROFILES, PROGRESSION, STAGES } from '@ffp/sim';
 import { EN } from './strings.en';
 import { ZH_CN } from './strings.zh-CN';
 import { DE } from './strings.de';
@@ -40,6 +40,13 @@ export function dataCatalog(): Record<string, string> {
       if (b.clue) out[`${k}.clue`] = b.clue.text;
       if (b.evidence) out[`${k}.evidence`] = b.evidence.text;
     }
+  }
+  // M11 progression names: store outfits and badges, achievements, Academy routes and lessons.
+  for (const s of PROGRESSION.store) if (s.name) out[`${s.id}.name`] = s.name;
+  for (const a of PROGRESSION.achievements) out[`${a.id}.name`] = a.name;
+  for (const r of PROGRESSION.academy) {
+    out[`${r.id}.name`] = r.name;
+    for (const l of r.lessons) out[`${l.id}.name`] = l.name;
   }
   return out;
 }

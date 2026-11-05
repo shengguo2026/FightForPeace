@@ -15,7 +15,9 @@ import {
   budgetOf,
   usage,
   MoveState,
+  RunPhase,
   beatOf,
+  codesOf,
 } from '@ffp/sim';
 import type { QualityGovernor } from '@ffp/platform';
 import type { GameSession } from './game';
@@ -40,6 +42,29 @@ export function installDebugHook(
         await shell.flushSave();
         return shell.store!.exportBackup();
       },
+      // M11 test hooks.
+      grantCredits: (n) =>
+        shell.update((p) => {
+          p.progress.credits += n;
+        }),
+      finishStage: () => {
+        const r = session.world.run;
+        if (!r) return;
+        r.phase = RunPhase.Complete;
+        r.phaseFrame = session.world.frame;
+      },
+      lesson: () => (shell.academy.lesson.value ? { ...shell.academy.lesson.value } : null),
+      lastCombo: () =>
+        shell.academy.lastCombo.value ? { ...shell.academy.lastCombo.value } : null,
+      cheats: () => {
+        const c = session.world.cheats;
+        return {
+          hero: c.hero.map((m) => codesOf(m)),
+          session: codesOf(c.session),
+          marked: c.marked,
+        };
+      },
+      pilotActive: () => session.pilot !== null,
     },
     frame: () => session.world.frame,
     body: (id) => {

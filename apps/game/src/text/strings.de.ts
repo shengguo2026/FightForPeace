@@ -1,4 +1,5 @@
 import type { Catalog } from '@ffp/platform';
+import { M11_DE } from './strings.m11';
 
 /** M10 catalogue (de). Keys mirror strings.en.ts and the generated data names. */
 export const DE: Catalog = {
@@ -546,4 +547,5 @@ export const DE: Catalog = {
   'grade.evidence': 'Spurensuche (Hinweis und Beweis des Geldgebers)',
   'grade.continues': 'Genutzte Fortsetzungen',
   'grade.time': 'Zeit',
+  ...M11_DE,
 };

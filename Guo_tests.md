@@ -239,3 +239,72 @@ In the game as in M9 (Player 1: W A S D, Attack T, Jump Y, Guard G, Interact J, 
 19. **Profile Data:** rename the profile, create a second profile, switch between them. **Export** downloads a `.ffpsave` file; **Import a backup** with that file first shows what it holds, then "Add them" adds a copy (nothing is overwritten). Daily backups can be restored.
 20. **Two tabs:** open the game in a second tab: the village says this profile is open in another tab and changes there are not saved.
 21. **Portable:** in the unzipped portable game, finish the setup, then look in the game folder: a `saves` folder with `profile.….json`, `device.json` and a daily backup. Close the console, start again: the village opens with your profile.
+
+## M11 · Progression, Academy, Guide and Elder's Secrets
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+Open `http://localhost:5173` (if Vite prints another port, use that one). Stop the server with `Ctrl+C`. M11 moves saves to version 2: an M10 profile is upgraded automatically on first load and starts with 0 Credits.
+
+To test the branch before it is merged instead of `main`:
+
+```powershell
+git fetch origin claude/project-thread-1k7hdh
+git checkout claude/project-thread-1k7hdh
+pnpm install
+pnpm dev
+```
+
+The portable build:
+
+```powershell
+pnpm release
+pnpm smoke:portable
+```
+
+`pnpm release` writes `release\FightForPeace-0.11.0.zip`.
+
+Optional, the automated checks (they also run on GitHub):
+
+```powershell
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm e2e
+```
+
+### Keys
+
+As in M10 (Player 1: W A S D, Attack T, Jump Y, Guard G, Interact J, Special U, Ultimate H, Team Attack B, Pause Esc). Menus: arrows, Enter, Esc, or a gamepad.
+
+### Steps
+
+1. **Village:** bottom right now shows **Credits: 0** next to your profile name. The menu detail panel describes the Store and the Guide (they are no longer "later").
+2. **Earn Credits:** Play → Solo → Stage 1 (any difficulty) → finish the stage. The results now show **Grade points … / 100**, **Score …** and **Standard Loadout**, then a payout block: "Credits earned", one line each for Stage completed (300), the difficulty bonus, the rank bonus, **First clear (1000)** and achievements such as "The River Flows Again" (150), your Hero Mastery points, and "New best score for this category!".
+3. Return to Village: the Credits at the bottom right match the payout. Play the stage again: the first-clear bonus is **not** paid a second time.
+4. **Records:** Collection and Records now also lists best scores by category (Standard/Open · Solo/Co-op · difficulty), Hero Mastery levels, all achievements (✓ earned, ○ open with progress) and the Credits history.
+5. **Village Store → Techniques:** Mountain's **Skybreak Column** and River's **Waterspout Rise** for 800 each, with their input in your own keys on the right and "Also granted free at … Mastery level 3". After your first clear the two **Ultimates** (Still Mountain, Floodline Passage, 1500) appear too. Buy one (Enter), press Enter again to **equip** it: the status changes Owned → Equipped.
+6. **Wardrobe:** buy and equip Millwright's Coat (Mountain) or Reed Courier (River): in the stage the hero is drawn in a different colour (placeholder for the outfit art). **Training Hall** says "No combat styles yet". **Collection:** buy the Village Lantern badge and equip it: the village shows it after your name. Open Sluice stays **Locked** until you have earned "The River Flows Again". With too few Credits the store says how many you still need; "Mark as goal" puts a ★ on an item.
+7. **Briefing with owned moves:** Play the stage with the hero whose technique you equipped. The briefing summary shows **Open Loadout** and the bought move in its slot with your key. The results then say **Open Loadout**, and Records keeps it apart from Standard.
+8. **Academy:** Village → Academy now opens the Academy (the old Combat Lab is the last item). Pick the hero with left/right. Route **First Steps** has four lessons, each marked New / Practised / Certified / Mastered.
+9. **Lesson "Your first chain":** the demonstration plays by itself (your hero performs the chain on the dummy). The panel at the top lists the three moves with **your current keys**. Press T (Attack) to start the guided practice; perform the chain to tick it off, then the independent trial (3 times), then the optional mastery goal (3 times within 15 seconds). "Certified! +100 Credits" and "Mastered! +150 Credits" appear as toasts, once only.
+10. **Rebind and see the lesson change:** Esc → Leave lesson. Settings → Controls → Remap controls → Attack → press R → Apply. Back to Academy → "Your first chain": the panel now shows **R** everywhere instead of T.
+11. **Gamepad prompts:** during a lesson, press any button on a gamepad: the lesson panel switches to the gamepad's buttons at once; press a key again and it switches back to the keyboard.
+12. **Other lessons:** "Move, jump and dash" (walk back from the dummy, jump, dash with a double tap); "Guard and Exact Block" (the trainer attacks: guard once, then two Exact Blocks, mastery: a Counter); "Special and Ultimate" (the attack bar is kept full). The first certificate also earns the achievement "First Lesson" (+100).
+13. **Free Practice and My Combos:** Academy → Free Practice → Start practice. Hit the dummy with a chain of 2 or more moves: the panel top left shows the recorded moves with your keys, hits and damage. Esc → **Save last combo** → Leave practice. Academy → My Combos: the combo is there as "Combo 1". Rename it, then **Watch and practise**: your hero plays it back, then "Your turn" and a ✓ when you perform it yourself. Delete removes it.
+14. **Technique trials and Cheat Practice:** Free Practice set-up lists the hero's store techniques; tick one you don't own and try it in practice (nothing is paid). Tick Elder's Secrets cards under Cheat Practice: the practice panel says "Cheat Practice".
+15. **Guide:** Village → Guide. Sixteen chapters on the left; type in the search box (e.g. "counter") to filter them. Each chapter has text and control cards drawn with your current keys (change a binding and they change).
+16. **Elder's Secrets:** Guide → chapter "Elder's Secrets" lists the 4 presets and all 12 cards (Steady Ride and Safe Passage say they have no effect yet). Choose Elder's Secrets: type `safe hart` → "That is not a code the elder knows" (no guessing). Type ` strong-hands ` → Strong Hands gets a ✓ (case, spaces and hyphens do not matter). Click the preset **Calm Battle**: its codes are selected. Done → "Every player has to accept…"; press "Player 1: I understand", then Done.
+17. **A Cheat-Assisted run:** play Stage 1. The HUD shows **Cheat-Assisted** under your portrait, the readiness screen and the pause menu show it too. Finish the stage: the results show the Cheat-Assisted line, the payout lines are struck through and **Credits earned: 0**; Records shows "Highest Cheat-Assisted clear" separately.
+18. **Cheats from the pause menu:** start a normal run, Esc → **Elder's Secrets** → pick Safe Heart → Player 1: I understand → Done. The pause menu now says Cheat-Assisted, and the hero takes no damage. Return to Village: the next run starts without cheats again (session cheats are chosen per run; hero cheats are remembered as "Use my saved choices for this hero").
+19. **Co-op:** with two players, the Elder's Secrets screen shows a column per player; both players have to press their "I understand" before Done works.
+20. **Languages:** switch to 简体中文 and Deutsch: the store, Academy, lessons, Guide, Elder's Secrets and results texts are translated.

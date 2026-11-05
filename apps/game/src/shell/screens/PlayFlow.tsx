@@ -1,6 +1,6 @@
 import { useLayoutEffect, useState } from 'preact/hooks';
 import type { DeviceId } from '@ffp/platform';
-import { DIFFICULTIES, HEROES, STAGES, defaultLoadout, SLOTS } from '@ffp/sim';
+import { DIFFICULTIES, HEROES, STAGES, defaultLoadout, equipMove, SLOTS } from '@ffp/sim';
 import { moveInputText } from '../../text/en';
 import { difficultyName, dt, heroName, locale, stageName, t } from '../../text/i18n';
 import { PLAYER_COLORS, PromptText } from '../../ui/InputPrompt';
@@ -399,6 +399,13 @@ const POSE = [0, 1, 3, 4, 2];
 function Loadout({ heroId, slot, shell }: { heroId: string; slot: number; shell: Shell }) {
   const kit = HEROES.find((h) => h.id === heroId)!;
   const lo = defaultLoadout(kit);
+  // M11: owned catalogue moves the player equipped replace the default in their slot.
+  const changes = shell.loadoutsFor(shell.chosenHeroes())[slot] ?? [];
+  for (const c of changes) {
+    const ai = kit.actions.findIndex((a) => a.id === c.action);
+    if (ai >= 0) equipMove(lo, kit, c.kind, c.dir, ai);
+  }
+  const open = changes.length > 0;
   const rows = lo
     .map((ai, i) => ({ ai, kind: i < SLOTS ? 'special' : 'ultimate', dir: i % SLOTS }))
     .filter((r) => r.ai >= 0);
@@ -406,7 +413,15 @@ function Loadout({ heroId, slot, shell }: { heroId: string; slot: number; shell:
     <div data-testid={`loadout-p${slot + 1}`}>
       <b style={{ color: PLAYER_COLORS[slot] }}>
         {t('common.player', { n: slot + 1 })} · {heroName(heroId)}
-      </b>
+      </b>{' '}
+      <span class="ffp-scope" data-testid={`loadout-kind-p${slot + 1}`}>
+        {open ? t('results.open') : t('results.standard')}
+      </span>
+      {(shell.cheatDraft.value.hero[slot] ?? []).length > 0 ? (
+        <span class="ffp-scope" style={{ color: '#ffb36b' }}>
+          {t('hud.cheatAssisted')}
+        </span>
+      ) : null}
       {rows.map((r) => {
         const a = kit.actions[r.ai]!;
         return (
@@ -502,6 +517,15 @@ export function BriefingScreen({ shell }: { shell: Shell }) {
               autofocus
               testId="briefing-continue"
             />
+            <Button
+              label={t('secrets.title')}
+              detail={shell.draftCheats() ? t('secrets.chosen') : t('secrets.briefingDetail')}
+              testId="briefing-secrets"
+              onPress={() => {
+                shell.secretsFrom.value = 'briefing';
+                shell.go('secrets');
+              }}
+            />
           </Panel>
         </div>
       )}
@@ -545,6 +569,11 @@ export function ReadyScreen({ shell }: { shell: Shell }) {
             {t('common.player', { n: slot + 1 })} · {heroName(h)} {ready[slot] ? '✓' : ''}
           </p>
         ))}
+        {shell.draftCheats() ? (
+          <p data-testid="ready-cheat" style={{ color: '#ffb36b' }}>
+            {t('hud.cheatAssisted')}
+          </p>
+        ) : null}
         <p class="ffp-hint">
           <PromptText text={t('play.readyHint')} ctx={ctxOf(shell, 0)} />
         </p>

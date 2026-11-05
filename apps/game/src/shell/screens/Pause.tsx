@@ -9,7 +9,20 @@ import { Button, Panel } from '../ui';
 import type { Category } from './Settings';
 
 type Item =
-  'resume' | 'moves' | 'howTo' | 'controls' | 'access' | 'objective' | 'restart' | 'village';
+  | 'resume'
+  | 'moves'
+  | 'howTo'
+  | 'controls'
+  | 'access'
+  | 'objective'
+  | 'restart'
+  | 'village'
+  | 'secrets'
+  | 'guide'
+  | 'lessonRestart'
+  | 'lessonLeave'
+  | 'saveCombo'
+  | 'practiceLeave';
 
 const HOW_TO: TextId[] = [
   'pause.howTo1',
@@ -131,6 +144,20 @@ export function PauseMenu({ shell, state }: { shell: Shell; state: LabState }) {
             ) : null}
           </div>
         );
+      case 'secrets':
+        return (
+          <p data-testid="pause-detail-secrets">
+            {world.cheats.marked ? t('secrets.alreadyMarked') : t('secrets.pauseDetail')}
+          </p>
+        );
+      case 'guide':
+        return <p>{t('menu.guideDetail')}</p>;
+      case 'lessonRestart':
+      case 'lessonLeave':
+        return <p>{t('lesson.pauseDetail')}</p>;
+      case 'saveCombo':
+      case 'practiceLeave':
+        return <p>{t('practice.pauseDetail')}</p>;
       case 'restart':
         return <p>{t('pause.confirmRestart')}</p>;
       case 'village':
@@ -156,6 +183,11 @@ export function PauseMenu({ shell, state }: { shell: Shell; state: LabState }) {
       <div class="ffp-row" style={{ width: '980px', maxWidth: '94vw' }}>
         <Panel style={{ width: '360px' }} testId="pause-menu">
           <h1 class="ffp-title">{t('pause.title')}</h1>
+          {world.cheats.marked ? (
+            <div data-testid="pause-cheat" style={{ color: '#ffb36b' }}>
+              {t('hud.cheatAssisted')}
+            </div>
+          ) : null}
           {ctx ? (
             <div class="ffp-hint" data-testid="pause-hint">
               <PromptText text={t('prompt.paused')} ctx={ctx} />
@@ -167,6 +199,49 @@ export function PauseMenu({ shell, state }: { shell: Shell; state: LabState }) {
           {item('controls', t('pause.controls'), () => openSettings('controls'))}
           {item('access', t('pause.access'), () => openSettings('accessibility'))}
           {item('objective', t('pause.objective'), () => setFocused('objective'))}
+          {run && shell.screen.value === 'game'
+            ? item('secrets', t('secrets.title'), () => {
+                shell.secretsFrom.value = 'game';
+                shell.go('secrets');
+              })
+            : null}
+          {shell.fromShell.value || shell.screen.value !== 'lab'
+            ? item('guide', t('menu.guide'), () => {
+                shell.guideFrom.value = shell.screen.value;
+                shell.go('guide');
+              })
+            : null}
+          {shell.screen.value === 'lesson' ? (
+            <>
+              {item('lessonRestart', t('lesson.restart'), () => {
+                shell.academy.restartLesson();
+                shell.resume();
+              })}
+              {item('lessonLeave', t('lesson.leave'), () => {
+                shell.resume();
+                shell.academy.leaveLesson();
+              })}
+            </>
+          ) : null}
+          {shell.screen.value === 'practice' ? (
+            <>
+              {item(
+                'saveCombo',
+                t('practice.save'),
+                () => {
+                  const id = shell.academy.saveLastCombo();
+                  shell.showToast(id ? t('practice.saved') : t('practice.notSaved'));
+                },
+                !shell.academy.lastCombo.value || !!shell.active.value?.guest,
+              )}
+              {item('practiceLeave', t('practice.leave'), () => {
+                shell.resume();
+                shell.academy.leavePractice(
+                  shell.academy.practice.value?.playing ? 'combos' : 'academy',
+                );
+              })}
+            </>
+          ) : null}
           {run ? item('restart', t('pause.restart'), () => ask('restart')) : null}
           {shell.fromShell.value ? item('village', t('pause.village'), () => ask('village')) : null}
         </Panel>
