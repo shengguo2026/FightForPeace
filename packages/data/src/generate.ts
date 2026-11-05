@@ -893,6 +893,65 @@ export const StageSchema = T.Object(
       T.Integer({ minimum: 1 }),
       T.Integer({ minimum: 1 }),
     ]),
+    grade: T.Object(
+      {
+        categories: T.Array(
+          T.Object(
+            {
+              id: KitId,
+              measure: T.Union([
+                T.Literal('workers'),
+                T.Literal('clues'),
+                T.Literal('continues'),
+                T.Literal('time'),
+              ]),
+              weight: T.Integer({ minimum: 1, maximum: 100 }),
+              allowance: T.Optional(T.Integer({ minimum: 1, maximum: 9 })),
+            },
+            { additionalProperties: false },
+          ),
+          { minItems: 1, maxItems: 8 },
+        ),
+        ranks: T.Object(
+          { S: Percent, A: Percent, B: Percent },
+          { additionalProperties: false },
+        ),
+        caps: T.Optional(
+          T.Array(
+            T.Object(
+              {
+                category: KitId,
+                below: Percent,
+                rank: T.Union([T.Literal('A'), T.Literal('B'), T.Literal('C')]),
+              },
+              { additionalProperties: false },
+            ),
+          ),
+        ),
+      },
+      { additionalProperties: false },
+    ),
+    score: T.Object(
+      {
+        surrendered: T.Integer({ minimum: 0, maximum: 100000 }),
+        defeated: T.Integer({ minimum: 0, maximum: 100000 }),
+        fled: T.Integer({ minimum: 0, maximum: 100000 }),
+        worker: T.Integer({ minimum: 0, maximum: 100000 }),
+        clue: T.Integer({ minimum: 0, maximum: 100000 }),
+        evidence: T.Integer({ minimum: 0, maximum: 100000 }),
+        comboHit: T.Integer({ minimum: 0, maximum: 100000 }),
+        timeBonus: T.Integer({ minimum: 0, maximum: 1000 }),
+        continuePenalty: T.Integer({ minimum: 0, maximum: 100000 }),
+        difficulty: T.Tuple([
+          T.Integer({ minimum: 1, maximum: 1000 }),
+          T.Integer({ minimum: 1, maximum: 1000 }),
+          T.Integer({ minimum: 1, maximum: 1000 }),
+          T.Integer({ minimum: 1, maximum: 1000 }),
+          T.Integer({ minimum: 1, maximum: 1000 }),
+        ]),
+      },
+      { additionalProperties: false },
+    ),
     beats: T.Array(
       T.Object(
         {
@@ -1152,6 +1211,15 @@ export function loadStage(
     if (reach.has(i)) for (const n of beats[i]!.next) if (n >= 0) reach.add(n);
   for (let i = 0; i < beats.length; i += 1)
     if (!reach.has(i)) problems.push(`${beats[i]!.id}: no beat leads here`);
+  // The grade is a 100-point grade; caps name a category of it; ranks fall from S to B.
+  const weights = d.grade.categories.reduce((n, c) => n + c.weight, 0);
+  if (weights !== 100) problems.push(`grade weights add up to ${weights}, not 100`);
+  const cats = new Set(d.grade.categories.map((c) => c.id));
+  if (cats.size !== d.grade.categories.length) problems.push('grade category ids repeat');
+  for (const cap of d.grade.caps ?? [])
+    if (!cats.has(cap.category)) problems.push(`grade cap names unknown category "${cap.category}"`);
+  const r = d.grade.ranks;
+  if (!(r.S > r.A && r.A > r.B)) problems.push('grade ranks must fall from S to A to B');
   if (problems.length > 0) throw new HeroDataError(problems.map((p) => `${file}: ${p}`).join('\n'));
   const c = d.continues;
   return {
@@ -1163,6 +1231,17 @@ export function loadStage(
       roster: d.roster ?? [],
       guests: d.guests ?? [],
       timePar: [...d.timePar],
+      grade: {
+        categories: d.grade.categories.map((c) => ({
+          id: c.id,
+          measure: c.measure,
+          weight: c.weight,
+          allowance: c.allowance ?? 3,
+        })),
+        ranks: [d.grade.ranks.S, d.grade.ranks.A, d.grade.ranks.B],
+        caps: (d.grade.caps ?? []).map((c) => ({ ...c })),
+      },
+      score: { ...d.score, difficulty: [...d.score.difficulty] },
       beats,
     },
     arenas: convertArenas(arenas, kits, file, true),

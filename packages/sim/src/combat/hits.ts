@@ -1,5 +1,6 @@
 import { fx } from '../math/fixed';
 import { carryFull, dealDamage, nonCombatant } from './damage';
+import { Cheat, heroCheat, outgoingDamage } from '../cheats/cheats';
 import { bossBudgets, bossHit, bossResists } from '../enemies/boss';
 import {
   Bounce,
@@ -292,7 +293,7 @@ export function resolveHits(world: World): void {
       payContact(world, att, false);
       if (armored(t, a)) {
         // Armor: the strike lands (damage) but causes no reaction and opens no combo.
-        dealDamage(world, t, a.damage);
+        dealDamage(world, t, outgoingDamage(world, att, a.damage));
         if (t.team === 'hero') logDefense(world, t, DefEvent.Armored, 0, att);
         continue;
       }
@@ -413,7 +414,7 @@ function payHit(
     band = juggleBand(ctx.juggleBudget + a.juggleCost);
   }
   const scale = Math.max(s.contactScales[k]!, scaleFloor(a));
-  const dmg = splitDamage(a.damage, scale, seg, segmentCount(a));
+  const dmg = outgoingDamage(world, s.owner, splitDamage(a.damage, scale, seg, segmentCount(a)));
   dealDamage(world, t, dmg);
   ctx.damage += dmg;
   ctx.lastDamage = dmg;
@@ -643,9 +644,12 @@ function react(
     return;
   }
 
-  const kind = trip ? 'trip' : r.kind;
+  let kind = trip ? 'trip' : r.kind;
   t.vx = dir * push;
   t.vz = 0;
+  // STEADYFEET: an eligible knockdown is a bounded standing stumble (launches remain).
+  if ((kind === 'knockdown' || kind === 'trip') && heroCheat(world, t, Cheat.STEADYFEET))
+    kind = 'stagger';
   if (kind === 'launch' || kind === 'knockdown' || kind === 'trip') {
     t.state = MoveState.Launched;
     const lift = Math.max(r.lift, fx(3));

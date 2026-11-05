@@ -37,6 +37,35 @@ rules:
   exitMargin: 200
 # Clear time (seconds) for the Time grade on Medium: S, A, B; slower is C.
 timePar: [600, 840, 1140]
+# M11 stage grade (guardrail M11): data-defined categories with weights adding up to 100
+# points, rank thresholds on the total and caps. Measures: workers (freed of all),
+# clues (clues and evidence found of all), continues (full points with none used, nothing
+# from `allowance` used on), time (the timePar steps: 100, 75, 50, otherwise 25 percent).
+# A category's own letter uses the rank thresholds on its share of its weight.
+grade:
+  categories:
+    - { id: rescue, measure: workers, weight: 35 }
+    - { id: evidence, measure: clues, weight: 25 }
+    - { id: continues, measure: continues, weight: 20, allowance: 3 }
+    - { id: time, measure: time, weight: 20 }
+  ranks: { S: 90, A: 75, B: 55 }
+  # A worker left behind caps the rank at A.
+  caps:
+    - { category: rescue, below: 100, rank: A }
+# M11 run score (spec §15.2: score is run-specific and never becomes Credits directly).
+score:
+  surrendered: 150
+  defeated: 100
+  fled: 50
+  worker: 500
+  clue: 300
+  evidence: 1000
+  comboHit: 40
+  # Points per second faster than the slowest time par.
+  timeBonus: 5
+  continuePenalty: 1000
+  # Percent per difficulty: easy, medium, hard, extreme, ultimate.
+  difficulty: [80, 100, 125, 150, 175]
 beats:
   - id: fields
     name: 'Dry Fields'

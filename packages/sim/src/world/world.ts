@@ -46,6 +46,8 @@ import {
   equipMove,
 } from '../combat/loadout';
 import { kitOf } from '../combat/roster';
+import { METER } from '../combat/meter';
+import { Cheat, heroCheat, newCheatState, setCheats } from '../cheats/cheats';
 import { NO_TAP, stepHero } from '../movement/controller';
 import { ON_FOOT } from '../movement/profile';
 import {
@@ -64,7 +66,7 @@ export const DUMMY_HEALTH = 1000;
 export const HERO_HEALTH = 1000;
 
 /** Version of the byte layout written by encodeWorld. Bump on any layout change. */
-export const STATE_FORMAT = 12;
+export const STATE_FORMAT = 13;
 
 /** Walking speeds (fixed point per frame), kept as exports for existing callers. */
 export const WALK_SPEED_X = ON_FOOT.walkX;
@@ -122,6 +124,8 @@ export interface WorldOptions {
   stage?: string;
   /** M9: practice from this beat (0 = the stage start). */
   beat?: number;
+  /** M11: cheats accepted before the run (hero masks per slot, session mask). */
+  cheats?: { hero: readonly number[]; session: number };
 }
 
 export interface LoadoutChange {
@@ -337,11 +341,18 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
     encounter: null,
     coop: newCoopState(),
     run: null,
+    cheats: newCheatState(),
   };
   world.bodies.sort((a, b) => a.id - b.id);
   if (options.stage !== undefined) {
     const diff = options.difficulty === undefined ? MEDIUM : difficultyIndex(options.difficulty);
+    // Cheats are in effect while the first beat is set up (FULLPANTRY's food).
+    if (options.cheats) {
+      world.cheats.hero = [options.cheats.hero[0] ?? 0, options.cheats.hero[1] ?? 0];
+      world.cheats.session = options.cheats.session;
+    }
     setupStage(world, stage, diff, options.beat ?? 0);
+    if (options.cheats) setCheats(world, options.cheats.hero, options.cheats.session);
     return world;
   }
   if (options.arena !== undefined) {
@@ -356,6 +367,7 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
     setupArena(world);
     return world;
   }
+  if (options.cheats) setCheats(world, options.cheats.hero, options.cheats.session);
   const layout = options.layout ?? LAB_LAYOUT;
   if (options.environment) world.environment = createEnvironment(layout);
   if (options.armory) placeItems(world, layout);
@@ -499,6 +511,7 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
       applyHeroChoice(world, f);
       stepHero(world, f, normalize(inputs[f.slot]), ON_FOOT);
       if (world.infiniteMeter) f.meter = 100;
+      if (heroCheat(world, f, Cheat.BRIGHTSPIRIT)) f.meter = METER.max;
     } else if (world.encounter && profileOf(f)) {
       // Arena enemies: Combo Breaker while trapped, reactions, then their AI.
       if (enemyBreaker(world, f)) continue;
@@ -522,6 +535,8 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
   stepHandoffs(world);
   for (const f of world.bodies) closeContextIfActionable(world, f);
   stepRunLate(world);
+  // BRIGHTSPIRIT: the Attack Bar stays full (an Ultimate spent this frame refills now).
+  for (const f of world.bodies) if (heroCheat(world, f, Cheat.BRIGHTSPIRIT)) f.meter = METER.max;
   world.frame += 1;
 }
 
@@ -779,6 +794,14 @@ export function encodeWorld(world: World): Uint8Array {
   encodeEncounter(w, world);
   encodeCoop(w, world.coop);
   encodeRun(w, world);
+  const c = world.cheats;
+  w.u32(c.hero[0] ?? 0);
+  w.u32(c.hero[1] ?? 0);
+  w.u32(c.session);
+  w.u8(c.marked ? 1 : 0);
+  w.i32(c.firstFrame);
+  w.i32(c.firstBeat);
+  w.u32(c.used);
   return w.bytes();
 }
 
@@ -854,6 +877,8 @@ function encodeStats(w: ByteWriter, s: RunStats): void {
   w.u32(s.workersFreed);
   w.u32(s.clues);
   w.u32(s.evidence);
+  w.u32(s.bestHits);
+  w.u32(s.bestDamage);
 }
 
 function encodeEncounter(w: ByteWriter, world: World): void {

@@ -1,5 +1,6 @@
 import { type Fighter, MoveState, type World } from '../world/types';
 import { profileOf } from '../enemies/data';
+import { incomingDamage } from '../cheats/cheats';
 
 /**
  * Fighters out of the fight (F&D §8, spec D.4): fleeing, surrendered and defeated
@@ -31,6 +32,8 @@ export function phaseFloor(world: World, f: Fighter): number {
  * deal no Health damage). Returns the Health damage actually taken.
  */
 export function dealDamage(world: World, t: Fighter, dmg: number): number {
+  // M11 cheats: SAFEHEART / SOFTERBLOWS change only a hero's Health loss.
+  dmg = incomingDamage(world, t, dmg);
   if (dmg <= 0) return 0;
   const b = world.encounter?.boss;
   if (b && b.id === t.id) {

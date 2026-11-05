@@ -529,7 +529,41 @@ export interface StageDef {
   guests: readonly string[];
   /** Medium clear-time thresholds in seconds for the Time grade (S, A, B). */
   timePar: readonly number[];
+  /** M11: the data-defined 100-point grade. */
+  grade: StageGradeDef;
+  /** M11: the run score table. */
+  score: StageScoreDef;
   beats: readonly BeatDef[];
+}
+
+export interface GradeCategoryDef {
+  id: string;
+  measure: 'workers' | 'clues' | 'continues' | 'time';
+  weight: number;
+  /** continues: points reach zero at this many continues used. */
+  allowance: number;
+}
+
+export interface StageGradeDef {
+  categories: readonly GradeCategoryDef[];
+  /** Rank thresholds on the 100-point total: S, A, B (below B is C). */
+  ranks: readonly number[];
+  /** A category below `below` percent of its weight caps the rank at `rank`. */
+  caps: readonly { category: string; below: number; rank: string }[];
+}
+
+export interface StageScoreDef {
+  surrendered: number;
+  defeated: number;
+  fled: number;
+  worker: number;
+  clue: number;
+  evidence: number;
+  comboHit: number;
+  timeBonus: number;
+  continuePenalty: number;
+  /** Percent per difficulty index. */
+  difficulty: readonly number[];
 }
 
 // --- M8 same-device co-op ----------------------------------------------------------------

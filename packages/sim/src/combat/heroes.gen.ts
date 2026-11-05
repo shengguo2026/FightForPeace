@@ -10652,6 +10652,64 @@ export const STAGE_DATA: readonly StageDef[] = [
       840,
       1140
     ],
+    "grade": {
+      "categories": [
+        {
+          "id": "rescue",
+          "measure": "workers",
+          "weight": 35,
+          "allowance": 3
+        },
+        {
+          "id": "evidence",
+          "measure": "clues",
+          "weight": 25,
+          "allowance": 3
+        },
+        {
+          "id": "continues",
+          "measure": "continues",
+          "weight": 20,
+          "allowance": 3
+        },
+        {
+          "id": "time",
+          "measure": "time",
+          "weight": 20,
+          "allowance": 3
+        }
+      ],
+      "ranks": [
+        90,
+        75,
+        55
+      ],
+      "caps": [
+        {
+          "category": "rescue",
+          "below": 100,
+          "rank": "A"
+        }
+      ]
+    },
+    "score": {
+      "surrendered": 150,
+      "defeated": 100,
+      "fled": 50,
+      "worker": 500,
+      "clue": 300,
+      "evidence": 1000,
+      "comboHit": 40,
+      "timeBonus": 5,
+      "continuePenalty": 1000,
+      "difficulty": [
+        80,
+        100,
+        125,
+        150,
+        175
+      ]
+    },
     "beats": [
       {
         "id": "fields",

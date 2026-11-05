@@ -1,6 +1,9 @@
 import { fx } from '../math/fixed';
+import { Cheat, codesOf, sessionCheat } from '../cheats/cheats';
+import { defaultLoadout } from '../combat/loadout';
 import { STAGE_DATA } from '../combat/heroes.gen';
-import type { BeatDef, StageDef } from '../combat/types';
+import type { BeatDef, GradeCategoryDef, StageDef } from '../combat/types';
+import { kitOf } from '../combat/roster';
 import { emptyContext } from '../combat/context';
 import { createEnvironment, emptyEnvironment } from '../combat/environment';
 import { spawnItem } from '../combat/held';
@@ -91,6 +94,8 @@ function zeroStats(): RunStats {
     workersFreed: 0,
     clues: 0,
     evidence: 0,
+    bestHits: 0,
+    bestDamage: 0,
   };
 }
 
@@ -199,7 +204,7 @@ export function enterBeat(world: World, n: number, record = true): void {
     state: WorkerState.Bound,
     since: world.frame,
   }));
-  run.pickups = beat.pickups.map((p) => ({ ...p, x: fx(p.x), z: fx(p.z), taken: false }));
+  run.pickups = pantry(world, beat.pickups);
   world.bounds = { ...world.bounds, minX: 0, maxX: fx(beat.width) };
   world.projectiles = [];
   world.items = [];
@@ -320,7 +325,12 @@ export function stepRun(world: World): void {
   switch (run.phase) {
     case RunPhase.Defeat:
       if (world.frame - run.phaseFrame < def.rules.defeatHold) return;
-      if (run.continues > 0) {
+      // HOMECOMING: the latest checkpoint returns without spending a continue (no
+      // checkpoint yet: the stage starts again).
+      if (sessionCheat(world, Cheat.HOMECOMING)) {
+        if (run.checkpoint) restoreCheckpoint(world);
+        else restartStage(world);
+      } else if (run.continues > 0) {
         run.continues -= 1;
         run.continuesUsed += 1;
         restoreCheckpoint(world);
@@ -483,6 +493,12 @@ function stepWorkers(world: World): void {
 
 function countOutcomes(world: World): void {
   const run = world.run!;
+  // M11: the best combo the heroes landed (hits and damage of an enemy's open context).
+  for (const e of world.bodies) {
+    if (e.team !== 'enemy' || !e.ctx.open) continue;
+    if (e.ctx.hits > run.stats.bestHits) run.stats.bestHits = e.ctx.hits;
+    if (e.ctx.damage > run.stats.bestDamage) run.stats.bestDamage = e.ctx.damage;
+  }
   for (const e of world.bodies) {
     if (e.team !== 'enemy' || !profileOf(e) || run.counted.includes(e.id)) continue;
     if (e.state === MoveState.Flee) run.stats.fled += 1;
@@ -613,8 +629,7 @@ function complete(world: World, f: Fighter, c: ChannelState): void {
       event(world, RunEvent.WorkerFreed, c.target);
       if (!run.cacheOpen && beat.cache && run.workers.every((x) => x.state !== WorkerState.Bound)) {
         run.cacheOpen = true;
-        for (const p of beat.cache.pickups)
-          run.pickups.push({ ...p, x: fx(p.x), z: fx(p.z), taken: false });
+        run.pickups.push(...pantry(world, beat.cache.pickups));
         event(world, RunEvent.CacheOpen, 0);
       }
       return;
@@ -636,6 +651,18 @@ function complete(world: World, f: Fighter, c: ChannelState): void {
   }
 }
 
+/**
+ * An authored food group as pickups. FULLPANTRY adds one deterministic recovery item per
+ * group: a copy of its first food, 80 px to the right.
+ */
+function pantry(world: World, list: readonly { x: number; z: number; heal: number; look: number }[]) {
+  const out = list.map((p) => ({ ...p, x: fx(p.x), z: fx(p.z), taken: false }));
+  const first = list[0];
+  if (first && sessionCheat(world, Cheat.FULLPANTRY))
+    out.push({ ...first, x: fx(first.x + 80), z: fx(first.z), taken: false });
+  return out;
+}
+
 // --- results ----------------------------------------------------------------------------
 
 export interface Grade {
@@ -643,8 +670,11 @@ export interface Grade {
   id: string;
   /** Value shown next to the grade, e.g. "2/2" or "9:41". */
   value: string;
-  /** S, A, B or C. */
+  /** S, A, B or C (the category's share of its weight on the rank thresholds). */
   grade: string;
+  /** Points earned and the category's weight (of the 100-point grade). */
+  points: number;
+  weight: number;
 }
 
 export interface StageResults {
@@ -653,11 +683,24 @@ export interface StageResults {
   /** Beat the run started at (0 = a full run). */
   startBeat: number;
   grades: Grade[];
+  /** The rank (S, A, B, C) from the 100-point total and the caps. */
   overall: string;
+  /** The 100-point total. */
+  points: number;
+  /** A cap that lowered the rank (category id), or null. */
+  capped: string | null;
+  /** The run score (spec §15.2). */
+  score: number;
   stats: RunStats;
   continuesUsed: number;
   workersTotal: number;
   cluesTotal: number;
+  /** Every hero used the default Specials and Ultimates (Standard Loadout). */
+  standard: boolean;
+  /** M11: the run was marked Cheat-Assisted; codes ever active and the first beat. */
+  cheatAssisted: boolean;
+  cheatCodes: string[];
+  cheatFirstBeat: number;
 }
 
 const LETTERS = ['C', 'B', 'A', 'S'];
@@ -668,45 +711,110 @@ export function clock(frames: number): string {
   return `${Math.trunc(s / 60)}:${String(s % 60).padStart(2, '0')}`;
 }
 
+/** The letter for a percentage on a grade's rank thresholds (S, A, B, else C). */
+export function rankFor(percent: number, ranks: readonly number[]): string {
+  if (percent >= ranks[0]!) return 'S';
+  if (percent >= ranks[1]!) return 'A';
+  if (percent >= ranks[2]!) return 'B';
+  return 'C';
+}
+
+/** Share (0–100 percent) of a category earned by a run. */
+function measure(c: GradeCategoryDef, run: StageRun, def: StageDef): { pct: number; value: string } {
+  const s = run.stats;
+  const ratio = (n: number, of: number) => (of === 0 ? 100 : Math.trunc((Math.min(n, of) * 100) / of));
+  switch (c.measure) {
+    case 'workers':
+      return { pct: ratio(s.workersFreed, run.workersTotal), value: `${s.workersFreed}/${run.workersTotal}` };
+    case 'clues': {
+      const found = s.clues + s.evidence;
+      return { pct: ratio(found, run.cluesTotal), value: `${found}/${run.cluesTotal}` };
+    }
+    case 'continues':
+      return {
+        pct: Math.trunc((Math.max(0, c.allowance - run.continuesUsed) * 100) / c.allowance),
+        value: `${run.continuesUsed}`,
+      };
+    case 'time': {
+      const secs = Math.trunc(s.frames / 60);
+      const par = def.timePar;
+      const pct = secs <= par[0]! ? 100 : secs <= par[1]! ? 75 : secs <= par[2]! ? 50 : 25;
+      return { pct, value: clock(s.frames) };
+    }
+  }
+}
+
+/** The run score: outcomes, rescues, discoveries, best combo and time, × difficulty. */
+export function runScore(run: StageRun, def: StageDef): number {
+  const t = def.score;
+  const s = run.stats;
+  const secs = Math.trunc(s.frames / 60);
+  const raw =
+    s.surrendered * t.surrendered +
+    s.defeated * t.defeated +
+    s.fled * t.fled +
+    s.workersFreed * t.worker +
+    s.clues * t.clue +
+    s.evidence * t.evidence +
+    s.bestHits * t.comboHit +
+    Math.max(0, def.timePar[2]! - secs) * t.timeBonus -
+    run.continuesUsed * t.continuePenalty;
+  return Math.max(0, Math.trunc((raw * (t.difficulty[run.difficulty] ?? 100)) / 100));
+}
+
 /**
- * The results screen's grades: a list of categories (Stage 2 brings other ones), each a
- * letter from S to C, and an overall letter (rounded mean). Candidate thresholds.
+ * The results screen: the stage's data-defined categories (Stage 2 brings other ones),
+ * each with its points, the 100-point total, the rank after caps and the score.
  */
 export function stageResults(world: World): StageResults | null {
   const run = world.run;
   if (!run) return null;
   const def = STAGES[run.stage]!;
-  const s = run.stats;
-  const ratio = (n: number, of: number) => (of === 0 ? 3 : n >= of ? 3 : n * 2 >= of ? 2 : 1);
-  const secs = Math.trunc(s.frames / 60);
-  const par = def.timePar;
-  const time = secs <= par[0]! ? 3 : secs <= par[1]! ? 2 : secs <= par[2]! ? 1 : 0;
-  const found = s.clues + s.evidence;
-  const points = [
-    ratio(s.workersFreed, run.workersTotal),
-    ratio(found, run.cluesTotal),
-    Math.max(0, 3 - run.continuesUsed),
-    time,
-  ];
-  const grades: Grade[] = [
-    { id: 'rescue', value: `${s.workersFreed}/${run.workersTotal}`, grade: LETTERS[points[0]!]! },
-    { id: 'evidence', value: `${found}/${run.cluesTotal}`, grade: LETTERS[points[1]!]! },
-    { id: 'continues', value: `${run.continuesUsed}`, grade: LETTERS[points[2]!]! },
-    { id: 'time', value: clock(s.frames), grade: LETTERS[points[3]!]! },
-  ];
-  const mean = Math.trunc(
-    (points.reduce((a, b) => a + b, 0) * 2 + points.length) / (2 * points.length),
-  );
+  const g = def.grade;
+  const grades: Grade[] = g.categories.map((c) => {
+    const m = measure(c, run, def);
+    return {
+      id: c.id,
+      value: m.value,
+      grade: rankFor(m.pct, g.ranks),
+      points: Math.trunc((c.weight * m.pct) / 100),
+      weight: c.weight,
+    };
+  });
+  const points = grades.reduce((n, x) => n + x.points, 0);
+  let overall = rankFor(points, g.ranks);
+  let capped: string | null = null;
+  for (const cap of g.caps) {
+    const x = grades.find((e) => e.id === cap.category);
+    if (!x || x.points * 100 >= cap.below * x.weight) continue;
+    if (LETTERS.indexOf(cap.rank) < LETTERS.indexOf(overall)) {
+      overall = cap.rank;
+      capped = cap.category;
+    }
+  }
+  const standard = world.playerHero.every((h, slot) => {
+    const lo = world.playerLoadout[slot];
+    const base = defaultLoadout(kitOf({ team: 'hero', hero: h }));
+    return !lo || lo.every((a, i) => a === base[i]);
+  });
+  const c = world.cheats;
   return {
     stage: def.id,
     difficulty: run.difficulty,
     startBeat: run.startBeat,
     grades,
-    overall: LETTERS[Math.min(3, mean)]!,
-    stats: { ...s },
+    overall,
+    points,
+    capped,
+    score: runScore(run, def),
+    stats: { ...run.stats },
     continuesUsed: run.continuesUsed,
     workersTotal: run.workersTotal,
     cluesTotal: run.cluesTotal,
+    standard,
+    cheatAssisted: c.marked,
+    cheatCodes: codesOf(c.used),
+    cheatFirstBeat: c.firstBeat,
   };
 }
 
