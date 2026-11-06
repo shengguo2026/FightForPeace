@@ -77,11 +77,11 @@ Cleared beats out of 12 bot variants · average Health left (of 1000). Snapshot:
 | River, Ultimate | 2 · 53 | 2 · 143 | 4 · 311 | 5 · 274 | 12 · 1000 | 6 · 280 | 1 · 35 | 2 · 31 |
 | Co-op, Easy | 12 · 908 | 12 · 866 | 12 · 985 | 11 · 799 | 12 · 1000 | 12 · 848 | 12 · 808 | 10 · 528 |
 | Co-op, Medium | 10 · 544 | 12 · 964 | 12 · 992 | 12 · 871 | 12 · 1000 | 12 · 866 | 10 · 581 | 11 · 577 |
-| Co-op, Hard | 10 · 622 | 11 · 668 | 12 · 922 | 11 · 780 | 12 · 1000 | 9 · 500 | 9 · 428 | 9 · 491 |
-| Co-op, Extreme | 8 · 443 | 11 · 735 | 10 · 759 | 6 · 336 | 12 · 1000 | 8 · 332 | 4 · 215 | 12 · 582 |
-| Co-op, Ultimate | 2 · 141 | 7 · 519 | 11 · 625 | 4 · 292 | 12 · 1000 | 7 · 378 | 4 · 170 | 11 · 525 |
+| Co-op, Hard | 10 · 628 | 12 · 689 | 12 · 922 | 11 · 740 | 12 · 1000 | 9 · 528 | 9 · 402 | 10 · 517 |
+| Co-op, Extreme | 9 · 484 | 11 · 736 | 10 · 744 | 6 · 337 | 12 · 1000 | 6 · 331 | 4 · 220 | 7 · 295 |
+| Co-op, Ultimate | 2 · 177 | 7 · 526 | 10 · 591 | 4 · 280 | 12 · 1000 | 8 · 390 | 4 · 177 | 6 · 294 |
 
-Cleared beats in total (of 96): Mountain 74 / 66 / 44 / 37 / 26, River 78 / 63 / 48 / 40 / 34, co-op 93 / 91 / 83 / 71 / 58 (Easy to Ultimate). Before the M14 follow-up, Hard to Ultimate sat at 69–74 (Mountain) and 63–68 (River), the same as Medium (66, 63) or easier.
+Cleared beats in total (of 96): Mountain 74 / 66 / 44 / 37 / 26, River 78 / 63 / 48 / 40 / 34, co-op 93 / 91 / 85 / 65 / 53 (Easy to Ultimate). Before the M14 follow-up, Hard to Ultimate sat at 69–74 (Mountain) and 63–68 (River), the same as Medium (66, 63) or easier.
 
 ### M14 follow-up: Hard and above
 
@@ -95,11 +95,14 @@ Why they were not harder: the larger Hard+ budgets were never used (each enemy w
 | Food restores (percent) | 100 | 100 | 85 | 70 | 60 |
 | Extra enemies per beat (stage data) | — | — | +1 solo, +1–2 co-op | +1 more, co-op +1 | +1 more |
 | Commander's phase-2 support pair | 2 Recruits | 2 Recruits | Runner + Shield | Runner + Shield | Runner + Shield |
+| Enemy caught between two heroes does not guard | — | — | yes | yes | yes |
+| Co-op: extra Commander supports | — | — | — | Runner + Recruit from the start | same, plus a Runner in phase 3 |
 
-The harness now also requires that every step from Medium up costs both cleared beats and Health left for every line-up, and that the solo courtyard and boss are no easier above Medium.
+The harness now also requires that every step from Medium up costs both cleared beats and Health left for every line-up, that the solo courtyard and boss are no easier above Medium, and that the co-op Commander is beaten less often on Extreme than on Medium (and no more often on Hard or Ultimate than the step below).
 
 ## 6. Open points (not slice blockers)
 
-- ~~Hard and above are not measurably harder than Medium for the stage bot.~~ Fixed in the M14 follow-up (section 5). Remaining: in co-op the bot pair still beats the Commander as often on Extreme and Ultimate as on Medium (two jab bots keep him in hitstun); the Hard+ Enforcer makes the courtyard only slightly harder for the bot, which interrupts its Anvil Pin telegraph. Fine Hard+ tuning stays M23 scope; human play decides.
+- ~~Hard and above are not measurably harder than Medium for the stage bot.~~ Fixed in the M14 follow-up (section 5).
+- ~~In co-op the bot pair beats the Commander as often on Extreme and Ultimate as on Medium.~~ Fixed in the second M14 follow-up (0.14.2): he stood guarding one hero while the other hit his back, and faced both heroes alone in phase 1. Co-op boss clears for the bot pair are now 11 / 10 / 7 / 6 of 12 (Medium to Ultimate). Remaining: the Hard+ Enforcer makes the courtyard only slightly harder for the bot, which interrupts its Anvil Pin telegraph. Fine Hard+ tuning stays M23 scope; human play decides.
 - **River Scout at the mill** is the weakest Medium pairing for the bot (4/12). The bot only jabs, which suits the Mountain Guardian; worth a human check before any data change.
 - Real Safari, a physical low-end laptop and real gamepad families are manual (Guo_tests M14).

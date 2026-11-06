@@ -378,6 +378,8 @@ export interface BossPhaseDef {
   supports: readonly string[];
   /** The pair on Hard and above (spec D.2 roster direction: elite variants). */
   eliteSupports: readonly string[];
+  /** Co-op only, from difficulty index `minDifficulty`: extra supports with this phase. */
+  coopSupports: { minDifficulty: number; kits: readonly string[] } | null;
   /** Device kind the phase works ('' = none). */
   device: string;
   attacks: readonly AiAttackDef[];

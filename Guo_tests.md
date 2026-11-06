@@ -534,3 +534,46 @@ pnpm e2e
 4. **Extreme and Ultimate (F1 panel, they are still locked in the normal menu):** same panel, difficulty **Extreme**, then **Ultimate**, the dry fields beat: each step has one more enemy (a Lookout in the second fight on Extreme, a Shield on Ultimate) and enemies come back faster. Ultimate should feel very hard.
 5. **Food:** on Hard, get hurt in the dry fields, then walk over the food at the end of the beat: it restores less Health than on Medium (85 %; Extreme 70 %, Ultimate 60 %).
 6. **Co-op on Hard (optional):** Same-device co-op on Hard: each fight has one extra enemy compared to solo Hard. Tell me if the Commander still feels too easy in co-op on Extreme (the test bots still beat him as often as on Medium).
+
+## M14 follow-up 2 · Co-op boss on Extreme and Ultimate (0.14.2)
+
+Before this fix, two players beat the Sluice Commander on Extreme about as often as on Medium. He kept raising his guard toward one player while the other hit him in the back, and in the first phase he fought both players alone. Now, from Hard up, an enemy standing between the two players no longer guards (it attacks or moves instead). In co-op on **Extreme** and **Ultimate**, a Runner and a Recruit come in with the Commander at the start, and on Ultimate another Runner joins when he goes to the winch (phase 3). Solo play and Easy/Medium are unchanged. The test bots now beat the co-op boss 11 / 10 / 7 / 6 times out of 12 on Medium / Hard / Extreme / Ultimate (before: 11 / 9 / 12 / 11).
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+Open `http://localhost:5173`. To test the branch before it is merged instead of `main`:
+
+```powershell
+git fetch origin claude/project-thread-qcmrgs
+git checkout claude/project-thread-qcmrgs
+pnpm install
+pnpm dev
+```
+
+Optional, the automated checks:
+
+```powershell
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm e2e
+```
+
+### Steps
+
+You need two players on one keyboard (Player 2 on the numpad, joins with **Num 4**) or a gamepad for Player 2.
+
+1. **Co-op boss on Medium (unchanged):** open the Combat Lab (Village → Academy → Combat Lab, the last item), Player 2 joins with **Num 4**. Press **F1** for the Lab panel, pick *Stage 1*, difficulty **Medium**, **Start at beat 8** (the sluice), Start; both players should be in the fight. The Commander starts alone; two Recruits join in phase 2.
+2. **Co-op boss on Extreme:** same F1 panel, difficulty **Extreme**, sluice beat, with both players in. A **Runner and a Recruit** come in with the Commander right at the start; in phase 2 a Runner and a Shield join. It should be clearly harder than on Medium.
+3. **Stand on both sides of him:** on Extreme, one player in front of the Commander and one behind. He should not just stand and block one of you; he turns and attacks, or steps away.
+4. **Co-op boss on Ultimate:** same panel, **Ultimate**, sluice beat. As on Extreme, and when he goes to the winch (phase 3) another Runner joins.
+5. **Solo check:** with only Player 1 on Extreme, the sluice beat: the Commander starts alone (the extra start supports are co-op only).

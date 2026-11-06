@@ -317,6 +317,16 @@ const BossPhase = T.Object(
     counter: T.Optional(T.Boolean()),
     breaker: T.Optional(T.Boolean()),
     supports: T.Optional(T.Array(T.String({ pattern: '^[a-z][a-z0-9-]*$' }), { maxItems: 2 })),
+    /** Co-op only, from `minDifficulty`: extra supports that arrive with this phase. */
+    coopSupports: T.Optional(
+      T.Object(
+        {
+          minDifficulty: DifficultyId,
+          kits: T.Array(T.String({ pattern: '^[a-z][a-z0-9-]*$' }), { minItems: 1, maxItems: 2 }),
+        },
+        { additionalProperties: false },
+      ),
+    ),
     /** Hard and above: the support pair's elite variant (replaces `supports`). */
     eliteSupports: T.Optional(T.Array(T.String({ pattern: '^[a-z][a-z0-9-]*$' }), { maxItems: 2 })),
     device: T.Optional(T.String({ pattern: '^[a-z][a-z0-9-]*$' })),
@@ -700,6 +710,12 @@ export function compileProfile(p: ProfileYaml): unknown {
             breaker: ph.breaker ?? false,
             supports: ph.supports ?? [],
             eliteSupports: ph.eliteSupports ?? ph.supports ?? [],
+            coopSupports: ph.coopSupports
+              ? {
+                  minDifficulty: DIFFICULTY_ORDER.indexOf(ph.coopSupports.minDifficulty),
+                  kits: ph.coopSupports.kits,
+                }
+              : null,
             device: ph.device ?? '',
             attacks: ph.attacks.map(compileAttack),
           })),
@@ -2024,7 +2040,11 @@ export function generate(
       for (const a of ph.attacks)
         if (!ids.has(a.action))
           problems.push(`${k.id}: phase "${ph.name}" attack "${a.action}" is unknown`);
-      for (const s of [...(ph.supports ?? []), ...(ph.eliteSupports ?? [])])
+      for (const s of [
+        ...(ph.supports ?? []),
+        ...(ph.eliteSupports ?? []),
+        ...(ph.coopSupports?.kits ?? []),
+      ])
         if (!enemyYaml.some((e) => e.id === s))
           problems.push(`${k.id}: unknown support kit "${s}"`);
     }
