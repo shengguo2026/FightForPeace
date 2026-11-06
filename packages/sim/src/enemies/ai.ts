@@ -43,6 +43,8 @@ const NO_INPUT: FrameInput = { moveX: 0, moveZ: 0, pressed: 0, held: 0, dirPress
 
 /** Candidate AI constants (Combat Lab). */
 export const AI = {
+  /** Hard and above: below this Defense an enemy stops taking guard chances. */
+  guardFloor: 40,
   /** Close range in which a hero counts as threatening (anticipatory guard), px. */
   nearX: fx(230),
   nearZ: fx(60),
@@ -183,6 +185,7 @@ export function stepEnemy(world: World, f: Fighter): void {
       f.vx -= Math.trunc(f.vx / 8);
       if (f.stateFrame < f.stun) return;
       f.vx = 0;
+      if (riposte(world, f)) return;
       enter(f, f.defense > 0 && world.frame < f.guardUntil ? MoveState.Guard : MoveState.Idle, 0);
       return;
     case MoveState.GuardCrush:
@@ -278,6 +281,30 @@ function raiseGuard(world: World, f: Fighter, toward: Fighter, hold: number, exa
   if (exact) f.exactFrame = world.frame;
 }
 
+/**
+ * Decision quality on Hard and above (spec §12.4, D.2): an enemy that has just blocked a
+ * hit answers it instead of turtling. It lowers its guard and its next attack in the
+ * rotation is ready at once; the director still has to allow the commitment.
+ */
+function riposte(world: World, f: Fighter): boolean {
+  if (!difficultyOf(world).riposte || f.threat > 0) return false;
+  const n = attackList(world, f).length;
+  if (n === 0) return false;
+  const slot = (f.aiStep % n) % AI.slots;
+  f.readyAt[slot] = Math.min(f.readyAt[slot] ?? 0, world.frame);
+  f.guardUntil = world.frame;
+  enter(f, MoveState.Idle, 0);
+  return true;
+}
+
+/**
+ * An attack's cooldown at the selected difficulty: `pace` is the percent of the authored
+ * cooldown, so higher difficulties come back sooner and fill the budgets they allow.
+ */
+function paced(world: World, cooldown: number): number {
+  return Math.round((cooldown * difficultyOf(world).pace) / 100);
+}
+
 /** Can this enemy use an advanced defense now (capability, phase and cooldown)? */
 function capable(world: World, f: Fighter, kind: 'exact' | 'counter' | 'breaker'): boolean {
   const prof = profileOf(f);
@@ -335,7 +362,8 @@ function planDefense(world: World, f: Fighter, prof: EnemyProfile): boolean {
     }
   }
   if (f.defPlan !== DefPlan.None) return f.state === MoveState.Guard;
-  const scale = d.guardScale;
+  // Decision quality (Hard and above): a guard that is about to be crushed is not taken.
+  const scale = d.riposte && f.defense < AI.guardFloor ? 0 : d.guardScale;
   const guardAcc = { v: f.guardAcc };
   const evadeAcc = { v: f.evadeAcc };
   let decided = false;
@@ -502,7 +530,7 @@ function commit(
   applyActionMovement(f, a, 1, NO_INPUT, ON_FOOT);
   f.aiAttack = slot;
   f.aiStep += 1;
-  f.readyAt[slot] = world.frame + at.cooldown;
+  f.readyAt[slot] = world.frame + paced(world, at.cooldown);
   f.aiMode = AiMode.Approach;
   logDecision(world, f, index, Verdict.Ok);
 }
@@ -580,7 +608,7 @@ function stepWarning(world: World, f: Fighter, target: Fighter): void {
   startAction(f, index);
   applyActionMovement(f, a, 1, NO_INPUT, ON_FOOT);
   f.aiStep += 1;
-  f.readyAt[f.aiAttack] = world.frame + at.cooldown;
+  f.readyAt[f.aiAttack] = world.frame + paced(world, at.cooldown);
   logDecision(world, f, index, Verdict.Ok);
 }
 

@@ -160,6 +160,8 @@ profile:
         counter: true
         breaker: true
         supports: [recruit, recruit]
+        # Hard and above (M14 follow-up): the pair is a Runner and a Shield.
+        eliteSupports: [runner, shield]
         attacks:
           - { action: double-palm, threat: 20, cooldown: 70 }
           - { action: rising-knee, threat: 26, cooldown: 140 }

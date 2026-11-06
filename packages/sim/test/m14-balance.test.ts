@@ -7,8 +7,8 @@ import { stageBotInput } from './stageBot';
 /**
  * M14 balance harness for Medium (roadmap M14, spec §19). Every Stage 1 beat is played
  * from its own checkpoint with full Health by twelve variants of the stage bot (three
- * guard habits × four attack rhythms), solo with each founder and in co-op, on Easy and
- * Medium. A beat counts as cleared when the bot reaches the next beat without going down.
+ * guard habits × four attack rhythms), solo with each founder and in co-op, on every
+ * difficulty (Easy to Ultimate). A beat counts as cleared when the bot reaches the next beat without going down.
  *
  * The bot is a deterministic stand-in, not a human, so the harness checks the shape of
  * the difficulty (ordering and spikes), not exact values. The snapshot is the balance
@@ -54,10 +54,11 @@ function measure(difficulty: string, heroes: string[]): Row {
   return { cleared, health: health.map((h) => Math.round(h / STYLES.length)) };
 }
 
+const DIFFS = ['easy', 'medium', 'hard', 'extreme', 'ultimate'];
 const LINEUPS = { mountain: ['mountain'], river: ['river'], coop: ['mountain', 'river'] };
 const table: Record<string, Row> = {};
 for (const [name, heroes] of Object.entries(LINEUPS))
-  for (const d of ['easy', 'medium']) table[`${name} ${d}`] = measure(d, heroes);
+  for (const d of DIFFS) table[`${name} ${d}`] = measure(d, heroes);
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
 
 describe('Medium balance shape (twelve bot variants per beat)', () => {
@@ -86,6 +87,34 @@ describe('Medium balance shape (twelve bot variants per beat)', () => {
     for (const name of ['mountain', 'river']) {
       const row = table[`${name} medium`]!;
       expect(row.cleared[courtyard]).toBeGreaterThanOrEqual(row.cleared[BOSS]! - 1);
+    }
+  });
+
+  // M14 follow-up: Hard and above were no harder than Medium for the bot (their extra
+  // budget went unused and more guarding made enemies passive). Each step up the ladder
+  // must now cost both cleared beats and Health left, for every line-up.
+  test('each difficulty above Medium is harder than the one below it', () => {
+    for (const name of Object.keys(LINEUPS))
+      for (let i = 2; i < DIFFS.length; i += 1) {
+        const lower = table[`${name} ${DIFFS[i - 1]}`]!;
+        const upper = table[`${name} ${DIFFS[i]}`]!;
+        const what = `${name}: ${DIFFS[i]} vs ${DIFFS[i - 1]}`;
+        expect(sum(upper.cleared), what).toBeLessThan(sum(lower.cleared));
+        expect(sum(upper.health), what).toBeLessThan(sum(lower.health));
+      }
+  });
+
+  test('solo: the gate courtyard and the Sluice Commander are no easier above Medium', () => {
+    const courtyard = BEATS.indexOf('courtyard');
+    for (const name of ['mountain', 'river']) {
+      const medium = table[`${name} medium`]!;
+      for (const d of DIFFS.slice(2)) {
+        const row = table[`${name} ${d}`]!;
+        expect(row.cleared[courtyard], `${name} ${d} courtyard`).toBeLessThanOrEqual(
+          medium.cleared[courtyard]!,
+        );
+        expect(row.cleared[BOSS], `${name} ${d} sluice`).toBeLessThanOrEqual(medium.cleared[BOSS]!);
+      }
     }
   });
 

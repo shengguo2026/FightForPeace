@@ -41,9 +41,12 @@
 - A throttled CPU fell behind real time in a crowded beat → Auto Quality **Lowest** (two-thirds resolution).
 - Settings → Display offered no Medium quality → Medium and Lowest added; Full screen setting where the browser supports it.
 
+- M14 follow-up (0.14.1): Hard and above were no harder than Medium for the stage bot → faster attack pace, an answer after a block, no guard chance on an almost empty Defense bar, Hard/Extreme/Ultimate extra enemies per beat, an elite Commander support pair and less food on Hard+; the balance harness now runs all five difficulties and checks that each step from Medium up is harder.
+
 Details and numbers: `docs/review/08-slice-acceptance.md`.
 
 ## Known limits
 
+- Co-op on Extreme/Ultimate: the bot pair still beats the Commander as often as on Medium; the Enforcer makes the courtyard only slightly harder for the bot. Fine Hard+ tuning is M23.
 - Real Safari on macOS and a physical low-end laptop are not in CI: WebKit stands in for Safari and CPU throttling for the laptop. Both are on Guo's manual test list.
 - The stage bot is a deterministic stand-in, not a human player, so the balance harness checks ordering and spikes, not "fun". Exact balance values stay production data (F&D).

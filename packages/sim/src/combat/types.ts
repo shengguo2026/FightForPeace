@@ -376,6 +376,8 @@ export interface BossPhaseDef {
   breaker: boolean;
   /** Enemy kit ids of the phase-authored support pair. */
   supports: readonly string[];
+  /** The pair on Hard and above (spec D.2 roster direction: elite variants). */
+  eliteSupports: readonly string[];
   /** Device kind the phase works ('' = none). */
   device: string;
   attacks: readonly AiAttackDef[];
@@ -425,6 +427,12 @@ export interface DifficultyDef {
   groupCooldown: number;
   warning: number;
   guardScale: number;
+  /** Percent of each enemy attack's authored cooldown (lower comes back sooner). */
+  pace: number;
+  /** Percent of each food pickup's authored Health restored. */
+  recovery: number;
+  /** An enemy that blocked a hit answers at once instead of holding its guard. */
+  riposte: boolean;
 }
 
 export interface ArenaEnemyDef {
@@ -677,15 +685,7 @@ export interface AchievementDef {
 }
 
 export type LessonGoal =
-  | 'walk'
-  | 'jump'
-  | 'dash'
-  | 'recipe'
-  | 'guard'
-  | 'exact'
-  | 'counter'
-  | 'special'
-  | 'ultimate';
+  'walk' | 'jump' | 'dash' | 'recipe' | 'guard' | 'exact' | 'counter' | 'special' | 'ultimate';
 
 export interface LessonPhaseDef {
   goals: readonly LessonGoal[];

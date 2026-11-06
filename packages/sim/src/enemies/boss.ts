@@ -6,7 +6,7 @@ import { kitOf } from '../combat/roster';
 import { spawnItem } from '../combat/held';
 import { weaponIndex } from '../combat/armory';
 import { fx } from '../math/fixed';
-import { ARENAS, PROFILES, enemyKitIndex, livingHeroes, profileOf } from './data';
+import { ARENAS, HARD, PROFILES, enemyKitIndex, livingHeroes, profileOf } from './data';
 
 /**
  * Visible Resolve Gauge with Earned Stagger Windows and Queued Transition with Capped
@@ -290,7 +290,8 @@ export function startPhase(world: World, f: Fighter, n: number): void {
     const spot = arena.weaponSpot ?? { x: Math.trunc(arena.width / 2), z: 760 };
     if (!inPlay) spawnItem(world, w, fx(spot.x), fx(spot.z));
   }
-  ph.supports.forEach((kit, i) => {
+  const elite = enc.difficulty >= HARD;
+  (elite ? ph.eliteSupports : ph.supports).forEach((kit, i) => {
     spawnEnemy(
       world,
       enemyKitIndex(kit),
