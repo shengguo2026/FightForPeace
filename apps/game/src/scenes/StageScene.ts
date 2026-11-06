@@ -38,6 +38,7 @@ import { profileText } from '../text/en';
 import {
   AssetRegistry,
   type PlaceholderFamily,
+  RENDER_SCALE,
   type QualityLevel,
   SpritePicker,
 } from '@ffp/platform';
@@ -193,7 +194,21 @@ export class StageScene extends Phaser.Scene {
     this.opts.onReady?.();
   }
 
+  /** M14 Auto Quality: the internal resolution in use (1 = 1920 × 1080). */
+  private renderScale = 1;
+
+  /** Draws at a lower internal resolution on the lowest quality level (spec §18.3). */
+  private applyRenderScale(level: QualityLevel): void {
+    const scale = RENDER_SCALE[level];
+    if (scale === this.renderScale) return;
+    this.renderScale = scale;
+    this.scale.resize(Math.round(VIEW_WIDTH * scale), Math.round(VIEW_HEIGHT * scale));
+    // Zoom from the top-left corner, so screen-fixed HUD text keeps its place.
+    this.cameras.main.setOrigin(scale === 1 ? 0.5 : 0, scale === 1 ? 0.5 : 0).setZoom(scale);
+  }
+
   override update(time: number): void {
+    this.applyRenderScale(this.opts.quality?.() ?? 'high');
     const snap = this.opts.getSnapshot();
     const { previous, current, alpha } = snap;
     const byId = new Map(previous.map((b) => [b.id, b]));

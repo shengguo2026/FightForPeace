@@ -41,13 +41,15 @@ export const DEFAULT_KEYBOARD_P2_NUMPAD: Bindings = {
     TeamAttack: ['Numpad0'],
     Dash: [],
     LowAttack: [],
-    Pause: [],
+    // M14 prompt matrix: Player 2 needs a key of their own to go back and to pause.
+    Pause: ['NumpadAdd'],
   },
 };
 
 /**
  * Player 2 on a laptop without a numpad (proposed in the M1 plan): arrows to move,
- * `I O P` / `K L ;` mirror P1's `T Z U` / `G H J`, Team Attack on `.`. Shares no key with P1.
+ * `I O P` / `K L ;` mirror P1's `T Z U` / `G H J`, Team Attack on `.`, Pause on Backspace.
+ * Shares no key with P1.
  */
 export const DEFAULT_KEYBOARD_P2_LAPTOP: Bindings = {
   device: 'keyboard',
@@ -65,7 +67,7 @@ export const DEFAULT_KEYBOARD_P2_LAPTOP: Bindings = {
     TeamAttack: ['Period'],
     Dash: [],
     LowAttack: [],
-    Pause: [],
+    Pause: ['Backspace'],
   },
 };
 

@@ -438,3 +438,57 @@ As in M10 (W A S D, Attack T, Jump Y, Guard G, Interact J, Special U, Ultimate H
 11. **Volumes:** Settings → Audio has Master, Music, Sound effects, Voices, **Ambience** and **Interface sounds**. Music at 0 silences the loops and the clips' sound; Sound effects at 0 silences hits and warnings.
 12. **Portable zip:** `pnpm release`, start the zip with `start.bat`: the intro clips and title loop play there too (also when you press Next quickly).
 13. **Wi-Fi co-op** (if you have PC 2 at hand): a Wi-Fi game ends straight on the results (no ending cinematic), everything else as in M12.
+
+## M14 · Slice hardening (final Stage 1 acceptance)
+
+M14 checks the whole slice: the game tests your browser and says what it can do (Settings → **System check**), a new lowest Auto Quality step keeps slow laptops in real time, every button prompt follows language, layout, gamepad and rebinding (and is read out in your language by screen readers), Player 2 on the keyboard now has a Back/Pause key (**Num +**, or **Backspace** with the laptop set), and the gate courtyard's five enemies now arrive in two groups (it was harder than the boss on Medium). The evidence for every line of spec §19 is in `docs/review/08-slice-acceptance.md`.
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+Open `http://localhost:5173`. For the portable build: `pnpm release`, unzip `release\FightForPeace-0.14.0.zip` and double-click `start.bat`.
+
+To test the branch before it is merged instead of `main`:
+
+```powershell
+git fetch origin claude/project-thread-qcmrgs
+git checkout claude/project-thread-qcmrgs
+pnpm install
+pnpm dev
+```
+
+Optional, the automated checks (they also run on GitHub; `pnpm e2e` now includes the accessibility audit, the German/Chinese layout sweep and a throttled performance test):
+
+```powershell
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm e2e
+pnpm release
+$env:FFP_SMOKE_BROWSER = "msedge"; pnpm smoke:portable; Remove-Item Env:FFP_SMOKE_BROWSER
+```
+
+The last line unzips the release, starts it with `start.bat` and plays the first launch in Microsoft Edge; it writes `release\system-check-msedge.json` and a screenshot.
+
+### Keys
+
+As in M10 (W A S D, Attack T, Jump Y, Guard G, Interact J, Special U, Ultimate H, Team Attack B, Pause Esc). Player 2 on the numpad: arrows, Num 4/5/6, Num 1/2/3, Num 0, **Pause Num +** (new).
+
+### Steps
+
+1. **System check in each browser:** in Chrome, Edge and Firefox (and Safari on a Mac if you have one), open the game, Settings → **System check**. Every line should say *Available*; Drawing says *WebGL*, Video *WebM* (Safari: *MP4*), Saving *in this browser* (portable zip: *in the game folder*). Note any *Missing* line and the browser.
+2. **Full Stage 1 on Medium, solo:** play the whole stage from the intro to the results with either founder. Nothing should stop you from progressing. At the **gate courtyard** (beat 7) two Recruits and a Shield come first; a Runner and a Lookout join when one of them is left. Tell me if the courtyard or the Sluice Commander feels too hard or too easy on Medium.
+3. **Low-end laptop (if you have one):** play the courtyard on the slowest PC. Then Settings → System check → *Performance*: the simulation line should say about **60 steps per second**. On a slow PC the drawing level goes down by itself, at worst to *Lowest (lower resolution)*: the picture gets a little softer, the fight stays the same speed. Settings → Display → Presentation quality now also offers *Medium* and *Lowest*; *Full screen* switches full screen on and off.
+4. **Measure again:** in System check press *Measure again*, play a minute, come back: the numbers are from that minute.
+5. **Player 2 on the keyboard:** Play → Same-device co-op, Player 2 joins with Num 4. In hero selection both confirm, then Player 2 presses **Num +**: Player 2's hero is unconfirmed again and the hint shows the Num + key (before M14 it said "Not assigned"). In the stage Num + pauses for both.
+6. **German and Chinese:** Settings → Language → Deutsch, then 简体中文: walk through the village, Settings (all categories, including System check), Play → stage and hero selection. No label should be cut off or run out of its box, and nothing should be in English except names. With Deutsch, a key such as Space now shows as **Leertaste**.
+7. **Reduce motion:** in Windows Settings → Accessibility → Visual effects, switch **Animation effects** off, then start the game with a new profile (Settings → Profile → New profile, or a private browser window): the first-launch page already has *Reduced flashing* on. Switch Animation effects back afterwards.
+8. **Screen reader (optional):** with Windows Narrator (Ctrl + Win + Enter) on the Guide page, the key prompts are read as "T key" in English and "Taste T" in German.

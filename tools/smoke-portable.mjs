@@ -12,6 +12,7 @@ import {
   readFileSync,
   writeFileSync,
 } from 'node:fs';
+import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -56,6 +57,59 @@ function stop(child) {
     } catch {
       child.kill('SIGTERM');
     }
+  }
+}
+
+/**
+ * M14 browser matrix: `FFP_SMOKE_BROWSER=msedge` (or chromium, firefox, webkit) also plays
+ * the first launch in that browser against the unzipped game and records its System check
+ * (every capability and what it falls back to) in release/system-check-<browser>.json.
+ */
+async function browserCheck(name) {
+  const require = createRequire(join(REPO, 'apps', 'game', 'package.json'));
+  const pw = require('@playwright/test');
+  const engine = name === 'firefox' ? pw.firefox : name === 'webkit' ? pw.webkit : pw.chromium;
+  const channel = name === 'msedge' || name === 'chrome' ? name : undefined;
+  const browser = await engine.launch({ channel });
+  try {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+    const errors = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    await page.goto(`http://localhost:${port}/`);
+    const id = (t) => page.locator(`[data-testid="${t}"]`);
+    await id('setup-language-en').click({ timeout: 60_000 });
+    await id('setup-next').click();
+    await id('setup-layout-qwerty').click();
+    await page.keyboard.press('Enter');
+    await id('setup-finish').click();
+    await id('village').waitFor();
+    await id('menu-settings').click();
+    await id('settings-system').click();
+    await id('system-check').waitFor();
+    const caps = await page
+      .locator('[data-testid^="system-cap-"]')
+      .evaluateAll((rows) =>
+        rows.map((r) => ({
+          id: r.getAttribute('data-testid').slice('system-cap-'.length),
+          ok: r.getAttribute('data-ok') === 'true',
+          text: r.innerText.replace(/\s+/g, ' ').trim(),
+        })),
+      );
+    const browserLine = await id('system-browser').innerText();
+    mkdirSync(join(REPO, 'release'), { recursive: true });
+    writeFileSync(
+      join(REPO, 'release', `system-check-${name}.json`),
+      JSON.stringify({ browser: browserLine, caps }, null, 2),
+    );
+    await page.screenshot({ path: join(REPO, 'release', `system-check-${name}.png`) });
+    for (const c of caps) console.log(`  ${c.ok ? 'ok     ' : 'missing'} ${c.text}`);
+    const missingRequired = caps.filter((c) => ['renderer', 'keyboard'].includes(c.id) && !c.ok);
+    if (missingRequired.length) throw new Error(`${name}: required capability missing`);
+    if (!caps.find((c) => c.id === 'storage')?.ok) throw new Error(`${name}: saves are not kept`);
+    if (errors.length) throw new Error(`${name}: page errors: ${errors.join('; ')}`);
+    console.log(`${browserLine}: first launch and System check passed`);
+  } finally {
+    await browser.close();
   }
 }
 
@@ -127,6 +181,7 @@ async function main() {
     console.log(`Room ${room.code} opened on port ${room.port} and closed again`);
     const last = readFileSync(join(app, 'logs', 'last-port.txt'), 'utf8').trim();
     if (last !== String(port)) throw new Error(`logs/last-port.txt says ${last}`);
+    if (process.env.FFP_SMOKE_BROWSER) await browserCheck(process.env.FFP_SMOKE_BROWSER);
     console.log(`Portable smoke test passed: Fight For Peace ${version} on port ${port}`);
   } catch (err) {
     fail(err.message);

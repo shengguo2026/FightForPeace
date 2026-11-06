@@ -1,3 +1,4 @@
+import { can } from '../../system/probe';
 import { useLayoutEffect, useState } from 'preact/hooks';
 import type { DeviceId } from '@ffp/platform';
 import { DIFFICULTIES, HEROES, STAGES, defaultLoadout, equipMove, SLOTS } from '@ffp/sim';
@@ -55,7 +56,8 @@ export function ModeScreen({ shell }: { shell: Shell }) {
         />
         <Button
           label={t('play.wifi')}
-          detail={t('play.wifiDetail')}
+          detail={can('wifiCoop') ? t('play.wifiDetail') : t('system.feature.wifiCoop.off')}
+          disabled={!can('wifiCoop')}
           onPress={() => {
             shell.fromShell.value = true;
             shell.go('wifi');

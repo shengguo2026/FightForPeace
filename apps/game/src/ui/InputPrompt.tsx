@@ -1,5 +1,6 @@
-import type { ActionName, Prompt, PromptContext, PromptInput } from '@ffp/platform';
-import { resolvePrompt } from '@ffp/platform';
+import type { ActionName, Prompt, PromptContext, PromptInput, PromptWords } from '@ffp/platform';
+import { promptA11y, resolvePrompt } from '@ffp/platform';
+import { locale, t } from '../text/i18n';
 import { type TextPart, parseText } from '../text/en';
 
 /** Player colours, used for prompts, panels and heroes. */
@@ -28,10 +29,11 @@ const padGlyph = { ...keycap, borderRadius: '999px', borderBottomWidth: '1px' } 
  */
 export function InputPrompt({ prompt, color }: { prompt: Prompt; color?: string }) {
   const style = { color: color ?? 'inherit' };
+  const a11y = promptA11y(prompt, promptWords());
   switch (prompt.kind) {
     case 'key':
       return (
-        <kbd style={{ ...keycap, ...style }} aria-label={prompt.a11y} data-prompt="key">
+        <kbd style={{ ...keycap, ...style }} role="img" aria-label={a11y} data-prompt="key">
           {prompt.label}
         </kbd>
       );
@@ -39,7 +41,7 @@ export function InputPrompt({ prompt, color }: { prompt: Prompt; color?: string 
       return (
         <span
           style={{ ...padGlyph, ...style }}
-          aria-label={prompt.a11y}
+          role="img" aria-label={a11y}
           data-prompt="pad"
           data-asset={`ui.prompt.pad.${prompt.family}.${prompt.button}`}
         >
@@ -48,7 +50,7 @@ export function InputPrompt({ prompt, color }: { prompt: Prompt; color?: string 
       );
     case 'chord':
       return (
-        <span aria-label={prompt.a11y} data-prompt="chord">
+        <span role="img" aria-label={a11y} data-prompt="chord">
           {prompt.parts.map((p, i) => (
             <>
               {i > 0 ? '+' : null}
@@ -59,7 +61,7 @@ export function InputPrompt({ prompt, color }: { prompt: Prompt; color?: string 
       );
     case 'gesture':
       return (
-        <span aria-label={prompt.a11y} data-prompt="gesture">
+        <span role="img" aria-label={a11y} data-prompt="gesture">
           <InputPrompt prompt={prompt.part} color={color} />
           <InputPrompt prompt={prompt.part} color={color} />
         </span>
@@ -67,10 +69,38 @@ export function InputPrompt({ prompt, color }: { prompt: Prompt; color?: string 
     case 'unassigned':
       return (
         <span style={{ ...style, fontStyle: 'italic', opacity: 0.8 }} data-prompt="unassigned">
-          Not assigned
+          {a11y}
         </span>
       );
   }
+}
+
+let cached: { locale: string; words: PromptWords } | null = null;
+
+/** M14: the spoken prompt words in the current language (from the catalogues). */
+export function promptWords(): PromptWords {
+  if (cached?.locale === locale.value) return cached.words;
+  const words: PromptWords = {
+    key: t('prompt.a11y.key'),
+    button: t('prompt.a11y.button'),
+    face: t('prompt.a11y.face'),
+    faces: {
+      bottom: t('prompt.a11y.bottom'),
+      right: t('prompt.a11y.right'),
+      left: t('prompt.a11y.left'),
+      top: t('prompt.a11y.top'),
+    },
+    dpad: {
+      up: t('prompt.a11y.dpadUp'),
+      down: t('prompt.a11y.dpadDown'),
+      left: t('prompt.a11y.dpadLeft'),
+      right: t('prompt.a11y.dpadRight'),
+    },
+    doubleTap: t('prompt.a11y.doubleTap'),
+    unassigned: t('prompt.unassigned'),
+  };
+  cached = { locale: locale.value, words };
+  return words;
 }
 
 function partInput(p: TextPart): PromptInput | null {

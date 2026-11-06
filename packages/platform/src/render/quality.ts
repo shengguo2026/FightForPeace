@@ -7,13 +7,24 @@
  * - high: everything.
  * - medium: the decorative foreground layer off.
  * - low: also the far and middle backdrops hold still (no parallax scrolling).
+ * - minimal (M14): also the internal resolution drops to two thirds (fewer pixels to
+ *   fill on a slow laptop or a software renderer).
  * Silhouettes, telegraphs, warnings, HUD, subtitles, hit confirmation and essential sounds
  * are never reduced.
  */
-export type QualityLevel = 'high' | 'medium' | 'low';
+export type QualityLevel = 'high' | 'medium' | 'low' | 'minimal';
 export type QualitySetting = 'auto' | QualityLevel;
 
-const ORDER: readonly QualityLevel[] = ['high', 'medium', 'low'];
+export const QUALITY_LEVELS: readonly QualityLevel[] = ['high', 'medium', 'low', 'minimal'];
+const ORDER = QUALITY_LEVELS;
+
+/** Internal render resolution per level (1 = the full 1920 × 1080 view). */
+export const RENDER_SCALE: Readonly<Record<QualityLevel, number>> = {
+  high: 1,
+  medium: 1,
+  low: 1,
+  minimal: 2 / 3,
+};
 
 /** Candidate thresholds (render side only; tuning values). */
 export const QUALITY = {

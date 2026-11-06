@@ -70,6 +70,7 @@ export class ArenaView {
   private beeped = new Set<number>();
   private audio: AudioContext | null = null;
   private camX = 0;
+  private boundsWidth = VIEW_W;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -168,7 +169,11 @@ export class ArenaView {
     }
     // M8 Auto Quality: medium drops the decorative foreground; low also holds the far and
     // middle backdrops still. The floor, bodies, telegraphs and HUD are never reduced.
-    const still = quality === 'low';
+    // The camera bounds assume zoom around the centre; the reduced resolution zooms from
+    // the corner, and the simulation's view already keeps the camera inside the stage.
+    if (cam.zoom !== 1) cam.removeBounds();
+    else if (!cam.useBounds) cam.setBounds(0, 0, Math.max(VIEW_W, this.boundsWidth), VIEW_H);
+    const still = quality === 'low' || quality === 'minimal';
     for (const l of this.layers) {
       if (l.name === 'fg') l.obj.setVisible(quality === 'high');
       const frozen = still && (l.name === 'far' || l.name === 'mid');
@@ -275,6 +280,7 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
     this.key = arena ? arena.id : 'lab';
     this.beeped.clear();
     const cam = this.scene.cameras.main;
+    this.boundsWidth = stageWidth;
     cam.setBounds(0, 0, Math.max(VIEW_W, stageWidth), VIEW_H);
     if (!arena) return;
     const id = (layer: string) => `bg.stage1.${arena.area}.${layer}`;

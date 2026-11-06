@@ -1,3 +1,4 @@
+import { can } from '../system/probe';
 import {
   AssetRegistry,
   type MusicCommand,
@@ -59,7 +60,8 @@ export class AudioEngine {
   unlock(): void {
     try {
       if (!this.ctx) {
-        const Ctx = window.AudioContext;
+        // M14: without Web Audio the game runs silent (subtitles and visual cues stay).
+        const Ctx = can('sound') ? window.AudioContext : undefined;
         if (!Ctx) return;
         this.ctx = new Ctx();
         const g = () => this.ctx!.createGain();

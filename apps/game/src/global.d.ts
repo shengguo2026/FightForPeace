@@ -95,6 +95,18 @@ export interface DebugMedia {
 }
 
 export interface FfpDebugHook {
+  /** M14: capability gates and the performance probe. */
+  system: {
+    capabilities(): {
+      blocking: string[];
+      disabled: string[];
+      renderer: string | null;
+      video: string | null;
+      results: { id: string; ok: boolean; via: string | null }[];
+    };
+    perf(): import('@ffp/platform').PerfSnapshot;
+    resetPerf(): void;
+  };
   /** M13 media hooks. */
   media: {
     state(): DebugMedia;
@@ -140,6 +152,8 @@ export interface FfpDebugHook {
     lastCombo(): { steps: string[]; hits: number } | null;
     cheats(): { hero: string[][]; session: string[]; marked: boolean };
     pilotActive(): boolean;
+    /** M14: text that fell back to English or is missing (localization QA). */
+    diagnostics(): string[];
   };
   runReplay(log: ReplayLog): number;
   /** Replaces real gamepads with these virtual ones from now on. */

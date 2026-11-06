@@ -92,7 +92,12 @@ const SHAKE: Record<Tier, number> = { 0: 0, 1: 0.0025, 2: 0.004, 3: 0.008 };
 const SCALE: Record<Tier, number> = { 0: 0.5, 1: 0.7, 2: 0.85, 3: 1.1 };
 
 /** Cosmetic effects allowed on screen at once, per quality level. */
-export const COSMETIC_BUDGET: Record<QualityLevel, number> = { high: 10, medium: 6, low: 3 };
+export const COSMETIC_BUDGET: Record<QualityLevel, number> = {
+  high: 10,
+  medium: 6,
+  low: 3,
+  minimal: 2,
+};
 const MERGE_PX = 70;
 const MERGE_MS = 90;
 const LIFE_MS = 400;
@@ -148,7 +153,7 @@ export class EffectBudget {
     if (room && s.particles !== 'off') {
       const n = SPARKS[req.tier];
       plan.sparks = s.particles === 'reduced' ? Math.ceil(n / 2) : n;
-      if (s.quality === 'low') plan.sparks = Math.min(plan.sparks, 2);
+      if (s.quality === 'low' || s.quality === 'minimal') plan.sparks = Math.min(plan.sparks, 2);
     }
     if (room) {
       plan.flash = s.flashes ? FLASH[req.tier] : 0;

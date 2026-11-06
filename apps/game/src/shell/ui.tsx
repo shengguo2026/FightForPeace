@@ -24,6 +24,10 @@ export const SHELL_CSS = `
 .ffp-choice .ffp-value { display: flex; align-items: center; gap: 10px; font-weight: 600; }
 .ffp-scope { display: inline-block; font-size: 0.7em; padding: 1px 8px; border-radius: 99px; border: 1px solid currentColor; opacity: 0.8; margin-left: 10px; }
 .ffp-hint { font-size: 0.85em; opacity: 0.75; }
+.ffp-table { border-collapse: collapse; width: 100%; margin: 8px 0 12px; }
+.ffp-table th, .ffp-table td { text-align: left; vertical-align: top; padding: 6px 10px; border-bottom: 1px solid rgba(255,255,255,0.12); }
+.ffp-table th { font-weight: 600; white-space: nowrap; }
+.ffp-table tr[data-ok='false'] td { color: #ffb38a; }
 .ffp-toast { position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); background: var(--ffp-panel); border: 1px solid var(--ffp-accent); border-radius: 8px; padding: 8px 18px; z-index: 50; }
 .ffp-row { display: flex; gap: 18px; align-items: stretch; }
 .ffp-col { display: flex; flex-direction: column; }

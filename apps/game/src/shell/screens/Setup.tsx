@@ -16,13 +16,23 @@ import { focusFirst } from '../nav';
 const SIZES = ['small', 'medium', 'large'] as const;
 
 /**
+ * M14 accessibility pass: first launch follows the operating system's "reduce motion"
+ * preference (reduced flashing and camera shake on); the player can still change both.
+ */
+export function firstLaunchSettings(): ProfileSettings {
+  const reduce =
+    typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return { ...DEFAULT_SETTINGS, reducedFlashing: reduce, reducedShake: reduce };
+}
+
+/**
  * First launch (Module 16): language, subtitle defaults, essential accessibility, the
  * keyboard layout picker (D6) and the first input device, then the village.
  */
 export function SetupScreen({ shell }: { shell: Shell }) {
   void locale.value;
   const [step, setStep] = useState(0);
-  const [settings, setSettings] = useState<ProfileSettings>({ ...DEFAULT_SETTINGS });
+  const [settings, setSettings] = useState<ProfileSettings>(firstLaunchSettings);
   const [device, setDevice] = useState<'keyboard' | 'gamepad' | null>(null);
   const [name, setName] = useState(() => t('setup.defaultName'));
   const total = 4;

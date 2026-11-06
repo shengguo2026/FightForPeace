@@ -8,6 +8,7 @@ import {
   WriterLock,
   createGuest,
   createProfile,
+  MemoryBackend,
   openBackend,
   pickLocale,
   recordClear,
@@ -43,6 +44,7 @@ import type { LabState } from '../ui/labState';
 import { setLocale, t } from '../text/i18n';
 import { presentation } from './presentation';
 import { audio } from '../media/audio';
+import { can } from '../system/probe';
 import { Academy } from '../academy/runner';
 import { NetPlay } from '../net/netplay';
 import { setFacingMode } from '@ffp/sim';
@@ -183,7 +185,8 @@ export class Shell {
   // --- boot and profiles ----------------------------------------------------------------
 
   async boot(backend?: SaveBackend): Promise<void> {
-    const b = backend ?? (await openBackend());
+    // M14: a browser without storage (or `?caps=-storage`) plays as a temporary profile.
+    const b = backend ?? (can('saves') ? await openBackend() : new MemoryBackend());
     this.storage.value = b.kind;
     this.store = new ProfileStore(b, this.gameVersion);
     const device = await this.store.device();

@@ -90,6 +90,31 @@ function isCharacterKey(code: string): boolean {
   return /^(Key[A-Z]|Digit[0-9])$/.test(code) || code in US;
 }
 
+/**
+ * M14 localization QA: names of keys without a printed character, as German and Chinese
+ * players call them (German keyboards print "Strg"; the space bar is the "Leertaste").
+ * English uses the names above. Keyed by locale id ('en', 'zh-CN', 'de').
+ */
+export const KEY_NAMES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  en: {},
+  'zh-CN': {
+    Space: '空格',
+    ShiftRight: '右 Shift',
+    ControlRight: '右 Ctrl',
+    Backspace: '退格',
+  },
+  de: {
+    Space: 'Leertaste',
+    Enter: 'Eingabe',
+    Backspace: 'Rücktaste',
+    ShiftLeft: 'Umschalt',
+    ShiftRight: 'Umschalt rechts',
+    ControlLeft: 'Strg',
+    ControlRight: 'Strg rechts',
+    NumpadEnter: 'Num Eingabe',
+  },
+};
+
 export class KeyLabelSource {
   private layoutMap: Map<string, string> | null = null;
   private readonly observed = new Map<string, string>();
@@ -121,8 +146,18 @@ export class KeyLabelSource {
     this.version += 1;
   }
 
+  /** M14: the language of key names (Space, Ctrl, Enter…); see KEY_NAMES. */
+  setKeyNames(locale: string): void {
+    const names = KEY_NAMES[locale] ?? {};
+    if (names === this.names) return;
+    this.names = names;
+    this.version += 1;
+  }
+
+  private names: Readonly<Record<string, string>> = {};
+
   label(code: string): string {
-    const named = NAMED[code];
+    const named = this.names[code] ?? NAMED[code];
     if (named) return named;
     if (code.startsWith('Numpad')) return `Num ${code.slice(6)}`;
     const fromMap = this.layoutMap?.get(code);

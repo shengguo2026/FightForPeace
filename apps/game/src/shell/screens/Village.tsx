@@ -1,3 +1,4 @@
+import { can } from '../../system/probe';
 import { useState } from 'preact/hooks';
 import { locale, difficultyName, stageName, t } from '../../text/i18n';
 import type { Shell } from '../shell';
@@ -68,9 +69,13 @@ export function VillageScreen({ shell }: { shell: Shell }) {
         : t('menu.storageMemory');
   return (
     <Screen bg={ART('menu-bg')} dim align="start" testId="village">
-      {titleLoop && p?.settings.cinematics !== 'stills' && !p?.settings.reducedFlashing ? (
+      {titleLoop &&
+      can('videoCinematics') &&
+      p?.settings.cinematics !== 'stills' &&
+      !p?.settings.reducedFlashing ? (
         <video
           data-testid="title-loop"
+          aria-hidden="true"
           autoplay
           muted
           loop
