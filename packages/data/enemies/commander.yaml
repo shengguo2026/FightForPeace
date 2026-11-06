@@ -147,6 +147,8 @@ profile:
         from: 100
         resolve: 240
         look: 1
+        # Co-op on Extreme and above (M14 follow-up): a Runner and a Recruit join at once.
+        coopSupports: { minDifficulty: extreme, kits: [runner, recruit] }
         attacks:
           - { action: palm-strike, threat: 12, cooldown: 60 }
           - { action: roundhouse, threat: 20, cooldown: 100 }
@@ -175,6 +177,8 @@ profile:
         counter: true
         breaker: true
         device: winch
+        # Co-op on Ultimate (M14 follow-up): a Runner joins while he works the winch.
+        coopSupports: { minDifficulty: ultimate, kits: [runner] }
         attacks:
           - { action: double-palm, threat: 20, cooldown: 70 }
           - { action: rising-knee, threat: 26, cooldown: 140 }

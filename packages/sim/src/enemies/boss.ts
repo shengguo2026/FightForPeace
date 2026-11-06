@@ -291,12 +291,17 @@ export function startPhase(world: World, f: Fighter, n: number): void {
     if (!inPlay) spawnItem(world, w, fx(spot.x), fx(spot.z));
   }
   const elite = enc.difficulty >= HARD;
-  (elite ? ph.eliteSupports : ph.supports).forEach((kit, i) => {
+  const kits = [...(elite ? ph.eliteSupports : ph.supports)];
+  // Co-op on the higher difficulties: more pressure through composition, not boss Health.
+  const extra = ph.coopSupports;
+  if (extra && enc.difficulty >= extra.minDifficulty && livingHeroes(world).length >= 2)
+    kits.push(...extra.kits);
+  kits.forEach((kit, i) => {
     spawnEnemy(
       world,
       enemyKitIndex(kit),
-      i === 0 ? world.bounds.minX + fx(60) : world.bounds.maxX - fx(60),
-      fx(760 + i * 140),
+      i % 2 === 0 ? world.bounds.minX + fx(60) : world.bounds.maxX - fx(60),
+      fx(760 + (i % 2) * 140 + Math.trunc(i / 2) * 70),
     );
   });
 }

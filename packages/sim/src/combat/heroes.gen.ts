@@ -7649,6 +7649,13 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
           "breaker": false,
           "supports": [],
           "eliteSupports": [],
+          "coopSupports": {
+            "minDifficulty": 3,
+            "kits": [
+              "runner",
+              "recruit"
+            ]
+          },
           "device": "",
           "attacks": [
             {
@@ -7697,6 +7704,7 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
             "runner",
             "shield"
           ],
+          "coopSupports": null,
           "device": "",
           "attacks": [
             {
@@ -7739,6 +7747,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
           "breaker": true,
           "supports": [],
           "eliteSupports": [],
+          "coopSupports": {
+            "minDifficulty": 4,
+            "kits": [
+              "runner"
+            ]
+          },
           "device": "winch",
           "attacks": [
             {

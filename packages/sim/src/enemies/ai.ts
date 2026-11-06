@@ -297,6 +297,19 @@ function riposte(world: World, f: Fighter): boolean {
   return true;
 }
 
+/** Are two living heroes close by on opposite sides of this enemy? */
+function flanked(world: World, f: Fighter): boolean {
+  let left = false;
+  let right = false;
+  for (const h of world.bodies) {
+    if (h.team !== 'hero' || h.ko) continue;
+    if (Math.abs(h.x - f.x) > AI.nearX || Math.abs(h.z - f.z) > AI.nearZ) continue;
+    if (h.x < f.x) left = true;
+    else right = true;
+  }
+  return left && right;
+}
+
 /**
  * An attack's cooldown at the selected difficulty: `pace` is the percent of the authored
  * cooldown, so higher difficulties come back sooner and fill the budgets they allow.
@@ -364,6 +377,9 @@ function planDefense(world: World, f: Fighter, prof: EnemyProfile): boolean {
   if (f.defPlan !== DefPlan.None) return f.state === MoveState.Guard;
   // Decision quality (Hard and above): a guard that is about to be crushed is not taken.
   const scale = d.riposte && f.defense < AI.guardFloor ? 0 : d.guardScale;
+  // Decision quality (Hard and above): a guard only covers the front, so an enemy caught
+  // between two heroes does not raise it (it would only be hit from behind).
+  const noGuard = d.riposte && flanked(world, f);
   const guardAcc = { v: f.guardAcc };
   const evadeAcc = { v: f.evadeAcc };
   let decided = false;
@@ -391,7 +407,7 @@ function planDefense(world: World, f: Fighter, prof: EnemyProfile): boolean {
     if (counterable && !staggered(world, f) && capable(world, f, 'counter')) {
       f.defPlan = DefPlan.Counter;
       f.defAt = when;
-    } else if (!unblockable && capable(world, f, 'exact')) {
+    } else if (!unblockable && !noGuard && capable(world, f, 'exact')) {
       f.defPlan = DefPlan.Exact;
       f.defAt = when;
     } else if (
@@ -402,6 +418,7 @@ function planDefense(world: World, f: Fighter, prof: EnemyProfile): boolean {
       f.defAt = world.frame;
     } else if (
       !unblockable &&
+      !noGuard &&
       rate(guardAcc, prof.defense.guardEvery, prof.defense.guardOf, scale)
     ) {
       f.defPlan = DefPlan.Guard;
@@ -423,7 +440,10 @@ function planDefense(world: World, f: Fighter, prof: EnemyProfile): boolean {
     else if (world.frame - f.nearSince >= perception) {
       f.nearSince = world.frame + prof.defense.guardHold;
       const stance = prof.defense.stance;
-      if (stance || rate(guardAcc, prof.defense.guardEvery, prof.defense.guardOf, scale)) {
+      if (
+        !noGuard &&
+        (stance || rate(guardAcc, prof.defense.guardEvery, prof.defense.guardOf, scale))
+      ) {
         raiseGuard(world, f, near, prof.defense.guardHold, false);
         f.guardAcc = guardAcc.v;
         f.evadeAcc = evadeAcc.v;

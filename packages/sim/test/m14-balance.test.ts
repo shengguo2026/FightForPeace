@@ -118,6 +118,16 @@ describe('Medium balance shape (twelve bot variants per beat)', () => {
     }
   });
 
+  // M14 follow-up 2: two heroes beat the Commander on Extreme as often as on Medium. On
+  // Extreme and above co-op brings extra supports, and enemies caught between both heroes
+  // stop guarding (it only exposed their back).
+  test('co-op: the Sluice Commander gets harder from Medium to Extreme', () => {
+    const boss = (d: string) => table[`coop ${d}`]!.cleared[BOSS]!;
+    expect(boss('hard')).toBeLessThanOrEqual(boss('medium'));
+    expect(boss('extreme')).toBeLessThan(boss('medium'));
+    expect(boss('ultimate')).toBeLessThanOrEqual(boss('extreme'));
+  });
+
   test('the balance table', () => {
     const lines = [`| Line-up | ${BEATS.join(' | ')} |`];
     for (const [k, r] of Object.entries(table))
