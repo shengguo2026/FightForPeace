@@ -11,7 +11,7 @@ import { weaponIndex } from '../combat/armory';
 import { REACTION } from '../combat/reactions';
 import { LAB_LAYOUT, type StageLayout } from '../world/stage';
 import { ActionBit } from '../input/bits';
-import { profileOf } from '../enemies/data';
+import { DIFFICULTIES, profileOf } from '../enemies/data';
 import { Result, newEncounter, setupDevices, updateView } from '../enemies/encounter';
 import { VIEW_WIDTH } from '../enemies/director';
 import {
@@ -453,7 +453,9 @@ export function stepRunLate(world: World): void {
     );
     if (!h) continue;
     p.taken = true;
-    h.health = Math.min(h.maxHealth, h.health + p.heal);
+    // Recovery direction per difficulty (spec D.2): Hard and above restore less.
+    const heal = Math.trunc((p.heal * (DIFFICULTIES[run.difficulty]?.recovery ?? 100)) / 100);
+    h.health = Math.min(h.maxHealth, h.health + heal);
     run.lastHealth[h.slot] = h.health;
     run.stats.food += 1;
     event(world, RunEvent.Food, h.slot);
@@ -655,7 +657,10 @@ function complete(world: World, f: Fighter, c: ChannelState): void {
  * An authored food group as pickups. FULLPANTRY adds one deterministic recovery item per
  * group: a copy of its first food, 80 px to the right.
  */
-function pantry(world: World, list: readonly { x: number; z: number; heal: number; look: number }[]) {
+function pantry(
+  world: World,
+  list: readonly { x: number; z: number; heal: number; look: number }[],
+) {
   const out = list.map((p) => ({ ...p, x: fx(p.x), z: fx(p.z), taken: false }));
   const first = list[0];
   if (first && sessionCheat(world, Cheat.FULLPANTRY))
@@ -720,12 +725,20 @@ export function rankFor(percent: number, ranks: readonly number[]): string {
 }
 
 /** Share (0–100 percent) of a category earned by a run. */
-function measure(c: GradeCategoryDef, run: StageRun, def: StageDef): { pct: number; value: string } {
+function measure(
+  c: GradeCategoryDef,
+  run: StageRun,
+  def: StageDef,
+): { pct: number; value: string } {
   const s = run.stats;
-  const ratio = (n: number, of: number) => (of === 0 ? 100 : Math.trunc((Math.min(n, of) * 100) / of));
+  const ratio = (n: number, of: number) =>
+    of === 0 ? 100 : Math.trunc((Math.min(n, of) * 100) / of);
   switch (c.measure) {
     case 'workers':
-      return { pct: ratio(s.workersFreed, run.workersTotal), value: `${s.workersFreed}/${run.workersTotal}` };
+      return {
+        pct: ratio(s.workersFreed, run.workersTotal),
+        value: `${s.workersFreed}/${run.workersTotal}`,
+      };
     case 'clues': {
       const found = s.clues + s.evidence;
       return { pct: ratio(found, run.cluesTotal), value: `${found}/${run.cluesTotal}` };

@@ -317,6 +317,8 @@ const BossPhase = T.Object(
     counter: T.Optional(T.Boolean()),
     breaker: T.Optional(T.Boolean()),
     supports: T.Optional(T.Array(T.String({ pattern: '^[a-z][a-z0-9-]*$' }), { maxItems: 2 })),
+    /** Hard and above: the support pair's elite variant (replaces `supports`). */
+    eliteSupports: T.Optional(T.Array(T.String({ pattern: '^[a-z][a-z0-9-]*$' }), { maxItems: 2 })),
     device: T.Optional(T.String({ pattern: '^[a-z][a-z0-9-]*$' })),
     attacks: T.Array(AiAttack, { minItems: 1 }),
   },
@@ -697,6 +699,7 @@ export function compileProfile(p: ProfileYaml): unknown {
             counter: ph.counter ?? false,
             breaker: ph.breaker ?? false,
             supports: ph.supports ?? [],
+            eliteSupports: ph.eliteSupports ?? ph.supports ?? [],
             device: ph.device ?? '',
             attacks: ph.attacks.map(compileAttack),
           })),
@@ -725,6 +728,9 @@ export const DifficultySchema = T.Object(
           groupCooldown: T.Integer({ minimum: 0, maximum: 3600 }),
           warning: T.Integer({ minimum: 1, maximum: 600 }),
           guardScale: T.Integer({ minimum: 0, maximum: 400 }),
+          pace: T.Integer({ minimum: 25, maximum: 400 }),
+          recovery: T.Integer({ minimum: 0, maximum: 200 }),
+          riposte: T.Boolean(),
         },
         { additionalProperties: false },
       ),
@@ -912,10 +918,7 @@ export const StageSchema = T.Object(
           ),
           { minItems: 1, maxItems: 8 },
         ),
-        ranks: T.Object(
-          { S: Percent, A: Percent, B: Percent },
-          { additionalProperties: false },
-        ),
+        ranks: T.Object({ S: Percent, A: Percent, B: Percent }, { additionalProperties: false }),
         caps: T.Optional(
           T.Array(
             T.Object(
@@ -1217,7 +1220,8 @@ export function loadStage(
   const cats = new Set(d.grade.categories.map((c) => c.id));
   if (cats.size !== d.grade.categories.length) problems.push('grade category ids repeat');
   for (const cap of d.grade.caps ?? [])
-    if (!cats.has(cap.category)) problems.push(`grade cap names unknown category "${cap.category}"`);
+    if (!cats.has(cap.category))
+      problems.push(`grade cap names unknown category "${cap.category}"`);
   const r = d.grade.ranks;
   if (!(r.S > r.A && r.A > r.B)) problems.push('grade ranks must fall from S to A to B');
   if (problems.length > 0) throw new HeroDataError(problems.map((p) => `${file}: ${p}`).join('\n'));
@@ -1639,7 +1643,6 @@ export function compileCoop(c: CoopYaml): unknown {
   };
 }
 
-
 // --- M11 progression ---------------------------------------------------------------------
 
 const ContentId = T.String({ pattern: '^[a-z0-9]+(\\.[a-z0-9-]+)+$' });
@@ -1661,21 +1664,33 @@ const LessonPhase = T.Object(
 
 const ProgressionYaml = T.Object(
   {
-    bands: T.Object({ low: Credits, medium: Credits, high: Credits }, { additionalProperties: false }),
+    bands: T.Object(
+      { low: Credits, medium: Credits, high: Credits },
+      { additionalProperties: false },
+    ),
     payout: T.Object(
       {
         completion: Credits,
         difficulty: T.Tuple([Credits, Credits, Credits, Credits, Credits]),
-        rank: T.Object({ C: Credits, B: Credits, A: Credits, S: Credits }, { additionalProperties: false }),
+        rank: T.Object(
+          { C: Credits, B: Credits, A: Credits, S: Credits },
+          { additionalProperties: false },
+        ),
         once: T.Object(
           {
             firstClear: Credits,
-            firstRank: T.Object({ B: Credits, A: Credits, S: Credits }, { additionalProperties: false }),
+            firstRank: T.Object(
+              { B: Credits, A: Credits, S: Credits },
+              { additionalProperties: false },
+            ),
             allClues: Credits,
           },
           { additionalProperties: false },
         ),
-        academy: T.Object({ certified: Credits, mastered: Credits }, { additionalProperties: false }),
+        academy: T.Object(
+          { certified: Credits, mastered: Credits },
+          { additionalProperties: false },
+        ),
         masteryLevel: Credits,
       },
       { additionalProperties: false },
@@ -1714,7 +1729,9 @@ const ProgressionYaml = T.Object(
             T.Literal('always'),
             T.Object({ clear: ContentId }, { additionalProperties: false }),
           ]),
-          requires: T.Optional(T.Object({ achievement: ContentId }, { additionalProperties: false })),
+          requires: T.Optional(
+            T.Object({ achievement: ContentId }, { additionalProperties: false }),
+          ),
           mastery: T.Optional(T.Integer({ minimum: 1, maximum: 100 })),
         },
         { additionalProperties: false },
@@ -1774,9 +1791,15 @@ const ProgressionYaml = T.Object(
               {
                 id: ContentId,
                 course: T.Union(
-                  ['orientation', 'foundations', 'defense', 'conversion', 'resources', 'specialization', 'mastery'].map(
-                    (c) => T.Literal(c),
-                  ),
+                  [
+                    'orientation',
+                    'foundations',
+                    'defense',
+                    'conversion',
+                    'resources',
+                    'specialization',
+                    'mastery',
+                  ].map((c) => T.Literal(c)),
                 ),
                 name: T.String({ minLength: 1 }),
                 demo: T.Optional(KitId),
@@ -1803,7 +1826,11 @@ type ProgressionYaml = Static<typeof ProgressionYaml>;
 /** Validates progression.yaml against the heroes it names. */
 export function loadProgression(
   source: string,
-  heroes: readonly { id: string; actions: readonly { id: string; category: string; catalogue?: boolean }[]; recipes?: readonly { id: string }[] }[],
+  heroes: readonly {
+    id: string;
+    actions: readonly { id: string; category: string; catalogue?: boolean }[];
+    recipes?: readonly { id: string }[];
+  }[],
   file = 'progression.yaml',
 ): unknown {
   const d = validate(ProgressionYaml, source, file) as ProgressionYaml;
@@ -1819,13 +1846,15 @@ export function loadProgression(
     const hero = e.hero ? heroes.find((h) => h.id === e.hero) : undefined;
     if (e.hero && !hero) problems.push(`${e.id}: unknown hero "${e.hero}"`);
     if (e.kind === 'special' || e.kind === 'ultimate') {
-      if (e.group !== 'technique') problems.push(`${e.id}: techniques belong to the technique group`);
+      if (e.group !== 'technique')
+        problems.push(`${e.id}: techniques belong to the technique group`);
       const a = hero?.actions.find((x) => x.id === e.action);
       if (!a) problems.push(`${e.id}: unknown action "${e.action}"`);
       else if (a.category !== e.kind || !a.catalogue)
         problems.push(`${e.id}: "${e.action}" is not a catalogue ${e.kind}`);
     } else if (e.action) problems.push(`${e.id}: only techniques name an action`);
-    if ((e.kind === 'outfit' || e.kind === 'badge') && !e.name) problems.push(`${e.id}: needs a name`);
+    if ((e.kind === 'outfit' || e.kind === 'badge') && !e.name)
+      problems.push(`${e.id}: needs a name`);
     if (e.kind === 'outfit' && (!hero || e.group !== 'wardrobe'))
       problems.push(`${e.id}: an outfit is a wardrobe entry of one hero`);
     if (e.requires && !achievements.has(e.requires.achievement))
@@ -1995,7 +2024,7 @@ export function generate(
       for (const a of ph.attacks)
         if (!ids.has(a.action))
           problems.push(`${k.id}: phase "${ph.name}" attack "${a.action}" is unknown`);
-      for (const s of ph.supports ?? [])
+      for (const s of [...(ph.supports ?? []), ...(ph.eliteSupports ?? [])])
         if (!enemyYaml.some((e) => e.id === s))
           problems.push(`${k.id}: unknown support kit "${s}"`);
     }
@@ -2021,7 +2050,14 @@ export function generate(
   }
   const progression = progressionFile
     ? loadProgression(readFileSync(progressionFile, 'utf8'), heroYaml, basename(progressionFile))
-    : { bands: { low: 0, medium: 0, high: 0 }, payout: null, mastery: null, store: [], achievements: [], academy: [] };
+    : {
+        bands: { low: 0, medium: 0, high: 0 },
+        payout: null,
+        mastery: null,
+        store: [],
+        achievements: [],
+        academy: [],
+      };
   const coop = coopFile
     ? compileCoop(loadCoop(readFileSync(coopFile, 'utf8'), heroYaml, basename(coopFile)))
     : { preBuffer: 0, handoffs: [], finishers: [], actions: [] };

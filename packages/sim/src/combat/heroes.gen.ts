@@ -7648,6 +7648,7 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
           "counter": false,
           "breaker": false,
           "supports": [],
+          "eliteSupports": [],
           "device": "",
           "attacks": [
             {
@@ -7692,6 +7693,10 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
             "recruit",
             "recruit"
           ],
+          "eliteSupports": [
+            "runner",
+            "shield"
+          ],
           "device": "",
           "attacks": [
             {
@@ -7733,6 +7738,7 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
           "counter": true,
           "breaker": true,
           "supports": [],
+          "eliteSupports": [],
           "device": "winch",
           "attacks": [
             {
@@ -9318,7 +9324,10 @@ export const DIFFICULTY_DATA: readonly DifficultyDef[] = [
     "hardCC": 1,
     "groupCooldown": 360,
     "warning": 72,
-    "guardScale": 60
+    "guardScale": 60,
+    "pace": 100,
+    "recovery": 100,
+    "riposte": false
   },
   {
     "id": "medium",
@@ -9340,7 +9349,10 @@ export const DIFFICULTY_DATA: readonly DifficultyDef[] = [
     "hardCC": 1,
     "groupCooldown": 300,
     "warning": 60,
-    "guardScale": 100
+    "guardScale": 100,
+    "pace": 100,
+    "recovery": 100,
+    "riposte": false
   },
   {
     "id": "hard",
@@ -9362,7 +9374,10 @@ export const DIFFICULTY_DATA: readonly DifficultyDef[] = [
     "hardCC": 1,
     "groupCooldown": 260,
     "warning": 54,
-    "guardScale": 120
+    "guardScale": 120,
+    "pace": 85,
+    "recovery": 85,
+    "riposte": true
   },
   {
     "id": "extreme",
@@ -9384,7 +9399,10 @@ export const DIFFICULTY_DATA: readonly DifficultyDef[] = [
     "hardCC": 1,
     "groupCooldown": 220,
     "warning": 48,
-    "guardScale": 140
+    "guardScale": 140,
+    "pace": 72,
+    "recovery": 70,
+    "riposte": true
   },
   {
     "id": "ultimate",
@@ -9406,7 +9424,10 @@ export const DIFFICULTY_DATA: readonly DifficultyDef[] = [
     "hardCC": 1,
     "groupCooldown": 180,
     "warning": 45,
-    "guardScale": 160
+    "guardScale": 160,
+    "pace": 62,
+    "recovery": 60,
+    "riposte": true
   }
 ];
 
@@ -10027,6 +10048,27 @@ export const ARENA_DATA: readonly ArenaDef[] = [
             "coop": false
           },
           {
+            "kit": "runner",
+            "x": 1950,
+            "z": 720,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "recruit",
+            "x": 2050,
+            "z": 860,
+            "minDifficulty": 2,
+            "coop": true
+          },
+          {
+            "kit": "runner",
+            "x": 400,
+            "z": 760,
+            "minDifficulty": 3,
+            "coop": true
+          },
+          {
             "kit": "recruit",
             "x": 1700,
             "z": 700,
@@ -10074,6 +10116,20 @@ export const ARENA_DATA: readonly ArenaDef[] = [
             "x": 4000,
             "z": 820,
             "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "lookout",
+            "x": 4150,
+            "z": 880,
+            "minDifficulty": 3,
+            "coop": false
+          },
+          {
+            "kit": "shield",
+            "x": 2700,
+            "z": 760,
+            "minDifficulty": 4,
             "coop": false
           },
           {
@@ -10160,6 +10216,34 @@ export const ARENA_DATA: readonly ArenaDef[] = [
             "z": 820,
             "minDifficulty": 0,
             "coop": false
+          },
+          {
+            "kit": "recruit",
+            "x": 2500,
+            "z": 900,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "runner",
+            "x": 800,
+            "z": 760,
+            "minDifficulty": 2,
+            "coop": true
+          },
+          {
+            "kit": "lookout",
+            "x": 2610,
+            "z": 720,
+            "minDifficulty": 3,
+            "coop": false
+          },
+          {
+            "kit": "runner",
+            "x": 2550,
+            "z": 820,
+            "minDifficulty": 4,
+            "coop": false
           }
         ]
       }
@@ -10218,6 +10302,34 @@ export const ARENA_DATA: readonly ArenaDef[] = [
             "x": 1900,
             "z": 820,
             "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "runner",
+            "x": 2050,
+            "z": 900,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "recruit",
+            "x": 2250,
+            "z": 820,
+            "minDifficulty": 2,
+            "coop": true
+          },
+          {
+            "kit": "shield",
+            "x": 2150,
+            "z": 760,
+            "minDifficulty": 3,
+            "coop": false
+          },
+          {
+            "kit": "lookout",
+            "x": 2300,
+            "z": 700,
+            "minDifficulty": 4,
             "coop": false
           },
           {
@@ -10285,6 +10397,34 @@ export const ARENA_DATA: readonly ArenaDef[] = [
             "z": 900,
             "minDifficulty": 0,
             "coop": false
+          },
+          {
+            "kit": "recruit",
+            "x": 1000,
+            "z": 760,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "recruit",
+            "x": 1100,
+            "z": 900,
+            "minDifficulty": 2,
+            "coop": true
+          },
+          {
+            "kit": "lookout",
+            "x": 500,
+            "z": 880,
+            "minDifficulty": 3,
+            "coop": false
+          },
+          {
+            "kit": "runner",
+            "x": 200,
+            "z": 820,
+            "minDifficulty": 3,
+            "coop": true
           },
           {
             "kit": "runner",
@@ -10369,6 +10509,13 @@ export const ARENA_DATA: readonly ArenaDef[] = [
             "coop": false
           },
           {
+            "kit": "recruit",
+            "x": 2550,
+            "z": 760,
+            "minDifficulty": 4,
+            "coop": false
+          },
+          {
             "kit": "runner",
             "x": 1100,
             "z": 860,
@@ -10386,6 +10533,34 @@ export const ARENA_DATA: readonly ArenaDef[] = [
             "z": 820,
             "minDifficulty": 0,
             "coop": false
+          },
+          {
+            "kit": "runner",
+            "x": 2550,
+            "z": 900,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "recruit",
+            "x": 2450,
+            "z": 760,
+            "minDifficulty": 2,
+            "coop": true
+          },
+          {
+            "kit": "runner",
+            "x": 900,
+            "z": 760,
+            "minDifficulty": 3,
+            "coop": false
+          },
+          {
+            "kit": "shield",
+            "x": 2600,
+            "z": 700,
+            "minDifficulty": 3,
+            "coop": true
           }
         ]
       }
@@ -10470,6 +10645,41 @@ export const ARENA_DATA: readonly ArenaDef[] = [
             "x": 2500,
             "z": 880,
             "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "shield",
+            "x": 2450,
+            "z": 700,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "runner",
+            "x": 800,
+            "z": 720,
+            "minDifficulty": 2,
+            "coop": true
+          },
+          {
+            "kit": "recruit",
+            "x": 2400,
+            "z": 900,
+            "minDifficulty": 3,
+            "coop": true
+          },
+          {
+            "kit": "lookout",
+            "x": 2350,
+            "z": 760,
+            "minDifficulty": 3,
+            "coop": false
+          },
+          {
+            "kit": "overseer",
+            "x": 700,
+            "z": 760,
+            "minDifficulty": 4,
             "coop": false
           }
         ]

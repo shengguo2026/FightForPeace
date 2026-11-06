@@ -492,3 +492,45 @@ As in M10 (W A S D, Attack T, Jump Y, Guard G, Interact J, Special U, Ultimate H
 6. **German and Chinese:** Settings → Language → Deutsch, then 简体中文: walk through the village, Settings (all categories, including System check), Play → stage and hero selection. No label should be cut off or run out of its box, and nothing should be in English except names. With Deutsch, a key such as Space now shows as **Leertaste**.
 7. **Reduce motion:** in Windows Settings → Accessibility → Visual effects, switch **Animation effects** off, then start the game with a new profile (Settings → Profile → New profile, or a private browser window): the first-launch page already has *Reduced flashing* on. Switch Animation effects back afterwards.
 8. **Screen reader (optional):** with Windows Narrator (Ctrl + Win + Enter) on the Guide page, the key prompts are read as "T key" in English and "Taste T" in German.
+
+## M14 follow-up · Hard and above are harder than Medium (0.14.1)
+
+Before this fix, Hard, Extreme and Ultimate played no harder than Medium for the test bot (sometimes easier). Now, from Hard up, enemies attack sooner after each attack, answer straight after blocking one of your hits instead of hiding behind their guard, stop guarding when their Defense bar is almost empty, food restores less, and each fight gets one more enemy per step (Hard, Extreme, Ultimate; co-op gets extra ones). On Hard the Sluice Commander's helpers are a Runner and a Shield instead of two Recruits. Easy and Medium are unchanged. Numbers: `docs/review/08-slice-acceptance.md`, section 5.
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+Open `http://localhost:5173`. To test the branch before it is merged instead of `main`:
+
+```powershell
+git fetch origin claude/project-thread-qcmrgs
+git checkout claude/project-thread-qcmrgs
+pnpm install
+pnpm dev
+```
+
+Optional, the automated checks (the balance check now plays every beat on all five difficulties and takes about 40 seconds):
+
+```powershell
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm e2e
+```
+
+### Steps
+
+1. **Medium is unchanged:** play the gate courtyard on Medium as in M14 step 2: two Recruits and a Shield, then a Runner and a Lookout. It should feel the same as before.
+2. **Hard, solo:** Play → Solo → Stage 1 on **Hard**, either founder, and play from the start to at least the bridge. The first fight has one enemy more (a Runner); after you block or hit into an enemy's guard, it hits back quickly instead of standing in its guard. It should feel clearly harder than Medium, but still fair.
+3. **Hard courtyard and boss:** press **F1** for the Lab panel, pick *Stage 1* with difficulty **Hard** and the courtyard beat, start. The second group now brings a Shield as well as the Runner and Lookout, and one Recruit is the Black-Iron Enforcer. Then pick the **sluice** beat: when the Commander picks up the Handwheel (phase 2), a **Runner and a Shield** come in, not two Recruits.
+4. **Extreme and Ultimate (F1 panel, they are still locked in the normal menu):** same panel, difficulty **Extreme**, then **Ultimate**, the dry fields beat: each step has one more enemy (a Lookout in the second fight on Extreme, a Shield on Ultimate) and enemies come back faster. Ultimate should feel very hard.
+5. **Food:** on Hard, get hurt in the dry fields, then walk over the food at the end of the beat: it restores less Health than on Medium (85 %; Extreme 70 %, Ultimate 60 %).
+6. **Co-op on Hard (optional):** Same-device co-op on Hard: each fight has one extra enemy compared to solo Hard. Tell me if the Commander still feels too easy in co-op on Extreme (the test bots still beat him as often as on Medium).

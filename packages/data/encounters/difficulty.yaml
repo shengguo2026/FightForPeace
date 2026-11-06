@@ -2,6 +2,10 @@
 # reference. Pairs are [solo, co-op]. Difficulty changes budgets, concurrency, perception
 # and decision quality, never hero controls or defensive timing windows. `guardScale`
 # multiplies how often enemies take their guard chances (percent of the profile rate).
+# M14 follow-up: `pace` is the percent of each enemy attack's authored cooldown (higher
+# difficulties come back sooner, so the larger budgets are actually used) and `recovery`
+# the percent of a food pickup's Health restored (D.2 resource direction). With `riposte`
+# an enemy that blocked a hit answers it at once instead of holding its guard.
 difficulties:
   - id: easy
     name: Easy
@@ -14,6 +18,9 @@ difficulties:
     groupCooldown: 360
     warning: 72
     guardScale: 60
+    pace: 100
+    recovery: 100
+    riposte: false
   - id: medium
     name: Medium
     budget: [68, 108]
@@ -25,6 +32,9 @@ difficulties:
     groupCooldown: 300
     warning: 60
     guardScale: 100
+    pace: 100
+    recovery: 100
+    riposte: false
   - id: hard
     name: Hard
     budget: [82, 128]
@@ -36,6 +46,9 @@ difficulties:
     groupCooldown: 260
     warning: 54
     guardScale: 120
+    pace: 85
+    recovery: 85
+    riposte: true
   - id: extreme
     name: Extreme
     budget: [96, 148]
@@ -47,6 +60,9 @@ difficulties:
     groupCooldown: 220
     warning: 48
     guardScale: 140
+    pace: 72
+    recovery: 70
+    riposte: true
   - id: ultimate
     name: Ultimate
     budget: [108, 166]
@@ -58,3 +74,6 @@ difficulties:
     groupCooldown: 180
     warning: 45
     guardScale: 160
+    pace: 62
+    recovery: 60
+    riposte: true

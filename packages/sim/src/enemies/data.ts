@@ -17,6 +17,8 @@ export const PROFILES: readonly (EnemyProfile | null)[] = ENEMY_PROFILES;
 
 /** Difficulty index of Medium, the reference profile. */
 export const MEDIUM = 1;
+/** Difficulty index of Hard, from which elite variants appear. */
+export const HARD = 2;
 
 export function arenaIndex(id: string): number {
   const i = ARENAS.findIndex((a) => a.id === id);

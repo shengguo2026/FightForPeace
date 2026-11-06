@@ -81,6 +81,9 @@ beats:
               - { kit: recruit, x: 1500, z: 760 }
               - { kit: recruit, x: 1650, z: 900 }
               - { kit: recruit, x: 1800, z: 820, minDifficulty: medium }
+              - { kit: runner, x: 1950, z: 720, minDifficulty: hard }
+              - { kit: recruit, x: 2050, z: 860, minDifficulty: hard, coop: true }
+              - { kit: runner, x: 400, z: 760, minDifficulty: extreme, coop: true }
               - { kit: recruit, x: 1700, z: 700, coop: true }
       - at: 2900
         view: 2600
@@ -89,6 +92,8 @@ beats:
               - { kit: recruit, x: 3700, z: 760 }
               - { kit: recruit, x: 3850, z: 900, minDifficulty: medium }
               - { kit: shield, x: 4000, z: 820 }
+              - { kit: lookout, x: 4150, z: 880, minDifficulty: extreme }
+              - { kit: shield, x: 2700, z: 760, minDifficulty: ultimate }
               - { kit: recruit, x: 3800, z: 700, coop: true }
     pickups:
       - { x: 4300, z: 880, heal: 250, look: 0 }
@@ -111,6 +116,10 @@ beats:
             next: 1
           - enemies:
               - { kit: runner, x: 2580, z: 820 }
+              - { kit: recruit, x: 2500, z: 900, minDifficulty: hard }
+              - { kit: runner, x: 800, z: 760, minDifficulty: hard, coop: true }
+              - { kit: lookout, x: 2610, z: 720, minDifficulty: extreme }
+              - { kit: runner, x: 2550, z: 820, minDifficulty: ultimate }
     pickups:
       - { x: 3000, z: 900, heal: 250, look: 1 }
 
@@ -129,6 +138,10 @@ beats:
               - { kit: recruit, x: 1500, z: 760 }
               - { kit: recruit, x: 1650, z: 900, minDifficulty: medium }
               - { kit: overseer, x: 1900, z: 820 }
+              - { kit: runner, x: 2050, z: 900, minDifficulty: hard }
+              - { kit: recruit, x: 2250, z: 820, minDifficulty: hard, coop: true }
+              - { kit: shield, x: 2150, z: 760, minDifficulty: extreme }
+              - { kit: lookout, x: 2300, z: 700, minDifficulty: ultimate }
               - { kit: recruit, x: 1700, z: 700, coop: true }
     workers:
       - { x: 2020, z: 690, look: a }
@@ -157,6 +170,10 @@ beats:
               - { kit: shield, x: 1400, z: 820 }
               - { kit: runner, x: 1650, z: 720 }
               - { kit: overseer, x: 1800, z: 900 }
+              - { kit: recruit, x: 1000, z: 760, minDifficulty: hard }
+              - { kit: recruit, x: 1100, z: 900, minDifficulty: hard, coop: true }
+              - { kit: lookout, x: 500, z: 880, minDifficulty: extreme }
+              - { kit: runner, x: 200, z: 820, minDifficulty: extreme, coop: true }
               - { kit: runner, x: 1900, z: 860, coop: true }
     pickups:
       - { x: 2400, z: 900, heal: 250, look: 3 }
@@ -189,10 +206,15 @@ beats:
               - { kit: shield, x: 2200, z: 820 }
               - { kit: runner, x: 2450, z: 720 }
               - { kit: lookout, x: 2680, z: 880 }
+              - { kit: recruit, x: 2550, z: 760, minDifficulty: ultimate }
               - { kit: runner, x: 1100, z: 860, coop: true }
             next: 1
           - enemies:
               - { kit: overseer, x: 2650, z: 820 }
+              - { kit: runner, x: 2550, z: 900, minDifficulty: hard }
+              - { kit: recruit, x: 2450, z: 760, minDifficulty: hard, coop: true }
+              - { kit: runner, x: 900, z: 760, minDifficulty: extreme }
+              - { kit: shield, x: 2600, z: 700, minDifficulty: extreme, coop: true }
     pickups:
       - { x: 3300, z: 880, heal: 250, look: 0 }
 
@@ -218,6 +240,11 @@ beats:
           - enemies:
               - { kit: runner, x: 2400, z: 720 }
               - { kit: lookout, x: 2500, z: 880 }
+              - { kit: shield, x: 2450, z: 700, minDifficulty: hard }
+              - { kit: runner, x: 800, z: 720, minDifficulty: hard, coop: true }
+              - { kit: recruit, x: 2400, z: 900, minDifficulty: extreme, coop: true }
+              - { kit: lookout, x: 2350, z: 760, minDifficulty: extreme }
+              - { kit: overseer, x: 700, z: 760, minDifficulty: ultimate }
         substitutions:
           - { from: recruit, to: enforcer, minDifficulty: hard, count: 1 }
     pickups:
