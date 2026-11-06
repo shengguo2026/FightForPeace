@@ -17,13 +17,13 @@ export function SystemCheckPanel({ shell }: { shell: Shell }) {
   const storage = shell.storage.value;
   const q = shell.lab.quality.value;
   const p = perf.snapshot();
-  const level = (v: string) =>
-    t(`settings.quality${v[0]!.toUpperCase()}${v.slice(1)}` as TextId);
+  const level = (v: string) => t(`settings.quality${v[0]!.toUpperCase()}${v.slice(1)}` as TextId);
   return (
     <div data-testid="system-check">
       <p class="ffp-hint">{t('system.intro')}</p>
       <p data-testid="system-browser">
-        {t('system.browser', { browser: BROWSER })} · {t('system.version', { version: __FFP_VERSION__ })}
+        {t('system.browser', { browser: BROWSER })} ·{' '}
+        {t('system.version', { version: __FFP_VERSION__ })}
       </p>
       <table class="ffp-table" data-testid="system-caps">
         <tbody>

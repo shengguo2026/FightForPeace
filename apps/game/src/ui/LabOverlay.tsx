@@ -442,7 +442,7 @@ function ArenaPanel({ state, actions }: { state: LabState; actions: LabActions }
   );
 }
 
-const QUALITY_OPTIONS = ['auto', 'high', 'medium', 'low'] as const;
+const QUALITY_OPTIONS = ['auto', 'high', 'medium', 'low', 'minimal'] as const;
 
 /** M8 same-device co-op: invitation, handoffs, bundles, telemetry, quality and focus pause. */
 function CoopPanel({ state, actions }: { state: LabState; actions: LabActions }) {

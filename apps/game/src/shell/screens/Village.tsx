@@ -75,6 +75,7 @@ export function VillageScreen({ shell }: { shell: Shell }) {
       !p?.settings.reducedFlashing ? (
         <video
           data-testid="title-loop"
+          aria-hidden="true"
           autoplay
           muted
           loop

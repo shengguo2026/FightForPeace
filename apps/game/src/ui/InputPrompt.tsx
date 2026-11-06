@@ -33,7 +33,7 @@ export function InputPrompt({ prompt, color }: { prompt: Prompt; color?: string 
   switch (prompt.kind) {
     case 'key':
       return (
-        <kbd style={{ ...keycap, ...style }} aria-label={a11y} data-prompt="key">
+        <kbd style={{ ...keycap, ...style }} role="img" aria-label={a11y} data-prompt="key">
           {prompt.label}
         </kbd>
       );
@@ -41,7 +41,7 @@ export function InputPrompt({ prompt, color }: { prompt: Prompt; color?: string 
       return (
         <span
           style={{ ...padGlyph, ...style }}
-          aria-label={a11y}
+          role="img" aria-label={a11y}
           data-prompt="pad"
           data-asset={`ui.prompt.pad.${prompt.family}.${prompt.button}`}
         >
@@ -50,7 +50,7 @@ export function InputPrompt({ prompt, color }: { prompt: Prompt; color?: string 
       );
     case 'chord':
       return (
-        <span aria-label={a11y} data-prompt="chord">
+        <span role="img" aria-label={a11y} data-prompt="chord">
           {prompt.parts.map((p, i) => (
             <>
               {i > 0 ? '+' : null}
@@ -61,7 +61,7 @@ export function InputPrompt({ prompt, color }: { prompt: Prompt; color?: string 
       );
     case 'gesture':
       return (
-        <span aria-label={a11y} data-prompt="gesture">
+        <span role="img" aria-label={a11y} data-prompt="gesture">
           <InputPrompt prompt={prompt.part} color={color} />
           <InputPrompt prompt={prompt.part} color={color} />
         </span>

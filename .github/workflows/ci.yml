@@ -30,8 +30,10 @@ jobs:
       - run: pnpm build
       - name: Portable zip
         run: node tools/release.mjs
-      - name: Portable smoke test (unzip and start)
+      - name: Portable smoke test (unzip and start, played in Chromium)
         run: pnpm smoke:portable
+        env:
+          FFP_SMOKE_BROWSER: chromium
       - name: Upload portable zip
         uses: actions/upload-artifact@v4
         with:
@@ -43,7 +45,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: screenshots
-          path: apps/game/test-results/**/*.png
+          path: |
+            apps/game/test-results/**/*.png
+            apps/game/test-results/*.json
+            release/system-check-*
           if-no-files-found: warn
       - name: Upload Playwright report
         if: failure()
@@ -65,5 +70,14 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm release
-      - name: Portable smoke test with start.bat
+      - name: Portable smoke test with start.bat, played in Microsoft Edge (M14 browser matrix)
         run: pnpm smoke:portable
+        env:
+          FFP_SMOKE_BROWSER: msedge
+      - name: Upload Edge System check
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: edge-system-check
+          path: release/system-check-*
+          if-no-files-found: warn

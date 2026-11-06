@@ -28,6 +28,7 @@ import { activeCinematic } from './media/Cinematic';
 import { audio } from './media/audio';
 import { EFFECT_STATS } from './scenes/effects';
 import { capabilities, perf } from './system/probe';
+import { textDiagnostics } from './text/i18n';
 
 /** Installs window.__ffp for automated tests. Called in dev and e2e builds only. */
 export function installDebugHook(
@@ -136,6 +137,8 @@ export function installDebugHook(
         };
       },
       pilotActive: () => session.pilot !== null,
+      // M14: text that fell back to English or is missing (localization QA).
+      diagnostics: () => [...textDiagnostics()],
     },
     frame: () => session.world.frame,
     body: (id) => {

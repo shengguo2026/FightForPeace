@@ -120,8 +120,16 @@ describe('what the player sees follows layout, family, rebinding and language', 
     l.setKeyNames(locale);
     return l;
   };
-  const show = (b: Bindings, input: PromptInput, layout: LayoutName, family: PadFamily = 'xbox', locale: Locale = 'en') =>
-    promptText(resolvePrompt({ bindings: b, labels: labels(layout, locale), family, facing: 1 }, input));
+  const show = (
+    b: Bindings,
+    input: PromptInput,
+    layout: LayoutName,
+    family: PadFamily = 'xbox',
+    locale: Locale = 'en',
+  ) =>
+    promptText(
+      resolvePrompt({ bindings: b, labels: labels(layout, locale), family, facing: 1 }, input),
+    );
 
   test('Jump is the key printed Y on QWERTY and AZERTY, Z on QWERTZ (same physical key)', () => {
     expect(show(DEFAULT_KEYBOARD_P1, { action: 'Jump' }, 'qwerty')).toBe('Y');
@@ -145,7 +153,12 @@ describe('what the player sees follows layout, family, rebinding and language', 
   });
 
   test('Dash falls back to a double tap of Forward, which turns with the facing', () => {
-    const ctx = (facing: 1 | -1) => ({ bindings: DEFAULT_KEYBOARD_P1, labels: labels('qwerty'), family: 'xbox' as const, facing });
+    const ctx = (facing: 1 | -1) => ({
+      bindings: DEFAULT_KEYBOARD_P1,
+      labels: labels('qwerty'),
+      family: 'xbox' as const,
+      facing,
+    });
     expect(promptText(resolvePrompt(ctx(1), { action: 'Dash' }))).toBe('DD');
     expect(promptText(resolvePrompt(ctx(-1), { action: 'Dash' }))).toBe('AA');
     const words = wordsOf('de');
@@ -153,7 +166,10 @@ describe('what the player sees follows layout, family, rebinding and language', 
   });
 
   test('spoken prompts in each language', () => {
-    const p = resolvePrompt({ bindings: DEFAULT_GAMEPAD, labels: labels('qwerty'), family: 'generic', facing: 1 }, { action: 'Jump' });
+    const p = resolvePrompt(
+      { bindings: DEFAULT_GAMEPAD, labels: labels('qwerty'), family: 'generic', facing: 1 },
+      { action: 'Jump' },
+    );
     expect(promptA11y(p, wordsOf('en'))).toBe('bottom face button');
     expect(promptA11y(p, wordsOf('de'))).toBe('unterer Aktionsknopf');
     expect(promptA11y(p, wordsOf('zh-CN'))).toBe('下侧功能键');

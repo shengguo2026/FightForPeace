@@ -69,7 +69,9 @@ describe('capability gates (spec §2)', () => {
     expect(browserName(chrome)).toBe('Chrome 131');
     expect(browserName(`${chrome} Edg/131.0.2903.70`)).toBe('Microsoft Edge 131');
     expect(
-      browserName('Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0'),
+      browserName(
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0',
+      ),
     ).toBe('Firefox 133');
     expect(
       browserName(
@@ -94,7 +96,8 @@ describe('performance probe', () => {
 
   test('a slow 30 FPS machine still steps twice per frame (real time), p95 sees spikes', () => {
     const p = new PerfProbe();
-    for (let i = 0; i < 100; i += 1) p.frame(i % 20 === 0 ? 90 : 1000 / 30, i % 20 === 0 ? 5 : 2, 1, i % 20 === 0);
+    for (let i = 0; i < 100; i += 1)
+      p.frame(i % 20 === 0 ? 90 : 1000 / 30, i % 20 === 0 ? 5 : 2, 1, i % 20 === 0);
     const s = p.snapshot();
     expect(s.simHz).toBeGreaterThan(55);
     expect(s.p95Ms).toBe(90);

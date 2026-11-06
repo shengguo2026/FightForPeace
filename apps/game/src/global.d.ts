@@ -152,6 +152,8 @@ export interface FfpDebugHook {
     lastCombo(): { steps: string[]; hits: number } | null;
     cheats(): { hero: string[][]; session: string[]; marked: boolean };
     pilotActive(): boolean;
+    /** M14: text that fell back to English or is missing (localization QA). */
+    diagnostics(): string[];
   };
   runReplay(log: ReplayLog): number;
   /** Replaces real gamepads with these virtual ones from now on. */

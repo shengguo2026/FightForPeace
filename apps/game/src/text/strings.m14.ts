@@ -28,8 +28,7 @@ export const M14_EN = {
   'system.via.mp4': 'MP4',
   'system.via.indexeddb': 'in this browser',
   'system.via.server': 'in the game folder',
-  'system.feature.saves.off':
-    'Progress is kept only until you close the game (temporary profile).',
+  'system.feature.saves.off': 'Progress is kept only until you close the game (temporary profile).',
   'system.feature.sound.off': 'The game runs silent; subtitles and on-screen warnings stay.',
   'system.feature.videoCinematics.off':
     'Cinematics show their still pictures with the same subtitles.',
@@ -51,6 +50,7 @@ export const M14_EN = {
   'system.blocked.hint':
     'You are using {browser}. Please open the game in a current Chrome, Edge, Firefox or Safari.',
   'settings.qualityMedium': 'Medium',
+  'settings.qualityMinimal': 'Lowest (lower resolution)',
   'settings.fullscreen': 'Full screen',
   'settings.fullscreenHint': 'Fills the whole screen. The browser explains how to leave it.',
   'prompt.unassigned': 'Not assigned',
@@ -108,8 +108,10 @@ export const M14_ZH: Catalog = {
   'system.blocked.title': '和平之战无法在此浏览器中运行',
   'system.blocked.renderer': '此浏览器无法绘制游戏画面（没有 WebGL，也没有 Canvas）。',
   'system.blocked.keyboard': '此浏览器无法报告按下的是哪个物理按键。',
-  'system.blocked.hint': '你正在使用 {browser}。请在最新版 Chrome、Edge、Firefox 或 Safari 中打开游戏。',
+  'system.blocked.hint':
+    '你正在使用 {browser}。请在最新版 Chrome、Edge、Firefox 或 Safari 中打开游戏。',
   'settings.qualityMedium': '中',
+  'settings.qualityMinimal': '最低（降低分辨率）',
   'settings.fullscreen': '全屏',
   'settings.fullscreenHint': '填满整个屏幕。浏览器会说明如何退出。',
   'prompt.unassigned': '未设置',
@@ -168,16 +170,20 @@ export const M14_DE: Catalog = {
   'system.perf.sim':
     'Simulation: {hz} Schritte pro Sekunde (60 ist Echtzeit), {step} ms pro Schritt',
   'system.perf.capped': 'Bilder, die zu langsam zum Aufholen waren: {n}',
-  'system.perf.none': 'Spiele einen Moment und komm dann hierher zurück, um die Messwerte zu sehen.',
+  'system.perf.none':
+    'Spiele einen Moment und komm dann hierher zurück, um die Messwerte zu sehen.',
   'system.perf.reset': 'Neu messen',
   'system.blocked.title': 'Fight For Peace läuft in diesem Browser nicht',
-  'system.blocked.renderer': 'dieser Browser kann das Spiel nicht darstellen (weder WebGL noch Canvas).',
+  'system.blocked.renderer':
+    'dieser Browser kann das Spiel nicht darstellen (weder WebGL noch Canvas).',
   'system.blocked.keyboard': 'dieser Browser meldet nicht, welche physische Taste gedrückt wurde.',
   'system.blocked.hint':
     'Du verwendest {browser}. Bitte öffne das Spiel in einem aktuellen Chrome, Edge, Firefox oder Safari.',
   'settings.qualityMedium': 'Mittel',
+  'settings.qualityMinimal': 'Minimal (geringere Auflösung)',
   'settings.fullscreen': 'Vollbild',
-  'settings.fullscreenHint': 'Füllt den ganzen Bildschirm. Der Browser erklärt, wie du es verlässt.',
+  'settings.fullscreenHint':
+    'Füllt den ganzen Bildschirm. Der Browser erklärt, wie du es verlässt.',
   'prompt.unassigned': 'Nicht belegt',
   'prompt.a11y.key': 'Taste {label}',
   'prompt.a11y.button': 'Knopf {label}',

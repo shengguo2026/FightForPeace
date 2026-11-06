@@ -1,4 +1,4 @@
-import { QUALITY, QualityGovernor } from '../src/render/quality';
+import { QUALITY, QualityGovernor, RENDER_SCALE } from '../src/render/quality';
 
 const feed = (q: QualityGovernor, ms: number, total: number) => {
   for (let t = 0; t < total; t += ms) q.sample(ms);
@@ -10,7 +10,11 @@ test('Auto Quality steps down after sustained slow frames, one level at a time',
   expect(feed(q, 16.7, 5000)).toBe('high');
   expect(feed(q, 33, QUALITY.downAfterMs + 600)).toBe('medium');
   expect(feed(q, 33, QUALITY.downAfterMs + 100)).toBe('low');
-  expect(feed(q, 33, 10000)).toBe('low');
+  // M14: the last step lowers the internal resolution.
+  expect(feed(q, 33, QUALITY.downAfterMs + 100)).toBe('minimal');
+  expect(feed(q, 33, 10000)).toBe('minimal');
+  expect(RENDER_SCALE.minimal).toBeLessThan(1);
+  expect(RENDER_SCALE.low).toBe(1);
 });
 
 test('it steps back up only after a longer fast period (hysteresis)', () => {

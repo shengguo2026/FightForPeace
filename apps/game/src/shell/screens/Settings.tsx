@@ -329,6 +329,7 @@ function DisplayPanel({ shell }: { shell: Shell }) {
           { value: 'high' as QualitySetting, label: t('settings.qualityHigh') },
           { value: 'medium' as QualitySetting, label: t('settings.qualityMedium') },
           { value: 'low' as QualitySetting, label: t('settings.qualityLow') },
+          { value: 'minimal' as QualitySetting, label: t('settings.qualityMinimal') },
         ]}
         onChange={(v) => shell.onQuality(v)}
         testId="setting-quality"
