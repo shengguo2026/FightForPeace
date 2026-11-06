@@ -8,7 +8,7 @@ import { nonCombatant } from '../src/combat/damage';
  * the fight, presses Attack on a fixed rhythm in range, and raises Guard while an enemy
  * close by is in its startup (every `guardEvery`-th time). Not an AI for the game.
  */
-export function botInput(w: World, slot = 0, guardEvery = 2): FrameInput {
+export function botInput(w: World, slot = 0, guardEvery = 2, attackEvery = 9): FrameInput {
   const h = heroOf(w, slot);
   const idle: FrameInput = { moveX: 0, moveZ: 0, pressed: 0, held: 0, dirPressed: 0 };
   if (!h) return idle;
@@ -38,8 +38,10 @@ export function botInput(w: World, slot = 0, guardEvery = 2): FrameInput {
   const moveX = Math.abs(dx) > 120 ? (dx > 0 ? 1 : -1) : 0;
   const moveZ = Math.abs(dz) > 10 ? (dz > 0 ? 1 : -1) : 0;
   const inRange = Math.abs(dx) <= 130 && Math.abs(dz) <= 24;
-  const pressed = inRange && w.frame % 9 === 0 ? ActionBit.Attack : 0;
   const facingWrong = inRange && (dx > 0 ? 1 : -1) !== h.facing;
+  // M14: never attack away from the target (a jab string facing the wrong way could
+  // chain forever against an enemy idling at the edge of the view).
+  const pressed = inRange && !facingWrong && w.frame % attackEvery === 0 ? ActionBit.Attack : 0;
   return {
     moveX: facingWrong ? (dx > 0 ? 1 : -1) : (moveX as -1 | 0 | 1),
     moveZ: moveZ as -1 | 0 | 1,

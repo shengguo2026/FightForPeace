@@ -206,13 +206,18 @@ beats:
       - at: 800
         view: 600
         waves:
+          # M14 balance pass: the spec's five (six in co-op) arrive in two groups. The
+          # Runner and the Lookout join when one of the first group is still fighting,
+          # so the exam stays the hardest ordinary beat without out-pressing the boss.
           - enemies:
               - { kit: recruit, x: 2000, z: 760 }
               - { kit: recruit, x: 2100, z: 900 }
               - { kit: shield, x: 2250, z: 820 }
+              - { kit: runner, x: 700, z: 860, coop: true }
+            next: 1
+          - enemies:
               - { kit: runner, x: 2400, z: 720 }
               - { kit: lookout, x: 2500, z: 880 }
-              - { kit: runner, x: 700, z: 860, coop: true }
         substitutions:
           - { from: recruit, to: enforcer, minDifficulty: hard, count: 1 }
     pickups:

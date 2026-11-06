@@ -29,12 +29,16 @@ function toward(w: World, slot: number, x: number, z: number): FrameInput {
  * A deterministic stand-in player for stage tests: fights with the arena bot, then frees
  * workers, revives its partner, inspects the clue and the evidence, and walks right.
  */
-export function stageBotInput(w: World, slot = 0): FrameInput {
+export function stageBotInput(
+  w: World,
+  slot = 0,
+  style: { guardEvery?: number; attackEvery?: number } = {},
+): FrameInput {
   const h = heroOf(w, slot);
   const run = w.run;
   if (!h || !run || h.ko) return IDLE;
   const fighting = w.bodies.some((e) => e.team === 'enemy' && !e.ko && !nonCombatant(e));
-  if (fighting) return botInput(w, slot);
+  if (fighting) return botInput(w, slot, style.guardEvery, style.attackEvery);
   if (h.state === MoveState.Channel) return { ...IDLE, held: ActionBit.Interact };
   if (interactionFor(w, h) !== ChannelKind.None) {
     const ready = h.state === MoveState.Idle || h.state === MoveState.Walk;

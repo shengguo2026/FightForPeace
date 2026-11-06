@@ -10423,7 +10423,7 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "surge": null,
     "waves": [
       {
-        "next": 0,
+        "next": 1,
         "enemies": [
           {
             "kit": "recruit",
@@ -10448,6 +10448,18 @@ export const ARENA_DATA: readonly ArenaDef[] = [
           },
           {
             "kit": "runner",
+            "x": 700,
+            "z": 860,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      },
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "runner",
             "x": 2400,
             "z": 720,
             "minDifficulty": 0,
@@ -10459,13 +10471,6 @@ export const ARENA_DATA: readonly ArenaDef[] = [
             "z": 880,
             "minDifficulty": 0,
             "coop": false
-          },
-          {
-            "kit": "runner",
-            "x": 700,
-            "z": 860,
-            "minDifficulty": 0,
-            "coop": true
           }
         ]
       }

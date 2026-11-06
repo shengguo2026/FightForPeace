@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Medium balance shape (twelve bot variants per beat) > the balance table 1`] = `
+"| Line-up | fields | bridge | rescue | mill | investigation | canal | courtyard | sluice |
+| mountain easy | 12/12 · 903 | 10/12 · 647 | 10/12 · 750 | 9/12 · 658 | 12/12 · 1000 | 9/12 · 509 | 8/12 · 382 | 4/12 · 105 |
+| mountain medium | 11/12 · 752 | 9/12 · 637 | 8/12 · 594 | 8/12 · 595 | 12/12 · 1000 | 9/12 · 519 | 4/12 · 206 | 5/12 · 169 |
+| river easy | 12/12 · 852 | 10/12 · 572 | 12/12 · 918 | 9/12 · 585 | 12/12 · 1000 | 8/12 · 532 | 6/12 · 570 | 9/12 · 271 |
+| river medium | 9/12 · 539 | 9/12 · 649 | 11/12 · 859 | 4/12 · 271 | 12/12 · 1000 | 9/12 · 633 | 5/12 · 345 | 4/12 · 97 |
+| coop easy | 12/12 · 908 | 12/12 · 866 | 12/12 · 985 | 11/12 · 799 | 12/12 · 1000 | 12/12 · 848 | 12/12 · 808 | 10/12 · 528 |
+| coop medium | 10/12 · 544 | 12/12 · 964 | 12/12 · 992 | 12/12 · 871 | 12/12 · 1000 | 12/12 · 866 | 10/12 · 581 | 11/12 · 577 |"
+`;
