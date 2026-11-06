@@ -9,4 +9,6 @@ export const presentation = {
   reducedShake: false,
   /** M11: each player's worn outfit as a sprite tint (null: default clothes). */
   outfitTint: [] as (number | null)[],
+  /** M13: cosmetic sparks and particles (cores, telegraphs and cues always stay). */
+  particles: 'full' as 'full' | 'reduced' | 'off',
 };

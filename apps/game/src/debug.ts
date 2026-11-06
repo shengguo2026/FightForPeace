@@ -24,6 +24,9 @@ import type { GameSession } from './game';
 import type { LabState } from './ui/labState';
 import type { Shell } from './shell/shell';
 import { setFakePads, useFakePads } from './input/browserInput';
+import { activeCinematic } from './media/Cinematic';
+import { audio } from './media/audio';
+import { EFFECT_STATS } from './scenes/effects';
 
 /** Installs window.__ffp for automated tests. Called in dev and e2e builds only. */
 export function installDebugHook(
@@ -33,6 +36,33 @@ export function installDebugHook(
   shell: Shell,
 ): void {
   window.__ffp = {
+    media: {
+      state: () => {
+        const c = activeCinematic.value;
+        const f = c?.player.frame();
+        const now = audio.director.playing;
+        return {
+          cine:
+            c && f
+              ? {
+                  id: c.id,
+                  shot: f.shot.id,
+                  index: f.index,
+                  count: f.count,
+                  time: f.time,
+                  paused: f.paused,
+                  video: c.video,
+                }
+              : null,
+          music: now ? { cue: now.cue, state: now.state } : null,
+          musicLog: [...audio.director.log],
+          played: [...audio.played],
+          audioRunning: audio.running,
+          effects: { ...EFFECT_STATS },
+        };
+      },
+      advanceCine: (ms) => activeCinematic.value?.player.advance(ms),
+    },
     net: {
       state: () => {
         const n = shell.net;

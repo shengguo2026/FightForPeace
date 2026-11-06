@@ -91,6 +91,9 @@ PLATE_AREAS = {"sluice"}
 
 PROPS = ["WORKSTAFF", "HANDWHEEL", "SLUICEBOARDS", "IMPACT-HAZARD", "FOOD", "BARRICADE"]
 
+# Logical id prefixes owned by tools/art/import_media.py (M13).
+MEDIA_PREFIXES = {"cine", "story", "mus", "sfx", "vfx"}
+
 # M9 non-combatants: the two coerced workers of the Stage 1 rescue (pose sheets).
 NPCS = {"worker-a": "NPC-WORKER-A", "worker-b": "NPC-WORKER-B"}
 
@@ -215,6 +218,12 @@ def main() -> None:
                 continue
             key = f"bg.stage1.{area}.{layer.lower()}"
             assets[key] = convert_layer(p, f"bg-{area}-{layer.lower()}", tiled is not None)
+    # M13: media entries (clips, stills, music, sounds, effect sheets) come from
+    # import_media.py; keep them when the sprite sheets are re-imported.
+    if MANIFEST.exists():
+        for key, entry in json.loads(MANIFEST.read_text(encoding="utf-8"))["assets"].items():
+            if key.split(".")[0] in MEDIA_PREFIXES and key not in assets:
+                assets[key] = entry
     manifest = {"version": 2, "assets": dict(sorted(assets.items()))}
     MANIFEST.write_text(json.dumps(manifest, indent=1) + "\n", encoding="utf-8")
     # Keep the manifest in the repository's Prettier style (best effort).

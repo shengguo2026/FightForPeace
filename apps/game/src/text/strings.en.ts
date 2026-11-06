@@ -1,6 +1,7 @@
 import { ARENA_TEXT, GRADE_TEXT, STAGE_TEXT, TEXT } from './en';
 import { M11_EN } from './strings.m11';
 import { M12_EN } from './strings.m12';
+import { M13_EN } from './strings.m13';
 
 /**
  * M10 English base catalogue. Every key here must exist in strings.zh-CN.ts and
@@ -222,7 +223,7 @@ const SHELL = {
   'settings.volumeEffects': 'Sound effects',
   'settings.volumeVoice': 'Voices',
   'settings.audioHint':
-    'Music and voices arrive with the cinematics; the warning sounds use Sound effects.',
+    'Cinematic clips play their own sound at the Music level; warnings and hits use Sound effects.',
   'settings.uiScale': 'Interface size',
   'settings.uiScaleHint': 'Bigger or smaller menus and HUD on this computer.',
   'settings.keepChange': 'Keep this size? It changes back in {n} s.',
@@ -305,6 +306,7 @@ export const EN = {
   ...SHELL,
   ...M11_EN,
   ...M12_EN,
+  ...M13_EN,
   ...prefixed('prompt.', TEXT),
   ...prefixed('run.', STAGE_TEXT),
   ...prefixed('arena.', ARENA_TEXT),

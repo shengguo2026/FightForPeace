@@ -1,6 +1,7 @@
 import type { Catalog } from '@ffp/platform';
 import { M11_DE } from './strings.m11';
 import { M12_DE } from './strings.m12';
+import { M13_DE } from './strings.m13';
 
 /** M10 catalogue (de). Keys mirror strings.en.ts and the generated data names. */
 export const DE: Catalog = {
@@ -388,7 +389,7 @@ export const DE: Catalog = {
   'settings.volumeEffects': 'Soundeffekte',
   'settings.volumeVoice': 'Stimmen',
   'settings.audioHint':
-    'Musik und Stimmen kommen mit den Zwischensequenzen; die Warntöne nutzen die Soundeffekte.',
+    'Zwischensequenzen spielen ihren eigenen Ton mit der Musiklautstärke; Warnungen und Treffer nutzen die Soundeffekte.',
   'settings.uiScale': 'Größe der Oberfläche',
   'settings.uiScaleHint': 'Größere oder kleinere Menüs und HUD auf diesem Computer.',
   'settings.keepChange': 'Diese Größe behalten? Sie wird in {n} s zurückgesetzt.',
@@ -548,4 +549,5 @@ export const DE: Catalog = {
   'grade.time': 'Zeit',
   ...M11_DE,
   ...M12_DE,
+  ...M13_DE,
 };

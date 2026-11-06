@@ -1,3 +1,5 @@
+import { tickMusic } from './media/director';
+import { audio } from './media/audio';
 import * as Phaser from 'phaser';
 import { render, h } from 'preact';
 import { DEFAULT_KEYBOARD_P1, QualityGovernor, rebind } from '@ffp/platform';
@@ -164,6 +166,7 @@ render(
       continuedFrom: () => shell.continued.value?.beat ?? null,
       settlement: () => (useShell ? shell.settlement.value : []),
       again: () => !shell.net.active,
+      hidden: () => useShell && shell.ending.value !== null,
       onAgain: () => {
         if (useShell && shell.fromShell.value) shell.startStage();
         else actions.startArena(lab.arenaPick.value.arena);
@@ -239,6 +242,11 @@ installKeyboard(
   },
 );
 
+// M13: browsers allow audio only after a user gesture.
+for (const type of ['pointerdown', 'keydown'] as const)
+  window.addEventListener(type, () => audio.unlock(), { capture: true });
+window.addEventListener('gamepadconnected', () => audio.unlock());
+
 if (useShell) {
   const d = new URLSearchParams(location.search);
   if (d.has('lang')) setLocale(d.get('lang') as 'en');
@@ -285,6 +293,18 @@ function tick(now: number): void {
   refreshArena(session, lab);
   refreshCoop(session, lab);
   refreshStage(session, lab);
+  if (useShell)
+    tickMusic(
+      {
+        screen: shell.screen.value,
+        settingsFrom: shell.settingsFrom.value,
+        world: session.world,
+        results: lab.results.value !== null,
+        ending: shell.ending.value !== null,
+        paused: menuPaused(lab),
+      },
+      now,
+    );
   if (useShell && shell.screen.value === 'game') {
     refreshHud(session);
     shell.watchRun(lab.results.value ? stageResults(session.world) : null);

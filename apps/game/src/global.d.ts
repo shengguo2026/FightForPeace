@@ -76,7 +76,31 @@ export interface DebugNet {
   hashes: [number, number][];
 }
 
+export interface DebugMedia {
+  /** The cinematic on screen: id, shot, index, mode, paused, time in the shot. */
+  cine: {
+    id: string;
+    shot: string;
+    index: number;
+    count: number;
+    time: number;
+    paused: boolean;
+    video: boolean;
+  } | null;
+  music: { cue: string; state: string } | null;
+  musicLog: string[];
+  played: string[];
+  audioRunning: boolean;
+  effects: Record<string, number>;
+}
+
 export interface FfpDebugHook {
+  /** M13 media hooks. */
+  media: {
+    state(): DebugMedia;
+    /** Advance the cinematic on screen by this many ms (its own clock). */
+    advanceCine(ms: number): void;
+  };
   /** M12 Wi-Fi co-op hooks. */
   net: {
     state(): DebugNet;

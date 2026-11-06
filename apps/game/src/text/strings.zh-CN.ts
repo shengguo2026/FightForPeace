@@ -1,6 +1,7 @@
 import type { Catalog } from '@ffp/platform';
 import { M11_ZH } from './strings.m11';
 import { M12_ZH } from './strings.m12';
+import { M13_ZH } from './strings.m13';
 
 /** M10 catalogue (zh-CN). Keys mirror strings.en.ts and the generated data names. */
 export const ZH_CN: Catalog = {
@@ -362,7 +363,7 @@ export const ZH_CN: Catalog = {
   'settings.volumeMusic': '音乐',
   'settings.volumeEffects': '音效',
   'settings.volumeVoice': '语音',
-  'settings.audioHint': '音乐和语音会随过场动画一起加入；警示音使用音效音量。',
+  'settings.audioHint': '过场动画片段按音乐音量播放自身的声音；警示和命中使用音效音量。',
   'settings.uiScale': '界面大小',
   'settings.uiScaleHint': '放大或缩小这台电脑上的菜单和界面信息。',
   'settings.keepChange': '保留这个大小吗？{n} 秒后恢复。',
@@ -515,4 +516,5 @@ export const ZH_CN: Catalog = {
   'grade.time': '用时',
   ...M11_ZH,
   ...M12_ZH,
+  ...M13_ZH,
 };

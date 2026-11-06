@@ -12,6 +12,7 @@ import type { Shell } from '../shell';
 import { useNav } from '../hooks';
 import { ART, Button, Choice, Panel, Screen } from '../ui';
 import { RemapPanel } from './Remap';
+import { audio } from '../../media/audio';
 
 export const CATEGORIES = [
   'gameplay',
@@ -170,6 +171,30 @@ export function AccessibilityPanel({ shell }: { shell: Shell }) {
         options={onOff()}
         onChange={(v) => set('reducedShake', v)}
       />
+      <Choice
+        label={t('settings.particles')}
+        scope={scope}
+        value={s.particles}
+        options={(['full', 'reduced', 'off'] as const).map((v) => ({
+          value: v,
+          label: t(`settings.particles.${v}`),
+        }))}
+        onChange={(v) => set('particles', v)}
+        testId="setting-particles"
+      />
+      <Hint id="settings.particlesHint" />
+      <Choice
+        label={t('settings.cinematics')}
+        scope={scope}
+        value={s.cinematics}
+        options={[
+          { value: 'video' as const, label: t('settings.cinematicsVideo') },
+          { value: 'stills' as const, label: t('settings.cinematicsStills') },
+        ]}
+        onChange={(v) => set('cinematics', v)}
+        testId="setting-cinematics"
+      />
+      <Hint id="settings.cinematicsHint" />
       <Hint id="settings.presentationHint" />
     </>
   );
@@ -179,7 +204,13 @@ export function AudioPanel({ shell }: { shell: Shell }) {
   const s = shell.active.value!.settings;
   const set = useSetting(shell);
   const volume = (
-    key: 'volumeMaster' | 'volumeMusic' | 'volumeEffects' | 'volumeVoice',
+    key:
+      | 'volumeMaster'
+      | 'volumeMusic'
+      | 'volumeEffects'
+      | 'volumeVoice'
+      | 'volumeAmbience'
+      | 'volumeInterface',
     label: TextId,
     first = false,
   ) => (
@@ -199,8 +230,28 @@ export function AudioPanel({ shell }: { shell: Shell }) {
       {volume('volumeMusic', 'settings.volumeMusic')}
       {volume('volumeEffects', 'settings.volumeEffects')}
       {volume('volumeVoice', 'settings.volumeVoice')}
+      {volume('volumeAmbience', 'settings.volumeAmbience')}
+      {volume('volumeInterface', 'settings.volumeInterface')}
       <Hint id="settings.audioHint" />
+      <NowPlaying />
     </>
+  );
+}
+
+/** M13: the music cue and state playing now (the Stage 1 score). */
+function NowPlaying() {
+  const [now, setNow] = useState(audio.director.playing);
+  useLayoutEffect(() => {
+    const id = setInterval(() => setNow(audio.director.playing), 500);
+    return () => clearInterval(id);
+  }, []);
+  const cue = now ? audio.director.cue(now.cue) : undefined;
+  return (
+    <p class="ffp-hint" data-testid="now-playing">
+      {cue
+        ? t('settings.nowPlaying', { title: `${t(cue.title as TextId)} · ${now!.state}` })
+        : t('settings.nothingPlaying')}
+    </p>
   );
 }
 

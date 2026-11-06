@@ -42,10 +42,11 @@ import type { GameSession } from '../game';
 import type { LabState } from '../ui/labState';
 import { setLocale, t } from '../text/i18n';
 import { presentation } from './presentation';
+import { audio } from '../media/audio';
 import { Academy } from '../academy/runner';
 import { NetPlay } from '../net/netplay';
 import { setFacingMode } from '@ffp/sim';
-import type { StartInfo } from '@ffp/platform';
+import type { StartInfo, StoryState } from '@ffp/platform';
 
 /**
  * M10 game shell: which screen is open, the profiles and their saves, and the play flow
@@ -138,6 +139,8 @@ export class Shell {
   /** Cheats for the next run, and which players accepted the Cheat-Assisted consequence. */
   readonly cheatDraft = signal<CheatDraft>({ hero: [[], []], session: [] });
   readonly cheatConsent = signal<boolean[]>([]);
+  /** M13: the ending cinematic's state while it plays over the finished stage (null: none). */
+  readonly ending = signal<StoryState | null>(null);
   /** Where Elder's Secrets and the Guide return to. */
   readonly secretsFrom = signal<Screen>('guide');
   readonly guideFrom = signal<Screen>('village');
@@ -497,6 +500,7 @@ export class Shell {
     this.partner.value = null;
     this.continued.value = null;
     this.resultsRecorded = false;
+    this.ending.value = null;
     this.settlement.value = [];
     this.lastCheckpointKey = '';
     this.cheatDraft.value = { hero: [[], []], session: [] };
@@ -558,6 +562,7 @@ export class Shell {
     const heroes = from ? from.heroes : this.chosenHeroes();
     this.continued.value = from ?? null;
     this.resultsRecorded = false;
+    this.ending.value = null;
     this.settlement.value = [];
     this.lastCheckpointKey = '';
     this.lab.visible.value = false;
@@ -643,6 +648,7 @@ export class Shell {
     if (this.net.status.value !== 'idle')
       this.net.leave(this.lab.results.value ? 'finished' : 'left');
     this.pauseConfirm.value = null;
+    this.ending.value = null;
     this.session.devices.userPaused = false;
     this.session.startArena(null);
     this.session.devices.assignPlayers([this.session.devices.slots[0]?.device ?? 'kb:p1', null]);
@@ -721,6 +727,14 @@ export class Shell {
     }
     if (results && !this.resultsRecorded) {
       this.resultsRecorded = true;
+      // M13: the ending plays first (not in Wi-Fi games, where each player skips alone).
+      if (!this.net.active && stage.id === 'stage1')
+        this.ending.value = {
+          workersFreed: run.stats.workersFreed,
+          workersTotal: run.workersTotal,
+          clues: run.stats.clues,
+          cluesTotal: run.cluesTotal,
+        };
       const heroes = this.session.world.playerHero
         .slice(0, this.playerCount() || 1)
         .map((h) => HERO_ROSTER[h] ?? 'mountain');
@@ -810,6 +824,15 @@ export class Shell {
 /** Accessibility presentation settings as CSS on the page (never the simulation). */
 export function applyPresentation(s: Profile['settings']): void {
   presentation.effects = (s.volumeMaster / 100) * (s.volumeEffects / 100);
+  presentation.particles = s.particles;
+  audio.setVolumes({
+    master: s.volumeMaster / 100,
+    music: s.volumeMusic / 100,
+    effects: s.volumeEffects / 100,
+    voice: s.volumeVoice / 100,
+    ambience: s.volumeAmbience / 100,
+    interface: s.volumeInterface / 100,
+  });
   presentation.reducedFlashing = s.reducedFlashing;
   presentation.reducedShake = s.reducedShake;
   const root = document.documentElement;

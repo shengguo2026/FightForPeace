@@ -65,6 +65,9 @@ const profile = async (page: Page) =>
  */
 async function finishStage(page: Page) {
   await page.evaluate(() => window.__ffp!.shell.finishStage());
+  // M13: the ending cinematic plays first; skip it.
+  await expect(page.getByTestId('ending')).toBeVisible({ timeout: 30_000 });
+  await page.getByTestId('ending-skip').click();
   await expect(page.getByTestId('results')).toBeVisible({ timeout: 30_000 });
   await expect(page.getByTestId('results-payout-p1')).toBeVisible({ timeout: 10_000 });
 }

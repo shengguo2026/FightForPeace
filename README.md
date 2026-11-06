@@ -97,6 +97,8 @@ If Node.js 24 is not installed, the first start downloads a pinned Node.js 24 in
 
 **Wi-Fi co-op (M12):** each computer runs its own copy (the zip, or `pnpm dev`). The host chooses Play → Wi-Fi co-op → Host a game and reads out the address, port (7350 or the next free one) and room code; the guest chooses Join a game and types them. The first time, Windows Firewall asks whether Node.js may communicate: allow it on private networks. Details: `tools/portable/README.txt` and `docs/superpowers/plans/2026-11-05-m12-lan-coop-lockstep.md`.
 
+**Media (M13):** the intro and ending cinematics play the delivered Flow clips with subtitles (Settings → Accessibility → Cinematics switches to still pictures), the village menu shows the title loop, and Stage 1 has its adaptive score (placeholder loops until the recordings arrive; the victory stinger is real). New clips, stills, effect sheets or music are imported with `python3 tools/art/import_media.py ../pictures/FightForPeace [victory-stinger.mp3]`. Details: `docs/superpowers/plans/2026-11-06-m13-media-and-cinematics.md`.
+
 ## Developer commands
 
 | Command | What it does |

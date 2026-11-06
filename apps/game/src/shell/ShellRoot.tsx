@@ -7,6 +7,7 @@ import {
   BriefingScreen,
   HeroesScreen,
   IntroScreen,
+  EndingScreen,
   LobbyScreen,
   ModeScreen,
   ReadyScreen,
@@ -45,6 +46,7 @@ export function ShellRoot({ shell, state }: { shell: Shell; state: LabState }) {
     return (
       <>
         {screen === 'game' && !state.results.value ? <HudClusters /> : null}
+        {screen === 'game' && shell.ending.value ? <EndingScreen shell={shell} /> : null}
         {screen === 'lesson' ? <LessonHud shell={shell} /> : null}
         {screen === 'practice' ? <PracticeHud shell={shell} /> : null}
         {screen === 'game' && shell.net.active ? <NetOverlay shell={shell} /> : null}

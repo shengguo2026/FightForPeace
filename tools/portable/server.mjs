@@ -61,6 +61,26 @@ const MIME = {
   '.wasm': 'application/wasm',
 };
 
+/**
+ * One `bytes=` range of a file of `size` bytes: null (no or unsupported header, send the
+ * whole file), 'invalid' (unsatisfiable), or the inclusive start and end.
+ */
+export function byteRange(header, size) {
+  const m = /^bytes=(\d*)-(\d*)$/.exec(header ?? '');
+  if (!m || (m[1] === '' && m[2] === '')) return null;
+  let start;
+  let end;
+  if (m[1] === '') {
+    start = Math.max(0, size - Number(m[2]));
+    end = size - 1;
+  } else {
+    start = Number(m[1]);
+    end = m[2] === '' ? size - 1 : Math.min(size - 1, Number(m[2]));
+  }
+  if (start > end || start >= size) return 'invalid';
+  return { start, end };
+}
+
 export function mimeType(file) {
   return MIME[extname(file).toLowerCase()] ?? 'application/octet-stream';
 }
@@ -199,13 +219,30 @@ function handler(root, info, savesDir, rooms) {
       res.writeHead(file ? 404 : 400, { 'Content-Type': MIME['.txt'] }).end('Not found');
       return;
     }
-    res.writeHead(200, {
+    const headers = {
       'Content-Type': mimeType(file),
-      'Content-Length': size,
       // Built assets carry content hashes; index.html must always be fresh.
       'Cache-Control': file.endsWith('index.html') ? 'no-cache' : 'public, max-age=3600',
       'X-Content-Type-Options': 'nosniff',
-    });
+      'Accept-Ranges': 'bytes',
+    };
+    // M13: byte ranges, so browsers can seek in the cinematic clips.
+    const range = byteRange(req.headers.range, size);
+    if (range === 'invalid') {
+      res.writeHead(416, { ...headers, 'Content-Range': `bytes */${size}` }).end();
+      return;
+    }
+    if (range) {
+      res.writeHead(206, {
+        ...headers,
+        'Content-Length': range.end - range.start + 1,
+        'Content-Range': `bytes ${range.start}-${range.end}/${size}`,
+      });
+      if (req.method === 'HEAD') res.end();
+      else createReadStream(file, range).pipe(res);
+      return;
+    }
+    res.writeHead(200, { ...headers, 'Content-Length': size });
     if (req.method === 'HEAD') res.end();
     else createReadStream(file).pipe(res);
   };

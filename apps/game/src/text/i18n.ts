@@ -1,7 +1,16 @@
 import { CALLOUT_WORDS, calloutKey } from './callouts';
 import { signal } from '@preact/signals';
 import { Translator, format, type Catalog, type Locale } from '@ffp/platform';
-import { ARENAS, COOP, DIFFICULTIES, ENEMIES, HEROES, PROFILES, PROGRESSION, STAGES } from '@ffp/sim';
+import {
+  ARENAS,
+  COOP,
+  DIFFICULTIES,
+  ENEMIES,
+  HEROES,
+  PROFILES,
+  PROGRESSION,
+  STAGES,
+} from '@ffp/sim';
 import { EN } from './strings.en';
 import { ZH_CN } from './strings.zh-CN';
 import { DE } from './strings.de';
@@ -97,4 +106,12 @@ export const stageName = (id: string) =>
 /** Fallbacks and missing keys seen so far (shown in Settings > Language for testers). */
 export function textDiagnostics(): readonly string[] {
   return translator.diagnostics;
+}
+
+const BASE = baseCatalog();
+
+/** M13: text in a given language (a cinematic subtitle latched at its cue boundary). */
+export function tIn(l: Locale, key: string): string {
+  void locale.value;
+  return (l !== 'en' ? CATALOGS[l]?.[key] : undefined) ?? BASE[key] ?? key;
 }

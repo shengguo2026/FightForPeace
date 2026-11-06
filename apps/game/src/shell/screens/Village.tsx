@@ -3,7 +3,10 @@ import { locale, difficultyName, stageName, t } from '../../text/i18n';
 import type { Shell } from '../shell';
 import { useNav } from '../hooks';
 import { ART, MenuIcon, Panel, Screen, hoverFocus } from '../ui';
-import { STORE } from '@ffp/platform';
+import { AssetRegistry, STAGE1_TITLE_LOOP, STORE } from '@ffp/platform';
+
+/** M13: the seamless Flow title loop behind the village menu (muted, decorative). */
+const titleLoop = new AssetRegistry().video(STAGE1_TITLE_LOOP.clip);
 import { itemName } from './Store';
 
 type Item = 'continue' | 'play' | 'academy' | 'store' | 'records' | 'guide' | 'settings';
@@ -65,6 +68,28 @@ export function VillageScreen({ shell }: { shell: Shell }) {
         : t('menu.storageMemory');
   return (
     <Screen bg={ART('menu-bg')} dim align="start" testId="village">
+      {titleLoop && p?.settings.cinematics !== 'stills' && !p?.settings.reducedFlashing ? (
+        <video
+          data-testid="title-loop"
+          autoplay
+          muted
+          loop
+          playsInline
+          poster={ART('menu-bg')}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            zIndex: -2,
+            pointerEvents: 'none',
+          }}
+        >
+          <source src={titleLoop.video.webm} type="video/webm" />
+          <source src={titleLoop.video.mp4} type="video/mp4" />
+        </video>
+      ) : null}
       <div class="ffp-row" style={{ width: '88vw', alignItems: 'flex-start' }}>
         <div class="ffp-col" style={{ width: '440px' }}>
           <h1
