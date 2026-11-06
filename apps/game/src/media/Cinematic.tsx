@@ -1,3 +1,4 @@
+import { can } from '../system/probe';
 import { signal } from '@preact/signals';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks';
 import {
@@ -94,7 +95,9 @@ export function Cinematic({
   const frame = player.frame();
   const shot = frame?.shot;
   const clip =
-    shot?.clip && !stills && !failed.current.has(shot.clip) ? assets.video(shot.clip) : undefined;
+    shot?.clip && !stills && can('videoCinematics') && !failed.current.has(shot.clip)
+      ? assets.video(shot.clip)
+      : undefined;
   useEffect(() => {
     if (finished.current) return;
     activeCinematic.value = {

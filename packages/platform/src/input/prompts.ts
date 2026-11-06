@@ -194,6 +194,54 @@ export function promptText(p: Prompt): string {
 
 export { ACTION_A11Y };
 
+/**
+ * M14: the words a screen reader says for a prompt, in the player's language. `{label}`,
+ * `{face}` and `{part}` are filled in; the English set is the default.
+ */
+export interface PromptWords {
+  key: string;
+  button: string;
+  face: string;
+  faces: Record<'bottom' | 'right' | 'left' | 'top', string>;
+  dpad: Record<'up' | 'down' | 'left' | 'right', string>;
+  doubleTap: string;
+  unassigned: string;
+}
+
+export const EN_PROMPT_WORDS: PromptWords = {
+  key: '{label} key',
+  button: '{label} button',
+  face: '{face} face button',
+  faces: { bottom: 'bottom', right: 'right', left: 'left', top: 'top' },
+  dpad: { up: 'D-pad up', down: 'D-pad down', left: 'D-pad left', right: 'D-pad right' },
+  doubleTap: 'double-tap {part}',
+  unassigned: 'Not assigned',
+};
+
+const fill = (t: string, v: Record<string, string>) =>
+  t.replace(/\{(\w+)\}/g, (m, k: string) => v[k] ?? m);
+
+/** Accessible text for a resolved prompt in the given words (M14 localization). */
+export function promptA11y(p: Prompt, w: PromptWords = EN_PROMPT_WORDS): string {
+  switch (p.kind) {
+    case 'key':
+      return fill(w.key, { label: p.label });
+    case 'pad': {
+      const dir = DPAD[p.button] ? (p.button.slice(4).toLowerCase() as 'up') : null;
+      if (dir) return w.dpad[dir];
+      const face = FACE_NAMES[p.button] as keyof PromptWords['faces'] | undefined;
+      if (p.family === 'generic' && face) return fill(w.face, { face: w.faces[face] });
+      return fill(w.button, { label: p.label });
+    }
+    case 'chord':
+      return p.parts.map((x) => promptA11y(x, w)).join(' + ');
+    case 'gesture':
+      return fill(w.doubleTap, { part: promptA11y(p.part, w) });
+    case 'unassigned':
+      return w.unassigned;
+  }
+}
+
 const defaultLabels = new KeyLabelSource();
 
 /**

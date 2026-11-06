@@ -27,6 +27,7 @@ import { setFakePads, useFakePads } from './input/browserInput';
 import { activeCinematic } from './media/Cinematic';
 import { audio } from './media/audio';
 import { EFFECT_STATS } from './scenes/effects';
+import { capabilities, perf } from './system/probe';
 
 /** Installs window.__ffp for automated tests. Called in dev and e2e builds only. */
 export function installDebugHook(
@@ -36,6 +37,17 @@ export function installDebugHook(
   shell: Shell,
 ): void {
   window.__ffp = {
+    system: {
+      capabilities: () => ({
+        blocking: [...capabilities.blocking],
+        disabled: [...capabilities.disabled],
+        renderer: capabilities.renderer,
+        video: capabilities.video,
+        results: capabilities.results.map((r) => ({ id: r.id, ok: r.ok, via: r.via })),
+      }),
+      perf: () => perf.snapshot(),
+      resetPerf: () => perf.reset(),
+    },
     media: {
       state: () => {
         const c = activeCinematic.value;

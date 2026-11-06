@@ -2,6 +2,7 @@ import { ARENA_TEXT, GRADE_TEXT, STAGE_TEXT, TEXT } from './en';
 import { M11_EN } from './strings.m11';
 import { M12_EN } from './strings.m12';
 import { M13_EN } from './strings.m13';
+import { M14_EN } from './strings.m14';
 
 /**
  * M10 English base catalogue. Every key here must exist in strings.zh-CN.ts and
@@ -307,6 +308,7 @@ export const EN = {
   ...M11_EN,
   ...M12_EN,
   ...M13_EN,
+  ...M14_EN,
   ...prefixed('prompt.', TEXT),
   ...prefixed('run.', STAGE_TEXT),
   ...prefixed('arena.', ARENA_TEXT),

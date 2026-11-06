@@ -24,3 +24,5 @@ export * from './media/mixer';
 export * from './media/spectacle';
 export * from './media/events';
 export * from './media/stage1';
+export * from './system/capabilities';
+export * from './system/perf';

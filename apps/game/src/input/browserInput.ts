@@ -1,3 +1,4 @@
+import { can } from '../system/probe';
 import type { PadSnapshot } from '@ffp/platform';
 import type { GameSession } from '../game';
 
@@ -32,7 +33,8 @@ export function useFakePads(on: boolean): void {
 /** Copies navigator.getGamepads() into plain snapshots, once per render frame. */
 export function readPads(): (PadSnapshot | null)[] {
   if (usingFake) return fakePads;
-  const pads = typeof navigator.getGamepads === 'function' ? navigator.getGamepads() : [];
+  if (!can('gamepadPlay')) return [];
+  const pads = navigator.getGamepads();
   return Array.from(pads, (p) =>
     p
       ? {

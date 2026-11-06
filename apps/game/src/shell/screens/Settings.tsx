@@ -12,6 +12,8 @@ import type { Shell } from '../shell';
 import { useNav } from '../hooks';
 import { ART, Button, Choice, Panel, Screen } from '../ui';
 import { RemapPanel } from './Remap';
+import { SystemCheckPanel } from './SystemCheck';
+import { can } from '../../system/probe';
 import { audio } from '../../media/audio';
 
 export const CATEGORIES = [
@@ -22,6 +24,7 @@ export const CATEGORIES = [
   'display',
   'language',
   'profile',
+  'system',
 ] as const;
 export type Category = (typeof CATEGORIES)[number];
 
@@ -286,6 +289,12 @@ function DisplayPanel({ shell }: { shell: Shell }) {
     }, 1000);
   };
   const q = shell.lab.quality.value.setting;
+  const [full, setFull] = useState(() => !!document.fullscreenElement);
+  useLayoutEffect(() => {
+    const h = () => setFull(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', h);
+    return () => document.removeEventListener('fullscreenchange', h);
+  }, []);
   return (
     <>
       <Choice
@@ -318,12 +327,34 @@ function DisplayPanel({ shell }: { shell: Shell }) {
         options={[
           { value: 'auto' as QualitySetting, label: t('settings.qualityAuto') },
           { value: 'high' as QualitySetting, label: t('settings.qualityHigh') },
+          { value: 'medium' as QualitySetting, label: t('settings.qualityMedium') },
           { value: 'low' as QualitySetting, label: t('settings.qualityLow') },
         ]}
         onChange={(v) => shell.onQuality(v)}
         testId="setting-quality"
       />
       <Hint id="settings.qualityHint" />
+      {can('fullscreen') ? (
+        <>
+          <Choice
+            label={t('settings.fullscreen')}
+            scope={t('scope.session')}
+            value={full}
+            options={onOff()}
+            onChange={(v) => {
+              const done = () => setFull(!!document.fullscreenElement);
+              const r = v
+                ? document.documentElement.requestFullscreen?.()
+                : document.exitFullscreen?.();
+              void Promise.resolve(r).then(done, done);
+            }}
+            testId="setting-fullscreen"
+          />
+          <Hint id="settings.fullscreenHint" />
+        </>
+      ) : (
+        <Hint id="system.feature.fullscreen.off" />
+      )}
     </>
   );
 }
@@ -624,6 +655,8 @@ export function CategoryPanel({ shell, category }: { shell: Shell; category: Cat
       return <LanguagePanel shell={shell} />;
     case 'profile':
       return <ProfilePanel shell={shell} />;
+    case 'system':
+      return <SystemCheckPanel shell={shell} />;
   }
 }
 

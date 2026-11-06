@@ -95,6 +95,18 @@ export interface DebugMedia {
 }
 
 export interface FfpDebugHook {
+  /** M14: capability gates and the performance probe. */
+  system: {
+    capabilities(): {
+      blocking: string[];
+      disabled: string[];
+      renderer: string | null;
+      video: string | null;
+      results: { id: string; ok: boolean; via: string | null }[];
+    };
+    perf(): import('@ffp/platform').PerfSnapshot;
+    resetPerf(): void;
+  };
   /** M13 media hooks. */
   media: {
     state(): DebugMedia;
