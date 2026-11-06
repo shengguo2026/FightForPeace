@@ -63,6 +63,8 @@ export function Cinematic({
     if (finished.current) return;
     finished.current = true;
     player.skip();
+    // Clear at once: a deferred effect of this screen must not outlive it (music, tests).
+    if (activeCinematic.value?.player === player) activeCinematic.value = null;
     onDone();
   };
   useNav(finish, (e) => {
@@ -94,6 +96,7 @@ export function Cinematic({
   const clip =
     shot?.clip && !stills && !failed.current.has(shot.clip) ? assets.video(shot.clip) : undefined;
   useEffect(() => {
+    if (finished.current) return;
     activeCinematic.value = {
       id: def.id,
       player,
@@ -101,7 +104,13 @@ export function Cinematic({
       ...(def.music ? { music: def.music } : {}),
     };
   }, [def, player, !!clip?.video.audio]);
-  useEffect(() => () => void (activeCinematic.value = null), []);
+  useEffect(
+    () => () => {
+      finished.current = true;
+      if (activeCinematic.value?.player === player) activeCinematic.value = null;
+    },
+    [player],
+  );
   // Keep the clip on the player's clock: play/pause with it, and re-seek on a jump.
   useEffect(() => {
     const v = video.current;
