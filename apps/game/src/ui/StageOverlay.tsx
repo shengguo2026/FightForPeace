@@ -119,8 +119,11 @@ export function ResultsOverlay({
   continuedFrom,
   settlement,
   again,
+  hidden,
 }: {
   state: LabState;
+  /** M13: hidden while the ending cinematic plays over it. */
+  hidden?: () => boolean;
   onAgain: () => void;
   /** M12: whether Play again is offered (not in a Wi-Fi game). */
   again?: () => boolean;
@@ -133,7 +136,7 @@ export function ResultsOverlay({
   settlement?: () => readonly (Settlement | null)[];
 }) {
   const r = state.results.value;
-  if (!r) return null;
+  if (!r || hidden?.()) return null;
   const toVillage = village?.() ?? false;
   const cont = continuedFrom?.() ?? null;
   const settled = settlement?.() ?? [];

@@ -43,6 +43,9 @@ import {
 } from '@ffp/platform';
 import type { RenderSnapshot } from '../game';
 import { ArenaView } from './arenaView';
+import { EffectsLayer } from './effects';
+import { PresentationTracker } from '@ffp/platform';
+import { playEventSounds } from '../media/sounds';
 import { callout, dt } from '../text/i18n';
 import { presentation } from '../shell/presentation';
 
@@ -156,6 +159,10 @@ export class StageScene extends Phaser.Scene {
   private worldKey = '';
   private inArena = false;
   private readonly arena = new ArenaView(this, this.assets);
+  /** M13: presentation events (stable ids) for sound and the effect layers. */
+  private readonly tracker = new PresentationTracker();
+  private readonly effects = new EffectsLayer(this, this.assets);
+  private lastTime = 0;
   private labFloor!: Phaser.GameObjects.Graphics;
 
   constructor(private readonly opts: StageOptions) {
@@ -182,6 +189,7 @@ export class StageScene extends Phaser.Scene {
     this.overlay = this.add.graphics();
     this.overlay.setDepth(8);
     this.arena.create();
+    this.effects.create();
     this.opts.onReady?.();
   }
 
@@ -243,6 +251,19 @@ export class StageScene extends Phaser.Scene {
     if (collision) for (const { f, p } of drawn) this.drawBoxes(f, p);
     this.dropStale(this.sprites, new Set(current.map((b) => b.id)));
     this.environmentCallout(snap.environment, time);
+    const events = this.tracker.update({
+      frame: snap.frame,
+      fighters: current,
+      run: snap.run,
+      coop: snap.coop,
+      bossPhase: snap.encounter?.boss?.phase ?? -1,
+      bossId: snap.encounter?.boss?.id ?? 0,
+      generation: snap.generation,
+    });
+    this.effects.play(events, time, this.opts.quality?.() ?? 'high');
+    playEventSounds(events);
+    this.effects.update(time, Math.min(50, time - this.lastTime));
+    this.lastTime = time;
     this.updatePopups(time);
   }
 
@@ -321,6 +342,7 @@ export class StageScene extends Phaser.Scene {
 
   /** A new world (arena start, restart, back to the Lab): drop every per-id object. */
   private forgetWorld(): void {
+    this.effects.clear();
     for (const map of [this.sprites, this.itemSprites, this.propSprites, this.runSprites]) {
       for (const sp of map.values()) sp.destroy();
       map.clear();
@@ -388,7 +410,9 @@ export class StageScene extends Phaser.Scene {
     if (f.state === MoveState.Hitstun && f.stateFrame < 4) {
       // Reduced flashing (M10): a soft red tint instead of the solid white flash.
       sp.setTint(presentation.reducedFlashing ? 0xffb0b0 : 0xffffff);
-      sp.setTintMode(presentation.reducedFlashing ? Phaser.TintModes.MULTIPLY : Phaser.TintModes.FILL);
+      sp.setTintMode(
+        presentation.reducedFlashing ? Phaser.TintModes.MULTIPLY : Phaser.TintModes.FILL,
+      );
     } else {
       sp.setTintMode(Phaser.TintModes.MULTIPLY);
       // M11: a worn outfit (placeholder treatment) tints the hero's sprite.

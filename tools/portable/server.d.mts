@@ -8,6 +8,10 @@ export const SAVES_PATH: string;
 export const RECORD_NAME: RegExp;
 export const MAX_RECORD_BYTES: number;
 export function mimeType(file: string): string;
+export function byteRange(
+  header: string | undefined,
+  size: number,
+): { start: number; end: number } | 'invalid' | null;
 export function resolveRequest(root: string, urlPath: string): string | null;
 export function folderId(appDir: string): string;
 export function startServer(o: {

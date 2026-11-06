@@ -53,11 +53,39 @@ export interface LayerMeta {
   tiled: boolean;
 }
 
+/** M13: a browser-ready clip in two encodings (WebM VP9 first, MP4 H.264 fallback). */
+export interface VideoMeta {
+  webm: string;
+  mp4: string;
+  ms: number;
+  w: number;
+  h: number;
+  /** The clip carries its own soundtrack (Flow ambience). */
+  audio: boolean;
+}
+
+/** M13: a browser-ready sound or music file. */
+export interface AudioMeta {
+  ms: number;
+}
+
+/** M13: where a delivered asset came from (F&D Module 18 manifest fields). */
+export interface Provenance {
+  /** Source file in the pictures repository or the project files. */
+  source: string;
+  tool: string;
+  /** Human edits (trims, loop blends) and the export settings. */
+  edits?: string;
+}
+
 export interface ManifestEntry {
   url: string;
   status?: 'candidate' | 'approved';
   sheet?: SheetMeta;
   layer?: LayerMeta;
+  video?: VideoMeta;
+  audio?: AudioMeta;
+  provenance?: Provenance;
 }
 
 export interface AssetManifest {
@@ -90,7 +118,8 @@ export function familyOf(id: string): PlaceholderFamily {
     return fam && POSE_FAMILIES.includes(fam) ? fam : 'idle';
   }
   if (parts[0] === 'sfx' || parts[0] === 'mus') return 'sound';
-  if (parts[0] === 'bg' || parts[0] === 'cine' || parts[0] === 'ui') return 'panel';
+  if (parts[0] === 'bg' || parts[0] === 'cine' || parts[0] === 'story' || parts[0] === 'ui')
+    return 'panel';
   return 'unknown';
 }
 
@@ -121,6 +150,31 @@ export class AssetRegistry {
     const entry = this.manifest.assets[id];
     if (!entry || entry.status === 'candidate' || !entry.layer) return undefined;
     return entry as ManifestEntry & { layer: LayerMeta };
+  }
+
+  /** An approved clip (cinematics), if the manifest has one for this id. */
+  video(id: string): (ManifestEntry & { video: VideoMeta }) | undefined {
+    const entry = this.manifest.assets[id];
+    if (!entry || entry.status === 'candidate' || !entry.video) return undefined;
+    return entry as ManifestEntry & { video: VideoMeta };
+  }
+
+  /** An approved sound or music file, if the manifest has one for this id. */
+  audio(id: string): (ManifestEntry & { audio: AudioMeta }) | undefined {
+    const entry = this.manifest.assets[id];
+    if (!entry || entry.status === 'candidate' || !entry.audio) return undefined;
+    return entry as ManifestEntry & { audio: AudioMeta };
+  }
+
+  /** The URL of an approved picture (story stills), or undefined for a placeholder. */
+  url(id: string): string | undefined {
+    const r = this.resolve(id);
+    return r.kind === 'approved' ? r.url : undefined;
+  }
+
+  /** Every logical id in the manifest. */
+  ids(): string[] {
+    return Object.keys(this.manifest.assets);
   }
 
   /** Every approved background layer (for preloading). */

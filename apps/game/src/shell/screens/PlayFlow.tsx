@@ -8,6 +8,8 @@ import { HERO_ROSTER, type Shell } from '../shell';
 import { useNav } from '../hooks';
 import type { NavEvent } from '../nav';
 import { ART, Button, Choice, Panel, Screen } from '../ui';
+import { STAGE1_ENDING, STAGE1_INTRO } from '@ffp/platform';
+import { Cinematic } from '../../media/Cinematic';
 
 /** Player 1's prompt context (bindings, labels, pad family) from the Lab's player views. */
 function ctxOf(shell: Shell, slot: number) {
@@ -326,73 +328,43 @@ export function HeroesScreen({ shell }: { shell: Shell }) {
   );
 }
 
-const INTRO = [1, 2, 3, 4, 5, 6] as const;
-
-/** The intro: captioned story stills (the still-art fallback; clips arrive in M13). */
+/**
+ * The intro cinematic (M13): the six Flow clips with subtitles, or the same shots as
+ * still pictures (setting, missing or failing clips). Skip, next and pause.
+ */
 export function IntroScreen({ shell }: { shell: Shell }) {
   void locale.value;
-  const [i, setI] = useState(0);
-  const next = () => (i + 1 < INTRO.length ? setI(i + 1) : shell.go('briefing'));
-  useNav(
-    () => shell.go('briefing'),
-    (e) => {
-      if (e.confirm) next();
-      else if (e.back) shell.go('briefing');
-      return true;
-    },
-  );
-  const n = INTRO[i]!;
-  const speaker = shell.active.value?.settings.speakerLabels ?? true;
+  const s = shell.active.value?.settings;
   return (
-    <Screen bg={ART(`s1-intro-0${n}`)} testId="intro">
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '60px',
-          left: 0,
-          right: 0,
-          display: 'flex',
-          justifyContent: 'center',
-        }}
-      >
-        <div class="ffp-caption" data-testid="intro-caption">
-          {speaker ? <b>{t('speaker.narrator')}: </b> : null}
-          {t(`intro.${n}`)}
-        </div>
-      </div>
-      <div
-        style={{
-          position: 'absolute',
-          top: '18px',
-          right: '24px',
-          display: 'flex',
-          gap: '12px',
-          alignItems: 'center',
-        }}
-      >
-        <span class="ffp-hint">
-          <PromptText text={t('play.skipHint')} ctx={ctxOf(shell, 0)} />
-        </span>
-        <button
-          type="button"
-          class="ffp-btn"
-          style={{ width: 'auto' }}
-          data-testid="intro-skip"
-          onClick={() => shell.go('briefing')}
-        >
-          {t('play.skip')}
-        </button>
-        <button
-          type="button"
-          class="ffp-btn"
-          style={{ width: 'auto' }}
-          data-testid="intro-next"
-          onClick={next}
-        >
-          {t('common.next')} ({i + 1}/{INTRO.length})
-        </button>
-      </div>
-    </Screen>
+    <Cinematic
+      def={STAGE1_INTRO}
+      stills={s?.cinematics === 'stills'}
+      speakerLabels={s?.speakerLabels ?? true}
+      ctx={ctxOf(shell, 0)}
+      testId="intro"
+      onDone={() => shell.go('briefing')}
+    />
+  );
+}
+
+/** The ending cinematic over the finished stage (M13), chosen by the run's outcome. */
+export function EndingScreen({ shell }: { shell: Shell }) {
+  void locale.value;
+  const s = shell.active.value?.settings;
+  const state = shell.ending.value;
+  if (!state) return null;
+  return (
+    <div class="ffp-shell" style={{ pointerEvents: 'auto', zIndex: 40 }}>
+      <Cinematic
+        def={STAGE1_ENDING}
+        state={state}
+        stills={s?.cinematics === 'stills'}
+        speakerLabels={s?.speakerLabels ?? true}
+        ctx={ctxOf(shell, 0)}
+        testId="ending"
+        onDone={() => (shell.ending.value = null)}
+      />
+    </div>
   );
 }
 

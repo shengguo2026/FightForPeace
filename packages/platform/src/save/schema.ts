@@ -40,6 +40,13 @@ export interface ProfileSettings {
   volumeMusic: number;
   volumeEffects: number;
   volumeVoice: number;
+  /** M13: ambience and interface sounds, 0–100 (Profile scope). */
+  volumeAmbience: number;
+  volumeInterface: number;
+  /** M13: cinematics as video clips, or as their still artwork with the same subtitles. */
+  cinematics: 'video' | 'stills';
+  /** M13: cosmetic sparks and particles (impact cores, telegraphs and cues always stay). */
+  particles: 'full' | 'reduced' | 'off';
 }
 
 export const DEFAULT_SETTINGS: ProfileSettings = {
@@ -58,6 +65,10 @@ export const DEFAULT_SETTINGS: ProfileSettings = {
   volumeMusic: 70,
   volumeEffects: 80,
   volumeVoice: 80,
+  volumeAmbience: 80,
+  volumeInterface: 80,
+  cinematics: 'video',
+  particles: 'full',
 };
 
 /** A saved Continue point: the last checkpoint the profile reached in a stage. */
@@ -219,6 +230,10 @@ export function normalizeSettings(raw: unknown): ProfileSettings {
     volumeMusic: vol('volumeMusic'),
     volumeEffects: vol('volumeEffects'),
     volumeVoice: vol('volumeVoice'),
+    volumeAmbience: vol('volumeAmbience'),
+    volumeInterface: vol('volumeInterface'),
+    cinematics: pick(r.cinematics, ['video', 'stills'] as const, d.cinematics),
+    particles: pick(r.particles, ['full', 'reduced', 'off'] as const, d.particles),
   };
 }
 

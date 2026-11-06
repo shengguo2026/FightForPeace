@@ -54,14 +54,19 @@ test('Stage 1 founder, dummy, weapon and prop sheets are in the manifest', () =>
     expect(ids).toContain(`prop.${p}`);
 });
 
-test('every sheet is a 3x2 grid of 384 px cells', () => {
+test('every sheet is a 3x2 grid of 384 px cells (M13 effect sheets: 256 px)', () => {
   for (const s of reg.sheets())
-    expect([s.sheet.cols, s.sheet.rows, s.sheet.cell]).toEqual([3, 2, 384]);
+    expect([s.sheet.cols, s.sheet.rows, s.sheet.cell]).toEqual([
+      3,
+      2,
+      s.id.startsWith('vfx.') ? 256 : 384,
+    ]);
 });
 
 test('character sheets share one ground line (aerial sheets are drawn in the air)', () => {
   for (const s of reg.sheets()) {
-    if (s.id.startsWith('prop.') || s.id.includes('.pose.aerial.')) continue;
+    if (s.id.startsWith('prop.') || s.id.startsWith('vfx.') || s.id.includes('.pose.aerial.'))
+      continue;
     expect(s.sheet.ground, s.id).toBeGreaterThan(320);
     expect(s.sheet.ground, s.id).toBeLessThan(370);
   }

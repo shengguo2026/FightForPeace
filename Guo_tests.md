@@ -382,3 +382,59 @@ As in M10 on each computer (W A S D, Attack T, Jump Y, Guard G, Interact J, Spec
 13. **Lost connection:** start a new Wi-Fi game, then close the black server window on PC 1 (or turn off PC 1's Wi-Fi). Within about 10 seconds PC 2 shows "Session ended · The connection to the other computer was lost."
 14. **Languages:** switch PC 2 to 简体中文 or Deutsch: the Wi-Fi screens, lobby and hold panels are translated.
 15. **Solo and same-device co-op still work:** Play → Solo and Play → Same-device co-op behave exactly as in M11.
+
+## M13 · Media integration and cinematics
+
+Stage 1 now plays with the delivered media: the six Flow clips as the intro cinematic (with subtitles), the ending cinematic before the results, the seamless title loop behind the village menu, the Stage 1 music "Water Held Back" (only the victory stinger is a real recording; the other states are quiet placeholder loops in each cue's tempo), placeholder sounds for hits, blocks and Ultimates through the priority mix, and the delivered effect sheets (hit sparks, guard flashes, dust, Ultimate auras, breaker and team bursts). Use headphones or speakers.
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+Open `http://localhost:5173`. For the portable build instead: `pnpm release`, unzip `release\FightForPeace-0.13.0.zip` and double-click `start.bat` (the zip is about 20 MB bigger: the clips).
+
+To test the branch before it is merged instead of `main`:
+
+```powershell
+git fetch origin claude/project-thread-pw6v3u
+git checkout claude/project-thread-pw6v3u
+pnpm install
+pnpm dev
+```
+
+Optional, the automated checks (they also run on GitHub):
+
+```powershell
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm e2e
+pnpm smoke:portable
+```
+
+### Keys
+
+As in M10 (W A S D, Attack T, Jump Y, Guard G, Interact J, Special U, Ultimate H, Team Attack B, Pause Esc). In a cinematic: Attack (T or Enter) next shot, S (Down) pause and resume, Esc skip; or the Pause, Skip and Next buttons top right.
+
+### Steps
+
+1. **Title loop and menu music:** start the game. Behind the village menu the title clip moves (river, mill, bridge) and loops without a jump. After your first click or key press a quiet music loop starts (placeholder for "River Before Silence"). Settings → Audio shows "Now playing: River Before Silence · title".
+2. **Intro cinematic:** Play → Solo → Stage 1 → a hero. The intro plays the six clips, each with its English subtitle at the bottom ("Narrator: …"), and the clips' own sound (Flow ambience, at the Music volume). The counter top right shows "Next (1/6)". The menu music is silent while the clips play.
+3. **Pause, next, skip:** press S: the clip and the subtitle freeze, the button says Resume; press S again. Press T: the next shot starts at once. Press Esc: the elder's briefing opens.
+4. **Still pictures:** Settings → Accessibility → **Cinematics → Still pictures with subtitles**. Go back: the title clip is replaced by the still menu picture. Start Stage 1 again: the intro shows the same six shots as pictures with "Still pictures" top right, the same subtitles at the same pace, and now the intro music plays underneath. Set it back to **Video clips** afterwards.
+5. **Languages:** set Settings → Language → 简体中文 or Deutsch and start Stage 1 again: the intro subtitles, speaker labels, buttons and the new settings are translated. (A language change in the middle of a cinematic applies from the next subtitle line, never inside one; the automated tests cover this.)
+6. **Stage music:** in Beat 1 (dry fields) a new loop plays ("Fields Without Water"). When enemies lock the camera it changes to a busier combat loop on the next bar, and back after the wave. Bridge, mill and canal each have their own loop; Settings → Audio (from the pause menu) shows the cue and state. The pause menu makes the music quieter, not silent.
+7. **Effects and sounds:** fight. Ordinary hits show a small gold spark and a short tap; heavy hits, wall bounces and weapon hits a bigger spark with a few flecks and a slight shake; an Exact Block or Counter a pale-blue ring or chevron with a distinct chime; an Ultimate a tall ochre (Mountain) or teal (River) aura, a brief white flash and a rising sweep; dashes and knockdowns a dust puff. In a crowded fight the screen should not turn into a wall of sparks: the hit marks always show, the extra flecks are limited.
+8. **Effect settings:** Settings → Accessibility → **Sparks and particles: Reduced / Off**: the flecks shrink or disappear but every hit mark stays. **Reduced flashing: On** removes the white flash; **Reduced camera shake: On** removes the shake.
+9. **Boss music:** at the Sluice Commander a faster loop plays; at each phase change you hear a short rising sting before the next phase's loop, and when he surrenders a closing sting.
+10. **Ending and victory:** secure the evidence. Before the results the ending plays: the gate opening, the village by the water (if you freed every worker: "Every worker came home…"; otherwise: "…still waiting for those not yet home."), and the sponsor's seal (with a second line if you found every clue). Skip or let it finish: the results open and the real victory music (MUS-STINGER-VICTORY) plays once.
+11. **Volumes:** Settings → Audio has Master, Music, Sound effects, Voices, **Ambience** and **Interface sounds**. Music at 0 silences the loops and the clips' sound; Sound effects at 0 silences hits and warnings.
+12. **Portable zip:** `pnpm release`, start the zip with `start.bat`: the intro clips and title loop play there too (also when you press Next quickly).
+13. **Wi-Fi co-op** (if you have PC 2 at hand): a Wi-Fi game ends straight on the results (no ending cinematic), everything else as in M12.

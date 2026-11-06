@@ -9,6 +9,7 @@ import { inflateRawSync } from 'node:zlib';
 import {
   ID_PATH,
   SAVES_PATH,
+  byteRange,
   mimeType,
   parseArgs,
   resolveRequest,
@@ -80,6 +81,26 @@ describe('portable server', () => {
     expect(mimeType('a.webp')).toBe('image/webp');
     expect(mimeType('a.ogg')).toBe('audio/ogg');
     expect(mimeType('a.unknown')).toBe('application/octet-stream');
+    expect(mimeType('a.webm')).toBe('video/webm');
+    expect(mimeType('a.mp4')).toBe('video/mp4');
+  });
+
+  it('answers byte ranges so the cinematic clips can seek (M13)', async () => {
+    expect(byteRange(undefined, 100)).toBeNull();
+    expect(byteRange('bytes=0-9', 100)).toEqual({ start: 0, end: 9 });
+    expect(byteRange('bytes=90-', 100)).toEqual({ start: 90, end: 99 });
+    expect(byteRange('bytes=-10', 100)).toEqual({ start: 90, end: 99 });
+    expect(byteRange('bytes=0-500', 100)).toEqual({ start: 0, end: 99 });
+    expect(byteRange('bytes=200-300', 100)).toBe('invalid');
+    expect(byteRange('items=0-1', 100)).toBeNull();
+    const game = fakeGame();
+    const port = await freePort();
+    const { server, url } = await startServer({ root: game, port });
+    servers.push(server);
+    const res = await fetch(`${url}index.html`, { headers: { Range: 'bytes=0-4' } });
+    expect(res.status).toBe(206);
+    expect(res.headers.get('content-range')).toMatch(/^bytes 0-4\/\d+$/);
+    expect((await res.text()).length).toBe(5);
   });
 
   it('serves files, answers the id check, and refuses traversal', async () => {
