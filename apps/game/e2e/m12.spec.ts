@@ -59,9 +59,12 @@ async function join(page: Page, port: number, code: string) {
 }
 
 /** Both players in the lobby, ready, and the stage running on both. */
-async function startTogether(browser: Browser) {
+async function startTogether(browser: Browser, courtesyMs: number | null = null) {
   const h = await player(browser, 'Host');
   const g = await player(browser, 'Guest');
+  // A long courtesy hold keeps this M12 scenario a hold on slow CI runners (M15 tests the
+  // recovery that follows a short one).
+  for (const p of [h, g]) await p.evaluate((ms) => window.__ffp!.net.setCourtesy(ms), courtesyMs);
   const room = await host(h);
   await join(g, room.port, room.code);
   await expect(g.getByTestId('net-lobby')).toBeVisible();
@@ -89,8 +92,10 @@ test('two games join over the room server and play Stage 1 in lockstep', async (
   const { h, g } = await startTogether(browser);
   await expect(h.getByTestId('net-badge')).toContainText('Wi-Fi');
   const hs = await net(h);
-  expect(hs.delay).toBeGreaterThanOrEqual(2);
-  expect(hs.delay).toBeLessThanOrEqual(4);
+  // M15: prediction and rollback, so a home network plays with no input delay.
+  // (Quality monitoring may raise it a little when a slow machine keeps waiting.)
+  expect(hs.startDelay).toBeLessThanOrEqual(3); // 0 on a quiet network (unit tests)
+  expect(hs.delay).toBeLessThanOrEqual(3);
   // Walk both heroes right for a while so the worlds have something to agree on.
   await h.keyboard.down('KeyD');
   await g.keyboard.down('KeyD');
@@ -120,7 +125,7 @@ test('a courtesy hold stops both games on one frame, resumes after readiness, a 
   browserName,
 }) => {
   test.skip(browserName !== 'chromium', 'Chromium only (CI time)');
-  const { h, g } = await startTogether(browser);
+  const { h, g } = await startTogether(browser, 120_000);
   // The guest leaves the window: both games hold.
   await g.evaluate(() => window.__ffp!.net.loseFocus());
   await expect(h.getByTestId('net-hold')).toBeVisible();

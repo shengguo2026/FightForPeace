@@ -74,6 +74,20 @@ export interface DebugNet {
   resyncs: number;
   ended: string | null;
   hashes: [number, number][];
+  /** M15: player slot, authority, missing partner, rollbacks and the session log. */
+  slot: number;
+  /** The input delay the session started with (quality monitoring may raise it). */
+  startDelay: number;
+  authority: boolean;
+  partnerAbsent: boolean;
+  linkUp: boolean;
+  rollbacks: number;
+  maxRollback: number;
+  confirmed: number;
+  standby: { code: string; port: number; addresses: string[] } | null;
+  log: { frame: number; ev: string; slot: number }[];
+  /** Results recorded on this computer for this session. */
+  credited: boolean;
 }
 
 export interface DebugMedia {
@@ -124,6 +138,10 @@ export interface FfpDebugHook {
     loseFocus(): void;
     /** Make this game's world differ from the partner's (resync test). */
     corrupt(): void;
+    /** M15: no message gets through either way for `ms` (a pulled cable). */
+    cutFor(ms: number): void;
+    /** M15: the courtesy hold of the next Wi-Fi session (ms; null: the default). */
+    setCourtesy(ms: number | null): void;
   };
   frame(): number;
   body(id: number): DebugBody | undefined;

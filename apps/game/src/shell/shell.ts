@@ -491,6 +491,11 @@ export class Shell {
     return slot;
   }
 
+  /** M15: this computer recorded the current Wi-Fi session's results (tests). */
+  get creditedThisSession(): boolean {
+    return this.net.active && this.resultsRecorded;
+  }
+
   /** Players in the running game (Wi-Fi: both computers' players). */
   playerCount(): number {
     return this.net.active ? 2 : this.session.devices.joinedCount();
@@ -730,6 +735,9 @@ export class Shell {
     }
     if (results && !this.resultsRecorded) {
       this.resultsRecorded = true;
+      // M15: once per Wi-Fi session on this computer, whatever rejoins or takeovers
+      // replaced the world in between (no duplicated or lost results).
+      if (this.net.active) this.net.noteCredit();
       // M13: the ending plays first (not in Wi-Fi games, where each player skips alone).
       if (!this.net.active && stage.id === 'stage1')
         this.ending.value = {

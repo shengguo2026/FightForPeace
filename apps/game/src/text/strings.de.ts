@@ -3,6 +3,7 @@ import { M11_DE } from './strings.m11';
 import { M12_DE } from './strings.m12';
 import { M13_DE } from './strings.m13';
 import { M14_DE } from './strings.m14';
+import { M15_DE } from './strings.m15';
 
 /** M10 catalogue (de). Keys mirror strings.en.ts and the generated data names. */
 export const DE: Catalog = {
@@ -552,4 +553,5 @@ export const DE: Catalog = {
   ...M12_DE,
   ...M13_DE,
   ...M14_DE,
+  ...M15_DE,
 };

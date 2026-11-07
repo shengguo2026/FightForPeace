@@ -323,14 +323,43 @@ export function NetOverlay({ shell }: { shell: Shell }) {
         borderRadius: '6px',
       }}
     >
-      {t('net.badge', { n: v.delay, ms: v.rtt })}
+      {v.authority && net.role.value === 'guest'
+        ? t('net.badgeHost', { n: v.delay, ms: v.rtt })
+        : t('net.badge', { n: v.delay, r: v.rollbacks, ms: v.rtt })}
     </div>
   );
+  const other = 1 - me;
+  // M15: the partner is missing (guard, then the survival proxy) or the link is down.
+  const notice =
+    v.partner !== 'here' ? (
+      <div class="ffp-caption" data-testid="net-partner" style={NOTICE}>
+        <span data-testid={`net-partner-${v.partner}`}>
+          {v.partner === 'grace'
+            ? t('net.partnerGrace', { n: other + 1 })
+            : t('net.partnerProxy', { n: other + 1 })}
+        </span>
+        {v.standby ? (
+          <div class="ffp-hint" data-testid="net-standby">
+            {t('net.rejoinHere', {
+              address: v.standby.addresses[0] ?? '—',
+              port: v.standby.port,
+              code: v.standby.code,
+            })}
+          </div>
+        ) : null}
+      </div>
+    ) : v.takeover !== null ? (
+      <div class="ffp-caption" data-testid="net-reconnecting" style={NOTICE}>
+        {t('net.reconnecting', { n: other + 1 })}{' '}
+        <span data-testid="net-takeover">{t('net.takeover', { s: v.takeover })}</span>
+      </div>
+    ) : null;
   if (v.phase === 'run')
     return (
       <div class="ffp-shell" style={{ pointerEvents: 'none' }}>
         {badge}
-        {v.waiting ? (
+        {notice}
+        {v.waiting && v.takeover === null ? (
           <div
             class="ffp-caption"
             data-testid="net-waiting"
@@ -347,9 +376,9 @@ export function NetOverlay({ shell }: { shell: Shell }) {
         ) : null}
       </div>
     );
-  const other = 1 - me;
   let title = '';
   if (v.phase === 'ended') title = t('net.endedTitle');
+  else if (v.phase === 'away') title = t('net.awayTitle');
   else if (v.hold?.kind === 'focus')
     title = v.hold.by === me ? t('net.holdYou') : t('net.holdAway', { n: v.hold.by + 1 });
   else if (v.hold) title = t('net.paused', { n: v.hold.by + 1 });
@@ -385,6 +414,21 @@ export function NetOverlay({ shell }: { shell: Shell }) {
                 autofocus
                 testId="net-to-village"
               />
+            </>
+          ) : v.phase === 'away' ? (
+            <>
+              <p data-testid="net-away-text">{t('net.awayText')}</p>
+              {v.rejoining ? (
+                <p data-testid="net-rejoining">{t('net.rejoining')}</p>
+              ) : (
+                <Button
+                  label={t('net.rejoin')}
+                  onPress={() => net.pauseOrReady()}
+                  autofocus
+                  testId="net-rejoin"
+                />
+              )}
+              <Button label={t('net.end')} onPress={() => net.endSession()} testId="net-end" />
             </>
           ) : v.phase === 'countdown' ? (
             <p style={{ fontSize: '40px' }} data-testid="net-countdown">
@@ -433,6 +477,17 @@ export function NetOverlay({ shell }: { shell: Shell }) {
         </Panel>
       </div>
       {badge}
+      {notice}
     </div>
   );
 }
+
+const NOTICE = {
+  position: 'absolute',
+  top: '96px',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  background: 'rgba(0,0,0,0.7)',
+  maxWidth: '900px',
+  textAlign: 'center',
+} as const;

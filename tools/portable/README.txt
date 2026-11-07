@@ -60,6 +60,12 @@ Both computers run the game from their own copy of this zip, on the same home Wi
 Esc pauses both games; both players confirm before play resumes. A Wi-Fi game keeps no
 checkpoint to continue later. Guest networks or "AP isolation" on some routers block
 computers from seeing each other: then use the home network instead.
+Your own moves show at once; the other player's late moves are corrected by a short
+rollback. If one computer drops out (cable, Wi-Fi, a closed window), the other plays on
+and the missing hero is kept safe until its player is back: the game reconnects by
+itself, or the player opens the game again and joins with the same code. If the host
+drops out, the guest's computer takes over and shows the address, port and code the
+host joins again with (the guest's Windows Firewall may then ask for Node.js too).
 
 Combat Lab
 ----------

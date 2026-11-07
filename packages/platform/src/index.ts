@@ -17,7 +17,7 @@ export * from './save/store';
 export * from './progress/economy';
 export * from './net/protocol';
 export * from './net/transport';
-export * from './net/lockstep';
+export * from './net/rollback';
 export * from './media/cinematic';
 export * from './media/music';
 export * from './media/mixer';

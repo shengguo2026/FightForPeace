@@ -9,12 +9,13 @@ import {
 import manifest from '../assets/manifest.json';
 
 /**
- * M12 LAN co-op wire protocol (JSON messages over the Transport). The gameplay messages
+ * LAN co-op wire protocol (JSON messages over the Transport). The gameplay messages
  * (`in`, `hash`, `snap`) are frame-stamped inputs, frame-stamped hashes and full world
- * snapshots: the format M15's prediction and rollback reuses, so phase 2 adds prediction
- * without changing the wire format. Bump NET_PROTOCOL whenever a message changes.
+ * snapshots (M12); M15 keeps them unchanged and adds the recovery messages: a missing
+ * player (`absent`), authority migration (`promoted`), and the way back (`rejoin`,
+ * `back`). Bump NET_PROTOCOL whenever a message changes.
  */
-export const NET_PROTOCOL = 1;
+export const NET_PROTOCOL = 2;
 
 /** What two copies of the game compare before readiness (spec §18.2). */
 export interface Compat {
@@ -91,14 +92,33 @@ export interface StartInfo {
   heroes: string[];
   loadouts: LoadoutChange[][];
   facing: FacingMode[];
-  /** Input delay in frames (2–4, from the measured round trip). */
+  /** Local input delay in frames (0 on a home network; raised up to MAX_DELAY if needed). */
   delay: number;
+  /** M15: this session's id (a rejoining game names it in its hello). */
+  session: string;
 }
 
 export type HoldKind = 'focus' | 'pause';
 
 /** Why a session ended (both screens explain it; nothing continuable is kept). */
 export type EndReason = 'left' | 'finished' | 'away' | 'lost' | 'desync';
+
+/** M15: what the authority sends a returning player (see RollbackSession). */
+export interface BackInfo {
+  /** The authority's world at frame `snap.frame` (= `from` of the hand-back). */
+  snap: WorldSnapshot;
+  /** The returning player's slot, and the frame they went missing. */
+  slot: number;
+  absentFrom: number;
+  /** First frame the returning player's own input counts again. */
+  control: number;
+  /** The authority's own inputs already stamped from `snap.frame` on: [frame, input]. */
+  inputs: [number, WireInput][];
+  /** How the session started (a fresh tab rebuilds the stage from it). */
+  start: StartInfo;
+  /** The authority's compatibility data: a returning game must match it exactly. */
+  compat: Compat;
+}
 
 export type NetMessage =
   // Lobby (guest → host unless noted).
@@ -108,6 +128,8 @@ export type NetMessage =
       name: string;
       loadouts: Record<string, LoadoutChange[]>;
       facing: FacingMode;
+      /** M15: the session this game was part of (a reconnect), if any. */
+      session?: string;
     }
   | { t: 'welcome'; lobby: LobbyState } // host → guest
   | { t: 'reject'; reason: RejectReason } // host → guest
@@ -125,16 +147,31 @@ export type NetMessage =
   | { t: 'ping'; n: number; at: number }
   | { t: 'pong'; n: number; at: number }
   | { t: 'bye'; reason: EndReason }
+  // M15 recovery (both ways).
+  | { t: 'absent'; from: number } // authority → partner: you are out from frame `from`
+  | { t: 'promoted'; from: number } // sender took authority; the receiver is out from `from`
+  | { t: 'rejoin'; from?: number } // a missing player asks to come back (from: its absence)
+  | { t: 'back'; back: BackInfo } // authority → returning player
   // Room server notices.
   | {
       t: 'sys';
       ev: 'hosting' | 'joined' | 'peer-joined' | 'peer-left' | 'error';
       reason?: string;
       code?: string;
+      /** `joined`: the guest's token, to take its place again after a lost connection. */
+      token?: string;
     };
 
-/** Frames of input delay for a measured round trip (ms): 2 on a quiet LAN, at most 4. */
+/** The largest local input delay (frames) quality monitoring may raise to. */
+export const MAX_DELAY = 3;
+
+/**
+ * M15: frames of local input delay for a measured round trip (ms). Prediction and
+ * rollback cover the partner's late input, so a home network plays with no delay; a slow
+ * link starts with a little (at most MAX_DELAY) to keep rollbacks short.
+ */
 export function chooseDelay(rttMs: number): number {
   const frame = 1000 / 60;
-  return Math.min(4, Math.max(2, 1 + Math.ceil((Math.max(0, rttMs) / 2 + 8) / frame)));
+  const oneWay = Math.max(0, rttMs) / 2;
+  return Math.min(MAX_DELAY, Math.max(0, Math.ceil((oneWay - 3 * frame) / frame)));
 }

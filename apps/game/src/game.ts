@@ -30,6 +30,10 @@ import {
   STAGES,
   METER,
   type WorldOptions,
+  actionable,
+  proxyInput,
+  restoreWorld,
+  snapshotWorld,
 } from '@ffp/sim';
 
 const IDLE: FrameInput = { moveX: 0, moveZ: 0, pressed: 0, held: 0, dirPressed: 0 };
@@ -40,6 +44,7 @@ import {
   KeyLabelSource,
   type KeyboardP2Preset,
   keyboardP2,
+  type SimHooks,
 } from '@ffp/platform';
 
 /** Max simulation steps per render frame; any further debt is dropped (tab was hidden). */
@@ -75,21 +80,20 @@ export interface RenderSnapshot {
 }
 
 /**
- * M12 LAN co-op: while set, the session steps in lockstep with the partner's game (see
- * apps/game/src/net/netplay.ts). This game's player is always the local Player 1 device;
- * in the world it plays slot `localSlot` (host 0, guest 1).
+ * LAN co-op: while set, the session steps with the partner's game (M12 lockstep, M15
+ * prediction and rollback; see apps/game/src/net/netplay.ts). This game's player is always
+ * the local Player 1 device; in the world it plays slot `localSlot`.
  */
 export interface NetDriver {
   readonly localSlot: number;
   /** Once per render frame before stepping: timers, and pause or focus requests. */
   poll(): void;
-  wantsInput(frame: number): boolean;
-  submit(frame: number, input: FrameInput): void;
-  canStep(frame: number): boolean;
-  inputsFor(frame: number): FrameInput[];
-  stepped(frame: number): void;
-  stalled(): void;
-  catchUp(frame: number): number;
+  /**
+   * Re-simulates what late inputs corrected, then up to `steps` new frames: `sample`
+   * reads this computer's input, `before` runs before every new frame. Returns the inputs
+   * of every new frame.
+   */
+  advance(steps: number, sample: () => FrameInput, before: () => void): FrameInput[][];
 }
 
 export interface FrameReport {
@@ -250,30 +254,19 @@ export class GameSession {
   }
 
   /**
-   * M12 lockstep: a frame is stepped only when both players' inputs for it are known; the
-   * local input is stamped `delay` frames ahead. A game that fell behind its partner may
-   * take a couple of extra steps. Pauses are network holds (the driver handles them).
+   * Wi-Fi play: the driver predicts the partner's late input, rolls back and re-simulates
+   * when it arrives, and steps new frames with this computer's input applied at once.
+   * Pauses are network holds (the driver handles them).
    */
   private advanceNet(net: NetDriver, elapsedMs: number): FrameReport {
     this.devices.poll();
     net.poll();
     const { steps, alpha } = this.accumulator.advance(this.held ? 0 : elapsedMs);
-    const want = this.held ? 0 : steps + (steps > 0 ? net.catchUp(this.world.frame) : 0);
-    const inputs: FrameInput[][] = [];
-    for (let i = 0; i < want; i += 1) {
-      this.runStepHooks();
-      const f = this.world.frame;
-      if (net.wantsInput(f)) net.submit(f, this.devices.sampleFrame()[0] ?? IDLE);
-      if (!net.canStep(f)) {
-        net.stalled();
-        break;
-      }
-      this.previous = cloneFighters(this.world.bodies);
-      const frame = net.inputsFor(f);
-      inputs.push(frame);
-      step(this.world, frame);
-      net.stepped(this.world.frame);
-    }
+    const inputs = net.advance(
+      this.held ? 0 : steps,
+      () => this.devices.sampleFrame()[0] ?? IDLE,
+      () => this.runStepHooks(),
+    );
     this.alpha = alpha;
     return { frame: this.world.frame, hash: hashWorld(this.world), paused: false, inputs };
   }
@@ -283,6 +276,37 @@ export class GameSession {
     this.world = world;
     this.previous = cloneFighters(world.bodies);
     this.generation += 1;
+  }
+
+  /** M15: the renderer starts over (the world jumped to an authoritative snapshot). */
+  worldReplaced(): void {
+    this.previous = cloneFighters(this.world.bodies);
+    this.generation += 1;
+  }
+
+  /**
+   * M15: the simulation as the rollback session sees it. Saves are full copies of the
+   * world (plain data); loading one never shares objects with the save.
+   */
+  netHooks(): SimHooks<World> {
+    return {
+      frame: () => this.world.frame,
+      save: () => structuredClone(this.world),
+      load: (w) => {
+        this.world = structuredClone(w);
+        this.previous = cloneFighters(this.world.bodies);
+      },
+      step: (inputs) => {
+        this.previous = cloneFighters(this.world.bodies);
+        step(this.world, inputs);
+        for (const after of this.afterStep) after(this.world);
+      },
+      hash: (w) => hashWorld(w ?? this.world),
+      snapshot: (w) => snapshotWorld(w ?? this.world),
+      restore: (s) => restoreWorld(s),
+      proxy: (slot, frames, handover) => proxyInput(this.world, slot, frames, handover),
+      actionable: (slot) => actionable(this.world, slot),
+    };
   }
 
   private runStepHooks(): void {

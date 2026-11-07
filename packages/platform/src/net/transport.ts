@@ -69,6 +69,8 @@ export type RoomError =
 export class WebSocketTransport implements Transport {
   onMessage: ((msg: NetMessage) => void) | null = null;
   onClose: (() => void) | null = null;
+  /** M15: the guest's token from the room server (to take its place again later). */
+  token: string | null = null;
   private closed = false;
 
   constructor(private readonly ws: WebSocket) {
@@ -157,7 +159,9 @@ export function connectRoom(
       else if (msg.ev === expect && !done) {
         done = true;
         clearTimeout(timer);
-        resolve(new WebSocketTransport(ws));
+        const t = new WebSocketTransport(ws);
+        t.token = msg.token ?? null;
+        resolve(t);
       }
     };
   });

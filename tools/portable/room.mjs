@@ -1,4 +1,4 @@
-// Fight For Peace - M12 LAN room server (docs/review/03 §1.2, roadmap M12).
+// Fight For Peace - M12 LAN room server (M15: guests reconnect with their token) (docs/review/03 §1.2, roadmap M12).
 // Node.js built-ins only, so the portable zip needs no node_modules. The host's game asks
 // its own local server (POST /__ffp/room) to open a room; this module then listens on the
 // local network (all interfaces, port 7350 or the next free one up to 7359) and carries
@@ -303,7 +303,11 @@ export function createRoomService({
     const r = rooms.get(normaliseCode(url.searchParams.get('code')));
     if (!r) return reject(socket, 'code');
     if (!r.joined && now() - r.opened > ROOM_TTL_MS) return reject(socket, 'expired');
-    if (r.guest) return reject(socket, 'full');
+    // M15: a guest whose connection broke takes its place again with its token (the old
+    // connection may still look open after a pulled cable).
+    const rejoin = url.searchParams.get('token');
+    const stale = r.guest && rejoin && rejoin === r.guestToken ? r.guest : null;
+    if (r.guest && !stale) return reject(socket, 'full');
     if (!r.host) return reject(socket, 'closed');
     const peer = new Peer(
       socket,
@@ -317,7 +321,9 @@ export function createRoomService({
     );
     r.guest = peer;
     r.joined = true;
-    peer.sendJson({ t: 'sys', ev: 'joined', code: r.code });
+    if (!stale) r.guestToken = randomBytes(16).toString('hex');
+    stale?.close(4001);
+    peer.sendJson({ t: 'sys', ev: 'joined', code: r.code, token: r.guestToken });
     r.host.sendJson({ t: 'sys', ev: 'peer-joined' });
     log(`Room ${r.code}: a guest joined from ${req.socket.remoteAddress}`);
   }
@@ -366,6 +372,7 @@ export function createRoomService({
         joined: false,
         host: null,
         guest: null,
+        guestToken: null,
       };
       rooms.set(code, room);
       latest = room;

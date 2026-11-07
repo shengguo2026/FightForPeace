@@ -95,15 +95,25 @@ export function installDebugHook(
           resyncs: lock?.stats.resyncs ?? 0,
           ended: lock?.ended?.reason ?? null,
           hashes: lock?.hashes() ?? [],
+          slot: n.localSlot,
+          startDelay: n.startDelay,
+          authority: lock?.authority ?? false,
+          partnerAbsent: lock?.partnerAbsent ?? false,
+          linkUp: lock?.linkUp ?? false,
+          rollbacks: lock?.stats.rollbacks ?? 0,
+          maxRollback: lock?.stats.maxRollback ?? 0,
+          confirmed: lock?.confirmed ?? -1,
+          standby: n.view.value?.standby ?? null,
+          log: [...n.log],
+          credited: shell.creditedThisSession,
         };
       },
       fakeVersion: (v) => (shell.net.versionOverride = v),
       quickSetup: (name) => shell.finishSetup({ name, locale: 'en', settings: {} }),
       loseFocus: () => shell.net.requestHold('focus'),
-      corrupt: () => {
-        const h = heroOf(session.world, 0);
-        if (h) h.health = Math.max(1, h.health - 13);
-      },
+      corrupt: () => shell.net.corrupt(),
+      cutFor: (ms) => shell.net.cutFor(ms),
+      setCourtesy: (ms) => (shell.net.courtesyMs = ms),
     },
     shell: {
       screen: () => shell.screen.value,
