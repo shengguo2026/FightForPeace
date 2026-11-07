@@ -41,7 +41,9 @@ async function waitNet(page: Page, test: string, arg?: unknown) {
   } catch (err) {
     const s = await net(page).catch(() => null);
     const brief = s && { ...s, hashes: s.hashes.length, lobby: null, log: s.log.slice(-12) };
-    throw new Error(`waiting for ${test}: ${(err as Error).message}\n${JSON.stringify(brief)}`);
+    throw new Error(`waiting for ${test}: ${(err as Error).message}\n${JSON.stringify(brief)}`, {
+      cause: err,
+    });
   }
 }
 
