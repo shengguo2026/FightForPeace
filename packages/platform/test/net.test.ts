@@ -441,6 +441,24 @@ describe('M15 recovery: grace, survival proxy, migration and rejoin', () => {
     expect(hashWorld(host.world)).toBe(hashWorld(guest.world));
   });
 
+  it('notices that cross a hand-back on a slow link do not start the hand-back again', () => {
+    const { net, host, guest } = pair(0);
+    net.latency = 150;
+    run(net, [host, guest], 2000);
+    net.silent = true;
+    run(net, [host, guest], ABSENT_MS + 300);
+    net.silent = false;
+    // The guest also reconnects (a hello) while its old inputs are still in flight.
+    host.s.partnerReturning(net.now);
+    run(net, [host, guest], 8000);
+    const backs = host.s.log.filter((e) => e.ev === 'back').length;
+    expect(backs).toBeGreaterThanOrEqual(1);
+    expect(backs).toBeLessThanOrEqual(2);
+    expect(host.s.partnerAbsent).toBe(false);
+    settle(net, host, guest);
+    expect(hashWorld(host.world)).toBe(hashWorld(guest.world));
+  });
+
   it('a hand-back with other rules is refused safely', () => {
     const { net, host, guest } = pair(0);
     run(net, [host, guest], 1000);

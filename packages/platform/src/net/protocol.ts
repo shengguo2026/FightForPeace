@@ -150,7 +150,7 @@ export type NetMessage =
   // M15 recovery (both ways).
   | { t: 'absent'; from: number } // authority → partner: you are out from frame `from`
   | { t: 'promoted'; from: number } // sender took authority; the receiver is out from `from`
-  | { t: 'rejoin' } // a missing player asks to come back
+  | { t: 'rejoin'; from?: number } // a missing player asks to come back (from: its absence)
   | { t: 'back'; back: BackInfo } // authority → returning player
   // Room server notices.
   | {

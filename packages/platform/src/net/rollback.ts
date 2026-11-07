@@ -620,7 +620,9 @@ export class RollbackSession<S> {
     void now;
     this.rejoining = true;
     this.record('rejoin', this.slot);
-    this.o.send({ t: 'rejoin' });
+    const mine = this.absences[this.slot];
+    const last = mine[mine.length - 1];
+    this.o.send(last ? { t: 'rejoin', from: last.from } : { t: 'rejoin' });
   }
 
   /**
@@ -628,13 +630,20 @@ export class RollbackSession<S> {
    * computer's room). The authority hands back at the next safe moment; a game without
    * authority asks the partner instead.
    */
-  partnerReturning(now: number): void {
+  partnerReturning(now: number, from?: number): void {
     if (this.phase === 'ended') return;
     if (!this.authority) {
       if (this.phase === 'away' || this.rejoining) this.askToRejoin(now);
       return;
     }
-    if (!this.partnerAbsent) this.declareAbsent('absent', now);
+    if (!this.partnerAbsent) {
+      // A request about an absence that was already handed back is stale (it crossed
+      // the hand-back on the wire): the partner is in the game.
+      const theirs = this.absences[this.other];
+      const last = theirs[theirs.length - 1];
+      if (from !== undefined && last && last.from >= from) return;
+      this.declareAbsent('absent', now);
+    }
     if (this.pendingBack === null) this.pendingBack = now;
   }
 
@@ -950,11 +959,13 @@ export class RollbackSession<S> {
           this.o.send({ t: 'absent', from: claim.from });
           break;
         }
+        // A repeated notice about an absence this game already came back from is stale.
+        if (!this.authority && this.absences[this.slot].some((a) => a.from >= msg.from)) break;
         this.demote(msg.from, now);
         break;
       }
       case 'rejoin':
-        this.partnerReturning(now);
+        this.partnerReturning(now, msg.from);
         break;
       case 'back':
         this.takeBack(msg.back, now);
