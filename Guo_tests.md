@@ -577,3 +577,56 @@ You need two players on one keyboard (Player 2 on the numpad, joins with **Num 4
 3. **Stand on both sides of him:** on Extreme, one player in front of the Commander and one behind. He should not just stand and block one of you; he turns and attacks, or steps away.
 4. **Co-op boss on Ultimate:** same panel, **Ultimate**, sluice beat. As on Extreme, and when he goes to the winch (phase 3) another Runner joins.
 5. **Solo check:** with only Player 1 on Extreme, the sluice beat: the Commander starts alone (the extra start supports are co-op only).
+
+## M15 · Network phase 2: no input delay, recovery, host takeover and rejoin (0.15.0)
+
+Wi-Fi co-op now shows your own moves at once (no input delay); the other player's moves that arrive late are corrected by a short rollback. A pulled cable, a closed window or a player who stays away no longer ends the session: the missing player's hero first holds its guard, then a restricted "survival proxy" keeps it safe (it follows the other hero, blocks and uses basic attacks; it never uses meter, items, weapons or makes choices) until the player is back. If the host drops out, the guest's computer takes over and the host rejoins through it. You need two computers on the same home network, as in M12.
+
+### Get and start the build
+
+On PC 1:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm release
+```
+
+`pnpm release` writes `release\FightForPeace-0.15.0.zip`. Copy it to PC 2, unzip it there and double-click `start.bat`. On PC 1 either start the same zip or run `pnpm dev` and open `http://localhost:5173`. Both computers must run 0.15.0 (a 0.14 copy is refused in the lobby).
+
+To test the branch before it is merged instead of `main`:
+
+```powershell
+git fetch origin claude/project-thread-6rrgxj
+git checkout claude/project-thread-6rrgxj
+pnpm install
+pnpm release
+```
+
+Optional, the automated checks:
+
+```powershell
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm e2e
+pnpm smoke:portable
+```
+
+### Steps
+
+1. **Start as in M12:** PC 1 Play → Wi-Fi co-op → Host a game; PC 2 Join a game with PC 1's address, port and code; both pick a hero and press Ready.
+2. **No input delay:** the line under the stage title now reads **Wi-Fi · input delay 0 · rollbacks … · … ms**. Walk and attack on both computers: your own hero answers at once, like solo play. The other hero may very rarely jump a few pixels when its moves arrive late (that is the rollback). The rollbacks number grows; the delay should stay 0 on a home network (it can rise to 1–3 only if one computer keeps waiting).
+3. **Same game on both screens:** fight through Beat 1 together. Enemy positions and health bars must match on both screens.
+4. **Pull the cable on PC 2** (or switch off PC 2's Wi-Fi) for about 5 seconds, then plug it back in. PC 1 keeps playing without waiting; after about 1.5 s it shows "Player 2 is disconnected. Their hero holds its guard." and after 3 more seconds "…follows you, guards and uses basic attacks until they return." PC 2 shows "The connection to Player 1 was lost. Reconnecting…" with a countdown. After the cable is back, PC 2 jumps to PC 1's game and Player 2 controls their hero again within a second or two. Both screens show the same thing again.
+5. **Long cable pull on PC 2 (optional):** as step 4 but for about 15 seconds. After 6 seconds PC 2 continues on its own ("this computer leads") with Player 1's hero on the proxy. When the cable is back, PC 1's game wins: PC 2 jumps back to PC 1's game and both play on together.
+6. **Stay away (courtesy hold):** on PC 2 click another window and stay there. Both games stop; PC 1 shows "Player 2 left the game window." and "If Player 2 is not back in 3 s, play continues…". After 3 s PC 1 counts down and plays on with Player 2's hero guarding, then on the proxy. Go back to PC 2: it shows **You are out of the game** with **Rejoin**. Press it: PC 2 jumps to the current game and Player 2 takes the hero over at the next safe moment (not in the middle of a proxy attack).
+7. **Close the guest's window:** close the browser tab (or the whole zip) on PC 2. PC 1 plays on, Player 2's hero on guard and then on the proxy. Start the game again on PC 2, Wi-Fi co-op → Join a game with the **same** address, port and code: PC 2 goes straight into the running game as Player 2 (no lobby).
+8. **Close the host's window:** close the browser tab on PC 1 (leave the black server window open, or close it too). PC 2 takes over at once and keeps playing; the line under the title reads "Wi-Fi · this computer leads …", and a note shows "They can rejoin with Wi-Fi co-op → Join: address … · port … · code …". (The first time, Windows Firewall on PC 2 may ask about Node.js: allow private networks.) On PC 1 open the game again, Wi-Fi co-op → Join a game, and type PC 2's address, port and code from that note: PC 1 goes into the running game as Player 1, and PC 2 stays the leading computer.
+9. **Pause and End session still work:** Esc on either computer pauses both, both confirm, countdown, play on. End session on one computer still ends it on the other ("Player N left the session.").
+10. **Results once:** play a session to the Stage 1 results (it can include a reconnect from step 4). Each computer's player gets the Credits and records once (check the Credits in each village before and after). Rejoining or a takeover never gives them twice.
+11. **Languages:** switch PC 2 to 简体中文 or Deutsch and repeat step 4 or 6: the new notices, the away panel and the badge are translated.
+12. **Solo and same-device co-op:** Play → Solo and Same-device co-op behave exactly as in M14.

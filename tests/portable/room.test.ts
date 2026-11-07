@@ -11,7 +11,14 @@ import {
   type RoomService,
 } from '../../tools/portable/room.mjs';
 
-type Msg = { t: string; ev?: string; reason?: string; n?: number; big?: string };
+type Msg = {
+  t: string;
+  ev?: string;
+  reason?: string;
+  n?: number;
+  big?: string;
+  token?: string;
+};
 
 /** A WebSocket client that collects every message and waits for the next one. */
 function client(url: string) {
@@ -173,5 +180,32 @@ describe('M12 room server', () => {
     const late = client(`${base}?role=guest&code=${info.code}`);
     await late.opened;
     await late.until((m) => m.some((x) => x.reason === 'closed'));
+  });
+
+  it('M15: a guest whose connection broke takes its place again with its token', async () => {
+    const res = await fetch(`http://127.0.0.1:${apiPort}/__ffp/room`, { method: 'POST' });
+    const info = (await res.json()) as { code: string; port: number; token: string };
+    const base = `ws://127.0.0.1:${info.port}/ffp-room`;
+    const host = client(`${base}?role=host&token=${info.token}`);
+    await host.opened;
+    await host.until((m) => m.some((x) => x.ev === 'hosting'));
+    const guest = client(`${base}?role=guest&code=${info.code}`);
+    await guest.opened;
+    await guest.until((m) => m.some((x) => x.ev === 'joined'));
+    const token = guest.got.find((x) => x.ev === 'joined')!.token!;
+    expect(token).toMatch(/^[0-9a-f]{32}$/);
+    // The old connection still looks open (a pulled cable): without the token the room is full.
+    const stranger = client(`${base}?role=guest&code=${info.code}&token=nope`);
+    await stranger.opened;
+    await stranger.until((m) => m.some((x) => x.reason === 'full'));
+    const again = client(`${base}?role=guest&code=${info.code}&token=${token}`);
+    await again.opened;
+    await again.until((m) => m.some((x) => x.ev === 'joined'));
+    await guest.until(() => guest.isClosed());
+    // The host was not told that its guest left: the same player is back.
+    expect(host.got.filter((x) => x.ev === 'peer-left')).toHaveLength(0);
+    again.ws.send(JSON.stringify({ t: 'rejoin' }));
+    await host.until((m) => m.some((x) => x.t === 'rejoin'));
+    rooms.closeRoom(info.code);
   });
 });
