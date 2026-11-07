@@ -43,7 +43,15 @@ APPROVED = {
     "ENM-LOOKOUT-REACT": "ENM-LOOKOUT-REACT_v2.png",
 }
 
-HEROES = {"mountain": ("heroes/mountain", "HERO-MTN"), "river": ("heroes/river", "HERO-RIV")}
+HEROES = {
+    "mountain": ("heroes/mountain", "HERO-MTN"),
+    "river": ("heroes/river", "HERO-RIV"),
+    # M16: the Stage 2 twins (their Stage 1 weapon poses fall back to their own sheets).
+    "wind": ("heroes/wind", "HERO-WND"),
+    "fire": ("heroes/fire", "HERO-FIR"),
+}
+# Sheets a hero may lack without it being reported (the twins have no Stage 1 weapon sheets).
+OPTIONAL_COMMON = {"staff-a", "staff-b", "handwheel"}
 
 # Movement and reaction sheets every founder has (logical id suffix -> sheet name suffix).
 HERO_COMMON = {
@@ -60,6 +68,8 @@ HERO_COMMON = {
     "staff-a": "STAFF-A",
     "staff-b": "STAFF-B",
     "handwheel": "HANDWHEEL",
+    # M16: every hero's shared Team Attack sheet (Confluence Strike).
+    "team-attack": "TEAM-ATTACK",
 }
 
 # The training dummy and the Pressed Recruit share the recruit sheets (key "trainer").
@@ -128,10 +138,46 @@ def cell_info(img: Image.Image) -> list[dict | None]:
     return cells
 
 
+# Sheets whose figures were drawn over the row line (feet of the top row spill into the
+# bottom row's cells): each figure is cut at the gap between them, scaled to fit, and
+# stood on a common foot line inside its own cell. Values are the scale factors.
+REFIT = {"wind-idle": 0.92, "wind-walk": 0.92, "wind-dash": 1.0}
+REFIT_FOOT = 490  # source pixels from the top of a 512 cell
+
+
+def refit(img: Image.Image, scale: float) -> Image.Image:
+    src_cell = 512
+    alpha = img.getchannel("A").point(lambda v: 255 if v >= ALPHA_MIN else 0)
+    out = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    for c in range(COLS):
+        x0, x1 = c * src_cell, (c + 1) * src_cell
+        # The empty row nearest the row line splits this column's two figures.
+        band = alpha.crop((x0, 0, x1, img.height))
+        rows = [band.crop((0, y, src_cell, y + 1)).getbbox() is None for y in range(img.height)]
+        split = min(
+            (y for y in range(src_cell - 64, src_cell + 64) if rows[y]),
+            key=lambda y: abs(y - src_cell),
+            default=src_cell,
+        )
+        for r, (top, bottom) in enumerate(((0, split), (split, img.height))):
+            part = img.crop((x0, top, x1, bottom))
+            box = part.getchannel("A").point(lambda v: 255 if v >= ALPHA_MIN else 0).getbbox()
+            if box is None:
+                continue
+            fig = part.crop(box)
+            w, h = round(fig.width * scale), round(fig.height * scale)
+            fig = fig.resize((w, h), Image.Resampling.LANCZOS)
+            cx = x0 + (box[0] + box[2]) // 2
+            out.alpha_composite(fig, (max(x0, min(x1 - w, cx - w // 2)), r * src_cell + REFIT_FOOT - h))
+    return out
+
+
 def convert(src: Path, name: str) -> dict:
     img = Image.open(src).convert("RGBA")
     if img.size != (1536, 1024):
         raise SystemExit(f"{src}: expected a 1536x1024 sheet, got {img.size}")
+    if name in REFIT:
+        img = refit(img, REFIT[name])
     img = img.resize((COLS * CELL, ROWS * CELL), Image.Resampling.LANCZOS)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     out = OUT_DIR / f"{name}.webp"
@@ -177,7 +223,8 @@ def main() -> None:
         for key, suffix in HERO_COMMON.items():
             p = source(base, folder, f"{prefix}-{suffix}")
             if p is None:
-                missing.append(f"{prefix}-{suffix}")
+                if key not in OPTIONAL_COMMON:
+                    missing.append(f"{prefix}-{suffix}")
                 continue
             assets[f"hero.{hero}.sheet.{key}"] = convert(p, f"{hero}-{key}")
         for category, action in action_ids(hero):

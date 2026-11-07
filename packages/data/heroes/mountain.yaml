@@ -5,7 +5,7 @@
 id: mountain
 name: Mountain Guardian
 # Hero tags (M8): team finishers name the pairs they support by tag, never by hero id.
-tags: [founder]
+tags: [founder, guardian]
 bodyWidth: 84
 actions:
   - id: masons-touch

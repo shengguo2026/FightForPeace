@@ -339,6 +339,7 @@ export function installDebugHook(
         assists: c.assists,
         rescues: c.rescues,
         bundles: c.bundles,
+        reciprocal: c.reciprocal,
       };
     },
     staggerDummy: (frames) => {

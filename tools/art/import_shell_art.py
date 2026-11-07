@@ -30,6 +30,11 @@ PICTURES = [
     ("heroes/river/HERO-RIV-PORTRAIT.png", "portrait-river", 384, 88),
     ("heroes/mountain/HERO-MTN-SELECT.png", "select-mountain", 512, 88),
     ("heroes/river/HERO-RIV-SELECT.png", "select-river", 512, 88),
+    # M16: the Stage 2 twins.
+    ("heroes/wind/HERO-WND-PORTRAIT.png", "portrait-wind", 384, 88),
+    ("heroes/fire/HERO-FIR-PORTRAIT.png", "portrait-fire", 384, 88),
+    ("heroes/wind/HERO-WND-SELECT.png", "select-wind", 512, 88),
+    ("heroes/fire/HERO-FIR-SELECT.png", "select-fire", 512, 88),
     ("elder/ELDER-PORTRAIT.png", "elder-portrait", 512, 88),
     ("elder/ELDER-BRIEFING.png", "elder-briefing", 1152, 88),
     ("story/stage1/STORY-S1-INTRO-01.png", "s1-intro-01", 1280, 80),

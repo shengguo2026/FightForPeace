@@ -188,6 +188,8 @@ export function createFighter(
     bridged: false,
     ghost: false,
     meter: 0,
+    convert: 0,
+    punish: false,
     reqLink: -1,
     reqFrame: 0,
     verdictTo: -1,
@@ -277,6 +279,7 @@ export function createFighter(
     handoffFrom: 0,
     handoffAt: 0,
     handoffUntil: 0,
+    handoffRow: 0,
     assist: 0,
     releasedAt: NO_FRAME,
   };
@@ -707,6 +710,8 @@ export function encodeWorld(world: World): Uint8Array {
     w.u8(b.bridged ? 1 : 0);
     w.u8(b.ghost ? 1 : 0);
     w.u32(b.meter);
+    w.u32(b.convert);
+    w.u8(b.punish ? 1 : 0);
     w.i32(b.reqLink);
     w.u32(b.reqFrame);
     w.i32(b.verdictTo);
@@ -800,6 +805,7 @@ export function encodeWorld(world: World): Uint8Array {
     w.u32(b.handoffFrom);
     w.i32(b.handoffAt);
     w.i32(b.handoffUntil);
+    w.u8(b.handoffRow);
     w.u8(b.assist);
     w.i32(b.releasedAt);
   }

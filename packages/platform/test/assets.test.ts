@@ -18,11 +18,17 @@ test('aerial actions, and only aerial actions, use the aerial placeholder', () =
     [
       'bank-switch-arc',
       'cornerstone-sweep',
+      'crosswind-heel',
       'current-chase',
       'ebbturn-heel',
+      'ember-knee',
+      'falling-brand',
+      'featherline-check',
+      'flare-shift',
       'rafter-palm',
       'reedwing-tap',
       'stonefall-knee',
+      'tailwind-chase',
     ].sort(),
   );
 });

@@ -630,3 +630,58 @@ pnpm smoke:portable
 10. **Results once:** play a session to the Stage 1 results (it can include a reconnect from step 4). Each computer's player gets the Credits and records once (check the Credits in each village before and after). Rejoining or a takeover never gives them twice.
 11. **Languages:** switch PC 2 to 简体中文 or Deutsch and repeat step 4 or 6: the new notices, the away panel and the badge are translated.
 12. **Solo and same-device co-op:** Play → Solo and Same-device co-op behave exactly as in M14.
+
+## M16 · Four heroes: Wind Sentinel and Fire Warden (0.16.0)
+
+The twins join the roster. **Wind Sentinel** is a fast, mobile guard: quick jabs, a whiff-punish follow-up, wide sweeps and launchers. **Fire Warden** is a planted bruiser: some of her moves turn into a takedown when they connect ("contact-confirmed"), and big enemies (the Black-Iron Enforcer and the Commander) resist those takedowns unless they are staggered or guard-crushed. Every hero can now pair with every other one (six pairs, never the same hero twice). The twins together get two extra handoffs, **Crosswind Temper** (Wind → Fire) and **Rising Ember Relay** (Fire → Wind), and their own team finisher, **Twin Guardians' Accord**. Any pair that includes a founder (Mountain or River) uses Confluence Strike, as before.
+
+Two readings I chose (tell me if you want them different): mixed pairs (a founder with a twin) use Confluence Strike, and Wind's Clear-Sky Return only follows Slipstream Backfist when the backfist hits an enemy in the recovery of its own attack (a whiff punish), or when the Lab's "Counter-hit dummies" option is on.
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+Open `http://localhost:5173/?lab` for the Combat Lab (or Village → Academy → Combat Lab). If Vite prints another port, use that one. Stop the server with `Ctrl+C`.
+
+To test the branch before it is merged instead of `main`:
+
+```powershell
+git fetch origin claude/project-thread-8zvpuk
+git checkout claude/project-thread-8zvpuk
+pnpm install
+pnpm dev
+```
+
+Optional, the automated checks:
+
+```powershell
+pnpm typecheck
+pnpm lint
+pnpm test
+pnpm e2e
+```
+
+Keys as before. Player 1: move W A S D, Attack T, Jump Y, Guard G, Grab J, Special U, Ultimate H, Team Attack B. Player 2 joins with Num 4 (Attack Num 4, Jump Num 5, Special Num 6, Ultimate Num 2, Team Attack Num 0). F2 opens the Lab settings, F5 the move list. Player 1 starts on the left facing right, so "forward" is D and "backward" is A.
+
+### Steps
+
+1. **Pick the twins in the Lab:** open the Lab, press **F2**, set *Player 1 hero* to **wind**. The panel says "hero Wind Sentinel", F5 lists Windmark Jab, Crossline Reverse, Horizon Heel and the rest. In F2 also tick **Infinite attack meter**. Close F2.
+2. **Wind Sentinel basics:** next to Dummy 1: T T T (three-hit string), W + T (Northwind Rise launches), then Y and T in the air. The low attack (D D, then T + G together) is Grass-Cutter Sweep and knocks the dummy down; T on the downed dummy is Skimming Palm. Each hit shows the Wind sprite, not a placeholder.
+3. **Wind Specials and Ultimate:** U (Windbreak Combination), D + U (Gale Passage, she slides through), A + U (Skyward Sentinel, a rising guard that launches), H (Four-Wind Vigil, with its own effect burst). Grab with J, then T for strikes and J to throw.
+4. **Whiff punish:** A + T (Slipstream Backfist) then D + T right after the hit. With the default settings the second press does **not** become Clear-Sky Return (the Lab may show the reason "needs a whiff punish"). Now press F2 and tick **Counter-hit dummies**. Repeat: A + T, D + T now gives **Clear-Sky Return**. Untick the option again.
+5. **Fire Warden basics:** F2, set *Player 1 hero* to **fire**. T T T (Spark Jab, Hammer Cross, Furnace Heel), W + T (Rising Brand launches), the low attack (D D, then T + G: Ashline Reap) knocks the dummy down, and D + T on the downed dummy is **Rising Cast**: it lifts the dummy back onto its feet in a short stagger.
+6. **Contact-confirmed takedowns:** D + U (Flashpoint Clinch) next to the dummy: when it connects, it turns by itself into **Flashpoint Takedown** (the dummy goes down). From too far away it whiffs and nothing follows. H (Warden's Crucible) next to the dummy: on contact it becomes **Crucible Takedown**.
+7. **Large enemies resist:** press **F1** for the Arena panel, pick *Stage 1* on **Hard**, start at the **courtyard** beat, as Fire Warden. Against the Black-Iron Enforcer, Flashpoint Clinch hits but does **not** turn into the takedown, and Warden's Crucible becomes the shorter **Crucible Braced Strike** instead. In the boss fight (start at beat 8, the sluice) the Commander resists the same way until its resolve breaks ("STAGGER"); then Warden's Crucible becomes the full takedown again. End returns to the Lab.
+8. **Hero selection:** open `http://localhost:5173`, Play → Solo → ready → pick a stage → on the hero screen press D (or A) to cycle: Mountain Guardian, River Scout, Wind Sentinel, Fire Warden, and back. Each has its own portrait. In same-device co-op the second player cannot pick the hero the first player already has (the four heroes give six possible pairs).
+9. **Every pair, ordinary handoff and Confluence Strike:** in the Lab with Player 2 joined (Num 4), try for example Mountain + Wind, River + Fire. P1 W + T launches the dummy, P2 W + Num 4 (or jump and attack) takes over: "HANDOFF", the Co-op panel counts handoffs. Then P1 T to stagger the dummy, B to invite and P2 Num 0 to confirm: **Confluence Strike** lands.
+10. **Twin handoffs:** set P1 to **wind** and P2 to **fire** in F2. P1 W + T launches the dummy: the Co-op panel line reads "handoff on Dummy 1: airborne (Crosswind Temper) …". P2 W + Num 4 (Rising Brand) takes it: "handoffs 1 (reciprocal 1)". Then P2's backward Special (Player 2 faces left, so right arrow + Num 6: Furnace Rising) launches the dummy: the line names **Rising Ember Relay**; P1 jumps in with Y and D + T: "reciprocal 2".
+11. **Twin Guardians' Accord:** still Wind + Fire, both meters full. P1 T to stagger, B to invite, P2 Num 0: the finisher is **Twin Guardians' Accord** (its own effect burst, not Confluence Strike). The Accord is also allowed against the resisting Commander in the boss fight, where Confluence Strike is refused.
+12. **Languages:** switch to 简体中文 in Settings: the twins are 风神 and 火神, and their moves, the Accord and the two handoff routes are translated. Deutsch keeps the English hero names with German move names.
+13. **Founders unchanged:** Mountain Guardian and River Scout play exactly as in M15 (the old golden replays were re-recorded only because the save state now carries the new fields; their results did not change).

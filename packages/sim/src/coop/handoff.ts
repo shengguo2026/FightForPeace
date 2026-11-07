@@ -1,6 +1,7 @@
 import { type ActionDef, TargetState } from '../combat/types';
 import { CoopEvent, type Fighter, MoveState, type World } from '../world/types';
-import { COOP, logCoop, senderHandoff } from './data';
+import { baseKit } from '../combat/roster';
+import { COOP, logCoop, senderRow } from './data';
 
 /**
  * Organic Tagged Handoffs (F&D §6.5): a sender's tagged hit opens an authored target-state
@@ -24,8 +25,21 @@ export function partnerOf(world: World, f: Fighter): Fighter | undefined {
   );
 }
 
-function receiversFor(state: number): string[] {
-  return COOP.handoffs.filter((h) => h.state === state).flatMap((h) => h.receivers);
+/** Receiver tags of the handoff open on `t`: its own row's (Reciprocal Handoffs). */
+function receiversOf(t: Fighter): readonly string[] {
+  const row = COOP.handoffs[t.handoffRow - 1];
+  if (row) return row.receivers;
+  return COOP.handoffs.filter((h) => h.state === t.handoff).flatMap((h) => h.receivers);
+}
+
+/** Hero tags of a fighter's kit (never its id or name). */
+function heroTags(f: Fighter): readonly string[] {
+  return baseKit(f)?.tags ?? [];
+}
+
+/** The authored pair route of the handoff open on `t`, if any (for the Lab). */
+export function handoffRoute(t: Fighter): { id: string; name: string } | null {
+  return COOP.handoffs[t.handoffRow - 1]?.route ?? null;
 }
 
 /** Does this action of `att` claim the handoff open on `t`? (No state change.) */
@@ -38,7 +52,8 @@ export function canClaim(
 ): boolean {
   if (t.handoff === 0 || att.team !== 'hero' || att.id === t.handoffFrom) return false;
   if (world.frame > t.handoffUntil || stateBefore !== t.handoff) return false;
-  if (!a.tags.some((tag) => receiversFor(t.handoff).includes(tag))) return false;
+  const receivers = receiversOf(t);
+  if (!a.tags.some((tag) => receivers.includes(tag))) return false;
   // Short Pre-Input Buffer: the receiving move may start a few frames before the window.
   const started = world.frame - att.stateFrame;
   return started >= t.handoffAt - COOP.preBuffer;
@@ -48,8 +63,10 @@ export function canClaim(
 export function claimHandoff(world: World, att: Fighter, t: Fighter): void {
   logCoop(world, CoopEvent.HandoffClaim, att.id, t.handoffFrom, t.id, t.handoff);
   world.coop.handoffs += 1;
+  if (handoffRoute(t)) world.coop.reciprocal += 1;
   t.handoff = 0;
   t.handoffFrom = 0;
+  t.handoffRow = 0;
 }
 
 /**
@@ -58,13 +75,14 @@ export function claimHandoff(world: World, att: Fighter, t: Fighter): void {
  */
 export function openHandoff(world: World, owner: Fighter, a: ActionDef, t: Fighter): void {
   if (owner.team !== 'hero' || t.team === 'hero') return;
-  const h = senderHandoff(a.tags);
-  if (!h) return;
   const partner = partnerOf(world, owner);
   if (!partner) return;
   if (!t.ctx.open || t.ctx.exhausted || t.protectedRecovery) return;
-  if (targetState(t) !== h.state) return;
+  const row = senderRow(a.tags, targetState(t), heroTags(owner), heroTags(partner));
+  const h = COOP.handoffs[row];
+  if (!h) return;
   t.handoff = h.state;
+  t.handoffRow = row + 1;
   t.handoffFrom = owner.id;
   t.handoffAt = world.frame;
   t.handoffUntil = world.frame + h.window - 1;
@@ -84,6 +102,7 @@ export function stepHandoffs(world: World): void {
     logCoop(world, CoopEvent.HandoffClosed, t.handoffFrom, 0, t.id, expired ? 1 : 2);
     t.handoff = 0;
     t.handoffFrom = 0;
+    t.handoffRow = 0;
   }
 }
 

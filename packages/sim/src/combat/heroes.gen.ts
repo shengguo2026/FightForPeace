@@ -21,7 +21,8 @@ export const HERO_DATA: readonly HeroDef[] = [
     "name": "Mountain Guardian",
     "bodyWidth": 84,
     "tags": [
-      "founder"
+      "founder",
+      "guardian"
     ],
     "actions": [
       {
@@ -82,6 +83,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "grabAssistEligible",
           "receiveStagger"
@@ -95,6 +97,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -105,6 +108,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -115,6 +119,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -125,6 +130,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -197,6 +203,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "grabAssistEligible"
         ],
@@ -209,6 +216,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -219,6 +227,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -229,6 +238,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -239,6 +249,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -311,6 +322,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "handoffStagger",
           "wallBounce"
@@ -324,6 +336,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -334,6 +347,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 25
           }
         ],
@@ -406,6 +420,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "guardPressure",
           "handoffStagger",
@@ -420,6 +435,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -430,6 +446,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -502,6 +519,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "grabAssistEligible",
           "receiveStagger"
@@ -515,6 +533,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -587,6 +606,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "handoffAirborne",
           "receiveAirborne"
@@ -600,6 +620,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -610,6 +631,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -682,6 +704,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "handoffDown",
           "opensGroundWindow"
@@ -747,6 +770,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "receiveAirborne"
         ],
@@ -759,6 +783,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -769,6 +794,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -841,6 +867,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": -1536
           }
         ],
+        "convert": null,
         "tags": [
           "groundBounce",
           "receiveAirborne",
@@ -855,6 +882,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -927,6 +955,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "receiveAirborne"
         ],
@@ -939,6 +968,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -1002,6 +1032,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "groundExtension",
           "receiveDown"
@@ -1015,6 +1046,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -1025,6 +1057,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -1092,6 +1125,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "groundFinisher",
           "receiveDown",
@@ -1158,6 +1192,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "groundFinisher",
           "receiveDown",
@@ -1241,6 +1276,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "guardPressure"
         ],
@@ -1253,6 +1289,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -1325,6 +1362,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "opensGroundWindow"
         ],
@@ -1389,6 +1427,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "wallBounce"
         ],
@@ -1401,6 +1440,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 25
           }
         ],
@@ -1475,6 +1515,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "wallBounce"
         ],
@@ -1550,6 +1591,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "guardPressure"
         ],
@@ -1616,6 +1658,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "handoffAirborne"
         ],
@@ -1628,6 +1671,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -1708,6 +1752,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "finalReaction",
           "terminalKnockdown"
@@ -1776,6 +1821,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [],
         "links": [
           {
@@ -1786,6 +1832,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -1851,6 +1898,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "terminalKnockdown"
         ],
@@ -1924,6 +1972,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [],
         "links": [],
         "pose": "hero.mountain.pose.grab.millstone-clasp"
@@ -1986,6 +2035,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [],
         "links": [],
         "pose": "hero.mountain.pose.grabStrike.keystone-knee"
@@ -2048,6 +2098,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "wallBounce"
         ],
@@ -2112,6 +2163,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "bodyProjectile",
           "terminalKnockdown"
@@ -2177,6 +2229,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "bodyProjectile",
           "terminalKnockdown",
@@ -2243,6 +2296,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "opensGroundWindow"
         ],
@@ -2307,6 +2361,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "teamFinisher",
           "terminalKnockdown"
@@ -2406,7 +2461,8 @@ export const HERO_DATA: readonly HeroDef[] = [
     "name": "River Scout",
     "bodyWidth": 60,
     "tags": [
-      "founder"
+      "founder",
+      "guardian"
     ],
     "actions": [
       {
@@ -2467,6 +2523,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "grabAssistEligible",
           "receiveStagger"
@@ -2480,6 +2537,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -2490,6 +2548,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -2500,6 +2559,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -2510,6 +2570,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -2582,6 +2643,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "grabAssistEligible"
         ],
@@ -2594,6 +2656,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -2604,6 +2667,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -2614,6 +2678,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -2686,6 +2751,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "handoffStagger",
           "wallBounce"
@@ -2699,6 +2765,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -2709,6 +2776,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 25
           }
         ],
@@ -2781,6 +2849,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "carry",
           "handoffStagger",
@@ -2795,6 +2864,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -2805,6 +2875,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -2877,6 +2948,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "grabAssistEligible",
           "receiveStagger",
@@ -2891,6 +2963,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -2963,6 +3036,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "handoffAirborne",
           "receiveAirborne"
@@ -2976,6 +3050,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -3048,6 +3123,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "handoffDown",
           "passThrough"
@@ -3061,6 +3137,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -3071,6 +3148,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -3134,6 +3212,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "receiveAirborne"
         ],
@@ -3146,6 +3225,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -3156,6 +3236,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -3166,6 +3247,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -3238,6 +3320,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "carry",
           "receiveAirborne",
@@ -3252,6 +3335,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -3324,6 +3408,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "receiveAirborne"
         ],
@@ -3336,6 +3421,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -3408,6 +3494,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "receiveAirborne"
         ],
@@ -3420,6 +3507,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -3483,6 +3571,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "groundExtension",
           "receiveDown"
@@ -3496,6 +3585,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -3559,6 +3649,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "groundFinisher",
           "receiveDown",
@@ -3635,6 +3726,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "passThrough",
           "sideSwitch"
@@ -3648,6 +3740,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -3728,6 +3821,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "opensGroundWindow"
         ],
@@ -3792,6 +3886,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [],
         "links": [
           {
@@ -3802,6 +3897,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -3870,6 +3966,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [],
         "links": [],
         "pose": "hero.river.pose.special.current-crescent"
@@ -3951,6 +4048,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "finalReaction"
         ],
@@ -4038,6 +4136,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [],
         "links": [],
         "pose": "hero.river.pose.special.ebbstep-return"
@@ -4119,6 +4218,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "finalReaction",
           "passThrough",
@@ -4198,6 +4298,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "handoffAirborne"
         ],
@@ -4210,6 +4311,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -4290,6 +4392,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "carry",
           "finalReaction",
@@ -4365,6 +4468,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [],
         "links": [],
         "pose": "hero.river.pose.grab.ferry-catch"
@@ -4429,6 +4533,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [],
         "links": [],
         "pose": "hero.river.pose.grabStrike.ripple-elbows"
@@ -4491,6 +4596,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [],
         "links": [],
         "pose": "hero.river.pose.grabStrike.spring-tide-kick"
@@ -4553,6 +4659,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "bodyProjectile",
           "terminalKnockdown"
@@ -4618,6 +4725,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "bodyProjectile",
           "terminalKnockdown",
@@ -4684,6 +4792,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [],
         "links": [
           {
@@ -4694,6 +4803,7 @@ export const HERO_DATA: readonly HeroDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -4757,6 +4867,7 @@ export const HERO_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "teamFinisher",
           "terminalKnockdown"
@@ -4849,6 +4960,4992 @@ export const HERO_DATA: readonly HeroDef[] = [
         "counterHit": true
       }
     ]
+  },
+  {
+    "id": "wind",
+    "name": "Wind Sentinel",
+    "bodyWidth": 56,
+    "tags": [
+      "guardian",
+      "twin"
+    ],
+    "actions": [
+      {
+        "id": "windmark-jab",
+        "name": "Windmark Jab",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 0,
+        "startup": 4,
+        "active": [
+          2
+        ],
+        "recovery": 8,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 3840,
+          "w": 25600,
+          "y": 40960,
+          "h": 20480,
+          "depth": 7680
+        },
+        "hurtbox": "standing",
+        "damage": 22,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 16,
+          "push": 384,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 8,
+        "damageScaleCost": 10,
+        "starterProration": 20,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 11,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "grabAssistEligible",
+          "receiveStagger"
+        ],
+        "links": [
+          {
+            "kind": "action",
+            "to": 1,
+            "dir": 0,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "action",
+            "to": 3,
+            "dir": 1,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "action",
+            "to": 5,
+            "dir": 3,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "action",
+            "to": 6,
+            "dir": 4,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.wind.pose.standing.windmark-jab"
+      },
+      {
+        "id": "crossline-reverse",
+        "name": "Crossline Reverse",
+        "category": "standing",
+        "context": "chain",
+        "dir": 0,
+        "startup": 5,
+        "active": [
+          3
+        ],
+        "recovery": 10,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 3840,
+          "w": 26880,
+          "y": 35840,
+          "h": 25600,
+          "depth": 8192
+        },
+        "hurtbox": "standing",
+        "damage": 32,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 512,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 16,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 5,
+            "forward": 512,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "grabAssistEligible"
+        ],
+        "links": [
+          {
+            "kind": "action",
+            "to": 2,
+            "dir": 0,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "action",
+            "to": 5,
+            "dir": 3,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "special",
+            "to": -1,
+            "dir": 0,
+            "category": "special",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.wind.pose.standing.crossline-reverse"
+      },
+      {
+        "id": "horizon-heel",
+        "name": "Horizon Heel",
+        "category": "standing",
+        "context": "chain",
+        "dir": 0,
+        "startup": 8,
+        "active": [
+          4
+        ],
+        "recovery": 15,
+        "landing": false,
+        "blockstun": 20,
+        "hitbox": {
+          "x": 3840,
+          "w": 32000,
+          "y": 28160,
+          "h": 35840,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 52,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 24,
+          "push": 3072,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 14,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 26,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 8,
+            "forward": 384,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "handoffStagger",
+          "handoffTemper",
+          "wallBounce"
+        ],
+        "links": [
+          {
+            "kind": "ultimate",
+            "to": -1,
+            "dir": 0,
+            "category": "ultimate",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "dash",
+            "to": -1,
+            "dir": 1,
+            "category": "dashBridge",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 25
+          }
+        ],
+        "pose": "hero.wind.pose.standing.horizon-heel"
+      },
+      {
+        "id": "headwind-entry",
+        "name": "Headwind Entry",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 1,
+        "startup": 9,
+        "active": [
+          4
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 3840,
+          "w": 38400,
+          "y": 35840,
+          "h": 25600,
+          "depth": 7680
+        },
+        "hurtbox": "standing",
+        "damage": 40,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 1024,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 20,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 11,
+            "forward": 1792,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "carry",
+          "receiveRelay",
+          "receiveStagger"
+        ],
+        "links": [
+          {
+            "kind": "action",
+            "to": 1,
+            "dir": 0,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "special",
+            "to": -1,
+            "dir": 1,
+            "category": "special",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.wind.pose.standing.headwind-entry"
+      },
+      {
+        "id": "slipstream-backfist",
+        "name": "Slipstream Backfist",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 2,
+        "startup": 6,
+        "active": [
+          3
+        ],
+        "recovery": 12,
+        "landing": false,
+        "blockstun": 18,
+        "hitbox": {
+          "x": 2560,
+          "w": 29440,
+          "y": 38400,
+          "h": 23040,
+          "depth": 7680
+        },
+        "hurtbox": "standing",
+        "damage": 30,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 22,
+          "push": 384,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 9,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 15,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 6,
+            "forward": -1024,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "grabAssistEligible",
+          "receiveStagger",
+          "whiffPunish"
+        ],
+        "links": [
+          {
+            "kind": "action",
+            "to": 7,
+            "dir": 1,
+            "category": "chain",
+            "onHit": false,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": true,
+            "premium": 0
+          },
+          {
+            "kind": "action",
+            "to": 0,
+            "dir": 0,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.wind.pose.standing.slipstream-backfist"
+      },
+      {
+        "id": "northwind-rise",
+        "name": "Northwind Rise",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 3,
+        "startup": 8,
+        "active": [
+          4
+        ],
+        "recovery": 16,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 3840,
+          "w": 26880,
+          "y": 30720,
+          "h": 46080,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 40,
+        "reaction": {
+          "kind": "launch",
+          "hitstun": 30,
+          "push": 384,
+          "lift": 3584,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 30,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 20,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 8,
+            "forward": null,
+            "depth": -768,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "handoffAirborne",
+          "handoffTemper",
+          "receiveAirborne"
+        ],
+        "links": [
+          {
+            "kind": "jump",
+            "to": -1,
+            "dir": 0,
+            "category": "jumpChase",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.wind.pose.standing.northwind-rise"
+      },
+      {
+        "id": "southwind-pass",
+        "name": "Southwind Pass",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 4,
+        "startup": 8,
+        "active": [
+          5
+        ],
+        "recovery": 17,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": -5120,
+          "w": 33280,
+          "y": 0,
+          "h": 43520,
+          "depth": 11264
+        },
+        "hurtbox": "standing",
+        "damage": 36,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 256,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 18,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 14,
+            "forward": 768,
+            "depth": 768,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "passThrough",
+          "receiveStagger",
+          "sideSwitch"
+        ],
+        "links": [
+          {
+            "kind": "action",
+            "to": 4,
+            "dir": 2,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.wind.pose.standing.southwind-pass"
+      },
+      {
+        "id": "clear-sky-return",
+        "name": "Clear-Sky Return",
+        "category": "standing",
+        "context": "chain",
+        "dir": 1,
+        "startup": 7,
+        "active": [
+          4
+        ],
+        "recovery": 16,
+        "landing": false,
+        "blockstun": 22,
+        "hitbox": {
+          "x": 3840,
+          "w": 32000,
+          "y": 35840,
+          "h": 35840,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 68,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 26,
+          "push": 2560,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 14,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 6,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 34,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 7,
+            "forward": 768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "handoffStagger",
+          "handoffTemper",
+          "wallBounce"
+        ],
+        "links": [
+          {
+            "kind": "ultimate",
+            "to": -1,
+            "dir": 0,
+            "category": "ultimate",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "special",
+            "to": -1,
+            "dir": 1,
+            "category": "special",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.wind.pose.standing.clear-sky-return"
+      },
+      {
+        "id": "featherline-check",
+        "name": "Featherline Check",
+        "category": "aerial",
+        "context": "air",
+        "dir": 0,
+        "startup": 4,
+        "active": [
+          3
+        ],
+        "recovery": 7,
+        "landing": true,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 2560,
+          "w": 26880,
+          "y": -5120,
+          "h": 33280,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 26,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 16,
+          "push": 512,
+          "lift": 0,
+          "airPop": 1792,
+          "counterTrip": false
+        },
+        "stunDecayCost": 9,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 10,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 13,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "receiveAirborne"
+        ],
+        "links": [
+          {
+            "kind": "action",
+            "to": 9,
+            "dir": 1,
+            "category": "air",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "action",
+            "to": 10,
+            "dir": 5,
+            "category": "air",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.wind.pose.aerial.featherline-check"
+      },
+      {
+        "id": "tailwind-chase",
+        "name": "Tailwind Chase",
+        "category": "aerial",
+        "context": "air",
+        "dir": 1,
+        "startup": 6,
+        "active": [
+          5
+        ],
+        "recovery": 10,
+        "landing": true,
+        "blockstun": 20,
+        "hitbox": {
+          "x": 2560,
+          "w": 29440,
+          "y": -10240,
+          "h": 33280,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 44,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 24,
+          "push": 1536,
+          "lift": 768,
+          "airPop": 1280,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 20,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 22,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 11,
+            "forward": 1280,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "carry",
+          "receiveAirborne",
+          "receiveRelay"
+        ],
+        "links": [
+          {
+            "kind": "ultimate",
+            "to": -1,
+            "dir": 0,
+            "category": "ultimate",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.wind.pose.aerial.tailwind-chase"
+      },
+      {
+        "id": "crosswind-heel",
+        "name": "Crosswind Heel",
+        "category": "aerial",
+        "context": "air",
+        "dir": 5,
+        "startup": 7,
+        "active": [
+          5
+        ],
+        "recovery": 11,
+        "landing": true,
+        "blockstun": 16,
+        "hitbox": {
+          "x": -2560,
+          "w": 34560,
+          "y": -10240,
+          "h": 35840,
+          "depth": 15360
+        },
+        "hurtbox": "standing",
+        "damage": 34,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 512,
+          "lift": 0,
+          "airPop": 1536,
+          "counterTrip": false
+        },
+        "stunDecayCost": 11,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 15,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 17,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 12,
+            "forward": null,
+            "depth": 1280,
+            "depthFromInput": true,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "receiveAirborne"
+        ],
+        "links": [
+          {
+            "kind": "action",
+            "to": 9,
+            "dir": 1,
+            "category": "air",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.wind.pose.aerial.crosswind-heel"
+      },
+      {
+        "id": "skimming-palm",
+        "name": "Skimming Palm",
+        "category": "ground",
+        "context": "groundFocus",
+        "dir": 0,
+        "startup": 6,
+        "active": [
+          4
+        ],
+        "recovery": 12,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": -5120,
+          "w": 35840,
+          "y": 0,
+          "h": 17920,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 26,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 9,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 13,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 8,
+            "forward": 1024,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "groundExtension",
+          "receiveDown",
+          "sideSwitch"
+        ],
+        "links": [
+          {
+            "kind": "action",
+            "to": 12,
+            "dir": 1,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.wind.pose.ground.skimming-palm"
+      },
+      {
+        "id": "updraft-release",
+        "name": "Updraft Release",
+        "category": "ground",
+        "context": "groundFocus",
+        "dir": 1,
+        "startup": 9,
+        "active": [
+          5
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 2560,
+          "w": 28160,
+          "y": 0,
+          "h": 30720,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 45,
+        "reaction": {
+          "kind": "launch",
+          "hitstun": 30,
+          "push": 0,
+          "lift": 3072,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 16,
+        "damageScaleCost": 14,
+        "starterProration": 0,
+        "juggleCost": 35,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 22,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "groundFinisher",
+          "handoffTemper",
+          "receiveDown",
+          "relaunch"
+        ],
+        "links": [],
+        "pose": "hero.wind.pose.ground.updraft-release"
+      },
+      {
+        "id": "windline-entry",
+        "name": "Windline Entry",
+        "category": "dash",
+        "context": "dash",
+        "dir": 0,
+        "startup": 5,
+        "active": [
+          4
+        ],
+        "recovery": 14,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": -5120,
+          "w": 38400,
+          "y": 25600,
+          "h": 43520,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 38,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 512,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 11,
+        "damageScaleCost": 11,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 19,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 9,
+            "forward": 2304,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "receiveRelay",
+          "receiveStagger"
+        ],
+        "links": [
+          {
+            "kind": "action",
+            "to": 1,
+            "dir": 0,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "special",
+            "to": -1,
+            "dir": 1,
+            "category": "special",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.wind.pose.dash.windline-entry"
+      },
+      {
+        "id": "grass-cutter-sweep",
+        "name": "Grass-Cutter Sweep",
+        "category": "low",
+        "context": "dashLow",
+        "dir": 0,
+        "startup": 6,
+        "active": [
+          6
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 0,
+          "w": 35840,
+          "y": 0,
+          "h": 14080,
+          "depth": 6656
+        },
+        "hurtbox": "low",
+        "damage": 30,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 512,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": true
+        },
+        "stunDecayCost": 13,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 15,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 12,
+            "forward": 1792,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          },
+          {
+            "from": 13,
+            "to": 18,
+            "forward": 768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "opensGroundWindow"
+        ],
+        "links": [],
+        "pose": "hero.wind.pose.low.grass-cutter-sweep"
+      },
+      {
+        "id": "open-gate-return",
+        "name": "Open Gate Return",
+        "category": "counter",
+        "context": "counter",
+        "dir": 0,
+        "startup": 3,
+        "active": [
+          4
+        ],
+        "recovery": 14,
+        "landing": false,
+        "blockstun": 24,
+        "hitbox": {
+          "x": 0,
+          "w": 34560,
+          "y": 28160,
+          "h": 40960,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 85,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 28,
+          "push": 2560,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 20,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 42,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "sideSwitch"
+        ],
+        "links": [
+          {
+            "kind": "dash",
+            "to": -1,
+            "dir": 1,
+            "category": "dashBridge",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 25
+          }
+        ],
+        "pose": "hero.wind.pose.counter.open-gate-return"
+      },
+      {
+        "id": "windbreak-combination",
+        "name": "Windbreak Combination",
+        "category": "special",
+        "context": "special",
+        "dir": 0,
+        "startup": 7,
+        "active": [
+          2,
+          2,
+          2,
+          2,
+          3
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 20,
+        "hitbox": {
+          "x": 2560,
+          "w": 30720,
+          "y": 28160,
+          "h": 40960,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 72,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 24,
+          "push": 2048,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [
+          0
+        ],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 36,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 14,
+            "forward": 384,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "finalReaction"
+        ],
+        "links": [],
+        "pose": "hero.wind.pose.special.windbreak-combination"
+      },
+      {
+        "id": "gale-passage",
+        "name": "Gale Passage",
+        "category": "special",
+        "context": "special",
+        "dir": 1,
+        "startup": 6,
+        "active": [
+          5
+        ],
+        "recovery": 26,
+        "landing": false,
+        "blockstun": 20,
+        "hitbox": {
+          "x": 2560,
+          "w": 32000,
+          "y": 28160,
+          "h": 38400,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 62,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 24,
+          "push": 2304,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 13,
+        "damageScaleCost": 12,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [
+          1
+        ],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 31,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 11,
+            "forward": 2304,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "handoffStagger",
+          "handoffTemper",
+          "sideSwitch"
+        ],
+        "links": [],
+        "pose": "hero.wind.pose.special.gale-passage"
+      },
+      {
+        "id": "skyward-sentinel",
+        "name": "Skyward Sentinel",
+        "category": "special",
+        "context": "special",
+        "dir": 2,
+        "startup": 6,
+        "active": [
+          6
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 0,
+          "w": 29440,
+          "y": 30720,
+          "h": 56320,
+          "depth": 10752
+        },
+        "hurtbox": "standing",
+        "damage": 62,
+        "reaction": {
+          "kind": "launch",
+          "hitstun": 30,
+          "push": 384,
+          "lift": 3328,
+          "airPop": 3072,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 15,
+        "juggleCost": 30,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [
+          2
+        ],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": {
+          "from": 1,
+          "to": 7,
+          "x": 10240
+        },
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 31,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 5,
+            "forward": -1280,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          },
+          {
+            "from": 6,
+            "to": 11,
+            "forward": 768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "handoffAirborne",
+          "handoffTemper"
+        ],
+        "links": [
+          {
+            "kind": "jump",
+            "to": -1,
+            "dir": 0,
+            "category": "jumpChase",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.wind.pose.special.skyward-sentinel"
+      },
+      {
+        "id": "four-wind-vigil",
+        "name": "Four-Wind Vigil",
+        "category": "ultimate",
+        "context": "ultimate",
+        "dir": 0,
+        "startup": 7,
+        "active": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          4
+        ],
+        "recovery": 40,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": -10240,
+          "w": 51200,
+          "y": 15360,
+          "h": 61440,
+          "depth": 14336
+        },
+        "hurtbox": "standing",
+        "damage": 280,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 3072,
+          "lift": 2048,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 10,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [
+          0
+        ],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 140,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 22,
+            "forward": 512,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "finalReaction",
+          "sideSwitch",
+          "terminalKnockdown"
+        ],
+        "links": [],
+        "pose": "hero.wind.pose.ultimate.four-wind-vigil"
+      },
+      {
+        "id": "patrol-grip",
+        "name": "Patrol Grip",
+        "category": "grab",
+        "context": "grab",
+        "dir": 0,
+        "startup": 5,
+        "active": [
+          2
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 5120,
+          "w": 25600,
+          "y": 30720,
+          "h": 35840,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 0,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 5,
+            "forward": 768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "hero.wind.pose.grab.patrol-grip"
+      },
+      {
+        "id": "breeze-turn",
+        "name": "Breeze Turn",
+        "category": "grabStrike",
+        "context": "grabExtension",
+        "dir": 0,
+        "startup": 5,
+        "active": [
+          2
+        ],
+        "recovery": 10,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 5120,
+          "w": 20480,
+          "y": 30720,
+          "h": 30720,
+          "depth": 7680
+        },
+        "hurtbox": "standing",
+        "damage": 32,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 9,
+        "damageScaleCost": 10,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 16,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "hero.wind.pose.grabStrike.breeze-turn"
+      },
+      {
+        "id": "sentinel-heel",
+        "name": "Sentinel Heel",
+        "category": "grabStrike",
+        "context": "grabRelease",
+        "dir": 0,
+        "startup": 7,
+        "active": [
+          4
+        ],
+        "recovery": 16,
+        "landing": false,
+        "blockstun": 20,
+        "hitbox": {
+          "x": 5120,
+          "w": 30720,
+          "y": 25600,
+          "h": 40960,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 52,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 24,
+          "push": 2816,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 13,
+        "damageScaleCost": 12,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 26,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "handoffStagger",
+          "handoffTemper"
+        ],
+        "links": [],
+        "pose": "hero.wind.pose.grabStrike.sentinel-heel"
+      },
+      {
+        "id": "clear-path-cast",
+        "name": "Clear Path Cast",
+        "category": "throw",
+        "context": "grabThrow",
+        "dir": 0,
+        "startup": 9,
+        "active": [
+          3
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 5120,
+          "w": 25600,
+          "y": 25600,
+          "h": 40960,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 45,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 3584,
+          "lift": 1536,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 13,
+        "damageScaleCost": 12,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 40,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 22,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "bodyProjectile",
+          "terminalKnockdown"
+        ],
+        "links": [],
+        "pose": "hero.wind.pose.throw.clear-path-cast"
+      },
+      {
+        "id": "clear-path-turn",
+        "name": "Clear Path Turn",
+        "category": "throw",
+        "context": "grabThrow",
+        "dir": 2,
+        "startup": 10,
+        "active": [
+          3
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 5120,
+          "w": 25600,
+          "y": 25600,
+          "h": 40960,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 48,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 3072,
+          "lift": 1792,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 13,
+        "damageScaleCost": 12,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 40,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 24,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "bodyProjectile",
+          "terminalKnockdown",
+          "throwBack"
+        ],
+        "links": [],
+        "pose": "hero.wind.pose.throw.clear-path-turn"
+      },
+      {
+        "id": "confluence-strike",
+        "name": "Confluence Strike",
+        "category": "team",
+        "context": "team",
+        "dir": 0,
+        "startup": 14,
+        "active": [
+          4
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 0,
+          "w": 43520,
+          "y": 10240,
+          "h": 66560,
+          "depth": 15360
+        },
+        "hurtbox": "standing",
+        "damage": 140,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 2304,
+          "lift": 2560,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 70,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "teamFinisher",
+          "terminalKnockdown"
+        ],
+        "links": [],
+        "pose": "hero.wind.pose.team.confluence-strike"
+      },
+      {
+        "id": "twin-accord",
+        "name": "Twin Guardians' Accord",
+        "category": "team",
+        "context": "team",
+        "dir": 0,
+        "startup": 12,
+        "active": [
+          3,
+          3,
+          3,
+          3,
+          5
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 0,
+          "w": 43520,
+          "y": 10240,
+          "h": 66560,
+          "depth": 15360
+        },
+        "hurtbox": "standing",
+        "damage": 150,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 1536,
+          "lift": 2048,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 75,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "finalReaction",
+          "teamFinisher",
+          "terminalKnockdown"
+        ],
+        "links": [],
+        "pose": "hero.wind.pose.team.twin-accord"
+      }
+    ],
+    "recipes": [
+      {
+        "id": "foundation",
+        "name": "Foundation",
+        "family": "foundation",
+        "steps": [
+          {
+            "jump": false,
+            "any": [
+              0
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              1
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              2
+            ]
+          }
+        ],
+        "counterHit": false
+      },
+      {
+        "id": "aerial-conversion",
+        "name": "Aerial conversion",
+        "family": "aerial",
+        "steps": [
+          {
+            "jump": false,
+            "any": [
+              5
+            ]
+          },
+          {
+            "jump": true,
+            "any": []
+          },
+          {
+            "jump": false,
+            "any": [
+              8
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              9
+            ]
+          }
+        ],
+        "counterHit": false
+      },
+      {
+        "id": "low-to-ground",
+        "name": "Low to ground",
+        "family": "ground",
+        "steps": [
+          {
+            "jump": false,
+            "any": [
+              14
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              11
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              12
+            ]
+          }
+        ],
+        "counterHit": true
+      }
+    ]
+  },
+  {
+    "id": "fire",
+    "name": "Fire Warden",
+    "bodyWidth": 72,
+    "tags": [
+      "guardian",
+      "twin"
+    ],
+    "actions": [
+      {
+        "id": "spark-jab",
+        "name": "Spark Jab",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 0,
+        "startup": 5,
+        "active": [
+          2
+        ],
+        "recovery": 9,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 23552,
+          "y": 38400,
+          "h": 23040,
+          "depth": 8192
+        },
+        "hurtbox": "standing",
+        "damage": 28,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 384,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 14,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "grabAssistEligible",
+          "receiveStagger"
+        ],
+        "links": [
+          {
+            "kind": "action",
+            "to": 1,
+            "dir": 0,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "action",
+            "to": 3,
+            "dir": 1,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "action",
+            "to": 5,
+            "dir": 3,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "action",
+            "to": 6,
+            "dir": 4,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.fire.pose.standing.spark-jab"
+      },
+      {
+        "id": "hammer-cross",
+        "name": "Hammer Cross",
+        "category": "standing",
+        "context": "chain",
+        "dir": 0,
+        "startup": 7,
+        "active": [
+          3
+        ],
+        "recovery": 12,
+        "landing": false,
+        "blockstun": 17,
+        "hitbox": {
+          "x": 5120,
+          "w": 25088,
+          "y": 35840,
+          "h": 25600,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 45,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 21,
+          "push": 512,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 22,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 7,
+            "forward": 384,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "grabAssistEligible"
+        ],
+        "links": [
+          {
+            "kind": "action",
+            "to": 2,
+            "dir": 0,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "action",
+            "to": 5,
+            "dir": 3,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "special",
+            "to": -1,
+            "dir": 0,
+            "category": "special",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "grab",
+            "to": -1,
+            "dir": 0,
+            "category": "grab",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.fire.pose.standing.hammer-cross"
+      },
+      {
+        "id": "furnace-heel",
+        "name": "Furnace Heel",
+        "category": "standing",
+        "context": "chain",
+        "dir": 0,
+        "startup": 10,
+        "active": [
+          4
+        ],
+        "recovery": 19,
+        "landing": false,
+        "blockstun": 22,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 30720,
+          "h": 35840,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 72,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 26,
+          "push": 3072,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 17,
+        "damageScaleCost": 15,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 6,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 36,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 10,
+            "forward": 256,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "handoffStagger",
+          "wallBounce"
+        ],
+        "links": [
+          {
+            "kind": "ultimate",
+            "to": -1,
+            "dir": 0,
+            "category": "ultimate",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "dash",
+            "to": -1,
+            "dir": 1,
+            "category": "dashBridge",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 25
+          }
+        ],
+        "pose": "hero.fire.pose.standing.furnace-heel"
+      },
+      {
+        "id": "flashpoint-drive",
+        "name": "Flashpoint Drive",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 1,
+        "startup": 9,
+        "active": [
+          4
+        ],
+        "recovery": 17,
+        "landing": false,
+        "blockstun": 18,
+        "hitbox": {
+          "x": 3840,
+          "w": 25600,
+          "y": 28160,
+          "h": 38400,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 50,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 22,
+          "push": 512,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 13,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 25,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 12,
+            "forward": 1280,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "receiveStagger",
+          "receiveTemper"
+        ],
+        "links": [
+          {
+            "kind": "grab",
+            "to": -1,
+            "dir": 0,
+            "category": "grab",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "action",
+            "to": 1,
+            "dir": 0,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "special",
+            "to": -1,
+            "dir": 1,
+            "category": "special",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.fire.pose.standing.flashpoint-drive"
+      },
+      {
+        "id": "cinder-check",
+        "name": "Cinder Check",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 2,
+        "startup": 7,
+        "active": [
+          3
+        ],
+        "recovery": 14,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 2560,
+          "w": 28160,
+          "y": 25600,
+          "h": 35840,
+          "depth": 8192
+        },
+        "hurtbox": "standing",
+        "damage": 38,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 20,
+          "push": 1536,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 19,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 9,
+            "forward": -768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "grabAssistEligible",
+          "receiveStagger"
+        ],
+        "links": [
+          {
+            "kind": "action",
+            "to": 0,
+            "dir": 0,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.fire.pose.standing.cinder-check"
+      },
+      {
+        "id": "rising-brand",
+        "name": "Rising Brand",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 3,
+        "startup": 9,
+        "active": [
+          4
+        ],
+        "recovery": 19,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 3840,
+          "w": 24320,
+          "y": 28160,
+          "h": 46080,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 50,
+        "reaction": {
+          "kind": "launch",
+          "hitstun": 30,
+          "push": 384,
+          "lift": 3584,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 30,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 25,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 9,
+            "forward": null,
+            "depth": -512,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "handoffAirborne",
+          "receiveAirborne",
+          "receiveTemper"
+        ],
+        "links": [
+          {
+            "kind": "jump",
+            "to": -1,
+            "dir": 0,
+            "category": "jumpChase",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.fire.pose.standing.rising-brand"
+      },
+      {
+        "id": "forge-side-hook",
+        "name": "Forge-Side Hook",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 4,
+        "startup": 8,
+        "active": [
+          4
+        ],
+        "recovery": 15,
+        "landing": false,
+        "blockstun": 18,
+        "hitbox": {
+          "x": 3840,
+          "w": 26880,
+          "y": 33280,
+          "h": 30720,
+          "depth": 11264
+        },
+        "hurtbox": "standing",
+        "damage": 42,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 22,
+          "push": 512,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 11,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 21,
+        "pull": 512,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 8,
+            "forward": null,
+            "depth": 768,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "receiveStagger"
+        ],
+        "links": [
+          {
+            "kind": "action",
+            "to": 1,
+            "dir": 0,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "grab",
+            "to": -1,
+            "dir": 0,
+            "category": "grab",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.fire.pose.standing.forge-side-hook"
+      },
+      {
+        "id": "ember-knee",
+        "name": "Ember Knee",
+        "category": "aerial",
+        "context": "air",
+        "dir": 0,
+        "startup": 5,
+        "active": [
+          4
+        ],
+        "recovery": 8,
+        "landing": true,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 2560,
+          "w": 25600,
+          "y": -5120,
+          "h": 35840,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 36,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 512,
+          "lift": 0,
+          "airPop": 1792,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 10,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 18,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "receiveAirborne",
+          "receiveTemper"
+        ],
+        "links": [
+          {
+            "kind": "action",
+            "to": 8,
+            "dir": 1,
+            "category": "air",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "action",
+            "to": 9,
+            "dir": 5,
+            "category": "air",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.fire.pose.aerial.ember-knee"
+      },
+      {
+        "id": "falling-brand",
+        "name": "Falling Brand",
+        "category": "aerial",
+        "context": "air",
+        "dir": 1,
+        "startup": 9,
+        "active": [
+          6
+        ],
+        "recovery": 14,
+        "landing": true,
+        "blockstun": 22,
+        "hitbox": {
+          "x": 2560,
+          "w": 26880,
+          "y": -15360,
+          "h": 35840,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 62,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 26,
+          "push": 2304,
+          "lift": 768,
+          "airPop": -1536,
+          "counterTrip": false
+        },
+        "stunDecayCost": 17,
+        "damageScaleCost": 15,
+        "starterProration": 0,
+        "juggleCost": 25,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 31,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 10,
+            "to": 15,
+            "forward": 1024,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": -1536
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "receiveAirborne",
+          "terminalKnockdown",
+          "wallBounce"
+        ],
+        "links": [
+          {
+            "kind": "ultimate",
+            "to": -1,
+            "dir": 0,
+            "category": "ultimate",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.fire.pose.aerial.falling-brand"
+      },
+      {
+        "id": "flare-shift",
+        "name": "Flare Shift",
+        "category": "aerial",
+        "context": "air",
+        "dir": 5,
+        "startup": 7,
+        "active": [
+          5
+        ],
+        "recovery": 12,
+        "landing": true,
+        "blockstun": 16,
+        "hitbox": {
+          "x": -2560,
+          "w": 33280,
+          "y": -10240,
+          "h": 35840,
+          "depth": 16384
+        },
+        "hurtbox": "standing",
+        "damage": 42,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 768,
+          "lift": 0,
+          "airPop": 1536,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 15,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 21,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 12,
+            "forward": null,
+            "depth": 1024,
+            "depthFromInput": true,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "receiveAirborne"
+        ],
+        "links": [
+          {
+            "kind": "action",
+            "to": 8,
+            "dir": 1,
+            "category": "air",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.fire.pose.aerial.flare-shift"
+      },
+      {
+        "id": "pressure-seal",
+        "name": "Pressure Seal",
+        "category": "ground",
+        "context": "groundFocus",
+        "dir": 0,
+        "startup": 7,
+        "active": [
+          4
+        ],
+        "recovery": 13,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 2560,
+          "w": 33280,
+          "y": 0,
+          "h": 17920,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 32,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 16,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "groundExtension",
+          "receiveDown"
+        ],
+        "links": [
+          {
+            "kind": "action",
+            "to": 11,
+            "dir": 1,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "action",
+            "to": 12,
+            "dir": 2,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.fire.pose.ground.pressure-seal"
+      },
+      {
+        "id": "rising-cast",
+        "name": "Rising Cast",
+        "category": "ground",
+        "context": "groundFocus",
+        "dir": 1,
+        "startup": 10,
+        "active": [
+          5
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 22,
+        "hitbox": {
+          "x": 2560,
+          "w": 33280,
+          "y": 0,
+          "h": 35840,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 45,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 26,
+          "push": 512,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 14,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 22,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "groundFinisher",
+          "handoffRelay",
+          "handoffStagger",
+          "receiveDown",
+          "standRelease"
+        ],
+        "links": [],
+        "pose": "hero.fire.pose.ground.rising-cast"
+      },
+      {
+        "id": "final-measure",
+        "name": "Final Measure",
+        "category": "ground",
+        "context": "groundFocus",
+        "dir": 2,
+        "startup": 11,
+        "active": [
+          5,
+          1,
+          5
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 2560,
+          "w": 33280,
+          "y": 0,
+          "h": 20480,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 66,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 20,
+        "damageScaleCost": 15,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 33,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "groundFinisher",
+          "receiveDown",
+          "terminalKnockdown"
+        ],
+        "links": [],
+        "pose": "hero.fire.pose.ground.final-measure"
+      },
+      {
+        "id": "breach-step",
+        "name": "Breach Step",
+        "category": "dash",
+        "context": "dash",
+        "dir": 0,
+        "startup": 8,
+        "active": [
+          5
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 20,
+        "hitbox": {
+          "x": 3840,
+          "w": 26880,
+          "y": 25600,
+          "h": 43520,
+          "depth": 9728
+        },
+        "hurtbox": "standing",
+        "damage": 50,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 24,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 25,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 8,
+            "forward": 1792,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          },
+          {
+            "from": 9,
+            "to": 13,
+            "forward": 512,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "guardPressure"
+        ],
+        "links": [
+          {
+            "kind": "grab",
+            "to": -1,
+            "dir": 0,
+            "category": "grab",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          },
+          {
+            "kind": "special",
+            "to": -1,
+            "dir": 1,
+            "category": "special",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.fire.pose.dash.breach-step"
+      },
+      {
+        "id": "ashline-reap",
+        "name": "Ashline Reap",
+        "category": "low",
+        "context": "dashLow",
+        "dir": 0,
+        "startup": 8,
+        "active": [
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 0,
+          "w": 29440,
+          "y": 0,
+          "h": 15360,
+          "depth": 9216
+        },
+        "hurtbox": "low",
+        "damage": 40,
+        "reaction": {
+          "kind": "trip",
+          "hitstun": 30,
+          "push": 512,
+          "lift": 1280,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 20,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 8,
+            "forward": 768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "opensGroundWindow"
+        ],
+        "links": [],
+        "pose": "hero.fire.pose.low.ashline-reap"
+      },
+      {
+        "id": "ember-catch",
+        "name": "Ember Catch",
+        "category": "counter",
+        "context": "counter",
+        "dir": 0,
+        "startup": 3,
+        "active": [
+          4
+        ],
+        "recovery": 16,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 2560,
+          "w": 32000,
+          "y": 28160,
+          "h": 40960,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 90,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 30,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 16,
+        "damageScaleCost": 12,
+        "starterProration": 20,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 45,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": {
+          "to": 16,
+          "large": -1,
+          "unarmed": true
+        },
+        "tags": [],
+        "links": [
+          {
+            "kind": "dash",
+            "to": -1,
+            "dir": 1,
+            "category": "dashBridge",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 25
+          }
+        ],
+        "pose": "hero.fire.pose.counter.ember-catch"
+      },
+      {
+        "id": "ember-catch-trip",
+        "name": "Ember Catch Trip",
+        "category": "counter",
+        "context": "script",
+        "dir": 0,
+        "startup": 4,
+        "active": [
+          3
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 0,
+          "w": 35840,
+          "y": 0,
+          "h": 40960,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 35,
+        "reaction": {
+          "kind": "trip",
+          "hitstun": 30,
+          "push": 512,
+          "lift": 1280,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 17,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "opensGroundWindow"
+        ],
+        "links": [],
+        "pose": "hero.fire.pose.counter.ember-catch-trip"
+      },
+      {
+        "id": "forge-combination",
+        "name": "Forge Combination",
+        "category": "special",
+        "context": "special",
+        "dir": 0,
+        "startup": 9,
+        "active": [
+          2,
+          2,
+          2,
+          2,
+          3
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 22,
+        "hitbox": {
+          "x": 3840,
+          "w": 29440,
+          "y": 15360,
+          "h": 51200,
+          "depth": 9728
+        },
+        "hurtbox": "standing",
+        "damage": 88,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 26,
+          "push": 2048,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 6,
+        "meterDecay": 10,
+        "slots": [
+          0
+        ],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 44,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 15,
+            "forward": 384,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "finalReaction",
+          "guardPressure"
+        ],
+        "links": [],
+        "pose": "hero.fire.pose.special.forge-combination"
+      },
+      {
+        "id": "flashpoint-clinch",
+        "name": "Flashpoint Clinch",
+        "category": "special",
+        "context": "special",
+        "dir": 1,
+        "startup": 10,
+        "active": [
+          4
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 3840,
+          "w": 26880,
+          "y": 28160,
+          "h": 40960,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 40,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 30,
+          "push": 256,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [
+          1
+        ],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 20,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 12,
+            "forward": 2048,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": {
+          "to": 19,
+          "large": -1,
+          "unarmed": false
+        },
+        "tags": [],
+        "links": [],
+        "pose": "hero.fire.pose.special.flashpoint-clinch"
+      },
+      {
+        "id": "flashpoint-takedown",
+        "name": "Flashpoint Takedown",
+        "category": "special",
+        "context": "script",
+        "dir": 0,
+        "startup": 5,
+        "active": [
+          3,
+          2,
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 0,
+          "w": 35840,
+          "y": 0,
+          "h": 56320,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 80,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 1024,
+          "lift": 1536,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 40,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "finalReaction",
+          "opensGroundWindow"
+        ],
+        "links": [],
+        "pose": "hero.fire.pose.special.flashpoint-takedown"
+      },
+      {
+        "id": "furnace-rising",
+        "name": "Furnace Rising",
+        "category": "special",
+        "context": "special",
+        "dir": 2,
+        "startup": 6,
+        "active": [
+          7
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 0,
+          "w": 28160,
+          "y": 30720,
+          "h": 56320,
+          "depth": 11264
+        },
+        "hurtbox": "standing",
+        "damage": 70,
+        "reaction": {
+          "kind": "launch",
+          "hitstun": 30,
+          "push": 512,
+          "lift": 3584,
+          "airPop": 3072,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 15,
+        "juggleCost": 30,
+        "guardCost": 10,
+        "meterGain": 6,
+        "meterDecay": 10,
+        "slots": [
+          2
+        ],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          1,
+          4
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 35,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "handoffAirborne",
+          "handoffRelay"
+        ],
+        "links": [
+          {
+            "kind": "jump",
+            "to": -1,
+            "dir": 0,
+            "category": "jumpChase",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.fire.pose.special.furnace-rising"
+      },
+      {
+        "id": "wardens-crucible",
+        "name": "Warden's Crucible",
+        "category": "ultimate",
+        "context": "ultimate",
+        "dir": 0,
+        "startup": 8,
+        "active": [
+          4
+        ],
+        "recovery": 34,
+        "landing": false,
+        "blockstun": 36,
+        "hitbox": {
+          "x": 2560,
+          "w": 35840,
+          "y": 20480,
+          "h": 51200,
+          "depth": 12800
+        },
+        "hurtbox": "standing",
+        "damage": 70,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 40,
+          "push": 256,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 8,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 10,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [
+          0
+        ],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 35,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 8,
+            "forward": 1280,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": {
+          "to": 22,
+          "large": 23,
+          "unarmed": false
+        },
+        "tags": [],
+        "links": [],
+        "pose": "hero.fire.pose.ultimate.wardens-crucible"
+      },
+      {
+        "id": "crucible-takedown",
+        "name": "Crucible Takedown",
+        "category": "ultimate",
+        "context": "script",
+        "dir": 0,
+        "startup": 4,
+        "active": [
+          3,
+          3,
+          3,
+          3,
+          5
+        ],
+        "recovery": 40,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": -5120,
+          "w": 46080,
+          "y": 0,
+          "h": 66560,
+          "depth": 14336
+        },
+        "hurtbox": "standing",
+        "damage": 240,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 2560,
+          "lift": 2048,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 8,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 120,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "finalReaction",
+          "terminalKnockdown"
+        ],
+        "links": [],
+        "pose": "hero.fire.pose.ultimate.crucible-takedown"
+      },
+      {
+        "id": "crucible-braced",
+        "name": "Crucible Braced Strike",
+        "category": "ultimate",
+        "context": "script",
+        "dir": 0,
+        "startup": 5,
+        "active": [
+          4,
+          3,
+          6
+        ],
+        "recovery": 36,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 0,
+          "w": 40960,
+          "y": 15360,
+          "h": 56320,
+          "depth": 12800
+        },
+        "hurtbox": "standing",
+        "damage": 200,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 30,
+          "push": 3072,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 8,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 100,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "finalReaction"
+        ],
+        "links": [],
+        "pose": "hero.fire.pose.ultimate.crucible-braced"
+      },
+      {
+        "id": "collar-tie",
+        "name": "Collar Tie",
+        "category": "grab",
+        "context": "grab",
+        "dir": 0,
+        "startup": 6,
+        "active": [
+          2
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 5120,
+          "w": 24576,
+          "y": 30720,
+          "h": 35840,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 0,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 6,
+            "forward": 512,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "hero.fire.pose.grab.collar-tie"
+      },
+      {
+        "id": "iron-clinch",
+        "name": "Iron Clinch",
+        "category": "grabStrike",
+        "context": "grabExtension",
+        "dir": 0,
+        "startup": 6,
+        "active": [
+          3
+        ],
+        "recovery": 10,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 5120,
+          "w": 20480,
+          "y": 25600,
+          "h": 30720,
+          "depth": 7680
+        },
+        "hurtbox": "standing",
+        "damage": 48,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 11,
+        "damageScaleCost": 10,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 24,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "hero.fire.pose.grabStrike.iron-clinch"
+      },
+      {
+        "id": "kiln-door-release",
+        "name": "Kiln-Door Release",
+        "category": "grabStrike",
+        "context": "grabRelease",
+        "dir": 0,
+        "startup": 8,
+        "active": [
+          4
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 22,
+        "hitbox": {
+          "x": 5120,
+          "w": 28160,
+          "y": 30720,
+          "h": 35840,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 66,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 26,
+          "push": 2304,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 33,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "handoffRelay",
+          "handoffStagger"
+        ],
+        "links": [],
+        "pose": "hero.fire.pose.grabStrike.kiln-door-release"
+      },
+      {
+        "id": "foundry-reap",
+        "name": "Foundry Reap",
+        "category": "throw",
+        "context": "grabThrow",
+        "dir": 0,
+        "startup": 8,
+        "active": [
+          3
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 5120,
+          "w": 25600,
+          "y": 25600,
+          "h": 40960,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 55,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 2048,
+          "lift": 1536,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 6,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 45,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 27,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "bodyProjectile",
+          "opensGroundWindow"
+        ],
+        "links": [],
+        "pose": "hero.fire.pose.throw.foundry-reap"
+      },
+      {
+        "id": "foundry-turn",
+        "name": "Foundry Turn",
+        "category": "throw",
+        "context": "grabThrow",
+        "dir": 2,
+        "startup": 10,
+        "active": [
+          3
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 5120,
+          "w": 25600,
+          "y": 25600,
+          "h": 40960,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 60,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 2304,
+          "lift": 1792,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 6,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 45,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 30,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "bodyProjectile",
+          "terminalKnockdown",
+          "throwBack"
+        ],
+        "links": [],
+        "pose": "hero.fire.pose.throw.foundry-turn"
+      },
+      {
+        "id": "confluence-strike",
+        "name": "Confluence Strike",
+        "category": "team",
+        "context": "team",
+        "dir": 0,
+        "startup": 14,
+        "active": [
+          4
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 0,
+          "w": 43520,
+          "y": 10240,
+          "h": 66560,
+          "depth": 15360
+        },
+        "hurtbox": "standing",
+        "damage": 150,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 2304,
+          "lift": 2560,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 75,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "teamFinisher",
+          "terminalKnockdown"
+        ],
+        "links": [],
+        "pose": "hero.fire.pose.team.confluence-strike"
+      },
+      {
+        "id": "twin-accord",
+        "name": "Twin Guardians' Accord",
+        "category": "team",
+        "context": "team",
+        "dir": 0,
+        "startup": 14,
+        "active": [
+          3,
+          3,
+          3,
+          3,
+          5
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 0,
+          "w": 43520,
+          "y": 10240,
+          "h": 66560,
+          "depth": 15360
+        },
+        "hurtbox": "standing",
+        "damage": 160,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 2048,
+          "lift": 2560,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 80,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "finalReaction",
+          "teamFinisher",
+          "terminalKnockdown"
+        ],
+        "links": [],
+        "pose": "hero.fire.pose.team.twin-accord"
+      }
+    ],
+    "recipes": [
+      {
+        "id": "foundation",
+        "name": "Foundation",
+        "family": "foundation",
+        "steps": [
+          {
+            "jump": false,
+            "any": [
+              0
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              1
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              2
+            ]
+          }
+        ],
+        "counterHit": false
+      },
+      {
+        "id": "aerial-conversion",
+        "name": "Aerial conversion",
+        "family": "aerial",
+        "steps": [
+          {
+            "jump": false,
+            "any": [
+              5
+            ]
+          },
+          {
+            "jump": true,
+            "any": []
+          },
+          {
+            "jump": false,
+            "any": [
+              7
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              8
+            ]
+          }
+        ],
+        "counterHit": false
+      },
+      {
+        "id": "low-to-ground",
+        "name": "Low to ground",
+        "family": "ground",
+        "steps": [
+          {
+            "jump": false,
+            "any": [
+              14
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              10
+            ]
+          },
+          {
+            "jump": false,
+            "any": [
+              11,
+              12
+            ]
+          }
+        ],
+        "counterHit": false
+      }
+    ]
   }
 ];
 
@@ -4926,6 +10023,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "counterable"
         ],
@@ -4990,6 +10088,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "counterable",
           "guardPressure"
@@ -5064,6 +10163,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "guardPiercing",
           "uncounterable"
@@ -5140,6 +10240,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "counterable",
           "deflectBreak"
@@ -5222,6 +10323,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [],
         "links": [],
         "pose": "enemy.trainer.pose.standing.barrage"
@@ -5284,6 +10386,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "terminalKnockdown",
           "unblockable",
@@ -5364,6 +10467,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "rescueInterruptible",
           "terminalKnockdown"
@@ -5443,6 +10547,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "rescueInterruptible",
           "restraint"
@@ -5508,6 +10613,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "counterable",
           "selectOnly"
@@ -5522,7 +10628,9 @@ export const ENEMY_DATA: readonly HeroDef[] = [
     "id": "commander",
     "name": "Sluice Commander",
     "bodyWidth": 84,
-    "tags": [],
+    "tags": [
+      "large"
+    ],
     "actions": [
       {
         "id": "palm-strike",
@@ -5582,6 +10690,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "counterable"
         ],
@@ -5646,6 +10755,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "counterable"
         ],
@@ -5710,6 +10820,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "counterable"
         ],
@@ -5783,6 +10894,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "guardPressure",
           "leap",
@@ -5851,6 +10963,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "counterable",
           "deflectBreak"
@@ -5916,6 +11029,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "counterable"
         ],
@@ -5989,6 +11103,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "guardPressure",
           "leap",
@@ -6055,6 +11170,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "terminalKnockdown"
         ],
@@ -6119,6 +11235,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "objective"
         ],
@@ -6132,7 +11249,9 @@ export const ENEMY_DATA: readonly HeroDef[] = [
     "id": "enforcer",
     "name": "Black-Iron Enforcer",
     "bodyWidth": 96,
-    "tags": [],
+    "tags": [
+      "large"
+    ],
     "actions": [
       {
         "id": "gauntlet-punch",
@@ -6201,6 +11320,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "counterable",
           "guardPressure"
@@ -6266,6 +11386,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "counterable"
         ],
@@ -6330,6 +11451,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "terminalKnockdown",
           "unblockable",
@@ -6401,6 +11523,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "terminalKnockdown"
         ],
@@ -6474,6 +11597,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "groupAttack"
         ],
@@ -6550,6 +11674,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "offscreenCapable"
         ],
@@ -6614,6 +11739,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "counterable"
         ],
@@ -6687,6 +11813,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "evade"
         ],
@@ -6760,6 +11887,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "counterable"
         ],
@@ -6824,6 +11952,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "counterable",
           "guardPressure"
@@ -6903,6 +12032,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "rescueInterruptible",
           "restraint"
@@ -6982,6 +12112,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "rescueInterruptible",
           "terminalKnockdown"
@@ -7056,6 +12187,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "counterable"
         ],
@@ -7131,6 +12263,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "counterable",
           "deflectBreak"
@@ -7214,6 +12347,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "counterable"
         ],
@@ -7287,6 +12421,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "counterable"
         ],
@@ -7360,6 +12495,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "counterable",
           "leap"
@@ -7434,6 +12570,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "evade"
         ],
@@ -7507,6 +12644,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "counterable"
         ],
@@ -7580,6 +12718,7 @@ export const ENEMY_DATA: readonly HeroDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "guardPressure",
           "uncounterable"
@@ -8180,6 +13319,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [],
         "links": [
           {
@@ -8190,6 +13330,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           },
           {
@@ -8200,6 +13341,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -8263,6 +13405,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "projectileDeflect"
         ],
@@ -8275,6 +13418,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
             "onHit": true,
             "onGuard": true,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -8338,6 +13482,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "impact",
           "wallBounce"
@@ -8412,6 +13557,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "impact"
         ],
@@ -8476,6 +13622,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [],
         "links": [],
         "pose": "weapon.workstaff.pose.standing.staff-hook"
@@ -8538,6 +13685,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [],
         "links": [
           {
@@ -8548,6 +13696,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
             "onHit": true,
             "onGuard": false,
             "onWhiff": false,
+            "onPunish": false,
             "premium": 0
           }
         ],
@@ -8611,6 +13760,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "opensGroundWindow"
         ],
@@ -8675,6 +13825,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [],
         "links": [],
         "pose": "weapon.workstaff.pose.aerial.staff-air"
@@ -8737,6 +13888,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "groundFinisher",
           "terminalKnockdown"
@@ -8811,6 +13963,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
             "vy": null
           }
         ],
+        "convert": null,
         "tags": [
           "impact"
         ],
@@ -8875,6 +14028,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "impact"
         ],
@@ -8955,6 +14109,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
                   "vy": null
                 }
               ],
+              "convert": null,
               "tags": [
                 "guardPressure",
                 "impact",
@@ -9038,6 +14193,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
                   "vy": null
                 }
               ],
+              "convert": null,
               "tags": [
                 "passThrough",
                 "sideSwitch"
@@ -9141,6 +14297,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "impact"
         ],
@@ -9241,6 +14398,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "impact",
           "wallBounce"
@@ -9306,6 +14464,7 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
         "ammo": 0,
         "armed": "default",
         "moves": [],
+        "convert": null,
         "tags": [
           "impact"
         ],
@@ -10776,12 +15935,77 @@ export const COOP_DATA: CoopDef = {
   "preBuffer": 7,
   "handoffs": [
     {
+      "tag": "handoffTemper",
+      "state": 1,
+      "window": 40,
+      "receivers": [
+        "receiveTemper"
+      ],
+      "route": {
+        "id": "crosswind-temper",
+        "name": "Crosswind Temper",
+        "pair": [
+          "twin",
+          "twin"
+        ]
+      }
+    },
+    {
+      "tag": "handoffTemper",
+      "state": 2,
+      "window": 28,
+      "receivers": [
+        "receiveTemper"
+      ],
+      "route": {
+        "id": "crosswind-temper",
+        "name": "Crosswind Temper",
+        "pair": [
+          "twin",
+          "twin"
+        ]
+      }
+    },
+    {
+      "tag": "handoffRelay",
+      "state": 2,
+      "window": 28,
+      "receivers": [
+        "receiveRelay"
+      ],
+      "route": {
+        "id": "rising-ember-relay",
+        "name": "Rising Ember Relay",
+        "pair": [
+          "twin",
+          "twin"
+        ]
+      }
+    },
+    {
+      "tag": "handoffRelay",
+      "state": 1,
+      "window": 40,
+      "receivers": [
+        "receiveRelay"
+      ],
+      "route": {
+        "id": "rising-ember-relay",
+        "name": "Rising Ember Relay",
+        "pair": [
+          "twin",
+          "twin"
+        ]
+      }
+    },
+    {
       "tag": "handoffAirborne",
       "state": 1,
       "window": 36,
       "receivers": [
         "receiveAirborne"
-      ]
+      ],
+      "route": null
     },
     {
       "tag": "handoffStagger",
@@ -10789,7 +16013,8 @@ export const COOP_DATA: CoopDef = {
       "window": 24,
       "receivers": [
         "receiveStagger"
-      ]
+      ],
+      "route": null
     },
     {
       "tag": "handoffDown",
@@ -10797,16 +16022,37 @@ export const COOP_DATA: CoopDef = {
       "window": 30,
       "receivers": [
         "receiveDown"
-      ]
+      ],
+      "route": null
     }
   ],
   "finishers": [
     {
+      "id": "twin-accord",
+      "name": "Twin Guardians' Accord",
+      "pair": [
+        "twin",
+        "twin"
+      ],
+      "targets": [
+        2,
+        1
+      ],
+      "move": "twin-accord",
+      "rangeX": 97280,
+      "rangeZ": 28160,
+      "place": 28160,
+      "cost": 50,
+      "confirm": 30,
+      "minScale": 50,
+      "bossStrike": true
+    },
+    {
       "id": "confluence",
       "name": "Confluence Strike",
       "pair": [
-        "founder",
-        "founder"
+        "guardian",
+        "guardian"
       ],
       "targets": [
         2,
@@ -10818,7 +16064,8 @@ export const COOP_DATA: CoopDef = {
       "place": 28160,
       "cost": 50,
       "confirm": 30,
-      "minScale": 50
+      "minScale": 50,
+      "bossStrike": false
     }
   ],
   "actions": [

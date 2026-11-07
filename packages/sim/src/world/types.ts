@@ -156,6 +156,13 @@ export interface Fighter extends Body {
   ghost: boolean;
   /** Attack meter, 0–100 %. */
   meter: number;
+  /**
+   * M16 Contact-Confirmed Conversion pending on the running action: the action index + 1
+   * that starts when its active frames end (0 = none).
+   */
+  convert: number;
+  /** M16: the running action's first hit caught its target in an attack's recovery. */
+  punish: boolean;
   /** Queued cancel: index of the link in the running action (-1 none) and its press frame. */
   reqLink: number;
   reqFrame: number;
@@ -319,6 +326,8 @@ export interface Fighter extends Body {
   handoffFrom: number;
   handoffAt: number;
   handoffUntil: number;
+  /** M16: the handoff row (COOP.handoffs index + 1) that opened it, for its receivers. */
+  handoffRow: number;
   /** One Tagged Partner Assist on this hero-held target: 0 none, 1 available, 2 spent. */
   assist: number;
   /** Frame a hero's grab finisher released this target (a same-frame assist still lands). */
@@ -887,6 +896,8 @@ export interface CoopState {
   assists: number;
   rescues: number;
   bundles: number;
+  /** M16: handoffs claimed on an authored pair route (Reciprocal Handoffs). */
+  reciprocal: number;
 }
 
 export interface World {

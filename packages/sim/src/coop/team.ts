@@ -86,7 +86,7 @@ function targetOk(world: World, fin: TeamFinisherDef, t: Fighter): boolean {
     !t.cinematic &&
     t.grabbedBy === 0 &&
     !nonCombatant(t) &&
-    !bossResists(world, t) &&
+    (fin.bossStrike || !bossResists(world, t)) &&
     fin.targets.includes(targetState(t))
   );
 }
@@ -240,6 +240,7 @@ function commit(world: World, fin: TeamFinisherDef, a: Fighter, b: Fighter, t: F
   t.bounce = 0;
   t.handoff = 0;
   t.handoffFrom = 0;
+  t.handoffRow = 0;
 }
 
 /** Frames left to confirm the pending invitation (0 = none), for the cue and the Lab. */

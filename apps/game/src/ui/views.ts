@@ -33,6 +33,7 @@ import {
   ENEMIES,
   budgetOf,
   coopIndex,
+  handoffRoute,
   difficultyOf,
   profileOf,
   usage,
@@ -892,6 +893,12 @@ export function refreshArena(session: GameSession, lab: LabState): void {
 
 const TARGET_STATE_TEXT = ['', 'airborne', 'stagger', 'down'];
 
+/** M16: a reciprocal handoff names its route (Crosswind Temper, Rising Ember Relay). */
+function routeText(b: Fighter): string {
+  const r = handoffRoute(b);
+  return r ? ` (${r.name})` : '';
+}
+
 /** M8 Co-op panel: invitation, open handoffs, the last bundle and event, telemetry. */
 export function refreshCoop(session: GameSession, lab: LabState): void {
   const world = session.world;
@@ -917,7 +924,7 @@ export function refreshCoop(session: GameSession, lab: LabState): void {
     .filter((b) => b.handoff > 0 && world.frame >= b.handoffAt)
     .map(
       (b) =>
-        `handoff on ${who(b.id)}: ${TARGET_STATE_TEXT[b.handoff] ?? '?'} from ${who(b.handoffFrom)}, ${handoffLeft(world, b)} frames left`,
+        `handoff on ${who(b.id)}: ${TARGET_STATE_TEXT[b.handoff] ?? '?'}${routeText(b)} from ${who(b.handoffFrom)}, ${handoffLeft(world, b)} frames left`,
     );
   const l = c.log;
   const denied =
@@ -939,7 +946,7 @@ export function refreshCoop(session: GameSession, lab: LabState): void {
     ...(handoffs.length ? handoffs : ['handoff: none open']),
     bundle,
     last,
-    `handoffs ${c.handoffs} · team finishers ${c.finishers} · bundles ${c.bundles} · assists ${c.assists} · rescues ${c.rescues}`,
+    `handoffs ${c.handoffs} (reciprocal ${c.reciprocal}) · team finishers ${c.finishers} · bundles ${c.bundles} · assists ${c.assists} · rescues ${c.rescues}`,
   ];
   const prev = lab.coop.value;
   const same =

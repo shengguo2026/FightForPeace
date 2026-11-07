@@ -110,6 +110,8 @@ export interface LinkDef {
   onHit: boolean;
   onGuard: boolean;
   onWhiff: boolean;
+  /** M16: only after a whiff punish (the hit caught the target in an attack's recovery). */
+  onPunish: boolean;
   /** Premium cancel cost in attack-meter percent (0 = ordinary transition). */
   premium: number;
 }
@@ -171,6 +173,12 @@ export interface ActionDef {
   /** Hero Specials and Ultimates while armed: 'default' follows the weapon's hand count. */
   armed: 'default' | 'unchanged' | 'unavailable';
   moves: readonly MoveSample[];
+  /**
+   * M16 Contact-Confirmed Conversion: action index started after this action's active
+   * frames when its first confirmed hit found an eligible target; `large` (or -1) for a
+   * `large` enemy outside a vulnerable state; `unarmed` needs empty-handed targets.
+   */
+  convert: { to: number; large: number; unarmed: boolean } | null;
   /**
    * Open tag set (opensGroundWindow, terminalKnockdown, passThrough, …) including the
    * defense profile: guardPressure, guardPiercing, unblockable, counterable, uncounterable,
@@ -302,6 +310,8 @@ export const Reject = {
   HandsFull: 17,
   /** The held weapon has no rounds left. */
   NoAmmo: 18,
+  /** M16: the link needs a whiff punish (a hit on an attack's recovery). */
+  NeedsPunish: 19,
 } as const;
 export type Reject = (typeof Reject)[keyof typeof Reject];
 
@@ -325,6 +335,7 @@ export const REJECT_TEXT: Record<number, string> = {
   [Reject.Contested]: 'the other hero grabbed first',
   [Reject.HandsFull]: 'both hands are on the weapon',
   [Reject.NoAmmo]: 'no rounds left: throw it instead',
+  [Reject.NeedsPunish]: 'needs a whiff punish',
 };
 
 // --- M7 enemies, difficulty and arenas ---------------------------------------------------
@@ -587,6 +598,8 @@ export interface HandoffDef {
   state: number;
   window: number;
   receivers: readonly string[];
+  /** M16 authored pair route (Reciprocal Handoffs): sender and partner hero tags. */
+  route: { id: string; name: string; pair: readonly string[] } | null;
 }
 
 /** An authored team finisher (Invite and Confirm with Equal Meter Contribution). */
@@ -609,6 +622,8 @@ export interface TeamFinisherDef {
   confirm: number;
   /** Damage-scale floor of the finisher (percent). */
   minScale: number;
+  /** M16: a resisting boss may be the target (coordinated strikes as Resolve pressure). */
+  bossStrike: boolean;
 }
 
 /** A tagged co-op action: restraint release, partner interrupt or grab assist. */

@@ -489,6 +489,18 @@ function stepRunningAction(
   }
 
   bufferPress(f, 0, frame, p.bufferFrames);
+  // M16 Contact-Confirmed Conversion: the earned catch, clinch or takedown follows as soon
+  // as the converting action's active frames end (it replaces any queued cancel).
+  if (f.convert > 0 && n > a.startup + activeSpan(a)) {
+    const dest = f.convert - 1;
+    // An Ultimate's cinematic protection carries into its conversion.
+    const cinematic = f.cinematic;
+    f.reqLink = -1;
+    startAction(f, dest);
+    f.cinematic = cinematic;
+    runActionFrame(f, actionOf(f)!, 1, input, p);
+    return true;
+  }
   if (!a.landing && n > totalFrames(a)) {
     // The grab extension is over: back to holding the target with a fresh window.
     if (f.grabId !== 0) {

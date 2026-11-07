@@ -39,6 +39,7 @@ export function dataCatalog(): Record<string, string> {
   for (const a of ARENAS) if (!a.stage) out[`arena.${a.id}.name`] = a.name;
   for (const d of DIFFICULTIES) out[`difficulty.${d.id}`] = d.name;
   for (const f of COOP.finishers) out[`coop.finisher.${f.id}`] = f.name;
+  for (const h of COOP.handoffs) if (h.route) out[`coop.route.${h.route.id}`] = h.route.name;
   for (const w of CALLOUT_WORDS) out[calloutKey(w)] = w;
   for (const s of STAGES) {
     out[`stage.${s.id}.name`] = s.name;

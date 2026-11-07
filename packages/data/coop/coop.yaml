@@ -8,9 +8,39 @@
 # `state`; the partner claims it when an action carrying one of `receivers` physically
 # connects inside `window` while the target is still in that state. The receiving action
 # may have been started up to `preBuffer` frames before the window opened.
+#
+# M16 Reciprocal Handoffs (Stage 2 spec §7.3): rows with a `route` open only when the
+# sender's and the partner's hero tags match its pair, and only the route's receivers
+# claim them. They are listed first, so a twin pair uses them before the shared rows; any
+# other pair keeps the shared rows. Nothing is reset: the target's scaling, hit-stun,
+# juggle, ground and environment budgets carry on.
 handoff:
   preBuffer: 7
   states:
+    # Crosswind Temper: a Wind Sentinel launcher, redirect or Updraft Release; Fire Warden
+    # claims it with Flashpoint Drive, Ember Knee or Rising Brand.
+    - tag: handoffTemper
+      state: airborne
+      window: 40
+      receivers: [receiveTemper]
+      route: { id: crosswind-temper, name: Crosswind Temper, pair: [twin, twin] }
+    - tag: handoffTemper
+      state: stagger
+      window: 28
+      receivers: [receiveTemper]
+      route: { id: crosswind-temper, name: Crosswind Temper, pair: [twin, twin] }
+    # Rising Ember Relay: Rising Cast or another controlled release of Fire Warden; Wind
+    # Sentinel claims it with Windline Entry, Headwind Entry or Tailwind Chase.
+    - tag: handoffRelay
+      state: stagger
+      window: 28
+      receivers: [receiveRelay]
+      route: { id: rising-ember-relay, name: Rising Ember Relay, pair: [twin, twin] }
+    - tag: handoffRelay
+      state: airborne
+      window: 40
+      receivers: [receiveRelay]
+      route: { id: rising-ember-relay, name: Rising Ember Relay, pair: [twin, twin] }
     - tag: handoffAirborne
       state: airborne
       window: 36
@@ -30,10 +60,24 @@ handoff:
 # each hero's Attack-meter percent, committed atomically on confirmation. `place` is the
 # authored reposition (both players opted in): each hero this far from the target, on
 # opposite sides. `minScale` is the finisher's authored damage-scale floor (percent).
+# M16: Twin Guardians' Accord for the twins (listed first, so they use it); Confluence
+# Strike for every other pair (all four heroes carry `guardian`). A boss whose Resolve
+# holds may take the Accord as coordinated strikes with Resolve pressure (`bossStrike`).
 teamFinishers:
+  - id: twin-accord
+    name: Twin Guardians' Accord
+    pair: [twin, twin]
+    targets: [stagger, airborne]
+    move: twin-accord
+    range: { x: 380, z: 110 }
+    place: 110
+    cost: 50
+    confirm: 30
+    minScale: 50
+    bossStrike: true
   - id: confluence
     name: Confluence Strike
-    pair: [founder, founder]
+    pair: [guardian, guardian]
     targets: [stagger, airborne]
     move: confluence-strike
     range: { x: 380, z: 110 }

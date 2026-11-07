@@ -67,6 +67,44 @@ const CATEGORY_POSES: Partial<Record<string, { sheet: string; cells: Phased }>> 
   throw: { sheet: 'grab-throw', cells: [2, 2, 5] },
 };
 
+/**
+ * M16 poses drawn from another sheet or with authored cells: `sheet` is a key under
+ * `hero.<id>.` (an action's own pose or a shared sheet), `cells` the startup cell, the
+ * active cells (spread evenly over the active frames) and the recovery cell.
+ */
+type Posed = { sheet: string; cells: readonly [number, readonly number[], number] };
+const HERO_POSES: Record<string, Record<string, Posed>> = {
+  wind: {
+    'open-gate-return': { sheet: 'sheet.exact-counter', cells: [1, [2, 3], 5] },
+    'patrol-grip': { sheet: 'sheet.grab-throw', cells: [0, [0], 0] },
+    'breeze-turn': { sheet: 'sheet.grab-throw', cells: [1, [1], 1] },
+    'clear-path-cast': { sheet: 'sheet.grab-throw', cells: [2, [2], 2] },
+    'clear-path-turn': { sheet: 'sheet.grab-throw', cells: [3, [3], 3] },
+    'sentinel-heel': { sheet: 'sheet.grab-throw', cells: [4, [4], 4] },
+    'four-wind-vigil': { sheet: 'pose.ultimate.four-wind-vigil', cells: [0, [1, 2, 3, 4], 5] },
+    'twin-accord': { sheet: 'pose.team.twin-accord', cells: [0, [1, 2, 3], 5] },
+    'confluence-strike': { sheet: 'sheet.team-attack', cells: [0, [1, 2, 3], 4] },
+  },
+  fire: {
+    'ember-catch': { sheet: 'sheet.exact-counter', cells: [1, [3], 5] },
+    'ember-catch-trip': { sheet: 'sheet.exact-counter', cells: [1, [2], 5] },
+    'collar-tie': { sheet: 'sheet.grab-throw', cells: [0, [0], 0] },
+    'iron-clinch': { sheet: 'sheet.grab-throw', cells: [1, [1], 1] },
+    'foundry-reap': { sheet: 'sheet.grab-throw', cells: [2, [2], 2] },
+    'foundry-turn': { sheet: 'sheet.grab-throw', cells: [3, [3], 3] },
+    'kiln-door-release': { sheet: 'sheet.grab-throw', cells: [4, [4], 4] },
+    'flashpoint-clinch': { sheet: 'pose.special.flashpoint-clinch', cells: [0, [1], 5] },
+    'flashpoint-takedown': { sheet: 'pose.special.flashpoint-clinch', cells: [2, [2, 3], 4] },
+    'wardens-crucible': { sheet: 'pose.ultimate.wardens-crucible', cells: [0, [1], 5] },
+    'crucible-takedown': { sheet: 'pose.ultimate.wardens-crucible', cells: [2, [2, 3, 4], 5] },
+    'crucible-braced': { sheet: 'pose.ultimate.wardens-crucible', cells: [1, [1, 2], 5] },
+    'twin-accord': { sheet: 'pose.team.twin-accord', cells: [0, [1, 2, 3, 4], 5] },
+    'confluence-strike': { sheet: 'sheet.team-attack', cells: [0, [1, 2, 3], 4] },
+  },
+  mountain: { 'confluence-strike': { sheet: 'sheet.team-attack', cells: [0, [1, 2, 3], 4] } },
+  river: { 'confluence-strike': { sheet: 'sheet.team-attack', cells: [0, [1, 2, 3], 4] } },
+};
+
 /** The training dummy (Pressed Recruit) attack sheet: raise, contact, recover; rush. */
 const RUSH = new Set(['two-step', 'barrage', 'wild-rush']);
 
@@ -170,7 +208,22 @@ export class SpritePicker {
         if (!a) return s('idle', 0);
         const p = phase(f, a);
         const wp = WEAPON_POSES[a.id];
-        if (wp && a.pose.startsWith('weapon.')) return s(wp.sheet, wp.cells[p]);
+        // A hero without Stage 1 weapon sheets (the twins) swings with its neutral starter.
+        if (wp && a.pose.startsWith('weapon.'))
+          return s(wp.sheet, wp.cells[p]) ?? this.starter(hero.actions[0]!, p);
+        const posed = HERO_POSES[hero.id]?.[a.id];
+        if (posed && this.has(`${base}.${posed.sheet}`)) {
+          const [start, active, end] = posed.cells;
+          let cell = p === 0 ? start : end;
+          if (p === 1) {
+            const at = phaseOf(a, f.stateFrame + 1);
+            cell =
+              active[
+                Math.min(active.length - 1, Math.floor(((at.at - 1) * active.length) / at.of))
+              ]!;
+          }
+          return { sheet: `${base}.${posed.sheet}`, cell };
+        }
         const own = this.has(a.pose);
         if (own) {
           const cells = filled(own);
@@ -187,12 +240,12 @@ export class SpritePicker {
         return s('idle', 0);
       }
       case MoveState.Idle:
-        if (staff) return s('staff-a', 0);
-        if (wheel) return s('handwheel', 0);
+        if (staff && meta('staff-a')) return s('staff-a', 0);
+        if (wheel && meta('handwheel')) return s('handwheel', 0);
         return s('idle', loop(meta('idle'), frame, 6));
       case MoveState.Walk:
-        if (staff) return s('staff-a', 1);
-        if (wheel) return s('handwheel', 0);
+        if (staff && meta('staff-a')) return s('staff-a', 1);
+        if (wheel && meta('handwheel')) return s('handwheel', 0);
         return s('walk', loop(meta('walk'), frame, 10));
       case MoveState.Dash:
         return s('dash', f.stateFrame < 3 ? 0 : 1 + (Math.floor(f.stateFrame / 5) % 2));
@@ -223,6 +276,20 @@ export class SpritePicker {
       default:
         return this.reaction(f, s);
     }
+  }
+
+  /** The hero's neutral starter pose in a phase (fallback for missing weapon sheets). */
+  private starter(a: ActionDef, p: 0 | 1 | 2): SpriteFrame | null {
+    const own = this.has(a.pose);
+    if (!own) return null;
+    const cells = filled(own);
+    const cell =
+      p === 0
+        ? cells[0]!
+        : p === 2
+          ? cells[cells.length - 1]!
+          : cells[Math.min(1, cells.length - 1)]!;
+    return { sheet: a.pose, cell };
   }
 
   private reaction(

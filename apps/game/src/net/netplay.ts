@@ -26,6 +26,7 @@ import {
   type LoadoutChange,
   PROXY_GRACE_FRAMES,
   type World,
+  HEROES,
   cheatRegistryHash,
   heroOf,
   rulesHash,
@@ -35,7 +36,7 @@ import type { Shell } from '../shell/shell';
 
 export const ROOM_API = '/__ffp/room';
 export const DEFAULT_ROOM_PORT = 7350;
-const HEROES = ['mountain', 'river'] as const;
+const ROSTER: readonly string[] = HEROES.map((h) => h.id);
 /** A game connected to its partner's room tries again this often after losing it. */
 const RECONNECT_MS = 2000;
 
@@ -237,7 +238,7 @@ export class NetPlay {
 
   private sendHello(session?: string): void {
     const loadouts: Record<string, LoadoutChange[]> = {};
-    for (const h of HEROES) loadouts[h] = loadoutChanges(this.shell.active.value, h);
+    for (const h of ROSTER) loadouts[h] = loadoutChanges(this.shell.active.value, h);
     this.send({
       t: 'hello',
       compat: this.compat(),
@@ -355,7 +356,7 @@ export class NetPlay {
 
   private preferredHero(): string {
     const last = this.shell.active.value?.lastHeroes[0];
-    return HEROES.includes(last as (typeof HEROES)[number]) ? last! : 'mountain';
+    return last && ROSTER.includes(last) ? last : 'mountain';
   }
 
   // --- the lobby -----------------------------------------------------------------------
@@ -442,7 +443,7 @@ export class NetPlay {
           return;
         }
         this.guestHello = { loadouts: m.loadouts, facing: m.facing };
-        const free = HEROES.find((h) => h !== l.players[0]?.hero) ?? 'river';
+        const free = ROSTER.find((h) => h !== l.players[0]?.hero) ?? 'river';
         const next: LobbyState = {
           ...l,
           players: [

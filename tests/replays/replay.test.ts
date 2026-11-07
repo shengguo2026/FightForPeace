@@ -23,7 +23,20 @@ import specialsGrabsJson from './specials-grabs.json';
 import grabEscapeJson from './grab-escape.json';
 import coopDrillsJson from './coop-drills.json';
 import stageRescueJson from './stage-rescue.json';
-import { SCRIPTS } from './scripts';
+import heroMountainJson from './hero-mountain.json';
+import heroRiverJson from './hero-river.json';
+import heroWindJson from './hero-wind.json';
+import heroFireJson from './hero-fire.json';
+import pairMountainRiverJson from './pair-mountain-river.json';
+import pairMountainWindJson from './pair-mountain-wind.json';
+import pairMountainFireJson from './pair-mountain-fire.json';
+import pairRiverWindJson from './pair-river-wind.json';
+import pairRiverFireJson from './pair-river-fire.json';
+import pairWindFireJson from './pair-wind-fire.json';
+import { PAIRS, SCRIPTS } from './scripts';
+
+/** The founders (roster entries 0 and 1); the twins have their own M16 replays. */
+const FOUNDERS = HEROES.filter((h) => h.tags.includes('founder'));
 
 const LOGS: [string, ReplayLog][] = [
   ['walk-square', walkSquareJson as ReplayLog],
@@ -36,6 +49,16 @@ const LOGS: [string, ReplayLog][] = [
   ['grab-escape', grabEscapeJson as ReplayLog],
   ['coop-drills', coopDrillsJson as ReplayLog],
   ['stage-rescue', stageRescueJson as ReplayLog],
+  ['hero-mountain', heroMountainJson as ReplayLog],
+  ['hero-river', heroRiverJson as ReplayLog],
+  ['hero-wind', heroWindJson as ReplayLog],
+  ['hero-fire', heroFireJson as ReplayLog],
+  ['pair-mountain-river', pairMountainRiverJson as ReplayLog],
+  ['pair-mountain-wind', pairMountainWindJson as ReplayLog],
+  ['pair-mountain-fire', pairMountainFireJson as ReplayLog],
+  ['pair-river-wind', pairRiverWindJson as ReplayLog],
+  ['pair-river-fire', pairRiverFireJson as ReplayLog],
+  ['pair-wind-fire', pairWindFireJson as ReplayLog],
 ];
 
 /** Plays a log and collects each hero's grab events and every action that connected. */
@@ -120,7 +143,7 @@ test('academy-recipes performs every §8.3 recipe of both founders and a shared 
   for (const f of log.frames) {
     step(world, f);
     for (const d of world.bodies.filter((b) => b.team === 'enemy')) {
-      HEROES.forEach((h, i) => {
+      FOUNDERS.forEach((h, i) => {
         for (const r of h.recipes) if (recipeDone(r, d.ctx.route, i)) done.add(`${h.id}/${r.id}`);
       });
       const heroes = new Set(d.ctx.route.map((c) => Math.trunc(c / 64)));
@@ -128,7 +151,7 @@ test('academy-recipes performs every §8.3 recipe of both founders and a shared 
     }
   }
   expect([...done].sort()).toEqual(
-    HEROES.flatMap((h) => h.recipes.map((r) => `${h.id}/${r.id}`)).sort(),
+    FOUNDERS.flatMap((h) => h.recipes.map((r) => `${h.id}/${r.id}`)).sort(),
   );
   expect(coop).toBe(true);
 });
@@ -198,4 +221,83 @@ test('coop-drills: an airborne handoff, a team finisher bundle and one grab assi
   expect(c.bundles).toBe(1);
   expect(c.bundleHits).toBe(2);
   expect(c.assists).toBe(1);
+});
+
+/** M16: plays a log and collects every connected action and the co-op counters. */
+function playM16(log: ReplayLog) {
+  const world = createWorld(log.seed, log.options);
+  const connected = new Set<string>();
+  for (const f of log.frames) {
+    step(world, f);
+    for (const b of world.bodies)
+      for (const c of b.ctx.route) connected.add(routeAction(c)?.id ?? '?');
+  }
+  return { connected, coop: world.coop };
+}
+
+const HERO_LOGS: Record<string, ReplayLog> = {
+  mountain: heroMountainJson as ReplayLog,
+  river: heroRiverJson as ReplayLog,
+  wind: heroWindJson as ReplayLog,
+  fire: heroFireJson as ReplayLog,
+};
+
+test.each(HEROES.map((h) => h.id))(
+  'hero-%s lands its recipes, three starting Specials and the signature Ultimate',
+  (id) => {
+    const h = HEROES.find((x) => x.id === id)!;
+    const { connected } = playM16(HERO_LOGS[id]!);
+    const starting = h.actions.filter((a) => a.category === 'special' && a.context === 'special');
+    const specials = starting.filter((a) => connected.has(a.id));
+    expect(specials.length, [...connected].join(' ')).toBeGreaterThanOrEqual(3);
+    expect(h.actions.some((a) => a.category === 'ultimate' && connected.has(a.id))).toBe(true);
+    expect(h.actions.some((a) => a.category === 'low' && connected.has(a.id))).toBe(true);
+  },
+);
+
+test('hero-wind lands Clear-Sky Return off a whiff punish and Four-Wind Vigil', () => {
+  const { connected } = playM16(heroWindJson as ReplayLog);
+  for (const id of [
+    'slipstream-backfist',
+    'clear-sky-return',
+    'four-wind-vigil',
+    'skyward-sentinel',
+  ])
+    expect(connected).toContain(id);
+});
+
+test("hero-fire converts Flashpoint Clinch and Warden's Crucible on contact", () => {
+  const { connected } = playM16(heroFireJson as ReplayLog);
+  for (const id of [
+    'flashpoint-clinch',
+    'flashpoint-takedown',
+    'wardens-crucible',
+    'crucible-takedown',
+  ])
+    expect(connected).toContain(id);
+  expect(connected).not.toContain('crucible-braced'); // the dummy is not a large enemy
+});
+
+const PAIR_LOGS: Record<string, ReplayLog> = {
+  'mountain-river': pairMountainRiverJson as ReplayLog,
+  'mountain-wind': pairMountainWindJson as ReplayLog,
+  'mountain-fire': pairMountainFireJson as ReplayLog,
+  'river-wind': pairRiverWindJson as ReplayLog,
+  'river-fire': pairRiverFireJson as ReplayLog,
+  'wind-fire': pairWindFireJson as ReplayLog,
+};
+
+test('there is one pair replay for each of the six legal pairs', () => {
+  expect(PAIRS.map((p) => p.join('-')).sort()).toEqual(Object.keys(PAIR_LOGS).sort());
+});
+
+test.each(PAIRS.map((p) => p.join('-')))('pair-%s hands off and lands its team finisher', (key) => {
+  const { connected, coop } = playM16(PAIR_LOGS[key]!);
+  expect(coop.handoffs).toBeGreaterThanOrEqual(1);
+  expect(coop.finishers).toBe(1);
+  const twins = key === 'wind-fire';
+  expect(connected.has('twin-accord')).toBe(twins);
+  expect(connected.has('confluence-strike')).toBe(!twins);
+  // Reciprocal Handoffs belong to the twins: both routes, once each.
+  expect(coop.reciprocal).toBe(twins ? 2 : 0);
 });

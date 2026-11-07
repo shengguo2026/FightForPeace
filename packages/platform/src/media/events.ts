@@ -55,7 +55,7 @@ export type PresentationEvent =
       own: boolean;
     }
   | { id: string; kind: 'ultimate'; fighter: number; hero: string; x: number; y: number }
-  | { id: string; kind: 'team'; x: number; y: number }
+  | { id: string; kind: 'team'; move: string; x: number; y: number }
   | { id: string; kind: 'bossPhase'; phase: number; x: number; y: number }
   | { id: string; kind: 'run'; event: number; detail: number };
 
@@ -197,7 +197,9 @@ export class PresentationTracker {
       }
       if (f.action !== prev.action && f.action >= 0 && f.team === 'hero') {
         const a = kitOf(f)?.actions[f.action];
-        if (a?.category === 'ultimate')
+        // A contact-confirmed conversion continues the same Ultimate: no second burst.
+        const before = prev.action >= 0 ? kitOf(f)?.actions[prev.action] : undefined;
+        if (a?.category === 'ultimate' && before?.category !== 'ultimate')
           push({
             id: `${s.frame}:ult:${f.id}`,
             kind: 'ultimate',
@@ -214,9 +216,13 @@ export class PresentationTracker {
       this.coopKey = ck;
       if (log.kind === CoopEvent.Finisher && log.frame > 0) {
         const t = byId.get(log.target);
+        const actor = byId.get(log.actor);
+        const move =
+          actor && actor.action >= 0 ? (kitOf(actor)?.actions[actor.action]?.id ?? '') : '';
         push({
           id: `${log.frame}:team`,
           kind: 'team',
+          move,
           x: t ? fxToPixels(t.x) : 960,
           y: t ? fxToPixels(t.z) - fxToPixels(t.y) - 150 : 600,
         });

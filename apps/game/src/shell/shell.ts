@@ -24,6 +24,7 @@ import {
 } from '@ffp/platform';
 import {
   DIFFICULTIES,
+  HEROES,
   STAGES,
   cheatMask,
   codesOf,
@@ -105,7 +106,8 @@ export interface HeroPick {
 
 export type PauseConfirm = { kind: 'restart' | 'village'; agreed: boolean[] } | null;
 
-export const HERO_ROSTER = ['mountain', 'river'] as const;
+/** Every playable hero in roster order (M16: the founders, then the twins). */
+export const HERO_ROSTER: readonly string[] = HEROES.map((h) => h.id);
 export const DIFFICULTY_ORDER = DIFFICULTIES.map((d) => d.id);
 
 export class Shell {
@@ -422,7 +424,7 @@ export class Shell {
     const picks: HeroPick[] = [];
     for (let i = 0; i < players; i += 1) {
       const want = (i === 1 ? this.partner.value?.lastHeroes[0] : last[0]) ?? HERO_ROSTER[i];
-      let cursor = Math.max(0, HERO_ROSTER.indexOf(want as (typeof HERO_ROSTER)[number]));
+      let cursor = Math.max(0, HERO_ROSTER.indexOf(want ?? 'mountain'));
       if (i === 1 && cursor === picks[0]?.cursor) cursor = (cursor + 1) % HERO_ROSTER.length;
       picks.push({ cursor, confirmed: false });
     }
@@ -521,7 +523,7 @@ export class Shell {
     hub.focusPaused = false;
     const local = this.net.localSlot;
     this.heroPicks.value = start.heroes.map((h) => ({
-      cursor: Math.max(0, HERO_ROSTER.indexOf(h as (typeof HERO_ROSTER)[number])),
+      cursor: Math.max(0, HERO_ROSTER.indexOf(h)),
       confirmed: true,
     }));
     presentation.outfitTint = start.heroes.map((h, slot) => {
@@ -639,7 +641,7 @@ export class Shell {
     this.session.devices.assignPlayers([device, null]);
     this.stagePick.value = { stage: cp.stage, difficulty: cp.difficulty };
     this.heroPicks.value = [
-      { cursor: Math.max(0, HERO_ROSTER.indexOf(cp.heroes[0] as 'mountain')), confirmed: true },
+      { cursor: Math.max(0, HERO_ROSTER.indexOf(cp.heroes[0] ?? 'mountain')), confirmed: true },
     ];
     this.startStage({ ...cp, heroes: cp.heroes.slice(0, 1) });
   }

@@ -2291,6 +2291,1258 @@
         ]
       }
     },
+    "hero.fire.pose.aerial.ember-knee": {
+      "url": "art/fire-ember-knee.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 361,
+        "cells": [
+          {
+            "x0": 104,
+            "y0": 57,
+            "x1": 274,
+            "foot": 365
+          },
+          {
+            "x0": 76,
+            "y0": 64,
+            "x1": 294,
+            "foot": 361
+          },
+          {
+            "x0": 130,
+            "y0": 57,
+            "x1": 270,
+            "foot": 313
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.fire.pose.aerial.falling-brand": {
+      "url": "art/fire-falling-brand.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 309,
+        "cells": [
+          {
+            "x0": 68,
+            "y0": 49,
+            "x1": 244,
+            "foot": 303
+          },
+          {
+            "x0": 55,
+            "y0": 41,
+            "x1": 246,
+            "foot": 325
+          },
+          {
+            "x0": 78,
+            "y0": 122,
+            "x1": 267,
+            "foot": 309
+          },
+          {
+            "x0": 165,
+            "y0": 159,
+            "x1": 319,
+            "foot": 307
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.fire.pose.aerial.flare-shift": {
+      "url": "art/fire-flare-shift.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 353,
+        "cells": [
+          {
+            "x0": 75,
+            "y0": 57,
+            "x1": 314,
+            "foot": 365
+          },
+          {
+            "x0": 48,
+            "y0": 69,
+            "x1": 355,
+            "foot": 350
+          },
+          {
+            "x0": 117,
+            "y0": 60,
+            "x1": 297,
+            "foot": 353
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.fire.pose.dash.breach-step": {
+      "url": "art/fire-breach-step.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 348,
+        "cells": [
+          {
+            "x0": 51,
+            "y0": 91,
+            "x1": 310,
+            "foot": 345
+          },
+          {
+            "x0": 37,
+            "y0": 90,
+            "x1": 327,
+            "foot": 349
+          },
+          {
+            "x0": 54,
+            "y0": 86,
+            "x1": 333,
+            "foot": 348
+          },
+          {
+            "x0": 81,
+            "y0": 57,
+            "x1": 305,
+            "foot": 339
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.fire.pose.ground.final-measure": {
+      "url": "art/fire-final-measure.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 351,
+        "cells": [
+          {
+            "x0": 68,
+            "y0": 74,
+            "x1": 318,
+            "foot": 351
+          },
+          {
+            "x0": 84,
+            "y0": 67,
+            "x1": 304,
+            "foot": 352
+          },
+          {
+            "x0": 45,
+            "y0": 74,
+            "x1": 348,
+            "foot": 351
+          },
+          {
+            "x0": 90,
+            "y0": 51,
+            "x1": 294,
+            "foot": 345
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.fire.pose.ground.pressure-seal": {
+      "url": "art/fire-pressure-seal.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 346,
+        "cells": [
+          {
+            "x0": 66,
+            "y0": 90,
+            "x1": 338,
+            "foot": 345
+          },
+          {
+            "x0": 80,
+            "y0": 125,
+            "x1": 325,
+            "foot": 346
+          },
+          {
+            "x0": 71,
+            "y0": 78,
+            "x1": 306,
+            "foot": 348
+          },
+          {
+            "x0": 86,
+            "y0": 42,
+            "x1": 309,
+            "foot": 332
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.fire.pose.ground.rising-cast": {
+      "url": "art/fire-rising-cast.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 317,
+        "cells": [
+          {
+            "x0": 75,
+            "y0": 93,
+            "x1": 258,
+            "foot": 317
+          },
+          {
+            "x0": 81,
+            "y0": 52,
+            "x1": 249,
+            "foot": 317
+          },
+          {
+            "x0": 56,
+            "y0": 67,
+            "x1": 276,
+            "foot": 317
+          },
+          {
+            "x0": 143,
+            "y0": 59,
+            "x1": 318,
+            "foot": 317
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.fire.pose.low.ashline-reap": {
+      "url": "art/fire-ashline-reap.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 335,
+        "cells": [
+          {
+            "x0": 57,
+            "y0": 118,
+            "x1": 345,
+            "foot": 335
+          },
+          {
+            "x0": 41,
+            "y0": 138,
+            "x1": 333,
+            "foot": 335
+          },
+          {
+            "x0": 36,
+            "y0": 130,
+            "x1": 344,
+            "foot": 336
+          },
+          {
+            "x0": 66,
+            "y0": 65,
+            "x1": 309,
+            "foot": 329
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.fire.pose.special.flashpoint-clinch": {
+      "url": "art/fire-flashpoint-clinch.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 365,
+        "cells": [
+          {
+            "x0": 89,
+            "y0": 84,
+            "x1": 306,
+            "foot": 365
+          },
+          {
+            "x0": 57,
+            "y0": 82,
+            "x1": 327,
+            "foot": 365
+          },
+          {
+            "x0": 72,
+            "y0": 80,
+            "x1": 292,
+            "foot": 365
+          },
+          {
+            "x0": 87,
+            "y0": 74,
+            "x1": 355,
+            "foot": 325
+          },
+          {
+            "x0": 75,
+            "y0": 51,
+            "x1": 312,
+            "foot": 330
+          },
+          {
+            "x0": 39,
+            "y0": 91,
+            "x1": 343,
+            "foot": 325
+          }
+        ]
+      }
+    },
+    "hero.fire.pose.special.forge-combination": {
+      "url": "art/fire-forge-combination.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 73,
+            "y0": 67,
+            "x1": 305,
+            "foot": 355
+          },
+          {
+            "x0": 51,
+            "y0": 69,
+            "x1": 347,
+            "foot": 354
+          },
+          {
+            "x0": 70,
+            "y0": 66,
+            "x1": 326,
+            "foot": 355
+          },
+          {
+            "x0": 71,
+            "y0": 57,
+            "x1": 345,
+            "foot": 340
+          },
+          {
+            "x0": 70,
+            "y0": 57,
+            "x1": 297,
+            "foot": 338
+          },
+          null
+        ]
+      }
+    },
+    "hero.fire.pose.special.furnace-rising": {
+      "url": "art/fire-furnace-rising.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 365,
+        "cells": [
+          {
+            "x0": 85,
+            "y0": 108,
+            "x1": 312,
+            "foot": 365
+          },
+          {
+            "x0": 128,
+            "y0": 73,
+            "x1": 275,
+            "foot": 365
+          },
+          {
+            "x0": 112,
+            "y0": 44,
+            "x1": 274,
+            "foot": 357
+          },
+          {
+            "x0": 71,
+            "y0": 130,
+            "x1": 332,
+            "foot": 327
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.fire.pose.standing.cinder-check": {
+      "url": "art/fire-cinder-check.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 365,
+        "cells": [
+          {
+            "x0": 126,
+            "y0": 58,
+            "x1": 274,
+            "foot": 365
+          },
+          {
+            "x0": 73,
+            "y0": 60,
+            "x1": 332,
+            "foot": 365
+          },
+          {
+            "x0": 83,
+            "y0": 59,
+            "x1": 275,
+            "foot": 365
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.fire.pose.standing.flashpoint-drive": {
+      "url": "art/fire-flashpoint-drive.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 361,
+        "cells": [
+          {
+            "x0": 74,
+            "y0": 69,
+            "x1": 355,
+            "foot": 361
+          },
+          {
+            "x0": 131,
+            "y0": 54,
+            "x1": 297,
+            "foot": 363
+          },
+          {
+            "x0": 118,
+            "y0": 63,
+            "x1": 299,
+            "foot": 361
+          },
+          {
+            "x0": 73,
+            "y0": 52,
+            "x1": 353,
+            "foot": 338
+          },
+          {
+            "x0": 91,
+            "y0": 55,
+            "x1": 298,
+            "foot": 337
+          },
+          null
+        ]
+      }
+    },
+    "hero.fire.pose.standing.forge-side-hook": {
+      "url": "art/fire-forge-side-hook.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 320,
+        "cells": [
+          {
+            "x0": 58,
+            "y0": 78,
+            "x1": 233,
+            "foot": 319
+          },
+          {
+            "x0": 79,
+            "y0": 82,
+            "x1": 279,
+            "foot": 319
+          },
+          {
+            "x0": 87,
+            "y0": 74,
+            "x1": 259,
+            "foot": 323
+          },
+          {
+            "x0": 147,
+            "y0": 69,
+            "x1": 318,
+            "foot": 320
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.fire.pose.standing.furnace-heel": {
+      "url": "art/fire-furnace-heel.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 355,
+        "cells": [
+          {
+            "x0": 82,
+            "y0": 74,
+            "x1": 305,
+            "foot": 355
+          },
+          {
+            "x0": 78,
+            "y0": 70,
+            "x1": 239,
+            "foot": 355
+          },
+          {
+            "x0": 35,
+            "y0": 69,
+            "x1": 310,
+            "foot": 355
+          },
+          {
+            "x0": 96,
+            "y0": 60,
+            "x1": 296,
+            "foot": 343
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.fire.pose.standing.hammer-cross": {
+      "url": "art/fire-hammer-cross.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 365,
+        "cells": [
+          {
+            "x0": 76,
+            "y0": 63,
+            "x1": 297,
+            "foot": 365
+          },
+          {
+            "x0": 51,
+            "y0": 65,
+            "x1": 351,
+            "foot": 365
+          },
+          {
+            "x0": 84,
+            "y0": 66,
+            "x1": 291,
+            "foot": 365
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.fire.pose.standing.rising-brand": {
+      "url": "art/fire-rising-brand.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 321,
+        "cells": [
+          {
+            "x0": 66,
+            "y0": 57,
+            "x1": 285,
+            "foot": 318
+          },
+          {
+            "x0": 111,
+            "y0": 52,
+            "x1": 252,
+            "foot": 320
+          },
+          {
+            "x0": 107,
+            "y0": 42,
+            "x1": 226,
+            "foot": 321
+          },
+          {
+            "x0": 130,
+            "y0": 57,
+            "x1": 311,
+            "foot": 321
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.fire.pose.standing.spark-jab": {
+      "url": "art/fire-spark-jab.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 361,
+        "cells": [
+          {
+            "x0": 90,
+            "y0": 72,
+            "x1": 287,
+            "foot": 361
+          },
+          {
+            "x0": 65,
+            "y0": 72,
+            "x1": 331,
+            "foot": 362
+          },
+          {
+            "x0": 89,
+            "y0": 72,
+            "x1": 286,
+            "foot": 361
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.fire.pose.team.twin-accord": {
+      "url": "art/fire-twin-accord.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 363,
+        "cells": [
+          {
+            "x0": 102,
+            "y0": 52,
+            "x1": 267,
+            "foot": 363
+          },
+          {
+            "x0": 78,
+            "y0": 68,
+            "x1": 321,
+            "foot": 364
+          },
+          {
+            "x0": 126,
+            "y0": 54,
+            "x1": 277,
+            "foot": 363
+          },
+          {
+            "x0": 88,
+            "y0": 48,
+            "x1": 329,
+            "foot": 339
+          },
+          {
+            "x0": 84,
+            "y0": 75,
+            "x1": 355,
+            "foot": 339
+          },
+          {
+            "x0": 54,
+            "y0": 58,
+            "x1": 333,
+            "foot": 335
+          }
+        ]
+      }
+    },
+    "hero.fire.pose.ultimate.wardens-crucible": {
+      "url": "art/fire-wardens-crucible.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 362,
+        "cells": [
+          {
+            "x0": 75,
+            "y0": 54,
+            "x1": 291,
+            "foot": 362
+          },
+          {
+            "x0": 66,
+            "y0": 59,
+            "x1": 336,
+            "foot": 362
+          },
+          {
+            "x0": 117,
+            "y0": 47,
+            "x1": 289,
+            "foot": 362
+          },
+          {
+            "x0": 105,
+            "y0": 63,
+            "x1": 355,
+            "foot": 348
+          },
+          {
+            "x0": 79,
+            "y0": 109,
+            "x1": 321,
+            "foot": 334
+          },
+          {
+            "x0": 72,
+            "y0": 42,
+            "x1": 288,
+            "foot": 340
+          }
+        ]
+      }
+    },
+    "hero.fire.sheet.breaker-pickup": {
+      "url": "art/fire-breaker-pickup.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 342,
+        "cells": [
+          {
+            "x0": 63,
+            "y0": 66,
+            "x1": 314,
+            "foot": 348
+          },
+          {
+            "x0": 52,
+            "y0": 98,
+            "x1": 330,
+            "foot": 342
+          },
+          {
+            "x0": 83,
+            "y0": 156,
+            "x1": 311,
+            "foot": 291
+          },
+          {
+            "x0": 96,
+            "y0": 122,
+            "x1": 309,
+            "foot": 330
+          },
+          {
+            "x0": 76,
+            "y0": 91,
+            "x1": 318,
+            "foot": 330
+          },
+          {
+            "x0": 114,
+            "y0": 38,
+            "x1": 277,
+            "foot": 342
+          }
+        ]
+      }
+    },
+    "hero.fire.sheet.dash": {
+      "url": "art/fire-dash.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 346,
+        "cells": [
+          {
+            "x0": 58,
+            "y0": 96,
+            "x1": 328,
+            "foot": 346
+          },
+          {
+            "x0": 55,
+            "y0": 66,
+            "x1": 276,
+            "foot": 352
+          },
+          {
+            "x0": 54,
+            "y0": 62,
+            "x1": 318,
+            "foot": 350
+          },
+          {
+            "x0": 61,
+            "y0": 55,
+            "x1": 327,
+            "foot": 336
+          },
+          {
+            "x0": 142,
+            "y0": 53,
+            "x1": 271,
+            "foot": 319
+          },
+          null
+        ]
+      }
+    },
+    "hero.fire.sheet.exact-counter": {
+      "url": "art/fire-exact-counter.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 353,
+        "cells": [
+          {
+            "x0": 54,
+            "y0": 59,
+            "x1": 316,
+            "foot": 353
+          },
+          {
+            "x0": 108,
+            "y0": 54,
+            "x1": 299,
+            "foot": 356
+          },
+          {
+            "x0": 85,
+            "y0": 74,
+            "x1": 341,
+            "foot": 354
+          },
+          {
+            "x0": 51,
+            "y0": 52,
+            "x1": 337,
+            "foot": 336
+          },
+          {
+            "x0": 96,
+            "y0": 62,
+            "x1": 355,
+            "foot": 339
+          },
+          {
+            "x0": 89,
+            "y0": 49,
+            "x1": 325,
+            "foot": 336
+          }
+        ]
+      }
+    },
+    "hero.fire.sheet.grab-throw": {
+      "url": "art/fire-grab-throw.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 353,
+        "cells": [
+          {
+            "x0": 82,
+            "y0": 62,
+            "x1": 325,
+            "foot": 356
+          },
+          {
+            "x0": 135,
+            "y0": 62,
+            "x1": 285,
+            "foot": 355
+          },
+          {
+            "x0": 131,
+            "y0": 88,
+            "x1": 315,
+            "foot": 353
+          },
+          {
+            "x0": 114,
+            "y0": 48,
+            "x1": 326,
+            "foot": 330
+          },
+          {
+            "x0": 59,
+            "y0": 48,
+            "x1": 331,
+            "foot": 331
+          },
+          {
+            "x0": 80,
+            "y0": 50,
+            "x1": 320,
+            "foot": 330
+          }
+        ]
+      }
+    },
+    "hero.fire.sheet.guard": {
+      "url": "art/fire-guard.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 352,
+        "cells": [
+          {
+            "x0": 99,
+            "y0": 47,
+            "x1": 312,
+            "foot": 355
+          },
+          {
+            "x0": 92,
+            "y0": 63,
+            "x1": 336,
+            "foot": 355
+          },
+          {
+            "x0": 74,
+            "y0": 126,
+            "x1": 299,
+            "foot": 352
+          },
+          {
+            "x0": 99,
+            "y0": 42,
+            "x1": 324,
+            "foot": 337
+          },
+          {
+            "x0": 43,
+            "y0": 43,
+            "x1": 315,
+            "foot": 337
+          },
+          {
+            "x0": 79,
+            "y0": 45,
+            "x1": 302,
+            "foot": 331
+          }
+        ]
+      }
+    },
+    "hero.fire.sheet.hurt": {
+      "url": "art/fire-hurt.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 349,
+        "cells": [
+          {
+            "x0": 95,
+            "y0": 49,
+            "x1": 327,
+            "foot": 349
+          },
+          {
+            "x0": 90,
+            "y0": 84,
+            "x1": 300,
+            "foot": 349
+          },
+          {
+            "x0": 85,
+            "y0": 48,
+            "x1": 318,
+            "foot": 351
+          },
+          {
+            "x0": 93,
+            "y0": 40,
+            "x1": 294,
+            "foot": 310
+          },
+          {
+            "x0": 44,
+            "y0": 79,
+            "x1": 342,
+            "foot": 322
+          },
+          {
+            "x0": 39,
+            "y0": 119,
+            "x1": 341,
+            "foot": 333
+          }
+        ]
+      }
+    },
+    "hero.fire.sheet.idle": {
+      "url": "art/fire-idle.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 355,
+        "cells": [
+          {
+            "x0": 114,
+            "y0": 51,
+            "x1": 296,
+            "foot": 355
+          },
+          {
+            "x0": 110,
+            "y0": 51,
+            "x1": 271,
+            "foot": 355
+          },
+          {
+            "x0": 95,
+            "y0": 51,
+            "x1": 275,
+            "foot": 355
+          },
+          {
+            "x0": 100,
+            "y0": 48,
+            "x1": 312,
+            "foot": 351
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.fire.sheet.jump": {
+      "url": "art/fire-jump.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 338,
+        "cells": [
+          {
+            "x0": 83,
+            "y0": 133,
+            "x1": 290,
+            "foot": 344
+          },
+          {
+            "x0": 78,
+            "y0": 52,
+            "x1": 305,
+            "foot": 360
+          },
+          {
+            "x0": 123,
+            "y0": 91,
+            "x1": 264,
+            "foot": 302
+          },
+          {
+            "x0": 122,
+            "y0": 62,
+            "x1": 252,
+            "foot": 268
+          },
+          {
+            "x0": 93,
+            "y0": 72,
+            "x1": 306,
+            "foot": 338
+          },
+          {
+            "x0": 93,
+            "y0": 141,
+            "x1": 309,
+            "foot": 323
+          }
+        ]
+      }
+    },
+    "hero.fire.sheet.knockdown": {
+      "url": "art/fire-knockdown.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 333,
+        "cells": [
+          {
+            "x0": 36,
+            "y0": 175,
+            "x1": 342,
+            "foot": 340
+          },
+          {
+            "x0": 41,
+            "y0": 228,
+            "x1": 355,
+            "foot": 352
+          },
+          {
+            "x0": 40,
+            "y0": 243,
+            "x1": 348,
+            "foot": 333
+          },
+          {
+            "x0": 75,
+            "y0": 169,
+            "x1": 339,
+            "foot": 309
+          },
+          {
+            "x0": 88,
+            "y0": 111,
+            "x1": 312,
+            "foot": 312
+          },
+          {
+            "x0": 93,
+            "y0": 38,
+            "x1": 297,
+            "foot": 314
+          }
+        ]
+      }
+    },
+    "hero.fire.sheet.team-attack": {
+      "url": "art/fire-team-attack.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 365,
+        "cells": [
+          {
+            "x0": 104,
+            "y0": 48,
+            "x1": 314,
+            "foot": 365
+          },
+          {
+            "x0": 60,
+            "y0": 67,
+            "x1": 337,
+            "foot": 365
+          },
+          {
+            "x0": 109,
+            "y0": 48,
+            "x1": 254,
+            "foot": 365
+          },
+          {
+            "x0": 63,
+            "y0": 61,
+            "x1": 355,
+            "foot": 343
+          },
+          {
+            "x0": 86,
+            "y0": 52,
+            "x1": 310,
+            "foot": 345
+          },
+          null
+        ]
+      }
+    },
+    "hero.fire.sheet.walk": {
+      "url": "art/fire-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 352,
+        "cells": [
+          {
+            "x0": 93,
+            "y0": 58,
+            "x1": 299,
+            "foot": 352
+          },
+          {
+            "x0": 92,
+            "y0": 60,
+            "x1": 267,
+            "foot": 354
+          },
+          {
+            "x0": 96,
+            "y0": 54,
+            "x1": 285,
+            "foot": 354
+          },
+          {
+            "x0": 93,
+            "y0": 49,
+            "x1": 315,
+            "foot": 338
+          },
+          {
+            "x0": 97,
+            "y0": 51,
+            "x1": 279,
+            "foot": 339
+          },
+          {
+            "x0": 95,
+            "y0": 43,
+            "x1": 300,
+            "foot": 339
+          }
+        ]
+      }
+    },
     "hero.mountain.pose.aerial.cornerstone-sweep": {
       "url": "art/mountain-cornerstone-sweep.webp",
       "sheet": {
@@ -3532,6 +4784,48 @@
             "x1": 317,
             "foot": 349
           }
+        ]
+      }
+    },
+    "hero.mountain.sheet.team-attack": {
+      "url": "art/mountain-team-attack.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 350,
+        "cells": [
+          {
+            "x0": 70,
+            "y0": 58,
+            "x1": 314,
+            "foot": 351
+          },
+          {
+            "x0": 50,
+            "y0": 97,
+            "x1": 333,
+            "foot": 350
+          },
+          {
+            "x0": 70,
+            "y0": 19,
+            "x1": 313,
+            "foot": 351
+          },
+          {
+            "x0": 36,
+            "y0": 72,
+            "x1": 347,
+            "foot": 350
+          },
+          {
+            "x0": 75,
+            "y0": 53,
+            "x1": 309,
+            "foot": 350
+          },
+          null
         ]
       }
     },
@@ -4873,6 +6167,48 @@
         ]
       }
     },
+    "hero.river.sheet.team-attack": {
+      "url": "art/river-team-attack.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 348,
+        "cells": [
+          {
+            "x0": 72,
+            "y0": 30,
+            "x1": 312,
+            "foot": 348
+          },
+          {
+            "x0": 48,
+            "y0": 63,
+            "x1": 336,
+            "foot": 348
+          },
+          {
+            "x0": 70,
+            "y0": 26,
+            "x1": 313,
+            "foot": 326
+          },
+          {
+            "x0": 54,
+            "y0": 63,
+            "x1": 329,
+            "foot": 318
+          },
+          {
+            "x0": 45,
+            "y0": 136,
+            "x1": 338,
+            "foot": 348
+          },
+          null
+        ]
+      }
+    },
     "hero.river.sheet.walk": {
       "url": "art/river-walk.webp",
       "sheet": {
@@ -4916,6 +6252,1273 @@
             "y0": 12,
             "x1": 276,
             "foot": 354
+          }
+        ]
+      }
+    },
+    "hero.wind.pose.aerial.crosswind-heel": {
+      "url": "art/wind-crosswind-heel.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 348,
+        "cells": [
+          {
+            "x0": 81,
+            "y0": 52,
+            "x1": 300,
+            "foot": 337
+          },
+          {
+            "x0": 16,
+            "y0": 54,
+            "x1": 350,
+            "foot": 348
+          },
+          {
+            "x0": 56,
+            "y0": 53,
+            "x1": 337,
+            "foot": 348
+          },
+          {
+            "x0": 116,
+            "y0": 53,
+            "x1": 296,
+            "foot": 336
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.aerial.featherline-check": {
+      "url": "art/wind-featherline-check.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 340,
+        "cells": [
+          {
+            "x0": 88,
+            "y0": 40,
+            "x1": 278,
+            "foot": 334
+          },
+          {
+            "x0": 69,
+            "y0": 41,
+            "x1": 342,
+            "foot": 340
+          },
+          {
+            "x0": 98,
+            "y0": 48,
+            "x1": 292,
+            "foot": 345
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.aerial.tailwind-chase": {
+      "url": "art/wind-tailwind-chase.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 351,
+        "cells": [
+          {
+            "x0": 49,
+            "y0": 44,
+            "x1": 295,
+            "foot": 351
+          },
+          {
+            "x0": 0,
+            "y0": 48,
+            "x1": 365,
+            "foot": 291
+          },
+          {
+            "x0": 73,
+            "y0": 47,
+            "x1": 345,
+            "foot": 351
+          },
+          {
+            "x0": 77,
+            "y0": 40,
+            "x1": 271,
+            "foot": 306
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.dash.windline-entry": {
+      "url": "art/wind-windline-entry.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 337,
+        "cells": [
+          {
+            "x0": 78,
+            "y0": 79,
+            "x1": 312,
+            "foot": 341
+          },
+          {
+            "x0": 72,
+            "y0": 81,
+            "x1": 312,
+            "foot": 337
+          },
+          {
+            "x0": 35,
+            "y0": 90,
+            "x1": 295,
+            "foot": 336
+          },
+          {
+            "x0": 102,
+            "y0": 57,
+            "x1": 306,
+            "foot": 337
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.ground.skimming-palm": {
+      "url": "art/wind-skimming-palm.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 351,
+        "cells": [
+          {
+            "x0": 81,
+            "y0": 115,
+            "x1": 303,
+            "foot": 351
+          },
+          {
+            "x0": 39,
+            "y0": 129,
+            "x1": 281,
+            "foot": 351
+          },
+          {
+            "x0": 50,
+            "y0": 138,
+            "x1": 315,
+            "foot": 351
+          },
+          {
+            "x0": 109,
+            "y0": 116,
+            "x1": 310,
+            "foot": 345
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.ground.updraft-release": {
+      "url": "art/wind-updraft-release.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 347,
+        "cells": [
+          {
+            "x0": 75,
+            "y0": 130,
+            "x1": 309,
+            "foot": 341
+          },
+          {
+            "x0": 89,
+            "y0": 79,
+            "x1": 277,
+            "foot": 343
+          },
+          {
+            "x0": 70,
+            "y0": 38,
+            "x1": 269,
+            "foot": 347
+          },
+          {
+            "x0": 126,
+            "y0": 69,
+            "x1": 315,
+            "foot": 347
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.low.grass-cutter-sweep": {
+      "url": "art/wind-grass-cutter-sweep.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 326,
+        "cells": [
+          {
+            "x0": 44,
+            "y0": 88,
+            "x1": 347,
+            "foot": 331
+          },
+          {
+            "x0": 4,
+            "y0": 112,
+            "x1": 353,
+            "foot": 326
+          },
+          {
+            "x0": 57,
+            "y0": 121,
+            "x1": 339,
+            "foot": 321
+          },
+          {
+            "x0": 54,
+            "y0": 30,
+            "x1": 333,
+            "foot": 326
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.special.gale-passage": {
+      "url": "art/wind-gale-passage.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 358,
+        "cells": [
+          {
+            "x0": 66,
+            "y0": 51,
+            "x1": 273,
+            "foot": 358
+          },
+          {
+            "x0": 52,
+            "y0": 53,
+            "x1": 335,
+            "foot": 360
+          },
+          {
+            "x0": 100,
+            "y0": 56,
+            "x1": 322,
+            "foot": 360
+          },
+          {
+            "x0": 105,
+            "y0": 53,
+            "x1": 304,
+            "foot": 351
+          },
+          {
+            "x0": 87,
+            "y0": 52,
+            "x1": 297,
+            "foot": 348
+          },
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.special.skyward-sentinel": {
+      "url": "art/wind-skyward-sentinel.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 342,
+        "cells": [
+          {
+            "x0": 73,
+            "y0": 55,
+            "x1": 294,
+            "foot": 342
+          },
+          {
+            "x0": 76,
+            "y0": 54,
+            "x1": 274,
+            "foot": 365
+          },
+          {
+            "x0": 30,
+            "y0": 50,
+            "x1": 299,
+            "foot": 365
+          },
+          {
+            "x0": 60,
+            "y0": 57,
+            "x1": 338,
+            "foot": 288
+          },
+          {
+            "x0": 47,
+            "y0": 124,
+            "x1": 337,
+            "foot": 321
+          },
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.special.windbreak-combination": {
+      "url": "art/wind-windbreak-combination.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 357,
+        "cells": [
+          {
+            "x0": 55,
+            "y0": 54,
+            "x1": 350,
+            "foot": 358
+          },
+          {
+            "x0": 57,
+            "y0": 53,
+            "x1": 323,
+            "foot": 358
+          },
+          {
+            "x0": 51,
+            "y0": 51,
+            "x1": 315,
+            "foot": 357
+          },
+          {
+            "x0": 54,
+            "y0": 47,
+            "x1": 348,
+            "foot": 352
+          },
+          {
+            "x0": 70,
+            "y0": 47,
+            "x1": 300,
+            "foot": 354
+          },
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.standing.clear-sky-return": {
+      "url": "art/wind-clear-sky-return.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 348,
+        "cells": [
+          {
+            "x0": 66,
+            "y0": 51,
+            "x1": 340,
+            "foot": 348
+          },
+          {
+            "x0": 77,
+            "y0": 39,
+            "x1": 271,
+            "foot": 351
+          },
+          {
+            "x0": 28,
+            "y0": 45,
+            "x1": 330,
+            "foot": 351
+          },
+          {
+            "x0": 101,
+            "y0": 36,
+            "x1": 297,
+            "foot": 344
+          },
+          {
+            "x0": 75,
+            "y0": 54,
+            "x1": 315,
+            "foot": 343
+          },
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.standing.crossline-reverse": {
+      "url": "art/wind-crossline-reverse.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 324,
+        "cells": [
+          {
+            "x0": 83,
+            "y0": 12,
+            "x1": 315,
+            "foot": 324
+          },
+          {
+            "x0": 64,
+            "y0": 12,
+            "x1": 330,
+            "foot": 324
+          },
+          {
+            "x0": 84,
+            "y0": 12,
+            "x1": 298,
+            "foot": 324
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.standing.headwind-entry": {
+      "url": "art/wind-headwind-entry.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 351,
+        "cells": [
+          {
+            "x0": 39,
+            "y0": 67,
+            "x1": 309,
+            "foot": 352
+          },
+          {
+            "x0": 28,
+            "y0": 78,
+            "x1": 350,
+            "foot": 351
+          },
+          {
+            "x0": 29,
+            "y0": 80,
+            "x1": 350,
+            "foot": 350
+          },
+          {
+            "x0": 44,
+            "y0": 58,
+            "x1": 337,
+            "foot": 334
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.standing.horizon-heel": {
+      "url": "art/wind-horizon-heel.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 85,
+            "y0": 41,
+            "x1": 264,
+            "foot": 354
+          },
+          {
+            "x0": 34,
+            "y0": 45,
+            "x1": 349,
+            "foot": 354
+          },
+          {
+            "x0": 102,
+            "y0": 41,
+            "x1": 274,
+            "foot": 354
+          },
+          {
+            "x0": 73,
+            "y0": 43,
+            "x1": 299,
+            "foot": 345
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.standing.northwind-rise": {
+      "url": "art/wind-northwind-rise.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 359,
+        "cells": [
+          {
+            "x0": 72,
+            "y0": 102,
+            "x1": 349,
+            "foot": 359
+          },
+          {
+            "x0": 93,
+            "y0": 39,
+            "x1": 288,
+            "foot": 359
+          },
+          {
+            "x0": 84,
+            "y0": 15,
+            "x1": 281,
+            "foot": 357
+          },
+          {
+            "x0": 75,
+            "y0": 78,
+            "x1": 326,
+            "foot": 346
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.standing.slipstream-backfist": {
+      "url": "art/wind-slipstream-backfist.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 94,
+            "y0": 52,
+            "x1": 342,
+            "foot": 354
+          },
+          {
+            "x0": 81,
+            "y0": 59,
+            "x1": 320,
+            "foot": 354
+          },
+          {
+            "x0": 56,
+            "y0": 57,
+            "x1": 318,
+            "foot": 354
+          },
+          {
+            "x0": 90,
+            "y0": 49,
+            "x1": 317,
+            "foot": 342
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.standing.southwind-pass": {
+      "url": "art/wind-southwind-pass.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 70,
+            "y0": 47,
+            "x1": 329,
+            "foot": 354
+          },
+          {
+            "x0": 58,
+            "y0": 82,
+            "x1": 353,
+            "foot": 354
+          },
+          {
+            "x0": 79,
+            "y0": 45,
+            "x1": 330,
+            "foot": 354
+          },
+          {
+            "x0": 39,
+            "y0": 33,
+            "x1": 330,
+            "foot": 342
+          },
+          {
+            "x0": 84,
+            "y0": 37,
+            "x1": 306,
+            "foot": 336
+          },
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.standing.windmark-jab": {
+      "url": "art/wind-windmark-jab.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 352,
+        "cells": [
+          {
+            "x0": 72,
+            "y0": 9,
+            "x1": 316,
+            "foot": 353
+          },
+          {
+            "x0": 41,
+            "y0": 14,
+            "x1": 337,
+            "foot": 350
+          },
+          {
+            "x0": 66,
+            "y0": 10,
+            "x1": 302,
+            "foot": 352
+          },
+          null,
+          null,
+          null
+        ]
+      }
+    },
+    "hero.wind.pose.team.twin-accord": {
+      "url": "art/wind-twin-accord.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 365,
+        "cells": [
+          {
+            "x0": 60,
+            "y0": 49,
+            "x1": 335,
+            "foot": 365
+          },
+          {
+            "x0": 56,
+            "y0": 54,
+            "x1": 328,
+            "foot": 365
+          },
+          {
+            "x0": 33,
+            "y0": 47,
+            "x1": 346,
+            "foot": 365
+          },
+          {
+            "x0": 112,
+            "y0": 45,
+            "x1": 308,
+            "foot": 309
+          },
+          {
+            "x0": 66,
+            "y0": 132,
+            "x1": 348,
+            "foot": 348
+          },
+          {
+            "x0": 54,
+            "y0": 52,
+            "x1": 339,
+            "foot": 349
+          }
+        ]
+      }
+    },
+    "hero.wind.pose.ultimate.four-wind-vigil": {
+      "url": "art/wind-four-wind-vigil.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 360,
+        "cells": [
+          {
+            "x0": 78,
+            "y0": 54,
+            "x1": 307,
+            "foot": 360
+          },
+          {
+            "x0": 50,
+            "y0": 57,
+            "x1": 333,
+            "foot": 360
+          },
+          {
+            "x0": 28,
+            "y0": 54,
+            "x1": 335,
+            "foot": 360
+          },
+          {
+            "x0": 52,
+            "y0": 60,
+            "x1": 355,
+            "foot": 347
+          },
+          {
+            "x0": 99,
+            "y0": 41,
+            "x1": 276,
+            "foot": 297
+          },
+          {
+            "x0": 28,
+            "y0": 97,
+            "x1": 326,
+            "foot": 347
+          }
+        ]
+      }
+    },
+    "hero.wind.sheet.breaker-pickup": {
+      "url": "art/wind-breaker-pickup.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 350,
+        "cells": [
+          {
+            "x0": 78,
+            "y0": 58,
+            "x1": 336,
+            "foot": 365
+          },
+          {
+            "x0": 24,
+            "y0": 48,
+            "x1": 360,
+            "foot": 354
+          },
+          {
+            "x0": 98,
+            "y0": 136,
+            "x1": 293,
+            "foot": 347
+          },
+          {
+            "x0": 75,
+            "y0": 106,
+            "x1": 321,
+            "foot": 339
+          },
+          {
+            "x0": 90,
+            "y0": 87,
+            "x1": 330,
+            "foot": 332
+          },
+          {
+            "x0": 102,
+            "y0": 38,
+            "x1": 284,
+            "foot": 350
+          }
+        ]
+      }
+    },
+    "hero.wind.sheet.dash": {
+      "url": "art/wind-dash.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 368,
+        "cells": [
+          {
+            "x0": 27,
+            "y0": 59,
+            "x1": 361,
+            "foot": 367
+          },
+          {
+            "x0": 3,
+            "y0": 36,
+            "x1": 360,
+            "foot": 368
+          },
+          {
+            "x0": 15,
+            "y0": 40,
+            "x1": 361,
+            "foot": 367
+          },
+          {
+            "x0": 48,
+            "y0": 24,
+            "x1": 359,
+            "foot": 368
+          },
+          {
+            "x0": 102,
+            "y0": 45,
+            "x1": 309,
+            "foot": 368
+          },
+          null
+        ]
+      }
+    },
+    "hero.wind.sheet.exact-counter": {
+      "url": "art/wind-exact-counter.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 358,
+        "cells": [
+          {
+            "x0": 72,
+            "y0": 50,
+            "x1": 319,
+            "foot": 358
+          },
+          {
+            "x0": 89,
+            "y0": 54,
+            "x1": 326,
+            "foot": 358
+          },
+          {
+            "x0": 80,
+            "y0": 52,
+            "x1": 316,
+            "foot": 358
+          },
+          {
+            "x0": 54,
+            "y0": 44,
+            "x1": 355,
+            "foot": 346
+          },
+          {
+            "x0": 75,
+            "y0": 51,
+            "x1": 355,
+            "foot": 347
+          },
+          {
+            "x0": 87,
+            "y0": 43,
+            "x1": 325,
+            "foot": 345
+          }
+        ]
+      }
+    },
+    "hero.wind.sheet.grab-throw": {
+      "url": "art/wind-grab-throw.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 365,
+        "cells": [
+          {
+            "x0": 54,
+            "y0": 50,
+            "x1": 337,
+            "foot": 365
+          },
+          {
+            "x0": 84,
+            "y0": 48,
+            "x1": 316,
+            "foot": 365
+          },
+          {
+            "x0": 41,
+            "y0": 51,
+            "x1": 327,
+            "foot": 365
+          },
+          {
+            "x0": 72,
+            "y0": 45,
+            "x1": 304,
+            "foot": 347
+          },
+          {
+            "x0": 29,
+            "y0": 41,
+            "x1": 354,
+            "foot": 351
+          },
+          {
+            "x0": 89,
+            "y0": 48,
+            "x1": 310,
+            "foot": 351
+          }
+        ]
+      }
+    },
+    "hero.wind.sheet.guard": {
+      "url": "art/wind-guard.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 362,
+        "cells": [
+          {
+            "x0": 94,
+            "y0": 49,
+            "x1": 323,
+            "foot": 365
+          },
+          {
+            "x0": 69,
+            "y0": 65,
+            "x1": 324,
+            "foot": 365
+          },
+          {
+            "x0": 74,
+            "y0": 119,
+            "x1": 294,
+            "foot": 362
+          },
+          {
+            "x0": 80,
+            "y0": 44,
+            "x1": 329,
+            "foot": 353
+          },
+          {
+            "x0": 30,
+            "y0": 56,
+            "x1": 334,
+            "foot": 346
+          },
+          {
+            "x0": 57,
+            "y0": 65,
+            "x1": 299,
+            "foot": 354
+          }
+        ]
+      }
+    },
+    "hero.wind.sheet.hurt": {
+      "url": "art/wind-hurt.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 363,
+        "cells": [
+          {
+            "x0": 84,
+            "y0": 52,
+            "x1": 306,
+            "foot": 364
+          },
+          {
+            "x0": 111,
+            "y0": 75,
+            "x1": 265,
+            "foot": 363
+          },
+          {
+            "x0": 39,
+            "y0": 51,
+            "x1": 346,
+            "foot": 365
+          },
+          {
+            "x0": 85,
+            "y0": 49,
+            "x1": 321,
+            "foot": 324
+          },
+          {
+            "x0": 41,
+            "y0": 75,
+            "x1": 315,
+            "foot": 280
+          },
+          {
+            "x0": 28,
+            "y0": 114,
+            "x1": 339,
+            "foot": 320
+          }
+        ]
+      }
+    },
+    "hero.wind.sheet.idle": {
+      "url": "art/wind-idle.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 368,
+        "cells": [
+          {
+            "x0": 100,
+            "y0": 22,
+            "x1": 329,
+            "foot": 367
+          },
+          {
+            "x0": 95,
+            "y0": 32,
+            "x1": 285,
+            "foot": 368
+          },
+          {
+            "x0": 77,
+            "y0": 35,
+            "x1": 291,
+            "foot": 368
+          },
+          {
+            "x0": 70,
+            "y0": 49,
+            "x1": 338,
+            "foot": 368
+          },
+          null,
+          null
+        ]
+      }
+    },
+    "hero.wind.sheet.jump": {
+      "url": "art/wind-jump.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 357,
+        "cells": [
+          {
+            "x0": 68,
+            "y0": 127,
+            "x1": 335,
+            "foot": 379
+          },
+          {
+            "x0": 63,
+            "y0": 20,
+            "x1": 307,
+            "foot": 384
+          },
+          {
+            "x0": 80,
+            "y0": 25,
+            "x1": 285,
+            "foot": 334
+          },
+          {
+            "x0": 91,
+            "y0": 39,
+            "x1": 286,
+            "foot": 321
+          },
+          {
+            "x0": 31,
+            "y0": 0,
+            "x1": 323,
+            "foot": 357
+          },
+          {
+            "x0": 59,
+            "y0": 132,
+            "x1": 349,
+            "foot": 352
+          }
+        ]
+      }
+    },
+    "hero.wind.sheet.knockdown": {
+      "url": "art/wind-knockdown.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 332,
+        "cells": [
+          {
+            "x0": 42,
+            "y0": 158,
+            "x1": 355,
+            "foot": 343
+          },
+          {
+            "x0": 40,
+            "y0": 174,
+            "x1": 348,
+            "foot": 333
+          },
+          {
+            "x0": 41,
+            "y0": 171,
+            "x1": 339,
+            "foot": 321
+          },
+          {
+            "x0": 44,
+            "y0": 159,
+            "x1": 333,
+            "foot": 319
+          },
+          {
+            "x0": 87,
+            "y0": 100,
+            "x1": 299,
+            "foot": 321
+          },
+          {
+            "x0": 101,
+            "y0": 38,
+            "x1": 303,
+            "foot": 332
+          }
+        ]
+      }
+    },
+    "hero.wind.sheet.team-attack": {
+      "url": "art/wind-team-attack.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 348,
+        "cells": [
+          {
+            "x0": 76,
+            "y0": 45,
+            "x1": 340,
+            "foot": 363
+          },
+          {
+            "x0": 87,
+            "y0": 117,
+            "x1": 355,
+            "foot": 348
+          },
+          {
+            "x0": 69,
+            "y0": 42,
+            "x1": 312,
+            "foot": 362
+          },
+          {
+            "x0": 66,
+            "y0": 51,
+            "x1": 355,
+            "foot": 240
+          },
+          {
+            "x0": 116,
+            "y0": 38,
+            "x1": 345,
+            "foot": 342
+          },
+          null
+        ]
+      }
+    },
+    "hero.wind.sheet.walk": {
+      "url": "art/wind-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 368,
+        "cells": [
+          {
+            "x0": 75,
+            "y0": 29,
+            "x1": 330,
+            "foot": 368
+          },
+          {
+            "x0": 110,
+            "y0": 34,
+            "x1": 296,
+            "foot": 367
+          },
+          {
+            "x0": 102,
+            "y0": 26,
+            "x1": 300,
+            "foot": 368
+          },
+          {
+            "x0": 78,
+            "y0": 37,
+            "x1": 341,
+            "foot": 368
+          },
+          {
+            "x0": 119,
+            "y0": 42,
+            "x1": 275,
+            "foot": 367
+          },
+          {
+            "x0": 100,
+            "y0": 34,
+            "x1": 311,
+            "foot": 368
           }
         ]
       }
@@ -5581,6 +8184,58 @@
       },
       "provenance": {
         "source": "vfx/VFX-HIT-SPARKS.png",
+        "tool": "Codex image generation",
+        "edits": "scaled to 50 %"
+      }
+    },
+    "vfx.s2-ultimate.sheet": {
+      "url": "art/vfx-s2-ultimate.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 256,
+        "ground": 128,
+        "cells": [
+          {
+            "x0": 25,
+            "y0": 74,
+            "x1": 231,
+            "foot": 182
+          },
+          {
+            "x0": 38,
+            "y0": 50,
+            "x1": 218,
+            "foot": 205
+          },
+          {
+            "x0": 41,
+            "y0": 58,
+            "x1": 215,
+            "foot": 198
+          },
+          {
+            "x0": 28,
+            "y0": 79,
+            "x1": 228,
+            "foot": 177
+          },
+          {
+            "x0": 48,
+            "y0": 54,
+            "x1": 208,
+            "foot": 201
+          },
+          {
+            "x0": 42,
+            "y0": 40,
+            "x1": 214,
+            "foot": 215
+          }
+        ]
+      },
+      "provenance": {
+        "source": "vfx/VFX-S2-ULTIMATE.png",
         "tool": "Codex image generation",
         "edits": "scaled to 50 %"
       }

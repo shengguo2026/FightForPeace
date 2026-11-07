@@ -91,9 +91,11 @@ const Link = T.Object(
       T.Literal('ultimate'),
       T.Literal('grab'),
     ]),
-    on: T.Array(T.Union([T.Literal('hit'), T.Literal('guard'), T.Literal('whiff')]), {
-      minItems: 1,
-    }),
+    /** `punish`: only after a hit that caught the target in an attack's recovery (whiff punish). */
+    on: T.Array(
+      T.Union([T.Literal('hit'), T.Literal('guard'), T.Literal('whiff'), T.Literal('punish')]),
+      { minItems: 1 },
+    ),
     premium: T.Optional(T.Integer({ minimum: 0, maximum: 100 })),
   },
   { additionalProperties: false },
@@ -226,6 +228,23 @@ const Action = T.Object(
     armed: T.Optional(T.Union([T.Literal('unchanged'), T.Literal('unavailable')])),
     /** Weapon affinity overrides: the core action this one replaces. */
     replaces: T.Optional(T.String({ pattern: '^[a-z][a-z0-9-]*$' })),
+    /**
+     * M16 Contact-Confirmed Conversion (Fire Warden's catches and clinches): the first
+     * confirmed hit on an eligible target starts `to` once this action's active frames end.
+     * A target whose kit is tagged `large` is eligible only in a vulnerable state (a boss's
+     * Stagger Break, a Guard Crush); otherwise `large` starts instead, if given. `unarmed`
+     * also needs a target with empty hands (a limb attack to catch). Never through guard.
+     */
+    convert: T.Optional(
+      T.Object(
+        {
+          to: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
+          large: T.Optional(T.String({ pattern: '^[a-z][a-z0-9-]*$' })),
+          unarmed: T.Optional(T.Boolean()),
+        },
+        { additionalProperties: false },
+      ),
+    ),
     moves: T.Optional(T.Array(Move)),
     tags: T.Optional(T.Array(T.String({ pattern: '^[a-z][A-Za-z0-9]*$' }))),
     links: T.Optional(T.Array(Link)),
@@ -408,7 +427,7 @@ export const HeroSchema = T.Object(
     bodyWidth: T.Integer({ minimum: 20, maximum: 400 }),
     /** Hero tags (M8): team finishers name the pairs they support by these, never by hero id. */
     tags: T.Optional(T.Array(T.String({ pattern: '^[a-z][A-Za-z0-9]*$' }))),
-    actions: T.Array(Action, { minItems: 1, maxItems: 32 }),
+    actions: T.Array(Action, { minItems: 1, maxItems: 48 }),
     recipes: T.Optional(T.Array(Recipe, { maxItems: 16 })),
     /** Enemy kits (M7): role, AI, defense capability profile, morale and boss phases. */
     profile: T.Optional(Profile),
@@ -544,13 +563,18 @@ export function loadHero(
   for (const a of hero.actions) {
     if (ids.has(a.id)) problems.push(`duplicate action id "${a.id}"`);
     ids.add(a.id);
+    const converted = hero.actions.some((x) => x.convert?.to === a.id || x.convert?.large === a.id);
     if (kind === 'hero') {
       for (const t of a.tags ?? []) {
         if (ENEMY_ONLY_TAGS.includes(t)) problems.push(`"${a.id}": tag ${t} is for enemies only`);
       }
-      if (a.input.context === 'script') problems.push(`"${a.id}": context script is for enemies`);
+      // Heroes use context script only for conversion destinations (never an input).
+      if (a.input.context === 'script' && !converted)
+        problems.push(`"${a.id}": context script is for enemies and conversions`);
     }
-    if ((a.category === 'counter') !== (a.input.context === 'counter'))
+    // A counter's conversion (Ember Catch's trip) keeps the counter category.
+    const counterOk = a.input.context === 'counter' || (converted && a.category === 'counter');
+    if ((a.category === 'counter') !== counterOk)
       problems.push(`"${a.id}": counter actions use category and context counter together`);
     const loadout = LOADOUT_CONTEXTS.includes(a.input.context);
     if (loadout && a.category !== a.input.context)
@@ -615,6 +639,15 @@ export function loadHero(
     for (const m of a.moves ?? []) {
       if (m.to < m.from) problems.push(`"${a.id}": move sample ends before it starts`);
     }
+    for (const c of [a.convert?.to, a.convert?.large]) {
+      if (c === undefined) continue;
+      if (!ids.has(c)) problems.push(`"${a.id}" converts into unknown action "${c}"`);
+      const dest = hero.actions.find((x) => x.id === c);
+      if (dest && dest.input.context !== 'script')
+        problems.push(`"${a.id}": conversion "${c}" must use context script (never an input)`);
+      if (dest?.convert) problems.push(`"${a.id}": conversion "${c}" may not convert again`);
+    }
+    if (a.convert && kind !== 'hero') problems.push(`"${a.id}": conversions are for heroes`);
   }
   const recipeIds = new Set<string>();
   for (const r of hero.recipes ?? []) {
@@ -1344,6 +1377,13 @@ function compileAction(
       depthFromInput: m.depthFrom === 'input',
       vy: m.vy === undefined ? null : fx(m.vy),
     })),
+    convert: a.convert
+      ? {
+          to: index.get(a.convert.to)!,
+          large: a.convert.large === undefined ? -1 : index.get(a.convert.large)!,
+          unarmed: a.convert.unarmed ?? false,
+        }
+      : null,
     tags: [...(a.tags ?? [])].sort(),
     links: (a.links ?? []).map((l) => {
       const kind = LINK_KINDS.includes(l.to) ? l.to : 'action';
@@ -1358,6 +1398,7 @@ function compileAction(
         onHit: l.on.includes('hit'),
         onGuard: l.on.includes('guard'),
         onWhiff: l.on.includes('whiff'),
+        onPunish: l.on.includes('punish'),
         premium: l.premium ?? 0,
       };
     }),
@@ -1532,6 +1573,16 @@ export const CoopSchema = T.Object(
               state: TargetState,
               window: Frame1,
               receivers: T.Array(Tag, { minItems: 1 }),
+              /**
+               * M16 authored pair route (Reciprocal Handoffs): opens only when the sender and
+               * the partner carry these hero tags (sender first); named in the Lab.
+               */
+              route: T.Optional(
+                T.Object(
+                  { id: KitId, name: T.String({ minLength: 1 }), pair: T.Tuple([Tag, Tag]) },
+                  { additionalProperties: false },
+                ),
+              ),
             },
             { additionalProperties: false },
           ),
@@ -1553,6 +1604,11 @@ export const CoopSchema = T.Object(
           cost: T.Integer({ minimum: 0, maximum: 100 }),
           confirm: Frame1,
           minScale: T.Integer({ minimum: 0, maximum: 100 }),
+          /**
+           * M16: a boss whose Resolve holds may still be the target; it then takes the
+           * coordinated strikes as Resolve pressure (a flinch), not the full lift.
+           */
+          bossStrike: T.Optional(T.Boolean()),
         },
         { additionalProperties: false },
       ),
@@ -1601,6 +1657,12 @@ export function loadCoop(
         if (t.startsWith('receive') && !receivers.has(t))
           problems.push(`${h.id}/${a.id}: receiver tag ${t} is not declared`);
       }
+  for (const s of c.handoff.states) {
+    if (!s.route) continue;
+    for (const t of s.route.pair)
+      if (!heroes.some((h) => (h.tags ?? []).includes(t)))
+        problems.push(`handoff route "${s.route.id}": no hero carries tag ${t}`);
+  }
   const ids = new Set<string>();
   for (const f of c.teamFinishers) {
     if (ids.has(f.id)) problems.push(`duplicate team finisher "${f.id}"`);
@@ -1630,6 +1692,7 @@ export function compileCoop(c: CoopYaml): unknown {
       state: STATE_CODE[s.state],
       window: s.window,
       receivers: [...s.receivers].sort(),
+      route: s.route ? { id: s.route.id, name: s.route.name, pair: [...s.route.pair] } : null,
     })),
     finishers: c.teamFinishers.map((f) => ({
       id: f.id,
@@ -1643,6 +1706,7 @@ export function compileCoop(c: CoopYaml): unknown {
       cost: f.cost,
       confirm: f.confirm,
       minScale: f.minScale,
+      bossStrike: f.bossStrike ?? false,
     })),
     actions: c.coopActions.map((a) =>
       a.kind === 'release'
@@ -1997,7 +2061,7 @@ export function enemyFiles(dir = ENEMIES_DIR): string[] {
     .map((f) => join(dir, f));
 }
 
-const ROSTER_ORDER = ['mountain.yaml', 'river.yaml'];
+const ROSTER_ORDER = ['mountain.yaml', 'river.yaml', 'wind.yaml', 'fire.yaml'];
 function order(file: string): number {
   const i = ROSTER_ORDER.indexOf(file);
   return i === -1 ? ROSTER_ORDER.length : i;

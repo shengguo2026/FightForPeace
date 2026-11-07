@@ -63,14 +63,18 @@ describe('co-op data is keyed by tags (roadmap guardrails M8)', () => {
   test('coop.yaml names tags, never hero ids', () => {
     const json = JSON.stringify(COOP);
     for (const h of HEROES) expect(json).not.toContain(`"${h.id}"`);
-    expect(TEAM_FINISHERS[0]!.pair).toEqual(['founder', 'founder']);
+    expect(TEAM_FINISHERS.find((f) => f.id === 'confluence')!.pair).toEqual([
+      'guardian',
+      'guardian',
+    ]);
     expect(COOP.actions.map((a) => a.kind).sort()).toEqual(['assist', 'interrupt', 'release']);
   });
 
   test('a finisher pairs heroes by their tags, in either order', () => {
     const w = pair();
-    expect(finisherFor(hero(w, 0), hero(w, 1))).toBe(0);
-    expect(finisherFor(hero(w, 1), hero(w, 0))).toBe(0);
+    const confluence = TEAM_FINISHERS.findIndex((f) => f.id === 'confluence');
+    expect(finisherFor(hero(w, 0), hero(w, 1))).toBe(confluence);
+    expect(finisherFor(hero(w, 1), hero(w, 0))).toBe(confluence);
   });
 });
 

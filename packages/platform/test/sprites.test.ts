@@ -67,12 +67,13 @@ test('character sheets share one ground line (aerial sheets are drawn in the air
   for (const s of reg.sheets()) {
     if (s.id.startsWith('prop.') || s.id.startsWith('vfx.') || s.id.includes('.pose.aerial.'))
       continue;
-    expect(s.sheet.ground, s.id).toBeGreaterThan(320);
+    // The twins' sheets were drawn a few pixels higher (Rising Cast stands on 317).
+    expect(s.sheet.ground, s.id).toBeGreaterThan(310);
     expect(s.sheet.ground, s.id).toBeLessThan(370);
   }
 });
 
-test('every movement and reaction state of both founders has a drawable pose', () => {
+test('every movement and reaction state of every hero has a drawable pose', () => {
   for (const h of HEROES) {
     const f = hero(h.id);
     for (const state of Object.values(MoveState)) {
@@ -85,7 +86,7 @@ test('every movement and reaction state of both founders has a drawable pose', (
   }
 });
 
-test('every action of both founders, with and without a weapon, is drawable in every phase', () => {
+test('every action of every hero, with and without a weapon, is drawable in every phase', () => {
   for (const h of HEROES) {
     for (const weapon of [-1, ...WEAPONS.map((_, i) => i)]) {
       const w = createWorld(1, { heroes: [h.id, 'river'] });
