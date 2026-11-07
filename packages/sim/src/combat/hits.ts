@@ -1,7 +1,7 @@
 import { fx } from '../math/fixed';
 import { carryFull, dealDamage, nonCombatant } from './damage';
 import { Cheat, heroCheat, outgoingDamage } from '../cheats/cheats';
-import { bossBudgets, bossHit, bossResists } from '../enemies/boss';
+import { bossBudgets, bossHit, bossResists, staggered } from '../enemies/boss';
 import {
   Bounce,
   type ComboContext,
@@ -23,7 +23,7 @@ import {
 import { defend, defenseSnapshots, logDefense } from './defense';
 import { awardHitMeter } from './meter';
 import { REACTION, enter, enterProtection, exhaustJuggle, interrupt } from './reactions';
-import { activeSegment, kitOf, routeCodeOf, segmentCount } from './roster';
+import { activeSegment, baseKit, kitOf, phaseOf, routeCodeOf, segmentCount } from './roster';
 import type { ActionDef } from './types';
 import { DefEvent, type Facing } from '../world/types';
 import { hitProjectiles } from './projectiles';
@@ -325,6 +325,48 @@ function lifts(a: ActionDef): boolean {
   return k === 'launch' || k === 'knockdown' || k === 'trip';
 }
 
+/**
+ * A target counts as large when its kit is tagged `large` or it is the encounter's boss:
+ * contact-confirmed catches, clinches and takedowns convert only in a vulnerable state.
+ */
+export function largeTarget(world: World, t: Fighter): boolean {
+  return (baseKit(t)?.tags.includes('large') ?? false) || world.encounter?.boss?.id === t.id;
+}
+
+/** A vulnerable state: a boss's Stagger Break (Resolve broken) or a Guard Crush. */
+export function vulnerable(world: World, t: Fighter): boolean {
+  return staggered(world, t) || t.state === MoveState.GuardCrush;
+}
+
+/**
+ * The conversion a confirmed hit of `a` earns on `t` (action index, or -1): only a
+ * grounded, standing opponent; `unarmed` also needs empty hands; a large target outside a
+ * vulnerable state gets the authored `large` alternative (or none).
+ */
+export function conversionFor(world: World, a: ActionDef, t: Fighter): number {
+  const c = a.convert;
+  if (!c || nonCombatant(t) || t.y > 0) return -1;
+  if (t.state === MoveState.Down || t.state === MoveState.Launched) return -1;
+  if (t.state === MoveState.Grabbed || t.state === MoveState.Restrained) return -1;
+  if (c.unarmed && t.wkit >= 0) return -1;
+  if (largeTarget(world, t) && !vulnerable(world, t)) return c.large;
+  return c.to;
+}
+
+/**
+ * The first confirmed hit of a fighter's running action on a target (state before the
+ * reaction): a whiff punish when the target was in an attack's recovery (or the Lab counts
+ * every hit as a counter-hit), and a pending Contact-Confirmed Conversion.
+ */
+function confirmContact(world: World, att: Fighter, a: ActionDef, t: Fighter): void {
+  const ta = runningAction(t);
+  if (world.dummy.counterHit || (ta && phaseOf(ta, t.stateFrame + 1).phase === 'recovery'))
+    att.punish = true;
+  if (att.convert !== 0 || att.team === t.team) return;
+  const to = conversionFor(world, a, t);
+  if (to >= 0) att.convert = to + 1;
+}
+
 /** What one hit paid, for the reaction that follows. */
 interface Paid {
   downed: boolean;
@@ -389,6 +431,7 @@ function payHit(
   let band = juggleBand(start ? start.juggle : ctx.juggleBudget);
   let juggleOut = false;
   if (first) {
+    if (runningAction(s.owner) === a) confirmContact(world, s.owner, a, t);
     // Budgets and meter are paid once per offensive action, on its first hit.
     k = s.contactIds.length;
     s.contactIds.push(t.id);
@@ -705,6 +748,16 @@ function groundReact(
     return;
   }
   const dir = pushDir(att, a, t);
+  if (a.tags.includes('standRelease')) {
+    // M16 lift-and-release (standRelease tag): the target is set back on its feet in a bounded
+    // standing stagger, inside the same combo (a partner's handoff, never a fresh route).
+    t.groundWindow = 0;
+    t.y = 0;
+    t.vy = 0;
+    t.vx = dir * a.reaction.push;
+    enter(t, MoveState.Hitstun, Math.max(1, hitstun));
+    return;
+  }
   if (a.tags.includes('relaunch')) {
     if (!ctx.groundBounceUsed && ctx.juggleBudget > 0) {
       // A ground relaunch spends the combo's ground-bounce quota and its juggle cost.

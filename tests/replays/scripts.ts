@@ -646,6 +646,140 @@ export const stageRescueScript: ReplayScript = {
   frames: stageRescue(),
 };
 
+/**
+ * M16: one golden replay per hero. Lab dummy, infinite meter, counter-hit on (so every hit
+ * is a whiff punish): the three §8.3 recipes, a backward-then-forward chain (Wind
+ * Sentinel's punish link), the three starting Specials, the signature Ultimate and a grab
+ * with a strike and a throw.
+ */
+function heroKit(id: string, seed: number): FrameInput[][] {
+  const r = new Recorder(seed, heroKitOptions(id));
+  const d = r.body(101);
+  const near = (gap: number) => r.walkTo(0, d.x / 256 - gap, d.z / 256, 1);
+  const done = () => r.wait(() => r.free(0), 200).settle(d.id);
+  // Foundation.
+  near(80);
+  r.pressWhen(0, () => true, ['Attack']);
+  r.pressWhen(0, () => r.contact(0), ['Attack']);
+  r.pressWhen(0, () => r.contact(0) && r.hero(0).chainUsed !== 1, ['Attack']);
+  done();
+  // Aerial conversion.
+  near(80);
+  r.pressWhen(0, () => true, ['Attack'], ['up']);
+  r.pressWhen(0, () => r.contact(0), ['Jump']);
+  r.pressWhen(0, () => r.hero(0).state === MoveState.Air && r.hero(0).stateFrame > 2, ['Attack']);
+  r.pressWhen(0, () => r.contact(0), ['Attack'], ['right']);
+  done();
+  // Low to ground.
+  near(200);
+  r.pressWhen(0, () => true, ['Dash']);
+  r.pressWhen(0, () => r.hero(0).stateFrame >= 3, ['LowAttack']);
+  r.pressWhen(0, () => d.state === MoveState.Down && r.free(0), ['Attack']);
+  r.pressWhen(0, () => r.running(0) !== null && r.contact(0), ['Attack'], ['right']);
+  done();
+  // Backward Attack, then Forward + Attack on contact (a punish link where authored).
+  near(80);
+  r.pressWhen(0, () => true, ['Attack'], ['left']);
+  r.pressWhen(0, () => r.contact(0), ['Attack'], ['right']);
+  done();
+  // The starting Specials: neutral, forward, backward.
+  for (const dirs of [[], ['right'], ['left']] as Dir[][]) {
+    near(90);
+    r.tick(0, dirs, ['Special']);
+    done();
+  }
+  // The signature Ultimate.
+  near(80);
+  r.tick(0, [], ['Ultimate']);
+  done();
+  // Grab, one strike, throw.
+  near(60);
+  r.tick(0, [], ['Interact']);
+  r.pressWhen(0, () => r.hero(0).state === MoveState.Grabbing, ['Attack']);
+  r.pressWhen(0, () => r.hero(0).state === MoveState.Grabbing, ['Interact']);
+  done();
+  r.idle(0, 30);
+  return r.frames;
+}
+
+function heroKitOptions(id: string): WorldOptions {
+  return { dummies: 1, infiniteMeter: true, counterHit: true, heroes: [id] };
+}
+
+export const HERO_IDS = HEROES.map((h) => h.id);
+
+export const heroKitScripts: ReplayScript[] = HERO_IDS.map((id, i) => ({
+  name: `hero-${id}`,
+  seed: 70 + i,
+  options: heroKitOptions(id),
+  frames: heroKit(id, 70 + i),
+}));
+
+/**
+ * M16: one golden replay per legal pair (no duplicates): an airborne handoff from Player 1
+ * to Player 2, the reverse from Player 2's backward Special to Player 1's jump-in, and the
+ * pair's team finisher (Twin Guardians' Accord for the twins, Confluence Strike otherwise).
+ */
+function pairDrills(a: string, b: string, seed: number): FrameInput[][] {
+  const r = new Recorder(seed, pairOptions(a, b));
+  r.tick(1); // Player 2 joins
+  const dz = Math.trunc(r.body(101).z / 256);
+  const dx = () => Math.trunc(r.body(101).x / 256);
+  const d = r.body(101);
+  const around = (slot: number, offset: number) => {
+    r.walkTo(slot, dx() + offset, dz + 110, offset < 0 ? 1 : -1);
+    r.walkTo(slot, dx() + offset, dz, offset < 0 ? 1 : -1);
+  };
+  const rest = (n = 90) => r.wait(() => r.free(0) && r.free(1), n).settle(101);
+  // Player 1 launches (Up + Attack); Player 2's Up + Attack claims the airborne window.
+  around(1, 90);
+  around(0, -90);
+  r.tick(0, ['up'], ['Attack']);
+  r.wait(() => r.contact(0), 30);
+  r.idle(0, 2);
+  r.tick(1, ['up'], ['Attack']);
+  rest();
+  // Player 2's backward Special lifts; Player 1 jumps in with Forward + air Attack.
+  around(1, 80);
+  around(0, -110);
+  r.tick(1, ['right'], ['Special']);
+  r.wait(() => r.contact(1), 30);
+  r.pressWhen(0, () => d.y > fx(30), ['Jump'], ['right']);
+  r.pressWhen(
+    0,
+    () => r.hero(0).state === MoveState.Air && r.hero(0).stateFrame > 3,
+    ['Attack'],
+    ['right'],
+  );
+  rest(120);
+  // Team finisher: Player 1 staggers the dummy and invites, Player 2 confirms.
+  around(1, 90);
+  around(0, -90);
+  r.tick(0, [], ['Attack']);
+  r.wait(() => r.contact(0), 20);
+  r.tick(0, [], ['TeamAttack']);
+  r.idle(1, 4).tick(1, [], ['TeamAttack']);
+  rest(120);
+  r.idle(0, 60);
+  return r.frames;
+}
+
+function pairOptions(a: string, b: string): WorldOptions {
+  return { dummies: 1, infiniteMeter: true, heroes: [a, b] };
+}
+
+/** The six legal pairs in roster order (each hero at most once). */
+export const PAIRS: [string, string][] = HERO_IDS.flatMap((a, i) =>
+  HERO_IDS.slice(i + 1).map((b) => [a, b] as [string, string]),
+);
+
+export const pairScripts: ReplayScript[] = PAIRS.map(([a, b], i) => ({
+  name: `pair-${a}-${b}`,
+  seed: 80 + i,
+  options: pairOptions(a, b),
+  frames: pairDrills(a, b, 80 + i),
+}));
+
 export const SCRIPTS = [
   walkSquare,
   dashJump,
@@ -659,6 +793,8 @@ export const SCRIPTS = [
   arenaTrialScript,
   coopDrillsScript,
   stageRescueScript,
+  ...heroKitScripts,
+  ...pairScripts,
 ];
 
 export type { ReplayLog };

@@ -5,6 +5,8 @@
 # one shared telegraph and one 52-point reservation. M7 candidates.
 id: enforcer
 name: Black-Iron Enforcer
+# M16: large enemies take Fire Warden's catches and takedowns only when vulnerable.
+tags: [large]
 bodyWidth: 96
 actions:
   - id: gauntlet-punch

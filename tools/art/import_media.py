@@ -48,7 +48,8 @@ CLIPS = {
 # Stills already imported by import_shell_art.py (same file, now also a manifest id).
 SHELL_STILLS = {"intro.01", "intro.02", "intro.03", "intro.04", "intro.05", "intro.06"}
 
-VFX = ["HIT-SPARKS", "GUARD", "DUST", "ULTIMATE", "BREAKER-TEAM"]
+# M16: S2-ULTIMATE holds the twins' Ultimate rings (Wind 0-1, Fire 2-3) and the Accord (4-5).
+VFX = ["HIT-SPARKS", "GUARD", "DUST", "ULTIMATE", "BREAKER-TEAM", "S2-ULTIMATE"]
 VFX_CELL = 256
 ALPHA_MIN = 40
 

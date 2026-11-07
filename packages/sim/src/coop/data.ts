@@ -12,9 +12,24 @@ export function coopAction(kind: CoopActionDef['kind']): CoopActionDef {
   return COOP.actions.find((a) => a.kind === kind)!;
 }
 
-/** Handoff state a sender action opens (its first sender tag), if any. */
-export function senderHandoff(tags: readonly string[]): HandoffDef | undefined {
-  return COOP.handoffs.find((h) => tags.includes(h.tag));
+/**
+ * The handoff row a sender action opens on a target in `state` (index into COOP.handoffs,
+ * or -1): the first row whose sender tag the action carries, whose state the target is in,
+ * and whose authored pair route (if any) the sender's and the partner's hero tags match.
+ */
+export function senderRow(
+  tags: readonly string[],
+  state: number,
+  senderTags: readonly string[],
+  partnerTags: readonly string[],
+): number {
+  return COOP.handoffs.findIndex(
+    (h: HandoffDef) =>
+      tags.includes(h.tag) &&
+      h.state === state &&
+      (!h.route ||
+        (senderTags.includes(h.route.pair[0]!) && partnerTags.includes(h.route.pair[1]!))),
+  );
 }
 
 export function newCoopState(): CoopState {
@@ -30,6 +45,7 @@ export function newCoopState(): CoopState {
     assists: 0,
     rescues: 0,
     bundles: 0,
+    reciprocal: 0,
   };
 }
 
@@ -71,4 +87,5 @@ export function encodeCoop(w: ByteWriter, c: CoopState): void {
   w.u32(c.assists);
   w.u32(c.rescues);
   w.u32(c.bundles);
+  w.u32(c.reciprocal);
 }

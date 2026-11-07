@@ -24,7 +24,10 @@ const LOOKS: Record<string, { sheet: string; cells: number[]; ms: number }> = {
   knockdown: { sheet: 'vfx.dust.sheet', cells: [4, 5], ms: 320 },
   'ultimate.mountain': { sheet: 'vfx.ultimate.sheet', cells: [0, 1, 2], ms: 620 },
   'ultimate.river': { sheet: 'vfx.ultimate.sheet', cells: [3, 4, 5], ms: 620 },
+  'ultimate.wind': { sheet: 'vfx.s2-ultimate.sheet', cells: [0, 1], ms: 620 },
+  'ultimate.fire': { sheet: 'vfx.s2-ultimate.sheet', cells: [2, 3], ms: 620 },
   team: { sheet: 'vfx.breaker-team.sheet', cells: [4, 5], ms: 520 },
+  'team.accord': { sheet: 'vfx.s2-ultimate.sheet', cells: [4, 5], ms: 620 },
   phase: { sheet: 'vfx.hit-sparks.sheet', cells: [4, 5], ms: 420 },
 };
 const SPARK_COLORS: Record<number, number> = { 0: 0xfff2c0, 1: 0xffd166, 2: 0xbfefff, 3: 0xff9ad0 };
@@ -200,10 +203,16 @@ function request(
         tier: 3,
         x: e.x,
         y: e.y,
-        look: `ultimate.${e.hero === 'river' ? 'river' : 'mountain'}`,
+        look: `ultimate.${['river', 'wind', 'fire'].includes(e.hero) ? e.hero : 'mountain'}`,
       };
     case 'team':
-      return { kind: 'team', tier: 3, x: e.x, y: e.y, look: 'team' };
+      return {
+        kind: 'team',
+        tier: 3,
+        x: e.x,
+        y: e.y,
+        look: e.move === 'twin-accord' ? 'team.accord' : 'team',
+      };
     case 'bossPhase':
       return { kind: 'phase', tier: 3, x: e.x, y: e.y, look: 'phase' };
     default:

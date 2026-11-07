@@ -226,6 +226,7 @@ export interface DebugCoop {
   assists: number;
   rescues: number;
   bundles: number;
+  reciprocal: number;
 }
 
 export interface DebugEncounter {

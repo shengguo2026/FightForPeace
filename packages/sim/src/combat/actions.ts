@@ -86,6 +86,8 @@ export function startAction(f: Fighter, index: number): void {
     f.grabZ = 0;
   }
   f.contactAt = -1;
+  f.convert = 0;
+  f.punish = false;
   f.contactIds = [];
   f.contactScales = [];
   f.hitSeg = -1;
@@ -188,7 +190,8 @@ export function pressDuringAction(
   const activeEnd = a.startup + activeSpan(a);
   if (f.contactAt >= 0) {
     if (n > f.contactAt + timing.window) return reject(Reject.TooLate);
-    if (!link.onHit && !link.onGuard) return reject(Reject.NeedsHit);
+    if (!link.onHit && !link.onGuard && !link.onPunish) return reject(Reject.NeedsHit);
+    if (link.onPunish && !link.onHit && !f.punish) return reject(Reject.NeedsPunish);
   } else if (n > activeEnd && !link.onWhiff) {
     return reject(Reject.NeedsHit);
   }
@@ -265,6 +268,7 @@ export function queuedLink(world: World, f: Fighter, a: ActionDef): LinkDef | nu
     if (link.premium > 0 && !world.infiniteMeter && f.meter < link.premium * METER.unit)
       return drop(Reject.NoMeter);
     if (link.kind === 'ultimate' && !fullMeter(world, f)) return drop(Reject.NoMeter);
+    if (link.onPunish && !link.onHit && !f.punish) return drop(Reject.NeedsPunish);
     return link;
   }
   if (n <= activeEnd) return null;

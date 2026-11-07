@@ -8,6 +8,8 @@
 # cranks release a flood surge across the back of the floor. Defeated, he surrenders.
 id: commander
 name: Sluice Commander
+# M16: large enemies take Fire Warden's catches and takedowns only when vulnerable.
+tags: [large]
 bodyWidth: 84
 actions:
   - id: palm-strike

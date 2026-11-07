@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "rulesVersion": "m11",
+  "rulesVersion": "m16",
   "seed": 61,
   "options": {
     "stage": "stage1",
     "difficulty": "easy",
     "beat": 2
   },
-  "expectedHash": 1255101877,
+  "expectedHash": 1461886746,
   "frames": [
     [{"moveX":1,"moveZ":-1,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":1,"moveZ":-1,"pressed":0,"held":0,"dirPressed":0}],

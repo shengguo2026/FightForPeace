@@ -1,0 +1,503 @@
+# Fire Warden (火神): Stage 2 spec §7.2, stage2_feature_story_line.md §6.2. A Momentum
+# Converter: kickboxing entries close distance, confirmed contact earns brief Sanda
+# catches, clinches and trips, and short Qinna conclusions end the route. Shorter reach and
+# more committed recovery than Wind Sentinel. Every number is an M16 Combat Lab Candidate.
+#
+# Contact-Confirmed Conversion (`convert`): Flashpoint Clinch, Ember Catch and Warden's
+# Crucible become their clinch, trip or takedown only after a confirmed hit on an eligible
+# target (never through guard). Enemies tagged `large` and bosses convert only in a
+# vulnerable state (Stagger Break, Guard Crush); otherwise Crucible becomes a braced strike.
+# Defensive identity (Earned Control): Ember Catch is his counter; Iron Clinch, Foundry
+# Reap and Kiln-Door Release his grab route; Break the Ring (Combo Breaker) and Tempered
+# Frame (Exact Block) use the universal rules and his own pictures.
+id: fire
+name: Fire Warden
+tags: [guardian, twin]
+bodyWidth: 72
+actions:
+  - id: spark-jab
+    name: Spark Jab
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 5, active: 2, recovery: 9 }
+    hitbox: { x: 20, w: 92, y: 150, h: 90, depth: 32 }
+    damage: 28
+    reaction: { kind: stagger, hitstun: 18, push: 1.5 }
+    costs: { stun: 10, scale: 10, starter: 15 }
+    meter: 3
+    tags: [receiveStagger, grabAssistEligible]
+    links:
+      - { to: hammer-cross, category: chain, on: [hit, guard] }
+      - { to: flashpoint-drive, category: chain, on: [hit, guard] }
+      - { to: rising-brand, category: chain, on: [hit, guard] }
+      - { to: forge-side-hook, category: chain, on: [hit, guard] }
+
+  - id: hammer-cross
+    name: Hammer Cross
+    category: standing
+    input: { context: chain, dir: neutral }
+    frames: { startup: 7, active: 3, recovery: 12 }
+    hitbox: { x: 20, w: 98, y: 140, h: 100, depth: 34 }
+    damage: 45
+    reaction: { kind: stagger, hitstun: 21, push: 2 }
+    costs: { stun: 12, scale: 10 }
+    meter: 4
+    tags: [grabAssistEligible]
+    moves:
+      - { from: 1, to: 7, forward: 1.5 }
+    links:
+      - { to: furnace-heel, category: chain, on: [hit, guard] }
+      - { to: rising-brand, category: chain, on: [hit, guard] }
+      - { to: special, input: neutral, category: special, on: [hit, guard] }
+      - { to: grab, category: grab, on: [hit] }
+
+  - id: furnace-heel
+    name: Furnace Heel
+    category: standing
+    input: { context: chain, dir: neutral }
+    frames: { startup: 10, active: 4, recovery: 19 }
+    hitbox: { x: 20, w: 115, y: 120, h: 140, depth: 36 }
+    damage: 72
+    reaction: { kind: knockback, hitstun: 26, push: 12 }
+    costs: { stun: 17, scale: 15 }
+    meter: 6
+    tags: [wallBounce, handoffStagger]
+    moves:
+      - { from: 1, to: 10, forward: 1 }
+    links:
+      - { to: ultimate, input: neutral, category: ultimate, on: [hit] }
+      - { to: dash, input: forward, category: dashBridge, on: [hit], premium: 25 }
+
+  # Advancing knee-and-elbow entry: a grab cancel only after valid contact.
+  - id: flashpoint-drive
+    name: Flashpoint Drive
+    category: standing
+    input: { context: neutral, dir: forward }
+    frames: { startup: 9, active: 4, recovery: 17 }
+    hitbox: { x: 15, w: 100, y: 110, h: 150, depth: 34 }
+    damage: 50
+    reaction: { kind: stagger, hitstun: 22, push: 2 }
+    costs: { stun: 13, scale: 12 }
+    meter: 5
+    tags: [receiveStagger, receiveTemper]
+    moves:
+      - { from: 1, to: 12, forward: 5 }
+    links:
+      - { to: grab, category: grab, on: [hit] }
+      - { to: hammer-cross, category: chain, on: [hit, guard] }
+      - { to: special, input: forward, category: special, on: [hit] }
+
+  # Short retreating push kick.
+  - id: cinder-check
+    name: Cinder Check
+    category: standing
+    input: { context: neutral, dir: backward }
+    frames: { startup: 7, active: 3, recovery: 14 }
+    hitbox: { x: 10, w: 110, y: 100, h: 140, depth: 32 }
+    damage: 38
+    reaction: { kind: knockback, hitstun: 20, push: 6 }
+    costs: { stun: 10, scale: 10, starter: 10 }
+    meter: 3
+    tags: [receiveStagger, grabAssistEligible]
+    moves:
+      - { from: 1, to: 9, forward: -3 }
+    links:
+      - { to: spark-jab, category: chain, on: [hit] }
+
+  # Depth-up rising knee with controlled launch potential.
+  - id: rising-brand
+    name: Rising Brand
+    category: standing
+    input: { context: neutral, dir: up }
+    frames: { startup: 9, active: 4, recovery: 19 }
+    hitbox: { x: 15, w: 95, y: 110, h: 180, depth: 40 }
+    damage: 50
+    reaction: { kind: launch, hitstun: 30, push: 1.5, lift: 14 }
+    costs: { stun: 15, scale: 12, juggle: 30 }
+    meter: 5
+    tags: [handoffAirborne, receiveAirborne, receiveTemper]
+    moves:
+      - { from: 1, to: 9, depth: -2, depthFrom: fixed }
+    links:
+      - { to: jump, input: neutral, category: jumpChase, on: [hit] }
+
+  # Depth-down shifting hook that turns the target towards close range.
+  - id: forge-side-hook
+    name: Forge-Side Hook
+    category: standing
+    input: { context: neutral, dir: down }
+    frames: { startup: 8, active: 4, recovery: 15 }
+    hitbox: { x: 15, w: 105, y: 130, h: 120, depth: 44 }
+    damage: 42
+    reaction: { kind: stagger, hitstun: 22, push: 2 }
+    costs: { stun: 12, scale: 11 }
+    meter: 4
+    pull: 2
+    tags: [receiveStagger]
+    moves:
+      - { from: 1, to: 8, depth: 3, depthFrom: fixed }
+    links:
+      - { to: hammer-cross, category: chain, on: [hit] }
+      - { to: grab, category: grab, on: [hit] }
+
+  - id: ember-knee
+    name: Ember Knee
+    category: aerial
+    input: { context: air, dir: neutral }
+    frames: { startup: 5, active: 4, recovery: 8, landing: true }
+    hitbox: { x: 10, w: 100, y: -20, h: 140, depth: 36 }
+    damage: 36
+    reaction: { kind: stagger, hitstun: 18, push: 2, airPop: 7 }
+    costs: { stun: 10, scale: 10, juggle: 10 }
+    meter: 3
+    tags: [receiveAirborne, receiveTemper]
+    links:
+      - { to: falling-brand, category: air, on: [hit] }
+      - { to: flare-shift, category: air, on: [hit] }
+
+  # Committed descending kick with strong knockback.
+  - id: falling-brand
+    name: Falling Brand
+    category: aerial
+    input: { context: air, dir: forward }
+    frames: { startup: 9, active: 6, recovery: 14, landing: true }
+    hitbox: { x: 10, w: 105, y: -60, h: 140, depth: 36 }
+    damage: 62
+    reaction: { kind: knockback, hitstun: 26, push: 9, lift: 3, airPop: -6 }
+    costs: { stun: 17, scale: 15, juggle: 25 }
+    meter: 5
+    tags: [wallBounce, terminalKnockdown, receiveAirborne]
+    moves:
+      - { from: 10, to: 15, forward: 4, vy: -6 }
+    links:
+      - { to: ultimate, input: neutral, category: ultimate, on: [hit] }
+
+  - id: flare-shift
+    name: Flare Shift
+    category: aerial
+    input: { context: air, dir: vertical }
+    frames: { startup: 7, active: 5, recovery: 12, landing: true }
+    hitbox: { x: -10, w: 130, y: -40, h: 140, depth: 64 }
+    damage: 42
+    reaction: { kind: stagger, hitstun: 20, push: 3, airPop: 6 }
+    costs: { stun: 12, scale: 10, juggle: 15 }
+    meter: 4
+    tags: [receiveAirborne]
+    moves:
+      - { from: 1, to: 12, depth: 4, depthFrom: input }
+    links:
+      - { to: falling-brand, category: air, on: [hit] }
+
+  # Ground route: one extension, then two mutually exclusive conclusions.
+  - id: pressure-seal
+    name: Pressure Seal
+    category: ground
+    input: { context: groundFocus, dir: neutral }
+    frames: { startup: 7, active: 4, recovery: 13 }
+    hitbox: { x: 10, w: 130, y: 0, h: 70, depth: 36 }
+    damage: 32
+    reaction: { kind: stagger, hitstun: 20 }
+    costs: { stun: 10, scale: 10 }
+    meter: 3
+    tags: [groundExtension, receiveDown]
+    note: Needs Ground-Opportunity Focus.
+    links:
+      - { to: rising-cast, category: chain, on: [hit] }
+      - { to: final-measure, category: chain, on: [hit] }
+
+  # Lift-and-release: back on its feet in a bounded stagger for a partner's handoff.
+  - id: rising-cast
+    name: Rising Cast
+    category: ground
+    input: { context: groundFocus, dir: forward }
+    frames: { startup: 10, active: 5, recovery: 18 }
+    hitbox: { x: 10, w: 130, y: 0, h: 140, depth: 36 }
+    damage: 45
+    reaction: { kind: stagger, hitstun: 26, push: 2 }
+    costs: { stun: 15, scale: 14 }
+    meter: 5
+    tags: [groundFinisher, standRelease, handoffStagger, handoffRelay, receiveDown]
+    note: Needs Ground-Opportunity Focus.
+
+  # Terminal Qinna-inspired turn and separating push.
+  - id: final-measure
+    name: Final Measure
+    category: ground
+    input: { context: groundFocus, dir: backward }
+    frames: { startup: 11, active: [5, 1, 5], recovery: 22 }
+    hitbox: { x: 10, w: 130, y: 0, h: 80, depth: 36 }
+    damage: 66
+    reaction: { kind: knockdown, hitstun: 30 }
+    costs: { stun: 20, scale: 15 }
+    meter: 5
+    tags: [terminalKnockdown, groundFinisher, receiveDown]
+    note: Needs Ground-Opportunity Focus.
+
+  # Committed dash forearm entry: close control (a grab) on confirmed contact only.
+  - id: breach-step
+    name: Breach Step
+    category: dash
+    input: { context: dash, dir: neutral }
+    frames: { startup: 8, active: 5, recovery: 18 }
+    hitbox: { x: 15, w: 105, y: 100, h: 170, depth: 38 }
+    damage: 50
+    reaction: { kind: stagger, hitstun: 24, push: 3 }
+    costs: { stun: 14, scale: 12 }
+    meter: 5
+    tags: [guardPressure]
+    moves:
+      - { from: 1, to: 8, forward: 7 }
+      - { from: 9, to: 13, forward: 2 }
+    links:
+      - { to: grab, category: grab, on: [hit] }
+      - { to: special, input: forward, category: special, on: [hit] }
+
+  # Short Sanda foot sweep: a trip on a clean hit, less reach than Grass-Cutter.
+  - id: ashline-reap
+    name: Ashline Reap
+    category: low
+    input: { context: dashLow, dir: neutral }
+    frames: { startup: 8, active: 4, recovery: 22 }
+    hitbox: { x: 0, w: 115, y: 0, h: 60, depth: 36 }
+    hurtbox: low
+    damage: 40
+    reaction: { kind: trip, hitstun: 30, push: 2, lift: 5 }
+    costs: { stun: 15, scale: 12 }
+    meter: 5
+    tags: [opensGroundWindow]
+    moves:
+      - { from: 1, to: 8, forward: 3 }
+
+  # Directional Counter (Ember Catch): against an empty-handed limb attack it catches and
+  # trips; otherwise (armed attacker, large enemy) the forceful forearm response stands.
+  - id: ember-catch
+    name: Ember Catch
+    category: counter
+    input: { context: counter, dir: neutral }
+    frames: { startup: 3, active: 4, recovery: 16 }
+    hitbox: { x: 10, w: 125, y: 110, h: 160, depth: 40 }
+    damage: 90
+    reaction: { kind: knockback, hitstun: 30, push: 3 }
+    costs: { stun: 16, scale: 12, starter: 20 }
+    meter: 5
+    convert: { to: ember-catch-trip, unarmed: true }
+    links:
+      - { to: dash, input: forward, category: dashBridge, on: [hit], premium: 25 }
+
+  - id: ember-catch-trip
+    name: Ember Catch Trip
+    category: counter
+    input: { context: script, dir: neutral }
+    frames: { startup: 4, active: 3, recovery: 18 }
+    hitbox: { x: 0, w: 140, y: 0, h: 160, depth: 40 }
+    damage: 35
+    reaction: { kind: trip, hitstun: 30, push: 2, lift: 5 }
+    costs: { stun: 12, scale: 10 }
+    meter: 3
+    tags: [opensGroundWindow]
+
+  # Starting Specials: the Breach-and-Control package (no projectile).
+  - id: forge-combination
+    name: Forge Combination
+    category: special
+    input: { context: special, dir: neutral }
+    frames: { startup: 9, active: [2, 2, 2, 2, 3], recovery: 20 }
+    hitbox: { x: 15, w: 115, y: 60, h: 200, depth: 38 }
+    damage: 88
+    reaction: { kind: knockback, hitstun: 26, push: 8 }
+    costs: { stun: 15, scale: 12, starter: 15 }
+    meter: 6
+    tags: [finalReaction, guardPressure]
+    moves:
+      - { from: 1, to: 15, forward: 1.5 }
+
+  # Committed advancing forearm entry. A confirmed hit converts into the clinch and
+  # takedown; a miss, block or ineligible target leaves the long recovery.
+  - id: flashpoint-clinch
+    name: Flashpoint Clinch
+    category: special
+    input: { context: special, dir: forward }
+    frames: { startup: 10, active: 4, recovery: 30 }
+    hitbox: { x: 15, w: 105, y: 110, h: 160, depth: 36 }
+    damage: 40
+    reaction: { kind: stagger, hitstun: 30, push: 1 }
+    costs: { stun: 12, scale: 10, starter: 15 }
+    meter: 5
+    convert: { to: flashpoint-takedown }
+    moves:
+      - { from: 1, to: 12, forward: 8 }
+
+  - id: flashpoint-takedown
+    name: Flashpoint Takedown
+    category: special
+    input: { context: script, dir: neutral }
+    frames: { startup: 5, active: [3, 2, 4], recovery: 22 }
+    hitbox: { x: 0, w: 140, y: 0, h: 220, depth: 40 }
+    damage: 80
+    reaction: { kind: knockdown, hitstun: 30, push: 4, lift: 6 }
+    costs: { stun: 15, scale: 12 }
+    meter: 5
+    tags: [finalReaction, opensGroundWindow]
+
+  # Planted rising knee-and-forearm interception: answers aerial attacks and entries.
+  - id: furnace-rising
+    name: Furnace Rising
+    category: special
+    input: { context: special, dir: backward }
+    frames: { startup: 6, active: 7, recovery: 30 }
+    hitbox: { x: 0, w: 110, y: 120, h: 220, depth: 44 }
+    damage: 70
+    reaction: { kind: launch, hitstun: 30, push: 2, lift: 14, airPop: 12 }
+    costs: { stun: 15, scale: 12, starter: 15, juggle: 30 }
+    meter: 6
+    tags: [handoffAirborne, handoffRelay]
+    invulnerable: { from: 1, to: 4 }
+    links:
+      - { to: jump, input: neutral, category: jumpChase, on: [hit] }
+
+  # Signature Ultimate: the body strike converts on contact into clinch knee, rotational
+  # takedown and controlled conclusion; on a large enemy or a boss outside a vulnerable
+  # state it becomes a braced strike with heavy Resolve pressure.
+  - id: wardens-crucible
+    name: "Warden's Crucible"
+    category: ultimate
+    input: { context: ultimate, dir: neutral }
+    frames: { startup: 8, active: 4, recovery: 34 }
+    hitbox: { x: 10, w: 140, y: 80, h: 200, depth: 50 }
+    damage: 70
+    reaction: { kind: stagger, hitstun: 40, push: 1 }
+    costs: { stun: 8, scale: 0, juggle: 10 }
+    meter: 0
+    convert: { to: crucible-takedown, large: crucible-braced }
+    moves:
+      - { from: 1, to: 8, forward: 5 }
+
+  - id: crucible-takedown
+    name: Crucible Takedown
+    category: ultimate
+    input: { context: script, dir: neutral }
+    frames: { startup: 4, active: [3, 3, 3, 3, 5], recovery: 40 }
+    hitbox: { x: -20, w: 180, y: 0, h: 260, depth: 56 }
+    damage: 240
+    reaction: { kind: knockdown, hitstun: 30, push: 10, lift: 8 }
+    costs: { stun: 8, scale: 0 }
+    meter: 0
+    tags: [finalReaction, terminalKnockdown]
+
+  - id: crucible-braced
+    name: Crucible Braced Strike
+    category: ultimate
+    input: { context: script, dir: neutral }
+    frames: { startup: 5, active: [4, 3, 6], recovery: 36 }
+    hitbox: { x: 0, w: 160, y: 60, h: 220, depth: 50 }
+    damage: 200
+    reaction: { kind: knockback, hitstun: 30, push: 12 }
+    costs: { stun: 8, scale: 0 }
+    meter: 0
+    tags: [finalReaction]
+
+  # Grab kit (F&D §6.7 Short Branching Grab Route).
+  - id: collar-tie
+    name: Collar Tie
+    category: grab
+    input: { context: grab, dir: neutral }
+    frames: { startup: 6, active: 2, recovery: 22 }
+    hitbox: { x: 20, w: 96, y: 120, h: 140, depth: 40 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 0 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    moves:
+      - { from: 1, to: 6, forward: 2 }
+
+  # A short body-control adjustment and one knee: the route's single extension.
+  - id: iron-clinch
+    name: Iron Clinch
+    category: grabStrike
+    input: { context: grabExtension, dir: neutral }
+    frames: { startup: 6, active: 3, recovery: 10 }
+    hitbox: { x: 20, w: 80, y: 100, h: 120, depth: 30 }
+    damage: 48
+    reaction: { kind: stagger, hitstun: 20 }
+    costs: { stun: 11, scale: 10, starter: 15 }
+    meter: 4
+
+  # Shoulder-and-forearm separation, with the twins' handoff tag.
+  - id: kiln-door-release
+    name: Kiln-Door Release
+    category: grabStrike
+    input: { context: grabRelease, dir: neutral }
+    frames: { startup: 8, active: 4, recovery: 18 }
+    hitbox: { x: 20, w: 110, y: 120, h: 140, depth: 36 }
+    damage: 66
+    reaction: { kind: knockback, hitstun: 26, push: 9 }
+    costs: { stun: 15, scale: 12, starter: 15 }
+    meter: 5
+    tags: [handoffStagger, handoffRelay]
+
+  # Compact leg reap in the chosen direction: a trip that opens the ground route.
+  - id: foundry-reap
+    name: Foundry Reap
+    category: throw
+    input: { context: grabThrow, dir: neutral }
+    frames: { startup: 8, active: 3, recovery: 20 }
+    hitbox: { x: 20, w: 100, y: 100, h: 160, depth: 36 }
+    damage: 55
+    bodyDamage: 45
+    reaction: { kind: knockdown, hitstun: 30, push: 8, lift: 6 }
+    costs: { stun: 15, scale: 12, starter: 15 }
+    meter: 6
+    tags: [bodyProjectile, opensGroundWindow]
+
+  - id: foundry-turn
+    name: Foundry Turn
+    category: throw
+    input: { context: grabThrow, dir: backward }
+    frames: { startup: 10, active: 3, recovery: 22 }
+    hitbox: { x: 20, w: 100, y: 100, h: 160, depth: 36 }
+    damage: 60
+    bodyDamage: 45
+    reaction: { kind: knockdown, hitstun: 30, push: 9, lift: 7 }
+    costs: { stun: 15, scale: 12, starter: 15 }
+    meter: 6
+    tags: [bodyProjectile, throwBack, terminalKnockdown]
+
+  # Team finisher parts (coop/coop.yaml): Confluence Strike with any other hero, Twin
+  # Guardians' Accord with Wind Sentinel (elbow, knee and lift, then the takedown).
+  - id: confluence-strike
+    name: Confluence Strike
+    category: team
+    input: { context: team, dir: neutral }
+    frames: { startup: 14, active: 4, recovery: 30 }
+    hitbox: { x: 0, w: 170, y: 40, h: 260, depth: 60 }
+    damage: 150
+    reaction: { kind: knockdown, hitstun: 30, push: 9, lift: 10 }
+    costs: { stun: 10, scale: 10 }
+    meter: 0
+    tags: [teamFinisher, terminalKnockdown]
+
+  - id: twin-accord
+    name: Twin Guardians' Accord
+    category: team
+    input: { context: team, dir: neutral }
+    frames: { startup: 14, active: [3, 3, 3, 3, 5], recovery: 30 }
+    hitbox: { x: 0, w: 170, y: 40, h: 260, depth: 60 }
+    damage: 160
+    reaction: { kind: knockdown, hitstun: 30, push: 8, lift: 10 }
+    costs: { stun: 10, scale: 10 }
+    meter: 0
+    tags: [teamFinisher, terminalKnockdown, finalReaction]
+
+recipes:
+  - id: foundation
+    name: Foundation
+    family: foundation
+    steps: [spark-jab, hammer-cross, furnace-heel]
+  - id: aerial-conversion
+    name: Aerial conversion
+    family: aerial
+    steps: [rising-brand, jump, ember-knee, falling-brand]
+  - id: low-to-ground
+    name: Low to ground
+    family: ground
+    steps: [ashline-reap, pressure-seal, rising-cast|final-measure]

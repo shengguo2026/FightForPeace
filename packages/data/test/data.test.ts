@@ -28,8 +28,13 @@ test('the committed heroes.gen.ts is up to date (run pnpm gen:heroes)', () => {
   expect(readFileSync(GENERATED_PATH, 'utf8').replace(/\r\n/g, '\n')).toBe(generate());
 });
 
-test('roster order puts the founders first', () => {
-  expect(files.map((f) => basename(f))).toEqual(['mountain.yaml', 'river.yaml']);
+test('roster order puts the founders first, then the twins (M16)', () => {
+  expect(files.map((f) => basename(f))).toEqual([
+    'mountain.yaml',
+    'river.yaml',
+    'wind.yaml',
+    'fire.yaml',
+  ]);
 });
 
 const NORMAL = ['standing', 'aerial', 'ground', 'dash', 'low'];
@@ -112,13 +117,13 @@ test('pose IDs name the hero, category and action', () => {
   expect(compiled.actions[7]!.pose).toBe('hero.mountain.pose.aerial.rafter-palm');
 });
 
-test('a third hero file becomes a third roster entry with no code change (Review Focus 7)', () => {
+test('another hero file becomes another roster entry with no code change (Review Focus 7)', () => {
   const dir = mkdtempSync(join(tmpdir(), 'heroes-'));
   for (const f of files) copyFileSync(f, join(dir, basename(f)));
   writeFileSync(join(dir, 'zz-test.yaml'), base.replace('id: mountain', 'id: test-hero'));
   const source = generate(heroFiles(join(dir, '/')), [], undefined, null);
   expect(source).toContain('"id": "test-hero"');
-  expect(source.match(/"bodyWidth"/g)).toHaveLength(3);
+  expect(source.match(/"bodyWidth"/g)).toHaveLength(files.length + 1);
 });
 
 describe('Academy recipes (M3)', () => {
@@ -310,10 +315,13 @@ describe('co-op rules (M8)', () => {
   const coop = readFileSync(coopPath, 'utf8');
   const heroes = () => files.map((f) => loadHero(readFileSync(f, 'utf8'), basename(f)));
 
-  test('coop.yaml loads against both founders and names no hero', () => {
+  test('coop.yaml loads against all four heroes and names no hero', () => {
     const c = loadCoop(coop, heroes());
-    expect(c.teamFinishers[0]!.pair).toEqual(['founder', 'founder']);
-    expect(coop).not.toMatch(/\bmountain\b|\briver\b/);
+    expect(c.teamFinishers.map((f) => [f.id, f.pair])).toEqual([
+      ['twin-accord', ['twin', 'twin']],
+      ['confluence', ['guardian', 'guardian']],
+    ]);
+    expect(coop).not.toMatch(/\bmountain\b|\briver\b|\bwind\b|\bfire\b/);
   });
 
   test('a hero action with an undeclared handoff tag fails', () => {
