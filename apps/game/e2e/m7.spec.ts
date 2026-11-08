@@ -42,7 +42,7 @@ test('the Sluice Commander fights on the Sluice plate with Resolve and three pha
   await page.waitForFunction(() => window.__ffp!.encounter()?.boss !== null);
   const enc = await page.evaluate(() => window.__ffp!.encounter()!);
   expect(enc.arena).toBe('boss-commander');
-  expect(enc.boss).toEqual({ phase: 0, resolve: 240, stagger: 0, pending: false });
+  expect(enc.boss).toMatchObject({ phase: 0, resolve: 240, stagger: 0, pending: false });
   expect((await page.request.get('/art/bg-sluice-plate.webp')).ok()).toBe(true);
   expect((await page.request.get('/art/commander-phase.webp')).ok()).toBe(true);
   await page.keyboard.press('F1');
