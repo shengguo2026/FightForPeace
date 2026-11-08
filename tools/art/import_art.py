@@ -43,6 +43,8 @@ APPROVED = {
     "ENM-LOOKOUT-REACT": "ENM-LOOKOUT-REACT_v2.png",
     # Full two-step walk cycles (v1 repeated half a cycle, so the limbs never swapped).
     "HERO-MTN-WALK": "HERO-MTN-WALK_v2.png",
+    "HERO-WND-WALK": "HERO-WND-WALK_v2.png",
+    "HERO-FIR-WALK": "HERO-FIR-WALK_v2.png",
 }
 
 HEROES = {
@@ -237,6 +239,7 @@ SHEET_SCALE = {
     "mountain-dash": 0.92,
     "mountain-team-attack": 0.95,
     "mountain-walk": 0.95,
+    "fire-walk": 0.9,
     "river-walk": 0.88,
     "river-handwheel": 0.95,
 }
