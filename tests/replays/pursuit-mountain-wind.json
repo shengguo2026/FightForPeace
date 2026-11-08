@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "rulesVersion": "m18",
+  "rulesVersion": "m19",
   "seed": 91,
   "options": {
     "pursuit": "perimeter-pursuit",
@@ -9,7 +9,7 @@
       "wind"
     ]
   },
-  "expectedHash": 1031668300,
+  "expectedHash": 894728835,
   "frames": [
     [{"moveX":1,"moveZ":0,"pressed":16,"held":16,"dirPressed":0},{"moveX":1,"moveZ":0,"pressed":16,"held":16,"dirPressed":0}],
     [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],

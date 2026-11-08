@@ -4,6 +4,7 @@ import {
   type Fighter,
   GREENHOUSE,
   GRENADIER_ID,
+  Special,
   GhEvent,
   GrenadePhase,
   type Greenhouse,
@@ -197,8 +198,22 @@ export class GreenhouseView {
         this.front.lineBetween(px(r.x), px(r.z) - 30, px(held.x), px(held.z) - 60);
       }
     }
+    // M19: assets a hostile objective is working on right now (Control Breach, Scorched
+    // Claim) are marked THREATENED (word and blinking outline, not colour alone).
+    const threatened = new Set<number>();
+    for (const b of bodies) {
+      if (b.special === Special.Breach && b.breachAsset > 0) threatened.add(b.breachAsset - 1);
+      if (b.special === Special.Scorch && room.scorch >= 0) threatened.add(room.scorch);
+    }
     // Ledger assets.
-    for (const a of gh.assets) {
+    for (const [ai, a] of gh.assets.entries()) {
+      if (threatened.has(ai)) {
+        const k = G.ledger[a.kind]!;
+        const [tx, tz, thw, th] = [px(a.x), px(a.z), px(k.hw), px(k.h)];
+        this.front.lineStyle(5, 0xff4d4d, blink ? 1 : 0.35);
+        this.front.strokeRect(tx - thw - 8, tz - th - 8, thw * 2 + 16, th + 16 + px(k.hd));
+        this.words.put(tx, tz - th - 48, t('m19.threatened'), 22, '#ff8080');
+      }
       const k = G.ledger[a.kind]!;
       const [x, z, hw, hd, h] = [px(a.x), px(a.z), px(k.hw), px(k.hd), px(k.h)];
       const lost = a.state === AssetState.Lost;

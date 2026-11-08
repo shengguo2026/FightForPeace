@@ -76,7 +76,7 @@ export const DUMMY_HEALTH = 1000;
 export const HERO_HEALTH = 1000;
 
 /** Version of the byte layout written by encodeWorld. Bump on any layout change. */
-export const STATE_FORMAT = 15;
+export const STATE_FORMAT = 16;
 
 /** Walking speeds (fixed point per frame), kept as exports for existing callers. */
 export const WALK_SPEED_X = ON_FOOT.walkX;
@@ -130,6 +130,11 @@ export interface WorldOptions {
   arena?: string;
   /** M7: difficulty id for the arena or the stage (default medium). */
   difficulty?: string;
+  /**
+   * M19: the mounted intercept's outcome carried into Marek's room (1 broken: his opening
+   * is earned, 2 forced dismount). Replays carry it as a world option.
+   */
+  intercept?: number;
   /** M9: a stage id (STAGES); the world becomes a run through that stage's beats. */
   stage?: string;
   /** M9: practice from this beat (0 = the stage start). */
@@ -291,6 +296,18 @@ export function createFighter(
     flinches: 0,
     groupWith: 0,
     groupAt: 0,
+    order: 0,
+    orderTarget: 0,
+    orderSide: 0,
+    orderAt: 0,
+    orderUntil: 0,
+    special: 0,
+    breach: 0,
+    breachAsset: 0,
+    objectiveAt: 0,
+    interrupts: 0,
+    shaken: false,
+    callKind: 0,
     handoff: 0,
     handoffFrom: 0,
     handoffAt: 0,
@@ -383,6 +400,7 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
     const diff = options.difficulty === undefined ? MEDIUM : difficultyIndex(options.difficulty);
     if (options.cheats) setCheats(world, options.cheats.hero, options.cheats.session);
     setupGreenhouse(world, roomIndex(options.greenhouse), diff);
+    if (world.encounter && options.intercept) world.encounter.opening = options.intercept;
     return world;
   }
   if (options.stage !== undefined) {
@@ -854,6 +872,18 @@ export function encodeWorld(world: World): Uint8Array {
     w.u32(b.flinches);
     w.u32(b.groupWith);
     w.i32(b.groupAt);
+    w.u8(b.order);
+    w.u32(b.orderTarget);
+    w.i32(b.orderSide);
+    w.i32(b.orderAt);
+    w.i32(b.orderUntil);
+    w.u8(b.special);
+    w.u8(b.breach);
+    w.u32(b.breachAsset);
+    w.i32(b.objectiveAt);
+    w.u32(b.interrupts);
+    w.u8(b.shaken ? 1 : 0);
+    w.u8(b.callKind);
     w.u8(b.handoff);
     w.u32(b.handoffFrom);
     w.i32(b.handoffAt);
@@ -983,6 +1013,16 @@ function encodeEncounter(w: ByteWriter, world: World): void {
     w.i32(b.pendingSince);
     w.i32(b.carry);
     w.i32(b.shift);
+    w.u8(b.summoned ? 1 : 0);
+    w.u8(b.capture);
+    w.i32(b.captureAt);
+    w.u8(b.gunLost);
+    w.i32(b.gunAmmo);
+    w.u32(b.gunItem);
+    w.u8(b.scorch);
+    w.i32(b.scorchAt);
+    w.u32(b.scorchStops);
+    w.u8(b.intercept);
   }
   w.u32(e.devices.length);
   for (const d of e.devices) {
@@ -1001,6 +1041,21 @@ function encodeEncounter(w: ByteWriter, world: World): void {
   w.u32(e.peakCommitted);
   w.u32(e.offscreenWarned);
   w.u32(e.offscreenUnwarned);
+  w.u32(e.call);
+  w.i32(e.callReadyAt);
+  w.u32(e.sabotage);
+  w.u32(e.breached.length);
+  for (const i of e.breached) w.u32(i);
+  w.u32(e.reserveUsed);
+  w.i32(e.entryKit);
+  w.i32(e.entryX);
+  w.i32(e.entryZ);
+  w.i32(e.entryAt);
+  w.u8(e.opening);
+  w.u8(e.event.kind);
+  w.i32(e.event.frame);
+  w.i32(e.event.a);
+  w.i32(e.event.b);
 }
 
 function encodeItems(w: ByteWriter, world: World): void {

@@ -185,6 +185,8 @@ export interface Greenhouse {
     returned: boolean;
     nextAt: number;
     rounds: number;
+    /** M19: the body that throws (the drill thrower, or the room's Systems Saboteur; 0 = none yet). */
+    thrower: number;
   } | null;
   /** Aquatic assets do not drain before this frame (the cooperative redirect). */
   stableUntil: number;
@@ -295,7 +297,8 @@ export function setupGreenhouse(world: World, room: number, difficulty: number):
     jet: r.jet ? { phase: JetPhase.Ready, frame: 0, lane: 0, hits: [] } : null,
     redirect: r.redirect ? { progress: 0, ready: 0 } : null,
     restraint: r.restraint ? { target: 0, until: 0, ready: 0 } : null,
-    grenade: r.grenadier
+    grenade:
+      r.grenadier || r.saboteurGrenade
       ? {
           phase: GrenadePhase.Wait,
           frame: 0,
@@ -311,8 +314,9 @@ export function setupGreenhouse(world: World, room: number, difficulty: number):
           vz: 0,
           vy: 0,
           returned: false,
-          nextAt: GREENHOUSE!.grenade.every,
+          nextAt: r.grenadier ? GREENHOUSE!.grenade.every : 0,
           rounds: 0,
+          thrower: r.grenadier ? GRENADIER_ID : 0,
         }
       : null,
     stableUntil: 0,
@@ -427,6 +431,34 @@ function restore(world: World, a: LedgerAsset, amount: number): number {
   a.state = stateFor(a);
   if (add > 0) world.greenhouse!.record.repaired += add;
   return add;
+}
+
+/**
+ * M19 hostile objectives: a completed Control Breach puts an essential control into Safe
+ * fallback (repairable; an optional one into Critical); a completed Scorched Claim leaves
+ * the asset Critical. Never Lost, never destroyed.
+ */
+export function forceAsset(world: World, index: number, scorch: boolean): void {
+  const gh = world.greenhouse;
+  const a = gh?.assets[index];
+  if (!gh || !a || a.state === AssetState.Lost) return;
+  const k = kindDef(a);
+  const before = a.state;
+  if (k.essential && !scorch) {
+    a.damage += a.condition;
+    a.condition = 0;
+  } else {
+    const to = Math.min(a.condition, Math.max(1, k.critical));
+    a.damage += a.condition - to;
+    a.condition = to;
+  }
+  a.state = stateFor(a);
+  a.hits += 1;
+  gh.record.assetHits += 1;
+  if (a.state === AssetState.Fallback && before !== AssetState.Fallback) {
+    gh.record.fallbacks += 1;
+    log(world, GhEvent.Fallback, a.id);
+  } else log(world, GhEvent.AssetHit, a.id, 0);
 }
 
 /** Does any circulation pump still run (Sound or Damaged)? */
@@ -1046,7 +1078,7 @@ function stepGrenade(world: World): void {
   const gh = world.greenhouse!;
   const g = gh.grenade;
   if (!g) return;
-  const thrower = world.bodies.find((b) => b.id === GRENADIER_ID);
+  const thrower = g.thrower !== 0 ? world.bodies.find((b) => b.id === g.thrower) : undefined;
   // Interruption: a hit on the thrower before arming drops an unarmed grenade (a pickup to
   // secure); once armed, the live grenade falls at its feet.
   if (
@@ -1059,6 +1091,11 @@ function stepGrenade(world: World): void {
     const armed = g.phase === GrenadePhase.Aim;
     dropGrenade(world, thrower.x + thrower.facing * fx(40), thrower.z + fx(10));
     log(world, armed ? GhEvent.GrenadeLiveDrop : GhEvent.GrenadeDropped, thrower.id);
+    // M19: a Systems Saboteur that loses its grenade is shaken.
+    if (thrower.id !== GRENADIER_ID) {
+      thrower.shaken = true;
+      thrower.interrupts += 1;
+    }
   }
   if (g.phase === GrenadePhase.Lob) {
     g.x += g.vx;
@@ -1403,6 +1440,7 @@ export function encodeGreenhouse(w: ByteWriter, gh: Greenhouse | null): void {
     w.u8(g.returned ? 1 : 0);
     w.i32(g.nextAt);
     w.u32(g.rounds);
+    w.u32(g.thrower);
   }
   w.i32(gh.stableUntil);
   for (const c of gh.channel) {

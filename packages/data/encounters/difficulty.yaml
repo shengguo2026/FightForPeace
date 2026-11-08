@@ -6,6 +6,8 @@
 # difficulties come back sooner, so the larger budgets are actually used) and `recovery`
 # the percent of a food pickup's Health restored (D.2 resource direction). With `riposte`
 # an enemy that blocked a hit answers it at once instead of holding its guard.
+# M19: `aims` is how many firearm aims (warned lines) may be active together [solo, co-op];
+# Medium allows one revolver aim at a time (Stage 2 story line §9).
 difficulties:
   - id: easy
     name: Easy
@@ -21,6 +23,7 @@ difficulties:
     pace: 100
     recovery: 100
     riposte: false
+    aims: [1, 1]
   - id: medium
     name: Medium
     budget: [68, 108]
@@ -35,6 +38,7 @@ difficulties:
     pace: 100
     recovery: 100
     riposte: false
+    aims: [1, 1]
   - id: hard
     name: Hard
     budget: [82, 128]
@@ -49,6 +53,7 @@ difficulties:
     pace: 85
     recovery: 85
     riposte: true
+    aims: [1, 2]
   - id: extreme
     name: Extreme
     budget: [96, 148]
@@ -63,6 +68,7 @@ difficulties:
     pace: 72
     recovery: 70
     riposte: true
+    aims: [2, 2]
   - id: ultimate
     name: Ultimate
     budget: [108, 166]
@@ -77,3 +83,4 @@ difficulties:
     pace: 62
     recovery: 60
     riposte: true
+    aims: [2, 2]

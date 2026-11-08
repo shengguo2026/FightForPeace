@@ -242,6 +242,11 @@ export function startGame(): void {
       beat: 0,
     };
     actions.startArena(roomParam);
+    // M19: `&intercept=1` (broken) or `&intercept=2` (forced dismount) opens Marek's room
+    // as if the mounted intercept had just ended that way.
+    const intercept = Number(params.get('intercept') ?? 0);
+    if (intercept === 1 || intercept === 2)
+      session.startArena(roomParam, lab.arenaPick.value.difficulty, 0, { intercept });
     lab.visible.value = false;
   }
 

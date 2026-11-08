@@ -27,10 +27,11 @@ function run(w: World, frames: number, each?: (w: World) => void, bot = true): v
 test('M7 data: 7 enemy kits with profiles, 5 difficulties, every arena valid', () => {
   for (const id of ['recruit', 'shield', 'runner', 'overseer', 'lookout', 'enforcer', 'commander'])
     expect(ENEMIES.some((k) => k.id === id)).toBe(true);
-  expect(PROFILES.filter((p) => p).length).toBe(7);
+  // M7's seven, then M19's Stage 2 roles and their difficulty variants.
+  expect(PROFILES.filter((p) => p).length).toBeGreaterThanOrEqual(7);
   expect(DIFFICULTIES.map((d) => d.id)).toEqual(['easy', 'medium', 'hard', 'extreme', 'ultimate']);
   expect(arenaNames().length).toBe(ARENAS.filter((a) => !a.stage).length);
-  const boss = PROFILES.find((p) => p?.boss)!;
+  const boss = PROFILES[ENEMIES.findIndex((k) => k.id === 'commander')]!;
   expect(boss.boss!.phases.map((p) => p.from)).toEqual([100, 66, 33]);
   expect(kitName(-1)).toBe('?');
 });

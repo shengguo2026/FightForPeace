@@ -4,6 +4,7 @@ import {
   AiMode,
   DIFFICULTIES,
   ENEMIES,
+  EncEvent,
   type Encounter,
   type Fighter,
   MoveState,
@@ -24,6 +25,55 @@ import { presentation } from '../shell/presentation';
 /** Localized stage and arena words (English from en.ts is the fallback). */
 const S = (k: keyof typeof STAGE_TEXT) => t(`run.${k}` as TextId);
 const A = (k: keyof typeof ARENA_TEXT) => t(`arena.${k}` as TextId);
+
+/** M19: frames an encounter caption and a subtitle stay on screen. */
+const CAPTION_FRAMES = 120;
+const SUBTITLE_FRAMES = 240;
+/** Tomas Rell's line for an encounter event (Marek's room). */
+const TOMAS_LINE: Partial<Record<number, string>> = {
+  [EncEvent.Disarmed]: 'm19.tomas.gun',
+  [EncEvent.ScorchStart]: 'm19.tomas.scorch',
+  [EncEvent.Capture]: 'm19.tomas.capture',
+};
+
+/** The caption of an M19 encounter event (empty for events without one). */
+function eventCaption(kind: number, a: number, b: number): string {
+  void a;
+  switch (kind) {
+    case EncEvent.Call:
+      return t(`m19.call.${b}` as TextId);
+    case EncEvent.CallDone:
+      return t('m19.ev.callDone');
+    case EncEvent.CallBroken:
+      return t('m19.ev.callBroken');
+    case EncEvent.BreachStep:
+      return t(`m19.breach.${Math.max(1, Math.min(3, b))}` as TextId);
+    case EncEvent.BreachDone:
+      return t('m19.ev.breachDone');
+    case EncEvent.BreachStopped:
+      return t('m19.ev.breachStopped');
+    case EncEvent.ReserveWarn:
+      return t('m19.ev.reserveWarn');
+    case EncEvent.ReserveIn:
+      return t('m19.ev.reserveIn');
+    case EncEvent.Summon:
+      return t('m19.ev.summon');
+    case EncEvent.Disarmed:
+      return t(`m19.gun.${b}` as TextId);
+    case EncEvent.ScorchStart:
+      return t('m19.ev.scorchStart');
+    case EncEvent.ScorchStopped:
+      return t('m19.ev.scorchStopped');
+    case EncEvent.ScorchDone:
+      return t('m19.ev.scorchDone');
+    case EncEvent.Capture:
+      return t(`m19.capture.${b === 2 ? 2 : 1}` as TextId);
+    case EncEvent.Escort:
+      return t('m19.ev.escort');
+    default:
+      return '';
+  }
+}
 
 const VIEW_W = 1920;
 const VIEW_H = 1080;
@@ -62,6 +112,9 @@ export class ArenaView {
   private bossName!: Phaser.GameObjects.Text;
   private banner!: Phaser.GameObjects.Text;
   private objective!: Phaser.GameObjects.Text;
+  /** M19: the encounter's event caption (calls, breaches, the gun, capture) and subtitles. */
+  private caption!: Phaser.GameObjects.Text;
+  private subtitle!: Phaser.GameObjects.Text;
   private go!: Phaser.GameObjects.Text;
   /** Full-screen black for the fade between two beats. */
   private fade!: Phaser.GameObjects.Graphics;
@@ -115,6 +168,21 @@ export class ArenaView {
       strokeThickness: 8,
     });
     this.go.setOrigin(1, 0.5).setScrollFactor(0).setDepth(21);
+    this.caption = this.scene.add.text(VIEW_W / 2, 200, '', {
+      ...style,
+      fontSize: '40px',
+      fontStyle: 'bold',
+      color: '#ffd166',
+      strokeThickness: 8,
+    });
+    this.caption.setOrigin(0.5, 0).setScrollFactor(0).setDepth(21);
+    this.subtitle = this.scene.add.text(VIEW_W / 2, VIEW_H - 120, '', {
+      ...style,
+      fontSize: '30px',
+      wordWrap: { width: 1500 },
+      align: 'center',
+    });
+    this.subtitle.setOrigin(0.5, 1).setScrollFactor(0).setDepth(21);
     this.fade = this.scene.add.graphics().setScrollFactor(0).setDepth(30);
     for (let i = 0; i < 2; i += 1) {
       const t = this.scene.add.text(0, 0, '', { ...style, fontSize: '30px', color: '#ffb020' });
@@ -130,23 +198,32 @@ export class ArenaView {
   }
 
   /** Boss state for the sprite picker (null outside a boss arena). */
-  bossView(enc: Encounter | null): BossView | undefined {
+  bossView(enc: Encounter | null, bodies: readonly Fighter[], frame: number): BossView | undefined {
     const b = enc?.boss;
     if (!b) return undefined;
-    const prof = this.bossProfile(enc);
+    const prof = this.bossProfile(enc, bodies);
+    const ph = prof?.phases[b.phase];
+    // M19 looks: the phase's, Scorched Claim's once tried, captured last.
+    const look =
+      b.capture > 0 ? 4 : ph?.scorch && b.scorch !== 0 ? ph.scorch.look : (ph?.look ?? 1);
     return {
       id: b.id,
       phase: b.phase,
       stagger: b.stagger,
       shift: b.shift,
       shiftFrames: prof?.transition.shift ?? 90,
+      look,
+      capture: b.capture,
+      captureAge: frame - b.captureAt,
     };
   }
 
-  private bossProfile(enc: Encounter | null) {
+  /** The boss profile of the encounter's boss (its own kit, not the first boss's). */
+  private bossProfile(enc: Encounter | null, bodies: readonly Fighter[]) {
     const b = enc?.boss;
     if (!b) return undefined;
-    return PROFILES.find((p) => p?.boss)?.boss;
+    const f = bodies.find((x) => x.id === b.id);
+    return f ? PROFILES[f.hero]?.boss : PROFILES.find((p) => p?.boss)?.boss;
   }
 
   /** Per render frame: backdrop for this arena, camera, HUD. */
@@ -353,6 +430,8 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
       this.title.setText('');
       this.bossName.setText('');
       this.banner.setText('');
+      this.caption.setText('');
+      this.subtitle.setText('');
       for (const t of this.warnTexts) t.setVisible(false);
       for (const t of this.tags.values()) t.setVisible(false);
       return;
@@ -370,6 +449,7 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
     this.drawDevices(enc);
     this.drawWarnings(enc, bodies, frame);
     this.drawTags(enc, bodies);
+    this.drawM19(enc, bodies, frame);
     const result = enc.result === 1 ? A('cleared') : enc.result === 2 ? A('defeated') : '';
     // Stage beats (M9) draw their own banners in drawStage.
     if (arena.stage) {
@@ -385,7 +465,7 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
   private drawBoss(enc: Encounter, bodies: readonly Fighter[]): void {
     const b = enc.boss;
     const f = b ? bodies.find((x) => x.id === b.id) : undefined;
-    const prof = this.bossProfile(enc);
+    const prof = this.bossProfile(enc, bodies);
     if (!b || !f || !prof) {
       this.bossName.setText('');
       return;
@@ -429,10 +509,50 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
             ? ` · ${A('phaseQueued')}`
             : '';
     const kit = ENEMIES[f.hero]!;
+    // M19: the armed phase's gun (rounds left, or how it was lost).
+    const gun = phase.armed
+      ? b.gunLost > 0
+        ? ` · ${t(`m19.gun.${b.gunLost}` as TextId)}`
+        : f.item !== 0
+          ? ` · ${b.gunAmmo} ${t('m19.rounds')}`
+          : ` · ${t('m19.gun.0')}`
+      : '';
     this.bossName.setText(
-      `${dt(`enemy.${kit.id}.name`, kit.name)} · ${A('phase')} ${b.phase + 1}: ${dt(`enemy.${kit.id}.phase.${b.phase}`, phase.name)} · ${A('resolve')} ${b.resolve}/${b.resolveMax}${state}`,
+      `${dt(`enemy.${kit.id}.name`, kit.name)} · ${A('phase')} ${b.phase + 1}: ${dt(`enemy.${kit.id}.phase.${b.phase}`, phase.name)} · ${A('resolve')} ${b.resolve}/${b.resolveMax}${state}${gun}`,
     );
     this.bossName.setColor(b.stagger > 0 ? '#ffd166' : '#ffffff');
+  }
+
+  /**
+   * M19 captions: the last encounter event for a few seconds (calls, Control Breach steps,
+   * the reserve, the gun, Scorched Claim, capture), the warned reserve edge, a call's
+   * raised-arm marker, and Tomas Rell's subtitles in Marek's room.
+   */
+  private drawM19(enc: Encounter, bodies: readonly Fighter[], frame: number): void {
+    const e = enc.event;
+    const age = frame - e.frame;
+    let text = '';
+    if (e.kind !== EncEvent.None && age < CAPTION_FRAMES) text = eventCaption(e.kind, e.a, e.b);
+    this.caption.setText(text);
+    // The warned reserve entry: an arrow at that edge until the enemy steps in.
+    if (enc.entryKit >= 0) {
+      const x = fxToPixels(enc.entryX);
+      const z = fxToPixels(enc.entryZ);
+      const w = this.world;
+      w.fillStyle(0xffb020, (frame >> 3) % 2 === 0 ? 0.9 : 0.4);
+      const dir = x < fxToPixels(enc.viewMin) + 400 ? 1 : -1;
+      w.fillTriangle(x, z - 200, x + dir * 70, z - 240, x + dir * 70, z - 160);
+    }
+    // Tomas's lines (subtitles) on Marek's entrance, the gun's loss, Scorched Claim, capture.
+    const b = enc.boss;
+    let line = '';
+    if (b && bodies.some((x) => x.id === b.id)) {
+      const tomas = TOMAS_LINE[e.kind];
+      if (tomas && age < SUBTITLE_FRAMES) line = tomas;
+      else if (enc.wave === 0 && frame - enc.start < SUBTITLE_FRAMES + 30 && b.phase === 0)
+        line = 'm19.tomas.entry';
+    }
+    this.subtitle.setText(line ? `${t('m19.tomas.name')}: ${t(line as TextId)}` : '');
   }
 
   /** Device progress pips at the device (the winch), counted cranks, never time. */

@@ -24,6 +24,9 @@ const VIEW_H = 1080;
 const HERO_COLORS = [0x4fa3ff, 0xff9a3c];
 const RIDER_COLOR = 0x7a4a2a;
 const RIDER_MARK = 0xffb020;
+/** M19: Marek's aubergine bike with its antique-brass mark. */
+const MAREK_COLOR = 0x4a2a4f;
+const MAREK_MARK = 0xc9a24a;
 const CALLOUT_FRAMES = 50;
 const px = fxToPixels;
 
@@ -148,7 +151,8 @@ export class PursuitView {
       const x = px(e.x);
       const z = px(e.z);
       const down = e.state === EnemyState.Crash || e.state === EnemyState.Down;
-      this.bike(x, z, 0, RIDER_COLOR, RIDER_MARK, down);
+      // M19: Marek on his aubergine bike (brass mark), named, with Stability only.
+      this.bike(x, z, 0, e.boss ? MAREK_COLOR : RIDER_COLOR, e.boss ? MAREK_MARK : RIDER_MARK, down);
       if (e.state === EnemyState.Down) {
         // Dismounted at the road edge: the rider stands beside the settled bike.
         this.front.fillStyle(0x5a3a22, 1);
@@ -164,9 +168,9 @@ export class PursuitView {
       this.words.put(
         x,
         top - 34,
-        dt(`rider.${MOUNTED.rider.id}.name`, MOUNTED.rider.name),
-        20,
-        '#ffd8a8',
+        e.boss ? t('m19.ride.marek' as TextId) : dt(`rider.${MOUNTED.rider.id}.name`, MOUNTED.rider.name),
+        e.boss ? 26 : 20,
+        e.boss ? '#e7c26a' : '#ffd8a8',
       );
       if (!down) {
         this.bar(
@@ -179,7 +183,7 @@ export class PursuitView {
           e.maxStability,
           e.critical ? 0xff5050 : 0xffb020,
         );
-        this.bar(this.front, x - 60, top - 4, 120, 6, e.health, e.maxHealth, 0xd04040);
+        if (!e.boss) this.bar(this.front, x - 60, top - 4, 120, 6, e.health, e.maxHealth, 0xd04040);
       }
       if (e.state === EnemyState.Enter) {
         this.front.lineStyle(4, RIDER_MARK, blink ? 1 : 0.4);
@@ -582,6 +586,9 @@ export class PursuitView {
         0,
       );
     });
+    // M19: the intercept's result (it leads straight into Marek's yard).
+    if (p.phase !== PursuitPhase.Ride && (p.marek === 1 || p.marek === 2))
+      this.hudWords.put(VIEW_W / 2, 250, t(`m19.intercept.${p.marek}` as TextId), 34, '#e7c26a');
     if (p.phase === PursuitPhase.Complete) this.drawRecord(p, cheatAssisted);
   }
 

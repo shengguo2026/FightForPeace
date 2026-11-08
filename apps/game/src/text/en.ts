@@ -228,6 +228,8 @@ export const VERDICT_TEXT = [
   'group attack in progress',
   'not visible (off screen)',
   'boss share reserved',
+  'too many firearm aims at once',
+  'too close to aim',
 ] as const;
 
 /** M8 co-op event words for the Lab's Co-op panel (index = CoopEvent). */

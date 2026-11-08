@@ -216,6 +216,8 @@ export interface HeroDef {
   tags: readonly string[];
   actions: readonly ActionDef[];
   recipes: readonly RecipeDef[];
+  /** M19 enemy kits: the art key its sheets use (a variant shares its base kit's art). */
+  art?: string;
 }
 
 /** Clash strength tiers. Numbers are part of the data; never renumber. */
@@ -356,6 +358,25 @@ export interface AiAttackDef {
   minDifficulty: number;
   /** Reach override (fixed point), 0 = the action's own reach. */
   range: number;
+  /** M19: never from closer than this (fixed point; point-blank shots), 0 = no limit. */
+  minRange: number;
+  /** M19: 0 always, 1 only while holding a weapon, 2 only with empty hands. */
+  when: number;
+}
+
+/** M19 Jackal Signalman calls. Numbers are encoded; never renumber. */
+export const CallKind = { None: 0, Crossfang: 1, Guard: 2, Replace: 3 } as const;
+
+/** M19: a visible, interruptible command (the Signalman's calls). */
+export interface CommandDef {
+  kind: number;
+  /** The call action in the kit (its startup is the raised-arm telegraph). */
+  action: string;
+  threat: number;
+  cooldown: number;
+  minDifficulty: number;
+  /** Frames the authorised formation lasts once the call is confirmed. */
+  frames: number;
 }
 
 /** Tiered Capability Profile (F&D §8): the defensive subset an archetype receives. */
@@ -399,6 +420,15 @@ export interface BossPhaseDef {
   /** Device kind the phase works ('' = none). */
   device: string;
   attacks: readonly AiAttackDef[];
+  // --- M19 Marek -----------------------------------------------------------------------
+  /** A weapon put into the boss's hands as the phase starts ('' = none). */
+  armed: string;
+  /** The phase also ends once the boss no longer holds a loaded `armed` weapon. */
+  untilDisarmed: boolean;
+  /** Command action that brings the phase's supports once ('' = they arrive at the start). */
+  summon: string;
+  /** Low-Health objective behaviour (Scorched Claim), or null. */
+  scorch: { below: number; action: string; look: number; cooldown: number } | null;
 }
 
 export interface BossDef {
@@ -411,11 +441,24 @@ export interface BossDef {
   /** Threat budget kept for the boss; supports share the rest. */
   share: number;
   phases: readonly BossPhaseDef[];
+  /** M19: a Resolve break at or below this Health percent is a clean surrender (0 = off). */
+  surrender: number;
+  /** M19: capture presentation (both routes) instead of the Stage 1 kneel. */
+  capture: boolean;
 }
 
 /** An enemy kit's AI: tactical role, movement, defense profile, morale and boss data. */
 export interface EnemyProfile {
-  role: 'pressure' | 'defender' | 'flanker' | 'grappler' | 'ranged' | 'elite' | 'boss';
+  role:
+    | 'pressure'
+    | 'defender'
+    | 'flanker'
+    | 'grappler'
+    | 'ranged'
+    | 'elite'
+    | 'boss'
+    | 'objective'
+    | 'commander';
   health: number;
   walkX: number;
   walkZ: number;
@@ -430,6 +473,21 @@ export interface EnemyProfile {
   group: { action: string; threat: number; partnerThreat: number; telegraph: number } | null;
   attacks: readonly AiAttackDef[];
   boss: BossDef | null;
+  // --- M19 Stage 2 roles -------------------------------------------------------------
+  /** May pick up firearms and the grenade (M7 kits: yes; Stage 2 roles: no). */
+  firearms: boolean;
+  /** Morale breaks at this Health percent once isolated, disarmed or shaken (0 = breakAt). */
+  shaken: number;
+  /** Spawns holding this weapon with this many rounds per difficulty (Revolver Marauder). */
+  armed: { weapon: string; ammo: readonly number[] } | null;
+  /** Systems Saboteur: Control Breach threat and the frames between attempts. */
+  objective: { threat: number; cooldown: number } | null;
+  /** Lockstep Escort: threat reserved while escorting and the escort range (fixed point). */
+  escort: { threat: number; range: number } | null;
+  /** Jackal Signalman calls. */
+  commands: readonly CommandDef[];
+  /** 'dismount': arrives knocked down with protected recovery (a Road Rider on foot). */
+  entry: 'walk' | 'dismount';
 }
 
 /** Difficulty profile (spec Appendix D.2, D.5). Pairs are [solo, co-op]. */
@@ -451,6 +509,8 @@ export interface DifficultyDef {
   recovery: number;
   /** An enemy that blocked a hit answers at once instead of holding its guard. */
   riposte: boolean;
+  /** M19: firearm aims (warned lines) that may be active together [solo, co-op]. */
+  aims: readonly [number, number];
 }
 
 export interface ArenaEnemyDef {
@@ -477,6 +537,8 @@ export interface ArenaDef {
   surge: { z0: number; z1: number; warn: number; active: number; damage: number } | null;
   waves: readonly { next: number; enemies: readonly ArenaEnemyDef[] }[];
   substitutions: readonly { from: string; to: string; minDifficulty: number; count: number }[];
+  /** M19: the finite reserve the Signalman's Replace the Line draws from (kit ids). */
+  reserve: readonly string[];
   /** M9: a stage beat's arena (a camera lock or the quiet time between locks), not a Lab arena. */
   stage: boolean;
 }
@@ -892,6 +954,8 @@ export interface CorridorDef {
   obstacles: { at: number; z: number; kind: number; hw: number; hd: number }[];
   equipment: { id: string; name: string; at: number; side: number }[];
   checkpoints: number[];
+  /** M19 Marek's mounted intercept: where he rides in, his Stability percent, his lane. */
+  boss: { at: number; stability: number; lane: number } | null;
   waves: {
     at: number;
     /** Lowest difficulty index that has this wave. */
@@ -968,6 +1032,8 @@ export interface LedgerKindDef {
   hw: number;
   hd: number;
   h: number;
+  /** M19: a room control a Systems Saboteur may breach. */
+  control: boolean;
 }
 
 export interface GreenhouseRoomDef {
@@ -1030,6 +1096,12 @@ export interface GreenhouseRoomDef {
     cooldown: number;
   } | null;
   grenadier: { x: number; z: number } | null;
+  /** M19: the room's one grenade belongs to its first Systems Saboteur. */
+  saboteurGrenade: boolean;
+  /** M19: the optional asset Marek's Scorched Claim goes for (asset index, -1 = none). */
+  scorch: number;
+  /** M19: story NPCs standing in the room (Tomas Rell). */
+  npcs: readonly { id: string; x: number; z: number }[];
 }
 
 export interface GreenhouseDef {

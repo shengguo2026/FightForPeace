@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "rulesVersion": "m18",
+  "rulesVersion": "m19",
   "seed": 7,
-  "expectedHash": 2709264383,
+  "expectedHash": 2630671663,
   "frames": [
     [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":8}],
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],

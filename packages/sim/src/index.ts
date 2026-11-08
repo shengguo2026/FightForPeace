@@ -37,6 +37,7 @@ export * from './enemies/targeting';
 export * from './enemies/boss';
 export * from './enemies/ai';
 export * from './enemies/encounter';
+export * from './enemies/stage2';
 export * from './collision/collide';
 export * from './world/world';
 export * from './loop/fixedStep';

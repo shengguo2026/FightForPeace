@@ -319,6 +319,27 @@ export interface Fighter extends Body {
   groupWith: number;
   groupAt: number;
 
+  // --- M19 Stage 2 roles ---------------------------------------------------------------
+  /** An order this enemy follows (Order): kind, the fighter it concerns, a depth side, and its frames. */
+  order: number;
+  orderTarget: number;
+  orderSide: number;
+  orderAt: number;
+  orderUntil: number;
+  /** A special action is running (Special): a Control Breach step, a call, Scorched Claim. */
+  special: number;
+  /** Control Breach: next step (1 Access, 2 Tamper, 3 Commit) and the asset index + 1. */
+  breach: number;
+  breachAsset: number;
+  /** The next objective attempt or call may start from this frame. */
+  objectiveAt: number;
+  /** Interruptions taken (breach steps, calls, the grenade): two shake its morale. */
+  interrupts: number;
+  /** Morale shaken (grenade lost, disarmed); the profile's `shaken` threshold applies. */
+  shaken: boolean;
+  /** The Signalman call kind it is raising (CallKind). */
+  callKind: number;
+
   // --- M8 same-device co-op ------------------------------------------------------------
   /**
    * Open handoff opportunity on this target: its TargetState (0 = none), the sender's id,
@@ -360,7 +381,20 @@ export const AiMode = {
 } as const;
 
 /** Threat reservation kind bits. */
-export const Threat = { HardCC: 1, Projectile: 2, Unblockable: 4, Group: 8, Boss: 16 } as const;
+export const Threat = {
+  HardCC: 1,
+  Projectile: 2,
+  Unblockable: 4,
+  Group: 8,
+  Boss: 16,
+  /** M19: a firearm aim (warned line) or a sweeping burst. */
+  Aim: 32,
+} as const;
+
+/** M19 enemy orders. Numbers are encoded; never renumber. */
+export const Order = { None: 0, Crossfang: 1, Escort: 2 } as const;
+/** M19 special actions. Numbers are encoded; never renumber. */
+export const Special = { None: 0, Breach: 1, Call: 2, Scorch: 3, Summon: 4 } as const;
 
 /** Planned enemy defenses. Numbers are encoded; never renumber. */
 export const DefPlan = { None: 0, Guard: 1, Exact: 2, Counter: 3, Evade: 4 } as const;
@@ -386,6 +420,10 @@ export const Verdict = {
   Hidden: 8,
   /** Supports may not use the boss's share. */
   BossShare: 9,
+  /** M19: too many firearm aims at once. */
+  Aims: 10,
+  /** M19: an attack's minimum range (too close to aim). */
+  TooClose: 11,
 } as const;
 
 /** Boss state (spec §12.3, F&D §8). */
@@ -407,7 +445,48 @@ export interface BossState {
   carry: number;
   /** Frames left of the phase transition (0 = none). */
   shift: number;
+  // --- M19 Marek ---
+  /** The phase's summon (Command Pressure) was used. */
+  summoned: boolean;
+  /** Capture: 0 none, 1 Resolve surrender, 2 forced capture; and the frame it began. */
+  capture: number;
+  captureAt: number;
+  /** How the armed phase's gun was lost (GunLost) and the rounds it still held. */
+  gunLost: number;
+  gunAmmo: number;
+  /** The armed phase's gun (item id; 0 = none). */
+  gunItem: number;
+  /** Scorched Claim: 0 not tried, 1 running, 2 interrupted (may retry), 3 completed. */
+  scorch: number;
+  scorchAt: number;
+  scorchStops: number;
+  /** The mounted intercept's outcome: 0 none, 1 crashed (broken), 2 forced dismount. */
+  intercept: number;
 }
+
+/** M19: how Marek lost the support gun. Numbers are encoded; never renumber. */
+export const GunLost = { None: 0, Disarmed: 1, Broken: 2, Emptied: 3 } as const;
+
+/** M19 encounter events for captions and the HUD. Numbers are encoded; never renumber. */
+export const EncEvent = {
+  None: 0,
+  Call: 1,
+  CallDone: 2,
+  CallBroken: 3,
+  BreachStep: 4,
+  BreachDone: 5,
+  BreachStopped: 6,
+  ReserveWarn: 7,
+  ReserveIn: 8,
+  Summon: 9,
+  Disarmed: 10,
+  ScorchStart: 11,
+  ScorchStopped: 12,
+  ScorchDone: 13,
+  Capture: 14,
+  Collapse: 15,
+  Escort: 16,
+} as const;
 
 /** An objective device (the sluice winch): advanced only by completed hostile actions. */
 export interface Device {
@@ -456,6 +535,24 @@ export interface Encounter {
   peakCommitted: number;
   offscreenWarned: number;
   offscreenUnwarned: number;
+  // --- M19 ---
+  /** The Signalman raising a call (0 = none) and the next frame a call may start. */
+  call: number;
+  callReadyAt: number;
+  /** The Saboteur running a Control Breach (one sabotage per room at a time; 0 = none). */
+  sabotage: number;
+  /** Ledger asset indices already breached (each control at most once). */
+  breached: number[];
+  /** Reserve entries used, and a pending warned entry (kit index, -1 = none). */
+  reserveUsed: number;
+  entryKit: number;
+  entryX: number;
+  entryZ: number;
+  entryAt: number;
+  /** The mounted intercept's outcome brought into this room (0 none, 1 broken, 2 dismounted). */
+  opening: number;
+  /** The last event (EncEvent) for captions: kind, frame and two details. */
+  event: { kind: number; frame: number; a: number; b: number };
 }
 
 /**

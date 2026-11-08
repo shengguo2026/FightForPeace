@@ -1,0 +1,119 @@
+# Revolver Marauder (Stage 2 spec §11, story line §9): the Finite-Ammunition Interrupter. It
+# spawns holding a real Six-Round Sidearm, loaded below capacity on the lower difficulties.
+# Claim Shot (Sightline Aim is its long warned startup) and Retreating Shot (a signalled
+# backward step, then the shot, with a long recovery) each spend one of that weapon's
+# rounds; there is no hidden reserve and no reload. No shot from point-blank range (a near
+# hero gets Close Check instead), into a grab, against protected recovery or from outside
+# the combat-safe zone; the director allows one aim at a time on Easy and Medium. Empty, it
+# throws the revolver once (Empty Cast: the weapon's own throw) and fights on with a reduced
+# Claim Hand kit. Disarmed or defeated, the revolver drops with its exact rounds; the
+# Marauder reclaims only its own loaded revolver. M19 candidates.
+id: marauder
+name: Revolver Marauder
+bodyWidth: 66
+actions:
+  - id: claim-shot
+    name: Claim Shot
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 32, active: 2, recovery: 30, blockstun: 16 }
+    hitbox: { x: 40, w: 820, y: 150, h: 30, depth: 22 }
+    damage: 65
+    reaction: { kind: knockdown, hitstun: 28, push: 4, lift: 4 }
+    costs: { stun: 18, scale: 18, starter: 30, guard: 22 }
+    meter: 0
+    ammo: 1
+    tags: [warnedLine, committed, uncounterable]
+    note: 'Sightline Aim is the startup: the aim line is drawn for all of it.'
+
+  - id: retreating-shot
+    name: Retreating Shot
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 30, active: 2, recovery: 42, blockstun: 16 }
+    hitbox: { x: 40, w: 760, y: 150, h: 30, depth: 22 }
+    damage: 55
+    reaction: { kind: knockdown, hitstun: 26, push: 4, lift: 4 }
+    costs: { stun: 18, scale: 18, starter: 30, guard: 20 }
+    meter: 0
+    ammo: 1
+    tags: [warnedLine, committed, uncounterable]
+    moves:
+      - { from: 1, to: 14, forward: -5 }
+
+  - id: close-check
+    name: Close Check
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 10, active: 3, recovery: 18, blockstun: 12 }
+    hitbox: { x: 15, w: 95, y: 150, h: 100, depth: 30 }
+    damage: 30
+    reaction: { kind: knockback, hitstun: 18, push: 8 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 8 }
+    meter: 0
+    tags: [counterable]
+
+  # The reduced Claim Hand route once the revolver is gone.
+  - id: claim-jab
+    name: Claim Jab
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 10, active: 3, recovery: 14, blockstun: 12 }
+    hitbox: { x: 20, w: 105, y: 150, h: 100, depth: 32 }
+    damage: 30
+    reaction: { kind: stagger, hitstun: 18, push: 2 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 8 }
+    meter: 0
+    tags: [counterable]
+
+  - id: bootline-kick
+    name: Bootline Kick
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 13, active: 4, recovery: 22, blockstun: 14 }
+    hitbox: { x: 20, w: 125, y: 140, h: 110, depth: 34 }
+    damage: 45
+    reaction: { kind: knockback, hitstun: 22, push: 9 }
+    costs: { stun: 12, scale: 12, starter: 10, guard: 12 }
+    meter: 0
+    tags: [counterable]
+
+profile:
+  role: ranged
+  health: 240
+  walk: { x: 3, z: 2 }
+  perception: 6
+  ring: 560
+  defense: { tier: basic, guard: { every: 3, of: 1 }, guardHold: 20 }
+  morale: { breakAt: 28, shaken: 55 }
+  weapons: preferred
+  firearms: false
+  armed: { weapon: six-round-sidearm, ammo: [3, 4, 5, 6, 6] }
+  attacks:
+    - { action: claim-shot, threat: 28, cooldown: 220, range: 800, minRange: 260, when: armed }
+    - { action: close-check, threat: 12, cooldown: 90 }
+    - {
+        action: retreating-shot,
+        threat: 28,
+        cooldown: 300,
+        range: 700,
+        minRange: 200,
+        when: armed,
+        minDifficulty: medium,
+      }
+    - { action: sidearm-throw, threat: 16, cooldown: 60, range: 600, when: armed }
+    - { action: claim-jab, threat: 14, cooldown: 90, when: unarmed }
+    - { action: bootline-kick, threat: 16, cooldown: 140, when: unarmed }
+
+variants:
+  - id: marauder-elite
+    name: Revolver Marauder Veteran
+    minDifficulty: hard
+    health: 260
+    defense: { tier: basic, guard: { every: 2, of: 1 }, guardHold: 22 }
+  - id: marauder-master
+    name: Revolver Marauder Ace
+    minDifficulty: ultimate
+    health: 270
+    defense:
+      { tier: specialist, guard: { every: 2, of: 1 }, exact: true, guardHold: 22, cooldown: 260 }

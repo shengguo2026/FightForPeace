@@ -1,0 +1,278 @@
+# Marek Vane, the Gilded Jackal (Stage 2 spec §12, story line §9): a Tailored Predator boss
+# with a Player-Influenced Authored Sequence. The mounted intercept (mounted.yaml,
+# corridor marek-intercept) comes first and touches neither Health nor Resolve.
+#
+# Armed Command: he starts holding the Burst-Command Support Gun. Jackal Burst and Sweeping
+# Claim spend its real rounds (three each, warned lines; the sweep covers two depth lanes
+# and leaves the far one free); Stock Check up close, Cover Shift to reposition, and Command
+# Pressure, one call that brings the phase's support pair once. Breaking his Resolve drops
+# the gun at his feet for the heroes for the whole Stagger window. The phase ends when he no
+# longer holds a loaded gun (disarmed, broken, or emptied and tossed aside) or at the Health
+# floor; the gun is never replaced.
+#
+# Predator Unbound (the encounter's one Resolve refill): an opportunistic counter-brawler.
+# Jackal's Measure (counter stance), Claimant's Advance, Road-Cutter Sweep, Spoilsman's Grip
+# (a pivot grab with Grab Escape), Carrion Descent -> descending boot on a confirmed hit,
+# elbow -> riding-boot strings, Exact Block and a Combo Breaker. He may take neutral melee
+# weapons, never a firearm. Scorched Claim (no phase, no refill): at low Health he goes for
+# the room's authored optional asset with a long interruptible action.
+#
+# Capture: a Resolve break at or below `surrender` % Health, or the final blow inside a
+# Stagger window, is the clean Resolve surrender; Health 0 while Resolve remains is the
+# forced capture (a short authored last attempt that the heroes stop safely). M19 candidates.
+id: marek
+name: Marek Vane
+tags: [large]
+bodyWidth: 80
+actions:
+  # --- Armed Command (the support gun's rounds) ---
+  - id: jackal-burst
+    name: Jackal Burst
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 26, active: [2, 5, 2, 5, 2], recovery: 32, blockstun: 12 }
+    hitbox: { x: 40, w: 700, y: 130, h: 40, depth: 26 }
+    damage: 90
+    reaction: { kind: stagger, hitstun: 20, push: 3 }
+    costs: { stun: 18, scale: 18, starter: 25, guard: 18 }
+    meter: 0
+    ammo: 3
+    tags: [warnedLine, committed, uncounterable]
+    moves:
+      - { from: 27, to: 42, forward: -1.5 }
+
+  - id: sweeping-claim
+    name: Sweeping Claim
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 34, active: [3, 6, 3, 6, 3], recovery: 36, blockstun: 12 }
+    hitbox: { x: 40, w: 620, y: 130, h: 40, depth: 80 }
+    damage: 80
+    reaction: { kind: stagger, hitstun: 20, push: 3 }
+    costs: { stun: 18, scale: 18, starter: 25, guard: 18 }
+    meter: 0
+    ammo: 3
+    tags: [warnedLine, committed, uncounterable]
+    note: 'Two adjacent depth lanes; the far lane is the escape gap.'
+    moves:
+      - { from: 35, to: 55, forward: -1 }
+
+  - id: stock-check
+    name: Stock Check
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: 4, recovery: 20, blockstun: 14 }
+    hitbox: { x: 20, w: 115, y: 110, h: 120, depth: 34 }
+    damage: 55
+    reaction: { kind: knockback, hitstun: 24, push: 9 }
+    costs: { stun: 14, scale: 12, starter: 10, guard: 16 }
+    meter: 0
+    tags: [counterable]
+
+  - id: cover-shift
+    name: Cover Shift
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 3, active: 1, recovery: 26 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    tags: []
+    note: 'A non-firing reposition across lanes.'
+    moves:
+      - { from: 1, to: 26, forward: -4, depth: 3, depthFrom: input }
+
+  - id: command-pressure
+    name: Command Pressure
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 36, active: 2, recovery: 18 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    tags: [command]
+
+  # --- Predator Unbound ---
+  - id: predator-elbow
+    name: Predator Elbow
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: 3, recovery: 18, blockstun: 14 }
+    hitbox: { x: 20, w: 105, y: 150, h: 100, depth: 34 }
+    damage: 55
+    reaction: { kind: stagger, hitstun: 20, push: 3 }
+    costs: { stun: 12, scale: 10, starter: 10, guard: 12 }
+    meter: 0
+    tags: [counterable]
+    convert: { to: riding-boot }
+
+  - id: riding-boot
+    name: Riding-Boot Kick
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: 4, recovery: 22, blockstun: 16 }
+    hitbox: { x: 20, w: 135, y: 130, h: 120, depth: 36 }
+    damage: 65
+    reaction: { kind: knockback, hitstun: 24, push: 10 }
+    costs: { stun: 14, scale: 12, guard: 18 }
+    meter: 0
+    tags: [counterable]
+
+  - id: claimants-advance
+    name: "Claimant's Advance"
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 18, active: [3, 4], recovery: 26, blockstun: 16 }
+    hitbox: { x: 15, w: 120, y: 120, h: 150, depth: 38 }
+    damage: 85
+    reaction: { kind: knockback, hitstun: 24, push: 9 }
+    costs: { stun: 16, scale: 14, starter: 10, guard: 22 }
+    meter: 0
+    tags: [counterable, deflectBreak]
+    moves:
+      - { from: 1, to: 22, forward: 4 }
+
+  - id: road-cutter-sweep
+    name: Road-Cutter Sweep
+    category: low
+    input: { context: script, dir: neutral }
+    frames: { startup: 16, active: 4, recovery: 26, blockstun: 14 }
+    hitbox: { x: 10, w: 140, y: 0, h: 70, depth: 36 }
+    damage: 55
+    reaction: { kind: trip, hitstun: 26, push: 4, lift: 3 }
+    costs: { stun: 14, scale: 12, starter: 10, guard: 16 }
+    meter: 0
+    tags: [counterable]
+
+  - id: spoilsmans-grip
+    name: "Spoilsman's Grip"
+    category: grab
+    input: { context: script, dir: neutral }
+    frames: { startup: 20, active: 3, recovery: 32 }
+    hitbox: { x: 20, w: 110, y: 100, h: 170, depth: 40 }
+    damage: 70
+    reaction: { kind: knockdown, hitstun: 28, push: 12, lift: 6 }
+    costs: { stun: 16, scale: 14, starter: 10 }
+    meter: 0
+    tags: [rescueInterruptible, pivot]
+    grab: { hold: 40, escapeFrom: 14, escapeWindow: 12 }
+    moves:
+      - { from: 1, to: 18, forward: 1 }
+
+  - id: carrion-descent
+    name: Carrion Descent
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 28, active: 5, recovery: 18, blockstun: 16 }
+    hitbox: { x: 10, w: 125, y: 90, h: 170, depth: 38 }
+    damage: 70
+    reaction: { kind: stagger, hitstun: 22, push: 3 }
+    costs: { stun: 16, scale: 14, starter: 10, guard: 22 }
+    meter: 0
+    tags: [leap, counterable]
+    convert: { to: carrion-boot }
+    moves:
+      - { from: 10, to: 33, forward: 5 }
+
+  - id: carrion-boot
+    name: Descending Boot
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 6, active: 5, recovery: 28, blockstun: 16 }
+    hitbox: { x: 10, w: 120, y: 30, h: 200, depth: 36 }
+    damage: 60
+    reaction: { kind: knockdown, hitstun: 28, push: 6, lift: 5 }
+    costs: { stun: 16, scale: 14, guard: 22 }
+    meter: 0
+    tags: [counterable, terminalKnockdown]
+
+  - id: jackals-measure
+    name: "Jackal's Measure"
+    category: counter
+    input: { context: counter, dir: neutral }
+    frames: { startup: 4, active: 4, recovery: 18 }
+    hitbox: { x: 15, w: 115, y: 80, h: 180, depth: 36 }
+    damage: 70
+    reaction: { kind: knockdown, hitstun: 26, push: 8, lift: 5 }
+    costs: { stun: 14, scale: 12, starter: 10 }
+    meter: 0
+    tags: [terminalKnockdown]
+
+  - id: scorched-claim
+    name: Scorched Claim
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 20, active: 110, recovery: 20 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    tags: [objective, scorch]
+
+profile:
+  role: boss
+  health: 2600
+  walk: { x: 3, z: 2 }
+  perception: 0
+  ring: 300
+  defense:
+    tier: boss
+    guard: { every: 3, of: 1 }
+    exact: true
+    guardHold: 24
+    cooldown: 180
+  weapons: opportunistic
+  firearms: false
+  attacks: []
+  boss:
+    flinchCap: 3
+    budgets: { stun: 70, juggle: 70 }
+    stagger: { telegraph: 30, duration: 300, reentry: 40 }
+    transition: { grace: 180, carryCap: 120, shift: 100 }
+    share: 40
+    surrender: 30
+    capture: true
+    phases:
+      - name: Armed Command
+        from: 100
+        resolve: 260
+        look: 1
+        armed: support-gun
+        untilDisarmed: true
+        summon: command-pressure
+        supports: [claimhand, claimhand]
+        # Hard and above: a Marauder joins the Claim Hand (variants by difficulty).
+        eliteSupports: [claimhand, marauder]
+        coopSupports: { minDifficulty: extreme, kits: [glassrunner] }
+        attacks:
+          - { action: jackal-burst, threat: 30, cooldown: 200, range: 680, minRange: 220, when: armed }
+          - { action: stock-check, threat: 18, cooldown: 90 }
+          - { action: command-pressure, threat: 16, cooldown: 1200, range: 1800 }
+          - {
+              action: sweeping-claim,
+              threat: 34,
+              cooldown: 320,
+              range: 600,
+              minRange: 240,
+              when: armed,
+              minDifficulty: medium,
+            }
+          - { action: cover-shift, threat: 4, cooldown: 260, range: 700 }
+      - name: Predator Unbound
+        from: 55
+        resolve: 340
+        look: 2
+        counter: true
+        breaker: true
+        scorch: { below: 30, action: scorched-claim, look: 3, cooldown: 420 }
+        attacks:
+          - { action: predator-elbow, threat: 20, cooldown: 80 }
+          - { action: claimants-advance, threat: 26, cooldown: 150 }
+          - { action: road-cutter-sweep, threat: 24, cooldown: 170 }
+          - { action: spoilsmans-grip, threat: 30, cooldown: 260 }
+          - { action: carrion-descent, threat: 30, cooldown: 280, minDifficulty: medium }

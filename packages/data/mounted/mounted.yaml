@@ -467,3 +467,33 @@ corridors:
       - { at: 21000, min: extreme, riders: [{ from: ahead, lane: 0 }] }
       - { at: 25200, min: easy, riders: [{ from: ahead, lane: 2 }] }
       - { at: 25200, min: medium, riders: [{ from: behind, lane: 0 }] }
+
+  # M19 Marek's mounted intercept (Stage 2 spec §12): about a minute on the river road to the
+  # greenhouse. Marek rides in on his own bike once the lead passes `boss.at`; he presses
+  # with the Road Rider's committed strikes, never breaks away, and touches neither the boss
+  # fight's Health nor its Resolve. Breaking his Stability into a safe crash earns the boss
+  # room's opening; reaching the finish with him still mounted forces his dismount there.
+  - id: marek-intercept
+    name: River Road Intercept
+    goal: Stop Marek before he reaches the greenhouse
+    start: 300
+    finish: 13400
+    length: 14400
+    road:
+      - { at: 0, top: 640, bottom: 980 }
+      - { at: 6000, top: 640, bottom: 980 }
+      - { at: 6800, top: 690, bottom: 940 }
+      - { at: 8800, top: 690, bottom: 940 }
+      - { at: 9600, top: 640, bottom: 980 }
+      - { at: 14400, top: 640, bottom: 980 }
+    obstacles:
+      - { at: 2600, z: 810, kind: barrier }
+      - { at: 4200, z: 700, kind: ramp }
+      - { at: 7400, z: 900, kind: barrier }
+      - { at: 10400, z: 760, kind: barrier }
+    equipment: []
+    checkpoints: [4000, 8000, 11000]
+    boss: { at: 1800, stability: 300, lane: 1 }
+    waves:
+      - { at: 5200, min: medium, riders: [{ from: behind, lane: 2 }] }
+      - { at: 9000, min: hard, riders: [{ from: ahead, lane: 0 }] }

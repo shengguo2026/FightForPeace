@@ -1,0 +1,140 @@
+# Jackal Signalman (Stage 2 spec §11, story line §9): the Extreme-and-higher Visible
+# Call-and-Response Coordinator. Its own kit is short (Baton Check, Command Kick, Low Marker,
+# Rearward Order); its danger is the calls. Each call is a raised-arm, whistle-and-baton
+# startup that reserves its whole threat on commitment; any hit, a throw or enough control
+# interrupts it before confirmation, and Signal Break (a vulnerable failure) follows.
+# Crossfang Call: two free allies approach the target from opposite depth sides, each still
+# asking the director and keeping its own telegraphs. Guard the Claim: an Enforcer or a
+# Cargo Reaver escorts a Marauder or a Saboteur (formation movement only). Replace the Line
+# (master variant, Ultimate): one wounded raider withdraws as it is and one enemy from the
+# room's finite reserve enters through a warned edge. Isolated, it escapes. M19 candidates.
+id: signalman
+name: Jackal Signalman
+bodyWidth: 66
+actions:
+  - id: baton-check
+    name: Baton Check
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 9, active: 3, recovery: 14, blockstun: 10 }
+    hitbox: { x: 20, w: 115, y: 150, h: 100, depth: 30 }
+    damage: 30
+    reaction: { kind: stagger, hitstun: 16, push: 3 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 8 }
+    meter: 0
+    tags: [counterable]
+
+  - id: command-kick
+    name: Command Kick
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 14, active: 4, recovery: 20, blockstun: 12 }
+    hitbox: { x: 20, w: 125, y: 120, h: 120, depth: 34 }
+    damage: 35
+    reaction: { kind: knockback, hitstun: 20, push: 11 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 10 }
+    meter: 0
+    tags: [counterable]
+
+  - id: low-marker
+    name: Low Marker
+    category: low
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: 4, recovery: 16, blockstun: 10 }
+    hitbox: { x: 15, w: 125, y: 0, h: 70, depth: 30 }
+    damage: 25
+    reaction: { kind: stagger, hitstun: 14, push: 2 }
+    costs: { stun: 8, scale: 8, starter: 10, guard: 8 }
+    meter: 0
+    tags: [counterable]
+
+  - id: rearward-order
+    name: Rearward Order
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 3, active: 1, recovery: 22 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    tags: [evade]
+    moves:
+      - { from: 1, to: 22, forward: -6 }
+
+  - id: crossfang-call
+    name: Crossfang Call
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 40, active: 2, recovery: 16 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    tags: [command]
+
+  - id: guard-the-claim
+    name: Guard the Claim
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 40, active: 2, recovery: 16 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    tags: [command]
+
+  - id: replace-the-line
+    name: Replace the Line
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 48, active: 2, recovery: 18 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    tags: [command]
+
+  - id: signal-break
+    name: Signal Break
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 2, active: 1, recovery: 44 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    tags: []
+    note: 'The vulnerable failure after an interrupted call.'
+
+profile:
+  role: commander
+  health: 260
+  walk: { x: 3, z: 2 }
+  perception: 5
+  ring: 520
+  defense: { tier: basic, guard: { every: 3, of: 1 }, guardHold: 20 }
+  morale: { breakAt: 35, shaken: 70 }
+  weapons: never
+  firearms: false
+  commands:
+    - { kind: crossfang, action: crossfang-call, threat: 18, cooldown: 600, frames: 300 }
+    - { kind: guard, action: guard-the-claim, threat: 14, cooldown: 600, frames: 420 }
+  attacks:
+    - { action: baton-check, threat: 12, cooldown: 90 }
+    - { action: command-kick, threat: 14, cooldown: 150 }
+    - { action: low-marker, threat: 12, cooldown: 130 }
+
+variants:
+  - id: signalman-master
+    name: Jackal Signal Captain
+    minDifficulty: ultimate
+    health: 280
+    commands:
+      - { kind: crossfang, action: crossfang-call, threat: 18, cooldown: 540, frames: 300 }
+      - { kind: guard, action: guard-the-claim, threat: 14, cooldown: 540, frames: 420 }
+      - { kind: replace, action: replace-the-line, threat: 20, cooldown: 900, frames: 1 }

@@ -1,3 +1,4 @@
+import { finalBlow } from '../enemies/stage2';
 import { type Fighter, MoveState, type World } from '../world/types';
 import { profileOf } from '../enemies/data';
 import { incomingDamage } from '../cheats/cheats';
@@ -54,7 +55,11 @@ export function dealDamage(world: World, t: Fighter, dmg: number): number {
   }
   const before = t.health;
   t.health = Math.max(0, t.health - dmg);
-  if (t.health === 0 && world.encounter) t.ko = true;
+  if (t.health === 0 && world.encounter) {
+    // M19: the boss's final blow decides the capture (Resolve surrender or forced).
+    if (!t.ko && world.encounter.boss?.id === t.id) finalBlow(world, t);
+    t.ko = true;
+  }
   return before - t.health;
 }
 

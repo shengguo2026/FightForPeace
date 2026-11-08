@@ -1,0 +1,123 @@
+# Claim Hand (Stage 2 spec §11, story line §9): the Readable Formation Fighter. A competent,
+# bounded generalist: Claim Jab -> Seizing Cross -> Bootline Kick is a hit-confirmed route
+# (a block, an evade or an Exact Block ends it), then it yields the budget and repositions.
+# Cut-In Hook is a punishable depth-angle entry, Taxing Low Kick never knocks down by itself
+# and Overreach Elbow is a slow, clearly telegraphed guard-pressure action with a long
+# recovery. Normal guard only on Medium (no Exact Block, Counter, command grab or Combo
+# Breaker); opportunistic melee pickups, never a firearm or the grenade. The faction member
+# most likely to lose morale, sooner still when it is left alone. M19 candidates.
+id: claimhand
+name: Claim Hand
+bodyWidth: 70
+actions:
+  - id: claim-jab
+    name: Claim Jab
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 10, active: 3, recovery: 14, blockstun: 12 }
+    hitbox: { x: 20, w: 105, y: 150, h: 100, depth: 32 }
+    damage: 35
+    reaction: { kind: stagger, hitstun: 18, push: 2 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 8 }
+    meter: 0
+    tags: [counterable]
+    convert: { to: seizing-cross }
+
+  - id: seizing-cross
+    name: Seizing Cross
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 8, active: 3, recovery: 16, blockstun: 12 }
+    hitbox: { x: 20, w: 115, y: 150, h: 100, depth: 32 }
+    damage: 40
+    reaction: { kind: stagger, hitstun: 20, push: 3 }
+    costs: { stun: 10, scale: 10, guard: 10 }
+    meter: 0
+    tags: [counterable]
+    convert: { to: bootline-kick }
+    moves:
+      - { from: 1, to: 8, forward: 1.5 }
+
+  - id: bootline-kick
+    name: Bootline Kick
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: 4, recovery: 22, blockstun: 14 }
+    hitbox: { x: 20, w: 130, y: 140, h: 110, depth: 34 }
+    damage: 55
+    reaction: { kind: knockback, hitstun: 22, push: 9 }
+    costs: { stun: 12, scale: 12, guard: 14 }
+    meter: 0
+    tags: [counterable]
+
+  - id: cut-in-hook
+    name: Cut-In Hook
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 16, active: 4, recovery: 26, blockstun: 14 }
+    hitbox: { x: 20, w: 115, y: 150, h: 110, depth: 40 }
+    damage: 50
+    reaction: { kind: stagger, hitstun: 20, push: 4 }
+    costs: { stun: 12, scale: 10, starter: 10, guard: 12 }
+    meter: 0
+    tags: [counterable]
+    note: 'Advancing depth-angle entry; its angle is fixed when it commits.'
+    moves:
+      - { from: 1, to: 16, forward: 3, depth: 1.5, depthFrom: input }
+
+  - id: taxing-low-kick
+    name: Taxing Low Kick
+    category: low
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: 3, recovery: 18, blockstun: 12 }
+    hitbox: { x: 15, w: 115, y: 0, h: 70, depth: 30 }
+    damage: 30
+    reaction: { kind: stagger, hitstun: 16, push: 2 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 8 }
+    meter: 0
+    tags: [counterable]
+
+  - id: overreach-elbow
+    name: Overreach Elbow
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 26, active: 4, recovery: 32, blockstun: 20 }
+    hitbox: { x: 15, w: 115, y: 160, h: 100, depth: 34 }
+    damage: 70
+    reaction: { kind: knockback, hitstun: 24, push: 8 }
+    costs: { stun: 14, scale: 12, starter: 10, guard: 30 }
+    meter: 0
+    tags: [guardPressure, counterable]
+    moves:
+      - { from: 10, to: 26, forward: 2 }
+
+profile:
+  role: pressure
+  health: 300
+  walk: { x: 3, z: 2 }
+  perception: 6
+  ring: 300
+  defense: { tier: basic, guard: { every: 3, of: 1 }, guardHold: 24 }
+  morale: { breakAt: 30, shaken: 55 }
+  weapons: opportunistic
+  firearms: false
+  attacks:
+    - { action: claim-jab, threat: 16, cooldown: 80 }
+    - { action: cut-in-hook, threat: 16, cooldown: 140 }
+    - { action: taxing-low-kick, threat: 12, cooldown: 110, minDifficulty: medium }
+    - { action: overreach-elbow, threat: 22, cooldown: 240, minDifficulty: medium }
+
+# Hard elite and Ultimate master variants (same art): steadier guard and more Health, then
+# an Exact Block. The attack rotation and the route stay readable.
+variants:
+  - id: claimhand-elite
+    name: Claim Hand Veteran
+    minDifficulty: hard
+    health: 340
+    defense: { tier: basic, guard: { every: 2, of: 1 }, guardHold: 26 }
+  - id: claimhand-master
+    name: Claim Hand Captain
+    minDifficulty: ultimate
+    health: 360
+    defense:
+      { tier: specialist, guard: { every: 2, of: 1 }, exact: true, guardHold: 26, cooldown: 240 }
