@@ -56,6 +56,11 @@ function results(over: Partial<StageResults> = {}): StageResults {
     cheatAssisted: false,
     cheatCodes: [],
     cheatFirstBeat: -1,
+    preservation: null,
+    response: null,
+    branches: [],
+    capture: null,
+    epilogue: [],
     ...over,
   };
 }
@@ -76,7 +81,12 @@ function report(r: StageResults, over: Partial<RunReport> = {}): RunReport {
 /** As the shell does: the mission record first, then the settlement. */
 function clear(p: Profile, r: StageResults, over: Partial<RunReport> = {}) {
   if (!r.cheatAssisted && r.startBeat === 0)
-    recordClear(p, STORY_STAGE1, { grade: r.overall, timeFrames: r.stats.frames, difficulty: 'medium', heroes: ['mountain'] }, ['easy', 'medium', 'hard', 'extreme', 'ultimate']);
+    recordClear(
+      p,
+      STORY_STAGE1,
+      { grade: r.overall, timeFrames: r.stats.frames, difficulty: 'medium', heroes: ['mountain'] },
+      ['easy', 'medium', 'hard', 'extreme', 'ultimate'],
+    );
   return settleRun(p, report(r, over), 1000);
 }
 
@@ -111,7 +121,14 @@ describe('Layered Result Payout', () => {
       expect.arrayContaining(['completion', 'difficulty', 'rank', 'firstClear', 'firstRank.B']),
     );
     expect(ids).not.toContain('allClues');
-    expect(s.total).toBe(300 + 100 + 100 + 1000 + 100 + s.lines.filter((l) => l.id === 'achievement').reduce((n, l) => n + l.amount, 0));
+    expect(s.total).toBe(
+      300 +
+        100 +
+        100 +
+        1000 +
+        100 +
+        s.lines.filter((l) => l.id === 'achievement').reduce((n, l) => n + l.amount, 0),
+    );
     expect(p.progress.credits).toBe(s.total);
     expect(s.achievements).toContain('ach.stage1.river-flows');
     expect(s.mastery).toEqual({ hero: 'mountain', gained: 125, from: 1, to: 1 });
@@ -159,7 +176,10 @@ describe('Layered Result Payout', () => {
 
   test('Cheat-Assisted: lines shown as unavailable, no Credits, records or Mastery; Story achievement kept', () => {
     const p = createProfile('Guo', 'en', 1);
-    const s = clear(p, results({ cheatAssisted: true, cheatCodes: ['SOFTERBLOWS'], difficulty: 2, overall: 'S' }));
+    const s = clear(
+      p,
+      results({ cheatAssisted: true, cheatCodes: ['SOFTERBLOWS'], difficulty: 2, overall: 'S' }),
+    );
     expect(s.cheatAssisted).toBe(true);
     expect(s.lines.length).toBeGreaterThan(0);
     expect(s.lines.every((l) => l.suppressed)).toBe(true);
@@ -209,11 +229,13 @@ describe('Hero Mastery', () => {
     expect(masteryLevel(1e9)).toBe(10);
     const p = createProfile('Guo', 'en', 1);
     let granted: string[] = [];
-    for (let i = 0; i < 6; i += 1) granted = [...granted, ...clear(p, results({ overall: 'S' })).granted];
+    for (let i = 0; i < 6; i += 1)
+      granted = [...granted, ...clear(p, results({ overall: 'S' })).granted];
     expect(p.progress.mastery.mountain).toBe(6 * 175);
     expect(granted).toEqual(['store.technique.mountain.skybreak-column']);
     expect(p.progress.owned).toContain('store.technique.mountain.skybreak-column');
-    for (let i = 0; i < 4; i += 1) granted = [...granted, ...clear(p, results({ overall: 'S' })).granted];
+    for (let i = 0; i < 4; i += 1)
+      granted = [...granted, ...clear(p, results({ overall: 'S' })).granted];
     expect(granted).toContain('store.technique.mountain.still-mountain');
     expect(p.progress.owned).not.toContain('store.technique.river.waterspout-rise');
   });
@@ -285,7 +307,9 @@ describe('Academy states and My Combos', () => {
     expect(advanceLesson(p, id, 'practiced').credits).toBe(0);
     const a = advanceLesson(p, id, 'certified');
     expect(a.achievements).toEqual(['ach.academy.first-lesson']);
-    expect(a.credits).toBe(100 + ACHIEVEMENTS.find((x) => x.id === 'ach.academy.first-lesson')!.credits);
+    expect(a.credits).toBe(
+      100 + ACHIEVEMENTS.find((x) => x.id === 'ach.academy.first-lesson')!.credits,
+    );
     expect(advanceLesson(p, id, 'practiced').state).toBe('certified');
     expect(advanceLesson(p, id, 'mastered').credits).toBe(150);
     expect(advanceLesson(p, id, 'mastered').credits).toBe(0);

@@ -430,6 +430,88 @@ test('beats follow in file order unless they branch with next', () => {
   expect(() => loadStage(skip, KITS, 0)).toThrow(/bridge: no beat leads here/);
 });
 
+// --- M20 Stage 2 journey ---------------------------------------------------------------
+
+const S2_KITS = [
+  ...KITS,
+  'claimhand',
+  'glassrunner',
+  'reaver',
+  'marauder',
+  'saboteur',
+  'signalman',
+  'enforcer2',
+  'marek',
+  'rider',
+];
+const stage2 = () => readFileSync(stageFileList()[1]!, 'utf8');
+
+describe('Stage 2 journey (M20)', () => {
+  test('stage2.yaml compiles to corridor and room beats with branches and an epilogue', () => {
+    const { stage } = loadStage(stage2(), S2_KITS, 0, 'stage2.yaml') as {
+      stage: {
+        beats: {
+          corridor: string;
+          room: string;
+          segment: number;
+          branch: { keep: number } | null;
+        }[];
+        epilogue: { id: string; by: string }[];
+        score: { branch: number };
+      };
+    };
+    expect(stage.beats).toHaveLength(14);
+    expect(stage.beats.filter((b) => b.corridor)).toHaveLength(2);
+    expect(stage.beats.filter((b) => b.room)).toHaveLength(12);
+    expect(stage.beats.filter((b) => b.branch).map((b) => b.branch!.keep)).toEqual([1, 1, 1]);
+    expect(stage.epilogue.map((e) => e.id)).toContain('depot');
+    expect(stage.score.branch).toBeGreaterThan(0);
+  });
+
+  test('a corridor beat holds no workers, a branch goal names what its beat has', () => {
+    const workers = stage2().replace(
+      'corridor: perimeter-pursuit',
+      'corridor: perimeter-pursuit\n    workers:\n      - { x: 500, z: 700, look: a }',
+    );
+    expect(() => loadStage(workers, S2_KITS, 0)).toThrow(/corridor beat holds no workers/);
+    const clue = stage2().replace(/ {4}clue:\n {6}x: 800[\s\S]*?among them\.'\n/, '');
+    expect(() => loadStage(clue, S2_KITS, 0)).toThrow(/names a record the beat does not have/);
+    const both = stage2().replace(
+      'corridor: perimeter-pursuit',
+      'corridor: perimeter-pursuit\n    room: beat-loading-yard',
+    );
+    expect(() => loadStage(both, S2_KITS, 0)).toThrow(/a corridor or a room, not both/);
+  });
+
+  test('beats must name a known room (as wide as the room) and a known corridor', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'ffp-s2-'));
+    const write = (src: string) => {
+      const f = join(dir, 'stage2.yaml');
+      writeFileSync(f, src);
+      return [stageFileList()[0]!, f];
+    };
+    const gen = (src: string) =>
+      generate(heroFiles(), enemyFiles(), undefined, undefined, undefined, write(src));
+    expect(() => gen(stage2().replace('room: s2-recovery-bay', 'room: s2-nowhere'))).toThrow(
+      /unknown room "s2-nowhere"/,
+    );
+    expect(() => gen(stage2().replace('corridor: marek-intercept', 'corridor: moon-road'))).toThrow(
+      /unknown corridor "moon-road"/,
+    );
+    expect(() =>
+      gen(
+        stage2().replace(
+          '    width: 1920\n    heroX: 300\n    segment: 4\n    room: s2-recovery-bay',
+          '    width: 2400\n    heroX: 300\n    segment: 4\n    room: s2-recovery-bay',
+        ),
+      ),
+    ).toThrow(/differs from room "s2-recovery-bay"/);
+    expect(() =>
+      gen(stage2().replace('assets: [seed-west, seed-east]', 'assets: [seed-north]')),
+    ).toThrow(/keeps "seed-north", not an asset of room "s2-seed-reserve-bay"/);
+  });
+});
+
 describe('mounted system (M17)', () => {
   const MOUNTED = readFileSync(new URL('../mounted/mounted.yaml', import.meta.url), 'utf8');
   const IDS = ['mountain', 'river', 'wind', 'fire'];
@@ -517,8 +599,8 @@ describe('greenhouse systems (M18)', () => {
     expect(() =>
       load(
         SRC.replace(
-          '{ id: damaged, name: Damaged, min: 0 }',
-          '{ id: damaged, name: Damaged, min: 10 }',
+          '{ id: recovered, name: Recovered, min: 0 }',
+          '{ id: recovered, name: Recovered, min: 10 }',
         ),
       ),
     ).toThrow(/grades run/);

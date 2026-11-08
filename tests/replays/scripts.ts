@@ -897,6 +897,34 @@ export const marekScript: ReplayScript = {
   frames: marekFight(),
 };
 
+/**
+ * M20: the end of the Stage 2 journey with Wind Sentinel and Fire Warden (stage bots):
+ * the quiet Recovery Bay, the dispatch bikes (Marek's intercept, Checkpoint 4) and the
+ * fade into the Dispatch Yard, where the armed command begins.
+ */
+const stage2Options: WorldOptions = {
+  stage: 'stage2',
+  beat: 11,
+  heroes: ['wind', 'fire'],
+  difficulty: 'medium',
+};
+function stage2Journey(): FrameInput[][] {
+  const w = createWorld(99, stage2Options);
+  const frames: FrameInput[][] = [];
+  for (let i = 0; i < 3000; i += 1) {
+    const f = [stageBotInput(w, 0), stageBotInput(w, 1)];
+    frames.push(f);
+    step(w, f);
+  }
+  return frames;
+}
+export const stage2Script: ReplayScript = {
+  name: 'stage2-journey',
+  seed: 99,
+  options: stage2Options,
+  frames: stage2Journey(),
+};
+
 export const SCRIPTS = [
   walkSquare,
   dashJump,
@@ -915,6 +943,7 @@ export const SCRIPTS = [
   ...pursuitScripts,
   greenhouseScript,
   marekScript,
+  stage2Script,
 ];
 
 export type { ReplayLog };

@@ -1,0 +1,252 @@
+# Stage 2 · Prosperity Under Siege (Stage 2 spec §5; story line §7, §5.7, §8, §9.2).
+# The Guided Spine with three optional branches, as data. Four segments:
+#   1 Perimeter Alarm   the mounted Perimeter Pursuit (corridor beat)
+#   2 Broken Entry      Loading Yard (Checkpoint 1 at the security gate), Aquaculture Hall,
+#                       optional Emergency Aeration Annex, Hygiene Vestibule (Checkpoint 2)
+#   3 Living Systems    Crop Channels, optional Seed Reserve Bay, Medicinal Wing, optional
+#                       Medicinal Preparation Room, Filtration Control (Control Breach and
+#                       the Saboteur's grenade)
+#   4 Counterattack     Production Hall (Checkpoint 3 after filtration), Recovery Bay, Marek's
+#                       mounted intercept (Checkpoint 4 at the dispatch bikes), Dispatch Yard
+#
+# M20 beat kinds: `corridor:` runs an M17 pursuit (it ends when the pursuit completes; the
+# intercept's outcome becomes the boss room's opening); `room:` runs an M18/M19 greenhouse
+# room (its waves are the beat's one encounter; `width` equals the room's). Beats with two
+# `next` beats branch by the lane the heroes leave on: the upper half of the floor takes the
+# first (the optional branch), the lower half the second (the main route). A branch beat's
+# goal decides its outcome when the heroes leave it: completed or failed; never visited is
+# skipped. No outcome blocks the stage. Every number is a Combat Lab candidate.
+id: stage2
+name: 'Prosperity Under Siege'
+continues: { easy: 5, medium: 3, hard: 2, extreme: 1, ultimate: 0 }
+rules:
+  reviveFrames: 120
+  revivePercent: 40
+  rejoinPercent: 30
+  continuePercent: 100
+  reachX: 150
+  reachZ: 70
+  workerFrames: 45
+  clueFrames: 30
+  evidenceFrames: 45
+  pickupReachX: 70
+  pickupReachZ: 45
+  defeatHold: 120
+  transition: 40
+  exitMargin: 200
+# Clear time (seconds) for the Time grade on Medium: S, A, B (story line §7: a first
+# Standard playthrough targets 27–33 minutes; greybox rooms are shorter).
+timePar: [1500, 2100, 2700]
+# Measures: preservation (the stage-wide Ledger percent, every room asset left so far; a
+# skipped branch adds nothing and costs nothing), response (the mean of every corridor's
+# Civil-Protection Response lines), continues, time.
+grade:
+  categories:
+    - { id: preservation, measure: preservation, weight: 35 }
+    - { id: response, measure: response, weight: 20 }
+    - { id: continues, measure: continues, weight: 20, allowance: 3 }
+    - { id: time, measure: time, weight: 25 }
+  ranks: { S: 90, A: 75, B: 55 }
+score:
+  surrendered: 150
+  defeated: 100
+  fled: 50
+  worker: 500
+  clue: 300
+  evidence: 1000
+  comboHit: 40
+  timeBonus: 5
+  continuePenalty: 1000
+  branch: 1500
+  resolve: 1000
+  forced: 500
+  preservation: 20
+  difficulty: [80, 100, 125, 150, 175]
+# The Layered Hybrid Epilogue (story line §5.7): the capture presentation, the area secured,
+# one Ledger insert per system category by its condition, the formula hand-over, the
+# matching seal, the differentiated justice, one card per completed branch, the community
+# recovery by Preservation grade and the abandoned depot. The text lives in the game's
+# EN/ZH/DE catalogues under epilogue.stage2.<card>.
+epilogue:
+  - { id: capture, by: capture }
+  - { id: secured }
+  - { id: ledger, by: categories }
+  - { id: formula }
+  - { id: seal }
+  - { id: justice }
+  - { id: branch, by: branches }
+  - { id: recovery, by: preservation }
+  - { id: depot }
+beats:
+  # --- Segment 1 · Perimeter Alarm ---------------------------------------------------------
+  - id: perimeter
+    name: 'Perimeter Pursuit'
+    area: courtyard
+    width: 1920
+    segment: 1
+    corridor: perimeter-pursuit
+    objective: 'Ride the service road and stop the raiders before the greenhouse'
+
+  # --- Segment 2 · Broken Entry ------------------------------------------------------------
+  - id: loading-yard
+    name: 'Loading Yard'
+    area: courtyard
+    width: 2400
+    heroX: 300
+    segment: 2
+    checkpoint: true
+    room: beat-loading-yard
+    objective: 'Retake the loading yard at the security gate'
+
+  - id: aquaculture
+    name: 'Aquaculture Hall'
+    area: courtyard
+    width: 2400
+    heroX: 300
+    segment: 2
+    room: s2-aquaculture-hall
+    objective: 'Protect the fish and shrimp systems'
+    next: [aeration-annex, vestibule]
+
+  - id: aeration-annex
+    name: 'Emergency Aeration Annex'
+    area: courtyard
+    width: 1920
+    heroX: 300
+    segment: 2
+    room: s2-aeration-annex
+    objective: 'Free the maintenance worker and keep the backup aeration running'
+    workers:
+      - { x: 1500, z: 700, look: a }
+    branch:
+      id: aeration
+      name: 'Emergency Aeration Annex'
+      artifact: early-aerator-impeller
+      artifactName: 'Early Aerator Impeller'
+      workers: true
+      assets: [backup-aeration]
+      keep: damaged
+    next: [vestibule]
+
+  - id: vestibule
+    name: 'Hygiene Vestibule'
+    area: courtyard
+    width: 1920
+    heroX: 300
+    segment: 2
+    checkpoint: true
+    room: s2-hygiene-vestibule
+    objective: 'Seal the vestibule and catch your breath'
+
+  # --- Segment 3 · Living Systems ----------------------------------------------------------
+  - id: crop-channels
+    name: 'Crop Channels'
+    area: courtyard
+    width: 2400
+    heroX: 300
+    segment: 3
+    room: s2-crop-channels
+    objective: 'Drive the raiders out of the crop channels'
+    next: [seed-bay, medicinal-wing]
+
+  - id: seed-bay
+    name: 'Seed Reserve Bay'
+    area: courtyard
+    width: 1920
+    heroX: 300
+    segment: 3
+    room: s2-seed-reserve-bay
+    objective: 'Stop the raiders taking the sealed seed reserves'
+    branch:
+      id: seed
+      name: 'Seed Reserve Bay'
+      artifact: first-harvest-seed-tin
+      artifactName: 'First-Harvest Seed Tin'
+      assets: [seed-west, seed-east]
+      keep: damaged
+    next: [medicinal-wing]
+
+  - id: medicinal-wing
+    name: 'Medicinal Wing'
+    area: courtyard
+    width: 2400
+    heroX: 300
+    segment: 3
+    room: s2-medicinal-wing
+    objective: 'Secure the medicinal-plant wing'
+    next: [prep-room, filtration]
+
+  - id: prep-room
+    name: 'Medicinal Preparation Room'
+    area: courtyard
+    width: 1920
+    heroX: 300
+    segment: 3
+    room: s2-medicinal-prep-room
+    objective: 'Free the researcher and recover the provenance ledger'
+    workers:
+      - { x: 1500, z: 700, look: b }
+    clue:
+      x: 800
+      z: 700
+      text: 'The provenance ledger: the formula Tomas offered was assembled from the notes of several contributors, a research cooperative among them.'
+    branch:
+      id: medicinal
+      name: 'Medicinal Preparation Room'
+      artifact: medicinal-cooperative-field-card
+      artifactName: 'Medicinal Cooperative Field Card'
+      workers: true
+      clue: true
+    next: [filtration]
+
+  - id: filtration
+    name: 'Filtration Control'
+    area: courtyard
+    width: 1920
+    heroX: 300
+    segment: 3
+    room: beat-filtration
+    objective: 'Stop the Control Breach and secure the filtration'
+
+  # --- Segment 4 · Counterattack -----------------------------------------------------------
+  - id: production-hall
+    name: 'Production Hall'
+    area: courtyard
+    width: 2400
+    heroX: 300
+    segment: 4
+    checkpoint: true
+    room: s2-production-hall
+    objective: 'Break the raiders holding the production hall'
+
+  - id: recovery-bay
+    name: 'Recovery Bay'
+    area: courtyard
+    width: 1920
+    heroX: 300
+    segment: 4
+    room: s2-recovery-bay
+    objective: 'Recover and check your gear before the dispatch yard'
+
+  - id: intercept
+    name: 'Dispatch Bikes'
+    area: courtyard
+    width: 1920
+    segment: 4
+    checkpoint: true
+    corridor: marek-intercept
+    objective: 'Intercept Marek before he reaches the yard'
+
+  - id: dispatch-yard
+    name: 'Dispatch Yard'
+    area: courtyard
+    width: 2400
+    heroX: 500
+    segment: 4
+    room: boss-marek
+    objective: 'Capture Marek Vane'
+    # Appears when Marek is captured; securing it ends the stage.
+    evidence:
+      x: 1250
+      z: 720
+      text: "A weapon crate from Marek's bikes bears the same seal as the brass gears from the sluice, with a related order code: one outside supplier equipped both raids."

@@ -283,4 +283,8 @@ export interface ResultsView {
   standard: boolean;
   cheatAssisted: boolean;
   cheatCodes: string[];
+  /** M20: itemised sections (branch outcomes, the Preservation Ledger). */
+  sections?: { title: string; lines: string[] }[];
+  /** M20: the layered epilogue's cards, shown one by one before the results. */
+  epilogue?: string[];
 }

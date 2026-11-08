@@ -138,6 +138,8 @@ export class PursuitView {
     frame: number,
     cheatAssisted: boolean,
     infiniteMeter: boolean,
+    /** M20: a stage run's corridor beat; the stage HUD names the beat and the goal. */
+    inRun = false,
   ): void {
     for (const g of [this.ground, this.back, this.front, this.hud]) g.clear();
     this.words.begin();
@@ -152,7 +154,14 @@ export class PursuitView {
       const z = px(e.z);
       const down = e.state === EnemyState.Crash || e.state === EnemyState.Down;
       // M19: Marek on his aubergine bike (brass mark), named, with Stability only.
-      this.bike(x, z, 0, e.boss ? MAREK_COLOR : RIDER_COLOR, e.boss ? MAREK_MARK : RIDER_MARK, down);
+      this.bike(
+        x,
+        z,
+        0,
+        e.boss ? MAREK_COLOR : RIDER_COLOR,
+        e.boss ? MAREK_MARK : RIDER_MARK,
+        down,
+      );
       if (e.state === EnemyState.Down) {
         // Dismounted at the road edge: the rider stands beside the settled bike.
         this.front.fillStyle(0x5a3a22, 1);
@@ -168,7 +177,9 @@ export class PursuitView {
       this.words.put(
         x,
         top - 34,
-        e.boss ? t('m19.ride.marek' as TextId) : dt(`rider.${MOUNTED.rider.id}.name`, MOUNTED.rider.name),
+        e.boss
+          ? t('m19.ride.marek' as TextId)
+          : dt(`rider.${MOUNTED.rider.id}.name`, MOUNTED.rider.name),
         e.boss ? 26 : 20,
         e.boss ? '#e7c26a' : '#ffd8a8',
       );
@@ -281,7 +292,7 @@ export class PursuitView {
       }
       this.callout(r.event, r.eventFrame, frame, x, top - 160);
     }
-    this.drawHud(p, heroes, frame, cheatAssisted, infiniteMeter);
+    this.drawHud(p, heroes, frame, cheatAssisted, infiniteMeter, inRun);
     this.words.end();
     this.hudWords.end();
   }
@@ -492,18 +503,21 @@ export class PursuitView {
     frame: number,
     cheatAssisted: boolean,
     infiniteMeter: boolean,
+    inRun: boolean,
   ): void {
     const c = CORRIDORS[p.corridor]!;
     const h = this.hud;
     const w = this.hudWords;
     const diff = DIFFICULTIES[p.difficulty];
-    w.put(
-      VIEW_W / 2,
-      30,
-      `${dt(`corridor.${c.id}.name`, c.name)} · ${diff ? difficultyName(diff.id) : ''}`,
-      28,
-    );
-    w.put(VIEW_W / 2, 64, dt(`corridor.${c.id}.goal`, c.goal), 20, '#d8ffd8');
+    if (!inRun) {
+      w.put(
+        VIEW_W / 2,
+        30,
+        `${dt(`corridor.${c.id}.name`, c.name)} · ${diff ? difficultyName(diff.id) : ''}`,
+        28,
+      );
+      w.put(VIEW_W / 2, 64, dt(`corridor.${c.id}.goal`, c.goal), 20, '#d8ffd8');
+    }
     // Progress to the gate with the recovery gates and each rider.
     const bx = 460;
     const bw = 1000;

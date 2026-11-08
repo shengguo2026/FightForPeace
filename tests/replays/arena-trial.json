@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "rulesVersion": "m19",
+  "rulesVersion": "m20",
   "seed": 41,
   "options": {
     "arena": "trial-recruit",
     "difficulty": "medium"
   },
-  "expectedHash": 2225323159,
+  "expectedHash": 1250730954,
   "frames": [
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],

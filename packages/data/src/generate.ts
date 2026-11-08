@@ -787,8 +787,7 @@ function profileProblems(p: ProfileYaml, ids: ReadonlySet<string>): string[] {
   const out: string[] = [];
   // An armed profile may also name its weapon's actions (checked in generate()).
   for (const a of p.attacks)
-    if (!ids.has(a.action) && !p.armed)
-      out.push(`profile attack "${a.action}" is not in the kit`);
+    if (!ids.has(a.action) && !p.armed) out.push(`profile attack "${a.action}" is not in the kit`);
   for (const c of p.commands ?? [])
     if (!ids.has(c.action)) out.push(`profile command "${c.action}" is not in the kit`);
   for (const ph of p.boss?.phases ?? []) {
@@ -1128,6 +1127,8 @@ export const StageSchema = T.Object(
                 T.Literal('clues'),
                 T.Literal('continues'),
                 T.Literal('time'),
+                T.Literal('preservation'),
+                T.Literal('response'),
               ]),
               weight: T.Integer({ minimum: 1, maximum: 100 }),
               allowance: T.Optional(T.Integer({ minimum: 1, maximum: 9 })),
@@ -1163,6 +1164,11 @@ export const StageSchema = T.Object(
         comboHit: T.Integer({ minimum: 0, maximum: 100000 }),
         timeBonus: T.Integer({ minimum: 0, maximum: 1000 }),
         continuePenalty: T.Integer({ minimum: 0, maximum: 100000 }),
+        // M20: a completed branch, Marek's capture routes, points per Preservation percent.
+        branch: T.Optional(T.Integer({ minimum: 0, maximum: 100000 })),
+        resolve: T.Optional(T.Integer({ minimum: 0, maximum: 100000 })),
+        forced: T.Optional(T.Integer({ minimum: 0, maximum: 100000 })),
+        preservation: T.Optional(T.Integer({ minimum: 0, maximum: 1000 })),
         difficulty: T.Tuple([
           T.Integer({ minimum: 1, maximum: 1000 }),
           T.Integer({ minimum: 1, maximum: 1000 }),
@@ -1220,10 +1226,50 @@ export const StageSchema = T.Object(
           ),
           clue: T.Optional(Story),
           evidence: T.Optional(Story),
+          // M20 beat kinds: a mounted pursuit (corridor id) or a greenhouse room (room id),
+          // the route segment, and an optional branch's goal and artifact.
+          corridor: T.Optional(KitId),
+          room: T.Optional(KitId),
+          segment: T.Optional(T.Integer({ minimum: 1, maximum: 9 })),
+          branch: T.Optional(
+            T.Object(
+              {
+                id: KitId,
+                name: T.String({ minLength: 1 }),
+                artifact: KitId,
+                artifactName: T.String({ minLength: 1 }),
+                workers: T.Optional(T.Boolean()),
+                clue: T.Optional(T.Boolean()),
+                assets: T.Optional(T.Array(KitId, { maxItems: 4 })),
+                keep: T.Optional(T.Union([T.Literal('damaged'), T.Literal('critical')])),
+              },
+              { additionalProperties: false },
+            ),
+          ),
         },
         { additionalProperties: false },
       ),
       { minItems: 1 },
+    ),
+    // M20: the layered epilogue's cards (ids; `by` picks the variants from the run).
+    epilogue: T.Optional(
+      T.Array(
+        T.Object(
+          {
+            id: KitId,
+            by: T.Optional(
+              T.Union([
+                T.Literal('capture'),
+                T.Literal('categories'),
+                T.Literal('branches'),
+                T.Literal('preservation'),
+              ]),
+            ),
+          },
+          { additionalProperties: false },
+        ),
+        { maxItems: 16 },
+      ),
     ),
   },
   { additionalProperties: false },
@@ -1390,6 +1436,17 @@ export function loadStage(
       problems.push(`${b.id}: a pen or cache needs workers`);
     if (b.clue) inside('the clue', b.clue.x);
     if (b.evidence) inside('the evidence', b.evidence.x);
+    if (b.corridor && b.room) problems.push(`${b.id}: a beat is a corridor or a room, not both`);
+    if ((b.corridor || b.room) && (b.locks ?? []).length > 0)
+      problems.push(`${b.id}: a corridor or room beat has no camera locks (the room has waves)`);
+    if (b.corridor && ((b.workers ?? []).length > 0 || b.clue || b.evidence || b.pickups?.length))
+      problems.push(`${b.id}: a corridor beat holds no workers, clue, evidence or food`);
+    if (b.branch?.workers && !(b.workers ?? []).length)
+      problems.push(`${b.id}: the branch goal names workers the beat does not have`);
+    if (b.branch?.clue && !b.clue)
+      problems.push(`${b.id}: the branch goal names a record the beat does not have`);
+    if (b.branch?.assets?.length && !b.room)
+      problems.push(`${b.id}: only a room beat can keep Ledger assets`);
     return {
       id: b.id,
       name: b.name,
@@ -1408,6 +1465,21 @@ export function loadStage(
       cache: b.cache ?? null,
       clue: b.clue ?? null,
       evidence: b.evidence ?? null,
+      corridor: b.corridor ?? '',
+      room: b.room ?? '',
+      segment: b.segment ?? 0,
+      branch: b.branch
+        ? {
+            id: b.branch.id,
+            name: b.branch.name,
+            artifact: b.branch.artifact,
+            artifactName: b.branch.artifactName,
+            workers: b.branch.workers ?? false,
+            clue: b.branch.clue ?? false,
+            assets: b.branch.assets ?? [],
+            keep: b.branch.keep === 'critical' ? 2 : 1,
+          }
+        : null,
       next: (b.next ?? (bi + 1 < d.beats.length ? [d.beats[bi + 1]!.id] : [])).map((id) => {
         const n = d.beats.findIndex((x) => x.id === id);
         if (n < 0) problems.push(`${b.id}: next beat "${id}" is unknown`);
@@ -1466,8 +1538,16 @@ export function loadStage(
         ranks: [d.grade.ranks.S, d.grade.ranks.A, d.grade.ranks.B],
         caps: (d.grade.caps ?? []).map((c) => ({ ...c })),
       },
-      score: { ...d.score, difficulty: [...d.score.difficulty] },
+      score: {
+        ...d.score,
+        branch: d.score.branch ?? 0,
+        resolve: d.score.resolve ?? 0,
+        forced: d.score.forced ?? 0,
+        preservation: d.score.preservation ?? 0,
+        difficulty: [...d.score.difficulty],
+      },
       beats,
+      epilogue: (d.epilogue ?? []).map((e) => ({ id: e.id, by: e.by ?? '' })),
     },
     arenas: convertArenas(arenas, kits, file, true),
   };
@@ -2621,9 +2701,7 @@ export function loadMounted(
         side: e.side === 'top' ? 0 : 1,
       })),
       checkpoints: c.checkpoints.map((x) => fx(x)),
-      boss: c.boss
-        ? { at: fx(c.boss.at), stability: c.boss.stability, lane: c.boss.lane }
-        : null,
+      boss: c.boss ? { at: fx(c.boss.at), stability: c.boss.stability, lane: c.boss.lane } : null,
       waves: c.waves.map((w) => ({
         at: fx(w.at),
         min: DIFFICULTY_ORDER.indexOf(w.min),
@@ -2795,7 +2873,10 @@ export const GreenhouseSchema = T.Object(
           /** M19: story NPCs (Tomas Rell). */
           npcs: T.Optional(
             T.Array(
-              T.Object({ id: T.Literal('tomas'), x: Pos, z: Depth }, { additionalProperties: false }),
+              T.Object(
+                { id: T.Literal('tomas'), x: Pos, z: Depth },
+                { additionalProperties: false },
+              ),
               { maxItems: 2 },
             ),
           ),
@@ -3370,6 +3451,41 @@ export function generate(
     greenhouse = out.greenhouse;
     arenas.push(...out.arenas);
   }
+  // M20: corridor and room beats name a known corridor and room; a room beat is as wide
+  // as its room (the exit is at the room's right edge).
+  const stageProblems: string[] = [];
+  const corridorIds = new Set(
+    ((mounted as { corridors?: { id: string }[] } | null)?.corridors ?? []).map((c) => c.id),
+  );
+  const rooms =
+    (greenhouse as { rooms?: { id: string; width: number; assets: { id: string }[] }[] } | null)
+      ?.rooms ?? [];
+  type StageBeat = {
+    id: string;
+    corridor: string;
+    room: string;
+    width: number;
+    branch: { assets: string[] } | null;
+  };
+  for (const st of stages as { id: string; beats: StageBeat[] }[])
+    for (const b of st.beats) {
+      if (b.corridor && !corridorIds.has(b.corridor))
+        stageProblems.push(`${st.id}.${b.id}: unknown corridor "${b.corridor}"`);
+      if (b.room) {
+        const r = rooms.find((x) => x.id === b.room);
+        if (!r) stageProblems.push(`${st.id}.${b.id}: unknown room "${b.room}"`);
+        else if (r.width !== b.width)
+          stageProblems.push(
+            `${st.id}.${b.id}: width ${b.width} differs from room "${r.id}" (${r.width})`,
+          );
+        for (const name of b.branch?.assets ?? [])
+          if (r && !r.assets.some((x) => x.id === name))
+            stageProblems.push(
+              `${st.id}.${b.id}: the branch keeps "${name}", not an asset of room "${r.id}"`,
+            );
+      }
+    }
+  if (stageProblems.length > 0) throw new HeroDataError(stageProblems.join('\n'));
   return `// GENERATED by packages/data/src/generate.ts from packages/data/heroes/*.yaml,
 // packages/data/enemies/*.yaml, packages/data/weapons/*.yaml,
 // packages/data/encounters/*.yaml, packages/data/stages/*.yaml, packages/data/coop/coop.yaml,

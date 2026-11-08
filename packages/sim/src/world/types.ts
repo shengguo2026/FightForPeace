@@ -1080,7 +1080,50 @@ export const RunEvent = {
   Evidence: 15,
   Complete: 16,
   ExitOpen: 17,
+  /** M20: a room beat's evidence is ready (the marked crate after Marek's capture). */
+  EvidenceReady: 18,
+  /** M20: an optional branch ended (detail: its outcome, BranchOutcome). */
+  BranchEnd: 19,
 } as const;
+
+/** M20 optional branch outcomes. Numbers are encoded; never renumber. */
+export const BranchOutcome = { Skipped: 0, Completed: 1, Failed: 2 } as const;
+
+/** M20: one Ledger asset as a room beat left it (for the stage's Preservation result). */
+export interface RunAsset {
+  /** Beat index of the room and the asset's authored name there. */
+  beat: number;
+  name: string;
+  /** Ledger kind index, its condition and state (AssetState) at the end of the beat. */
+  kind: number;
+  condition: number;
+  state: number;
+}
+
+/** M20: a corridor beat's Civil-Protection Response Record (line scores in record order). */
+export interface RunResponse {
+  beat: number;
+  scores: number[];
+  rewinds: number;
+  mastery: boolean;
+}
+
+/** M20: Marek's capture as the boss room left it (BossState fields). */
+export interface RunCapture {
+  route: number;
+  gunLost: number;
+  gunAmmo: number;
+  scorch: number;
+  scorchStops: number;
+  intercept: number;
+}
+
+/** M20: a weapon a hero carries from one beat into the next (exact Integrity and rounds). */
+export interface RunCarry {
+  def: number;
+  integrity: number;
+  ammo: number;
+}
 
 export interface RunWorker {
   x: number;
@@ -1133,6 +1176,12 @@ export interface RunCheckpoint {
   beat: number;
   meter: number[];
   stats: RunStats;
+  /** M20: the stage records as the checkpoint found them (copies). */
+  ledger: RunAsset[];
+  response: RunResponse[];
+  branches: number[];
+  intercept: number;
+  carry: (RunCarry | null)[];
 }
 
 export interface StageRun {
@@ -1171,4 +1220,20 @@ export interface StageRun {
   workersTotal: number;
   cluesTotal: number;
   event: { kind: number; frame: number; detail: number };
+  /** M20: Ledger assets of every room beat left so far. */
+  ledger: RunAsset[];
+  /** M20: the record of every corridor beat ridden so far. */
+  response: RunResponse[];
+  /** M20: outcome per branch beat (indexed by beat; BranchOutcome, Skipped when unvisited). */
+  branches: number[];
+  /** M20: the latest corridor's Marek intercept outcome (the boss room's opening). */
+  intercept: number;
+  /** M20: Marek's capture (null until the boss room is cleared). */
+  capture: RunCapture | null;
+  /** M20: weapon per slot carried into the next on-foot beat. */
+  carry: (RunCarry | null)[];
+  /** M20: steering assistance for the run's corridor beats (a player setting). */
+  assist: boolean;
+  /** M20: the phase the beat continues in once the fade ends (Walk, or a room's Locked). */
+  resume: number;
 }

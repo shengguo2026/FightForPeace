@@ -288,6 +288,7 @@ export class GameSession {
     }
     if (!paused) this.alpha = alpha;
     this.chainIntercept();
+    this.noteBeat();
     return {
       frame: this.world.frame,
       hash: hashWorld(this.world),
@@ -297,10 +298,25 @@ export class GameSession {
   }
 
   /**
+   * M20: a stage run moving between a corridor beat and a room beat (or one room and the
+   * next) swaps what the scene draws; the renderer starts over on such a change.
+   */
+  private beatKey = '';
+  private noteBeat(): void {
+    const w = this.world;
+    const key = w.run ? `${w.pursuit ? 1 : 0}/${w.greenhouse?.room ?? -1}` : '';
+    if (key === this.beatKey) return;
+    this.beatKey = key;
+    if (key !== '') this.worldReplaced();
+  }
+
+  /**
    * M19: the intercept leads straight into Marek's room, carrying its outcome (an earned
    * opening when he was broken, his forced dismount otherwise). Local play only.
    */
   private chainIntercept(): void {
+    // M20: inside a stage run the journey itself moves on to the yard.
+    if (this.world.run) return;
     const p = this.world.pursuit;
     if (!p || CORRIDORS[p.corridor]?.id !== INTERCEPT || p.phase !== PursuitPhase.Complete) return;
     if (this.world.frame - p.phaseFrame < CHAIN_FRAMES) return;
@@ -327,6 +343,7 @@ export class GameSession {
       () => this.runStepHooks(),
     );
     this.alpha = alpha;
+    this.noteBeat();
     return { frame: this.world.frame, hash: hashWorld(this.world), paused: false, inputs };
   }
 

@@ -150,9 +150,9 @@ export const M18_ZH: Catalog = {
   'gh.asset.glazing': '温室玻璃',
   'gh.asset.shutter': '装卸卷帘门',
   'gh.grade.flourishing': '繁荣',
-  'gh.grade.sustained': '维持',
+  'gh.grade.secure': '稳固',
   'gh.grade.strained': '吃紧',
-  'gh.grade.damaged': '受损',
+  'gh.grade.recovered': '已恢复',
   'gh.room.greenhouse-test-room': '温室测试间',
 };
 
@@ -193,7 +193,8 @@ export const M18_DE: Catalog = {
   'gh.cap.aim': 'Gefahr: scharfe Granate. Der Zünder brennt, sie zielt auf dich.',
   'gh.cap.throw': 'Granate geworfen: aufheben und zurückwerfen oder Abstand nehmen.',
   'gh.cap.dropped': 'Unterbrochen: Eine nicht scharfe Granate fiel. Aufheben sichert sie.',
-  'gh.cap.liveDrop': 'Nach dem Scharfmachen unterbrochen: Eine scharfe Granate fiel. Weg oder werfen.',
+  'gh.cap.liveDrop':
+    'Nach dem Scharfmachen unterbrochen: Eine scharfe Granate fiel. Weg oder werfen.',
   'gh.cap.blast': 'Explosion. Schäden stehen im Erhaltungsbuch.',
   'gh.fuse': 'Zünder {s} s',
   'gh.unarmed': 'nicht scharf',
@@ -239,8 +240,8 @@ export const M18_DE: Catalog = {
   'gh.asset.glazing': 'Gewächshausverglasung',
   'gh.asset.shutter': 'Ladetor',
   'gh.grade.flourishing': 'Blühend',
-  'gh.grade.sustained': 'Erhalten',
+  'gh.grade.secure': 'Gesichert',
   'gh.grade.strained': 'Angespannt',
-  'gh.grade.damaged': 'Beschädigt',
+  'gh.grade.recovered': 'Wiederhergestellt',
   'gh.room.greenhouse-test-room': 'Gewächshaus-Testraum',
 };

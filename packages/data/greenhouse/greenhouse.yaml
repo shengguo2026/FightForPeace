@@ -221,6 +221,20 @@ ledger:
         repair: { every: 6, amount: 2 },
         size: [44, 18, 120],
       }
+    # M20: the Seed Reserve Bay's sealed seed reserves (story line §7). Optional property
+    # tagged as a control, so a Systems Saboteur goes for them with a readable breach.
+    - {
+        id: seed-reserve,
+        name: Seed Reserve,
+        category: supplies,
+        condition: 80,
+        damaged: 55,
+        critical: 25,
+        weight: 2,
+        control: true,
+        repair: { every: 6, amount: 2 },
+        size: [50, 24, 60],
+      }
   rules:
     # Enemy strikes that reach an asset (once per action), bodies knocked into an asset.
     strike: 12
@@ -234,13 +248,13 @@ ledger:
     stable: 1800
     # Interaction reach from the hero's centre to an object's edge.
     reach: { x: 60, z: 40 }
-  # Grade bands (percent of the weighted condition, Lost assets count 0). Flourishing is the
-  # approved top result; the rest are candidate names.
+  # Grade bands (percent of the weighted condition, Lost assets count 0). M20: the four
+  # approved results (story line §8; no failure grade); the thresholds are candidates.
   grades:
     - { id: flourishing, name: Flourishing, min: 90 }
-    - { id: sustained, name: Sustained, min: 70 }
+    - { id: secure, name: Secure, min: 70 }
     - { id: strained, name: Strained, min: 45 }
-    - { id: damaged, name: Damaged, min: 0 }
+    - { id: recovered, name: Recovered, min: 0 }
 
 # --- Breaching grenade (§9.3) ---------------------------------------------------------------
 # The thrower's visible steps (frames), the fuse (from arming), and the blast. Ledger damage
@@ -603,3 +617,222 @@ rooms:
       frames: 180
       large: 70
       cooldown: 600
+
+  # --- M20 Stage 2 journey rooms (spec §5, story line §7) -----------------------------------
+  # Greybox rooms of the Guided Spine and its three optional branches. The Loading Yard,
+  # Filtration Control and the Dispatch Yard above are journey rooms too. A room without
+  # waves is a quiet area. Every placement and composition is a candidate.
+
+  # Segment 2: the aquaculture hall (revolver pressure near the tanks; the Annex branches off).
+  - id: s2-aquaculture-hall
+    name: 'Aquaculture Hall'
+    width: 2400
+    reserve: [glassrunner]
+    waves:
+      - enemies:
+          - { kit: claimhand, x: 1250, z: 780 }
+          - { kit: glassrunner, x: 1450, z: 920, minDifficulty: medium }
+          - { kit: claimhand, x: 1400, z: 860, coop: true }
+        next: 1
+      - enemies:
+          - { kit: marauder, x: 2050, z: 820, minDifficulty: medium }
+          - { kit: claimhand, x: 1900, z: 940 }
+          - { kit: reaver, x: 2150, z: 720, minDifficulty: hard }
+          - { kit: signalman, x: 2250, z: 880, minDifficulty: extreme }
+          - { kit: glassrunner, x: 300, z: 900, coop: true }
+    substitutions:
+      - { from: claimhand, to: enforcer2, minDifficulty: hard, count: 1 }
+    assets:
+      - { id: fish, kind: fish-tank, x: 1100, z: 650 }
+      - { id: shrimp, kind: shrimp-tank, x: 1300, z: 650 }
+      - { id: aeration, kind: aeration, x: 1500, z: 690 }
+      - { id: pump, kind: pump, x: 1750, z: 660 }
+    containers:
+      - { kind: harvest-tote, x: 300, z: 980, contents: [{ item: greenhouse-wrap }] }
+      - {
+          kind: raider-case,
+          x: 2000,
+          z: 980,
+          contents: [{ weapon: six-round-sidearm }, { item: honey-rice-cake }],
+        }
+    pantry:
+      - { item: herb-fish-bowl, x: 700, z: 900 }
+
+  # Branch: Emergency Aeration Annex. A Systems Saboteur goes for the backup aeration line
+  # while the heroes free the trapped maintenance worker.
+  - id: s2-aeration-annex
+    name: 'Emergency Aeration Annex'
+    width: 1920
+    waves:
+      - enemies:
+          - { kit: saboteur, x: 1500, z: 820 }
+          - { kit: claimhand, x: 1300, z: 920 }
+          - { kit: glassrunner, x: 1650, z: 760, minDifficulty: medium }
+          - { kit: claimhand, x: 1400, z: 720, coop: true }
+    assets:
+      - { id: backup-aeration, kind: aeration, x: 1200, z: 690 }
+      - { id: nursery-tank, kind: fish-tank, x: 900, z: 650 }
+    containers:
+      - { kind: maintenance-locker, x: 160, z: 660, contents: [{ item: mineral-broth }] }
+    pantry: []
+
+  # Checkpoint 2: the sealed hygiene vestibule (quiet).
+  - id: s2-hygiene-vestibule
+    name: 'Hygiene Vestibule'
+    width: 1920
+    assets: []
+    containers:
+      - { kind: emergency-cabinet, x: 900, z: 650, contents: [{ item: herb-fish-bowl }] }
+    pantry:
+      - { item: greenhouse-wrap, x: 1200, z: 900 }
+
+  # Segment 3: the crop channels (rack, purge jet, cooperative redirect; the Seed Reserve
+  # Bay branches off).
+  - id: s2-crop-channels
+    name: 'Crop Channels'
+    width: 2400
+    waves:
+      - enemies:
+          - { kit: claimhand, x: 1300, z: 780 }
+          - { kit: glassrunner, x: 1500, z: 900 }
+          - { kit: claimhand, x: 1450, z: 960, coop: true }
+        next: 1
+      - enemies:
+          - { kit: reaver, x: 2000, z: 840, minDifficulty: medium }
+          - { kit: claimhand, x: 2100, z: 760 }
+          - { kit: marauder, x: 2250, z: 900, minDifficulty: hard }
+          - { kit: signalman, x: 2200, z: 700, minDifficulty: extreme }
+          - { kit: glassrunner, x: 300, z: 860, coop: true }
+    assets:
+      - { id: bed-west, kind: crop-bed, x: 760, z: 950 }
+      - { id: bed-east, kind: crop-bed, x: 1300, z: 960 }
+      - { id: pump, kind: pump, x: 1900, z: 660 }
+    containers:
+      - { kind: maintenance-locker, x: 500, z: 660, contents: [{ weapon: service-lance }] }
+      - { kind: meal-carrier, x: 1700, z: 985, contents: [{ item: honey-rice-cake }] }
+    pantry: []
+    rack:
+      x: 230
+      z: 780
+      asset: seedlings
+      thresholds: [20, 45]
+      fragment: support-rail
+      fall: { w: 220, d: 70, damage: 50, seedlings: 25 }
+      right: 150
+    jet:
+      valve: { x: 860, z: 690 }
+      lanes:
+        - { x0: 900, x1: 2300, z0: 760, z1: 830 }
+        - { x0: 900, x1: 2300, z0: 860, z1: 930 }
+      warn: 45
+      active: 40
+      cooldown: 420
+      damage: 30
+      push: 10
+      restore: 10
+    redirect: { x: 1000, z: 700, solo: 180, coop: 60, restore: 15, cooldown: 600 }
+
+  # Branch: Seed Reserve Bay. Raiders try to take the sealed seed reserves out through the
+  # side loading passage (a Saboteur breaches them; a Reaver covers).
+  - id: s2-seed-reserve-bay
+    name: 'Seed Reserve Bay'
+    width: 1920
+    waves:
+      - enemies:
+          - { kit: saboteur, x: 1450, z: 820 }
+          - { kit: reaver, x: 1650, z: 920 }
+          - { kit: claimhand, x: 1300, z: 720, minDifficulty: medium }
+          - { kit: saboteur, x: 1750, z: 760, minDifficulty: hard }
+          - { kit: claimhand, x: 1350, z: 960, coop: true }
+    assets:
+      - { id: seed-west, kind: seed-reserve, x: 1000, z: 650 }
+      - { id: seed-east, kind: seed-reserve, x: 1350, z: 650 }
+    containers:
+      - { kind: stolen-cargo-crate, x: 1800, z: 960, contents: [{ item: herb-fish-bowl }] }
+    pantry: []
+
+  # Segment 3: the medicinal-plant wing (the Preparation Room branches off).
+  - id: s2-medicinal-wing
+    name: 'Medicinal Wing'
+    width: 2400
+    waves:
+      - enemies:
+          - { kit: claimhand, x: 1300, z: 840 }
+          - { kit: marauder, x: 1700, z: 760 }
+          - { kit: claimhand, x: 1400, z: 940, coop: true }
+        next: 1
+      - enemies:
+          - { kit: glassrunner, x: 2100, z: 900 }
+          - { kit: claimhand, x: 2000, z: 780, minDifficulty: medium }
+          - { kit: reaver, x: 2200, z: 820, minDifficulty: hard }
+          - { kit: signalman, x: 2250, z: 700, minDifficulty: extreme }
+    substitutions:
+      - { from: claimhand, to: enforcer2, minDifficulty: hard, count: 1 }
+    assets:
+      - { id: medicinal-west, kind: medicinal-bed, x: 900, z: 965 }
+      - { id: medicinal-east, kind: medicinal-bed, x: 1500, z: 965 }
+      - { id: glazing, kind: glazing, x: 640, z: 630 }
+    containers:
+      - { kind: clinic-cabinet, x: 400, z: 650, contents: [{ item: mineral-broth }] }
+    pantry:
+      - { item: greenhouse-wrap, x: 1100, z: 760 }
+
+  # Branch: Medicinal Preparation Room. Secure the room, free the researcher, recover the
+  # provenance ledger.
+  - id: s2-medicinal-prep-room
+    name: 'Medicinal Preparation Room'
+    width: 1920
+    waves:
+      - enemies:
+          - { kit: claimhand, x: 1400, z: 820 }
+          - { kit: claimhand, x: 1550, z: 940, minDifficulty: medium }
+          - { kit: marauder, x: 1750, z: 760, minDifficulty: hard }
+          - { kit: glassrunner, x: 300, z: 900, coop: true }
+    assets:
+      - { id: culture-bed, kind: medicinal-bed, x: 1100, z: 965 }
+    containers:
+      - { kind: clinic-cabinet, x: 600, z: 650, contents: [{ item: harvest-stew }] }
+    pantry: []
+
+  # Segment 4: the central production hall (advanced formations, the challenge enemies).
+  - id: s2-production-hall
+    name: 'Production Hall'
+    width: 2400
+    reserve: [claimhand, reaver]
+    waves:
+      - enemies:
+          - { kit: claimhand, x: 1300, z: 760 }
+          - { kit: reaver, x: 1500, z: 900 }
+          - { kit: marauder, x: 1800, z: 820, minDifficulty: medium }
+          - { kit: claimhand, x: 1400, z: 960, coop: true }
+        next: 1
+      - enemies:
+          - { kit: saboteur, x: 2100, z: 760 }
+          - { kit: glassrunner, x: 2200, z: 900 }
+          - { kit: enforcer2, x: 2250, z: 820, minDifficulty: hard }
+          - { kit: signalman, x: 2300, z: 700, minDifficulty: extreme }
+          - { kit: claimhand, x: 300, z: 880, coop: true }
+    assets:
+      - { id: pump, kind: pump, x: 1700, z: 660 }
+      - { id: cargo, kind: research-cargo, x: 1100, z: 650 }
+    containers:
+      - {
+          kind: raider-case,
+          x: 900,
+          z: 980,
+          contents: [{ weapon: six-round-sidearm }, { item: greenhouse-wrap }],
+        }
+    pantry: []
+
+  # Segment 4: the protected recovery and loadout-review area before the dispatch bikes.
+  - id: s2-recovery-bay
+    name: 'Recovery Bay'
+    width: 1920
+    assets: []
+    containers:
+      - { kind: clinic-cabinet, x: 500, z: 650, contents: [{ item: herb-fish-bowl }] }
+      - { kind: emergency-cabinet, x: 800, z: 650, contents: [{ item: mineral-broth }] }
+      - { kind: maintenance-locker, x: 1100, z: 660, contents: [{ weapon: service-lance }] }
+      - { kind: meal-carrier, x: 1400, z: 985, contents: [{ item: honey-rice-cake }] }
+    pantry:
+      - { item: greenhouse-wrap, x: 900, z: 900 }

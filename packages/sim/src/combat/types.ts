@@ -585,6 +585,30 @@ export interface BeatDef {
   evidence: { x: number; z: number; text: string } | null;
   /** Beats that may follow (indices); two are a branch chosen by the exit lane; none ends. */
   next: readonly number[];
+  /** M20: a mounted pursuit beat (CORRIDORS id), or ''. */
+  corridor: string;
+  /** M20: a greenhouse room beat (ROOMS id), or ''. */
+  room: string;
+  /** M20: the route segment (1–4; 0 = none). */
+  segment: number;
+  /** M20: an optional branch beat: its goal and Museum artifact (null = on the spine). */
+  branch: BranchDef | null;
+}
+
+/** M20: an optional branch: what completes it and the artifact it is remembered by. */
+export interface BranchDef {
+  id: string;
+  name: string;
+  artifact: string;
+  artifactName: string;
+  /** Every worker of the beat must be freed. */
+  workers: boolean;
+  /** The beat's clue (a record) must be found. */
+  clue: boolean;
+  /** These room assets (authored names) must end at `keep` or better. */
+  assets: readonly string[];
+  /** Worst allowed asset state (AssetState): 1 damaged, 2 critical. */
+  keep: number;
 }
 
 export interface StageRules {
@@ -622,11 +646,23 @@ export interface StageDef {
   /** M11: the run score table. */
   score: StageScoreDef;
   beats: readonly BeatDef[];
+  /**
+   * M20 layered epilogue: cards shown before the results, in order. `by` picks a card's
+   * variants from the run: '' always the same card, capture (resolve or forced),
+   * categories (one insert per Ledger category recorded, by its condition), branches (one
+   * per completed branch), preservation (by the stage's Preservation grade).
+   */
+  epilogue: readonly EpilogueCardDef[];
+}
+
+export interface EpilogueCardDef {
+  id: string;
+  by: '' | 'capture' | 'categories' | 'branches' | 'preservation';
 }
 
 export interface GradeCategoryDef {
   id: string;
-  measure: 'workers' | 'clues' | 'continues' | 'time';
+  measure: 'workers' | 'clues' | 'continues' | 'time' | 'preservation' | 'response';
   weight: number;
   /** continues: points reach zero at this many continues used. */
   allowance: number;
@@ -650,6 +686,11 @@ export interface StageScoreDef {
   comboHit: number;
   timeBonus: number;
   continuePenalty: number;
+  /** M20 (0 when absent): a completed branch, the capture routes, per Preservation percent. */
+  branch: number;
+  resolve: number;
+  forced: number;
+  preservation: number;
   /** Percent per difficulty index. */
   difficulty: readonly number[];
 }
