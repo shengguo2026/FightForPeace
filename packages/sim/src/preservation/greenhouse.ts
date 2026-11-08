@@ -196,6 +196,8 @@ export interface Greenhouse {
 const rules = () => GREENHOUSE!.rules;
 /** Frames between two body impacts that loosen the rack. */
 const RACK_BUMP = 20;
+/** Added to the seedlings' id to mark a strike on the rack frame in an attack's prop hits. */
+const RACK_MARK = 0x100000;
 /** Strikes meet low property (crates, beds) as if it were at least this tall. */
 const STRIKE_FLOOR = fx(240);
 const kindDef = (a: LedgerAsset) => GREENHOUSE!.ledger[a.kind]!;
@@ -791,9 +793,10 @@ export function strikeGreenhouse(
   const r = roomOf(gh);
   if (r.rack && gh.rack && gh.rack.state !== RackState.Toppled) {
     const k = GREENHOUSE!.ledger[gh.assets[r.rack.asset]!.kind]!;
-    const id = gh.assets[r.rack.asset]!.id;
-    if (meets(r.rack, k.hw, k.hd, k.h) && !att.propHits.includes(-id)) {
-      att.propHits.push(-id);
+    // The rack frame is marked apart from its seedlings (prop ids are encoded unsigned).
+    const id = RACK_MARK + gh.assets[r.rack.asset]!.id;
+    if (meets(r.rack, k.hw, k.hd, k.h) && !att.propHits.includes(id)) {
+      att.propHits.push(id);
       loosenRack(world, Math.max(10, Math.trunc(power / 2)));
     }
   }

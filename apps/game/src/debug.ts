@@ -22,6 +22,10 @@ import {
   Cheat,
   HEROES,
   responseRecord,
+  GREENHOUSE,
+  ROOMS,
+  ledgerGrade,
+  damageAsset,
 } from '@ffp/sim';
 import type { QualityGovernor } from '@ffp/platform';
 import type { GameSession } from './game';
@@ -332,6 +336,45 @@ export function installDebugHook(
         width: beat.width,
         bounds: { minX: w.bounds.minX / 256, maxX: w.bounds.maxX / 256 },
       };
+    },
+    startGreenhouse: (room, difficulty = 'medium') => {
+      lab.arenaPick.value = { arena: room, difficulty, beat: 0 };
+      session.startArena(room, difficulty, 0);
+    },
+    greenhouse: () => {
+      const gh = session.world.greenhouse;
+      if (!gh) return null;
+      const G = GREENHOUSE!;
+      const grade = ledgerGrade(gh);
+      return {
+        room: ROOMS[gh.room]!.id,
+        grade: grade.grade,
+        score: grade.score,
+        assets: gh.assets.map((a) => ({
+          name: a.name,
+          kind: G.ledger[a.kind]!.id,
+          x: a.x / 256,
+          z: a.z / 256,
+          condition: a.condition,
+          max: G.ledger[a.kind]!.condition,
+          state: a.state,
+        })),
+        containers: gh.containers.map((c) => ({
+          kind: G.containers[c.kind]!.id,
+          x: c.x / 256,
+          z: c.z / 256,
+          opened: c.opened,
+        })),
+        grenadePhase: gh.grenade?.phase ?? -1,
+        record: { ...gh.record },
+      };
+    },
+    damageAsset: (name, amount) => {
+      const gh = session.world.greenhouse;
+      const a = gh?.assets.find((x) => x.name === name);
+      if (!a) return;
+      a.guardUntil = 0;
+      damageAsset(session.world, a, amount);
     },
     moveHeroes: (x, z = 860) => {
       for (const h of session.world.bodies)

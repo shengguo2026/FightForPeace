@@ -3,7 +3,7 @@ import { audio } from './media/audio';
 import * as Phaser from 'phaser';
 import { render, h } from 'preact';
 import { DEFAULT_KEYBOARD_P1, QualityGovernor, rebind } from '@ffp/platform';
-import { CORRIDORS, Cheat, HEROES, STAGES, equip, heroOf, stageResults } from '@ffp/sim';
+import { CORRIDORS, Cheat, ROOMS, HEROES, STAGES, equip, heroOf, stageResults } from '@ffp/sim';
 import { GameSession, MAX_STEPS_PER_FRAME } from './game';
 import { capabilities, perf } from './system/probe';
 import { EQUIP_TEXT } from './text/en';
@@ -36,7 +36,6 @@ import { effect } from '@preact/signals';
 
 /** Starts the game (main.ts calls it once the capability gates have passed). */
 export function startGame(): void {
-
   const devBuild = import.meta.env.DEV || import.meta.env.MODE === 'e2e';
   // M4: the Lab is the playable build, so it is visible everywhere and Dummy 1 attacks with
   // the Straight Jab. Automated tests start with still dummies and arm them when needed.
@@ -158,7 +157,13 @@ export function startGame(): void {
   const stageParam = params.get('stage');
   const useShell =
     params.has('shell') ||
-    !((devBuild && navigator.webdriver) || params.has('lab') || stageParam || params.has('pursuit'));
+    !(
+      (devBuild && navigator.webdriver) ||
+      params.has('lab') ||
+      stageParam ||
+      params.has('pursuit') ||
+      params.has('greenhouse')
+    );
   const shell = new Shell(session, lab, __FFP_VERSION__);
   // M14: key names (Space, Ctrl, Enter…) follow the interface language.
   effect(() => session.labels.setKeyNames(locale.value));
@@ -227,9 +232,23 @@ export function startGame(): void {
     lab.visible.value = false;
   }
 
+  // M18: `?greenhouse=greenhouse-test-room` (optionally `&difficulty=hard`) opens the
+  // greenhouse test room in the Lab at once (F1 shows the arena panel and the Ledger).
+  const roomParam = params.get('greenhouse');
+  if (roomParam && ROOMS.some((r) => r.id === roomParam)) {
+    lab.arenaPick.value = {
+      arena: roomParam,
+      difficulty: params.get('difficulty') ?? lab.arenaPick.value.difficulty,
+      beat: 0,
+    };
+    actions.startArena(roomParam);
+    lab.visible.value = false;
+  }
+
   /** The shell wants menu input: a menu screen, or the pause menu or results over play. */
   const shellInput = () =>
-    useShell && (!shell.live || menuPaused(lab) || lab.results.value !== null || shell.net.menuOpen);
+    useShell &&
+    (!shell.live || menuPaused(lab) || lab.results.value !== null || shell.net.menuOpen);
   const padNav = new PadNav();
   const TYPING_KEYS = new Set(['Escape', 'Enter', 'NumpadEnter', 'ArrowUp', 'ArrowDown', 'Tab']);
 

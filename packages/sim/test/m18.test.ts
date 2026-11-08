@@ -23,6 +23,7 @@ import {
   RackState,
   damageAsset,
   ledgerGrade,
+  strikeGreenhouse,
 } from '../src/preservation/greenhouse';
 import { type FrameInput, ItemState, MoveState, type World } from '../src/world/types';
 import { armDummy, createWorld, hashWorld, heroOf, step } from '../src/world/world';
@@ -531,6 +532,22 @@ describe('environmental pieces', () => {
     run(w, r.right + 2, () => [hold(ActionBit.Interact)]);
     expect(w.greenhouse!.rack!.state).toBe(RackState.Secure);
     expect(w.greenhouse!.record.rights).toBe(1);
+  });
+
+  test('an enemy strike on the rack loosens it and the world still hashes (unsigned marks)', () => {
+    const w = room();
+    const r = ROOM.rack!;
+    const e = enemy(w, r.x / 256 + 60, r.z / 256);
+    const a = kitOf(e)!.actions[0]!;
+    const box = { x0: r.x - fx(20), x1: r.x + fx(20), y0: 0, z: r.z, depth: fx(20) };
+    strikeGreenhouse(w, e, a, box);
+    expect(w.greenhouse!.rack!.power).toBeGreaterThan(0);
+    expect(e.propHits.every((id) => id >= 0)).toBe(true);
+    expect(() => hashWorld(w)).not.toThrow();
+    // One strike marks the rack once.
+    const power = w.greenhouse!.rack!.power;
+    strikeGreenhouse(w, e, a, box);
+    expect(w.greenhouse!.rack!.power).toBe(power);
   });
 
   test('the purge jet warns, then pushes everyone in its lane; only enemies are hurt', () => {

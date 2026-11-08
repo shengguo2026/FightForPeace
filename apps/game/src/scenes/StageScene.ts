@@ -34,6 +34,7 @@ import {
   kitOf,
   phaseOf,
   RiderState,
+  runningAction,
 } from '@ffp/sim';
 import { profileText } from '../text/en';
 import {
@@ -46,6 +47,7 @@ import {
 import type { RenderSnapshot } from '../game';
 import { ArenaView } from './arenaView';
 import { PursuitView } from './pursuitView';
+import { GreenhouseView } from './greenhouseView';
 import { EffectsLayer } from './effects';
 import { PresentationTracker } from '@ffp/platform';
 import { playEventSounds } from '../media/sounds';
@@ -163,11 +165,14 @@ export class StageScene extends Phaser.Scene {
   private inArena = false;
   private readonly arena = new ArenaView(this, this.assets);
   private readonly pursuit = new PursuitView(this);
+  private readonly greenhouse = new GreenhouseView(this);
   /** M13: presentation events (stable ids) for sound and the effect layers. */
   private readonly tracker = new PresentationTracker();
   private readonly effects = new EffectsLayer(this, this.assets);
   private lastTime = 0;
   private labFloor!: Phaser.GameObjects.Graphics;
+  /** M18: the greenhouse shutter's impact surface (drawn by GreenhouseView). */
+  private shutterId = 0;
 
   constructor(private readonly opts: StageOptions) {
     super('stage');
@@ -194,6 +199,7 @@ export class StageScene extends Phaser.Scene {
     this.overlay.setDepth(8);
     this.arena.create();
     this.pursuit.create();
+    this.greenhouse.create();
     this.effects.create();
     this.opts.onReady?.();
   }
@@ -237,6 +243,12 @@ export class StageScene extends Phaser.Scene {
       snap.run,
     );
     this.labFloor.setVisible(snap.encounter === null && snap.pursuit === null);
+    this.shutterId = snap.greenhouse?.shutterId ?? 0;
+    this.arena.setBackdropVisible(snap.greenhouse === null);
+    // M18: a greenhouse room draws its own greybox room over the hidden arena's backdrop.
+    if (snap.greenhouse) {
+      this.greenhouse.draw(snap.greenhouse, current, snap.items, snap.frame, snap.greenhouseHints);
+    } else this.greenhouse.hide();
     if (snap.pursuit) {
       this.drawPursuit(snap, time);
       return;
@@ -267,6 +279,14 @@ export class StageScene extends Phaser.Scene {
       this.feedback(f, p, top, time);
       this.defense(f, p, top, time);
       this.grabCue(f, p, top, time, snap.escapeOpen.has(f.id));
+    }
+    // M18: a warned line ahead of a firearm shot while it winds up (spec §9.2).
+    for (const { f, p } of drawn) {
+      const a = runningAction(f);
+      if (!a || !a.tags.includes('warnedLine') || f.stateFrame >= a.startup) continue;
+      const blink = Math.floor(snap.frame / 6) % 2 === 0;
+      this.overlay.lineStyle(4, 0xff4040, blink ? 0.95 : 0.45);
+      this.overlay.lineBetween(p.x, p.z - 120, p.x + f.facing * 860, p.z - 120);
     }
     this.drawTethers(drawn);
     this.coopCues(snap.coop, drawn, snap.frame, time);
@@ -657,6 +677,8 @@ export class StageScene extends Phaser.Scene {
       return true;
     };
     for (const s of env.surfaces) {
+      // M18: the loading shutter's surface is drawn as its Ledger asset.
+      if (s.id === this.shutterId) continue;
       const [x, z, hw, hd, h] = [s.x, s.z, s.hw, s.hd, s.h].map(fxToPixels) as number[];
       if (!place(s.id, 'prop.impact-hazard', s.cracked ? 1 : 0, x!, z! + hd!, h!) || collision) {
         g.fillStyle(0x6d6a66, collision ? 0.35 : 1);

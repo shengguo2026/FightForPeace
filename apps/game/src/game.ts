@@ -31,6 +31,9 @@ import {
   METER,
   type WorldOptions,
   type Pursuit,
+  type Greenhouse,
+  ROOMS,
+  greenhouseHint,
   CORRIDORS,
   actionable,
   proxyInput,
@@ -81,6 +84,9 @@ export interface RenderSnapshot {
   run: StageRun | null;
   /** M17 mounted pursuit (or null). */
   pursuit: Pursuit | null;
+  /** M18 greenhouse room (or null) and each standing hero's Interact prompt there. */
+  greenhouse: Greenhouse | null;
+  greenhouseHints: readonly { x: number; z: number; hint: number }[];
   /** M17: the run is Cheat-Assisted; the Lab's infinite Attack Bar is on. */
   cheatAssisted: boolean;
   infiniteMeter: boolean;
@@ -213,6 +219,8 @@ export class GameSession {
     const stage = arena !== null && STAGES.some((s) => s.id === arena);
     // M17: a corridor id starts a mounted pursuit with the heroes on stage.
     const corridor = arena !== null && CORRIDORS.some((c) => c.id === arena);
+    // M18: a greenhouse room id starts that room with the heroes on stage.
+    const room = arena !== null && ROOMS.some((r) => r.id === arena);
     const players = heroes.flatMap((h) => (h === undefined ? [] : [HEROES[h]?.id ?? 'mountain']));
     this.world = stage
       ? createWorld(seed, { stage: arena, difficulty, beat, ...extra })
@@ -223,9 +231,16 @@ export class GameSession {
             heroes: extra.heroes ?? players,
             ...extra,
           })
-        : arena
-          ? createWorld(seed, { arena, difficulty, ...extra })
-          : this.labWorld();
+        : room
+          ? createWorld(seed, {
+              greenhouse: arena,
+              difficulty,
+              heroes: extra.heroes ?? players,
+              ...extra,
+            })
+          : arena
+            ? createWorld(seed, { arena, difficulty, ...extra })
+            : this.labWorld();
     // The heroes carry over from the previous world unless the caller chose them.
     if (!extra.heroes)
       heroes.forEach((h, slot) => {
@@ -349,6 +364,12 @@ export class GameSession {
       coop: this.world.coop,
       run: this.world.run,
       pursuit: this.world.pursuit,
+      greenhouse: this.world.greenhouse,
+      greenhouseHints: this.world.greenhouse
+        ? this.world.bodies
+            .filter((f) => f.team === 'hero' && !f.ko)
+            .map((f) => ({ x: f.x, z: f.z, hint: greenhouseHint(this.world, f) }))
+        : [],
       cheatAssisted: this.world.cheats.marked,
       infiniteMeter: this.world.infiniteMeter,
     };

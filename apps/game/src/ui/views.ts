@@ -52,6 +52,11 @@ import {
   isDowned,
   stageResults,
   CORRIDORS,
+  GREENHOUSE,
+  ROOMS,
+  AssetState,
+  ledgerGrade,
+  circulating,
   RIDER_ID_BASE,
   mountedKit,
   responseRecord,
@@ -896,6 +901,29 @@ function pursuitLines(session: GameSession): string[] {
   ];
 }
 
+const ASSET_STATE_TEXT = ['sound', 'damaged', 'critical', 'safe fallback', 'lost'];
+
+/** M18 Arena panel lines for a greenhouse room: the Ledger, the room's systems and the record. */
+function greenhouseLines(session: GameSession): string[] {
+  const gh = session.world.greenhouse;
+  if (!gh) return [];
+  const room = ROOMS[gh.room]!;
+  const G = GREENHOUSE!;
+  const grade = ledgerGrade(gh);
+  const r = gh.record;
+  const assets = gh.assets.map(
+    (a) =>
+      `${a.name} ${a.condition}/${G.ledger[a.kind]!.condition} ${ASSET_STATE_TEXT[a.state] ?? '?'}`,
+  );
+  const lost = gh.assets.filter((a) => a.state === AssetState.Lost).length;
+  return [
+    `${room.name} · Ledger ${grade.name} ${grade.score}% · circulation ${circulating(gh) ? 'on' : 'off'} · lost ${lost}`,
+    assets.join(' · '),
+    `opened ${r.opened} · broken ${r.broken} · eaten ${r.eaten} · repairs ${r.repairs} (+${r.repaired}) · asset hits ${r.assetHits} (-${r.damage}) · fallbacks ${r.fallbacks}`,
+    `rack topples ${r.topples} · righted ${r.rights} · fits ${r.fits} · purges ${r.purges} · redirects ${r.redirects} (co-op ${r.coopRedirects}) · lashes ${r.lashes} · grenades: blasts ${r.blasts} secured ${r.secured} returned ${r.returned}`,
+  ];
+}
+
 export function refreshArena(session: GameSession, lab: LabState): void {
   const world = session.world;
   if (lab.riding.value !== (world.pursuit !== null)) lab.riding.value = world.pursuit !== null;
@@ -934,6 +962,7 @@ export function refreshArena(session: GameSession, lab: LabState): void {
     });
   const lines = [
     ...stageLines(session),
+    ...greenhouseLines(session),
     `threat ${u.total}/${budgetOf(world)} · attackers ${u.attackers}/${d.attackers[coopIndex(world)]} · projectiles ${u.projectiles}/${d.projectiles[coopIndex(world)]} · hard CC ${u.hardCC}/${d.hardCC}`,
     heroes.join(' · '),
     `peak committed ${enc.peakCommitted} · off-screen warned ${enc.offscreenWarned} · unwarned ${enc.offscreenUnwarned}`,

@@ -12,6 +12,7 @@ import {
   stageNames,
   difficultyNames,
   CORRIDORS,
+  ROOMS,
   MountedSlot,
   mountedKit,
 } from '@ffp/sim';
@@ -372,6 +373,14 @@ function ArenaPanel({ state, actions }: { state: LabState; actions: LabActions }
     ...CORRIDORS.map((c) => ({
       id: c.id,
       name: `${c.name} (mounted pursuit, greybox)`,
+      minDifficulty: 0,
+      beats: [] as string[],
+      allDifficulties: true,
+    })),
+    // M18: the greenhouse test room (all five difficulties).
+    ...ROOMS.map((r) => ({
+      id: r.id,
+      name: `${r.name} (Preservation Ledger, greybox)`,
       minDifficulty: 0,
       beats: [] as string[],
       allDifficulties: true,
@@ -1010,26 +1019,28 @@ function HintBar({ players, riding }: { players: PlayerView[]; riding: boolean }
                     </span>
                   ))
                 : null}
-              {riding ? null : [
-                TEXT.hintMove,
-                TEXT.hintDash,
-                TEXT.hintJump,
-                TEXT.hintAttack,
-                TEXT.hintAirAttack,
-                TEXT.hintLowAttack,
-                TEXT.hintGuard,
-                TEXT.hintCounter,
-                TEXT.hintBreaker,
-                TEXT.hintSpecial,
-                TEXT.hintUltimate,
-                TEXT.hintGrab,
-                TEXT.hintEscape,
-                TEXT.hintTeam,
-              ].map((t) => (
-                <span style={{ marginRight: '12px' }}>
-                  <PromptText text={t} ctx={p.ctx} color={color} />
-                </span>
-              ))}
+              {riding
+                ? null
+                : [
+                    TEXT.hintMove,
+                    TEXT.hintDash,
+                    TEXT.hintJump,
+                    TEXT.hintAttack,
+                    TEXT.hintAirAttack,
+                    TEXT.hintLowAttack,
+                    TEXT.hintGuard,
+                    TEXT.hintCounter,
+                    TEXT.hintBreaker,
+                    TEXT.hintSpecial,
+                    TEXT.hintUltimate,
+                    TEXT.hintGrab,
+                    TEXT.hintEscape,
+                    TEXT.hintTeam,
+                  ].map((t) => (
+                    <span style={{ marginRight: '12px' }}>
+                      <PromptText text={t} ctx={p.ctx} color={color} />
+                    </span>
+                  ))}
             </div>
           );
         })}
