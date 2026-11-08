@@ -34,7 +34,13 @@ import { REACTION, enter, inReaction, stepReaction } from '../combat/reactions';
 import { resumeHold, startGrabAttempt, stepHeroHold, tryEscape, tryRescue } from '../combat/grabs';
 import { requestPickup, stepPickup, weaponInteract } from '../combat/items';
 import { startChannel, stepChannel } from '../stage/run';
-import { weaponGate } from '../combat/held';
+import { ammoChoice, weaponGate } from '../combat/held';
+import {
+  fitWithLance,
+  greenhouseChanneling,
+  greenhouseInteract,
+  stepGreenhouseChannel,
+} from '../preservation/greenhouse';
 import { loadoutAction } from '../combat/loadout';
 import { type ActionDef, Dir, Reject } from '../combat/types';
 import type { MovementProfile } from './profile';
@@ -126,7 +132,9 @@ export function stepHero(world: World, f: Fighter, input: FrameInput, p: Movemen
   }
   // M9 hold to interact (free a worker, revive a partner, inspect a clue or the evidence).
   if (f.state === MoveState.Channel) {
-    stepChannel(world, f, input);
+    // M18: a greenhouse hold (repair, redirect, rack) or a stage interaction.
+    if (greenhouseChanneling(world, f)) stepGreenhouseChannel(world, f, input);
+    else stepChannel(world, f, input);
     tickDefense(world, f);
     return;
   }
@@ -673,11 +681,15 @@ function startAttack(
     const neutral = input.moveX === 0 && input.moveZ === 0;
     if (neutral && startChannel(world, f)) return;
     if (f.item !== 0) {
+      // M18 contextual fitting: the Service Lance's coupling hook on a rack or the shutter.
+      if (neutral && fitWithLance(world, f)) return;
       weaponInteract(world, f, input);
       return;
     }
     if (input.moveX === 0 && input.moveZ === 0 && tryRescue(world, f)) return;
     if (requestPickup(world, f)) return;
+    // M18: containers, the purge valve, the restraint, the redirect wheel, rack and repairs.
+    if (neutral && greenhouseInteract(world, f)) return;
     startGrabAttempt(world, f, input);
     return;
   }
@@ -726,8 +738,10 @@ function startAttack(
     }
   }
   const context = low ? 'dashLow' : fromDash ? 'dash' : 'neutral';
-  const index = selectAction(f, context, low || fromDash ? Dir.Neutral : resolveDir(f, input));
-  if (index < 0) return;
+  const picked = selectAction(f, context, low || fromDash ? Dir.Neutral : resolveDir(f, input));
+  if (picked < 0) return;
+  // M18: an empty firearm's shot input becomes its empty-state strike.
+  const index = ammoChoice(world, f, picked);
   const gate = weaponGate(world, f, index);
   if (gate !== Reject.None) {
     f.verdictTo = index;

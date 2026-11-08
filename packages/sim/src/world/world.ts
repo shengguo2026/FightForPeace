@@ -52,6 +52,15 @@ import { NO_TAP, stepHero } from '../movement/controller';
 import { ON_FOOT } from '../movement/profile';
 import { corridorIndex, encodePursuit, setupPursuit, stepPursuit } from '../mounted/pursuit';
 import {
+  GRENADIER_ID,
+  encodeGreenhouse,
+  installGrenadierFactory,
+  roomIndex,
+  setupGreenhouse,
+  stepGreenhouse,
+  stepGrenadier,
+} from '../preservation/greenhouse';
+import {
   type FacingMode,
   type Fighter,
   type FrameInput,
@@ -67,7 +76,7 @@ export const DUMMY_HEALTH = 1000;
 export const HERO_HEALTH = 1000;
 
 /** Version of the byte layout written by encodeWorld. Bump on any layout change. */
-export const STATE_FORMAT = 14;
+export const STATE_FORMAT = 15;
 
 /** Walking speeds (fixed point per frame), kept as exports for existing callers. */
 export const WALK_SPEED_X = ON_FOOT.walkX;
@@ -134,6 +143,8 @@ export interface WorldOptions {
   pursuit?: string;
   /** M17: optional steering assistance in the pursuit (stronger soft-lane guidance). */
   steeringAssist?: boolean;
+  /** M18: a greenhouse room id (ROOMS); the world becomes that greenhouse test room. */
+  greenhouse?: string;
 }
 
 export interface LoadoutChange {
@@ -305,6 +316,7 @@ export function createEnemy(id: number, kit: number, x: number, z: number): Figh
   return f;
 }
 installEnemyFactory(createEnemy);
+installGrenadierFactory((id, kit, x, z) => createFighter(id, 'enemy', -1, x, z, 'manual', kit));
 
 /**
  * Creates a world with Player 1's hero. Player 2's hero appears on the first frame that
@@ -354,6 +366,7 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
     run: null,
     cheats: newCheatState(),
     pursuit: null,
+    greenhouse: null,
   };
   world.bodies.sort((a, b) => a.id - b.id);
   if (options.pursuit !== undefined) {
@@ -362,6 +375,14 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
     const diff = options.difficulty === undefined ? MEDIUM : difficultyIndex(options.difficulty);
     if (options.cheats) setCheats(world, options.cheats.hero, options.cheats.session);
     setupPursuit(world, corridorIndex(options.pursuit), diff, options.steeringAssist ?? false);
+    return world;
+  }
+  if (options.greenhouse !== undefined) {
+    // The Lab's dummies stay behind: the room has its own waves and drill thrower.
+    world.bodies = world.bodies.filter((b) => b.team === 'hero');
+    const diff = options.difficulty === undefined ? MEDIUM : difficultyIndex(options.difficulty);
+    if (options.cheats) setCheats(world, options.cheats.hero, options.cheats.session);
+    setupGreenhouse(world, roomIndex(options.greenhouse), diff);
     return world;
   }
   if (options.stage !== undefined) {
@@ -555,6 +576,9 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
       stepHero(world, f, normalize(inputs[f.slot]), ON_FOOT);
       if (world.infiniteMeter) f.meter = 100;
       if (heroCheat(world, f, Cheat.BRIGHTSPIRIT)) f.meter = METER.max;
+    } else if (f.id === GRENADIER_ID && world.greenhouse) {
+      // M18: the grenade-drill thrower reacts to hits, otherwise runs its sequence.
+      if (!stepReaction(world, f)) stepGrenadier(world, f);
     } else if (world.encounter && profileOf(f)) {
       // Arena enemies: Combo Breaker while trapped, reactions, then their AI.
       if (enemyBreaker(world, f)) continue;
@@ -575,6 +599,7 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
   sceneryCollide(world);
   holdPositions(world);
   hazardHits(world);
+  stepGreenhouse(world);
   stepHandoffs(world);
   for (const f of world.bodies) closeContextIfActionable(world, f);
   stepRunLate(world);
@@ -849,6 +874,7 @@ export function encodeWorld(world: World): Uint8Array {
   w.i32(c.firstBeat);
   w.u32(c.used);
   encodePursuit(w, world.pursuit);
+  encodeGreenhouse(w, world.greenhouse);
   return w.bytes();
 }
 

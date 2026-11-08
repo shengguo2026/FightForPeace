@@ -1,0 +1,42 @@
+# Support rail (Stage 2 spec §13): the one tagged usable fragment of the seedling rack.
+# Long improvised debris: one shared strike and a throw, little integrity. M18 candidates.
+id: support-rail
+name: Support Rail
+class: improvisedDebris
+debris: long
+hands: 2
+integrity: { max: 30, worn: 20, critical: 10, hit: 10, guard: 5, clash: 10, throw: 30 }
+gripResistance: 20
+pickup: 10
+hazardDestructible: true
+throw:
+  speed: 11
+  lift: 3
+  responses: [blockable, exactDeflectable, strikeDeflectable]
+actions:
+  - id: rail-swing
+    name: Rail Swing
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 11, active: 4, recovery: 19 }
+    hitbox: { x: 15, w: 160, y: 90, h: 150, depth: 36 }
+    damage: 55
+    reaction: { kind: knockback, hitstun: 24, push: 10 }
+    costs: { stun: 15, scale: 12, starter: 10 }
+    meter: 4
+    clash: heavy
+    breakPower: 40
+    tags: [wallBounce, impact]
+
+  - id: rail-throw
+    name: Rail Throw
+    category: weaponThrow
+    input: { context: weaponThrow, dir: neutral }
+    frames: { startup: 10, active: 1, recovery: 14 }
+    hitbox: { x: 0, w: 130, y: 110, h: 40, depth: 30 }
+    damage: 50
+    reaction: { kind: knockdown, hitstun: 28, push: 6, lift: 4 }
+    costs: { stun: 15, scale: 12 }
+    meter: 4
+    breakPower: 30
+    tags: [impact]

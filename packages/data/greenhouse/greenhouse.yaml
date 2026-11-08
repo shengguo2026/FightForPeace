@@ -1,0 +1,318 @@
+# Greenhouse systems (M18; Stage 2 spec §6 Preservation Ledger, §9.3 grenade, §10 recovery
+# items and containers, §13 environmental combat). Every number is an M18 candidate for
+# Combat Lab tuning; Preservation thresholds are deferred by the spec (§19 E), so the grade
+# bands below are candidates too. Units: pixels, frames at 60 Hz. Coordinates: x along the
+# room, z the depth band (620 far wall … 1000 front edge), like the Lab.
+
+# --- Layered Pantry (§10) ----------------------------------------------------------------
+# Walking over an item eats it when it helps the hero (a full hero leaves it for the
+# partner). Health follows the difficulty's recovery percent; Defense is out of 100 and
+# the Attack Bar out of 1000. Every item is taken once.
+pantry:
+  reach: { x: 50, z: 30 }
+  items:
+    - { id: greenhouse-wrap, name: Fresh Greenhouse Wrap, health: 120 }
+    - { id: herb-fish-bowl, name: Herb-Fish Rice Bowl, health: 220 }
+    - { id: mineral-broth, name: Mineral Garden Broth, defense: 40 }
+    - { id: honey-rice-cake, name: Honey-Fruit Rice Cake, meter: 350 }
+    - {
+        id: harvest-stew,
+        name: Community Harvest Stew,
+        health: 120,
+        defense: 20,
+        meter: 150,
+        rare: true,
+      }
+
+# --- Ownership-aware containers (§10) -------------------------------------------------------
+# protected: opened with Interact (empty hands), never damaged by anyone's strikes.
+# hostile: hostile or already damaged property, opened only by strikes that empty its
+# integrity (breakPower, or half the damage of an attack without breakPower).
+containers:
+  - { id: harvest-tote, name: Harvest Tote, ownership: protected, open: 18, size: [40, 22, 50] }
+  - { id: meal-carrier, name: Meal Carrier, ownership: protected, open: 18, size: [34, 20, 60] }
+  - {
+      id: clinic-cabinet,
+      name: Clinic Cabinet,
+      ownership: protected,
+      open: 24,
+      size: [40, 18, 130],
+    }
+  - {
+      id: maintenance-locker,
+      name: Maintenance Locker,
+      ownership: protected,
+      open: 24,
+      size: [44, 18, 160],
+    }
+  - {
+      id: emergency-cabinet,
+      name: Emergency Cabinet,
+      ownership: protected,
+      open: 24,
+      size: [40, 18, 120],
+    }
+  - { id: raider-case, name: Raider Case, ownership: hostile, integrity: 60, size: [44, 22, 40] }
+  - {
+      id: stolen-cargo-crate,
+      name: Stolen Cargo Crate,
+      ownership: hostile,
+      integrity: 90,
+      size: [50, 30, 80],
+    }
+  - {
+      id: damaged-irrigation-housing,
+      name: Damaged Irrigation Housing,
+      ownership: hostile,
+      integrity: 40,
+      size: [40, 20, 70],
+    }
+
+# --- Preservation Ledger (§6) -----------------------------------------------------------
+# condition: full value. damaged / critical: thresholds (condition at or below). essential
+# systems stop at Safe fallback (repairable from 0); other assets at 0 are Lost. weight:
+# share of the grade. repair: hold Interact; every `every` frames restores `amount`.
+ledger:
+  kinds:
+    - {
+        id: crop-bed,
+        name: Crop Bed,
+        category: crops,
+        condition: 100,
+        damaged: 70,
+        critical: 30,
+        weight: 2,
+        repair: { every: 6, amount: 2 },
+        size: [110, 30, 40],
+      }
+    - {
+        id: medicinal-bed,
+        name: Medicinal Bed,
+        category: crops,
+        condition: 100,
+        damaged: 70,
+        critical: 30,
+        weight: 2,
+        repair: { every: 8, amount: 2 },
+        size: [80, 26, 40],
+      }
+    - {
+        id: seedlings,
+        name: Seedlings,
+        category: crops,
+        condition: 60,
+        damaged: 40,
+        critical: 20,
+        weight: 1,
+        repair: { every: 8, amount: 2 },
+        size: [60, 20, 140],
+      }
+    - {
+        id: fish-tank,
+        name: Fish Tank,
+        category: aquatic,
+        condition: 100,
+        damaged: 70,
+        critical: 30,
+        weight: 2,
+        aquatic: true,
+        repair: { every: 6, amount: 2 },
+        size: [70, 22, 90],
+      }
+    - {
+        id: shrimp-tank,
+        name: Shrimp Tank,
+        category: aquatic,
+        condition: 80,
+        damaged: 55,
+        critical: 25,
+        weight: 2,
+        aquatic: true,
+        repair: { every: 6, amount: 2 },
+        size: [60, 22, 80],
+      }
+    - {
+        id: aeration,
+        name: Aeration Line,
+        category: aquatic,
+        condition: 60,
+        damaged: 40,
+        critical: 20,
+        weight: 1,
+        essential: true,
+        repair: { every: 5, amount: 2 },
+        size: [70, 12, 30],
+      }
+    - {
+        id: pump,
+        name: Circulation Pump,
+        category: systems,
+        condition: 120,
+        damaged: 80,
+        critical: 40,
+        weight: 3,
+        essential: true,
+        circulation: true,
+        repair: { every: 5, amount: 3 },
+        size: [50, 24, 90],
+      }
+    - {
+        id: filtration,
+        name: Filtration Control,
+        category: systems,
+        condition: 100,
+        damaged: 70,
+        critical: 30,
+        weight: 2,
+        essential: true,
+        repair: { every: 6, amount: 2 },
+        size: [40, 18, 110],
+      }
+    - {
+        id: glazing,
+        name: Greenhouse Glazing,
+        category: systems,
+        condition: 80,
+        damaged: 55,
+        critical: 25,
+        weight: 1,
+        essential: true,
+        repair: { every: 6, amount: 2 },
+        size: [150, 10, 220],
+      }
+    - {
+        id: shutter,
+        name: Loading Shutter,
+        category: systems,
+        condition: 80,
+        damaged: 55,
+        critical: 25,
+        weight: 1,
+        essential: true,
+        repair: { every: 6, amount: 2 },
+        size: [28, 110, 260],
+      }
+  rules:
+    # Enemy strikes that reach an asset (once per action), bodies knocked into an asset.
+    strike: 12
+    impact: 15
+    # One event never takes more than `maxHit`; after a hit the asset is guarded this long.
+    maxHit: 25
+    guard: 45
+    # Aquatic assets lose 1 every `every` frames while no pump runs (pump Critical or worse),
+    # never below `floor` percent; the cooperative redirect stabilises them for `stable` frames.
+    drain: { every: 90, floor: 40 }
+    stable: 1800
+    # Interaction reach from the hero's centre to an object's edge.
+    reach: { x: 60, z: 40 }
+  # Grade bands (percent of the weighted condition, Lost assets count 0). Flourishing is the
+  # approved top result; the rest are candidate names.
+  grades:
+    - { id: flourishing, name: Flourishing, min: 90 }
+    - { id: sustained, name: Sustained, min: 70 }
+    - { id: strained, name: Strained, min: 45 }
+    - { id: damaged, name: Damaged, min: 0 }
+
+# --- Breaching grenade (§9.3) ---------------------------------------------------------------
+# The thrower's visible steps (frames), the fuse (from arming), and the blast. Ledger damage
+# is bounded by `ledger` per asset and by the asset rules; essentials stop at Safe fallback.
+grenade:
+  weapon: breaching-grenade
+  remove: 50
+  arm: 40
+  aim: 50
+  fuse: 240
+  radius: 230
+  damage: 60
+  push: 12
+  lift: 7
+  integrity: 30
+  ledger: 20
+  # Frames between drill rounds once a grenade is resolved (blast or secured).
+  every: 300
+
+# --- Greenhouse rooms -------------------------------------------------------------------------
+rooms:
+  - id: greenhouse-test-room
+    name: Greenhouse Test Room
+    width: 1920
+    # Claim-Hand stand-ins until M19 brings the Stage 2 roster.
+    waves:
+      - enemies:
+          - { kit: recruit, x: 1300, z: 780 }
+          - { kit: recruit, x: 1450, z: 880, minDifficulty: medium }
+          - { kit: recruit, x: 1350, z: 960, coop: true }
+        next: 0
+      - enemies:
+          - { kit: runner, x: 1600, z: 820 }
+          - { kit: recruit, x: 1700, z: 900, minDifficulty: hard }
+    assets:
+      - { id: bed-west, kind: crop-bed, x: 760, z: 930 }
+      - { id: bed-east, kind: crop-bed, x: 1120, z: 950 }
+      - { id: medicinal, kind: medicinal-bed, x: 1480, z: 965 }
+      - { id: fish, kind: fish-tank, x: 1230, z: 650 }
+      - { id: shrimp, kind: shrimp-tank, x: 1400, z: 650 }
+      - { id: aeration, kind: aeration, x: 1320, z: 690 }
+      - { id: pump, kind: pump, x: 1580, z: 660 }
+      - { id: filtration, kind: filtration, x: 1720, z: 650 }
+      - { id: glazing, kind: glazing, x: 640, z: 630 }
+    containers:
+      - { kind: maintenance-locker, x: 150, z: 660, contents: [{ weapon: service-lance }] }
+      - { kind: clinic-cabinet, x: 400, z: 650, contents: [{ item: harvest-stew }] }
+      - {
+          kind: harvest-tote,
+          x: 300,
+          z: 980,
+          contents: [{ item: greenhouse-wrap }, { item: herb-fish-bowl }],
+        }
+      - { kind: meal-carrier, x: 940, z: 985, contents: [{ item: mineral-broth }] }
+      - { kind: emergency-cabinet, x: 1840, z: 650, contents: [{ item: honey-rice-cake }] }
+      - {
+          kind: raider-case,
+          x: 1000,
+          z: 780,
+          contents: [{ weapon: six-round-sidearm }, { item: honey-rice-cake }],
+        }
+      - { kind: stolen-cargo-crate, x: 1660, z: 960, contents: [{ item: herb-fish-bowl }] }
+      - { kind: damaged-irrigation-housing, x: 1060, z: 650, contents: [{ item: greenhouse-wrap }] }
+    pantry:
+      - { item: greenhouse-wrap, x: 560, z: 760 }
+    # Loading shutter: an impact surface at the right wall; impacts dent its Ledger asset.
+    shutter: { x: 1890, z: 820, asset: shutter }
+    # Seedling rack: power from bodies knocked into it and enemy strikes moves it Secure →
+    # Loose → Toppled. Toppling knocks down every enemy in its fall zone (in front of it),
+    # damages its seedlings and releases the tagged support rail once.
+    rack:
+      x: 230
+      z: 780
+      asset: seedlings
+      thresholds: [20, 45]
+      fragment: support-rail
+      fall: { w: 220, d: 70, damage: 50, seedlings: 25 }
+      right: 150
+    # Purge jet: the valve fires a warned jet along the current lane (everyone in it is
+    # pushed away from the valve); a purge also restores the pump by `restore`.
+    jet:
+      valve: { x: 860, z: 690 }
+      lanes:
+        - { x0: 900, x1: 1880, z0: 760, z1: 830 }
+        - { x0: 900, x1: 1880, z0: 860, z1: 930 }
+      warn: 45
+      active: 40
+      cooldown: 420
+      damage: 30
+      push: 10
+      restore: 10
+    # Cooperative redirect: total `solo` frames of holding; two heroes together fill it at
+    # solo/coop speed. Done: the jet swings to the other lane, aquatic assets stabilise and
+    # gain `restore`. It can be turned again after `cooldown`.
+    redirect: { x: 1000, z: 700, solo: 180, coop: 60, restore: 15, cooldown: 600 }
+    # Cargo restraint: an anchor that lashes the enemy nearest to it inside the cargo bay.
+    restraint:
+      x: 1780
+      z: 990
+      zone: { x: 1620, z: 860, hw: 140, hd: 70 }
+      frames: 180
+      large: 70
+      cooldown: 600
+    grenadier: { x: 1760, z: 760 }

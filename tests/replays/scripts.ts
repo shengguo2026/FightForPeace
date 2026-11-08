@@ -20,6 +20,7 @@ import {
 } from '@ffp/sim';
 import { botInput } from '../../packages/sim/test/arenaBot';
 import { stageBotInput } from '../../packages/sim/test/stageBot';
+import { GreenhouseBot, runBots } from '../../packages/sim/test/greenhouseBot';
 
 type Dir = 'up' | 'down' | 'left' | 'right';
 type Act = keyof typeof ActionBit;
@@ -832,15 +833,42 @@ function pursuitOptions(heroes: string[]): WorldOptions {
   return { pursuit: 'perimeter-pursuit', heroes };
 }
 
-export const pursuitScripts: ReplayScript[] = [
-  ['fire'],
-  ['mountain', 'wind'],
-].map((heroes, i) => ({
+export const pursuitScripts: ReplayScript[] = [['fire'], ['mountain', 'wind']].map((heroes, i) => ({
   name: `pursuit-${heroes.join('-')}`,
   seed: 90 + i,
   options: pursuitOptions(heroes),
   frames: pursuitRide(heroes, 90 + i),
 }));
+
+/**
+ * M18: the greenhouse test room with River Scout and Wind Sentinel: P1 opens the
+ * maintenance locker and takes the Service Lance, P2 fires the purge jet and turns the
+ * redirect wheel alone, then both fight the waves while the grenade drill runs.
+ */
+const greenhouseOptions: WorldOptions = {
+  greenhouse: 'greenhouse-test-room',
+  heroes: ['river', 'wind'],
+};
+export const greenhouseScript: ReplayScript = {
+  name: 'greenhouse-river-wind',
+  seed: 95,
+  options: greenhouseOptions,
+  frames: runBots(
+    createWorld(95, greenhouseOptions),
+    [
+      new GreenhouseBot(0, [
+        { x: 200, z: 700 },
+        { x: 175, z: 708 },
+      ]),
+      new GreenhouseBot(1, [
+        { x: 860, z: 720 },
+        { x: 1000, z: 730, hold: 200 },
+      ]),
+    ],
+    1800,
+    step,
+  ),
+};
 
 export const SCRIPTS = [
   walkSquare,
@@ -858,6 +886,7 @@ export const SCRIPTS = [
   ...heroKitScripts,
   ...pairScripts,
   ...pursuitScripts,
+  greenhouseScript,
 ];
 
 export type { ReplayLog };

@@ -1,0 +1,61 @@
+# Finite Burst-Command Support Gun (Stage 2 spec §9.4): Marek's support gun. An exact
+# magazine of 24 rounds; a burst spends 3 rounds in three hits. Bursts push the shooter
+# back (recoil), root it, and allow no cancels. Rounds Marek spends are gone: a disarm hands
+# over exactly what is left. Empty, the input becomes a stock strike (tag whenEmpty) and
+# the gun can still be thrown; it cannot be reloaded or kept between stages. Boss Resolve
+# conversion arrives with Marek in M19. M18 candidates.
+id: support-gun
+name: Burst-Command Support Gun
+class: firearm
+hands: 2
+ammo: 24
+fire: { defenseCost: 10 }
+integrity: { max: 90, worn: 60, critical: 30, hit: 4, guard: 2, clash: 8, throw: 20, deflect: 4 }
+gripResistance: 50
+pickup: 10
+throw:
+  speed: 10
+  lift: 4
+  responses: [blockable, exactDeflectable, strikeDeflectable]
+actions:
+  - id: support-burst
+    name: Command Burst
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 18, active: [2, 5, 2, 5, 2], recovery: 30, blockstun: 12 }
+    hitbox: { x: 40, w: 700, y: 130, h: 40, depth: 26 }
+    damage: 90
+    reaction: { kind: stagger, hitstun: 20, push: 3 }
+    costs: { stun: 18, scale: 18, starter: 25, guard: 18 }
+    meter: 3
+    ammo: 3
+    tags: [warnedLine, committed]
+    moves:
+      - { from: 19, to: 34, forward: -1.5 }
+    note: Three rounds in three hits; the recoil pushes the shooter back while it fires.
+
+  - id: support-stock
+    name: Stock Strike
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 10, active: 4, recovery: 18 }
+    hitbox: { x: 20, w: 110, y: 110, h: 110, depth: 34 }
+    damage: 55
+    reaction: { kind: knockback, hitstun: 24, push: 8 }
+    costs: { stun: 14, scale: 12 }
+    meter: 4
+    clash: heavy
+    tags: [whenEmpty, impact]
+
+  - id: support-throw
+    name: Support Gun Throw
+    category: weaponThrow
+    input: { context: weaponThrow, dir: neutral }
+    frames: { startup: 12, active: 1, recovery: 16, blockstun: 14 }
+    hitbox: { x: 0, w: 90, y: 100, h: 60, depth: 32 }
+    damage: 50
+    reaction: { kind: knockdown, hitstun: 30, push: 5, lift: 5 }
+    costs: { stun: 15, scale: 12 }
+    meter: 4
+    breakPower: 40
+    tags: [impact]

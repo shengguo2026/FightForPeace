@@ -483,6 +483,13 @@ export const WeaponSchema = T.Object(
     gripResistance: T.Integer({ minimum: 0, maximum: 1000 }),
     /** Finite rounds carried by the physical weapon (0 = none). */
     ammo: T.Optional(T.Integer({ minimum: 0, maximum: 100 })),
+    /** M18 firearms: Defense a hero pays for every shot (refused without enough Defense). */
+    fire: T.Optional(
+      T.Object(
+        { defenseCost: T.Integer({ minimum: 0, maximum: 100 }) },
+        { additionalProperties: false },
+      ),
+    ),
     /** Frames of the pickup. */
     pickup: T.Integer({ minimum: 1, maximum: 60 }),
     /** A destructive hazard may destroy it instead of the landing correction saving it. */
@@ -1456,6 +1463,8 @@ export function loadWeapon(
     if ((a.category === 'weaponThrow') !== (a.input.context === 'weaponThrow'))
       problems.push(`"${a.id}": weapon throws use category and context weaponThrow together`);
     if (a.input.context === 'chain') continue;
+    // M18: a firearm's empty-state strike shares the input of the shot it replaces.
+    if (a.tags?.includes('whenEmpty')) continue;
     const dirs = a.input.dir === 'vertical' ? ['up', 'down'] : [a.input.dir];
     for (const d of dirs) {
       const key = `${a.input.context}/${d}`;
@@ -1470,7 +1479,24 @@ export function loadWeapon(
   const melee = MELEE_CLASSES.includes(w.class) && w.debris !== 'light';
   if (melee && !slots.has('neutral/neutral'))
     problems.push('a melee weapon needs a neutral starter (context neutral, dir neutral)');
-  if (!melee && w.actions.length !== 1) problems.push('only melee weapons have a Weapon Core');
+  if (w.class === 'firearm') {
+    // M18: a shot that spends rounds, an optional empty-state strike on the same input, a throw.
+    const shots = w.actions.filter((a) => a.ammo);
+    const empty = w.actions.filter((a) => a.tags?.includes('whenEmpty'));
+    if (shots.length !== 1) problems.push('a firearm needs exactly one action that spends rounds');
+    if (empty.length > 1) problems.push('a firearm has at most one whenEmpty action');
+    if (w.actions.length !== 1 + shots.length + empty.length)
+      problems.push('a firearm has only its shot, an optional whenEmpty strike and its throw');
+    const shot = shots[0];
+    for (const e of empty)
+      if (
+        shot &&
+        (e.input.context !== shot.input.context || e.input.dir !== shot.input.dir || e.ammo)
+      )
+        problems.push(`"${e.id}": a whenEmpty strike uses the shot's input and spends no rounds`);
+  } else if (!melee && w.actions.length !== 1)
+    problems.push('only melee weapons have a Weapon Core');
+  if (w.fire && w.class !== 'firearm') problems.push('only firearms have a fire cost');
   if (w.integrity.critical > w.integrity.worn || w.integrity.worn > w.integrity.max)
     problems.push('integrity thresholds must satisfy critical <= worn <= max');
   if (w.guard && w.class !== 'guardModifier')
@@ -1525,6 +1551,7 @@ export function compileWeapon(w: WeaponYaml): unknown {
     integrity: { deflect: 0, ...w.integrity },
     gripResistance: w.gripResistance,
     ammo: w.ammo ?? 0,
+    fire: { defenseCost: w.fire?.defenseCost ?? 0 },
     pickup: w.pickup,
     hazardDestructible: w.hazardDestructible ?? false,
     guardCostPercent: w.guard?.costPercent ?? 100,
@@ -2092,10 +2119,7 @@ const MountedDifficulty = T.Object(
   },
   { additionalProperties: false },
 );
-const RoadPoint = T.Object(
-  { at: Dist, top: MPx, bottom: MPx },
-  { additionalProperties: false },
-);
+const RoadPoint = T.Object({ at: Dist, top: MPx, bottom: MPx }, { additionalProperties: false });
 export const MountedSchema = T.Object(
   {
     bike: T.Object(
@@ -2430,7 +2454,503 @@ export function loadMounted(
   };
 }
 
+// --- M18 greenhouse: pantry, containers, Preservation Ledger, grenade, rooms -------------
+
+const Id = T.String({ pattern: '^[a-z][a-z0-9-]*$' });
+const Pos = T.Integer({ minimum: 0, maximum: 7680 });
+const Depth = T.Integer({ minimum: 0, maximum: 2000 });
+const Long = T.Integer({ minimum: 1, maximum: 7200 });
+const Size = T.Tuple([
+  T.Integer({ minimum: 1, maximum: 400 }),
+  T.Integer({ minimum: 1, maximum: 400 }),
+  T.Integer({ minimum: 1, maximum: 600 }),
+]);
+const Category = T.Union([
+  T.Literal('workers'),
+  T.Literal('aquatic'),
+  T.Literal('crops'),
+  T.Literal('systems'),
+  T.Literal('supplies'),
+]);
+const Content = T.Object(
+  { item: T.Optional(Id), weapon: T.Optional(Id) },
+  { additionalProperties: false },
+);
+export const GreenhouseSchema = T.Object(
+  {
+    pantry: T.Object(
+      {
+        reach: T.Object(
+          {
+            x: T.Integer({ minimum: 1, maximum: 400 }),
+            z: T.Integer({ minimum: 1, maximum: 400 }),
+          },
+          { additionalProperties: false },
+        ),
+        items: T.Array(
+          T.Object(
+            {
+              id: Id,
+              name: T.String({ minLength: 1 }),
+              health: T.Optional(T.Integer({ minimum: 0, maximum: 1000 })),
+              defense: T.Optional(T.Integer({ minimum: 0, maximum: 100 })),
+              meter: T.Optional(T.Integer({ minimum: 0, maximum: 1000 })),
+              rare: T.Optional(T.Boolean()),
+            },
+            { additionalProperties: false },
+          ),
+          { minItems: 1 },
+        ),
+      },
+      { additionalProperties: false },
+    ),
+    containers: T.Array(
+      T.Object(
+        {
+          id: Id,
+          name: T.String({ minLength: 1 }),
+          ownership: T.Union([T.Literal('protected'), T.Literal('hostile')]),
+          open: T.Optional(Frame1),
+          integrity: T.Optional(T.Integer({ minimum: 1, maximum: 1000 })),
+          size: Size,
+        },
+        { additionalProperties: false },
+      ),
+      { minItems: 1 },
+    ),
+    ledger: T.Object(
+      {
+        kinds: T.Array(
+          T.Object(
+            {
+              id: Id,
+              name: T.String({ minLength: 1 }),
+              category: Category,
+              condition: T.Integer({ minimum: 1, maximum: 1000 }),
+              damaged: T.Integer({ minimum: 0, maximum: 1000 }),
+              critical: T.Integer({ minimum: 0, maximum: 1000 }),
+              weight: T.Integer({ minimum: 1, maximum: 10 }),
+              essential: T.Optional(T.Boolean()),
+              aquatic: T.Optional(T.Boolean()),
+              circulation: T.Optional(T.Boolean()),
+              repair: T.Object(
+                { every: Frame1, amount: T.Integer({ minimum: 1, maximum: 100 }) },
+                { additionalProperties: false },
+              ),
+              size: Size,
+            },
+            { additionalProperties: false },
+          ),
+          { minItems: 1 },
+        ),
+        rules: T.Object(
+          {
+            strike: T.Integer({ minimum: 0, maximum: 1000 }),
+            impact: T.Integer({ minimum: 0, maximum: 1000 }),
+            maxHit: T.Integer({ minimum: 1, maximum: 1000 }),
+            guard: Frames,
+            drain: T.Object(
+              { every: Frame1, floor: T.Integer({ minimum: 0, maximum: 100 }) },
+              { additionalProperties: false },
+            ),
+            stable: Long,
+            reach: T.Object(
+              {
+                x: T.Integer({ minimum: 1, maximum: 400 }),
+                z: T.Integer({ minimum: 1, maximum: 400 }),
+              },
+              { additionalProperties: false },
+            ),
+          },
+          { additionalProperties: false },
+        ),
+        grades: T.Array(
+          T.Object(
+            {
+              id: Id,
+              name: T.String({ minLength: 1 }),
+              min: T.Integer({ minimum: 0, maximum: 100 }),
+            },
+            { additionalProperties: false },
+          ),
+          { minItems: 2 },
+        ),
+      },
+      { additionalProperties: false },
+    ),
+    grenade: T.Object(
+      {
+        weapon: Id,
+        remove: Frame1,
+        arm: Frame1,
+        aim: Frame1,
+        fuse: Long,
+        radius: T.Integer({ minimum: 1, maximum: 1000 }),
+        damage: T.Integer({ minimum: 0, maximum: 1000 }),
+        push: T.Number({ minimum: 0, maximum: 60 }),
+        lift: T.Number({ minimum: 0, maximum: 60 }),
+        integrity: T.Integer({ minimum: 0, maximum: 1000 }),
+        ledger: T.Integer({ minimum: 0, maximum: 1000 }),
+        every: Long,
+      },
+      { additionalProperties: false },
+    ),
+    rooms: T.Array(
+      T.Object(
+        {
+          id: Id,
+          name: T.String({ minLength: 1 }),
+          width: T.Integer({ minimum: 1920, maximum: 7680 }),
+          waves: T.Optional(Waves),
+          assets: T.Array(
+            T.Object({ id: Id, kind: Id, x: Pos, z: Depth }, { additionalProperties: false }),
+          ),
+          containers: T.Array(
+            T.Object(
+              { kind: Id, x: Pos, z: Depth, contents: T.Array(Content, { maxItems: 4 }) },
+              { additionalProperties: false },
+            ),
+          ),
+          pantry: T.Array(
+            T.Object({ item: Id, x: Pos, z: Depth }, { additionalProperties: false }),
+          ),
+          shutter: T.Optional(
+            T.Object({ x: Pos, z: Depth, asset: Id }, { additionalProperties: false }),
+          ),
+          rack: T.Optional(
+            T.Object(
+              {
+                x: Pos,
+                z: Depth,
+                asset: Id,
+                thresholds: T.Tuple([
+                  T.Integer({ minimum: 1, maximum: 1000 }),
+                  T.Integer({ minimum: 1, maximum: 1000 }),
+                ]),
+                fragment: Id,
+                fall: T.Object(
+                  {
+                    w: T.Integer({ minimum: 1, maximum: 1000 }),
+                    d: T.Integer({ minimum: 1, maximum: 400 }),
+                    damage: T.Integer({ minimum: 0, maximum: 1000 }),
+                    seedlings: T.Integer({ minimum: 0, maximum: 1000 }),
+                  },
+                  { additionalProperties: false },
+                ),
+                right: Frame1,
+              },
+              { additionalProperties: false },
+            ),
+          ),
+          jet: T.Optional(
+            T.Object(
+              {
+                valve: T.Object({ x: Pos, z: Depth }, { additionalProperties: false }),
+                lanes: T.Array(
+                  T.Object(
+                    { x0: Pos, x1: Pos, z0: Depth, z1: Depth },
+                    { additionalProperties: false },
+                  ),
+                  { minItems: 1, maxItems: 2 },
+                ),
+                warn: Frame1,
+                active: Frame1,
+                cooldown: Long,
+                damage: T.Integer({ minimum: 0, maximum: 1000 }),
+                push: T.Number({ minimum: 0, maximum: 60 }),
+                restore: T.Integer({ minimum: 0, maximum: 1000 }),
+              },
+              { additionalProperties: false },
+            ),
+          ),
+          redirect: T.Optional(
+            T.Object(
+              {
+                x: Pos,
+                z: Depth,
+                solo: Long,
+                coop: Long,
+                restore: T.Integer({ minimum: 0, maximum: 1000 }),
+                cooldown: Long,
+              },
+              { additionalProperties: false },
+            ),
+          ),
+          restraint: T.Optional(
+            T.Object(
+              {
+                x: Pos,
+                z: Depth,
+                zone: T.Object(
+                  {
+                    x: Pos,
+                    z: Depth,
+                    hw: T.Integer({ minimum: 1, maximum: 1000 }),
+                    hd: T.Integer({ minimum: 1, maximum: 400 }),
+                  },
+                  { additionalProperties: false },
+                ),
+                frames: Long,
+                large: Long,
+                cooldown: Long,
+              },
+              { additionalProperties: false },
+            ),
+          ),
+          grenadier: T.Optional(T.Object({ x: Pos, z: Depth }, { additionalProperties: false })),
+        },
+        { additionalProperties: false },
+      ),
+      { minItems: 1 },
+    ),
+  },
+  { additionalProperties: false },
+);
+export type GreenhouseYaml = Static<typeof GreenhouseSchema>;
+
+const CATEGORY_CODE = { workers: 0, aquatic: 1, crops: 2, systems: 3, supplies: 4 } as const;
+
+/**
+ * Validates greenhouse.yaml against the weapon and enemy ids and converts it to the
+ * simulation's GreenhouseDef (fixed point positions, indices). Room waves become hidden
+ * arenas appended from index `firstArena` (like stage camera locks).
+ */
+export function loadGreenhouse(
+  source: string,
+  weapons: readonly string[],
+  kits: readonly string[],
+  firstArena: number,
+  file = 'greenhouse.yaml',
+): { greenhouse: unknown; arenas: unknown[] } {
+  const g = validate(GreenhouseSchema, source, file) as GreenhouseYaml;
+  const problems: string[] = [];
+  const unique = (list: readonly { id: string }[], what: string) => {
+    const seen = new Set<string>();
+    for (const x of list) {
+      if (seen.has(x.id)) problems.push(`duplicate ${what} "${x.id}"`);
+      seen.add(x.id);
+    }
+  };
+  unique(g.pantry.items, 'pantry item');
+  unique(g.containers, 'container');
+  unique(g.ledger.kinds, 'ledger kind');
+  unique(g.rooms, 'room');
+  const pantryIds = g.pantry.items.map((p) => p.id);
+  const containerIds = g.containers.map((c) => c.id);
+  const kindIds = g.ledger.kinds.map((k) => k.id);
+  for (const p of g.pantry.items)
+    if (!p.health && !p.defense && !p.meter) problems.push(`pantry "${p.id}" restores nothing`);
+  for (const c of g.containers) {
+    if (c.ownership === 'protected' && (!c.open || c.integrity))
+      problems.push(
+        `container "${c.id}": protected containers open with Interact (open, no integrity)`,
+      );
+    if (c.ownership === 'hostile' && (!c.integrity || c.open))
+      problems.push(`container "${c.id}": hostile containers break (integrity, no open)`);
+  }
+  for (const k of g.ledger.kinds)
+    if (!(k.critical <= k.damaged && k.damaged < k.condition))
+      problems.push(`ledger kind "${k.id}" needs critical <= damaged < condition`);
+  const mins = g.ledger.grades.map((x) => x.min);
+  if (mins.some((m, i) => i > 0 && m >= mins[i - 1]!) || mins[mins.length - 1] !== 0)
+    problems.push('grades run from the highest band down to a band at 0');
+  if (!weapons.includes(g.grenade.weapon))
+    problems.push(`grenade: unknown weapon "${g.grenade.weapon}"`);
+  for (const r of g.rooms) {
+    const where = `room "${r.id}"`;
+    unique(r.assets, `${where} asset`);
+    for (const a of r.assets)
+      if (!kindIds.includes(a.kind)) problems.push(`${where}: unknown ledger kind "${a.kind}"`);
+    for (const c of r.containers) {
+      if (!containerIds.includes(c.kind)) problems.push(`${where}: unknown container "${c.kind}"`);
+      for (const x of c.contents) {
+        if (!!x.item === !!x.weapon) problems.push(`${where}: a content is an item or a weapon`);
+        if (x.item && !pantryIds.includes(x.item))
+          problems.push(`${where}: unknown item "${x.item}"`);
+        if (x.weapon && !weapons.includes(x.weapon))
+          problems.push(`${where}: unknown weapon "${x.weapon}"`);
+      }
+    }
+    for (const p of r.pantry)
+      if (!pantryIds.includes(p.item)) problems.push(`${where}: unknown item "${p.item}"`);
+    for (const a of [r.shutter?.asset, r.rack?.asset])
+      if (a !== undefined && !kindIds.includes(a))
+        problems.push(`${where}: unknown ledger kind "${a}"`);
+    if (r.rack) {
+      if (r.rack.thresholds[0] >= r.rack.thresholds[1])
+        problems.push(`${where}: rack thresholds must rise`);
+      if (!weapons.includes(r.rack.fragment))
+        problems.push(`${where}: unknown fragment "${r.rack.fragment}"`);
+    }
+    for (const l of r.jet?.lanes ?? [])
+      if (l.x0 >= l.x1 || l.z0 >= l.z1)
+        problems.push(`${where}: a jet lane needs x0 < x1, z0 < z1`);
+    if (r.redirect && !r.jet) problems.push(`${where}: a redirect needs a jet`);
+    if (r.redirect && r.redirect.coop >= r.redirect.solo)
+      problems.push(`${where}: the cooperative redirect is faster than the solo one`);
+    if (r.redirect && r.jet && r.jet.lanes.length < 2)
+      problems.push(`${where}: a redirect needs two jet lanes`);
+    if (r.restraint && r.restraint.large > r.restraint.frames)
+      problems.push(`${where}: a large enemy is held no longer than others`);
+  }
+  if (problems.length > 0) throw new HeroDataError(problems.map((p) => `${file}: ${p}`).join('\n'));
+  const f = (v: number) => fx(v);
+  const kindOf = (id: string) => kindIds.indexOf(id);
+  const arenas: unknown[] = [];
+  const rooms = g.rooms.map((r) => {
+    let arena = -1;
+    if (r.waves) {
+      arena = firstArena + arenas.length;
+      arenas.push(
+        ...convertArenas(
+          [{ id: `${r.id}-waves`, name: r.name, area: 'mill', width: r.width, waves: r.waves }],
+          kits,
+          file,
+          true,
+        ),
+      );
+    }
+    // The shutter's and the rack's own assets follow the authored ones.
+    const assets = r.assets.map((a) => ({ id: a.id, kind: kindOf(a.kind), x: f(a.x), z: f(a.z) }));
+    let shutterAsset = -1;
+    if (r.shutter) {
+      shutterAsset = assets.length;
+      assets.push({
+        id: 'shutter',
+        kind: kindOf(r.shutter.asset),
+        x: f(r.shutter.x),
+        z: f(r.shutter.z),
+      });
+    }
+    let rackAsset = -1;
+    if (r.rack) {
+      rackAsset = assets.length;
+      assets.push({ id: 'seedlings', kind: kindOf(r.rack.asset), x: f(r.rack.x), z: f(r.rack.z) });
+    }
+    return {
+      id: r.id,
+      name: r.name,
+      width: r.width,
+      arena,
+      assets,
+      containers: r.containers.map((c) => ({
+        kind: containerIds.indexOf(c.kind),
+        x: f(c.x),
+        z: f(c.z),
+        contents: c.contents.map((x) => ({
+          item: x.item ? pantryIds.indexOf(x.item) : -1,
+          weapon: x.weapon ?? '',
+        })),
+      })),
+      pantry: r.pantry.map((p) => ({ item: pantryIds.indexOf(p.item), x: f(p.x), z: f(p.z) })),
+      shutter: r.shutter ? { x: f(r.shutter.x), z: f(r.shutter.z), asset: shutterAsset } : null,
+      rack: r.rack
+        ? {
+            x: f(r.rack.x),
+            z: f(r.rack.z),
+            asset: rackAsset,
+            loose: r.rack.thresholds[0],
+            topple: r.rack.thresholds[1],
+            fragment: r.rack.fragment,
+            fallW: f(r.rack.fall.w),
+            fallD: f(r.rack.fall.d),
+            fallDamage: r.rack.fall.damage,
+            seedlings: r.rack.fall.seedlings,
+            right: r.rack.right,
+          }
+        : null,
+      jet: r.jet
+        ? {
+            x: f(r.jet.valve.x),
+            z: f(r.jet.valve.z),
+            lanes: r.jet.lanes.map((l) => ({ x0: f(l.x0), x1: f(l.x1), z0: f(l.z0), z1: f(l.z1) })),
+            warn: r.jet.warn,
+            active: r.jet.active,
+            cooldown: r.jet.cooldown,
+            damage: r.jet.damage,
+            push: fxs(r.jet.push),
+            restore: r.jet.restore,
+          }
+        : null,
+      redirect: r.redirect ? { ...r.redirect, x: f(r.redirect.x), z: f(r.redirect.z) } : null,
+      restraint: r.restraint
+        ? {
+            x: f(r.restraint.x),
+            z: f(r.restraint.z),
+            zx: f(r.restraint.zone.x),
+            zz: f(r.restraint.zone.z),
+            hw: f(r.restraint.zone.hw),
+            hd: f(r.restraint.zone.hd),
+            frames: r.restraint.frames,
+            large: r.restraint.large,
+            cooldown: r.restraint.cooldown,
+          }
+        : null,
+      grenadier: r.grenadier ? { x: f(r.grenadier.x), z: f(r.grenadier.z) } : null,
+    };
+  });
+  const size = (s: readonly [number, number, number]) => ({ hw: f(s[0]), hd: f(s[1]), h: f(s[2]) });
+  const gr = g.grenade;
+  const greenhouse = {
+    pantry: g.pantry.items.map((p) => ({
+      id: p.id,
+      name: p.name,
+      health: p.health ?? 0,
+      defense: p.defense ?? 0,
+      meter: p.meter ?? 0,
+      rare: p.rare ?? false,
+    })),
+    pantryReach: { x: f(g.pantry.reach.x), z: f(g.pantry.reach.z) },
+    containers: g.containers.map((c) => ({
+      id: c.id,
+      name: c.name,
+      hostile: c.ownership === 'hostile',
+      open: c.open ?? 0,
+      integrity: c.integrity ?? 0,
+      ...size(c.size),
+    })),
+    ledger: g.ledger.kinds.map((k) => ({
+      id: k.id,
+      name: k.name,
+      category: CATEGORY_CODE[k.category],
+      condition: k.condition,
+      damaged: k.damaged,
+      critical: k.critical,
+      weight: k.weight,
+      essential: k.essential ?? false,
+      aquatic: k.aquatic ?? false,
+      circulation: k.circulation ?? false,
+      repairEvery: k.repair.every,
+      repairAmount: k.repair.amount,
+      ...size(k.size),
+    })),
+    rules: {
+      ...g.ledger.rules,
+      drain: { ...g.ledger.rules.drain },
+      reach: { x: f(g.ledger.rules.reach.x), z: f(g.ledger.rules.reach.z) },
+    },
+    grades: g.ledger.grades.map((x) => ({ ...x })),
+    grenade: {
+      weapon: gr.weapon,
+      remove: gr.remove,
+      arm: gr.arm,
+      aim: gr.aim,
+      fuse: gr.fuse,
+      radius: f(gr.radius),
+      damage: gr.damage,
+      push: fxs(gr.push),
+      lift: fxs(gr.lift),
+      integrity: gr.integrity,
+      ledger: gr.ledger,
+      every: gr.every,
+    },
+    rooms,
+  };
+  return { greenhouse, arenas };
+}
+
 const MOUNTED_FILE = fileURLToPath(new URL('../mounted/mounted.yaml', import.meta.url));
+const GREENHOUSE_FILE = fileURLToPath(new URL('../greenhouse/greenhouse.yaml', import.meta.url));
 
 const PROGRESSION_FILE = fileURLToPath(new URL('../progression/progression.yaml', import.meta.url));
 
@@ -2449,7 +2969,8 @@ const WEAPONS_DIR = fileURLToPath(new URL('../weapons/', import.meta.url));
 
 /** Weapon files in registry order: the Stage 1 pair first, then by file name. */
 export function weaponFiles(dir = WEAPONS_DIR): string[] {
-  const first = ['workstaff.yaml', 'handwheel.yaml'];
+  // Stage 1 weapons keep their registry indices; later files follow by name.
+  const first = ['workstaff.yaml', 'handwheel.yaml', 'timber-board.yaml'];
   const rank = (f: string) => (first.includes(f) ? first.indexOf(f) : first.length);
   return readdirSync(dir)
     .filter((f) => f.endsWith('.yaml'))
@@ -2498,6 +3019,7 @@ export function generate(
   stageFiles: readonly string[] = encounters === ENCOUNTERS_DIR ? stageFileList() : [],
   progressionFile: string | null = encounters === ENCOUNTERS_DIR ? PROGRESSION_FILE : null,
   mountedFile: string | null = encounters === ENCOUNTERS_DIR ? MOUNTED_FILE : null,
+  greenhouseFile: string | null = encounters === ENCOUNTERS_DIR ? GREENHOUSE_FILE : null,
 ): string {
   const load = (f: string, kind: 'hero' | 'enemy') =>
     loadHero(readFileSync(f, 'utf8'), basename(f), kind);
@@ -2568,10 +3090,23 @@ export function generate(
   const mounted = mountedFile
     ? loadMounted(readFileSync(mountedFile, 'utf8'), heroIds, basename(mountedFile))
     : null;
+  let greenhouse: unknown = null;
+  if (greenhouseFile) {
+    const out = loadGreenhouse(
+      readFileSync(greenhouseFile, 'utf8'),
+      weaponYaml.map((w) => w.id),
+      kitIds,
+      arenas.length,
+      basename(greenhouseFile),
+    );
+    greenhouse = out.greenhouse;
+    arenas.push(...out.arenas);
+  }
   return `// GENERATED by packages/data/src/generate.ts from packages/data/heroes/*.yaml,
 // packages/data/enemies/*.yaml, packages/data/weapons/*.yaml,
 // packages/data/encounters/*.yaml, packages/data/stages/*.yaml, packages/data/coop/coop.yaml,
-// packages/data/progression/progression.yaml and packages/data/mounted/mounted.yaml.
+// packages/data/progression/progression.yaml, packages/data/mounted/mounted.yaml and
+// packages/data/greenhouse/greenhouse.yaml.
 // Do not edit by hand:
 // change the YAML and run \`pnpm gen:heroes\`.
 import type {
@@ -2579,6 +3114,7 @@ import type {
   CoopDef,
   DifficultyDef,
   EnemyProfile,
+  GreenhouseDef,
   HeroDef,
   MountedDef,
   ProgressionDef,
@@ -2606,6 +3142,8 @@ export const STAGE_DATA: readonly StageDef[] = ${JSON.stringify(stages, null, 2)
 export const PROGRESSION_DATA: ProgressionDef = ${JSON.stringify(progression, null, 2)};
 
 export const MOUNTED_DATA: MountedDef | null = ${JSON.stringify(mounted, null, 2)};
+
+export const GREENHOUSE_DATA: GreenhouseDef | null = ${JSON.stringify(greenhouse, null, 2)};
 `;
 }
 

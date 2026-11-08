@@ -10,8 +10,10 @@ import {
   heroFiles,
   loadCoop,
   loadHero,
+  loadGreenhouse,
   loadMounted,
   loadStage,
+  loadWeapon,
   stageFileList,
 } from '../src/generate';
 
@@ -431,10 +433,11 @@ test('beats follow in file order unless they branch with next', () => {
 describe('mounted system (M17)', () => {
   const MOUNTED = readFileSync(new URL('../mounted/mounted.yaml', import.meta.url), 'utf8');
   const IDS = ['mountain', 'river', 'wind', 'fire'];
-  const mounted = (src = MOUNTED) => loadMounted(src, IDS) as {
-    heroes: { slot: number }[][];
-    corridors: { id: string }[];
-  };
+  const mounted = (src = MOUNTED) =>
+    loadMounted(src, IDS) as {
+      heroes: { slot: number }[][];
+      corridors: { id: string }[];
+    };
 
   test('mounted.yaml compiles: six slots per hero in roster order, one corridor', () => {
     const m = mounted();
@@ -455,5 +458,73 @@ describe('mounted system (M17)', () => {
   test('a wave that targets unknown equipment is rejected', () => {
     const bad = MOUNTED.replace('target: valve', 'target: windmill');
     expect(() => mounted(bad)).toThrow(/targets unknown "windmill"/);
+  });
+});
+
+describe('greenhouse systems (M18)', () => {
+  const SRC = readFileSync(new URL('../greenhouse/greenhouse.yaml', import.meta.url), 'utf8');
+  const WEAPONS = [
+    'service-lance',
+    'six-round-sidearm',
+    'support-gun',
+    'breaching-grenade',
+    'support-rail',
+  ];
+  const KITS = ['training', 'recruit', 'runner'];
+  const load = (src = SRC) =>
+    loadGreenhouse(src, WEAPONS, KITS, 20) as {
+      greenhouse: { rooms: { arena: number; assets: { id: string }[] }[] };
+      arenas: { id: string; stage: boolean }[];
+    };
+
+  test('greenhouse.yaml compiles: one room, a hidden arena, the shutter and rack assets', () => {
+    const g = load();
+    expect(g.greenhouse.rooms).toHaveLength(1);
+    expect(g.greenhouse.rooms[0]!.arena).toBe(20);
+    expect(g.arenas[0]!.stage).toBe(true);
+    expect(g.greenhouse.rooms[0]!.assets.map((a) => a.id)).toContain('shutter');
+  });
+
+  test('rejects a protected container with integrity and an unknown content', () => {
+    expect(() =>
+      load(
+        SRC.replace(
+          'ownership: protected, open: 18, size: [40, 22, 50]',
+          'ownership: protected, integrity: 5, size: [40, 22, 50]',
+        ),
+      ),
+    ).toThrow(/protected containers open with Interact/);
+    expect(() => load(SRC.replace('weapon: service-lance }', 'weapon: laser-lance }'))).toThrow(
+      /unknown weapon "laser-lance"/,
+    );
+  });
+
+  test('rejects grade bands that do not fall to 0 and a slow cooperative redirect', () => {
+    expect(() =>
+      load(
+        SRC.replace(
+          '{ id: damaged, name: Damaged, min: 0 }',
+          '{ id: damaged, name: Damaged, min: 10 }',
+        ),
+      ),
+    ).toThrow(/grades run/);
+    expect(() => load(SRC.replace('solo: 180, coop: 60', 'solo: 60, coop: 180'))).toThrow(
+      /cooperative redirect is faster/,
+    );
+  });
+
+  test('firearms: one shot, an optional whenEmpty strike on its input, a throw', () => {
+    const src = readFileSync(new URL('../weapons/six-round-sidearm.yaml', import.meta.url), 'utf8');
+    expect(() => loadWeapon(src, 'six-round-sidearm.yaml')).not.toThrow();
+    expect(() =>
+      loadWeapon(
+        src.replace('    tags: [whenEmpty]\n', '    tags: [whenEmpty]\n    ammo: 1\n'),
+        'x.yaml',
+      ),
+    ).toThrow(/exactly one action that spends rounds|whenEmpty strike uses/);
+    const melee = readFileSync(new URL('../weapons/handwheel.yaml', import.meta.url), 'utf8');
+    expect(() =>
+      loadWeapon(melee.replace('ammo', 'x') + 'fire: { defenseCost: 5 }\n', 'h.yaml'),
+    ).toThrow(/only firearms have a fire cost/);
   });
 });

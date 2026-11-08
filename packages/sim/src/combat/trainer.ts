@@ -14,7 +14,8 @@ import { kitOf, totalFrames } from './roster';
 import type { ActionDef } from './types';
 import { stepEnemyHold } from './grabs';
 import { WEAPONS } from './armory';
-import { ITEM, isWeaponAction } from './held';
+import { ITEM, ammoChoice, isWeaponAction, weaponGate } from './held';
+import { Reject } from './types';
 import { pickupEligible, requestPickup, stepPickup } from './items';
 import { ItemState } from '../world/types';
 
@@ -65,8 +66,18 @@ export function nextAttack(world: World, f: Fighter): number {
   if (!kit) return -1;
   const p = world.trainer.pattern;
   if (p >= 0 && p < kit.actions.length && f.wkit < 0) return p;
+  // M18: an armed firearm keeps firing its shot; empty, the shot input is its empty strike.
+  const shot = firearmShot(f);
+  if (shot >= 0) return ammoChoice(world, f, shot);
   const cycle = trainerCycle(f);
   return cycle.length === 0 ? -1 : cycle[f.aiStep % cycle.length]!;
+}
+
+/** The armed firearm's shot (the weapon action that spends rounds), or -1. */
+function firearmShot(f: Fighter): number {
+  if (f.wkit < 0 || WEAPONS[f.wkit]!.class !== 'firearm') return -1;
+  const kit = kitOf(f);
+  return kit ? kit.actions.findIndex((a, i) => isWeaponAction(f, i) && a.ammo > 0) : -1;
 }
 
 /** Thrown weapons attack from range. */
@@ -168,6 +179,8 @@ export function stepTrainer(world: World, f: Fighter): void {
   if (f.aiTimer > 0) return;
   f.aiTimer = world.trainer.interval;
   f.aiStep += 1;
+  // Finite rounds: a firearm's shot spends its rounds (M18).
+  if (weaponGate(world, f, index) !== Reject.None) return;
   startAction(f, index);
   applyActionMovement(f, a, 1, NO_INPUT, ON_FOOT);
 }
