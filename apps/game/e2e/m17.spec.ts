@@ -12,10 +12,11 @@ test('the greybox pursuit rides solo: steering, progress and mounted hints', asy
   const start = (await page.evaluate(() => window.__ffp!.pursuit()!))!;
   expect(start.corridor).toBe('perimeter-pursuit');
   expect(start.riders).toHaveLength(1);
-  await expect(page.getByTestId('hint-p1')).toContainText("Mason's Reach");
   await page.keyboard.down('KeyD');
   await page.waitForTimeout(800);
   await page.keyboard.up('KeyD');
+  // Player 1's hint bar (shown once the player is active) names the mounted moves.
+  await expect(page.getByTestId('hint-p1')).toContainText("Mason's Reach");
   const after = await page.evaluate(() => window.__ffp!.pursuit()!);
   expect(after.riders[0]!.x).toBeGreaterThan(start.riders[0]!.x);
   expect(after.camX).toBeGreaterThanOrEqual(start.camX);
