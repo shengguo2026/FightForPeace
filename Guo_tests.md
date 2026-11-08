@@ -915,3 +915,66 @@ Every room below also opens from the Lab: `http://localhost:5173/?lab`, press **
 15. **Capture:** break his Resolve when he is at 30% Health or less: he kneels and surrenders, and the supports lose their nerve. In another run, take his Health to 0 while his Resolve still has some left: he is pinned for the forced capture. Each ending has its own caption and art.
 16. **Every difficulty:** repeat steps 12 to 15 with `&difficulty=easy` and `&difficulty=ultimate`. Ultimate has Master supports and stronger numbers.
 17. **Languages:** switch to 简体中文 and Deutsch in Settings. Enemy names, room names, captions, Tomas's lines and the intercept text are translated.
+
+## M20 · Stage 2 greybox journey (0.20.0)
+
+What's new: Stage 2 "Prosperity Under Siege" plays as one journey of 14 beats, from the Perimeter Pursuit through the greenhouse rooms to Marek's Dispatch Yard. Three rooms are optional branches, the Preservation Ledger now counts across the whole stage, and the stage ends with epilogue cards and a results screen with Preservation, Response, the branches, Marek's capture and the Ledger.
+
+Choices you may want changed (all candidates):
+
+- **Preservation grades** use the approved names: Flourishing, Secure, Strained, Recovered.
+- **Branches by lane:** at a two-way exit, leave on the upper half of the floor for the optional branch, on the lower half for the main route. Signs at the exit name both.
+- **Branch goals:** Aeration Annex = free the worker and keep the backup aeration at least damaged; Seed Reserve Bay = keep both seed reserves at least damaged; Medicinal Preparation Room = free the researcher and read the provenance ledger.
+- **Weapons carry** from beat to beat with their exact durability and rounds (never a grenade).
+- **Results weights:** Preservation 35, Response 20, Continues 20, Time 25. Time targets on Medium: 25, 35 and 45 minutes for S, A and B.
+- **The epilogue** is text cards for now (Next, or Skip to the results).
+- Stage 2 opens only from the Lab or the URL until the shell's stage select in M21.
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+If Vite prints another port than 5173, use that one. Stop the server with `Ctrl+C`.
+
+To test the branch before it is merged, instead of `main`:
+
+```powershell
+git fetch origin claude/project-thread-jyfped
+git checkout claude/project-thread-jyfped
+pnpm install
+pnpm dev
+```
+
+Optional, the automated checks:
+
+```powershell
+pnpm typecheck
+pnpm test
+pnpm e2e
+```
+
+Stage 2 also opens from the Lab: `http://localhost:5173/?lab`, press **F1**, and pick "Stage 2: Prosperity Under Siege (full journey)" in the Arena panel (with a start beat). Add `&difficulty=easy|medium|hard|extreme|ultimate` to any URL below.
+
+### Test steps
+
+1. **Full journey:** open `http://localhost:5173/?stage=2&difficulty=easy`. The top line reads "Stage 2 · Beat 1/14: Perimeter Pursuit". Ride right with **D** and stop the raiders. When the pursuit completes, the stage moves on by itself to the Loading Yard (Checkpoint 1).
+2. **Room beats:** in the Loading Yard, the Preservation Ledger panel is at the top right. Clear the raiders, then walk right past "GO →" into the Aquaculture Hall.
+3. **Branch choice:** after clearing the Aquaculture Hall, two signs appear at the right edge. Leave on the **upper** lane: you enter the Emergency Aeration Annex (Beat 4). Free the maintenance worker (hold **J**) and stop the Saboteur, then leave: the banner says the branch is completed and names its museum artifact.
+4. **Skip a branch:** start again with `?stage=2&beat=6&difficulty=easy` (Crop Channels). Leave on the **lower** lane: you go straight to the Medicinal Wing and the Seed Reserve Bay counts as skipped.
+5. **Fail a branch:** `?stage=2&beat=7&difficulty=easy` (Seed Reserve Bay). Let the raiders break both seed reserves, then leave: the branch is failed, and the stage still goes on.
+6. **Weapon carry:** pick up a weapon in one room and walk into the next: the hero still holds it with the same durability.
+7. **Checkpoints and continues:** get knocked out after the Hygiene Vestibule (Checkpoint 2). A continue puts you back at the vestibule with the Ledger and branch results as they were there.
+8. **Intercept:** `?stage=2&beat=13&difficulty=easy`. Ride the dispatch bikes and crash Marek's bike. The Dispatch Yard then opens with Marek knocked down and half his Resolve.
+9. **Capture and evidence:** in the Dispatch Yard, capture Marek (break his Resolve at low Health, or take his Health to 0). The weapon crate appears ("Evidence ready"); hold **J** at it.
+10. **Epilogue:** the epilogue cards come one by one: the capture, the Ledger lines per system, one card per completed branch, the community recovery by Preservation grade, and the empty depot. Use **Next**, or **Skip to the results**.
+11. **Results:** the Stage 2 results show Preservation, Civil-Protection Response, Continues and Time with grades, the Preservation and Response lines, Marek's capture line, "Optional branches" with each outcome, and the itemised Preservation Ledger.
+12. **Co-op:** repeat step 1 with two players (P2 joins as usual). Both ride in the pursuit and both carry weapons between rooms.
+13. **Every difficulty:** play a few beats with `&difficulty=hard` and `&difficulty=ultimate`.
+14. **Languages:** switch to 简体中文 and Deutsch in Settings. Beat names, lane signs, branch names, artifacts, the epilogue and the results are translated.
