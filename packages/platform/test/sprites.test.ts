@@ -69,7 +69,9 @@ test('character sheets share one ground line (aerial sheets are drawn in the air
       continue;
     // The twins' sheets were drawn a few pixels higher (Rising Cast stands on 317).
     expect(s.sheet.ground, s.id).toBeGreaterThan(310);
-    expect(s.sheet.ground, s.id).toBeLessThan(370);
+    // River's v3 walk stands lower in its cells (376 of 384); the renderer stands every
+    // sheet on its own ground line, so only feet touching the cell edge would be wrong.
+    expect(s.sheet.ground, s.id).toBeLessThan(380);
   }
 });
 
@@ -129,4 +131,34 @@ test('an armed founder stands with the staff; loose weapons show their condition
   const wheel = spawnItem(w, weaponIndex('handwheel'), f.x, f.z);
   wheel.state = ItemState.Flying;
   expect([1, 2, 3]).toContain(pick.item(wheel, 5)!.cell);
+});
+
+test('an armed founder steps while walking instead of sliding on one cell', () => {
+  const w = createWorld(1);
+  const f = heroOf(w, 0)!;
+  claim(w, f, spawnItem(w, weaponIndex('workstaff'), f.x, f.z));
+  f.state = MoveState.Walk;
+  // Mountain has a drawn staff walk cycle.
+  const cells = new Set([0, 6, 12, 18, 24, 30].map((t) => pick.fighter(f, t)!.cell));
+  expect(pick.fighter(f, 0)!.sheet).toBe('hero.mountain.sheet.staff-walk');
+  expect(cells.size).toBe(6);
+  // River too.
+  const rw = createWorld(1, { heroes: ['river', 'mountain'] });
+  const r = heroOf(rw, 0)!;
+  claim(rw, r, spawnItem(rw, weaponIndex('workstaff'), r.x, r.z));
+  r.state = MoveState.Walk;
+  expect(pick.fighter(r, 0)!.sheet).toBe('hero.river.sheet.staff-walk');
+});
+
+test('weapon sheets are drawn at the same figure size as the idle sheet', () => {
+  // The founders' staff sheets were drawn about 12 % smaller than their idle sheets.
+  const size = (id: string) => reg.sheet(id)!.sheet.scale ?? 1;
+  expect(size('hero.mountain.sheet.staff-a')).toBeGreaterThan(1.1);
+  expect(size('hero.mountain.sheet.staff-b')).toBeGreaterThan(1.1);
+  expect(size('hero.river.sheet.walk')).toBeLessThan(0.9);
+  for (const s of reg.sheets()) {
+    const k = s.sheet.scale ?? 1;
+    expect(k, s.id).toBeGreaterThan(0.8);
+    expect(k, s.id).toBeLessThan(1.2);
+  }
 });

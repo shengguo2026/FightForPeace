@@ -345,8 +345,14 @@ export class SpritePicker {
         if (wheel && meta('handwheel')) return s('handwheel', 0);
         return s('idle', loop(meta('idle'), frame, 6));
       case MoveState.Walk:
-        if (staff && meta('staff-a')) return s('staff-a', 1);
-        if (wheel && meta('handwheel')) return s('handwheel', 0);
+        // Armed walk cycles where delivered; otherwise step between the staff ready stance
+        // and its mid-stride cell, and shift the handwheel carry between its two stances.
+        if (staff && meta('staff-walk'))
+          return s('staff-walk', loop(meta('staff-walk'), frame, 10));
+        if (wheel && meta('handwheel-walk'))
+          return s('handwheel-walk', loop(meta('handwheel-walk'), frame, 10));
+        if (staff && meta('staff-a')) return s('staff-a', loop(undefined, frame, 5, [0, 1]));
+        if (wheel && meta('handwheel')) return s('handwheel', loop(undefined, frame, 5, [0, 3]));
         return s('walk', loop(meta('walk'), frame, 10));
       case MoveState.Dash:
         return s('dash', f.stateFrame < 3 ? 0 : 1 + (Math.floor(f.stateFrame / 5) % 2));
@@ -444,7 +450,10 @@ export class SpritePicker {
       // Phase transition: the PHASE sheet plays through once over the shift.
       const meta = this.has(`${base}.phase`);
       const last = meta ? Math.max(0, filled(meta).length - 1) : 5;
-      const n = Math.min(last, Math.floor(((boss.shiftFrames - boss.shift) * (last + 1)) / boss.shiftFrames));
+      const n = Math.min(
+        last,
+        Math.floor(((boss.shiftFrames - boss.shift) * (last + 1)) / boss.shiftFrames),
+      );
       return s('phase', Math.max(0, n)) ?? s(idle.sheet, 0);
     }
     if (isBoss && (boss.capture ?? 0) > 0 && f.state === MoveState.Surrender) {

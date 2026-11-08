@@ -500,6 +500,9 @@ export class StageScene extends Phaser.Scene {
     sp.setTexture(pick.sheet, pick.cell);
     sp.setFlipX(pick.drawnLeft ? f.facing === 1 : f.facing === -1);
     sp.setOrigin(0.5, meta.ground / meta.cell);
+    // Sheets drawn at another figure size are corrected so the hero keeps one size.
+    const scale = meta.scale ?? 1;
+    sp.setScale(scale);
     sp.setPosition(p.x, p.z - p.y);
     sp.setDepth(this.depthAt(p.z));
     sp.setAlpha(f.protectedRecovery ? 0.55 : f.state === MoveState.Dash ? 0.85 : 1);
@@ -519,7 +522,7 @@ export class StageScene extends Phaser.Scene {
       else sp.clearTint();
     }
     const cell = meta.cells[pick.cell];
-    const head = cell ? meta.ground - cell.y0 : BODY_H;
+    const head = cell ? (meta.ground - cell.y0) * scale : BODY_H;
     if (f.state === MoveState.Down) return p.z - 90;
     return p.z - p.y - Math.max(head, 140);
   }

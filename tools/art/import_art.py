@@ -41,6 +41,11 @@ WEBP_QUALITY = 88
 APPROVED = {
     "HERO-RIV-STAFF-B": "HERO-RIV-STAFF-B_v2.png",
     "ENM-LOOKOUT-REACT": "ENM-LOOKOUT-REACT_v2.png",
+    # Full two-step walk cycles (v1 repeated half a cycle, so the limbs never swapped).
+    "HERO-MTN-WALK": "HERO-MTN-WALK_v2.png",
+    "HERO-WND-WALK": "HERO-WND-WALK_v2.png",
+    "HERO-FIR-WALK": "HERO-FIR-WALK_v2.png",
+    "HERO-RIV-WALK": "HERO-RIV-WALK_v3.png",
 }
 
 HEROES = {
@@ -51,7 +56,7 @@ HEROES = {
     "fire": ("heroes/fire", "HERO-FIR"),
 }
 # Sheets a hero may lack without it being reported (the twins have no Stage 1 weapon sheets).
-OPTIONAL_COMMON = {"staff-a", "staff-b", "handwheel"}
+OPTIONAL_COMMON = {"staff-a", "staff-b", "handwheel", "staff-walk", "handwheel-walk"}
 
 # Movement and reaction sheets every founder has (logical id suffix -> sheet name suffix).
 HERO_COMMON = {
@@ -68,6 +73,10 @@ HERO_COMMON = {
     "staff-a": "STAFF-A",
     "staff-b": "STAFF-B",
     "handwheel": "HANDWHEEL",
+    # Armed walk cycles (codex_redo_walk_cycles.md); until delivered, armed walking steps
+    # between two cells of the weapon sheet.
+    "staff-walk": "STAFF-WALK",
+    "handwheel-walk": "HANDWHEEL-WALK",
     # M16: every hero's shared Team Attack sheet (Confluence Strike).
     "team-attack": "TEAM-ATTACK",
 }
@@ -216,6 +225,31 @@ def refit(img: Image.Image, scale: float) -> Image.Image:
     return out
 
 
+# Sheets whose figure was drawn at another size than the hero's idle sheet: the draw scale
+# the renderer applies so a hero keeps one size across poses (measured by eye against the
+# idle sheet, head and shoulders over a common foot line). Wind and Fire are consistent.
+SHEET_SCALE = {
+    "mountain-staff-a": 1.13,
+    "mountain-staff-b": 1.13,
+    "mountain-handwheel": 1.04,
+    "mountain-guard": 0.88,
+    "mountain-exact-counter": 0.88,
+    "mountain-breaker-pickup": 0.88,
+    "mountain-hurt": 0.88,
+    "mountain-grab-throw": 0.92,
+    "mountain-dash": 0.92,
+    "mountain-team-attack": 0.95,
+    "mountain-walk": 0.95,
+    "fire-walk": 0.9,
+    "mountain-staff-walk": 0.92,
+    "mountain-handwheel-walk": 0.86,
+    "river-staff-walk": 0.88,
+    "river-handwheel-walk": 0.88,
+    "river-walk": 0.88,
+    "river-handwheel": 0.95,
+}
+
+
 def convert(src: Path, name: str) -> dict:
     img = Image.open(src).convert("RGBA")
     if img.size != (1536, 1024):
@@ -231,10 +265,10 @@ def convert(src: Path, name: str) -> dict:
     # The sheet's ground line: the median foot. Standing cells sit on it; jumps and
     # launches keep the lift they were drawn with.
     ground = feet[len(feet) // 2] if feet else CELL
-    return {
-        "url": f"art/{name}.webp",
-        "sheet": {"cols": COLS, "rows": ROWS, "cell": CELL, "ground": ground, "cells": cells},
-    }
+    sheet = {"cols": COLS, "rows": ROWS, "cell": CELL, "ground": ground, "cells": cells}
+    if name in SHEET_SCALE:
+        sheet["scale"] = SHEET_SCALE[name]
+    return {"url": f"art/{name}.webp", "sheet": sheet}
 
 
 def convert_layer(src: Path, name: str, tiled: bool) -> dict:
