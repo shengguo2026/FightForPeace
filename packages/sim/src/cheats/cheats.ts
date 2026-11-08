@@ -50,8 +50,8 @@ export const CHEATS: readonly CheatDef[] = [
   def('BRIGHTSPIRIT', 'hero'),
   def('STRONGHANDS', 'hero'),
   def('TRUSTYTOOLS', 'hero'),
-  // Mounted Stability and protected objectives arrive with later stages.
-  def('STEADYRIDE', 'hero', [], false),
+  // M17: mounted Stability (the bike pursuit). Protected objectives arrive later.
+  def('STEADYRIDE', 'hero'),
   def('QUIETCROWD', 'session'),
   def('FULLPANTRY', 'session'),
   def('HOMECOMING', 'session'),

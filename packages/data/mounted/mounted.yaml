@@ -1,0 +1,469 @@
+# M17 mounted system: the civil-protection bike, the Road Rider, the four heroes' mounted
+# kits and the greybox Guided Pursuit Corridor.
+#
+# Sources: Stage 2 spec §8, §11, §15; stage2_feature_story_line.md §10 (motorbike), the
+# twins' and the Road Rider's decision entries; Features_Decisions.md §7.4 and §13
+# (founders' mounted kits, 2026-10-25).
+#
+# Units: frames at 60 Hz and pixels (speeds in pixels per frame). Every number is a Combat
+# Lab Candidate value (spec Appendix B, E); names and slots are confirmed.
+
+# One mechanically equivalent bike per active hero (no hidden per-hero vehicle stats).
+bike:
+  id: civil-bike
+  name: Civil-Protection Bike
+  # Identification variants, one per player slot (one shared art package).
+  plates: [CP-07, CP-12]
+  speed: { base: 8, min: 5, max: 11, accel: 0.2, brake: 0.35 }
+  # Steering across road depth (pixels per frame) and the soft-lane pull with no vertical
+  # input (stronger with optional steering assistance).
+  steer: 6
+  laneDrift: 1
+  assistDrift: 3
+  stability: 100
+  # A short damage-free interval, then Stability returns a little at a time.
+  recover: { delay: 150, every: 6, amount: 1 }
+  # Steering wobble after a hit or an impact (steering is halved).
+  wobble: 18
+  # Obstacle impact: Stability loss (no Health) and the push out of the obstacle.
+  impact: { barrier: 20, gate: 25, push: 60 }
+  # Controlled skid after a crash, then protected recovery after any recovery.
+  crash: 60
+  protect: 120
+  # Co-op rescue: one clearly telegraphed window; the partner rides alongside and presses
+  # Team Attack. Success restores limited Stability.
+  rescue: { window: 180, x: 220, z: 140, restore: 40 }
+  # Shared-camera tether: beyond `soft` the leader slows and the trailer is assisted;
+  # the leader can never open the gap beyond `hard` (no teleport in normal play).
+  tether: { soft: 600, hard: 1000, slow: 3, assist: 2 }
+  # Hops: a plain hop, the long ramp hop, and the lane shift with a direction held.
+  hop: { frames: 28, height: 70, rampFrames: 44, rampHeight: 120, shift: 110, shiftFrames: 14 }
+
+# Road Rider: the Lane-Pressure Pursuer. Rider-delivered attacks only; no ramming.
+roadRider:
+  id: road-rider
+  name: Road Rider
+  health: 240
+  stability: 100
+  recover: { delay: 240, every: 8, amount: 1 }
+  # Warned entry inside the visibility zone: no commitment during this time.
+  warn: 60
+  # Approach: catch-up speed relative to the target and steering.
+  catchUp: 3
+  steer: 4
+  # Frames alongside before a commitment.
+  settle: 40
+  crash: 50
+  # Every `brace`-th hero hit while it approaches is braced (half Stability loss).
+  braceShare: 50
+  # Breakaway (authored exit) after this many committed sequences.
+  breakaway: 3
+  actions:
+    - id: parallel-check
+      name: Parallel Check
+      kind: check
+      windup: 20
+      active: 4
+      recovery: 20
+      reach: { x: 130, z: 100 }
+      damage: 25
+      stability: 22
+    - id: passing-boot
+      name: Passing Boot
+      kind: boot
+      windup: 26
+      active: 6
+      recovery: 30
+      reach: { x: 150, z: 190 }
+      damage: 30
+      stability: 28
+    - id: cutoff-line
+      name: Cutoff Line
+      kind: cutoff
+      windup: 40
+      active: 90
+      recovery: 0
+      reach: { x: 260, z: 0 }
+      damage: 0
+      stability: 0
+    - id: brake-fade
+      name: Brake-Fade
+      kind: fade
+      windup: 0
+      active: 60
+      recovery: 0
+      reach: { x: 300, z: 0 }
+      damage: 0
+      stability: 0
+    - id: rider-brace
+      name: Rider Brace
+      kind: brace
+      windup: 0
+      active: 20
+      recovery: 0
+      reach: { x: 0, z: 0 }
+      damage: 0
+      stability: 0
+    - id: breakaway
+      name: Breakaway
+      kind: breakaway
+      windup: 0
+      active: 120
+      recovery: 0
+      reach: { x: 0, z: 0 }
+      damage: 0
+      stability: 0
+
+# Difficulty may tune Stability damage, recovery and formations; it never removes the
+# low-Stability warning or the co-op rescue window, and never shortens warnings.
+difficulty:
+  easy: { riderStability: 70, damage: 70, windup: 10, committed: 1, brace: 0 }
+  medium: { riderStability: 100, damage: 100, windup: 0, committed: 1, brace: 4 }
+  hard: { riderStability: 120, damage: 110, windup: 0, committed: 2, brace: 3 }
+  extreme: { riderStability: 130, damage: 120, windup: 0, committed: 2, brace: 3 }
+  ultimate: { riderStability: 140, damage: 130, windup: 0, committed: 2, brace: 2 }
+
+# Compact mounted identity kits (same slots for every hero): neutral T, directional T,
+# Jump hop, G lean, U Special, H Ultimate (full Attack Bar). Reach boxes: `x` along the
+# road, `z` across it; directional kicks reach into the neighbouring lane (`near`..`far`
+# across the road on the held side). `miss`: steering penalty after a whiff.
+heroes:
+  mountain:
+    - {
+        id: masons-reach,
+        name: "Mason's Reach",
+        slot: neutral,
+        startup: 7,
+        active: 4,
+        recovery: 14,
+        reach: { x: 140, z: 110 },
+        damage: 45,
+        stability: 30,
+        meter: 60,
+      }
+    - {
+        id: bank-sweep-kick,
+        name: Bank-Sweep Kick,
+        slot: directional,
+        startup: 10,
+        active: 5,
+        recovery: 20,
+        reach: { x: 150, near: 50, far: 200 },
+        damage: 50,
+        stability: 36,
+        meter: 70,
+        miss: 36,
+      }
+    - {
+        id: stone-step-hop,
+        name: Stone-Step Hop,
+        slot: hop,
+        startup: 0,
+        active: 0,
+        recovery: 4,
+        evade: { from: 3, to: 12 },
+      }
+    - {
+        id: anchor-lean,
+        name: Anchor Lean,
+        slot: lean,
+        startup: 0,
+        active: 12,
+        recovery: 14,
+        evade: { from: 1, to: 12 },
+        restore: 16,
+      }
+    - {
+        id: rampart-escort,
+        name: Rampart Escort,
+        slot: special,
+        startup: 16,
+        active: 6,
+        recovery: 22,
+        reach: { x: 160, z: 110 },
+        damage: 50,
+        stability: 34,
+        meter: 60,
+        seek: partner,
+        guard: 120,
+      }
+    - {
+        id: open-gate-convoy,
+        name: Open Gate Convoy,
+        slot: ultimate,
+        startup: 20,
+        active: 24,
+        recovery: 16,
+        radius: 760,
+        damage: 90,
+        stability: 70,
+        guard: 180,
+        evade: { from: 1, to: 60 },
+      }
+  river:
+    - {
+        id: reed-tap-pass,
+        name: Reed-Tap Pass,
+        slot: neutral,
+        startup: 5,
+        active: 3,
+        recovery: 11,
+        reach: { x: 130, z: 105 },
+        damage: 32,
+        stability: 24,
+        meter: 55,
+      }
+    - {
+        id: current-kick,
+        name: Current Kick,
+        slot: directional,
+        startup: 8,
+        active: 5,
+        recovery: 16,
+        reach: { x: 150, near: 50, far: 200 },
+        damage: 40,
+        stability: 30,
+        meter: 65,
+        miss: 28,
+      }
+    - {
+        id: rapids-hop,
+        name: Rapids Hop,
+        slot: hop,
+        startup: 0,
+        active: 0,
+        recovery: 2,
+        evade: { from: 2, to: 13 },
+      }
+    - {
+        id: eddy-lean,
+        name: Eddy Lean,
+        slot: lean,
+        startup: 0,
+        active: 13,
+        recovery: 12,
+        evade: { from: 1, to: 13 },
+        restore: 14,
+      }
+    - {
+        id: riverline-overtake,
+        name: Riverline Overtake,
+        slot: special,
+        startup: 12,
+        active: 8,
+        recovery: 18,
+        reach: { x: 280, z: 105 },
+        damage: 45,
+        stability: 32,
+        meter: 60,
+        seek: ahead,
+        boost: 4,
+      }
+    - {
+        id: floodline-run,
+        name: Floodline Run,
+        slot: ultimate,
+        startup: 16,
+        active: 30,
+        recovery: 14,
+        radius: 820,
+        damage: 85,
+        stability: 70,
+        boost: 3,
+        evade: { from: 1, to: 60 },
+      }
+  wind:
+    - {
+        id: passing-palm,
+        name: Passing Palm,
+        slot: neutral,
+        startup: 5,
+        active: 3,
+        recovery: 10,
+        reach: { x: 130, z: 105 },
+        damage: 30,
+        stability: 24,
+        meter: 55,
+      }
+    - {
+        id: crosswind-kick,
+        name: Crosswind Kick,
+        slot: directional,
+        startup: 8,
+        active: 5,
+        recovery: 16,
+        reach: { x: 150, near: 50, far: 210 },
+        damage: 40,
+        stability: 30,
+        meter: 65,
+        miss: 24,
+      }
+    - {
+        id: wind-lane-hop,
+        name: Wind-Lane Hop,
+        slot: hop,
+        startup: 0,
+        active: 0,
+        recovery: 2,
+        evade: { from: 2, to: 14 },
+      }
+    - {
+        id: crosswind-lean,
+        name: Crosswind Lean,
+        slot: lean,
+        startup: 0,
+        active: 14,
+        recovery: 12,
+        evade: { from: 1, to: 14 },
+        restore: 18,
+      }
+    - {
+        id: guardian-cut-in,
+        name: Guardian Cut-In,
+        slot: special,
+        startup: 12,
+        active: 6,
+        recovery: 18,
+        reach: { x: 160, z: 100 },
+        damage: 40,
+        stability: 34,
+        meter: 60,
+        seek: threat,
+      }
+    - {
+        id: open-road-vigil,
+        name: Open Road Vigil,
+        slot: ultimate,
+        startup: 16,
+        active: 28,
+        recovery: 14,
+        radius: 800,
+        damage: 80,
+        stability: 70,
+        guard: 90,
+        evade: { from: 1, to: 58 },
+      }
+  fire:
+    - {
+        id: road-hammer-elbow,
+        name: Road-Hammer Elbow,
+        slot: neutral,
+        startup: 8,
+        active: 4,
+        recovery: 16,
+        reach: { x: 120, z: 100 },
+        damage: 55,
+        stability: 38,
+        meter: 65,
+      }
+    - {
+        id: passing-heel,
+        name: Passing Heel,
+        slot: directional,
+        startup: 11,
+        active: 5,
+        recovery: 22,
+        reach: { x: 150, near: 50, far: 200 },
+        damage: 60,
+        stability: 44,
+        meter: 75,
+        miss: 44,
+      }
+    - {
+        id: breach-line-hop,
+        name: Breach-Line Hop,
+        slot: hop,
+        startup: 0,
+        active: 0,
+        recovery: 6,
+        evade: { from: 3, to: 11 },
+      }
+    - {
+        id: iron-lean,
+        name: Iron Lean,
+        slot: lean,
+        startup: 0,
+        active: 9,
+        recovery: 18,
+        evade: { from: 1, to: 9 },
+        restore: 12,
+      }
+    - {
+        id: convoy-break,
+        name: Convoy Break,
+        slot: special,
+        startup: 14,
+        active: 6,
+        recovery: 24,
+        reach: { x: 170, z: 110 },
+        damage: 60,
+        stability: 50,
+        meter: 65,
+        seek: threat,
+      }
+    - {
+        id: wardens-passage,
+        name: "Warden's Passage",
+        slot: ultimate,
+        startup: 20,
+        active: 26,
+        recovery: 18,
+        radius: 760,
+        damage: 100,
+        stability: 80,
+        guard: 120,
+        evade: { from: 1, to: 64 },
+      }
+
+# The greybox Guided Pursuit Corridor (Segment 1's teaching pursuit in miniature): the
+# first stretch has no enemies, then obstacles, mounted attacks, Road Riders and rescue
+# are layered. Road edges are control points (top and bottom of the road at `at`).
+corridors:
+  - id: perimeter-pursuit
+    name: Perimeter Pursuit
+    goal: Reach and secure the greenhouse perimeter gate
+    start: 300
+    finish: 29200
+    length: 30400
+    road:
+      - { at: 0, top: 640, bottom: 980 }
+      - { at: 8600, top: 640, bottom: 980 }
+      - { at: 9400, top: 700, bottom: 930 }
+      - { at: 12000, top: 700, bottom: 930 }
+      - { at: 12800, top: 640, bottom: 980 }
+      - { at: 15800, top: 640, bottom: 980 }
+      - { at: 17000, top: 610, bottom: 920 }
+      - { at: 19400, top: 610, bottom: 920 }
+      - { at: 20600, top: 640, bottom: 980 }
+      - { at: 30400, top: 640, bottom: 980 }
+    obstacles:
+      - { at: 2400, z: 810, kind: barrier }
+      - { at: 3600, z: 700, kind: ramp }
+      - { at: 4600, z: 700, kind: barrier }
+      - { at: 4600, z: 920, kind: barrier }
+      - { at: 9300, z: 690, kind: gate }
+      - { at: 9300, z: 940, kind: gate }
+      - { at: 10800, z: 815, kind: barrier }
+      - { at: 15200, z: 925, kind: ramp }
+      - { at: 18200, z: 760, kind: barrier }
+      - { at: 23400, z: 700, kind: barrier }
+      - { at: 23400, z: 810, kind: barrier }
+      - { at: 26800, z: 810, kind: ramp }
+    equipment:
+      - { id: valve, name: Perimeter control valve, at: 13200, side: top }
+      - { id: irrigation, name: Irrigation connection, at: 17800, side: bottom }
+      - { id: signal, name: Emergency signal mast, at: 22000, side: top }
+    checkpoints: [6000, 12000, 18000, 24000]
+    waves:
+      - { at: 5200, min: easy, riders: [{ from: behind, lane: 2 }] }
+      - { at: 7600, min: easy, riders: [{ from: ahead, lane: 0 }] }
+      - { at: 7600, min: medium, riders: [{ from: behind, lane: 2 }] }
+      - { at: 10600, min: easy, target: valve, riders: [{ from: behind, lane: 0 }] }
+      - { at: 14000, min: medium, riders: [{ from: behind, lane: 2 }, { from: ahead, lane: 0 }] }
+      - { at: 14000, min: hard, riders: [{ from: behind, lane: 0 }] }
+      - { at: 15400, min: easy, target: irrigation, riders: [{ from: behind, lane: 2 }] }
+      - { at: 19600, min: easy, target: signal, riders: [{ from: behind, lane: 0 }] }
+      - { at: 21000, min: medium, riders: [{ from: behind, lane: 2 }, { from: ahead, lane: 1 }] }
+      - { at: 21000, min: extreme, riders: [{ from: ahead, lane: 0 }] }
+      - { at: 25200, min: easy, riders: [{ from: ahead, lane: 2 }] }
+      - { at: 25200, min: medium, riders: [{ from: behind, lane: 0 }] }

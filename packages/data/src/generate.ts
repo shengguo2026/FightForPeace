@@ -2013,6 +2013,425 @@ export function loadProgression(
   };
 }
 
+// --- M17 mounted system ---------------------------------------------------------------
+
+const MPx = T.Number({ minimum: 0, maximum: 4000 });
+/** Distance along a corridor (pixels). */
+const Dist = T.Integer({ minimum: 0, maximum: 60000 });
+const MFrames = T.Integer({ minimum: 0, maximum: 600 });
+const Amount = T.Integer({ minimum: 0, maximum: 1000 });
+const Speed = T.Number({ minimum: 0, maximum: 40 });
+const MountedSlot = T.Union([
+  T.Literal('neutral'),
+  T.Literal('directional'),
+  T.Literal('hop'),
+  T.Literal('lean'),
+  T.Literal('special'),
+  T.Literal('ultimate'),
+]);
+const MountedAction = T.Object(
+  {
+    id: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
+    name: T.String({ minLength: 1 }),
+    slot: MountedSlot,
+    startup: MFrames,
+    active: MFrames,
+    recovery: MFrames,
+    reach: T.Optional(
+      T.Object(
+        { x: MPx, z: T.Optional(MPx), near: T.Optional(MPx), far: T.Optional(MPx) },
+        { additionalProperties: false },
+      ),
+    ),
+    damage: T.Optional(Amount),
+    stability: T.Optional(Amount),
+    meter: T.Optional(Amount),
+    miss: T.Optional(MFrames),
+    evade: T.Optional(T.Object({ from: MFrames, to: MFrames }, { additionalProperties: false })),
+    restore: T.Optional(Amount),
+    seek: T.Optional(T.Union([T.Literal('threat'), T.Literal('partner'), T.Literal('ahead')])),
+    guard: T.Optional(MFrames),
+    boost: T.Optional(Speed),
+    radius: T.Optional(MPx),
+  },
+  { additionalProperties: false },
+);
+const RiderActionKind = T.Union([
+  T.Literal('check'),
+  T.Literal('boot'),
+  T.Literal('cutoff'),
+  T.Literal('fade'),
+  T.Literal('brace'),
+  T.Literal('breakaway'),
+]);
+const RiderAction = T.Object(
+  {
+    id: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
+    name: T.String({ minLength: 1 }),
+    kind: RiderActionKind,
+    windup: MFrames,
+    active: MFrames,
+    recovery: MFrames,
+    reach: T.Object({ x: MPx, z: MPx }, { additionalProperties: false }),
+    damage: Amount,
+    stability: Amount,
+  },
+  { additionalProperties: false },
+);
+const Recover = T.Object(
+  { delay: MFrames, every: T.Integer({ minimum: 1, maximum: 60 }), amount: Amount },
+  { additionalProperties: false },
+);
+const MountedDifficulty = T.Object(
+  {
+    riderStability: T.Integer({ minimum: 10, maximum: 400 }),
+    damage: T.Integer({ minimum: 10, maximum: 400 }),
+    windup: MFrames,
+    committed: T.Integer({ minimum: 1, maximum: 4 }),
+    brace: T.Integer({ minimum: 0, maximum: 10 }),
+  },
+  { additionalProperties: false },
+);
+const RoadPoint = T.Object(
+  { at: Dist, top: MPx, bottom: MPx },
+  { additionalProperties: false },
+);
+export const MountedSchema = T.Object(
+  {
+    bike: T.Object(
+      {
+        id: T.String(),
+        name: T.String(),
+        plates: T.Array(T.String({ minLength: 1 }), { minItems: 2, maxItems: 2 }),
+        speed: T.Object(
+          { base: Speed, min: Speed, max: Speed, accel: Speed, brake: Speed },
+          { additionalProperties: false },
+        ),
+        steer: Speed,
+        laneDrift: Speed,
+        assistDrift: Speed,
+        stability: Amount,
+        recover: Recover,
+        wobble: MFrames,
+        impact: T.Object(
+          { barrier: Amount, gate: Amount, push: MPx },
+          { additionalProperties: false },
+        ),
+        crash: MFrames,
+        protect: MFrames,
+        rescue: T.Object(
+          { window: MFrames, x: MPx, z: MPx, restore: Amount },
+          { additionalProperties: false },
+        ),
+        tether: T.Object(
+          { soft: MPx, hard: MPx, slow: Speed, assist: Speed },
+          { additionalProperties: false },
+        ),
+        hop: T.Object(
+          {
+            frames: MFrames,
+            height: MPx,
+            rampFrames: MFrames,
+            rampHeight: MPx,
+            shift: MPx,
+            shiftFrames: MFrames,
+          },
+          { additionalProperties: false },
+        ),
+      },
+      { additionalProperties: false },
+    ),
+    roadRider: T.Object(
+      {
+        id: T.String(),
+        name: T.String(),
+        health: Amount,
+        stability: Amount,
+        recover: Recover,
+        warn: MFrames,
+        catchUp: Speed,
+        steer: Speed,
+        settle: MFrames,
+        crash: MFrames,
+        braceShare: T.Integer({ minimum: 0, maximum: 100 }),
+        breakaway: T.Integer({ minimum: 1, maximum: 20 }),
+        actions: T.Array(RiderAction, { minItems: 6 }),
+      },
+      { additionalProperties: false },
+    ),
+    difficulty: T.Object(
+      {
+        easy: MountedDifficulty,
+        medium: MountedDifficulty,
+        hard: MountedDifficulty,
+        extreme: MountedDifficulty,
+        ultimate: MountedDifficulty,
+      },
+      { additionalProperties: false },
+    ),
+    heroes: T.Record(T.String(), T.Array(MountedAction)),
+    corridors: T.Array(
+      T.Object(
+        {
+          id: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
+          name: T.String({ minLength: 1 }),
+          goal: T.String({ minLength: 1 }),
+          start: Dist,
+          finish: Dist,
+          length: Dist,
+          road: T.Array(RoadPoint, { minItems: 2 }),
+          obstacles: T.Array(
+            T.Object(
+              {
+                at: Dist,
+                z: MPx,
+                kind: T.Union([T.Literal('barrier'), T.Literal('gate'), T.Literal('ramp')]),
+              },
+              { additionalProperties: false },
+            ),
+          ),
+          equipment: T.Array(
+            T.Object(
+              {
+                id: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
+                name: T.String({ minLength: 1 }),
+                at: Dist,
+                side: T.Union([T.Literal('top'), T.Literal('bottom')]),
+              },
+              { additionalProperties: false },
+            ),
+          ),
+          checkpoints: T.Array(Dist),
+          waves: T.Array(
+            T.Object(
+              {
+                at: Dist,
+                min: DifficultyId,
+                target: T.Optional(T.String()),
+                riders: T.Array(
+                  T.Object(
+                    {
+                      from: T.Union([T.Literal('behind'), T.Literal('ahead')]),
+                      lane: T.Integer({ minimum: 0, maximum: 2 }),
+                    },
+                    { additionalProperties: false },
+                  ),
+                  { minItems: 1 },
+                ),
+              },
+              { additionalProperties: false },
+            ),
+          ),
+        },
+        { additionalProperties: false },
+      ),
+      { minItems: 1 },
+    ),
+  },
+  { additionalProperties: false },
+);
+export type MountedYaml = Static<typeof MountedSchema>;
+
+const MOUNTED_SLOTS = ['neutral', 'directional', 'hop', 'lean', 'special', 'ultimate'] as const;
+const SEEK_CODE = { threat: 1, partner: 2, ahead: 3 } as const;
+const RIDER_KIND = { check: 0, boot: 1, cutoff: 2, fade: 3, brace: 4, breakaway: 5 } as const;
+const OBSTACLE_KIND = { barrier: 0, gate: 1, ramp: 2 } as const;
+/** Obstacle half sizes along and across the road (pixels). */
+const OBSTACLE_SIZE = { barrier: [30, 40], gate: [40, 40], ramp: [80, 55] } as const;
+/** Speeds and sub-pixel amounts: pixels (per frame) to fixed point, rounded. */
+const fxs = (v: number) => Math.round(v * FX);
+
+/**
+ * Validates mounted.yaml: every roster hero has exactly the six mounted slots, ids are
+ * unique, road points run forward, waves name known equipment, and the finish lies on
+ * the road. Returns the simulation's MountedDef (fixed point, codes, roster order).
+ */
+export function loadMounted(
+  source: string,
+  heroIds: readonly string[],
+  file = 'mounted.yaml',
+): unknown {
+  const m = validate(MountedSchema, source, file) as MountedYaml;
+  const problems: string[] = [];
+  for (const id of heroIds) {
+    const kit = m.heroes[id];
+    if (!kit) {
+      problems.push(`${file}: hero "${id}" has no mounted kit`);
+      continue;
+    }
+    const slots = kit.map((a) => a.slot);
+    for (const s of MOUNTED_SLOTS)
+      if (slots.filter((x) => x === s).length !== 1)
+        problems.push(`${file}: ${id} needs exactly one "${s}" action`);
+    const ids = new Set<string>();
+    for (const a of kit) {
+      if (ids.has(a.id)) problems.push(`${file}: ${id} repeats "${a.id}"`);
+      ids.add(a.id);
+      if (a.slot === 'directional' && (a.reach?.near === undefined || a.reach.far === undefined))
+        problems.push(`${file}: ${id}/${a.id} needs reach near and far`);
+      if ((a.slot === 'neutral' || a.slot === 'special') && a.reach?.z === undefined)
+        problems.push(`${file}: ${id}/${a.id} needs reach x and z`);
+      if (a.slot === 'ultimate' && a.radius === undefined)
+        problems.push(`${file}: ${id}/${a.id} needs a radius`);
+      if (a.evade && a.evade.from > a.evade.to)
+        problems.push(`${file}: ${id}/${a.id} evade runs backwards`);
+    }
+  }
+  for (const h of Object.keys(m.heroes))
+    if (!heroIds.includes(h)) problems.push(`${file}: unknown hero "${h}"`);
+  for (const k of Object.keys(RIDER_KIND))
+    if (!m.roadRider.actions.some((a) => a.kind === k))
+      problems.push(`${file}: the Road Rider needs a "${k}" action`);
+  for (const c of m.corridors) {
+    for (let i = 1; i < c.road.length; i += 1)
+      if (c.road[i]!.at <= c.road[i - 1]!.at)
+        problems.push(`${file}: ${c.id} road points must run forward`);
+    for (const r of c.road)
+      if (r.bottom - r.top < 200) problems.push(`${file}: ${c.id} road is too narrow at ${r.at}`);
+    if (c.road[c.road.length - 1]!.at < c.length)
+      problems.push(`${file}: ${c.id} road ends before the corridor`);
+    if (!(c.start < c.finish && c.finish < c.length))
+      problems.push(`${file}: ${c.id} needs start < finish < length`);
+    const eq = c.equipment.map((e) => e.id);
+    for (const w of c.waves)
+      if (w.target !== undefined && !eq.includes(w.target))
+        problems.push(`${file}: ${c.id} wave at ${w.at} targets unknown "${w.target}"`);
+    for (let i = 1; i < c.checkpoints.length; i += 1)
+      if (c.checkpoints[i]! <= c.checkpoints[i - 1]!)
+        problems.push(`${file}: ${c.id} checkpoints must run forward`);
+  }
+  if (problems.length > 0) throw new HeroDataError(problems.join('\n'));
+  const b = m.bike;
+  const recover = (r: Static<typeof Recover>) => ({ ...r });
+  return {
+    bike: {
+      id: b.id,
+      name: b.name,
+      plates: [...b.plates],
+      base: fxs(b.speed.base),
+      min: fxs(b.speed.min),
+      max: fxs(b.speed.max),
+      accel: fxs(b.speed.accel),
+      brake: fxs(b.speed.brake),
+      steer: fxs(b.steer),
+      laneDrift: fxs(b.laneDrift),
+      assistDrift: fxs(b.assistDrift),
+      stability: b.stability,
+      recover: recover(b.recover),
+      wobble: b.wobble,
+      impact: { barrier: b.impact.barrier, gate: b.impact.gate, push: fx(b.impact.push) },
+      crash: b.crash,
+      protect: b.protect,
+      rescue: {
+        window: b.rescue.window,
+        x: fx(b.rescue.x),
+        z: fx(b.rescue.z),
+        restore: b.rescue.restore,
+      },
+      tether: {
+        soft: fx(b.tether.soft),
+        hard: fx(b.tether.hard),
+        slow: fxs(b.tether.slow),
+        assist: fxs(b.tether.assist),
+      },
+      hop: {
+        frames: b.hop.frames,
+        height: fx(b.hop.height),
+        rampFrames: b.hop.rampFrames,
+        rampHeight: fx(b.hop.rampHeight),
+        shift: fx(b.hop.shift),
+        shiftFrames: b.hop.shiftFrames,
+      },
+    },
+    rider: {
+      id: m.roadRider.id,
+      name: m.roadRider.name,
+      health: m.roadRider.health,
+      stability: m.roadRider.stability,
+      recover: recover(m.roadRider.recover),
+      warn: m.roadRider.warn,
+      catchUp: fxs(m.roadRider.catchUp),
+      steer: fxs(m.roadRider.steer),
+      settle: m.roadRider.settle,
+      crash: m.roadRider.crash,
+      braceShare: m.roadRider.braceShare,
+      breakaway: m.roadRider.breakaway,
+      actions: m.roadRider.actions.map((a) => ({
+        id: a.id,
+        name: a.name,
+        kind: RIDER_KIND[a.kind],
+        windup: a.windup,
+        active: a.active,
+        recovery: a.recovery,
+        reachX: fx(a.reach.x),
+        reachZ: fx(a.reach.z),
+        damage: a.damage,
+        stability: a.stability,
+      })),
+    },
+    difficulty: DIFFICULTY_ORDER.map((d) => ({ ...m.difficulty[d] })),
+    heroes: heroIds.map((id) =>
+      MOUNTED_SLOTS.map((slot) => {
+        const a = m.heroes[id]!.find((x) => x.slot === slot)!;
+        return {
+          id: a.id,
+          name: a.name,
+          slot: MOUNTED_SLOTS.indexOf(slot),
+          startup: a.startup,
+          active: a.active,
+          recovery: a.recovery,
+          reachX: fx(a.reach?.x ?? 0),
+          reachZ: fx(a.reach?.z ?? 0),
+          near: fx(a.reach?.near ?? 0),
+          far: fx(a.reach?.far ?? 0),
+          damage: a.damage ?? 0,
+          stability: a.stability ?? 0,
+          meter: a.meter ?? 0,
+          miss: a.miss ?? 0,
+          evadeFrom: a.evade?.from ?? 0,
+          evadeTo: a.evade?.to ?? -1,
+          restore: a.restore ?? 0,
+          seek: a.seek ? SEEK_CODE[a.seek] : 0,
+          guard: a.guard ?? 0,
+          boost: fxs(a.boost ?? 0),
+          radius: fx(a.radius ?? 0),
+        };
+      }),
+    ),
+    corridors: m.corridors.map((c) => ({
+      id: c.id,
+      name: c.name,
+      goal: c.goal,
+      start: fx(c.start),
+      finish: fx(c.finish),
+      length: fx(c.length),
+      road: c.road.map((r) => ({ at: fx(r.at), top: fx(r.top), bottom: fx(r.bottom) })),
+      obstacles: c.obstacles.map((o) => ({
+        at: fx(o.at),
+        z: fx(o.z),
+        kind: OBSTACLE_KIND[o.kind],
+        hw: fx(OBSTACLE_SIZE[o.kind][0]),
+        hd: fx(OBSTACLE_SIZE[o.kind][1]),
+      })),
+      equipment: c.equipment.map((e) => ({
+        id: e.id,
+        name: e.name,
+        at: fx(e.at),
+        side: e.side === 'top' ? 0 : 1,
+      })),
+      checkpoints: c.checkpoints.map((x) => fx(x)),
+      waves: c.waves.map((w) => ({
+        at: fx(w.at),
+        min: DIFFICULTY_ORDER.indexOf(w.min),
+        target: w.target === undefined ? -1 : c.equipment.findIndex((e) => e.id === w.target),
+        riders: w.riders.map((r) => ({ from: r.from === 'behind' ? 0 : 1, lane: r.lane })),
+      })),
+    })),
+  };
+}
+
+const MOUNTED_FILE = fileURLToPath(new URL('../mounted/mounted.yaml', import.meta.url));
+
 const PROGRESSION_FILE = fileURLToPath(new URL('../progression/progression.yaml', import.meta.url));
 
 const COOP_FILE = fileURLToPath(new URL('../coop/coop.yaml', import.meta.url));
@@ -2078,6 +2497,7 @@ export function generate(
   coopFile: string | null = COOP_FILE,
   stageFiles: readonly string[] = encounters === ENCOUNTERS_DIR ? stageFileList() : [],
   progressionFile: string | null = encounters === ENCOUNTERS_DIR ? PROGRESSION_FILE : null,
+  mountedFile: string | null = encounters === ENCOUNTERS_DIR ? MOUNTED_FILE : null,
 ): string {
   const load = (f: string, kind: 'hero' | 'enemy') =>
     loadHero(readFileSync(f, 'utf8'), basename(f), kind);
@@ -2145,10 +2565,13 @@ export function generate(
   const coop = coopFile
     ? compileCoop(loadCoop(readFileSync(coopFile, 'utf8'), heroYaml, basename(coopFile)))
     : { preBuffer: 0, handoffs: [], finishers: [], actions: [] };
+  const mounted = mountedFile
+    ? loadMounted(readFileSync(mountedFile, 'utf8'), heroIds, basename(mountedFile))
+    : null;
   return `// GENERATED by packages/data/src/generate.ts from packages/data/heroes/*.yaml,
 // packages/data/enemies/*.yaml, packages/data/weapons/*.yaml,
-// packages/data/encounters/*.yaml, packages/data/stages/*.yaml, packages/data/coop/coop.yaml
-// and packages/data/progression/progression.yaml.
+// packages/data/encounters/*.yaml, packages/data/stages/*.yaml, packages/data/coop/coop.yaml,
+// packages/data/progression/progression.yaml and packages/data/mounted/mounted.yaml.
 // Do not edit by hand:
 // change the YAML and run \`pnpm gen:heroes\`.
 import type {
@@ -2157,6 +2580,7 @@ import type {
   DifficultyDef,
   EnemyProfile,
   HeroDef,
+  MountedDef,
   ProgressionDef,
   StageDef,
   WeaponDef,
@@ -2180,6 +2604,8 @@ export const COOP_DATA: CoopDef = ${JSON.stringify(coop, null, 2)};
 export const STAGE_DATA: readonly StageDef[] = ${JSON.stringify(stages, null, 2)};
 
 export const PROGRESSION_DATA: ProgressionDef = ${JSON.stringify(progression, null, 2)};
+
+export const MOUNTED_DATA: MountedDef | null = ${JSON.stringify(mounted, null, 2)};
 `;
 }
 

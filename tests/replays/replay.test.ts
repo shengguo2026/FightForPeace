@@ -2,6 +2,7 @@ import {
   DefEvent,
   GrabEvent,
   HEROES,
+  PursuitPhase,
   RULES_VERSION,
   type ReplayLog,
   SIM_HZ,
@@ -33,6 +34,8 @@ import pairMountainFireJson from './pair-mountain-fire.json';
 import pairRiverWindJson from './pair-river-wind.json';
 import pairRiverFireJson from './pair-river-fire.json';
 import pairWindFireJson from './pair-wind-fire.json';
+import pursuitFireJson from './pursuit-fire.json';
+import pursuitMountainWindJson from './pursuit-mountain-wind.json';
 import { PAIRS, SCRIPTS } from './scripts';
 
 /** The founders (roster entries 0 and 1); the twins have their own M16 replays. */
@@ -59,7 +62,19 @@ const LOGS: [string, ReplayLog][] = [
   ['pair-river-wind', pairRiverWindJson as ReplayLog],
   ['pair-river-fire', pairRiverFireJson as ReplayLog],
   ['pair-wind-fire', pairWindFireJson as ReplayLog],
+  ['pursuit-fire', pursuitFireJson as ReplayLog],
+  ['pursuit-mountain-wind', pursuitMountainWindJson as ReplayLog],
 ];
+
+test('the pursuit replays ride the corridor to its Response Record, solo and in co-op', () => {
+  for (const log of [pursuitFireJson, pursuitMountainWindJson] as ReplayLog[]) {
+    const world = createWorld(log.seed, log.options);
+    for (const f of log.frames) step(world, f);
+    const p = world.pursuit!;
+    expect(p.phase).toBe(PursuitPhase.Complete);
+    expect(p.record.dismounted).toBeGreaterThan(0);
+  }
+});
 
 /** Plays a log and collects each hero's grab events and every action that connected. */
 function playM5(log: ReplayLog): { events: number[]; connected: Set<string> } {

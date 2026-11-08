@@ -4,6 +4,7 @@ import { M12_EN } from './strings.m12';
 import { M13_EN } from './strings.m13';
 import { M14_EN } from './strings.m14';
 import { M15_EN } from './strings.m15';
+import { M17_EN } from './strings.m17';
 
 /**
  * M10 English base catalogue. Every key here must exist in strings.zh-CN.ts and
@@ -311,6 +312,7 @@ export const EN = {
   ...M13_EN,
   ...M14_EN,
   ...M15_EN,
+  ...M17_EN,
   ...prefixed('prompt.', TEXT),
   ...prefixed('run.', STAGE_TEXT),
   ...prefixed('arena.', ARENA_TEXT),

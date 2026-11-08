@@ -33,6 +33,7 @@ import {
   hurtbox,
   kitOf,
   phaseOf,
+  RiderState,
 } from '@ffp/sim';
 import { profileText } from '../text/en';
 import {
@@ -44,6 +45,7 @@ import {
 } from '@ffp/platform';
 import type { RenderSnapshot } from '../game';
 import { ArenaView } from './arenaView';
+import { PursuitView } from './pursuitView';
 import { EffectsLayer } from './effects';
 import { PresentationTracker } from '@ffp/platform';
 import { playEventSounds } from '../media/sounds';
@@ -160,6 +162,7 @@ export class StageScene extends Phaser.Scene {
   private worldKey = '';
   private inArena = false;
   private readonly arena = new ArenaView(this, this.assets);
+  private readonly pursuit = new PursuitView(this);
   /** M13: presentation events (stable ids) for sound and the effect layers. */
   private readonly tracker = new PresentationTracker();
   private readonly effects = new EffectsLayer(this, this.assets);
@@ -190,6 +193,7 @@ export class StageScene extends Phaser.Scene {
     this.overlay = this.add.graphics();
     this.overlay.setDepth(8);
     this.arena.create();
+    this.pursuit.create();
     this.effects.create();
     this.opts.onReady?.();
   }
@@ -232,7 +236,12 @@ export class StageScene extends Phaser.Scene {
       this.opts.quality?.() ?? 'high',
       snap.run,
     );
-    this.labFloor.setVisible(snap.encounter === null);
+    this.labFloor.setVisible(snap.encounter === null && snap.pursuit === null);
+    if (snap.pursuit) {
+      this.drawPursuit(snap, time);
+      return;
+    }
+    this.pursuit.hide();
     this.boss = this.arena.bossView(snap.encounter);
     this.inArena = snap.encounter !== null;
     this.drawScenery(snap.environment, snap.frame, collision);
@@ -279,6 +288,38 @@ export class StageScene extends Phaser.Scene {
     playEventSounds(events);
     this.effects.update(time, Math.min(50, time - this.lastTime));
     this.lastTime = time;
+    this.updatePopups(time);
+  }
+
+  /**
+   * M17 mounted pursuit: the corridor, bikes and HUD from PursuitView, the camera on the
+   * pursuit's shared view, and each hero's figure seated on its bike.
+   */
+  private drawPursuit(snap: RenderSnapshot, time: number): void {
+    const p = snap.pursuit!;
+    const cam = this.cameras.main;
+    cam.setBounds(0, 0, Math.max(VIEW_WIDTH, snap.stageWidth), VIEW_HEIGHT);
+    cam.setScroll(this.pursuit.camX(p), 0);
+    this.pursuit.draw(p, snap.current, snap.frame, snap.cheatAssisted, snap.infiniteMeter);
+    const keep = new Set<number>();
+    for (const f of snap.current) {
+      if (f.team !== 'hero') continue;
+      const r = p.riders.find((x) => x.slot === f.slot);
+      if (!r || r.state === RiderState.Out) continue;
+      const down = r.state === RiderState.Crash || r.state === RiderState.Downed;
+      const pos = {
+        x: fxToPixels(r.x) - (r.state === RiderState.Done || down ? 110 : 0),
+        z: fxToPixels(r.z) - (r.state === RiderState.Done || down ? 0 : 46),
+        y: fxToPixels(r.y),
+      };
+      if (this.drawSprite(f, pos, snap.frame) !== null) {
+        keep.add(f.id);
+        const sp = this.sprites.get(f.id);
+        sp?.setScale(0.62);
+        sp?.setDepth(2);
+      }
+    }
+    this.dropStale(this.sprites, keep);
     this.updatePopups(time);
   }
 

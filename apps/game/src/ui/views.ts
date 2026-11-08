@@ -51,6 +51,10 @@ import {
   interactionFor,
   isDowned,
   stageResults,
+  CORRIDORS,
+  RIDER_ID_BASE,
+  mountedKit,
+  responseRecord,
 } from '@ffp/sim';
 import {
   ACTION_NAMES,
@@ -851,8 +855,58 @@ function stageLines(session: GameSession): string[] {
   ];
 }
 
+const RIDER_STATE_TEXT = ['riding', 'action', 'skid', 'down: rescue window', 'out', 'dismounted'];
+const ENEMY_STATE_TEXT = [
+  'entering (warned)',
+  'approach',
+  'wind-up',
+  'strike',
+  'recovery',
+  'cutoff',
+  'brake-fade',
+  'crash',
+  'dismounted',
+  'breakaway',
+];
+
+/** M17 Arena panel lines for a mounted pursuit: riders, Road Riders and the record. */
+function pursuitLines(session: GameSession): string[] {
+  const p = session.world.pursuit!;
+  const c = CORRIDORS[p.corridor]!;
+  const r = p.record;
+  const pct = (x: number) => Math.round((100 * (x - c.start)) / (c.finish - c.start));
+  const riders = p.riders.map((x) => {
+    const f = heroOf(session.world, x.slot);
+    const kit = f ? mountedKit(f.hero) : [];
+    const act = x.action >= 0 ? ` · ${kit[x.action]?.name ?? ''}` : '';
+    return `P${x.slot + 1} ${RIDER_STATE_TEXT[x.state] ?? '?'}${act} · ${pct(x.x)}% · Stability ${x.stability}${x.critical ? ' CRITICAL' : ''} · speed ${(x.speed / 256).toFixed(1)}`;
+  });
+  const enemies = p.enemies.map(
+    (e) =>
+      `Road Rider ${e.id - RIDER_ID_BASE + 1}: ${ENEMY_STATE_TEXT[e.state] ?? '?'} · Stability ${e.stability}/${e.maxStability}${e.critical ? ' CRITICAL' : ''} · Health ${e.health}${e.target >= 0 ? ` · on P${e.target + 1}` : e.equipment >= 0 ? ' · on equipment' : ''}`,
+  );
+  const rec = responseRecord(p);
+  const phase = ['riding', 'braking at the gate', 'complete'][p.phase] ?? '?';
+  return [
+    `${c.name} · ${phase} · gate ${p.checkpoint + 1}/${c.checkpoints.length} · time ${clock(r.frames)}${p.assist ? ' · steering assistance' : ''}`,
+    ...riders,
+    `impacts ${r.impacts} · crashes ${r.crashes} · rewinds ${r.rewinds} · rescues ${r.rescues}/${r.rescueChances} · dismounted ${r.dismounted} · broke away ${r.brokeAway} · equipment lost ${r.equipmentLost} · saves ${r.saves} · intercepts ${r.intercepts}`,
+    `record ${rec.lines.map((l) => `${l.id} ${l.grade}`).join(' · ')} · mastery ${rec.mastery ? 'yes' : 'no'}`,
+    ...enemies.slice(0, 6),
+  ];
+}
+
 export function refreshArena(session: GameSession, lab: LabState): void {
   const world = session.world;
+  if (lab.riding.value !== (world.pursuit !== null)) lab.riding.value = world.pursuit !== null;
+  if (world.pursuit) {
+    if (!lab.visible.value && lab.arena.value.running) return;
+    const lines = pursuitLines(session);
+    const prev = lab.arena.value;
+    if (!(prev.running && prev.lines.join('|') === lines.join('|')))
+      lab.arena.value = { running: true, lines };
+    return;
+  }
   const enc = world.encounter;
   if (!enc) {
     if (lab.arena.value.running || lab.arena.value.lines.length === 0)

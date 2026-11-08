@@ -6,6 +6,7 @@ import {
   ENEMY_DATA,
   ENEMY_PROFILES,
   HERO_DATA,
+  MOUNTED_DATA,
   STAGE_DATA,
   WEAPON_DATA,
 } from '../combat/heroes.gen';
@@ -78,6 +79,7 @@ export function rulesHash(): number {
     ARENA_DATA,
     COOP_DATA,
     STAGE_DATA,
+    MOUNTED_DATA,
   ]);
   return rules;
 }

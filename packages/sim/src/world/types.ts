@@ -1,3 +1,4 @@
+import type { Pursuit } from '../mounted/pursuit';
 import type { CheatState } from '../cheats/cheats';
 import type { RngState } from '../math/rng';
 
@@ -933,6 +934,8 @@ export interface World {
   run: StageRun | null;
   /** M11 Elder's Secrets: active cheats and the Cheat-Assisted mark. */
   cheats: CheatState;
+  /** M17 mounted pursuit (null outside a Guided Pursuit Corridor). */
+  pursuit: Pursuit | null;
 }
 
 // --- M9 stage journey --------------------------------------------------------------------

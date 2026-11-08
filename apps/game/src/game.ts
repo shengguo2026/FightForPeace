@@ -30,6 +30,8 @@ import {
   STAGES,
   METER,
   type WorldOptions,
+  type Pursuit,
+  CORRIDORS,
   actionable,
   proxyInput,
   restoreWorld,
@@ -77,6 +79,11 @@ export interface RenderSnapshot {
   coop: CoopState;
   /** M9 stage journey: beat, locks, workers, food, checkpoint and counters (or null). */
   run: StageRun | null;
+  /** M17 mounted pursuit (or null). */
+  pursuit: Pursuit | null;
+  /** M17: the run is Cheat-Assisted; the Lab's infinite Attack Bar is on. */
+  cheatAssisted: boolean;
+  infiniteMeter: boolean;
 }
 
 /**
@@ -198,17 +205,27 @@ export class GameSession {
     arena: string | null,
     difficulty = 'medium',
     beat = 0,
-    extra: Pick<WorldOptions, 'loadouts' | 'cheats' | 'heroes'> = {},
+    extra: Pick<WorldOptions, 'loadouts' | 'cheats' | 'heroes' | 'steeringAssist'> = {},
     seed = this.seed,
   ): void {
     const heroes = [0, 1].map((slot) => heroOf(this.world, slot)?.hero);
     // M9: a stage id starts the stage journey (from `beat` when practising a later beat).
     const stage = arena !== null && STAGES.some((s) => s.id === arena);
+    // M17: a corridor id starts a mounted pursuit with the heroes on stage.
+    const corridor = arena !== null && CORRIDORS.some((c) => c.id === arena);
+    const players = heroes.flatMap((h) => (h === undefined ? [] : [HEROES[h]?.id ?? 'mountain']));
     this.world = stage
       ? createWorld(seed, { stage: arena, difficulty, beat, ...extra })
-      : arena
-        ? createWorld(seed, { arena, difficulty, ...extra })
-        : this.labWorld();
+      : corridor
+        ? createWorld(seed, {
+            pursuit: arena,
+            difficulty,
+            heroes: extra.heroes ?? players,
+            ...extra,
+          })
+        : arena
+          ? createWorld(seed, { arena, difficulty, ...extra })
+          : this.labWorld();
     // The heroes carry over from the previous world unless the caller chose them.
     if (!extra.heroes)
       heroes.forEach((h, slot) => {
@@ -331,6 +348,9 @@ export class GameSession {
       generation: this.generation,
       coop: this.world.coop,
       run: this.world.run,
+      pursuit: this.world.pursuit,
+      cheatAssisted: this.world.cheats.marked,
+      infiniteMeter: this.world.infiniteMeter,
     };
   }
 
