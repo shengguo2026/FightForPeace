@@ -52,6 +52,11 @@ export function dataCatalog(): Record<string, string> {
       out[`${k}.objective`] = b.objective;
       if (b.clue) out[`${k}.clue`] = b.clue.text;
       if (b.evidence) out[`${k}.evidence`] = b.evidence.text;
+      // M20: an optional branch's name and its Museum artifact.
+      if (b.branch) {
+        out[`stage.${s.id}.branch.${b.branch.id}`] = b.branch.name;
+        out[`stage.${s.id}.branch.${b.branch.id}.artifact`] = b.branch.artifactName;
+      }
     }
   }
   // M17 mounted names: each hero's mounted kit, the Road Rider, corridors and equipment.

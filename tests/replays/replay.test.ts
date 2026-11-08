@@ -36,6 +36,9 @@ import pairRiverFireJson from './pair-river-fire.json';
 import pairWindFireJson from './pair-wind-fire.json';
 import pursuitFireJson from './pursuit-fire.json';
 import pursuitMountainWindJson from './pursuit-mountain-wind.json';
+import greenhouseRiverWindJson from './greenhouse-river-wind.json';
+import marekRiverFireJson from './marek-river-fire.json';
+import stage2JourneyJson from './stage2-journey.json';
 import { PAIRS, SCRIPTS } from './scripts';
 
 /** The founders (roster entries 0 and 1); the twins have their own M16 replays. */
@@ -64,7 +67,22 @@ const LOGS: [string, ReplayLog][] = [
   ['pair-wind-fire', pairWindFireJson as ReplayLog],
   ['pursuit-fire', pursuitFireJson as ReplayLog],
   ['pursuit-mountain-wind', pursuitMountainWindJson as ReplayLog],
+  // M20: the M18 and M19 logs are checked too, with the Stage 2 journey's.
+  ['greenhouse-river-wind', greenhouseRiverWindJson as ReplayLog],
+  ['marek-river-fire', marekRiverFireJson as ReplayLog],
+  ['stage2-journey', stage2JourneyJson as ReplayLog],
 ];
+
+test('the Stage 2 journey replay rides the intercept into the Dispatch Yard', () => {
+  const log = stage2JourneyJson as ReplayLog;
+  const world = createWorld(log.seed, log.options);
+  for (const f of log.frames) step(world, f);
+  const run = world.run!;
+  expect(run.response).toHaveLength(1);
+  expect(run.checkpoint?.beat).toBe(12);
+  expect(run.beat).toBe(13);
+  expect(world.encounter?.boss).not.toBeNull();
+});
 
 test('the pursuit replays ride the corridor to its Response Record, solo and in co-op', () => {
   for (const log of [pursuitFireJson, pursuitMountainWindJson] as ReplayLog[]) {

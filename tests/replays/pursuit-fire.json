@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "rulesVersion": "m19",
+  "rulesVersion": "m20",
   "seed": 90,
   "options": {
     "pursuit": "perimeter-pursuit",
@@ -8,7 +8,7 @@
       "fire"
     ]
   },
-  "expectedHash": 3814998278,
+  "expectedHash": 2015618870,
   "frames": [
     [{"moveX":1,"moveZ":0,"pressed":16,"held":16,"dirPressed":0}],
     [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],

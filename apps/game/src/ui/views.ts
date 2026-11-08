@@ -60,6 +60,8 @@ import {
   RIDER_ID_BASE,
   mountedKit,
   responseRecord,
+  type StageResults,
+  lockCount,
 } from '@ffp/sim';
 import {
   ACTION_NAMES,
@@ -815,8 +817,9 @@ export function refreshStage(session: GameSession, lab: LabState): void {
   if (lab.results.value) return;
   const r = stageResults(world)!;
   const st = r.stats;
+  const stage2 = r.stage !== 'stage1';
   const view: ResultsView = {
-    title: t('run.resultsTitle'),
+    title: stage2 ? t('m20.resultsTitle') : t('run.resultsTitle'),
     difficulty:
       difficultyName(DIFFICULTIES[r.difficulty]?.id ?? '') +
       (r.startBeat > 0 ? ` · ${t('run.practice', { n: r.startBeat + 1 })}` : ''),
@@ -838,10 +841,76 @@ export function refreshStage(session: GameSession, lab: LabState): void {
       t('results.line2', { defeated: st.defeated, surrendered: st.surrendered, fled: st.fled }),
       t('results.line3', { damage: st.damageTaken, food: st.food }),
       t('results.line4', { downs: st.downs, revives: st.revives }),
-      t('run.sponsorHook'),
+      ...stage2Lines(r),
+      stage2 ? t('m20.sponsorHook') : t('run.sponsorHook'),
     ],
+    sections: stage2Sections(r),
+    epilogue: r.epilogue.map((k) => dt(`epilogue.${r.stage}.${k}`, k)),
   };
   lab.results.value = view;
+}
+
+/** M20 results lines: Preservation, Civil-Protection Response and Marek's capture. */
+function stage2Lines(r: StageResults): string[] {
+  const out: string[] = [];
+  const p = r.preservation;
+  if (p) {
+    const band = GREENHOUSE!.grades.find((g) => g.id === p.grade);
+    out.push(
+      t('m20.preservation', {
+        grade: dt(`gh.grade.${p.grade}`, band?.name ?? p.grade),
+        n: p.percent,
+      }),
+    );
+  }
+  const res = r.response;
+  if (res) out.push(t('m20.response', { grade: res.grade, n: res.percent, r: res.rewinds }));
+  const c = r.capture;
+  if (c) {
+    const gun = t(`m20.gun.${c.gunLost}` as TextId, { n: c.gunAmmo });
+    const scorch =
+      c.scorch === 0
+        ? t('m20.scorch.0')
+        : c.scorchStops > 0 && c.scorch !== 3
+          ? t('m20.scorch.stopped')
+          : t('m20.scorch.done');
+    out.push(
+      `${t(`m20.capture.${c.route}` as TextId)} · ${t(`m20.intercept.${c.intercept}` as TextId)} · ${gun} · ${scorch}`,
+    );
+  }
+  return out;
+}
+
+/** M20 results sections: the branch outcomes and the itemised Preservation Ledger. */
+function stage2Sections(r: StageResults): { title: string; lines: string[] }[] {
+  const out: { title: string; lines: string[] }[] = [];
+  const def = STAGES.find((s) => s.id === r.stage)!;
+  if (r.branches.length > 0)
+    out.push({
+      title: t('m20.branchesTitle'),
+      lines: r.branches.map((b) => {
+        const key = `stage.${r.stage}.branch.${b.id}`;
+        const name = dt(key, def.beats[b.beat]?.branch?.name ?? b.id);
+        const outcome = t(`m20.outcome.${b.outcome}` as TextId);
+        const artifact =
+          b.outcome === 1
+            ? ` · ${t('m20.artifact', { name: dt(`${key}.artifact`, def.beats[b.beat]?.branch?.artifactName ?? b.artifact) })}`
+            : '';
+        return `${name}: ${outcome}${artifact}`;
+      }),
+    });
+  const p = r.preservation;
+  if (p)
+    out.push({
+      title: t('m20.ledgerTitle'),
+      lines: p.assets.map((a) => {
+        const beat = def.beats[a.beat]!;
+        const room = dt(`stage.${r.stage}.beat.${beat.id}.name`, beat.name);
+        const kind = GREENHOUSE!.ledger[a.kind]!;
+        return `${room} · ${dt(`gh.asset.${kind.id}`, kind.name)} ${a.condition}/${kind.condition} · ${t(`gh.state.${a.state}` as TextId)}`;
+      }),
+    });
+  return out;
 }
 
 /** M9 Arena panel lines for a stage run: beat, phase, locks, continues and checkpoint. */
@@ -855,7 +924,7 @@ function stageLines(session: GameSession): string[] {
   const cp = run.checkpoint ? `beat ${run.checkpoint.beat + 1}` : 'none';
   return [
     `${def.name} · beat ${run.beat + 1}/${def.beats.length} ${beat.name} · ${phase}`,
-    `locks ${run.locksDone}/${beat.locks.length} · continues ${run.continues} (used ${run.continuesUsed}) · checkpoint ${cp}`,
+    `locks ${run.locksDone}/${lockCount(beat)} · continues ${run.continues} (used ${run.continuesUsed}) · checkpoint ${cp}`,
     `workers ${run.stats.workersFreed}/${run.workersTotal} · clues ${run.stats.clues + run.stats.evidence}/${run.cluesTotal} · time ${clock(run.stats.frames)}`,
   ];
 }

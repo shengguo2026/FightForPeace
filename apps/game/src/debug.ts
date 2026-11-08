@@ -26,6 +26,7 @@ import {
   ROOMS,
   ledgerGrade,
   damageAsset,
+  lockCount,
 } from '@ffp/sim';
 import type { QualityGovernor } from '@ffp/platform';
 import type { GameSession } from './game';
@@ -325,7 +326,10 @@ export function installDebugHook(
         beatId: beat.id,
         phase: r.phase,
         locksDone: r.locksDone,
-        locks: beat.locks.length,
+        locks: lockCount(beat),
+        branches: [...r.branches],
+        capture: r.capture ? { ...r.capture } : null,
+        intercept: r.intercept,
         continues: r.continues,
         continuesUsed: r.continuesUsed,
         checkpointBeat: r.checkpoint?.beat ?? -1,

@@ -326,6 +326,12 @@ interface DebugRun {
   beatId: string;
   phase: number;
   locksDone: number;
+  /** M20: each beat's branch outcome (0 skipped, 1 completed, 2 failed). */
+  branches: number[];
+  /** M20: Marek's capture record (route 1 resolve, 2 forced), or null. */
+  capture: { route: number; intercept: number } | null;
+  /** M20: the intercept's outcome carried into the boss room. */
+  intercept: number;
   locks: number;
   continues: number;
   continuesUsed: number;

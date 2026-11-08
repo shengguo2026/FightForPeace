@@ -28791,6 +28791,244 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "stage": true
   },
   {
+    "id": "stage2.perimeter",
+    "name": "Perimeter Pursuit",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 1920,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "stage2.loading-yard",
+    "name": "Loading Yard",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 2400,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "stage2.aquaculture",
+    "name": "Aquaculture Hall",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 2400,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "stage2.aeration-annex",
+    "name": "Emergency Aeration Annex",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 1920,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "stage2.vestibule",
+    "name": "Hygiene Vestibule",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 1920,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "stage2.crop-channels",
+    "name": "Crop Channels",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 2400,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "stage2.seed-bay",
+    "name": "Seed Reserve Bay",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 1920,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "stage2.medicinal-wing",
+    "name": "Medicinal Wing",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 2400,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "stage2.prep-room",
+    "name": "Medicinal Preparation Room",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 1920,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "stage2.filtration",
+    "name": "Filtration Control",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 1920,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "stage2.production-hall",
+    "name": "Production Hall",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 2400,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "stage2.recovery-bay",
+    "name": "Recovery Bay",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 1920,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "stage2.intercept",
+    "name": "Dispatch Bikes",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 1920,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "stage2.dispatch-yard",
+    "name": "Dispatch Yard",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 2400,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
     "id": "greenhouse-test-room-waves",
     "name": "Greenhouse Test Room",
     "area": "mill",
@@ -29489,6 +29727,521 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "substitutions": [],
     "reserve": [],
     "stage": true
+  },
+  {
+    "id": "s2-aquaculture-hall-waves",
+    "name": "Aquaculture Hall",
+    "area": "mill",
+    "backdrop": "layers",
+    "width": 2400,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 1,
+        "enemies": [
+          {
+            "kit": "claimhand",
+            "x": 1250,
+            "z": 780,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "glassrunner",
+            "x": 1450,
+            "z": 920,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "claimhand",
+            "x": 1400,
+            "z": 860,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      },
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "marauder",
+            "x": 2050,
+            "z": 820,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "claimhand",
+            "x": 1900,
+            "z": 940,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "reaver",
+            "x": 2150,
+            "z": 720,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "signalman",
+            "x": 2250,
+            "z": 880,
+            "minDifficulty": 3,
+            "coop": false
+          },
+          {
+            "kit": "glassrunner",
+            "x": 300,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [
+      {
+        "from": "claimhand",
+        "to": "enforcer2",
+        "minDifficulty": 2,
+        "count": 1
+      }
+    ],
+    "reserve": [
+      "glassrunner"
+    ],
+    "stage": true
+  },
+  {
+    "id": "s2-aeration-annex-waves",
+    "name": "Emergency Aeration Annex",
+    "area": "mill",
+    "backdrop": "layers",
+    "width": 1920,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "saboteur",
+            "x": 1500,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "claimhand",
+            "x": 1300,
+            "z": 920,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "glassrunner",
+            "x": 1650,
+            "z": 760,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "claimhand",
+            "x": 1400,
+            "z": 720,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "s2-crop-channels-waves",
+    "name": "Crop Channels",
+    "area": "mill",
+    "backdrop": "layers",
+    "width": 2400,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 1,
+        "enemies": [
+          {
+            "kit": "claimhand",
+            "x": 1300,
+            "z": 780,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "glassrunner",
+            "x": 1500,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "claimhand",
+            "x": 1450,
+            "z": 960,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      },
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "reaver",
+            "x": 2000,
+            "z": 840,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "claimhand",
+            "x": 2100,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "marauder",
+            "x": 2250,
+            "z": 900,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "signalman",
+            "x": 2200,
+            "z": 700,
+            "minDifficulty": 3,
+            "coop": false
+          },
+          {
+            "kit": "glassrunner",
+            "x": 300,
+            "z": 860,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "s2-seed-reserve-bay-waves",
+    "name": "Seed Reserve Bay",
+    "area": "mill",
+    "backdrop": "layers",
+    "width": 1920,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "saboteur",
+            "x": 1450,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "reaver",
+            "x": 1650,
+            "z": 920,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "claimhand",
+            "x": 1300,
+            "z": 720,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "saboteur",
+            "x": 1750,
+            "z": 760,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "claimhand",
+            "x": 1350,
+            "z": 960,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "s2-medicinal-wing-waves",
+    "name": "Medicinal Wing",
+    "area": "mill",
+    "backdrop": "layers",
+    "width": 2400,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 1,
+        "enemies": [
+          {
+            "kit": "claimhand",
+            "x": 1300,
+            "z": 840,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "marauder",
+            "x": 1700,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "claimhand",
+            "x": 1400,
+            "z": 940,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      },
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "glassrunner",
+            "x": 2100,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "claimhand",
+            "x": 2000,
+            "z": 780,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "reaver",
+            "x": 2200,
+            "z": 820,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "signalman",
+            "x": 2250,
+            "z": 700,
+            "minDifficulty": 3,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [
+      {
+        "from": "claimhand",
+        "to": "enforcer2",
+        "minDifficulty": 2,
+        "count": 1
+      }
+    ],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "s2-medicinal-prep-room-waves",
+    "name": "Medicinal Preparation Room",
+    "area": "mill",
+    "backdrop": "layers",
+    "width": 1920,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "claimhand",
+            "x": 1400,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "claimhand",
+            "x": 1550,
+            "z": 940,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "marauder",
+            "x": 1750,
+            "z": 760,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "glassrunner",
+            "x": 300,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true
+  },
+  {
+    "id": "s2-production-hall-waves",
+    "name": "Production Hall",
+    "area": "mill",
+    "backdrop": "layers",
+    "width": 2400,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 1,
+        "enemies": [
+          {
+            "kit": "claimhand",
+            "x": 1300,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "reaver",
+            "x": 1500,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "marauder",
+            "x": 1800,
+            "z": 820,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "claimhand",
+            "x": 1400,
+            "z": 960,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      },
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "saboteur",
+            "x": 2100,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "glassrunner",
+            "x": 2200,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "enforcer2",
+            "x": 2250,
+            "z": 820,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "signalman",
+            "x": 2300,
+            "z": 700,
+            "minDifficulty": 3,
+            "coop": false
+          },
+          {
+            "kit": "claimhand",
+            "x": 300,
+            "z": 880,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [
+      "claimhand",
+      "reaver"
+    ],
+    "stage": true
   }
 ];
 
@@ -29747,7 +30500,11 @@ export const STAGE_DATA: readonly StageDef[] = [
         125,
         150,
         175
-      ]
+      ],
+      "branch": 0,
+      "resolve": 0,
+      "forced": 0,
+      "preservation": 0
     },
     "beats": [
       {
@@ -29786,6 +30543,10 @@ export const STAGE_DATA: readonly StageDef[] = [
         "cache": null,
         "clue": null,
         "evidence": null,
+        "corridor": "",
+        "room": "",
+        "segment": 0,
+        "branch": null,
         "next": [
           1
         ]
@@ -29821,6 +30582,10 @@ export const STAGE_DATA: readonly StageDef[] = [
         "cache": null,
         "clue": null,
         "evidence": null,
+        "corridor": "",
+        "room": "",
+        "segment": 0,
+        "branch": null,
         "next": [
           2
         ]
@@ -29880,6 +30645,10 @@ export const STAGE_DATA: readonly StageDef[] = [
         },
         "clue": null,
         "evidence": null,
+        "corridor": "",
+        "room": "",
+        "segment": 0,
+        "branch": null,
         "next": [
           3
         ]
@@ -29915,6 +30684,10 @@ export const STAGE_DATA: readonly StageDef[] = [
         "cache": null,
         "clue": null,
         "evidence": null,
+        "corridor": "",
+        "room": "",
+        "segment": 0,
+        "branch": null,
         "next": [
           4
         ]
@@ -29948,6 +30721,10 @@ export const STAGE_DATA: readonly StageDef[] = [
           "text": "The canal is bone dry: the water was turned away at the sluice gate upstream."
         },
         "evidence": null,
+        "corridor": "",
+        "room": "",
+        "segment": 0,
+        "branch": null,
         "next": [
           5
         ]
@@ -29983,6 +30760,10 @@ export const STAGE_DATA: readonly StageDef[] = [
         "cache": null,
         "clue": null,
         "evidence": null,
+        "corridor": "",
+        "room": "",
+        "segment": 0,
+        "branch": null,
         "next": [
           6
         ]
@@ -30018,6 +30799,10 @@ export const STAGE_DATA: readonly StageDef[] = [
         "cache": null,
         "clue": null,
         "evidence": null,
+        "corridor": "",
+        "room": "",
+        "segment": 0,
+        "branch": null,
         "next": [
           7
         ]
@@ -30050,7 +30835,559 @@ export const STAGE_DATA: readonly StageDef[] = [
           "z": 690,
           "text": "An iron crate of precisely machined brass gears, unlike any village craft: someone outside is equipping the faction."
         },
+        "corridor": "",
+        "room": "",
+        "segment": 0,
+        "branch": null,
         "next": []
+      }
+    ],
+    "epilogue": []
+  },
+  {
+    "id": "stage2",
+    "name": "Prosperity Under Siege",
+    "continues": [
+      5,
+      3,
+      2,
+      1,
+      0
+    ],
+    "rules": {
+      "reviveFrames": 120,
+      "revivePercent": 40,
+      "rejoinPercent": 30,
+      "continuePercent": 100,
+      "reachX": 150,
+      "reachZ": 70,
+      "workerFrames": 45,
+      "clueFrames": 30,
+      "evidenceFrames": 45,
+      "pickupReachX": 70,
+      "pickupReachZ": 45,
+      "defeatHold": 120,
+      "transition": 40,
+      "exitMargin": 200
+    },
+    "roster": [],
+    "guests": [],
+    "timePar": [
+      1500,
+      2100,
+      2700
+    ],
+    "grade": {
+      "categories": [
+        {
+          "id": "preservation",
+          "measure": "preservation",
+          "weight": 35,
+          "allowance": 3
+        },
+        {
+          "id": "response",
+          "measure": "response",
+          "weight": 20,
+          "allowance": 3
+        },
+        {
+          "id": "continues",
+          "measure": "continues",
+          "weight": 20,
+          "allowance": 3
+        },
+        {
+          "id": "time",
+          "measure": "time",
+          "weight": 25,
+          "allowance": 3
+        }
+      ],
+      "ranks": [
+        90,
+        75,
+        55
+      ],
+      "caps": []
+    },
+    "score": {
+      "surrendered": 150,
+      "defeated": 100,
+      "fled": 50,
+      "worker": 500,
+      "clue": 300,
+      "evidence": 1000,
+      "comboHit": 40,
+      "timeBonus": 5,
+      "continuePenalty": 1000,
+      "branch": 1500,
+      "resolve": 1000,
+      "forced": 500,
+      "preservation": 20,
+      "difficulty": [
+        80,
+        100,
+        125,
+        150,
+        175
+      ]
+    },
+    "beats": [
+      {
+        "id": "perimeter",
+        "name": "Perimeter Pursuit",
+        "area": "courtyard",
+        "backdrop": "layers",
+        "width": 1920,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Ride the service road and stop the raiders before the greenhouse",
+        "base": 27,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "perimeter-pursuit",
+        "room": "",
+        "segment": 1,
+        "branch": null,
+        "next": [
+          1
+        ]
+      },
+      {
+        "id": "loading-yard",
+        "name": "Loading Yard",
+        "area": "courtyard",
+        "backdrop": "layers",
+        "width": 2400,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": true,
+        "objective": "Retake the loading yard at the security gate",
+        "base": 28,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "beat-loading-yard",
+        "segment": 2,
+        "branch": null,
+        "next": [
+          2
+        ]
+      },
+      {
+        "id": "aquaculture",
+        "name": "Aquaculture Hall",
+        "area": "courtyard",
+        "backdrop": "layers",
+        "width": 2400,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Protect the fish and shrimp systems",
+        "base": 29,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "s2-aquaculture-hall",
+        "segment": 2,
+        "branch": null,
+        "next": [
+          3,
+          4
+        ]
+      },
+      {
+        "id": "aeration-annex",
+        "name": "Emergency Aeration Annex",
+        "area": "courtyard",
+        "backdrop": "layers",
+        "width": 1920,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Free the maintenance worker and keep the backup aeration running",
+        "base": 30,
+        "locks": [],
+        "pickups": [],
+        "workers": [
+          {
+            "x": 1500,
+            "z": 700,
+            "look": 0
+          }
+        ],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "s2-aeration-annex",
+        "segment": 2,
+        "branch": {
+          "id": "aeration",
+          "name": "Emergency Aeration Annex",
+          "artifact": "early-aerator-impeller",
+          "artifactName": "Early Aerator Impeller",
+          "workers": true,
+          "clue": false,
+          "assets": [
+            "backup-aeration"
+          ],
+          "keep": 1
+        },
+        "next": [
+          4
+        ]
+      },
+      {
+        "id": "vestibule",
+        "name": "Hygiene Vestibule",
+        "area": "courtyard",
+        "backdrop": "layers",
+        "width": 1920,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": true,
+        "objective": "Seal the vestibule and catch your breath",
+        "base": 31,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "s2-hygiene-vestibule",
+        "segment": 2,
+        "branch": null,
+        "next": [
+          5
+        ]
+      },
+      {
+        "id": "crop-channels",
+        "name": "Crop Channels",
+        "area": "courtyard",
+        "backdrop": "layers",
+        "width": 2400,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Drive the raiders out of the crop channels",
+        "base": 32,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "s2-crop-channels",
+        "segment": 3,
+        "branch": null,
+        "next": [
+          6,
+          7
+        ]
+      },
+      {
+        "id": "seed-bay",
+        "name": "Seed Reserve Bay",
+        "area": "courtyard",
+        "backdrop": "layers",
+        "width": 1920,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Stop the raiders taking the sealed seed reserves",
+        "base": 33,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "s2-seed-reserve-bay",
+        "segment": 3,
+        "branch": {
+          "id": "seed",
+          "name": "Seed Reserve Bay",
+          "artifact": "first-harvest-seed-tin",
+          "artifactName": "First-Harvest Seed Tin",
+          "workers": false,
+          "clue": false,
+          "assets": [
+            "seed-west",
+            "seed-east"
+          ],
+          "keep": 1
+        },
+        "next": [
+          7
+        ]
+      },
+      {
+        "id": "medicinal-wing",
+        "name": "Medicinal Wing",
+        "area": "courtyard",
+        "backdrop": "layers",
+        "width": 2400,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Secure the medicinal-plant wing",
+        "base": 34,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "s2-medicinal-wing",
+        "segment": 3,
+        "branch": null,
+        "next": [
+          8,
+          9
+        ]
+      },
+      {
+        "id": "prep-room",
+        "name": "Medicinal Preparation Room",
+        "area": "courtyard",
+        "backdrop": "layers",
+        "width": 1920,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Free the researcher and recover the provenance ledger",
+        "base": 35,
+        "locks": [],
+        "pickups": [],
+        "workers": [
+          {
+            "x": 1500,
+            "z": 700,
+            "look": 1
+          }
+        ],
+        "pen": null,
+        "cache": null,
+        "clue": {
+          "x": 800,
+          "z": 700,
+          "text": "The provenance ledger: the formula Tomas offered was assembled from the notes of several contributors, a research cooperative among them."
+        },
+        "evidence": null,
+        "corridor": "",
+        "room": "s2-medicinal-prep-room",
+        "segment": 3,
+        "branch": {
+          "id": "medicinal",
+          "name": "Medicinal Preparation Room",
+          "artifact": "medicinal-cooperative-field-card",
+          "artifactName": "Medicinal Cooperative Field Card",
+          "workers": true,
+          "clue": true,
+          "assets": [],
+          "keep": 1
+        },
+        "next": [
+          9
+        ]
+      },
+      {
+        "id": "filtration",
+        "name": "Filtration Control",
+        "area": "courtyard",
+        "backdrop": "layers",
+        "width": 1920,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Stop the Control Breach and secure the filtration",
+        "base": 36,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "beat-filtration",
+        "segment": 3,
+        "branch": null,
+        "next": [
+          10
+        ]
+      },
+      {
+        "id": "production-hall",
+        "name": "Production Hall",
+        "area": "courtyard",
+        "backdrop": "layers",
+        "width": 2400,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": true,
+        "objective": "Break the raiders holding the production hall",
+        "base": 37,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "s2-production-hall",
+        "segment": 4,
+        "branch": null,
+        "next": [
+          11
+        ]
+      },
+      {
+        "id": "recovery-bay",
+        "name": "Recovery Bay",
+        "area": "courtyard",
+        "backdrop": "layers",
+        "width": 1920,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Recover and check your gear before the dispatch yard",
+        "base": 38,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "s2-recovery-bay",
+        "segment": 4,
+        "branch": null,
+        "next": [
+          12
+        ]
+      },
+      {
+        "id": "intercept",
+        "name": "Dispatch Bikes",
+        "area": "courtyard",
+        "backdrop": "layers",
+        "width": 1920,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": true,
+        "objective": "Intercept Marek before he reaches the yard",
+        "base": 39,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "marek-intercept",
+        "room": "",
+        "segment": 4,
+        "branch": null,
+        "next": [
+          13
+        ]
+      },
+      {
+        "id": "dispatch-yard",
+        "name": "Dispatch Yard",
+        "area": "courtyard",
+        "backdrop": "layers",
+        "width": 2400,
+        "heroX": 500,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Capture Marek Vane",
+        "base": 40,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": {
+          "x": 1250,
+          "z": 720,
+          "text": "A weapon crate from Marek's bikes bears the same seal as the brass gears from the sluice, with a related order code: one outside supplier equipped both raids."
+        },
+        "corridor": "",
+        "room": "boss-marek",
+        "segment": 4,
+        "branch": null,
+        "next": []
+      }
+    ],
+    "epilogue": [
+      {
+        "id": "capture",
+        "by": "capture"
+      },
+      {
+        "id": "secured",
+        "by": ""
+      },
+      {
+        "id": "ledger",
+        "by": "categories"
+      },
+      {
+        "id": "formula",
+        "by": ""
+      },
+      {
+        "id": "seal",
+        "by": ""
+      },
+      {
+        "id": "justice",
+        "by": ""
+      },
+      {
+        "id": "branch",
+        "by": "branches"
+      },
+      {
+        "id": "recovery",
+        "by": "preservation"
+      },
+      {
+        "id": "depot",
+        "by": ""
       }
     ]
   }
@@ -31990,6 +33327,24 @@ export const GREENHOUSE_DATA: GreenhouseDef | null = {
       "hw": 11264,
       "hd": 4608,
       "h": 30720
+    },
+    {
+      "id": "seed-reserve",
+      "name": "Seed Reserve",
+      "category": 4,
+      "condition": 80,
+      "damaged": 55,
+      "critical": 25,
+      "weight": 2,
+      "essential": false,
+      "aquatic": false,
+      "circulation": false,
+      "control": true,
+      "repairEvery": 6,
+      "repairAmount": 2,
+      "hw": 12800,
+      "hd": 6144,
+      "h": 15360
     }
   ],
   "rules": {
@@ -32014,8 +33369,8 @@ export const GREENHOUSE_DATA: GreenhouseDef | null = {
       "min": 90
     },
     {
-      "id": "sustained",
-      "name": "Sustained",
+      "id": "secure",
+      "name": "Secure",
       "min": 70
     },
     {
@@ -32024,8 +33379,8 @@ export const GREENHOUSE_DATA: GreenhouseDef | null = {
       "min": 45
     },
     {
-      "id": "damaged",
-      "name": "Damaged",
+      "id": "recovered",
+      "name": "Recovered",
       "min": 0
     }
   ],
@@ -32048,7 +33403,7 @@ export const GREENHOUSE_DATA: GreenhouseDef | null = {
       "id": "greenhouse-test-room",
       "name": "Greenhouse Test Room",
       "width": 1920,
-      "arena": 27,
+      "arena": 41,
       "assets": [
         {
           "id": "bed-west",
@@ -32295,7 +33650,7 @@ export const GREENHOUSE_DATA: GreenhouseDef | null = {
       "id": "trial-claimhand",
       "name": "Stage 2 trial: Claim Hands",
       "width": 1920,
-      "arena": 28,
+      "arena": 42,
       "assets": [
         {
           "id": "bed-west",
@@ -32349,7 +33704,7 @@ export const GREENHOUSE_DATA: GreenhouseDef | null = {
       "id": "trial-glassrunner",
       "name": "Stage 2 trial: Glasshouse Runners",
       "width": 1920,
-      "arena": 29,
+      "arena": 43,
       "assets": [
         {
           "id": "medicinal",
@@ -32410,7 +33765,7 @@ export const GREENHOUSE_DATA: GreenhouseDef | null = {
       "id": "trial-reaver",
       "name": "Stage 2 trial: Cargo Reavers",
       "width": 1920,
-      "arena": 30,
+      "arena": 44,
       "assets": [
         {
           "id": "bed-east",
@@ -32463,7 +33818,7 @@ export const GREENHOUSE_DATA: GreenhouseDef | null = {
       "id": "trial-marauder",
       "name": "Stage 2 trial: Revolver Marauders",
       "width": 1920,
-      "arena": 31,
+      "arena": 45,
       "assets": [
         {
           "id": "bed-west",
@@ -32512,7 +33867,7 @@ export const GREENHOUSE_DATA: GreenhouseDef | null = {
       "id": "trial-saboteur",
       "name": "Stage 2 trial: Systems Saboteur",
       "width": 1920,
-      "arena": 32,
+      "arena": 46,
       "assets": [
         {
           "id": "pump",
@@ -32561,7 +33916,7 @@ export const GREENHOUSE_DATA: GreenhouseDef | null = {
       "id": "trial-rider",
       "name": "Stage 2 trial: Road Riders on foot",
       "width": 1920,
-      "arena": 33,
+      "arena": 47,
       "assets": [
         {
           "id": "bed-west",
@@ -32586,7 +33941,7 @@ export const GREENHOUSE_DATA: GreenhouseDef | null = {
       "id": "trial-enforcer2",
       "name": "Stage 2 trial: Black-Iron Enforcer",
       "width": 1920,
-      "arena": 34,
+      "arena": 48,
       "assets": [
         {
           "id": "pump",
@@ -32623,7 +33978,7 @@ export const GREENHOUSE_DATA: GreenhouseDef | null = {
       "id": "trial-signalman",
       "name": "Stage 2 trial: Jackal Signalman",
       "width": 1920,
-      "arena": 35,
+      "arena": 49,
       "assets": [
         {
           "id": "filtration",
@@ -32666,7 +34021,7 @@ export const GREENHOUSE_DATA: GreenhouseDef | null = {
       "id": "beat-loading-yard",
       "name": "Stage 2 beat: Loading Yard",
       "width": 2400,
-      "arena": 36,
+      "arena": 50,
       "assets": [
         {
           "id": "cargo",
@@ -32734,7 +34089,7 @@ export const GREENHOUSE_DATA: GreenhouseDef | null = {
       "id": "beat-filtration",
       "name": "Stage 2 beat: Filtration Control",
       "width": 1920,
-      "arena": 37,
+      "arena": 51,
       "assets": [
         {
           "id": "filtration",
@@ -32823,7 +34178,7 @@ export const GREENHOUSE_DATA: GreenhouseDef | null = {
       "id": "boss-marek",
       "name": "Dispatch Yard: Marek Vane",
       "width": 2400,
-      "arena": 38,
+      "arena": 52,
       "assets": [
         {
           "id": "cargo",
@@ -32911,6 +34266,520 @@ export const GREENHOUSE_DATA: GreenhouseDef | null = {
           "z": 166400
         }
       ]
+    },
+    {
+      "id": "s2-aquaculture-hall",
+      "name": "Aquaculture Hall",
+      "width": 2400,
+      "arena": 53,
+      "assets": [
+        {
+          "id": "fish",
+          "kind": 3,
+          "x": 281600,
+          "z": 166400
+        },
+        {
+          "id": "shrimp",
+          "kind": 4,
+          "x": 332800,
+          "z": 166400
+        },
+        {
+          "id": "aeration",
+          "kind": 5,
+          "x": 384000,
+          "z": 176640
+        },
+        {
+          "id": "pump",
+          "kind": 6,
+          "x": 448000,
+          "z": 168960
+        }
+      ],
+      "containers": [
+        {
+          "kind": 0,
+          "x": 76800,
+          "z": 250880,
+          "contents": [
+            {
+              "item": 0,
+              "weapon": ""
+            }
+          ]
+        },
+        {
+          "kind": 5,
+          "x": 512000,
+          "z": 250880,
+          "contents": [
+            {
+              "item": -1,
+              "weapon": "six-round-sidearm"
+            },
+            {
+              "item": 3,
+              "weapon": ""
+            }
+          ]
+        }
+      ],
+      "pantry": [
+        {
+          "item": 1,
+          "x": 179200,
+          "z": 230400
+        }
+      ],
+      "shutter": null,
+      "rack": null,
+      "jet": null,
+      "redirect": null,
+      "restraint": null,
+      "grenadier": null,
+      "saboteurGrenade": false,
+      "scorch": -1,
+      "npcs": []
+    },
+    {
+      "id": "s2-aeration-annex",
+      "name": "Emergency Aeration Annex",
+      "width": 1920,
+      "arena": 54,
+      "assets": [
+        {
+          "id": "backup-aeration",
+          "kind": 5,
+          "x": 307200,
+          "z": 176640
+        },
+        {
+          "id": "nursery-tank",
+          "kind": 3,
+          "x": 230400,
+          "z": 166400
+        }
+      ],
+      "containers": [
+        {
+          "kind": 3,
+          "x": 40960,
+          "z": 168960,
+          "contents": [
+            {
+              "item": 2,
+              "weapon": ""
+            }
+          ]
+        }
+      ],
+      "pantry": [],
+      "shutter": null,
+      "rack": null,
+      "jet": null,
+      "redirect": null,
+      "restraint": null,
+      "grenadier": null,
+      "saboteurGrenade": false,
+      "scorch": -1,
+      "npcs": []
+    },
+    {
+      "id": "s2-hygiene-vestibule",
+      "name": "Hygiene Vestibule",
+      "width": 1920,
+      "arena": -1,
+      "assets": [],
+      "containers": [
+        {
+          "kind": 4,
+          "x": 230400,
+          "z": 166400,
+          "contents": [
+            {
+              "item": 1,
+              "weapon": ""
+            }
+          ]
+        }
+      ],
+      "pantry": [
+        {
+          "item": 0,
+          "x": 307200,
+          "z": 230400
+        }
+      ],
+      "shutter": null,
+      "rack": null,
+      "jet": null,
+      "redirect": null,
+      "restraint": null,
+      "grenadier": null,
+      "saboteurGrenade": false,
+      "scorch": -1,
+      "npcs": []
+    },
+    {
+      "id": "s2-crop-channels",
+      "name": "Crop Channels",
+      "width": 2400,
+      "arena": 55,
+      "assets": [
+        {
+          "id": "bed-west",
+          "kind": 0,
+          "x": 194560,
+          "z": 243200
+        },
+        {
+          "id": "bed-east",
+          "kind": 0,
+          "x": 332800,
+          "z": 245760
+        },
+        {
+          "id": "pump",
+          "kind": 6,
+          "x": 486400,
+          "z": 168960
+        },
+        {
+          "id": "seedlings",
+          "kind": 2,
+          "x": 58880,
+          "z": 199680
+        }
+      ],
+      "containers": [
+        {
+          "kind": 3,
+          "x": 128000,
+          "z": 168960,
+          "contents": [
+            {
+              "item": -1,
+              "weapon": "service-lance"
+            }
+          ]
+        },
+        {
+          "kind": 1,
+          "x": 435200,
+          "z": 252160,
+          "contents": [
+            {
+              "item": 3,
+              "weapon": ""
+            }
+          ]
+        }
+      ],
+      "pantry": [],
+      "shutter": null,
+      "rack": {
+        "x": 58880,
+        "z": 199680,
+        "asset": 3,
+        "loose": 20,
+        "topple": 45,
+        "fragment": "support-rail",
+        "fallW": 56320,
+        "fallD": 17920,
+        "fallDamage": 50,
+        "seedlings": 25,
+        "right": 150
+      },
+      "jet": {
+        "x": 220160,
+        "z": 176640,
+        "lanes": [
+          {
+            "x0": 230400,
+            "x1": 588800,
+            "z0": 194560,
+            "z1": 212480
+          },
+          {
+            "x0": 230400,
+            "x1": 588800,
+            "z0": 220160,
+            "z1": 238080
+          }
+        ],
+        "warn": 45,
+        "active": 40,
+        "cooldown": 420,
+        "damage": 30,
+        "push": 2560,
+        "restore": 10
+      },
+      "redirect": {
+        "x": 256000,
+        "z": 179200,
+        "solo": 180,
+        "coop": 60,
+        "restore": 15,
+        "cooldown": 600
+      },
+      "restraint": null,
+      "grenadier": null,
+      "saboteurGrenade": false,
+      "scorch": -1,
+      "npcs": []
+    },
+    {
+      "id": "s2-seed-reserve-bay",
+      "name": "Seed Reserve Bay",
+      "width": 1920,
+      "arena": 56,
+      "assets": [
+        {
+          "id": "seed-west",
+          "kind": 12,
+          "x": 256000,
+          "z": 166400
+        },
+        {
+          "id": "seed-east",
+          "kind": 12,
+          "x": 345600,
+          "z": 166400
+        }
+      ],
+      "containers": [
+        {
+          "kind": 6,
+          "x": 460800,
+          "z": 245760,
+          "contents": [
+            {
+              "item": 1,
+              "weapon": ""
+            }
+          ]
+        }
+      ],
+      "pantry": [],
+      "shutter": null,
+      "rack": null,
+      "jet": null,
+      "redirect": null,
+      "restraint": null,
+      "grenadier": null,
+      "saboteurGrenade": false,
+      "scorch": -1,
+      "npcs": []
+    },
+    {
+      "id": "s2-medicinal-wing",
+      "name": "Medicinal Wing",
+      "width": 2400,
+      "arena": 57,
+      "assets": [
+        {
+          "id": "medicinal-west",
+          "kind": 1,
+          "x": 230400,
+          "z": 247040
+        },
+        {
+          "id": "medicinal-east",
+          "kind": 1,
+          "x": 384000,
+          "z": 247040
+        },
+        {
+          "id": "glazing",
+          "kind": 8,
+          "x": 163840,
+          "z": 161280
+        }
+      ],
+      "containers": [
+        {
+          "kind": 2,
+          "x": 102400,
+          "z": 166400,
+          "contents": [
+            {
+              "item": 2,
+              "weapon": ""
+            }
+          ]
+        }
+      ],
+      "pantry": [
+        {
+          "item": 0,
+          "x": 281600,
+          "z": 194560
+        }
+      ],
+      "shutter": null,
+      "rack": null,
+      "jet": null,
+      "redirect": null,
+      "restraint": null,
+      "grenadier": null,
+      "saboteurGrenade": false,
+      "scorch": -1,
+      "npcs": []
+    },
+    {
+      "id": "s2-medicinal-prep-room",
+      "name": "Medicinal Preparation Room",
+      "width": 1920,
+      "arena": 58,
+      "assets": [
+        {
+          "id": "culture-bed",
+          "kind": 1,
+          "x": 281600,
+          "z": 247040
+        }
+      ],
+      "containers": [
+        {
+          "kind": 2,
+          "x": 153600,
+          "z": 166400,
+          "contents": [
+            {
+              "item": 4,
+              "weapon": ""
+            }
+          ]
+        }
+      ],
+      "pantry": [],
+      "shutter": null,
+      "rack": null,
+      "jet": null,
+      "redirect": null,
+      "restraint": null,
+      "grenadier": null,
+      "saboteurGrenade": false,
+      "scorch": -1,
+      "npcs": []
+    },
+    {
+      "id": "s2-production-hall",
+      "name": "Production Hall",
+      "width": 2400,
+      "arena": 59,
+      "assets": [
+        {
+          "id": "pump",
+          "kind": 6,
+          "x": 435200,
+          "z": 168960
+        },
+        {
+          "id": "cargo",
+          "kind": 10,
+          "x": 281600,
+          "z": 166400
+        }
+      ],
+      "containers": [
+        {
+          "kind": 5,
+          "x": 230400,
+          "z": 250880,
+          "contents": [
+            {
+              "item": -1,
+              "weapon": "six-round-sidearm"
+            },
+            {
+              "item": 0,
+              "weapon": ""
+            }
+          ]
+        }
+      ],
+      "pantry": [],
+      "shutter": null,
+      "rack": null,
+      "jet": null,
+      "redirect": null,
+      "restraint": null,
+      "grenadier": null,
+      "saboteurGrenade": false,
+      "scorch": -1,
+      "npcs": []
+    },
+    {
+      "id": "s2-recovery-bay",
+      "name": "Recovery Bay",
+      "width": 1920,
+      "arena": -1,
+      "assets": [],
+      "containers": [
+        {
+          "kind": 2,
+          "x": 128000,
+          "z": 166400,
+          "contents": [
+            {
+              "item": 1,
+              "weapon": ""
+            }
+          ]
+        },
+        {
+          "kind": 4,
+          "x": 204800,
+          "z": 166400,
+          "contents": [
+            {
+              "item": 2,
+              "weapon": ""
+            }
+          ]
+        },
+        {
+          "kind": 3,
+          "x": 281600,
+          "z": 168960,
+          "contents": [
+            {
+              "item": -1,
+              "weapon": "service-lance"
+            }
+          ]
+        },
+        {
+          "kind": 1,
+          "x": 358400,
+          "z": 252160,
+          "contents": [
+            {
+              "item": 3,
+              "weapon": ""
+            }
+          ]
+        }
+      ],
+      "pantry": [
+        {
+          "item": 0,
+          "x": 230400,
+          "z": 230400
+        }
+      ],
+      "shutter": null,
+      "rack": null,
+      "jet": null,
+      "redirect": null,
+      "restraint": null,
+      "grenadier": null,
+      "saboteurGrenade": false,
+      "scorch": -1,
+      "npcs": []
     }
   ]
 };

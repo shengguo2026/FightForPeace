@@ -247,7 +247,9 @@ export class StageScene extends Phaser.Scene {
       this.opts.quality?.() ?? 'high',
       snap.run,
     );
-    this.labFloor.setVisible(snap.encounter === null && snap.pursuit === null);
+    this.labFloor.setVisible(
+      snap.encounter === null && snap.pursuit === null && snap.greenhouse === null,
+    );
     this.shutterId = snap.greenhouse?.shutterId ?? 0;
     this.arena.setBackdropVisible(snap.greenhouse === null);
     // M18: a greenhouse room draws its own greybox room over the hidden arena's backdrop.
@@ -326,7 +328,14 @@ export class StageScene extends Phaser.Scene {
     const cam = this.cameras.main;
     cam.setBounds(0, 0, Math.max(VIEW_WIDTH, snap.stageWidth), VIEW_HEIGHT);
     cam.setScroll(this.pursuit.camX(p), 0);
-    this.pursuit.draw(p, snap.current, snap.frame, snap.cheatAssisted, snap.infiniteMeter);
+    this.pursuit.draw(
+      p,
+      snap.current,
+      snap.frame,
+      snap.cheatAssisted,
+      snap.infiniteMeter,
+      !!snap.run,
+    );
     const keep = new Set<number>();
     for (const f of snap.current) {
       if (f.team !== 'hero') continue;

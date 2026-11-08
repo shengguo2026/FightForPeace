@@ -12,10 +12,12 @@ import {
   Threat,
   fxToPixels,
   nonCombatant,
+  BranchOutcome,
   RunEvent,
   RunPhase,
   STAGES,
   type StageRun,
+  lockCount,
 } from '@ffp/sim';
 import type { AssetRegistry, BossView, QualityLevel } from '@ffp/platform';
 import { ARENA_TEXT, STAGE_TEXT } from '../text/en';
@@ -95,7 +97,7 @@ interface Layer {
 /** The exit is open (the beat's locks are done and another beat follows). */
 function exitOpenRun(run: StageRun): boolean {
   const beat = STAGES[run.stage]!.beats[run.beat]!;
-  return beat.next.length > 0 && run.locksDone >= beat.locks.length;
+  return beat.next.length > 0 && run.locksDone >= lockCount(beat);
 }
 /**
  * M7 arena presentation: the Stage 1 area backdrop drawn through the asset manifest (four
@@ -119,6 +121,8 @@ export class ArenaView {
   /** Full-screen black for the fade between two beats. */
   private fade!: Phaser.GameObjects.Graphics;
   private warnTexts: Phaser.GameObjects.Text[] = [];
+  /** M20: the two lane signs at a branching exit (in world space, at the exit). */
+  private signs: Phaser.GameObjects.Text[] = [];
   private tags = new Map<number, Phaser.GameObjects.Text>();
   private beeped = new Set<number>();
   private audio: AudioContext | null = null;
@@ -184,6 +188,16 @@ export class ArenaView {
     });
     this.subtitle.setOrigin(0.5, 1).setScrollFactor(0).setDepth(21);
     this.fade = this.scene.add.graphics().setScrollFactor(0).setDepth(30);
+    for (let i = 0; i < 2; i += 1) {
+      const sign = this.scene.add.text(0, 0, '', {
+        ...style,
+        fontSize: '30px',
+        fontStyle: 'bold',
+        color: i === 0 ? '#9fe8a8' : '#ffd166',
+      });
+      sign.setOrigin(1, 0.5).setDepth(21);
+      this.signs.push(sign);
+    }
     for (let i = 0; i < 2; i += 1) {
       const t = this.scene.add.text(0, 0, '', { ...style, fontSize: '30px', color: '#ffb020' });
       t.setScrollFactor(0).setDepth(21);
@@ -313,6 +327,12 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
     } else if (e.kind === RunEvent.RiverRestored && age < 180) {
       banner = S('riverRestored');
       color = '#8fe3ff';
+    } else if (e.kind === RunEvent.EvidenceReady && age < 180) {
+      banner = t('m20.evidenceReady');
+      color = '#ffd166';
+    } else if (e.kind === RunEvent.BranchEnd && age < 150) {
+      banner = t(e.detail === BranchOutcome.Completed ? 'm20.branch.1' : 'm20.branch.2');
+      color = e.detail === BranchOutcome.Completed ? '#7ddc7d' : '#ffb36b';
     } else if (e.kind === RunEvent.BeatStart && age < 120 && run.phase !== RunPhase.Transition) {
       banner = `${S('beat')} ${run.beat + 1} · ${beatName}`;
     } else if (e.kind === RunEvent.LockClear && age < 60) {
@@ -326,12 +346,24 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
     const ahead =
       run.phase === RunPhase.Walk &&
       run.workers.every((w) => w.state !== 0) &&
-      (run.locksDone < beat.locks.length || exitOpenRun(run));
+      (run.locksDone < lockCount(beat) || exitOpenRun(run));
     const blink = Math.floor(frame / 20) % 2 === 0;
     this.go.setText(ahead && blink && banner === '' ? `${S('go')} →` : '');
+    // M20: a two-way exit names both lanes (the optional branch above, the spine below).
+    const signs = ahead && exitOpenRun(run) && beat.next.length === 2;
+    this.signs.forEach((sign, i) => {
+      const next = def.beats[beat.next[i] ?? -1];
+      if (!signs || !next) {
+        sign.setText('');
+        return;
+      }
+      const name = dt(`stage.${def.id}.beat.${next.id}.name`, next.name);
+      sign.setText(t(i === 0 ? 'm20.sign.branch' : 'm20.sign.main', { name }));
+      sign.setPosition(beat.width - 60, i === 0 ? 690 : 900);
+    });
     // The river runs again (placeholder until the ending clips arrive in M13): water
     // flows back into the dry bed on the plate's left side once the Commander yields.
-    if (beat.evidence && run.evidence >= 1) {
+    if (beat.evidence && run.evidence >= 1 && !beat.room) {
       const since = e.kind === RunEvent.RiverRestored ? frame - e.frame : 600;
       const fill = Math.min(1, since / 180);
       const w = this.world;

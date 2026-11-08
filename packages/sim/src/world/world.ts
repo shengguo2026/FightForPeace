@@ -68,6 +68,7 @@ import {
   type Team,
   type World,
   type ComboContext,
+  type RunCheckpoint,
   type RunStats,
   type TrainerSettings,
 } from './types';
@@ -76,7 +77,7 @@ export const DUMMY_HEALTH = 1000;
 export const HERO_HEALTH = 1000;
 
 /** Version of the byte layout written by encodeWorld. Bump on any layout change. */
-export const STATE_FORMAT = 16;
+export const STATE_FORMAT = 17;
 
 /** Walking speeds (fixed point per frame), kept as exports for existing callers. */
 export const WALK_SPEED_X = ON_FOOT.walkX;
@@ -410,7 +411,7 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
       world.cheats.hero = [options.cheats.hero[0] ?? 0, options.cheats.hero[1] ?? 0];
       world.cheats.session = options.cheats.session;
     }
-    setupStage(world, stage, diff, options.beat ?? 0);
+    setupStage(world, stage, diff, options.beat ?? 0, options.steeringAssist ?? false);
     if (options.cheats) {
       setCheats(world, options.cheats.hero, options.cheats.session);
       if (options.cheats.marked && options.cheats.firstBeat !== undefined)
@@ -565,6 +566,9 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
   for (let slot = 0; slot < Math.min(inputs.length, MAX_PLAYERS); slot += 1) {
     if (inputs[slot] && !heroOf(world, slot)) spawnHero(world, slot);
   }
+  // M9 stage flow (locks, exit, transitions, continues) before the encounter steps. M20: it
+  // also runs a stage's corridor beats and may switch between a pursuit and a room here.
+  stepRun(world);
   // M17: a mounted pursuit runs its own corridor step (riders, Road Riders, Stability).
   if (world.pursuit) {
     for (const f of world.bodies) if (f.team === 'hero') applyHeroChoice(world, f);
@@ -579,8 +583,6 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
     world.frame += 1;
     return;
   }
-  // M9 stage flow (locks, exit, transitions, continues) before the encounter steps.
-  stepRun(world);
   stepEncounter(world);
   stepBoss(world);
   // Team Attack: invitations, confirmations and the atomic commit, before anyone moves.
@@ -966,6 +968,51 @@ function encodeRun(w: ByteWriter, world: World): void {
   w.u8(r.event.kind);
   w.i32(r.event.frame);
   w.i32(r.event.detail);
+  // M20: the stage records, the carried weapons and the run's switches.
+  encodeRecords(w, r);
+  w.u8(r.capture ? 1 : 0);
+  if (r.capture) {
+    const c = r.capture;
+    for (const v of [c.route, c.gunLost, c.gunAmmo, c.scorch, c.scorchStops, c.intercept]) w.i32(v);
+  }
+  w.u8(r.assist ? 1 : 0);
+  w.u8(r.resume);
+  w.u8(cp ? 1 : 0);
+  if (cp) encodeRecords(w, cp);
+}
+
+function encodeRecords(
+  w: ByteWriter,
+  r: Pick<RunCheckpoint, 'ledger' | 'response' | 'branches' | 'intercept' | 'carry'>,
+): void {
+  w.u32(r.ledger.length);
+  for (const a of r.ledger) {
+    w.u32(a.beat);
+    w.u32(a.name.length);
+    for (let i = 0; i < a.name.length; i += 1) w.u32(a.name.charCodeAt(i));
+    w.u32(a.kind);
+    w.i32(a.condition);
+    w.u8(a.state);
+  }
+  w.u32(r.response.length);
+  for (const x of r.response) {
+    w.u32(x.beat);
+    w.u32(x.scores.length);
+    for (const v of x.scores) w.i32(v);
+    w.u32(x.rewinds);
+    w.u8(x.mastery ? 1 : 0);
+  }
+  w.u32(r.branches.length);
+  for (const b of r.branches) w.u8(b);
+  w.u8(r.intercept);
+  for (const c of r.carry) {
+    w.u8(c ? 1 : 0);
+    if (c) {
+      w.u32(c.def);
+      w.i32(c.integrity);
+      w.i32(c.ammo);
+    }
+  }
 }
 
 function encodeStats(w: ByteWriter, s: RunStats): void {

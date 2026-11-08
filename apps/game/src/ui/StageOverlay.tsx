@@ -1,5 +1,6 @@
 import { ACHIEVEMENTS, STORE, type Settlement } from '@ffp/platform';
 import { HEROES } from '@ffp/sim';
+import { useState } from 'preact/hooks';
 import { dt, heroName, t, type TextId } from '../text/i18n';
 import { PLAYER_COLORS, PromptText } from './InputPrompt';
 import type { LabState } from './labState';
@@ -136,7 +137,11 @@ export function ResultsOverlay({
   settlement?: () => readonly (Settlement | null)[];
 }) {
   const r = state.results.value;
+  // M20: the layered epilogue's cards come one by one before the results (Next / Skip).
+  const [seen, setSeen] = useState<{ of: unknown; page: number }>({ of: null, page: 0 });
   if (!r || hidden?.()) return null;
+  const page = seen.of === r ? seen.page : 0;
+  const cards = r.epilogue ?? [];
   const toVillage = village?.() ?? false;
   const cont = continuedFrom?.() ?? null;
   const settled = settlement?.() ?? [];
@@ -153,6 +158,35 @@ export function ResultsOverlay({
       {label}
     </button>
   );
+  if (page < cards.length)
+    return (
+      <div
+        data-testid="epilogue"
+        data-shell-screen
+        style={{
+          position: 'absolute',
+          inset: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'rgba(0,0,0,0.75)',
+          font: '22px/1.6 system-ui, sans-serif',
+          color: '#f2f2f2',
+          pointerEvents: 'auto',
+        }}
+      >
+        <div style={{ ...box, padding: '28px 36px', maxWidth: '760px' }}>
+          <div style={{ opacity: 0.7, fontSize: '16px', marginBottom: '10px' }}>
+            {t('m20.epilogue')} · {page + 1}/{cards.length}
+          </div>
+          <div data-testid="epilogue-card" style={{ marginBottom: '20px' }}>
+            {cards[page]}
+          </div>
+          {button(t('m20.next'), 'epilogue-next', () => setSeen({ of: r, page: page + 1 }))}
+          {button(t('m20.skip'), 'epilogue-skip', () => setSeen({ of: r, page: cards.length }))}
+        </div>
+      </div>
+    );
   return (
     <div
       data-testid="results"
@@ -235,6 +269,14 @@ export function ResultsOverlay({
         ) : null}
         {r.lines.map((l) => (
           <div style={{ fontSize: '17px' }}>{l}</div>
+        ))}
+        {(r.sections ?? []).map((sec) => (
+          <div data-testid="results-section" style={{ marginTop: '10px', fontSize: '16px' }}>
+            <div style={{ fontWeight: 'bold' }}>{sec.title}</div>
+            {sec.lines.map((l) => (
+              <div style={{ opacity: 0.9 }}>{l}</div>
+            ))}
+          </div>
         ))}
         {settled.map((s, slot) =>
           s ? <Payout s={s} slot={slot} many={settled.length > 1} /> : null,
