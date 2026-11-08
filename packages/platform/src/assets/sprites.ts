@@ -345,8 +345,12 @@ export class SpritePicker {
         if (wheel && meta('handwheel')) return s('handwheel', 0);
         return s('idle', loop(meta('idle'), frame, 6));
       case MoveState.Walk:
-        // No armed walk cycle is drawn yet: step between the staff ready stance and its
-        // mid-stride cell, and shift the handwheel carry between its two stances.
+        // Armed walk cycles where delivered; otherwise step between the staff ready stance
+        // and its mid-stride cell, and shift the handwheel carry between its two stances.
+        if (staff && meta('staff-walk'))
+          return s('staff-walk', loop(meta('staff-walk'), frame, 10));
+        if (wheel && meta('handwheel-walk'))
+          return s('handwheel-walk', loop(meta('handwheel-walk'), frame, 10));
         if (staff && meta('staff-a')) return s('staff-a', loop(undefined, frame, 5, [0, 1]));
         if (wheel && meta('handwheel')) return s('handwheel', loop(undefined, frame, 5, [0, 3]));
         return s('walk', loop(meta('walk'), frame, 10));

@@ -51,7 +51,7 @@ HEROES = {
     "fire": ("heroes/fire", "HERO-FIR"),
 }
 # Sheets a hero may lack without it being reported (the twins have no Stage 1 weapon sheets).
-OPTIONAL_COMMON = {"staff-a", "staff-b", "handwheel"}
+OPTIONAL_COMMON = {"staff-a", "staff-b", "handwheel", "staff-walk", "handwheel-walk"}
 
 # Movement and reaction sheets every founder has (logical id suffix -> sheet name suffix).
 HERO_COMMON = {
@@ -68,6 +68,10 @@ HERO_COMMON = {
     "staff-a": "STAFF-A",
     "staff-b": "STAFF-B",
     "handwheel": "HANDWHEEL",
+    # Armed walk cycles (codex_redo_walk_cycles.md); until delivered, armed walking steps
+    # between two cells of the weapon sheet.
+    "staff-walk": "STAFF-WALK",
+    "handwheel-walk": "HANDWHEEL-WALK",
     # M16: every hero's shared Team Attack sheet (Confluence Strike).
     "team-attack": "TEAM-ATTACK",
 }

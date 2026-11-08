@@ -985,7 +985,7 @@ Findings from the M7 tests: a hero holding a weapon was drawn smaller than witho
 
 - **Size:** some hero sheets were drawn at another figure size than the hero's idle sheet: Mountain's staff sheets about 12 % smaller, Mountain's guard, counter, breaker, hurt, grab and dash sheets 5–12 % larger, River's walk about 12 % larger. Each such sheet now carries a draw scale so a hero keeps one size across poses. Wind and Fire were already consistent.
 - **Walking with a weapon:** there is no armed walk cycle in the art yet, so an armed hero showed one frozen cell while moving. With the staff the hero now steps between the ready stance and the mid-stride cell; with the handwheel the carry shifts between its two stances. A proper armed walk needs new art (see the thread).
-- **Walking without a weapon** already played the six-cell walk sheet; nothing changed there except River's size.
+- **Walking without a weapon** plays the six-cell walk sheet, but in all four heroes' delivered walk sheets cells 4–6 repeat cells 1–3, so the same leg and arm always lead. That needs redrawn sheets: prompts are in the project files (`art/prompts/codex_redo_walk_cycles.md`, also new armed walk sheets the game picks up automatically).
 
 ### Get and start the build
 
@@ -1006,6 +1006,6 @@ If Vite prints another port than 5173, use that one. Stop the server with `Ctrl+
 2. **Staff size:** note Mountain's head height against the barricade, walk to the staff and pick it up (**J**). Mountain stays the same size holding it. Drop or throw it again (as in your M7 test): still the same size.
 3. **Staff walk:** with the staff, walk left and right (**A**, **D**): the feet alternate between the stance and a step instead of sliding in one pose.
 4. **Handwheel:** pick up the handwheel. Same size as without it; walking shifts the stance.
-5. **Unarmed walk:** drop the weapon and walk: the six-cell walk plays as before.
+5. **Unarmed walk:** drop the weapon and walk: the walk sheet plays as before (the arms and legs still don't swap until the redrawn walk sheets arrive).
 6. **Other poses:** without a weapon, guard (**G**), dash (**D D**), grab the dummy (**J**) and get hit: Mountain keeps one size in every pose.
 7. **River:** press **Num 4** so Player 2 (River) joins. Walk River with the arrow keys: River is the same size walking and standing (before, the walk was visibly larger). River picks up the staff and the handwheel with **Num 3**: same size.
