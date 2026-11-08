@@ -1009,3 +1009,4 @@ If Vite prints another port than 5173, use that one. Stop the server with `Ctrl+
 5. **Unarmed walk:** drop the weapon and walk: the walk sheet plays as before (the arms and legs still don't swap until the redrawn walk sheets arrive).
 6. **Other poses:** without a weapon, guard (**G**), dash (**D D**), grab the dummy (**J**) and get hit: Mountain keeps one size in every pose.
 7. **River:** press **Num 4** so Player 2 (River) joins. Walk River with the arrow keys: River is the same size walking and standing (before, the walk was visibly larger). River picks up the staff and the handwheel with **Num 3**: same size.
+8. **Mountain's new walk (v2 sheet):** without a weapon, walk Mountain left and right. His arms and legs now swap every step (left arm forward with the right leg, then the other way round), and he is the same size walking and standing. The other three heroes still use the old walk until their v2 sheets arrive.
