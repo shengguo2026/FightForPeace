@@ -1,0 +1,60 @@
+# Road Rider on foot (Stage 2 spec §11, story line §9): the dismounted survivor of a mounted
+# pursuit. Where an encounter permits dismounting it arrives knocked down at the room edge
+# with protected recovery, then fights with a reduced Claim Hand moveset (no second
+# complete on-foot identity). No revolvers, grenades or melee weapons on Medium. Isolated,
+# it flees or surrenders. M19 candidates.
+id: rider
+name: Road Rider
+bodyWidth: 68
+actions:
+  - id: claim-jab
+    name: Claim Jab
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 10, active: 3, recovery: 14, blockstun: 12 }
+    hitbox: { x: 20, w: 105, y: 150, h: 100, depth: 32 }
+    damage: 30
+    reaction: { kind: stagger, hitstun: 18, push: 2 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 8 }
+    meter: 0
+    tags: [counterable]
+    convert: { to: bootline-kick }
+
+  - id: bootline-kick
+    name: Bootline Kick
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: 4, recovery: 22, blockstun: 14 }
+    hitbox: { x: 20, w: 130, y: 140, h: 110, depth: 34 }
+    damage: 50
+    reaction: { kind: knockback, hitstun: 22, push: 9 }
+    costs: { stun: 12, scale: 12, guard: 12 }
+    meter: 0
+    tags: [counterable]
+
+  - id: taxing-low-kick
+    name: Taxing Low Kick
+    category: low
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: 3, recovery: 18, blockstun: 12 }
+    hitbox: { x: 15, w: 115, y: 0, h: 70, depth: 30 }
+    damage: 28
+    reaction: { kind: stagger, hitstun: 16, push: 2 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 8 }
+    meter: 0
+    tags: [counterable]
+
+profile:
+  role: pressure
+  health: 200
+  walk: { x: 3, z: 2 }
+  perception: 8
+  ring: 320
+  defense: { tier: basic, guard: { every: 4, of: 1 }, guardHold: 20 }
+  morale: { breakAt: 40, shaken: 60 }
+  weapons: never
+  firearms: false
+  entry: dismount
+  attacks:
+    - { action: claim-jab, threat: 14, cooldown: 90 }
+    - { action: taxing-low-kick, threat: 12, cooldown: 120 }

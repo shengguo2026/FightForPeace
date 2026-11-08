@@ -14,6 +14,7 @@ const SAME_EVERYWHERE = [
   /^system\.via\./,
   /^cheat\.code\./,
   /^title\./,
+  /^(enemy\.marek|m19\.tomas)\.name$/, // M19: people's names (Marek Vane, Tomas Rell)
 ];
 
 /** Words that may stand alone in Chinese or German text (names of formats and products). */

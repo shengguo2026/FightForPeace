@@ -39,6 +39,23 @@ import {
 import { updateTarget, validTarget } from './targeting';
 import { isBoss, staggered } from './boss';
 import { DEFENSE } from '../combat/defense';
+import {
+  aiInput,
+  attackSkipped,
+  completeSpecial,
+  crossfangSpot,
+  grenadeTurn,
+  mayTake,
+  moraleAt,
+  specialInterrupted,
+  spendAmmo,
+  stepOrder,
+  stepSaboteur,
+  stepScorch,
+  tryCall,
+  tryEscort,
+} from './stage2';
+import { Special } from '../world/types';
 
 const NO_INPUT: FrameInput = { moveX: 0, moveZ: 0, pressed: 0, held: 0, dirPressed: 0 };
 
@@ -94,7 +111,7 @@ function walk(f: Fighter, prof: EnemyProfile, sx: Axis, sz: Axis): void {
 }
 
 /** Walks towards (x, z), stopping inside the given tolerances. Returns true when there. */
-function walkTo(
+export function walkTo(
   f: Fighter,
   prof: EnemyProfile,
   x: number,
@@ -110,7 +127,7 @@ function walkTo(
   return sx === 0 && sz === 0;
 }
 
-function face(f: Fighter, x: number): void {
+export function face(f: Fighter, x: number): void {
   if (x !== f.x) f.facing = x > f.x ? 1 : -1;
 }
 
@@ -120,7 +137,7 @@ export function attackList(world: World, f: Fighter): readonly AiAttackDef[] {
   const item = heldItem(world, f);
   if (!item || f.wkit < 0) return base;
   const w = WEAPONS[f.wkit]!;
-  if (isBoss(world, f)) return base;
+  if (isBoss(world, f) || profileOf(f)?.armed) return base;
   const throwId = w.actions.find((a) => a.category === 'weaponThrow')?.id ?? '';
   const throwAttack: AiAttackDef = {
     action: throwId,
@@ -128,6 +145,8 @@ export function attackList(world: World, f: Fighter): readonly AiAttackDef[] {
     cooldown: AI.throwCooldown,
     minDifficulty: 0,
     range: fx(900),
+    minRange: 0,
+    when: 0,
   };
   if (!w.melee) return [...base, throwAttack];
   const core = w.actions
@@ -138,6 +157,8 @@ export function attackList(world: World, f: Fighter): readonly AiAttackDef[] {
       cooldown: AI.armedCooldown,
       minDifficulty: 0,
       range: 0,
+      minRange: 0,
+      when: 0,
     }));
   return [...core, throwAttack];
 }
@@ -168,6 +189,10 @@ export function stepEnemy(world: World, f: Fighter): void {
   const prof = profileOf(f);
   if (!prof) return;
   if (f.threat > 0 && !holdsReservation(f)) release(f);
+  // An interrupted special resolves once the fighter can act again, so its reaction
+  // (Exit Route, Signal Break) can start; the room's locks clear when it leaves.
+  if (f.special !== Special.None && (f.state === MoveState.Idle || f.state === MoveState.Walk))
+    specialInterrupted(world, f);
   if (f.readyAt.length < AI.slots)
     f.readyAt = [...f.readyAt, ...new Array<number>(AI.slots - f.readyAt.length).fill(0)];
   switch (f.state) {
@@ -227,14 +252,20 @@ export function stepEnemy(world: World, f: Fighter): void {
     return;
   }
   const target = updateTarget(world, f);
+  if (grenadeTurn(world, f)) return;
   if (planDefense(world, f, prof)) return;
   if (!target) return;
   if (f.aiMode === AiMode.Warn) {
     stepWarning(world, f, target);
     return;
   }
+  if (stepOrder(world, f, prof, target)) return;
   if (bossObjective(world, f, prof)) return;
+  if (stepScorch(world, f, prof)) return;
   if (seekWeapon(world, f, prof)) return;
+  if (tryCall(world, f, prof, target)) return;
+  if (stepSaboteur(world, f, prof, target)) return;
+  if (tryEscort(world, f, prof, target)) return;
   if (tryGroup(world, f, prof, target)) return;
   if (tryAttack(world, f, prof, target)) return;
   tactical(world, f, prof, target);
@@ -269,7 +300,7 @@ function stepGuard(world: World, f: Fighter): boolean {
   return true;
 }
 
-function raiseGuard(world: World, f: Fighter, toward: Fighter, hold: number, exact: boolean): void {
+export function raiseGuard(world: World, f: Fighter, toward: Fighter, hold: number, exact: boolean): void {
   face(f, toward.x);
   f.vx = 0;
   f.vz = 0;
@@ -315,7 +346,7 @@ function flanked(world: World, f: Fighter): boolean {
  * An attack's cooldown at the selected difficulty: `pace` is the percent of the authored
  * cooldown, so higher difficulties come back sooner and fill the budgets they allow.
  */
-function paced(world: World, cooldown: number): number {
+export function paced(world: World, cooldown: number): number {
   return Math.round((cooldown * difficultyOf(world).pace) / 100);
 }
 
@@ -475,14 +506,17 @@ export function enemyBreaker(world: World, f: Fighter): boolean {
 
 /** Morale (Pressed Recruits): at low health it flees, or surrenders as the last one. */
 function morale(world: World, f: Fighter, prof: EnemyProfile): boolean {
-  if (prof.breakAt <= 0 || f.health * 100 > prof.breakAt * f.maxHealth) return false;
+  const at = moraleAt(world, f, prof);
+  if (at <= 0 || f.health * 100 > at * f.maxHealth) return false;
   const allies = world.bodies.filter(
     (e) => e.team === 'enemy' && e.id !== f.id && !e.ko && !nonCombatant(e),
   ).length;
   release(f);
   if (f.item !== 0) dropItem(world, f);
-  if (allies === 0) enter(f, MoveState.Surrender, 0);
+  // The last one surrenders; a commander (the Signalman) always runs for it.
+  if (allies === 0 && prof.role !== 'commander') enter(f, MoveState.Surrender, 0);
   else enter(f, MoveState.Flee, 0);
+  if (f.order !== 0) f.order = 0;
   f.vx = 0;
   f.vz = 0;
   return true;
@@ -515,8 +549,21 @@ function stepAiAction(world: World, f: Fighter): void {
   const a = kitOf(f)?.actions[f.action];
   f.stateFrame += 1;
   const n = f.stateFrame + 1;
+  // Contact-Confirmed Conversion (M16, enemies in M19): the earned follow-up starts as the
+  // converting action's active frames end, keeping the reservation.
+  if (a && f.convert > 0 && n > a.startup + a.active.reduce((s, x) => s + x, 0)) {
+    const dest = f.convert - 1;
+    const b = kitOf(f)?.actions[dest];
+    if (b) {
+      startAction(f, dest);
+      applyActionMovement(f, b, 1, aiInput(world, f, b), ON_FOOT);
+      return;
+    }
+  }
   if (!a || n > totalFrames(a)) {
-    if (a?.tags.includes('objective')) completeObjective(world, f);
+    if (a && f.special !== Special.None) completeSpecial(world, f, a);
+    else if (a?.tags.includes('command')) completeSpecial(world, f, a);
+    else if (a?.tags.includes('objective')) completeObjective(world, f);
     f.state = MoveState.Idle;
     f.stateFrame = 0;
     f.action = -1;
@@ -527,7 +574,7 @@ function stepAiAction(world: World, f: Fighter): void {
     release(f);
     return;
   }
-  applyActionMovement(f, a, n, NO_INPUT, ON_FOOT);
+  applyActionMovement(f, a, n, aiInput(world, f, a), ON_FOOT);
   if (a.tags.includes('leap')) {
     const span = a.startup + a.active.reduce((s, x) => s + x, 0);
     const t = Math.min(n, span);
@@ -548,7 +595,8 @@ function commit(
   reserve(world, f, a, at.threat, target.id);
   face(f, target.x);
   startAction(f, index);
-  applyActionMovement(f, a, 1, NO_INPUT, ON_FOOT);
+  spendAmmo(world, f, a);
+  applyActionMovement(f, a, 1, aiInput(world, f, a), ON_FOOT);
   f.aiAttack = slot;
   f.aiStep += 1;
   f.readyAt[slot] = world.frame + paced(world, at.cooldown);
@@ -575,9 +623,12 @@ function tryAttack(world: World, f: Fighter, prof: EnemyProfile, target: Fighter
     if (index < 0) continue;
     const a = kitOf(f)!.actions[index]!;
     if (targetBusy(world, target, a)) continue;
+    if (attackSkipped(world, f, at, a)) continue;
     const r = rangeOf(a, at);
     const dx = target.x - f.x;
     const dz = target.z - f.z;
+    // Too close to aim: a minimum-range attack is skipped (the enemy backs off instead).
+    if (at.minRange > 0 && Math.abs(dx) < at.minRange) continue;
     const inRange = Math.abs(dx) <= r.x && Math.abs(dz) <= r.z;
     const offscreen = a.tags.includes('offscreenCapable');
     const verdict = judge(world, f, a, at.threat, target.id);
@@ -627,7 +678,8 @@ function stepWarning(world: World, f: Fighter, target: Fighter): void {
   }
   const a = kitOf(f)!.actions[index]!;
   startAction(f, index);
-  applyActionMovement(f, a, 1, NO_INPUT, ON_FOOT);
+  spendAmmo(world, f, a);
+  applyActionMovement(f, a, 1, aiInput(world, f, a), ON_FOOT);
   f.aiStep += 1;
   f.readyAt[f.aiAttack] = world.frame + paced(world, at.cooldown);
   logDecision(world, f, index, Verdict.Ok);
@@ -734,13 +786,16 @@ function seekWeapon(world: World, f: Fighter, prof: EnemyProfile): boolean {
   if (prof.weapons === 0 || f.item !== 0 || f.threat > 0) return false;
   const phase = bossPhase(world, f);
   const want = phase ? phase.weapon : '';
-  if (prof.weapons === 2 && !want) return false;
+  if (prof.weapons === 2 && !want && !prof.armed) return false;
   let best = null;
   let bestD = 0;
   for (const item of world.items) {
     if (item.state !== ItemState.Ground || !pickupEligible(world, f, item)) continue;
     // M18: the drill's grenade is never an enemy pickup (the Saboteur arrives in M19).
     if (isGrenade(world, item)) continue;
+    // M19: Stage 2 roles never take firearms; a Marauder reclaims only its own sidearm.
+    if (!mayTake(f, prof, item)) continue;
+    if (prof.armed && WEAPONS[item.def]?.id !== prof.armed.weapon) continue;
     if (want && WEAPONS[item.def]?.id !== want) continue;
     const d = Math.abs(item.x - f.x) + Math.abs(item.z - f.z);
     if (prof.weapons === 1 && d > AI.weaponRadius) continue;
@@ -810,7 +865,13 @@ function tactical(world: World, f: Fighter, prof: EnemyProfile, t: Fighter): voi
   const ring = prof.ring;
   let x = t.x + side * ring;
   let z = lane;
-  switch (prof.role) {
+  const cross = crossfangSpot(world, f, t);
+  switch (cross ? 'crossfang' : prof.role) {
+    case 'crossfang':
+      f.aiMode = AiMode.Flank;
+      x = cross!.x;
+      z = cross!.z;
+      break;
     case 'ranged':
       f.aiMode = AiMode.Kite;
       z = t.z;

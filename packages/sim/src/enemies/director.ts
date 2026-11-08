@@ -1,5 +1,5 @@
 import { fx } from '../math/fixed';
-import { type Fighter, MoveState, Threat, Verdict, type World } from '../world/types';
+import { type Fighter, MoveState, Order, Threat, Verdict, type World } from '../world/types';
 import type { ActionDef } from '../combat/types';
 import { routeCodeOf } from '../combat/roster';
 import { difficultyOf, livingHeroes, profileOf } from './data';
@@ -27,6 +27,7 @@ export function threatFlags(a: ActionDef, boss: boolean): number {
   if (a.projectile || a.category === 'weaponThrow') flags |= Threat.Projectile;
   if (a.tags.includes('unblockable')) flags |= Threat.Unblockable;
   if (boss) flags |= Threat.Boss;
+  if (a.tags.includes('warnedLine')) flags |= Threat.Aim;
   return flags;
 }
 
@@ -43,6 +44,8 @@ export interface Usage {
   hardCC: number;
   unblockable: number;
   projectiles: number;
+  /** M19: firearm aims (warned lines) committed. */
+  aims: number;
   group: boolean;
   /** Pressure per hero id. */
   pressure: Map<number, number>;
@@ -57,6 +60,7 @@ export function usage(world: World): Usage {
     hardCC: 0,
     unblockable: 0,
     projectiles: 0,
+    aims: 0,
     group: false,
     pressure: new Map(),
   };
@@ -68,6 +72,7 @@ export function usage(world: World): Usage {
     if (e.threatFlags & Threat.HardCC) u.hardCC += 1;
     if (e.threatFlags & Threat.Unblockable) u.unblockable += 1;
     if (e.threatFlags & Threat.Projectile) u.projectiles += 1;
+    if (e.threatFlags & Threat.Aim) u.aims += 1;
     if (e.threatFlags & Threat.Group) u.group = true;
     u.pressure.set(e.threatTarget, (u.pressure.get(e.threatTarget) ?? 0) + e.threat);
   }
@@ -113,11 +118,12 @@ export function judge(
   cost: number,
   target: number,
   extra = 0,
+  kind = -1,
 ): number {
   const d = difficultyOf(world);
   const co = coopIndex(world);
   const u = usage(world);
-  const flags = threatFlags(a, isBoss(world, e));
+  const flags = kind >= 0 ? kind : threatFlags(a, isBoss(world, e));
   const total = cost + extra;
   if (!visible(world, e) && !a.tags.includes('offscreenCapable')) return Verdict.Hidden;
   if (u.group && extra === 0 && cost >= 26) return Verdict.Group;
@@ -134,6 +140,7 @@ export function judge(
     return Verdict.Projectiles;
   if (flags & Threat.HardCC && u.hardCC + 1 > d.hardCC) return Verdict.HardCC;
   if (flags & Threat.Unblockable && u.unblockable > 0) return Verdict.Unblockable;
+  if (flags & Threat.Aim && u.aims + 1 > d.aims[co]) return Verdict.Aims;
   return Verdict.Ok;
 }
 
@@ -151,10 +158,11 @@ export function reserve(
   a: ActionDef,
   cost: number,
   target: number,
+  kind = -1,
 ): void {
   e.threat = cost;
   e.threatTarget = target;
-  e.threatFlags = threatFlags(a, isBoss(world, e));
+  e.threatFlags = kind >= 0 ? kind : threatFlags(a, isBoss(world, e));
   const enc = world.encounter;
   if (enc) enc.peakCommitted = Math.max(enc.peakCommitted, usage(world).attackers);
 }
@@ -170,5 +178,7 @@ export function release(e: Fighter): void {
 /** States that keep an enemy's reservation alive. */
 export function holdsReservation(e: Fighter): boolean {
   if (e.groupWith !== 0) return true;
+  // M19 Lockstep Escort: the escort's threat stays reserved while it escorts.
+  if (e.order === Order.Escort) return true;
   return e.state === MoveState.Attack || e.state === MoveState.Grabbing;
 }

@@ -1,0 +1,136 @@
+# Cargo Reaver (Stage 2 spec §11, story line §9): the Telegraph-and-Reposition Controller.
+# Load Check (with its hit-confirmed elbow), Brace Shove (broad spacing), Load-Bearing Sweep
+# (a readable low reap) and three telegraphed Dock Clamp grabs, each with the universal
+# single Grab Escape window, partner rescue and re-grab protection on release: Freight Knee
+# (the one brief extension), Aisle Turn (a pivot throw to the hero's other side) and Pallet
+# Drop (a terminal trip-and-drop into protected recovery; no enemy ground combo). Stable
+# normal guard, no armour, Exact Block, Counter or Combo Breaker; empty hands always (Never
+# pickups). Committed raiders: slow to surrender. M19 candidates.
+id: reaver
+name: Cargo Reaver
+bodyWidth: 84
+actions:
+  - id: load-check
+    name: Load Check
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: 3, recovery: 16, blockstun: 12 }
+    hitbox: { x: 20, w: 105, y: 140, h: 110, depth: 32 }
+    damage: 35
+    reaction: { kind: stagger, hitstun: 18, push: 3 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 10 }
+    meter: 0
+    tags: [counterable]
+    convert: { to: load-elbow }
+
+  - id: load-elbow
+    name: Load Check Elbow
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 8, active: 3, recovery: 20, blockstun: 12 }
+    hitbox: { x: 15, w: 100, y: 150, h: 100, depth: 32 }
+    damage: 40
+    reaction: { kind: knockback, hitstun: 20, push: 7 }
+    costs: { stun: 10, scale: 10, guard: 12 }
+    meter: 0
+    tags: [counterable]
+
+  - id: brace-shove
+    name: Brace Shove
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 16, active: 5, recovery: 20, blockstun: 14 }
+    hitbox: { x: 15, w: 120, y: 100, h: 170, depth: 60 }
+    damage: 25
+    reaction: { kind: knockback, hitstun: 20, push: 13 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 12 }
+    meter: 0
+    tags: [counterable]
+
+  - id: load-bearing-sweep
+    name: Load-Bearing Sweep
+    category: low
+    input: { context: script, dir: neutral }
+    frames: { startup: 18, active: 4, recovery: 24, blockstun: 14 }
+    hitbox: { x: 15, w: 125, y: 0, h: 70, depth: 34 }
+    damage: 45
+    reaction: { kind: trip, hitstun: 26, push: 4, lift: 3 }
+    costs: { stun: 14, scale: 12, starter: 10, guard: 14 }
+    meter: 0
+    tags: [counterable]
+
+  - id: dock-clamp
+    name: 'Dock Clamp: Freight Knee'
+    category: grab
+    input: { context: script, dir: neutral }
+    frames: { startup: 22, active: 3, recovery: 34 }
+    hitbox: { x: 20, w: 105, y: 100, h: 160, depth: 40 }
+    damage: 55
+    reaction: { kind: knockback, hitstun: 24, push: 9 }
+    costs: { stun: 12, scale: 12, starter: 10 }
+    meter: 0
+    tags: [rescueInterruptible]
+    grab: { hold: 40, escapeFrom: 14, escapeWindow: 12 }
+    moves:
+      - { from: 1, to: 20, forward: 1 }
+
+  - id: aisle-turn
+    name: 'Dock Clamp: Aisle Turn'
+    category: grab
+    input: { context: script, dir: neutral }
+    frames: { startup: 22, active: 3, recovery: 34 }
+    hitbox: { x: 20, w: 105, y: 100, h: 160, depth: 40 }
+    damage: 50
+    reaction: { kind: knockdown, hitstun: 28, push: 11, lift: 5 }
+    costs: { stun: 14, scale: 12, starter: 10 }
+    meter: 0
+    tags: [rescueInterruptible, pivot]
+    grab: { hold: 40, escapeFrom: 14, escapeWindow: 12 }
+    moves:
+      - { from: 1, to: 20, forward: 1 }
+
+  - id: pallet-drop
+    name: 'Dock Clamp: Pallet Drop'
+    category: grab
+    input: { context: script, dir: neutral }
+    frames: { startup: 24, active: 3, recovery: 36 }
+    hitbox: { x: 20, w: 105, y: 100, h: 160, depth: 40 }
+    damage: 75
+    reaction: { kind: knockdown, hitstun: 30, push: 5, lift: 6 }
+    costs: { stun: 16, scale: 14, starter: 10 }
+    meter: 0
+    tags: [rescueInterruptible, terminalKnockdown]
+    grab: { hold: 46, escapeFrom: 16, escapeWindow: 12 }
+    moves:
+      - { from: 1, to: 22, forward: 1 }
+
+profile:
+  role: grappler
+  health: 380
+  walk: { x: 3, z: 2 }
+  perception: 4
+  ring: 280
+  defense: { tier: basic, guard: { every: 2, of: 1 }, guardHold: 28 }
+  morale: { breakAt: 18, shaken: 30 }
+  weapons: never
+  firearms: false
+  attacks:
+    - { action: load-check, threat: 16, cooldown: 90 }
+    - { action: brace-shove, threat: 14, cooldown: 120 }
+    - { action: dock-clamp, threat: 30, cooldown: 240 }
+    - { action: load-bearing-sweep, threat: 24, cooldown: 200, minDifficulty: medium }
+    - { action: aisle-turn, threat: 30, cooldown: 260, minDifficulty: medium }
+    - { action: pallet-drop, threat: 32, cooldown: 300, minDifficulty: medium }
+
+variants:
+  - id: reaver-elite
+    name: Cargo Reaver Foreman
+    minDifficulty: hard
+    health: 420
+    defense: { tier: basic, guard: { every: 3, of: 2 }, guardHold: 30 }
+  - id: reaver-master
+    name: Cargo Reaver Boss
+    minDifficulty: ultimate
+    health: 440
+    defense:
+      { tier: specialist, guard: { every: 3, of: 2 }, exact: true, guardHold: 30, cooldown: 260 }

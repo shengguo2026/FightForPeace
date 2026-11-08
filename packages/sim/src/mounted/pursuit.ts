@@ -159,6 +159,8 @@ export interface RoadRider {
   struck: boolean;
   event: number;
   eventFrame: number;
+  /** M19: Marek on his bike (the intercept's boss rider): never breaks away. */
+  boss: boolean;
 }
 
 export interface PursuitRecord {
@@ -204,7 +206,15 @@ export interface Pursuit {
   /** Last micro-checkpoint passed (-1 = the start). */
   checkpoint: number;
   record: PursuitRecord;
+  /**
+   * M19 Marek's intercept: 0 not yet (or no boss), 3 riding, 1 broken into a safe crash
+   * (the boss room's opening), 2 forced to dismount at the finish.
+   */
+  marek: number;
 }
+
+/** M19 intercept outcomes. Numbers are encoded; never renumber. */
+export const Intercept = { None: 0, Broken: 1, Dismounted: 2, Riding: 3 } as const;
 
 /** Road Rider ids start here (fighters use 1–2 and 101+, items 201+, scenery 301+). */
 export const RIDER_ID_BASE = 501;
@@ -360,6 +370,7 @@ export function setupPursuit(
     equipment: c.equipment.map(() => 0),
     checkpoint: -1,
     record: emptyRecord(),
+    marek: 0,
   };
   for (const f of world.bodies) if (f.team === 'hero') mount(world, f);
 }
@@ -763,7 +774,8 @@ function hitEnemy(
       enemyEvent(e, RideEvent.Brace, frame);
     }
   }
-  e.health = Math.max(0, e.health - outgoingDamage(world, f, a.damage));
+  // Marek's intercept touches neither the boss fight's Health nor its Resolve.
+  if (!e.boss) e.health = Math.max(0, e.health - outgoingDamage(world, f, a.damage));
   e.lastHurt = frame;
   if (e.critical || e.health === 0) crashEnemy(p, e, frame);
   else {
@@ -787,6 +799,7 @@ function hitEnemy(
 }
 
 function crashEnemy(p: Pursuit, e: RoadRider, frame: number): void {
+  if (e.boss && p.marek === Intercept.Riding) p.marek = Intercept.Broken;
   if (e.equipment >= 0 && p.equipment[e.equipment] === 1) p.equipment[e.equipment] = 0;
   e.state = EnemyState.Crash;
   e.since = frame;
@@ -1051,7 +1064,7 @@ function stepEnemy(world: World, p: Pursuit, e: RoadRider, heroes: Map<number, F
       e.speed = Math.max(0, ref - fx(1));
       if (t >= a.recovery) {
         e.commits += 1;
-        if (e.equipment >= 0 || e.commits >= R.breakaway) leave(p, e, frame);
+        if (!e.boss && (e.equipment >= 0 || e.commits >= R.breakaway)) leave(p, e, frame);
         else {
           e.state = EnemyState.Fade;
           e.since = frame;
@@ -1081,7 +1094,7 @@ function stepEnemy(world: World, p: Pursuit, e: RoadRider, heroes: Map<number, F
       const a = R.actions[riderAction(RiderKind.Fade)]!;
       e.speed = Math.max(0, ref - fx(2));
       if (t >= a.active) {
-        if (e.commits >= R.breakaway) leave(p, e, frame);
+        if (!e.boss && e.commits >= R.breakaway) leave(p, e, frame);
         else {
           e.state = EnemyState.Approach;
           e.since = frame;
@@ -1294,6 +1307,18 @@ function progress(world: World, p: Pursuit): void {
   }
   const lead = leader(p);
   if (!lead) return;
+  // M19: Marek rides in once (warned, like a wave) and never breaks away.
+  if (c.boss && p.marek === Intercept.None && lead.x >= c.boss.at) {
+    const x = p.camX + VIEW_W - fx(80);
+    const e = addRoadRider(p, x, laneZ(c, x, c.boss.lane), frame);
+    e.boss = true;
+    e.health = 1;
+    e.maxHealth = 1;
+    e.stability = Math.trunc((e.stability * c.boss.stability) / 100);
+    e.maxStability = e.stability;
+    e.speed = lead.speed;
+    p.marek = Intercept.Riding;
+  }
   // Waves: Road Riders enter from warned positions inside the visible zone.
   c.waves.forEach((w, i) => {
     if (!p.waveArmed[i] || (p.waveLeft[i] ?? 0) <= 0 || lead.x < w.at) return;
@@ -1311,7 +1336,10 @@ function progress(world: World, p: Pursuit): void {
     rejoin(p, lead, frame);
   }
   const ridingNow = p.riders.filter(riding);
-  if (ridingNow.length > 0 && ridingNow.every((r) => r.x >= c.finish)) {
+  // Breaking Marek ends the intercept at once; reaching the finish forces his dismount.
+  const broken = p.marek === Intercept.Broken;
+  if (broken || (ridingNow.length > 0 && ridingNow.every((r) => r.x >= c.finish))) {
+    if (p.marek === Intercept.Riding) p.marek = Intercept.Dismounted;
     p.phase = PursuitPhase.Finish;
     p.phaseFrame = frame;
     rejoin(p, lead, frame);
@@ -1396,6 +1424,7 @@ export function addRoadRider(
     struck: false,
     event: RideEvent.None,
     eventFrame: 0,
+    boss: false,
   };
   p.enemies.push(e);
   p.nextEnemy += 1;
@@ -1544,6 +1573,7 @@ export function encodePursuit(w: ByteWriter, p: Pursuit | null): void {
     w.u32(e.commits);
     w.u32(e.braceAcc);
     w.u8(e.struck ? 1 : 0);
+    w.u8(e.boss ? 1 : 0);
     w.u8(e.event);
     w.i32(e.eventFrame);
   }
@@ -1556,6 +1586,7 @@ export function encodePursuit(w: ByteWriter, p: Pursuit | null): void {
   w.u32(p.equipment.length);
   for (const s of p.equipment) w.u8(s);
   w.i32(p.checkpoint);
+  w.u8(p.marek);
   const r = p.record;
   for (const v of [
     r.frames,

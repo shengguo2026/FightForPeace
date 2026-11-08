@@ -140,6 +140,7 @@ ledger:
         critical: 20,
         weight: 1,
         essential: true,
+        control: true,
         repair: { every: 5, amount: 2 },
         size: [70, 12, 30],
       }
@@ -153,6 +154,7 @@ ledger:
         weight: 3,
         essential: true,
         circulation: true,
+        control: true,
         repair: { every: 5, amount: 3 },
         size: [50, 24, 90],
       }
@@ -165,6 +167,7 @@ ledger:
         critical: 30,
         weight: 2,
         essential: true,
+        control: true,
         repair: { every: 6, amount: 2 },
         size: [40, 18, 110],
       }
@@ -191,6 +194,32 @@ ledger:
         essential: true,
         repair: { every: 6, amount: 2 },
         size: [28, 110, 260],
+      }
+    # M19: Marek's dispatch yard (story line §9: the secured research cargo and the
+    # dispatch controls). The cargo is optional property; the controls are essential.
+    - {
+        id: research-cargo,
+        name: Research Cargo,
+        category: supplies,
+        condition: 100,
+        damaged: 70,
+        critical: 30,
+        weight: 2,
+        repair: { every: 6, amount: 2 },
+        size: [70, 26, 90],
+      }
+    - {
+        id: dispatch-control,
+        name: Dispatch Controls,
+        category: systems,
+        condition: 100,
+        damaged: 70,
+        critical: 30,
+        weight: 2,
+        essential: true,
+        control: true,
+        repair: { every: 6, amount: 2 },
+        size: [44, 18, 120],
       }
   rules:
     # Enemy strikes that reach an asset (once per action), bodies knocked into an asset.
@@ -236,16 +265,16 @@ rooms:
   - id: greenhouse-test-room
     name: Greenhouse Test Room
     width: 1920
-    # Claim-Hand stand-ins until M19 brings the Stage 2 roster.
+    # M19: the Stage 2 roster replaces M18's Recruit and Runner stand-ins.
     waves:
       - enemies:
-          - { kit: recruit, x: 1300, z: 780 }
-          - { kit: recruit, x: 1450, z: 880, minDifficulty: medium }
-          - { kit: recruit, x: 1350, z: 960, coop: true }
+          - { kit: claimhand, x: 1300, z: 780 }
+          - { kit: claimhand, x: 1450, z: 880, minDifficulty: medium }
+          - { kit: claimhand, x: 1350, z: 960, coop: true }
         next: 0
       - enemies:
-          - { kit: runner, x: 1600, z: 820 }
-          - { kit: recruit, x: 1700, z: 900, minDifficulty: hard }
+          - { kit: glassrunner, x: 1600, z: 820 }
+          - { kit: claimhand, x: 1700, z: 900, minDifficulty: hard }
     assets:
       - { id: bed-west, kind: crop-bed, x: 760, z: 930 }
       - { id: bed-east, kind: crop-bed, x: 1120, z: 950 }
@@ -316,3 +345,261 @@ rooms:
       large: 70
       cooldown: 600
     grenadier: { x: 1760, z: 760 }
+
+  # --- M19 Stage 2 enemy rooms (spec §11, §12) -----------------------------------------------
+  # One trial room per role, the challenge enemies, two mixed beats and Marek's dispatch
+  # yard. Difficulty tables: Easy has a reduced role selection, Medium every story-critical
+  # role, Hard the elite variants (generated kits, picked automatically) and the Stage 2
+  # Enforcer, Extreme the Jackal Signalman, Ultimate the master variants and Replace the
+  # Line's reserve.
+  - id: trial-claimhand
+    name: 'Stage 2 trial: Claim Hands'
+    width: 1920
+    waves:
+      - enemies:
+          - { kit: claimhand, x: 1300, z: 780 }
+          - { kit: claimhand, x: 1450, z: 900 }
+          - { kit: claimhand, x: 1600, z: 840, minDifficulty: medium }
+          - { kit: claimhand, x: 1500, z: 700, coop: true }
+        next: 1
+      - enemies:
+          - { kit: claimhand, x: 1750, z: 820 }
+          - { kit: claimhand, x: 1800, z: 920, minDifficulty: hard }
+    assets:
+      - { id: bed-west, kind: crop-bed, x: 700, z: 950 }
+      - { id: bed-east, kind: crop-bed, x: 1150, z: 960 }
+    containers:
+      - { kind: harvest-tote, x: 300, z: 980, contents: [{ item: greenhouse-wrap }] }
+      - { kind: maintenance-locker, x: 150, z: 660, contents: [{ weapon: service-lance }] }
+    pantry: []
+
+  - id: trial-glassrunner
+    name: 'Stage 2 trial: Glasshouse Runners'
+    width: 1920
+    waves:
+      - enemies:
+          - { kit: glassrunner, x: 1400, z: 760 }
+          - { kit: glassrunner, x: 1600, z: 920, minDifficulty: medium }
+          - { kit: claimhand, x: 1500, z: 840, minDifficulty: hard }
+          - { kit: glassrunner, x: 300, z: 860, coop: true }
+    assets:
+      - { id: medicinal, kind: medicinal-bed, x: 900, z: 965 }
+      - { id: glazing, kind: glazing, x: 640, z: 630 }
+    containers:
+      - { kind: meal-carrier, x: 300, z: 985, contents: [{ item: mineral-broth }] }
+    pantry: []
+    rack:
+      x: 1100
+      z: 760
+      asset: seedlings
+      thresholds: [20, 45]
+      fragment: support-rail
+      fall: { w: 220, d: 70, damage: 50, seedlings: 25 }
+      right: 150
+
+  - id: trial-reaver
+    name: 'Stage 2 trial: Cargo Reavers'
+    width: 1920
+    waves:
+      - enemies:
+          - { kit: reaver, x: 1400, z: 820 }
+          - { kit: claimhand, x: 1600, z: 720, minDifficulty: medium }
+          - { kit: reaver, x: 1650, z: 940, minDifficulty: hard }
+          - { kit: claimhand, x: 1600, z: 900, coop: true }
+    assets:
+      - { id: bed-east, kind: crop-bed, x: 1100, z: 960 }
+      - { id: fish, kind: fish-tank, x: 1230, z: 650 }
+    containers:
+      - { kind: stolen-cargo-crate, x: 1660, z: 960, contents: [{ item: herb-fish-bowl }] }
+    pantry: []
+    restraint:
+      x: 1780
+      z: 990
+      zone: { x: 1620, z: 860, hw: 140, hd: 70 }
+      frames: 180
+      large: 70
+      cooldown: 600
+
+  - id: trial-marauder
+    name: 'Stage 2 trial: Revolver Marauders'
+    width: 1920
+    waves:
+      - enemies:
+          - { kit: marauder, x: 1600, z: 800 }
+          - { kit: claimhand, x: 1300, z: 880 }
+          - { kit: marauder, x: 1750, z: 940, minDifficulty: hard }
+          - { kit: claimhand, x: 1400, z: 720, coop: true }
+    assets:
+      - { id: bed-west, kind: crop-bed, x: 760, z: 950 }
+      - { id: shrimp, kind: shrimp-tank, x: 1400, z: 650 }
+    containers:
+      - { kind: emergency-cabinet, x: 400, z: 650, contents: [{ item: honey-rice-cake }] }
+    pantry:
+      - { item: greenhouse-wrap, x: 560, z: 760 }
+
+  - id: trial-saboteur
+    name: 'Stage 2 trial: Systems Saboteur'
+    width: 1920
+    waves:
+      - enemies:
+          - { kit: saboteur, x: 1500, z: 820 }
+          - { kit: claimhand, x: 1300, z: 900, minDifficulty: medium }
+          - { kit: saboteur, x: 1700, z: 760, minDifficulty: hard }
+          - { kit: claimhand, x: 1350, z: 720, coop: true }
+    assets:
+      - { id: pump, kind: pump, x: 1580, z: 660 }
+      - { id: filtration, kind: filtration, x: 1720, z: 650 }
+      - { id: fish, kind: fish-tank, x: 1230, z: 650 }
+    containers:
+      - { kind: maintenance-locker, x: 150, z: 660, contents: [{ weapon: service-lance }] }
+    pantry: []
+
+  - id: trial-rider
+    name: 'Stage 2 trial: Road Riders on foot'
+    width: 1920
+    waves:
+      - enemies:
+          - { kit: rider, x: 1700, z: 680 }
+          - { kit: rider, x: 1800, z: 960, minDifficulty: medium }
+          - { kit: claimhand, x: 1500, z: 820, minDifficulty: hard }
+          - { kit: rider, x: 250, z: 960, coop: true }
+    assets:
+      - { id: bed-west, kind: crop-bed, x: 900, z: 960 }
+    containers: []
+    pantry: []
+
+  - id: trial-enforcer2
+    name: 'Stage 2 trial: Black-Iron Enforcer'
+    width: 1920
+    waves:
+      - enemies:
+          - { kit: enforcer2, x: 1400, z: 820 }
+          - { kit: marauder, x: 1750, z: 820 }
+          - { kit: saboteur, x: 1700, z: 950, minDifficulty: hard }
+          - { kit: claimhand, x: 1500, z: 700, coop: true }
+    assets:
+      - { id: pump, kind: pump, x: 1580, z: 660 }
+      - { id: bed-east, kind: crop-bed, x: 1100, z: 960 }
+    containers: []
+    pantry:
+      - { item: herb-fish-bowl, x: 560, z: 760 }
+
+  - id: trial-signalman
+    name: 'Stage 2 trial: Jackal Signalman'
+    width: 1920
+    reserve: [claimhand, glassrunner]
+    waves:
+      - enemies:
+          - { kit: signalman, x: 1750, z: 820 }
+          - { kit: claimhand, x: 1350, z: 760 }
+          - { kit: claimhand, x: 1450, z: 920 }
+          - { kit: marauder, x: 1650, z: 700 }
+          - { kit: reaver, x: 1500, z: 840, minDifficulty: hard }
+          - { kit: glassrunner, x: 300, z: 860, coop: true }
+    assets:
+      - { id: filtration, kind: filtration, x: 1720, z: 650 }
+      - { id: bed-west, kind: crop-bed, x: 760, z: 950 }
+    containers:
+      - { kind: harvest-tote, x: 300, z: 980, contents: [{ item: herb-fish-bowl }] }
+    pantry: []
+
+  # Segment 2 style mixed beat: the loading yard (Easy: Claim Hands and a Reaver; Medium adds
+  # the Marauder; Hard swaps one Claim Hand for the Stage 2 Enforcer; Extreme adds the
+  # Signalman; Ultimate gives it Replace the Line with a finite reserve).
+  - id: beat-loading-yard
+    name: 'Stage 2 beat: Loading Yard'
+    width: 2400
+    reserve: [claimhand]
+    waves:
+      - enemies:
+          - { kit: claimhand, x: 1300, z: 760 }
+          - { kit: claimhand, x: 1450, z: 920 }
+          - { kit: marauder, x: 1900, z: 820, minDifficulty: medium }
+          - { kit: claimhand, x: 1500, z: 840, coop: true }
+        next: 1
+      - enemies:
+          - { kit: reaver, x: 2100, z: 860 }
+          - { kit: glassrunner, x: 2200, z: 720, minDifficulty: medium }
+          - { kit: signalman, x: 2250, z: 900, minDifficulty: extreme }
+    substitutions:
+      - { from: claimhand, to: enforcer2, minDifficulty: hard, count: 1 }
+    assets:
+      - { id: cargo, kind: research-cargo, x: 1700, z: 650 }
+      - { id: bed-west, kind: crop-bed, x: 900, z: 960 }
+    containers:
+      - {
+          kind: raider-case,
+          x: 1100,
+          z: 780,
+          contents: [{ weapon: six-round-sidearm }, { item: honey-rice-cake }],
+        }
+      - { kind: meal-carrier, x: 300, z: 985, contents: [{ item: greenhouse-wrap }] }
+    pantry: []
+    shutter: { x: 2370, z: 820, asset: shutter }
+
+  # Segment 3 style mixed beat: the filtration control and the Saboteur's one grenade.
+  - id: beat-filtration
+    name: 'Stage 2 beat: Filtration Control'
+    width: 1920
+    grenade: saboteur
+    waves:
+      - enemies:
+          - { kit: saboteur, x: 1650, z: 780 }
+          - { kit: claimhand, x: 1350, z: 880 }
+          - { kit: glassrunner, x: 1500, z: 720, minDifficulty: medium }
+          - { kit: claimhand, x: 1400, z: 960, coop: true }
+        next: 1
+      - enemies:
+          - { kit: claimhand, x: 1750, z: 900 }
+          - { kit: enforcer2, x: 1800, z: 820, minDifficulty: hard }
+          - { kit: signalman, x: 1850, z: 700, minDifficulty: extreme }
+    assets:
+      - { id: filtration, kind: filtration, x: 1720, z: 650 }
+      - { id: pump, kind: pump, x: 1580, z: 660 }
+      - { id: aeration, kind: aeration, x: 1320, z: 690 }
+      - { id: fish, kind: fish-tank, x: 1180, z: 650 }
+    containers:
+      - { kind: maintenance-locker, x: 150, z: 660, contents: [{ weapon: service-lance }] }
+      - { kind: clinic-cabinet, x: 400, z: 650, contents: [{ item: mineral-broth }] }
+    pantry: []
+    jet:
+      valve: { x: 860, z: 690 }
+      lanes:
+        - { x0: 900, x1: 1880, z0: 760, z1: 830 }
+        - { x0: 900, x1: 1880, z0: 860, z1: 930 }
+      warn: 45
+      active: 40
+      cooldown: 420
+      damage: 30
+      push: 10
+      restore: 10
+
+  # Segment 4: the dispatch yard. Marek's arena with the secured research cargo (Scorched
+  # Claim's target), the dispatch controls, the cargo restraint and Tomas under guard.
+  - id: boss-marek
+    name: 'Dispatch Yard: Marek Vane'
+    width: 2400
+    heroX: 500
+    scorch: cargo
+    npcs:
+      - { id: tomas, x: 260, z: 650 }
+    waves:
+      - enemies:
+          - { kit: marek, x: 1700, z: 820 }
+    assets:
+      - { id: cargo, kind: research-cargo, x: 1500, z: 650 }
+      - { id: dispatch, kind: dispatch-control, x: 2100, z: 650 }
+      - { id: bed-west, kind: crop-bed, x: 900, z: 965 }
+    containers:
+      - { kind: emergency-cabinet, x: 640, z: 650, contents: [{ item: herb-fish-bowl }] }
+      - { kind: maintenance-locker, x: 1000, z: 650, contents: [{ weapon: service-lance }] }
+      - { kind: stolen-cargo-crate, x: 2250, z: 960, contents: [{ item: harvest-stew }] }
+    pantry:
+      - { item: greenhouse-wrap, x: 700, z: 900 }
+    restraint:
+      x: 2300
+      z: 990
+      zone: { x: 2120, z: 860, hw: 160, hd: 80 }
+      frames: 180
+      large: 70
+      cooldown: 600

@@ -439,11 +439,11 @@ describe('mounted system (M17)', () => {
       corridors: { id: string }[];
     };
 
-  test('mounted.yaml compiles: six slots per hero in roster order, one corridor', () => {
+  test('mounted.yaml compiles: six slots per hero in roster order, two corridors', () => {
     const m = mounted();
     expect(m.heroes).toHaveLength(4);
     for (const kit of m.heroes) expect(kit.map((a) => a.slot)).toEqual([0, 1, 2, 3, 4, 5]);
-    expect(m.corridors.map((c) => c.id)).toEqual(['perimeter-pursuit']);
+    expect(m.corridors.map((c) => c.id)).toEqual(['perimeter-pursuit', 'marek-intercept']);
   });
 
   test('a hero without a mounted kit is rejected', () => {
@@ -470,16 +470,30 @@ describe('greenhouse systems (M18)', () => {
     'breaching-grenade',
     'support-rail',
   ];
-  const KITS = ['training', 'recruit', 'runner'];
+  const KITS = [
+    'training',
+    'recruit',
+    'runner',
+    'claimhand',
+    'glassrunner',
+    'reaver',
+    'marauder',
+    'saboteur',
+    'rider',
+    'enforcer2',
+    'signalman',
+    'marek',
+  ];
   const load = (src = SRC) =>
     loadGreenhouse(src, WEAPONS, KITS, 20) as {
       greenhouse: { rooms: { arena: number; assets: { id: string }[] }[] };
       arenas: { id: string; stage: boolean }[];
     };
 
-  test('greenhouse.yaml compiles: one room, a hidden arena, the shutter and rack assets', () => {
+  test('greenhouse.yaml compiles: the test room, a hidden arena, the shutter and rack assets', () => {
     const g = load();
-    expect(g.greenhouse.rooms).toHaveLength(1);
+    // M18's test room first, then the M19 role trials, beats and Marek's room.
+    expect(g.greenhouse.rooms.length).toBeGreaterThan(1);
     expect(g.greenhouse.rooms[0]!.arena).toBe(20);
     expect(g.arenas[0]!.stage).toBe(true);
     expect(g.greenhouse.rooms[0]!.assets.map((a) => a.id)).toContain('shutter');

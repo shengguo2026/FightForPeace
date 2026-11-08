@@ -288,6 +288,10 @@ const AiAttack = T.Object(
     minDifficulty: T.Optional(DifficultyId),
     /** Reach override in px (ranged attacks); default: the action's hitbox. */
     range: T.Optional(T.Integer({ minimum: 1, maximum: 4000 })),
+    /** M19: never from closer than this (px): point-blank shots are refused. */
+    minRange: T.Optional(T.Integer({ minimum: 1, maximum: 4000 })),
+    /** M19: only while holding a weapon (armed) or only with empty hands (unarmed). */
+    when: T.Optional(T.Union([T.Literal('armed'), T.Literal('unarmed')])),
   },
   { additionalProperties: false },
 );
@@ -330,8 +334,8 @@ const BossPhase = T.Object(
     /** Health percent at which this phase begins (the first phase: 100). */
     from: T.Integer({ minimum: 1, maximum: 100 }),
     resolve: T.Integer({ minimum: 1, maximum: 10000 }),
-    /** Presentation: 1 = first look, 2 = second look (sheets with -P2). */
-    look: T.Optional(T.Integer({ minimum: 1, maximum: 2 })),
+    /** Presentation: 1 = first look, 2 = second look (sheets with -P2); Marek uses 1–4. */
+    look: T.Optional(T.Integer({ minimum: 1, maximum: 4 })),
     weapon: T.Optional(T.String({ pattern: '^[a-z][a-z0-9-]*$' })),
     counter: T.Optional(T.Boolean()),
     breaker: T.Optional(T.Boolean()),
@@ -350,6 +354,35 @@ const BossPhase = T.Object(
     eliteSupports: T.Optional(T.Array(T.String({ pattern: '^[a-z][a-z0-9-]*$' }), { maxItems: 2 })),
     device: T.Optional(T.String({ pattern: '^[a-z][a-z0-9-]*$' })),
     attacks: T.Array(AiAttack, { minItems: 1 }),
+    /** M19: a weapon put into the boss's hands as the phase starts. */
+    armed: T.Optional(T.String({ pattern: '^[a-z][a-z0-9-]*$' })),
+    /** M19: the phase also ends when the boss no longer holds a loaded `armed` weapon. */
+    untilDisarmed: T.Optional(T.Boolean()),
+    /** M19: a command action that brings the supports once (instead of at the start). */
+    summon: T.Optional(T.String({ pattern: '^[a-z][a-z0-9-]*$' })),
+    /** M19: Scorched Claim, a bounded low-Health objective behaviour (no phase, no refill). */
+    scorch: T.Optional(
+      T.Object(
+        {
+          below: T.Integer({ minimum: 1, maximum: 99 }),
+          action: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
+          look: T.Integer({ minimum: 1, maximum: 4 }),
+          cooldown: T.Integer({ minimum: 0, maximum: 3600 }),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+  },
+  { additionalProperties: false },
+);
+const Command = T.Object(
+  {
+    kind: T.Union([T.Literal('crossfang'), T.Literal('guard'), T.Literal('replace')]),
+    action: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
+    threat: T.Integer({ minimum: 1, maximum: 200 }),
+    cooldown: T.Integer({ minimum: 0, maximum: 3600 }),
+    minDifficulty: T.Optional(DifficultyId),
+    frames: T.Integer({ minimum: 1, maximum: 3600 }),
   },
   { additionalProperties: false },
 );
@@ -363,6 +396,10 @@ const Profile = T.Object(
       T.Literal('ranged'),
       T.Literal('elite'),
       T.Literal('boss'),
+      /** M19: Systems Saboteur (Control Breach). */
+      T.Literal('objective'),
+      /** M19: Jackal Signalman (calls). */
+      T.Literal('commander'),
     ]),
     health: T.Integer({ minimum: 1, maximum: 100000 }),
     walk: T.Object({ x: Px, z: Px }, { additionalProperties: false }),
@@ -373,10 +410,50 @@ const Profile = T.Object(
     defense: AiDefense,
     morale: T.Optional(
       T.Object(
-        { breakAt: T.Integer({ minimum: 1, maximum: 99 }) },
+        {
+          breakAt: T.Integer({ minimum: 1, maximum: 99 }),
+          /** M19: the threshold once isolated, disarmed or shaken by interruptions. */
+          shaken: T.Optional(T.Integer({ minimum: 1, maximum: 99 })),
+        },
         { additionalProperties: false },
       ),
     ),
+    /** M19: may pick up firearms and the grenade (default true; Stage 2 roles: false). */
+    firearms: T.Optional(T.Boolean()),
+    /** M19: spawns holding this weapon with these rounds [easy … ultimate]. */
+    armed: T.Optional(
+      T.Object(
+        {
+          weapon: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
+          ammo: T.Array(T.Integer({ minimum: 0, maximum: 100 }), { minItems: 5, maxItems: 5 }),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    /** M19: Control Breach (Systems Saboteur). */
+    objective: T.Optional(
+      T.Object(
+        {
+          threat: T.Integer({ minimum: 1, maximum: 200 }),
+          cooldown: T.Integer({ minimum: 0, maximum: 3600 }),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    /** M19: Lockstep Escort for a Marauder or Saboteur. */
+    escort: T.Optional(
+      T.Object(
+        {
+          threat: T.Integer({ minimum: 1, maximum: 200 }),
+          range: T.Integer({ minimum: 1, maximum: 2000 }),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    /** M19: Signalman calls. */
+    commands: T.Optional(T.Array(Command, { maxItems: 3 })),
+    /** M19: 'dismount' arrives knocked down with protected recovery (Road Rider on foot). */
+    entry: T.Optional(T.Union([T.Literal('walk'), T.Literal('dismount')])),
     weapons: T.Union([T.Literal('never'), T.Literal('opportunistic'), T.Literal('preferred')]),
     group: T.Optional(
       T.Object(
@@ -412,6 +489,10 @@ const Profile = T.Object(
           /** Threat budget points kept for the boss; supports share the rest. */
           share: T.Integer({ minimum: 0, maximum: 200 }),
           phases: T.Array(BossPhase, { minItems: 1, maxItems: 6 }),
+          /** M19: a Resolve break at or below this Health percent is a clean surrender. */
+          surrender: T.Optional(T.Integer({ minimum: 1, maximum: 99 })),
+          /** M19: the capture presentation (Resolve surrender or forced capture). */
+          capture: T.Optional(T.Boolean()),
         },
         { additionalProperties: false },
       ),
@@ -431,6 +512,31 @@ export const HeroSchema = T.Object(
     recipes: T.Optional(T.Array(Recipe, { maxItems: 16 })),
     /** Enemy kits (M7): role, AI, defense capability profile, morale and boss phases. */
     profile: T.Optional(Profile),
+    /**
+     * M19 enemy variants: generated kits with the same actions and art and a changed
+     * profile (Hard elite, Ultimate master). A wave picks the strongest one its
+     * difficulty allows.
+     */
+    variants: T.Optional(
+      T.Array(
+        T.Object(
+          {
+            id: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
+            name: T.String({ minLength: 1 }),
+            minDifficulty: DifficultyId,
+            health: T.Optional(T.Integer({ minimum: 1, maximum: 100000 })),
+            defense: T.Optional(AiDefense),
+            attacks: T.Optional(T.Array(AiAttack)),
+            ammo: T.Optional(
+              T.Array(T.Integer({ minimum: 0, maximum: 100 }), { minItems: 5, maxItems: 5 }),
+            ),
+            commands: T.Optional(T.Array(Command, { maxItems: 3 })),
+          },
+          { additionalProperties: false },
+        ),
+        { maxItems: 3 },
+      ),
+    ),
   },
   { additionalProperties: false },
 );
@@ -602,7 +708,7 @@ export function loadHero(
     if (
       a.category === 'weaponThrow' ||
       a.input.context === 'weaponThrow' ||
-      a.ammo !== undefined ||
+      (a.ammo !== undefined && kind === 'hero') ||
       a.replaces !== undefined
     )
       problems.push(`"${a.id}": weapon throws, ammunition and replaces belong in weapon files`);
@@ -631,6 +737,7 @@ export function loadHero(
       problems.push(`"${a.id}": only aerial actions use landing recovery`);
   }
   if (kind === 'hero' && hero.profile) problems.push('only enemy kits have an AI profile');
+  if (hero.variants && !hero.profile) problems.push('variants need a base profile');
   if (hero.profile) problems.push(...profileProblems(hero.profile, ids));
   if (kind === 'hero' && !slots.has('neutral/neutral'))
     problems.push('no neutral starter (context neutral, dir neutral)');
@@ -652,9 +759,10 @@ export function loadHero(
       const dest = hero.actions.find((x) => x.id === c);
       if (dest && dest.input.context !== 'script')
         problems.push(`"${a.id}": conversion "${c}" must use context script (never an input)`);
-      if (dest?.convert) problems.push(`"${a.id}": conversion "${c}" may not convert again`);
+      // M19: enemy routes (jab, cross, kick) may chain hit-confirmed conversions.
+      if (dest?.convert && kind === 'hero')
+        problems.push(`"${a.id}": conversion "${c}" may not convert again`);
     }
-    if (a.convert && kind !== 'hero') problems.push(`"${a.id}": conversions are for heroes`);
   }
   const recipeIds = new Set<string>();
   for (const r of hero.recipes ?? []) {
@@ -677,8 +785,19 @@ const WEAPON_POLICY = { never: 0, opportunistic: 1, preferred: 2 } as const;
 /** Profile checks that only need the kit's own action ids (boss phases: see generate). */
 function profileProblems(p: ProfileYaml, ids: ReadonlySet<string>): string[] {
   const out: string[] = [];
+  // An armed profile may also name its weapon's actions (checked in generate()).
   for (const a of p.attacks)
-    if (!ids.has(a.action)) out.push(`profile attack "${a.action}" is not in the kit`);
+    if (!ids.has(a.action) && !p.armed)
+      out.push(`profile attack "${a.action}" is not in the kit`);
+  for (const c of p.commands ?? [])
+    if (!ids.has(c.action)) out.push(`profile command "${c.action}" is not in the kit`);
+  for (const ph of p.boss?.phases ?? []) {
+    if (ph.summon && !ids.has(ph.summon))
+      out.push(`phase "${ph.name}" summon "${ph.summon}" is not in the kit`);
+    if (ph.scorch && !ids.has(ph.scorch.action))
+      out.push(`phase "${ph.name}" scorch "${ph.scorch.action}" is not in the kit`);
+    if (ph.untilDisarmed && !ph.armed) out.push(`phase "${ph.name}": untilDisarmed needs armed`);
+  }
   if (p.group && !ids.has(p.group.action))
     out.push(`profile group action "${p.group.action}" is not in the kit`);
   if (p.defense.evade && !ids.has(p.defense.evade.action))
@@ -701,6 +820,32 @@ function compileAttack(a: Static<typeof AiAttack>): unknown {
     cooldown: a.cooldown,
     minDifficulty: DIFFICULTY_ORDER.indexOf(a.minDifficulty ?? 'easy'),
     range: fx(a.range ?? 0),
+    minRange: fx(a.minRange ?? 0),
+    when: a.when === 'armed' ? 1 : a.when === 'unarmed' ? 2 : 0,
+  };
+}
+
+const CALL_CODE = { crossfang: 1, guard: 2, replace: 3 } as const;
+function compileCommand(c: Static<typeof Command>): unknown {
+  return {
+    kind: CALL_CODE[c.kind],
+    action: c.action,
+    threat: c.threat,
+    cooldown: c.cooldown,
+    minDifficulty: DIFFICULTY_ORDER.indexOf(c.minDifficulty ?? 'easy'),
+    frames: c.frames,
+  };
+}
+
+/** A profile with a variant's changes applied (M19 elite and master kits). */
+function variantProfile(p: ProfileYaml, v: NonNullable<HeroYaml['variants']>[number]): ProfileYaml {
+  return {
+    ...p,
+    health: v.health ?? p.health,
+    defense: v.defense ?? p.defense,
+    attacks: v.attacks ?? p.attacks,
+    armed: p.armed && v.ammo ? { ...p.armed, ammo: v.ammo } : p.armed,
+    commands: v.commands ?? p.commands,
   };
 }
 
@@ -733,6 +878,13 @@ export function compileProfile(p: ProfileYaml): unknown {
     weapons: WEAPON_POLICY[p.weapons],
     group: p.group ?? null,
     attacks: p.attacks.map(compileAttack),
+    firearms: p.firearms ?? true,
+    shaken: p.morale?.shaken ?? 0,
+    armed: p.armed ? { weapon: p.armed.weapon, ammo: p.armed.ammo } : null,
+    objective: p.objective ?? null,
+    escort: p.escort ? { threat: p.escort.threat, range: fx(p.escort.range) } : null,
+    commands: (p.commands ?? []).map(compileCommand),
+    entry: p.entry ?? 'walk',
     boss: p.boss
       ? {
           flinchCap: p.boss.flinchCap,
@@ -740,6 +892,8 @@ export function compileProfile(p: ProfileYaml): unknown {
           stagger: p.boss.stagger,
           transition: p.boss.transition,
           share: p.boss.share,
+          surrender: p.boss.surrender ?? 0,
+          capture: p.boss.capture ?? false,
           phases: p.boss.phases.map((ph) => ({
             name: ph.name,
             from: ph.from,
@@ -758,6 +912,10 @@ export function compileProfile(p: ProfileYaml): unknown {
               : null,
             device: ph.device ?? '',
             attacks: ph.attacks.map(compileAttack),
+            armed: ph.armed ?? '',
+            untilDisarmed: ph.untilDisarmed ?? false,
+            summon: ph.summon ?? '',
+            scorch: ph.scorch ?? null,
           })),
         }
       : null,
@@ -787,6 +945,8 @@ export const DifficultySchema = T.Object(
           pace: T.Integer({ minimum: 25, maximum: 400 }),
           recovery: T.Integer({ minimum: 0, maximum: 200 }),
           riposte: T.Boolean(),
+          /** M19: firearm aims (warned lines) active together [solo, co-op]. */
+          aims: Pair,
         },
         { additionalProperties: false },
       ),
@@ -881,6 +1041,8 @@ export const ArenaSchema = T.Object(
           surge: T.Optional(Surge),
           waves: Waves,
           substitutions: T.Optional(Substitutions),
+          /** M19: finite reserve for Replace the Line (kit ids). */
+          reserve: T.Optional(T.Array(KitId, { maxItems: 4 })),
         },
         { additionalProperties: false },
       ),
@@ -1129,6 +1291,8 @@ function convertArenas(
     for (const s of a.substitutions ?? [])
       for (const k of [s.from, s.to])
         if (!kits.includes(k)) problems.push(`${a.id}: unknown enemy kit "${k}"`);
+    for (const k of a.reserve ?? [])
+      if (!kits.includes(k)) problems.push(`${a.id}: unknown reserve kit "${k}"`);
   }
   if (problems.length > 0) throw new HeroDataError(problems.map((p) => `${file}: ${p}`).join('\n'));
   const lvl = (x: string | undefined) => DIFFICULTY_ORDER.indexOf((x ?? 'easy') as never);
@@ -1160,6 +1324,7 @@ function convertArenas(
       minDifficulty: lvl(s.minDifficulty),
       count: s.count,
     })),
+    reserve: a.reserve ?? [],
     stage,
   }));
 }
@@ -2226,6 +2391,18 @@ export const MountedSchema = T.Object(
             ),
           ),
           checkpoints: T.Array(Dist),
+          // M19 Marek's mounted intercept: the boss rides in once the lead passes `at`;
+          // `stability` is his Stability in percent of a Road Rider's. He never breaks away.
+          boss: T.Optional(
+            T.Object(
+              {
+                at: Dist,
+                stability: T.Integer({ minimum: 100, maximum: 1000 }),
+                lane: T.Integer({ minimum: 0, maximum: 2 }),
+              },
+              { additionalProperties: false },
+            ),
+          ),
           waves: T.Array(
             T.Object(
               {
@@ -2444,6 +2621,9 @@ export function loadMounted(
         side: e.side === 'top' ? 0 : 1,
       })),
       checkpoints: c.checkpoints.map((x) => fx(x)),
+      boss: c.boss
+        ? { at: fx(c.boss.at), stability: c.boss.stability, lane: c.boss.lane }
+        : null,
       waves: c.waves.map((w) => ({
         at: fx(w.at),
         min: DIFFICULTY_ORDER.indexOf(w.min),
@@ -2533,6 +2713,8 @@ export const GreenhouseSchema = T.Object(
               essential: T.Optional(T.Boolean()),
               aquatic: T.Optional(T.Boolean()),
               circulation: T.Optional(T.Boolean()),
+              /** M19: a control a Systems Saboteur may breach. */
+              control: T.Optional(T.Boolean()),
               repair: T.Object(
                 { every: Frame1, amount: T.Integer({ minimum: 1, maximum: 100 }) },
                 { additionalProperties: false },
@@ -2602,6 +2784,21 @@ export const GreenhouseSchema = T.Object(
           name: T.String({ minLength: 1 }),
           width: T.Integer({ minimum: 1920, maximum: 7680 }),
           waves: T.Optional(Waves),
+          /** M19: hidden-arena extras (hero start, weapon spot, substitutions, reserve). */
+          heroX: T.Optional(Pos),
+          substitutions: T.Optional(Substitutions),
+          reserve: T.Optional(T.Array(Id, { maxItems: 4 })),
+          /** M19: the room's one grenade belongs to its first Systems Saboteur. */
+          grenade: T.Optional(T.Literal('saboteur')),
+          /** M19: the optional asset Marek's Scorched Claim threatens (asset id). */
+          scorch: T.Optional(Id),
+          /** M19: story NPCs (Tomas Rell). */
+          npcs: T.Optional(
+            T.Array(
+              T.Object({ id: T.Literal('tomas'), x: Pos, z: Depth }, { additionalProperties: false }),
+              { maxItems: 2 },
+            ),
+          ),
           assets: T.Array(
             T.Object({ id: Id, kind: Id, x: Pos, z: Depth }, { additionalProperties: false }),
           ),
@@ -2773,6 +2970,16 @@ export function loadGreenhouse(
     }
     for (const p of r.pantry)
       if (!pantryIds.includes(p.item)) problems.push(`${where}: unknown item "${p.item}"`);
+    if (r.scorch) {
+      const a = r.assets.find((x) => x.id === r.scorch);
+      const k = a ? g.ledger.kinds.find((x) => x.id === a.kind) : undefined;
+      if (!a) problems.push(`${where}: unknown scorch asset "${r.scorch}"`);
+      else if (k?.essential)
+        problems.push(`${where}: Scorched Claim may only threaten an optional asset`);
+    }
+    if (r.grenade && r.grenadier) problems.push(`${where}: one grenade owner (drill or saboteur)`);
+    if (r.grenade && !(r.waves ?? []).some((w) => w.enemies.some((e) => e.kit === 'saboteur')))
+      problems.push(`${where}: grenade: saboteur needs a saboteur in its waves`);
     for (const a of [r.shutter?.asset, r.rack?.asset])
       if (a !== undefined && !kindIds.includes(a))
         problems.push(`${where}: unknown ledger kind "${a}"`);
@@ -2803,7 +3010,18 @@ export function loadGreenhouse(
       arena = firstArena + arenas.length;
       arenas.push(
         ...convertArenas(
-          [{ id: `${r.id}-waves`, name: r.name, area: 'mill', width: r.width, waves: r.waves }],
+          [
+            {
+              id: `${r.id}-waves`,
+              name: r.name,
+              area: 'mill',
+              width: r.width,
+              heroX: r.heroX,
+              waves: r.waves,
+              substitutions: r.substitutions,
+              reserve: r.reserve,
+            },
+          ],
           kits,
           file,
           true,
@@ -2887,6 +3105,9 @@ export function loadGreenhouse(
           }
         : null,
       grenadier: r.grenadier ? { x: f(r.grenadier.x), z: f(r.grenadier.z) } : null,
+      saboteurGrenade: r.grenade === 'saboteur',
+      scorch: r.scorch ? assets.findIndex((a) => a.id === r.scorch) : -1,
+      npcs: (r.npcs ?? []).map((n) => ({ id: n.id, x: f(n.x), z: f(n.z) })),
     };
   });
   const size = (s: readonly [number, number, number]) => ({ hw: f(s[0]), hd: f(s[1]), h: f(s[2]) });
@@ -2920,6 +3141,7 @@ export function loadGreenhouse(
       essential: k.essential ?? false,
       aquatic: k.aquatic ?? false,
       circulation: k.circulation ?? false,
+      control: k.control ?? false,
       repairEvery: k.repair.every,
       repairAmount: k.repair.amount,
       ...size(k.size),
@@ -3001,6 +3223,39 @@ export function enemyFiles(dir = ENEMIES_DIR): string[] {
     .map((f) => join(dir, f));
 }
 
+/** The art key of an enemy kit (a variant draws with its base kit's sheets). */
+const VARIANT_BASE = new Map<string, string>();
+function artOf(k: HeroYaml): string {
+  return VARIANT_BASE.get(k.id) ?? k.id;
+}
+
+/** Each base kit followed by its generated variants (ids must be unique overall). */
+export function expandVariants(kits: readonly HeroYaml[]): HeroYaml[] {
+  const out: HeroYaml[] = [];
+  for (const k of kits) {
+    const { variants, ...base } = k;
+    out.push(base);
+    for (const v of variants ?? []) {
+      VARIANT_BASE.set(v.id, k.id);
+      out.push({ ...base, id: v.id, name: v.name, profile: variantProfile(k.profile!, v) });
+    }
+  }
+  const seen = new Set<string>();
+  for (const k of out) {
+    if (seen.has(k.id)) throw new HeroDataError(`duplicate enemy kit "${k.id}"`);
+    seen.add(k.id);
+  }
+  return out;
+}
+
+/** Variant kit id -> [base kit id, difficulty index] (the encounter's variant pick). */
+export function variantTable(kits: readonly HeroYaml[]): Record<string, [string, number][]> {
+  const t: Record<string, [string, number][]> = {};
+  for (const k of kits)
+    t[k.id] = (k.variants ?? []).map((v) => [v.id, DIFFICULTY_ORDER.indexOf(v.minDifficulty)]);
+  return t;
+}
+
 const ROSTER_ORDER = ['mountain.yaml', 'river.yaml', 'wind.yaml', 'fire.yaml'];
 function order(file: string): number {
   const i = ROSTER_ORDER.indexOf(file);
@@ -3026,9 +3281,12 @@ export function generate(
   const heroYaml = files.map((f) => load(f, 'hero'));
   const roster = heroYaml.map((h) => compileHero(h, 'hero') as { id: string });
   const heroes = JSON.stringify(roster, null, 2);
-  const enemyYaml = enemies.map((f) => load(f, 'enemy'));
+  // M19: every variant becomes its own kit right after its base (same actions and art).
+  const baseEnemies = enemies.map((f) => load(f, 'enemy'));
+  const enemyYaml = expandVariants(baseEnemies);
+  const variants = JSON.stringify(variantTable(baseEnemies), null, 2);
   const kits = JSON.stringify(
-    enemyYaml.map((h) => compileHero(h, 'enemy')),
+    enemyYaml.map((h) => ({ ...(compileHero(h, 'enemy') as object), art: artOf(h) })),
     null,
     2,
   );
@@ -3038,10 +3296,20 @@ export function generate(
   // Boss phases may use the actions of the weapon the phase claims.
   const problems: string[] = [];
   for (const k of enemyYaml) {
+    // M19: an armed profile spawns with its weapon; its attacks may use the weapon's actions.
+    const armed = k.profile?.armed;
+    if (armed) {
+      const w = weaponYaml.find((x) => x.id === armed.weapon);
+      if (!w) problems.push(`${k.id}: armed with unknown weapon "${armed.weapon}"`);
+      const ids = new Set([...k.actions.map((a) => a.id), ...(w?.actions.map((a) => a.id) ?? [])]);
+      for (const a of k.profile!.attacks)
+        if (!ids.has(a.action)) problems.push(`${k.id}: attack "${a.action}" is unknown`);
+    }
     for (const ph of k.profile?.boss?.phases ?? []) {
-      const w = ph.weapon ? weaponYaml.find((x) => x.id === ph.weapon) : undefined;
-      if (ph.weapon && !w)
-        problems.push(`${k.id}: phase "${ph.name}" claims unknown weapon "${ph.weapon}"`);
+      const claim = ph.weapon ?? ph.armed;
+      const w = claim ? weaponYaml.find((x) => x.id === claim) : undefined;
+      if (claim && !w)
+        problems.push(`${k.id}: phase "${ph.name}" claims unknown weapon "${claim}"`);
       const ids = new Set([...k.actions.map((a) => a.id), ...(w?.actions.map((a) => a.id) ?? [])]);
       for (const a of ph.attacks)
         if (!ids.has(a.action))
@@ -3128,6 +3396,10 @@ export const ENEMY_DATA: readonly HeroDef[] = ${kits};
 
 /** AI profiles aligned with ENEMY_DATA (null: the training enemy has none). */
 export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = ${profiles};
+
+/** M19: base kit id -> its [variant kit id, minimum difficulty index] list. */
+export const ENEMY_VARIANTS: Readonly<Record<string, readonly (readonly [string, number])[]>> =
+  ${variants};
 
 export const WEAPON_DATA: readonly WeaponDef[] = ${arms};
 

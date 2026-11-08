@@ -1,12 +1,13 @@
 import { fx } from '../math/fixed';
 import { type Encounter, type Fighter, HazardPhase, MoveState, type World } from '../world/types';
 import { LAB_LAYOUT } from '../world/stage';
-import { ARENAS, DIFFICULTIES, enemyKitIndex, livingHeroes, profileOf } from './data';
+import { ARENAS, DIFFICULTIES, livingHeroes, profileOf } from './data';
 import { VIEW_WIDTH } from './director';
 import { newBossState, spawnEnemy, startPhase } from './boss';
 import { sweepBodies } from './ai';
 import { nonCombatant } from '../combat/damage';
 import { ENEMIES } from '../combat/roster';
+import { arrive, intercepted, stepStage2, variantKit } from './stage2';
 
 /** Frames before the first wave arrives (players can still join in that time). */
 export const FIRST_WAVE_AT = 30;
@@ -35,6 +36,17 @@ export function newEncounter(arena: number, difficulty: number, start = 0): Enco
     peakCommitted: 0,
     offscreenWarned: 0,
     offscreenUnwarned: 0,
+    call: 0,
+    callReadyAt: 0,
+    sabotage: 0,
+    breached: [],
+    reserveUsed: 0,
+    entryKit: -1,
+    entryX: 0,
+    entryZ: 0,
+    entryAt: 0,
+    opening: 0,
+    event: { kind: 0, frame: 0, a: 0, b: 0 },
   };
 }
 
@@ -127,10 +139,11 @@ function kitFor(world: World, kit: string, used: Map<string, number>): number {
     const n = used.get(s.from) ?? 0;
     if (n < s.count) {
       used.set(s.from, n + 1);
-      return enemyKitIndex(s.to);
+      return variantKit(s.to, enc.difficulty);
     }
   }
-  return enemyKitIndex(kit);
+  // M19: the strongest variant the difficulty allows (elite, master).
+  return variantKit(kit, enc.difficulty);
 }
 
 function spawnWave(world: World, n: number): void {
@@ -146,9 +159,11 @@ function spawnWave(world: World, n: number): void {
     if (e.minDifficulty > enc.difficulty || (e.coop && !coop)) continue;
     const kit = kitFor(world, e.kit, used);
     const f = spawnEnemy(world, kit, fx(e.x), fx(e.z));
+    arrive(world, f);
     if (profileOf(f)?.boss) {
       enc.boss = newBossState(f);
       startPhase(world, f, 0);
+      intercepted(world, f);
     }
   }
 }
@@ -161,6 +176,7 @@ export function stepEncounter(world: World): void {
   const enc = world.encounter;
   if (!enc) return;
   updateView(world);
+  stepStage2(world);
   for (const id of sweepBodies(world)) {
     const i = enc.waveIds.indexOf(id);
     if (i >= 0) enc.waveIds.splice(i, 1);
@@ -184,7 +200,7 @@ export function stepEncounter(world: World): void {
     if (left <= (wave?.next ?? 0)) spawnWave(world, enc.wave + 1);
     return;
   }
-  if (left === 0) enc.result = Result.Cleared;
+  if (left === 0 && enc.entryKit < 0) enc.result = Result.Cleared;
 }
 
 /** Names for the Lab and menus. */

@@ -1,0 +1,126 @@
+# Glasshouse Runner (Stage 2 spec §11, story line §9): the Commitment-Based Flank Diver. It
+# repositions quickly and must visibly commit before every dangerous aerial entry. Aisle Tap
+# when trapped beside a hero, Cross-Aisle Kick (its depth angle is fixed on commitment),
+# Rail Vault (a clearly signalled leap) that routes into Glassfall Heel only on a confirmed
+# hit (an anti-air, an Exact Block or a strong interception ends it), Underbench Slide (a
+# punishable low approach) and Rebound Exit (a withdrawal with no invulnerability). Rail
+# Vault's cooldown is the aerial-entry cooldown. It never guards and never picks up
+# weapons; it uses the same collision as everyone (no pass-through). M19 candidates.
+id: glassrunner
+name: Glasshouse Runner
+bodyWidth: 64
+actions:
+  - id: aisle-tap
+    name: Aisle Tap
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 8, active: 3, recovery: 12, blockstun: 10 }
+    hitbox: { x: 15, w: 95, y: 150, h: 100, depth: 30 }
+    damage: 28
+    reaction: { kind: stagger, hitstun: 16, push: 3 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 8 }
+    meter: 0
+    tags: [counterable]
+
+  - id: cross-aisle-kick
+    name: Cross-Aisle Kick
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 14, active: 4, recovery: 20, blockstun: 12 }
+    hitbox: { x: 15, w: 125, y: 130, h: 110, depth: 36 }
+    damage: 45
+    reaction: { kind: knockback, hitstun: 20, push: 6 }
+    costs: { stun: 12, scale: 10, starter: 10, guard: 10 }
+    meter: 0
+    tags: [counterable]
+    moves:
+      - { from: 1, to: 16, forward: 5, depth: 2, depthFrom: input }
+
+  - id: rail-vault
+    name: Rail Vault
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 22, active: 5, recovery: 16, blockstun: 12 }
+    hitbox: { x: 10, w: 110, y: 120, h: 150, depth: 32 }
+    damage: 35
+    reaction: { kind: stagger, hitstun: 22, push: 2 }
+    costs: { stun: 12, scale: 10, starter: 10, guard: 10 }
+    meter: 0
+    tags: [leap, counterable]
+    convert: { to: glassfall-heel }
+    moves:
+      - { from: 8, to: 27, forward: 5 }
+
+  - id: glassfall-heel
+    name: Glassfall Heel
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 6, active: 5, recovery: 32, blockstun: 16 }
+    hitbox: { x: 10, w: 120, y: 40, h: 200, depth: 34 }
+    damage: 55
+    reaction: { kind: knockdown, hitstun: 26, push: 5, lift: 4 }
+    costs: { stun: 14, scale: 12, guard: 18 }
+    meter: 0
+    tags: [counterable]
+
+  - id: underbench-slide
+    name: Underbench Slide
+    category: low
+    input: { context: script, dir: neutral }
+    frames: { startup: 14, active: 6, recovery: 26, blockstun: 14 }
+    hitbox: { x: 10, w: 130, y: 0, h: 70, depth: 30 }
+    damage: 45
+    reaction: { kind: trip, hitstun: 26, push: 4, lift: 3 }
+    costs: { stun: 14, scale: 12, starter: 10, guard: 12 }
+    meter: 0
+    tags: [counterable]
+    moves:
+      - { from: 10, to: 22, forward: 6 }
+
+  - id: rebound-exit
+    name: Rebound Exit
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 4, active: 1, recovery: 16 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    tags: [evade]
+    note: 'A withdrawal with no invulnerability; it cannot cancel a whiff.'
+    moves:
+      - { from: 1, to: 16, forward: -7 }
+
+profile:
+  role: flanker
+  health: 240
+  walk: { x: 5, z: 3 }
+  perception: 3
+  ring: 340
+  defense: { tier: basic, evade: { every: 3, of: 1, action: rebound-exit } }
+  morale: { breakAt: 22, shaken: 40 }
+  weapons: never
+  firearms: false
+  attacks:
+    - { action: aisle-tap, threat: 12, cooldown: 70 }
+    - { action: cross-aisle-kick, threat: 16, cooldown: 120 }
+    - { action: underbench-slide, threat: 24, cooldown: 170 }
+    - { action: rail-vault, threat: 26, cooldown: 300, minDifficulty: medium }
+
+variants:
+  - id: glassrunner-elite
+    name: Glasshouse Runner Veteran
+    minDifficulty: hard
+    health: 270
+    defense: { tier: basic, evade: { every: 2, of: 1, action: rebound-exit } }
+  - id: glassrunner-master
+    name: Glasshouse Runner Ace
+    minDifficulty: ultimate
+    health: 280
+    defense: { tier: basic, evade: { every: 2, of: 1, action: rebound-exit } }
+    attacks:
+      - { action: aisle-tap, threat: 12, cooldown: 70 }
+      - { action: cross-aisle-kick, threat: 16, cooldown: 110 }
+      - { action: underbench-slide, threat: 24, cooldown: 160 }
+      - { action: rail-vault, threat: 26, cooldown: 220 }

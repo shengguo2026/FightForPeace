@@ -6,7 +6,18 @@ import { kitOf } from '../combat/roster';
 import { spawnItem } from '../combat/held';
 import { weaponIndex } from '../combat/armory';
 import { fx } from '../math/fixed';
-import { ARENAS, HARD, PROFILES, enemyKitIndex, livingHeroes, profileOf } from './data';
+import { ARENAS, PROFILES, livingHeroes, profileOf } from './data';
+import {
+  S2,
+  armPhase,
+  checkDisarmed,
+  disarmForPhase,
+  marekLook,
+  resolveSurrender,
+  spawnSupports,
+  staggerDrop,
+  staggerReclaim,
+} from './stage2';
 
 /**
  * Visible Resolve Gauge with Earned Stagger Windows and Queued Transition with Capped
@@ -60,12 +71,23 @@ export function newBossState(f: Fighter): BossState {
     pendingSince: 0,
     carry: 0,
     shift: 0,
+    summoned: false,
+    capture: 0,
+    captureAt: 0,
+    gunLost: 0,
+    gunAmmo: 0,
+    gunItem: 0,
+    scorch: 0,
+    scorchAt: 0,
+    scorchStops: 0,
+    intercept: 0,
   };
 }
 
 /** Resolve damage of one hit of `a` that dealt `dmg` Health damage (before clamps). */
 export function resolveDamage(a: ActionDef, dmg: number): number {
-  const pct = RESOLVE_PERCENT[a.category] ?? 60;
+  // M19: a firearm's round costs more Resolve than its category would.
+  const pct = a.ammo > 0 ? S2.firearmResolve : (RESOLVE_PERCENT[a.category] ?? 60);
   const k = a.reaction.kind;
   const bonus = k === 'knockdown' || k === 'launch' || k === 'trip' ? RESOLVE_FINISHER_BONUS : 0;
   return Math.max(1, Math.trunc((dmg * pct) / 100) + bonus);
@@ -122,6 +144,8 @@ export function bossHit(world: World, a: ActionDef, t: Fighter, dmg: number, dir
   const objective = running?.tags.includes('objective') ?? false;
   // An attack's own action keeps running through a flinch only once the cap is reached.
   if (t.flinches >= prof.flinchCap && !objective) return true;
+  // M19: the boss's call (Command Pressure) holds through flinches; Resolve still drains.
+  if (running?.tags.includes('command')) return true;
   t.flinches += 1;
   if (t.state === MoveState.Grabbing) return true;
   interrupt(t);
@@ -139,9 +163,13 @@ export function bossClash(world: World, t: Fighter): void {
   if (b.resolve === 0) startStagger(world, t);
 }
 
-function startStagger(world: World, t: Fighter): void {
+export function startStagger(world: World, t: Fighter): void {
   const b = world.encounter!.boss!;
   const prof = profileOf(t)!.boss!;
+  // M19 capture: a Resolve break at or below the surrender line is the clean surrender.
+  if (resolveSurrender(world, t)) return;
+  // M19: an armed phase's gun falls at his feet for the heroes for the whole window.
+  staggerDrop(world, t);
   b.stagger = prof.stagger.duration;
   b.breaks += 1;
   // The telegraph: the boss reels; the earned window opens a fresh combo with boss budgets.
@@ -187,6 +215,7 @@ export function stepBoss(world: World): void {
     stepShift(world, f);
     return;
   }
+  checkDisarmed(world, f);
   if (!b.pending) return;
   const safe =
     f.state === MoveState.Idle || f.state === MoveState.Walk || f.state === MoveState.Guard;
@@ -203,6 +232,7 @@ function endStagger(world: World, f: Fighter): void {
   toActionable(f);
   enter(f, MoveState.Recover, prof.stagger.reentry);
   f.protectedRecovery = true;
+  staggerReclaim(world, f);
 }
 
 /** The queued transition begins at a safe point (or when the grace limit runs out). */
@@ -290,20 +320,11 @@ export function startPhase(world: World, f: Fighter, n: number): void {
     const spot = arena.weaponSpot ?? { x: Math.trunc(arena.width / 2), z: 760 };
     if (!inPlay) spawnItem(world, w, fx(spot.x), fx(spot.z));
   }
-  const elite = enc.difficulty >= HARD;
-  const kits = [...(elite ? ph.eliteSupports : ph.supports)];
-  // Co-op on the higher difficulties: more pressure through composition, not boss Health.
-  const extra = ph.coopSupports;
-  if (extra && enc.difficulty >= extra.minDifficulty && livingHeroes(world).length >= 2)
-    kits.push(...extra.kits);
-  kits.forEach((kit, i) => {
-    spawnEnemy(
-      world,
-      enemyKitIndex(kit),
-      i % 2 === 0 ? world.bounds.minX + fx(60) : world.bounds.maxX - fx(60),
-      fx(760 + (i % 2) * 140 + Math.trunc(i / 2) * 70),
-    );
-  });
+  // M19: the armed phase starts with its gun in hand; leaving it, the gun is tossed aside.
+  if (ph.armed) armPhase(world, f, ph.armed);
+  else if (n > 0 && prof.phases[n - 1]!.armed) disarmForPhase(world, f);
+  // A phase with a summon brings its supports through that call (once), not at its start.
+  if (!ph.summon) spawnSupports(world, ph.supports, ph.eliteSupports, ph.coopSupports);
 }
 
 /** Adds an enemy (encounter id sequence); used by waves and boss phases. */
@@ -331,5 +352,5 @@ export function bossLook(world: World, f: Fighter): number {
   const b = world.encounter?.boss;
   if (!b || b.id !== f.id) return 1;
   const prof = PROFILES[f.hero]?.boss;
-  return prof?.phases[b.phase]?.look ?? 1;
+  return marekLook(world, f, prof?.phases[b.phase]?.look ?? 1);
 }

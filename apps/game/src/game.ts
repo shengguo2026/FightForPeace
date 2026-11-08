@@ -35,6 +35,8 @@ import {
   ROOMS,
   greenhouseHint,
   CORRIDORS,
+  DIFFICULTIES,
+  PursuitPhase,
   actionable,
   proxyInput,
   restoreWorld,
@@ -42,6 +44,11 @@ import {
 } from '@ffp/sim';
 
 const IDLE: FrameInput = { moveX: 0, moveZ: 0, pressed: 0, held: 0, dirPressed: 0 };
+/** M19: Marek's mounted intercept and the greenhouse room it leads into. */
+export const INTERCEPT = 'marek-intercept';
+export const MAREK_ROOM = 'boss-marek';
+/** Frames the intercept's result stays on screen before Marek's room opens. */
+const CHAIN_FRAMES = 150;
 import {
   DEFAULT_GAMEPAD,
   DEFAULT_KEYBOARD_P1,
@@ -211,7 +218,10 @@ export class GameSession {
     arena: string | null,
     difficulty = 'medium',
     beat = 0,
-    extra: Pick<WorldOptions, 'loadouts' | 'cheats' | 'heroes' | 'steeringAssist'> = {},
+    extra: Pick<
+      WorldOptions,
+      'loadouts' | 'cheats' | 'heroes' | 'steeringAssist' | 'intercept'
+    > = {},
     seed = this.seed,
   ): void {
     const heroes = [0, 1].map((slot) => heroOf(this.world, slot)?.hero);
@@ -277,12 +287,29 @@ export class GameSession {
       for (const after of this.afterStep) after(this.world);
     }
     if (!paused) this.alpha = alpha;
+    this.chainIntercept();
     return {
       frame: this.world.frame,
       hash: hashWorld(this.world),
       paused: this.devices.paused,
       inputs,
     };
+  }
+
+  /**
+   * M19: the intercept leads straight into Marek's room, carrying its outcome (an earned
+   * opening when he was broken, his forced dismount otherwise). Local play only.
+   */
+  private chainIntercept(): void {
+    const p = this.world.pursuit;
+    if (!p || CORRIDORS[p.corridor]?.id !== INTERCEPT || p.phase !== PursuitPhase.Complete) return;
+    if (this.world.frame - p.phaseFrame < CHAIN_FRAMES) return;
+    const difficulty = DIFFICULTIES[p.difficulty]?.id ?? 'medium';
+    const cheats = this.world.cheats;
+    this.startArena(MAREK_ROOM, difficulty, 0, {
+      intercept: p.marek,
+      cheats: { hero: [cheats.hero[0] ?? 0, cheats.hero[1] ?? 0], session: cheats.session },
+    });
   }
 
   /**

@@ -35,6 +35,9 @@ import {
   phaseOf,
   RiderState,
   runningAction,
+  ROOMS,
+  type Encounter,
+  type Greenhouse,
 } from '@ffp/sim';
 import { profileText } from '../text/en';
 import {
@@ -155,6 +158,8 @@ export class StageScene extends Phaser.Scene {
   private propSprites = new Map<number, Phaser.GameObjects.Sprite>();
   /** M9 stage objects: workers, their pen, food, the cache, the clue and the evidence. */
   private runSprites = new Map<number, Phaser.GameObjects.Sprite>();
+  /** M19 story NPCs of a greenhouse room (Tomas Rell in Marek's yard). */
+  private npcSprites = new Map<number, Phaser.GameObjects.Sprite>();
   private weaponTags = new Map<number, Phaser.GameObjects.Text>();
   private lastWeapon = new Map<number, string>();
   private lastEnv = '';
@@ -254,11 +259,12 @@ export class StageScene extends Phaser.Scene {
       return;
     }
     this.pursuit.hide();
-    this.boss = this.arena.bossView(snap.encounter);
+    this.boss = this.arena.bossView(snap.encounter, current, snap.frame);
     this.inArena = snap.encounter !== null;
     this.drawScenery(snap.environment, snap.frame, collision);
     this.drawItems(snap.items, snap.frame);
     this.drawRun(snap.run, current, snap.frame);
+    this.drawNpcs(snap.greenhouse, snap.encounter, snap.frame);
     // Ground-Opportunity Focus: a ring under each marked target a hero is focused on.
     const focused = new Set<number>();
     for (const f of current) {
@@ -419,7 +425,13 @@ export class StageScene extends Phaser.Scene {
   /** A new world (arena start, restart, back to the Lab): drop every per-id object. */
   private forgetWorld(): void {
     this.effects.clear();
-    for (const map of [this.sprites, this.itemSprites, this.propSprites, this.runSprites]) {
+    for (const map of [
+      this.sprites,
+      this.itemSprites,
+      this.propSprites,
+      this.runSprites,
+      this.npcSprites,
+    ]) {
       for (const sp of map.values()) sp.destroy();
       map.clear();
     }
@@ -509,6 +521,44 @@ export class StageScene extends Phaser.Scene {
    * their rope pen, food, the recovery cache, the clue, the sponsor evidence, and a hold
    * ring over every hero who is holding Interact.
    */
+  /**
+   * M19 story NPCs: Tomas Rell, exposed and under guard by the cargo bay. He is not a
+   * body (nothing can hit him or path through him); his pose follows the fight.
+   */
+  private drawNpcs(gh: Greenhouse | null, enc: Encounter | null, frame: number): void {
+    const keep = new Set<number>();
+    const npcs = gh ? (ROOMS[gh.room]?.npcs ?? []) : [];
+    npcs.forEach((n, i) => {
+      const x = fxToPixels(n.x);
+      const z = fxToPixels(n.z);
+      const b = enc?.boss;
+      // Poses (exposed sheet): 0 watchful, 2 caught, 3 lowering the lantern, 5 looking back.
+      const cell = !b ? 0 : b.capture > 0 ? 5 : b.scorch === 1 ? 3 : b.stagger > 0 ? 2 : 0;
+      const sheet = 'npc.tomas-exposed.sheet';
+      const meta = this.assets.sheet(sheet)?.sheet;
+      const g = this.gfx;
+      g.fillStyle(0x000000, 0.3);
+      g.fillEllipse(x, z, 110, 20);
+      if (!meta || !this.textures.exists(sheet)) {
+        g.fillStyle(0xc9b8a0, 1);
+        g.fillRect(x - 30, z - 250, 60, 250);
+        return;
+      }
+      keep.add(990 + i);
+      const sp = this.sprite(this.npcSprites, 990 + i, sheet);
+      sp.setVisible(true);
+      sp.setTexture(sheet, cell);
+      sp.setOrigin(0.5, meta.ground / meta.cell);
+      sp.setScale(0.95);
+      sp.setPosition(x, z);
+      sp.setDepth(this.depthAt(z));
+      // He faces the yard (left of the cargo bay) unless he looks back after the capture.
+      sp.setFlipX(cell !== 5);
+      void frame;
+    });
+    this.dropStale(this.npcSprites, keep);
+  }
+
   private drawRun(run: StageRun | null, bodies: readonly Fighter[], frame: number): void {
     const keep = new Set<number>();
     if (!run) {

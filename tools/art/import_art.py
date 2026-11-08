@@ -89,6 +89,44 @@ ENEMIES = {
         "ENM-COMMANDER",
         ["IDLE-WALK", "ATTACK-A", "ATTACK-B", "ATTACK-C", "PHASE", "STAGGER", "REACT", "REACT-P2", "EXIT", "EXIT-P2"],
     ),
+    # M19 Stage 2 roles (difficulty variants share their base kit's sheets).
+    "claimhand": (
+        "enemies/claimhand",
+        "ENM-CLAIMHAND",
+        ["IDLE-WALK", "ATTACK-A", "ATTACK-B", "WEAPON", "REACT", "EXIT"],
+    ),
+    "glassrunner": ("enemies/glassrunner", "ENM-GLASSRUNNER", ["IDLE-RUN", "ATTACK", "AIR", "REACT", "EXIT"]),
+    "reaver": ("enemies/reaver", "ENM-REAVER", ["IDLE-WALK", "ATTACK", "GRAB", "REACT", "EXIT"]),
+    "marauder": (
+        "enemies/marauder",
+        "ENM-MARAUDER",
+        ["IDLE-WALK", "AIM", "ATTACK", "DISARM", "REACT", "EXIT"],
+    ),
+    "saboteur": (
+        "enemies/saboteur",
+        "ENM-SABOTEUR",
+        ["IDLE-WALK", "ATTACK", "BREACH", "GRENADE", "REACT", "EXIT"],
+    ),
+    "rider": (
+        "enemies/rider",
+        "ENM-RIDER",
+        ["ON-FOOT", "EXIT", "MOUNT-RIDE", "MOUNT-ATTACK", "MOUNT-STABILITY"],
+    ),
+    "enforcer2": (
+        "enemies/enforcer2",
+        "ENM-ENFORCER2",
+        ["IDLE-WALK", "ATTACK-A", "ATTACK-B", "STANCE", "REACT", "EXIT"],
+    ),
+    "signalman": ("enemies/signalman", "ENM-SIGNALMAN", ["IDLE-WALK", "ATTACK", "CALLS", "REACT", "EXIT"]),
+    "marek": (
+        "enemies/marek",
+        "ENM-MAREK",
+        [
+            "IDLE-WALK", "MOUNTED", "MOUNTED-BREAK", "ARMED-A", "ARMED-B", "ARMED-REACT", "PHASE",
+            "UNBOUND-IDLE-WALK", "UNBOUND-A", "UNBOUND-B", "UNBOUND-C", "SCORCHED", "REACT", "STAGGER",
+            "EXIT-SURRENDER", "EXIT-CAPTURE",
+        ],
+    ),
 }
 
 # Stage 1 areas (environments/stage1): far, middle, floor and foreground layers, plus the
@@ -105,7 +143,13 @@ PROPS = ["WORKSTAFF", "HANDWHEEL", "SLUICEBOARDS", "IMPACT-HAZARD", "FOOD", "BAR
 MEDIA_PREFIXES = {"cine", "story", "mus", "sfx", "vfx"}
 
 # M9 non-combatants: the two coerced workers of the Stage 1 rescue (pose sheets).
-NPCS = {"worker-a": "NPC-WORKER-A", "worker-b": "NPC-WORKER-B"}
+NPCS = {
+    "worker-a": "NPC-WORKER-A",
+    "worker-b": "NPC-WORKER-B",
+    # M19: Tomas Rell, the story NPC of Marek's greenhouse (frail guest, then exposed).
+    "tomas-frail": "NPC-TOMAS-FRAIL",
+    "tomas-exposed": "NPC-TOMAS-EXPOSED",
+}
 
 
 def action_ids(hero: str) -> list[tuple[str, str]]:

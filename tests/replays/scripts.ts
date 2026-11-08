@@ -870,6 +870,33 @@ export const greenhouseScript: ReplayScript = {
   ),
 };
 
+/**
+ * M19: Marek's yard on Hard with River Scout and Fire Vanguard (arena bots), opened by
+ * a broken intercept: the armed command, his supports and the fight towards a capture.
+ */
+const marekOptions: WorldOptions = {
+  greenhouse: 'boss-marek',
+  heroes: ['river', 'fire'],
+  difficulty: 'hard',
+  intercept: 1,
+};
+function marekFight(): FrameInput[][] {
+  const w = createWorld(97, marekOptions);
+  const frames: FrameInput[][] = [];
+  for (let i = 0; i < 2400; i += 1) {
+    const f = [botInput(w, 0), botInput(w, 1)];
+    frames.push(f);
+    step(w, f);
+  }
+  return frames;
+}
+export const marekScript: ReplayScript = {
+  name: 'marek-river-fire',
+  seed: 97,
+  options: marekOptions,
+  frames: marekFight(),
+};
+
 export const SCRIPTS = [
   walkSquare,
   dashJump,
@@ -887,6 +914,7 @@ export const SCRIPTS = [
   ...pairScripts,
   ...pursuitScripts,
   greenhouseScript,
+  marekScript,
 ];
 
 export type { ReplayLog };

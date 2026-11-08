@@ -253,7 +253,17 @@ export interface DebugEncounter {
   result: number;
   viewMin: number;
   enemies: { id: number; kit: string; state: number; health: number; threat: number }[];
-  boss: { phase: number; resolve: number; stagger: number; pending: boolean } | null;
+  boss: {
+    phase: number;
+    resolve: number;
+    stagger: number;
+    pending: boolean;
+    /** M19: 1 surrender, 2 forced capture; the intercept's outcome; supports summoned. */
+    capture: number;
+    intercept: number;
+    summoned: boolean;
+    gunLost: number;
+  } | null;
   threat: number;
   budget: number;
 }
@@ -292,7 +302,18 @@ export interface DebugPursuit {
     critical: boolean;
     health: number;
   }[];
-  enemies: { id: number; state: number; x: number; z: number; stability: number; target: number }[];
+  enemies: {
+    id: number;
+    state: number;
+    x: number;
+    z: number;
+    stability: number;
+    target: number;
+    /** M19: Marek's own bike. */
+    boss: boolean;
+  }[];
+  /** M19 intercept: 0 none, 1 broken, 2 dismounted, 3 riding. */
+  marek: number;
   equipment: number[];
   record: Record<string, number>;
   grades: { id: string; score: number; grade: string }[];

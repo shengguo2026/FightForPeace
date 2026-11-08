@@ -35,6 +35,11 @@ export interface BossView {
   stagger: number;
   shift: number;
   shiftFrames: number;
+  /** M19 kit look (1 armed, 2 unbound, 3 scorched, 4 captured) and the capture kind. */
+  look?: number;
+  capture?: number;
+  /** Frames since the capture began. */
+  captureAge?: number;
 }
 
 type Phased = readonly [startup: number, active: number, recovery: number];
@@ -141,6 +146,88 @@ const ENEMY_POSES: Record<string, Record<string, { sheet: string; cells: Phased 
     'iron-hug': { sheet: 'attack-b', cells: [3, 4, 5] },
     'anvil-shove': { sheet: 'attack-b', cells: [0, 1, 2] },
   },
+  // --- M19 Stage 2 roles (variants use their base kit's art) ---
+  claimhand: {
+    'claim-jab': { sheet: 'attack-a', cells: [0, 1, 1] },
+    'seizing-cross': { sheet: 'attack-a', cells: [0, 2, 2] },
+    'bootline-kick': { sheet: 'attack-a', cells: [3, 4, 5] },
+    'cut-in-hook': { sheet: 'attack-b', cells: [0, 1, 5] },
+    'taxing-low-kick': { sheet: 'attack-b', cells: [0, 2, 5] },
+    'overreach-elbow': { sheet: 'attack-b', cells: [3, 4, 5] },
+  },
+  glassrunner: {
+    'aisle-tap': { sheet: 'attack', cells: [0, 0, 5] },
+    'cross-aisle-kick': { sheet: 'attack', cells: [1, 2, 5] },
+    'underbench-slide': { sheet: 'attack', cells: [3, 4, 5] },
+    'rail-vault': { sheet: 'air', cells: [0, 1, 2] },
+    'glassfall-heel': { sheet: 'air', cells: [3, 3, 4] },
+    'rebound-exit': { sheet: 'air', cells: [5, 5, 5] },
+  },
+  reaver: {
+    'load-check': { sheet: 'attack', cells: [0, 0, 5] },
+    'load-elbow': { sheet: 'attack', cells: [1, 1, 5] },
+    'brace-shove': { sheet: 'attack', cells: [2, 2, 5] },
+    'load-bearing-sweep': { sheet: 'attack', cells: [3, 4, 5] },
+    'dock-clamp': { sheet: 'grab', cells: [0, 2, 1] },
+    'aisle-turn': { sheet: 'grab', cells: [4, 4, 4] },
+    'pallet-drop': { sheet: 'grab', cells: [5, 5, 5] },
+  },
+  marauder: {
+    'claim-shot': { sheet: 'aim', cells: [1, 2, 5] },
+    'retreating-shot': { sheet: 'attack', cells: [0, 1, 2] },
+    'close-check': { sheet: 'attack', cells: [5, 3, 5] },
+    'claim-jab': { sheet: 'attack', cells: [5, 3, 5] },
+    'bootline-kick': { sheet: 'attack', cells: [5, 3, 5] },
+    'sidearm-throw': { sheet: 'attack', cells: [4, 4, 5] },
+  },
+  saboteur: {
+    'tool-jab': { sheet: 'attack', cells: [0, 1, 1] },
+    'panel-kick': { sheet: 'attack', cells: [2, 2, 3] },
+    'covering-shove': { sheet: 'attack', cells: [4, 4, 5] },
+    'breach-access': { sheet: 'breach', cells: [0, 0, 0] },
+    'breach-tamper': { sheet: 'breach', cells: [1, 1, 1] },
+    'breach-commit': { sheet: 'breach', cells: [2, 2, 5] },
+    'exit-route': { sheet: 'breach', cells: [4, 4, 4] },
+  },
+  rider: {
+    'claim-jab': { sheet: 'on-foot', cells: [0, 2, 0] },
+    'bootline-kick': { sheet: 'on-foot', cells: [0, 3, 0] },
+    'taxing-low-kick': { sheet: 'on-foot', cells: [0, 3, 0] },
+  },
+  enforcer2: {
+    'iron-knuckle': { sheet: 'attack-a', cells: [0, 1, 5] },
+    'rivet-elbow': { sheet: 'attack-a', cells: [2, 2, 5] },
+    'anvil-heel': { sheet: 'attack-a', cells: [3, 4, 5] },
+    'blackline-advance': { sheet: 'attack-b', cells: [0, 2, 1] },
+    'anvil-sweep': { sheet: 'attack-b', cells: [3, 4, 5] },
+    'iron-measure': { sheet: 'stance', cells: [0, 2, 1] },
+  },
+  signalman: {
+    'baton-check': { sheet: 'attack', cells: [0, 1, 3] },
+    'command-kick': { sheet: 'attack', cells: [2, 2, 3] },
+    'low-marker': { sheet: 'attack', cells: [4, 4, 5] },
+    'rearward-order': { sheet: 'exit', cells: [0, 0, 0] },
+    'crossfang-call': { sheet: 'calls', cells: [3, 0, 0] },
+    'guard-the-claim': { sheet: 'calls', cells: [3, 1, 1] },
+    'replace-the-line': { sheet: 'calls', cells: [3, 2, 2] },
+    'signal-break': { sheet: 'calls', cells: [4, 5, 5] },
+  },
+  marek: {
+    'jackal-burst': { sheet: 'armed-a', cells: [0, 1, 2] },
+    'sweeping-claim': { sheet: 'armed-a', cells: [3, 4, 5] },
+    'stock-check': { sheet: 'armed-b', cells: [0, 1, 1] },
+    'cover-shift': { sheet: 'armed-b', cells: [2, 3, 3] },
+    'command-pressure': { sheet: 'armed-b', cells: [4, 5, 5] },
+    'predator-elbow': { sheet: 'unbound-a', cells: [0, 1, 5] },
+    'riding-boot': { sheet: 'unbound-a', cells: [3, 3, 5] },
+    'claimants-advance': { sheet: 'unbound-b', cells: [2, 3, 5] },
+    'road-cutter-sweep': { sheet: 'unbound-b', cells: [4, 4, 5] },
+    'spoilsmans-grip': { sheet: 'unbound-c', cells: [0, 1, 2] },
+    'carrion-descent': { sheet: 'unbound-c', cells: [3, 3, 5] },
+    'carrion-boot': { sheet: 'unbound-c', cells: [4, 4, 5] },
+    'jackals-measure': { sheet: 'unbound-b', cells: [0, 1, 5] },
+    'scorched-claim': { sheet: 'scorched', cells: [1, 2, 3] },
+  },
   commander: {
     'palm-strike': { sheet: 'attack-a', cells: [0, 1, 5] },
     roundhouse: { sheet: 'attack-a', cells: [0, 2, 5] },
@@ -159,6 +246,20 @@ const ENEMY_POSES: Record<string, Record<string, { sheet: string; cells: Phased 
 const EXIT_CELLS: Record<string, { surrender: number; kneel: number; flee: [number, number] }> = {
   trainer: { surrender: 0, kneel: 2, flee: [3, 4] },
   commander: { surrender: 0, kneel: 1, flee: [2, 3] },
+  // M19: hesitate, back away, surrender (kneel), surrendered (sit), flee (two cells).
+  claimhand: { surrender: 2, kneel: 3, flee: [4, 5] },
+  glassrunner: { surrender: 2, kneel: 3, flee: [4, 5] },
+  reaver: { surrender: 2, kneel: 3, flee: [4, 5] },
+  marauder: { surrender: 2, kneel: 3, flee: [4, 5] },
+  saboteur: { surrender: 2, kneel: 3, flee: [4, 5] },
+  rider: { surrender: 2, kneel: 3, flee: [4, 5] },
+  enforcer2: { surrender: 2, kneel: 3, flee: [4, 5] },
+  signalman: { surrender: 4, kneel: 5, flee: [2, 3] },
+};
+/** M19: kits whose idle and walk come from another sheet (cells: idle pair, walk cycle). */
+const IDLE_SHEETS: Record<string, { sheet: string; idle: number[]; walk: number[] }> = {
+  glassrunner: { sheet: 'idle-run', idle: [0, 1], walk: [2, 3, 4, 5] },
+  rider: { sheet: 'on-foot', idle: [0], walk: [0, 1] },
 };
 const EXIT_DEFAULT = { surrender: 0, kneel: 1, flee: [2, 3] as [number, number] };
 
@@ -320,8 +421,8 @@ export class SpritePicker {
   private enemy(f: Fighter, frame: number, boss?: BossView): SpriteFrame | null {
     const kit = ENEMIES[f.hero];
     if (!kit) return null;
-    // The Pressed Recruit wears the training dummy's sheets.
-    const art = kit.id === 'recruit' ? 'trainer' : kit.id;
+    // The Pressed Recruit wears the training dummy's sheets; M19 variants their base kit's.
+    const art = kit.id === 'recruit' ? 'trainer' : (kit.art ?? kit.id);
     const base = `enemy.${art}.sheet`;
     const s = (key: string, cell: number, drawnLeft = false): SpriteFrame | null =>
       this.has(`${base}.${key}`) ? { sheet: `${base}.${key}`, cell, drawnLeft } : null;
@@ -330,21 +431,52 @@ export class SpritePicker {
     const react = p2 && this.has(`${base}.react-p2`) ? 'react-p2' : 'react';
     const exitSheet = p2 && this.has(`${base}.exit-p2`) ? 'exit-p2' : 'exit';
     const exit = EXIT_CELLS[art] ?? EXIT_DEFAULT;
+    const look = isBoss ? (boss.look ?? 1) : 1;
+    const idle =
+      look === 3 && this.has(`${base}.scorched`)
+        ? { sheet: 'scorched', idle: [0], walk: [1] }
+        : look >= 2 && this.has(`${base}.unbound-idle-walk`)
+          ? { sheet: 'unbound-idle-walk', idle: [0, 1], walk: [2, 3, 4, 5] }
+          : art === 'marauder' && f.item === 0 && this.has(`${base}.disarm`)
+            ? { sheet: 'disarm', idle: [3], walk: [3] }
+            : (IDLE_SHEETS[art] ?? { sheet: 'idle-walk', idle: [0, 1], walk: [2, 3, 4, 5] });
     if (isBoss && boss.shift > 0) {
       // Phase transition: the PHASE sheet plays through once over the shift.
-      const n = Math.min(5, Math.floor(((boss.shiftFrames - boss.shift) * 6) / boss.shiftFrames));
-      return s('phase', Math.max(0, n)) ?? s('idle-walk', 0);
+      const meta = this.has(`${base}.phase`);
+      const last = meta ? Math.max(0, filled(meta).length - 1) : 5;
+      const n = Math.min(last, Math.floor(((boss.shiftFrames - boss.shift) * (last + 1)) / boss.shiftFrames));
+      return s('phase', Math.max(0, n)) ?? s(idle.sheet, 0);
+    }
+    if (isBoss && (boss.capture ?? 0) > 0 && f.state === MoveState.Surrender) {
+      // M19 capture: the Resolve surrender (kneel, open hands, raise, restrained) or the
+      // forced capture (collapse, the short last attempt, spent, restrained).
+      const age = boss.captureAge ?? f.stateFrame;
+      if (boss.capture === 1) {
+        const cell = age < 30 ? 0 : age < 60 ? 1 : age < 120 ? 2 : 3;
+        return s('exit-surrender', cell) ?? s(exitSheet, exit.surrender);
+      }
+      const cell = age < 20 ? 0 : age < 60 ? 1 : age < 80 ? 2 : age < 150 ? 3 : 4;
+      return s('exit-capture', cell) ?? s(exitSheet, exit.kneel);
     }
     if (isBoss && boss.stagger > 0 && f.state !== MoveState.Launched && f.state !== MoveState.Down)
       return s('stagger', f.stateFrame < 20 ? 0 : loop(undefined, frame, 3, [1, 2]));
     switch (f.state) {
       case MoveState.Idle:
       case MoveState.Pickup:
-        return s('idle-walk', loop(undefined, frame, 3, [0, 1]));
+        return s(idle.sheet, loop(undefined, frame, 3, idle.idle));
       case MoveState.Walk:
-        return s('idle-walk', loop(undefined, frame, 8, [2, 3, 4, 5]));
+        // M19 Lockstep Escort: the screening steps of the Stage 2 Enforcer.
+        if (f.order === 2 && this.has(`${base}.stance`))
+          return s('stance', loop(undefined, frame, 4, [3, 4]));
+        return s(idle.sheet, loop(undefined, frame, 8, idle.walk));
       case MoveState.Guard:
-        return s('guard', 0) ?? s('armor', 0) ?? s('idle-walk', 0);
+        return (
+          s('guard', 0) ??
+          s('armor', 0) ??
+          (f.order === 2 ? s('stance', 3) : null) ??
+          s('stance', 0) ??
+          s(idle.sheet, idle.idle[0]!)
+        );
       case MoveState.Attack:
       case MoveState.Grabbing:
       case MoveState.Counter: {
@@ -354,8 +486,11 @@ export class SpritePicker {
         if (own) {
           // The lookout loads the sling before it aims (the warning pose).
           if (a?.id === 'sling-shot' && p === 0 && f.stateFrame < 12) return s('attack', 0);
-          return s(own.sheet, own.cells[p]) ?? s('idle-walk', 0);
+          return s(own.sheet, own.cells[p]) ?? s(idle.sheet, 0);
         }
+        // M19 visible counter stances (Iron Measure, Jackal's Measure) before an action runs.
+        if (f.state === MoveState.Counter)
+          return s('stance', 0) ?? s('unbound-b', 0) ?? s('attack', 0);
         if (a && WEAPON_POSES[a.id]) return s('attack-c', [2, 3, 5][p]!) ?? s('attack', p);
         return s('attack', (a && RUSH.has(a.id) ? 3 : 0) + p);
       }
@@ -367,14 +502,17 @@ export class SpritePicker {
       case MoveState.Recoil:
       case MoveState.Grabbed:
       case MoveState.Restrained:
+        if (art === 'rider') return s('on-foot', 4);
         return s(react, f.stun > 20 ? 1 : 0);
       case MoveState.Launched:
-        return s(react, 2);
+        return s(react, 2) ?? s('on-foot', 5);
       case MoveState.Down:
       case MoveState.Defeated:
+        if (art === 'rider') return s('on-foot', 5);
         return s(react, 3);
       case MoveState.GetUp:
       case MoveState.Recover:
+        if (art === 'rider') return s('on-foot', 0);
         return s(react, f.stateFrame < f.stun / 2 ? 4 : 5);
       case MoveState.Flee: {
         const cell = loop(undefined, frame, 8, exit.flee);

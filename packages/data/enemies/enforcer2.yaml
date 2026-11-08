@@ -1,0 +1,114 @@
+# Black-Iron Enforcer, Stage 2 sponsor upgrade (Stage 2 spec §11, story line §9): the
+# recognisable guarded formation anchor (Hard and higher). Iron Knuckle -> Rivet Elbow ->
+# Anvil Heel is a hit-confirmed route; Blackline Advance has a vulnerable startup and armour
+# only on its active frames; Anvil Sweep is a broad low; Iron Measure is a visible counter
+# stance (with a cooldown, never a universal reflex) that answers one frontal attack with a
+# short recoil strike. Lockstep Escort: it walks between the nearest hero and a Revolver
+# Marauder or Systems Saboteur with its guard up, reserving escort threat (so the specialist
+# cannot also commit freely); attacking, being hit or a specialist out of range ends it.
+# Throws, rear contact and its recoveries stay open. M19 candidates.
+id: enforcer2
+name: Black-Iron Enforcer (Stage 2)
+# Large enemies take Fire Warden's catches and takedowns only when vulnerable (M16).
+tags: [large]
+bodyWidth: 96
+actions:
+  - id: iron-knuckle
+    name: Iron Knuckle
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 16, active: 4, recovery: 22, blockstun: 16 }
+    hitbox: { x: 20, w: 120, y: 140, h: 120, depth: 36 }
+    damage: 60
+    reaction: { kind: stagger, hitstun: 20, push: 4 }
+    costs: { stun: 14, scale: 12, starter: 10, guard: 16 }
+    meter: 0
+    tags: [counterable]
+    convert: { to: rivet-elbow }
+
+  - id: rivet-elbow
+    name: Rivet Elbow
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: 4, recovery: 24, blockstun: 16 }
+    hitbox: { x: 15, w: 110, y: 150, h: 110, depth: 36 }
+    damage: 70
+    reaction: { kind: stagger, hitstun: 22, push: 4 }
+    costs: { stun: 14, scale: 12, guard: 20 }
+    meter: 0
+    tags: [counterable]
+    convert: { to: anvil-heel }
+
+  - id: anvil-heel
+    name: Anvil Heel
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 14, active: 4, recovery: 26, blockstun: 18 }
+    hitbox: { x: 20, w: 140, y: 120, h: 130, depth: 38 }
+    damage: 80
+    reaction: { kind: knockback, hitstun: 24, push: 11 }
+    costs: { stun: 16, scale: 14, guard: 24 }
+    meter: 0
+    tags: [counterable]
+
+  - id: blackline-advance
+    name: Blackline Advance
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 28, active: 6, recovery: 30, blockstun: 18 }
+    hitbox: { x: 20, w: 130, y: 120, h: 150, depth: 40 }
+    damage: 90
+    reaction: { kind: knockback, hitstun: 26, push: 12 }
+    costs: { stun: 18, scale: 15, starter: 10, guard: 32 }
+    meter: 0
+    armor: { from: 29, to: 34 }
+    tags: [guardPressure, counterable]
+    moves:
+      - { from: 20, to: 34, forward: 3 }
+
+  - id: anvil-sweep
+    name: Anvil Sweep
+    category: low
+    input: { context: script, dir: neutral }
+    frames: { startup: 20, active: 5, recovery: 26, blockstun: 16 }
+    hitbox: { x: 10, w: 150, y: 0, h: 80, depth: 60 }
+    damage: 60
+    reaction: { kind: trip, hitstun: 28, push: 5, lift: 3 }
+    costs: { stun: 16, scale: 14, starter: 10, guard: 20 }
+    meter: 0
+    tags: [counterable]
+
+  - id: iron-measure
+    name: Iron Measure
+    category: counter
+    input: { context: counter, dir: neutral }
+    frames: { startup: 4, active: 4, recovery: 20 }
+    hitbox: { x: 15, w: 115, y: 100, h: 160, depth: 38 }
+    damage: 55
+    reaction: { kind: knockback, hitstun: 22, push: 9 }
+    costs: { stun: 12, scale: 12, starter: 10 }
+    meter: 0
+    tags: []
+
+profile:
+  role: elite
+  health: 760
+  walk: { x: 2, z: 2 }
+  perception: 2
+  ring: 280
+  defense:
+    tier: elite
+    guard: { every: 2, of: 1 }
+    exact: true
+    counter: true
+    breaker: true
+    guardHold: 30
+    cooldown: 260
+  morale: { breakAt: 10 }
+  weapons: never
+  firearms: false
+  escort: { threat: 14, range: 700 }
+  attacks:
+    - { action: iron-knuckle, threat: 24, cooldown: 120 }
+    - { action: anvil-sweep, threat: 26, cooldown: 200 }
+    - { action: blackline-advance, threat: 32, cooldown: 280 }

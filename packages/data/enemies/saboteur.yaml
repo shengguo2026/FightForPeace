@@ -1,0 +1,128 @@
+# Systems Saboteur (Stage 2 spec §11, story line §9): the Interruptible Objective Specialist.
+# It walks to a room control (a Ledger asset tagged `control`) and runs Control Breach as
+# three separate visible actions, Access, Tamper and Commit; any damaging hit interrupts
+# it, and Exit Route (a depth retreat with no invulnerability) follows. One sabotage at a
+# time per room, each control at most once; Commit puts an essential control into Safe
+# fallback (repairable) and never destroys anything. In a room authored with
+# `grenade: saboteur` its first Saboteur carries the room's one grenade (the M18 Remove, Arm,
+# Aim, Release sequence). Tool Jab, Panel Kick and Covering Shove keep heroes off it.
+# Limited normal guard; no Exact Block, Counter, breaker, armour or command grab; Never
+# pickups. Losing the grenade or two interruptions shake its morale. M19 candidates.
+id: saboteur
+name: Systems Saboteur
+bodyWidth: 66
+actions:
+  - id: tool-jab
+    name: Tool Jab
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 10, active: 3, recovery: 14, blockstun: 12 }
+    hitbox: { x: 20, w: 105, y: 150, h: 100, depth: 30 }
+    damage: 35
+    reaction: { kind: stagger, hitstun: 18, push: 3 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 8 }
+    meter: 0
+    tags: [counterable]
+
+  - id: panel-kick
+    name: Panel Kick
+    category: low
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: 4, recovery: 18, blockstun: 12 }
+    hitbox: { x: 15, w: 120, y: 0, h: 80, depth: 30 }
+    damage: 30
+    reaction: { kind: knockback, hitstun: 18, push: 9 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 8 }
+    meter: 0
+    tags: [counterable]
+
+  - id: covering-shove
+    name: Covering Shove
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 14, active: 4, recovery: 18, blockstun: 12 }
+    hitbox: { x: 15, w: 105, y: 110, h: 150, depth: 44 }
+    damage: 20
+    reaction: { kind: knockback, hitstun: 18, push: 12 }
+    costs: { stun: 8, scale: 8, starter: 10, guard: 8 }
+    meter: 0
+    tags: [counterable]
+
+  - id: breach-access
+    name: 'Control Breach: Access'
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 6, active: 50, recovery: 0 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    tags: [objective, breach]
+
+  - id: breach-tamper
+    name: 'Control Breach: Tamper'
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 4, active: 60, recovery: 0 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    tags: [objective, breach]
+
+  - id: breach-commit
+    name: 'Control Breach: Commit'
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 4, active: 40, recovery: 12 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    tags: [objective, breach]
+
+  - id: exit-route
+    name: Exit Route
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 3, active: 1, recovery: 22 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    tags: [evade]
+    note: 'A non-attacking retreat with no invulnerability.'
+    moves:
+      - { from: 1, to: 22, forward: -6, depth: 2, depthFrom: input }
+
+profile:
+  role: objective
+  health: 230
+  walk: { x: 3, z: 2 }
+  perception: 6
+  ring: 360
+  defense: { tier: basic, guard: { every: 4, of: 1 }, guardHold: 18 }
+  morale: { breakAt: 35, shaken: 60 }
+  weapons: never
+  firearms: false
+  objective: { threat: 22, cooldown: 300 }
+  attacks:
+    - { action: tool-jab, threat: 12, cooldown: 90 }
+    - { action: panel-kick, threat: 12, cooldown: 140, minDifficulty: medium }
+    - { action: covering-shove, threat: 10, cooldown: 160, minDifficulty: medium }
+
+variants:
+  - id: saboteur-elite
+    name: Systems Saboteur Veteran
+    minDifficulty: hard
+    health: 250
+    defense: { tier: basic, guard: { every: 3, of: 1 }, guardHold: 20 }
+  - id: saboteur-master
+    name: Systems Saboteur Specialist
+    minDifficulty: ultimate
+    health: 260
+    defense: { tier: basic, guard: { every: 3, of: 1 }, guardHold: 20 }

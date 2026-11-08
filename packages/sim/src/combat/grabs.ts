@@ -423,6 +423,14 @@ export function stepEnemyHold(world: World, f: Fighter): void {
   }
   if (world.frame - f.grabStart < a.grab.hold) return;
   release(world, f, t);
+  if (a.tags.includes('pivot')) {
+    // M19 pivot grab (Spoilsman's Grip, Aisle Turn): it swings the target round to its
+    // other side and throws it the other way.
+    const gap = Math.abs(t.x - f.x);
+    f.facing = f.facing > 0 ? -1 : 1;
+    t.x = f.x + f.facing * gap;
+    t.facing = f.facing > 0 ? -1 : 1;
+  }
   applyHit(world, sourceOf(f), a, 0, t);
   if (a.tags.includes('restraint')) {
     interrupt(t);
