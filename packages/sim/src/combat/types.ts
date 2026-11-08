@@ -249,6 +249,8 @@ export interface WeaponDef {
   gripResistance: number;
   /** Finite rounds a fresh weapon carries (0 = none). */
   ammo: number;
+  /** M18 firearms: Defense a hero pays for each shot (0 = none). */
+  fire: { defenseCost: number };
   /** Pickup frames. */
   pickup: number;
   hazardDestructible: boolean;
@@ -312,6 +314,8 @@ export const Reject = {
   NoAmmo: 18,
   /** M16: the link needs a whiff punish (a hit on an attack's recovery). */
   NeedsPunish: 19,
+  /** M18: not enough Defense for a firearm's shot. */
+  NoDefense: 20,
 } as const;
 export type Reject = (typeof Reject)[keyof typeof Reject];
 
@@ -336,6 +340,7 @@ export const REJECT_TEXT: Record<number, string> = {
   [Reject.HandsFull]: 'both hands are on the weapon',
   [Reject.NoAmmo]: 'no rounds left: throw it instead',
   [Reject.NeedsPunish]: 'needs a whiff punish',
+  [Reject.NoDefense]: 'not enough Defense to fire',
 };
 
 // --- M7 enemies, difficulty and arenas ---------------------------------------------------
@@ -905,4 +910,157 @@ export interface MountedDef {
   /** Six actions per roster hero, in slot order (HERO_DATA order). */
   heroes: MountedActionDef[][];
   corridors: CorridorDef[];
+}
+
+// --- M18 greenhouse: Layered Pantry, containers, Preservation Ledger, grenade -------------
+
+/** A Layered Pantry recovery item (Stage 2 spec §10). Defense out of 100, meter of 1000. */
+export interface PantryDef {
+  id: string;
+  name: string;
+  health: number;
+  defense: number;
+  meter: number;
+  rare: boolean;
+}
+
+/** An ownership-aware container kind. Sizes are fixed point half widths and height. */
+export interface ContainerKindDef {
+  id: string;
+  name: string;
+  /** Hostile or damaged property: opened by strikes. Otherwise protected: Interact only. */
+  hostile: boolean;
+  /** Protected: frames of the opening. */
+  open: number;
+  /** Hostile: integrity strikes must empty. */
+  integrity: number;
+  hw: number;
+  hd: number;
+  h: number;
+}
+
+/** Ledger categories. Numbers are encoded; never renumber. */
+export const LedgerCategory = {
+  Workers: 0,
+  Aquatic: 1,
+  Crops: 2,
+  Systems: 3,
+  Supplies: 4,
+} as const;
+
+/** A Preservation Ledger asset kind (spec §6). Conditions are plain integers. */
+export interface LedgerKindDef {
+  id: string;
+  name: string;
+  category: number;
+  condition: number;
+  damaged: number;
+  critical: number;
+  weight: number;
+  /** Essential systems stop at Safe fallback (repairable) instead of being Lost. */
+  essential: boolean;
+  /** Loses condition while no pump runs. */
+  aquatic: boolean;
+  /** A pump: aquatic assets drain while every pump is Critical or worse. */
+  circulation: boolean;
+  repairEvery: number;
+  repairAmount: number;
+  hw: number;
+  hd: number;
+  h: number;
+}
+
+export interface GreenhouseRoomDef {
+  id: string;
+  name: string;
+  width: number;
+  /** ARENAS index of the room's waves (hidden arena), or -1. */
+  arena: number;
+  assets: readonly { id: string; kind: number; x: number; z: number }[];
+  containers: readonly {
+    kind: number;
+    x: number;
+    z: number;
+    /** Pantry index, or a weapon id (item -1). */
+    contents: readonly { item: number; weapon: string }[];
+  }[];
+  pantry: readonly { item: number; x: number; z: number }[];
+  shutter: { x: number; z: number; asset: number } | null;
+  rack: {
+    x: number;
+    z: number;
+    asset: number;
+    loose: number;
+    topple: number;
+    fragment: string;
+    fallW: number;
+    fallD: number;
+    fallDamage: number;
+    seedlings: number;
+    right: number;
+  } | null;
+  jet: {
+    x: number;
+    z: number;
+    lanes: readonly { x0: number; x1: number; z0: number; z1: number }[];
+    warn: number;
+    active: number;
+    cooldown: number;
+    damage: number;
+    push: number;
+    restore: number;
+  } | null;
+  redirect: {
+    x: number;
+    z: number;
+    solo: number;
+    coop: number;
+    restore: number;
+    cooldown: number;
+  } | null;
+  restraint: {
+    x: number;
+    z: number;
+    zx: number;
+    zz: number;
+    hw: number;
+    hd: number;
+    frames: number;
+    large: number;
+    cooldown: number;
+  } | null;
+  grenadier: { x: number; z: number } | null;
+}
+
+export interface GreenhouseDef {
+  pantry: readonly PantryDef[];
+  pantryReach: { x: number; z: number };
+  containers: readonly ContainerKindDef[];
+  ledger: readonly LedgerKindDef[];
+  rules: {
+    strike: number;
+    impact: number;
+    maxHit: number;
+    guard: number;
+    drain: { every: number; floor: number };
+    stable: number;
+    reach: { x: number; z: number };
+  };
+  /** Grade bands, highest first; the last band starts at 0. */
+  grades: readonly { id: string; name: string; min: number }[];
+  grenade: {
+    weapon: string;
+    remove: number;
+    arm: number;
+    aim: number;
+    fuse: number;
+    radius: number;
+    damage: number;
+    push: number;
+    lift: number;
+    integrity: number;
+    ledger: number;
+    every: number;
+  };
+  rooms: readonly GreenhouseRoomDef[];
 }

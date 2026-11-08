@@ -30,6 +30,7 @@ import { hitProjectiles } from './projectiles';
 import { hitBodies } from './grabs';
 import { hitItems, payContact, strikeItems, tryDisarm } from './items';
 import { impactEligible, strikeScenery } from './environment';
+import { strikeGreenhouse } from '../preservation/greenhouse';
 import { bossResolve } from '../enemies/boss';
 import { TEAM_FINISHERS, coopAction, logCoop } from '../coop/data';
 import { canClaim, claimHandoff, openHandoff, partnerOf, targetState } from '../coop/handoff';
@@ -268,6 +269,7 @@ export function resolveHits(world: World): void {
     }
     const box = activeHitbox(att)!;
     strikeScenery(world, att, a, box);
+    strikeGreenhouse(world, att, a, box);
     strikeItems(world, att, a, box);
     for (const t of bodies) {
       // A counter or deflect may have stopped this action part-way through the targets.

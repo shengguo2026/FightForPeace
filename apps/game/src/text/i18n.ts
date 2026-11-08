@@ -9,6 +9,7 @@ import {
   CORRIDORS,
   HEROES,
   MOUNTED,
+  GREENHOUSE,
   PROFILES,
   PROGRESSION,
   STAGES,
@@ -63,6 +64,14 @@ export function dataCatalog(): Record<string, string> {
     out[`corridor.${c.id}.name`] = c.name;
     out[`corridor.${c.id}.goal`] = c.goal;
     for (const e of c.equipment) out[`corridor.${c.id}.equipment.${e.id}`] = e.name;
+  }
+  // M18 greenhouse names: pantry items, containers, Ledger assets, grades and rooms.
+  if (GREENHOUSE) {
+    for (const p of GREENHOUSE.pantry) out[`gh.item.${p.id}`] = p.name;
+    for (const c of GREENHOUSE.containers) out[`gh.container.${c.id}`] = c.name;
+    for (const k of GREENHOUSE.ledger) out[`gh.asset.${k.id}`] = k.name;
+    for (const g of GREENHOUSE.grades) out[`gh.grade.${g.id}`] = g.name;
+    for (const r of GREENHOUSE.rooms) out[`gh.room.${r.id}`] = r.name;
   }
   // M11 progression names: store outfits and badges, achievements, Academy routes and lessons.
   for (const s of PROGRESSION.store) if (s.name) out[`${s.id}.name`] = s.name;

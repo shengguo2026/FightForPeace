@@ -23,6 +23,7 @@ import { HURT_HALF_D, HURT_HALF_W, runningAction, strikes } from '../combat/hits
 import { reach } from '../combat/trainer';
 import { WEAPONS } from '../combat/armory';
 import { ITEM, heldItem } from '../combat/held';
+import { isGrenade } from '../preservation/greenhouse';
 import { pickupEligible, requestPickup, stepPickup } from '../combat/items';
 import { nonCombatant } from '../combat/damage';
 import { actionIndex, attacksOf, bossPhase, difficultyOf, livingHeroes, profileOf } from './data';
@@ -738,6 +739,8 @@ function seekWeapon(world: World, f: Fighter, prof: EnemyProfile): boolean {
   let bestD = 0;
   for (const item of world.items) {
     if (item.state !== ItemState.Ground || !pickupEligible(world, f, item)) continue;
+    // M18: the drill's grenade is never an enemy pickup (the Saboteur arrives in M19).
+    if (isGrenade(world, item)) continue;
     if (want && WEAPONS[item.def]?.id !== want) continue;
     const d = Math.abs(item.x - f.x) + Math.abs(item.z - f.z);
     if (prof.weapons === 1 && d > AI.weaponRadius) continue;

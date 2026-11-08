@@ -173,7 +173,35 @@ export function weaponGate(world: World, f: Fighter, index: number): number {
   }
   if (a.ammo > 0) {
     if (item.ammo < a.ammo) return Reject.NoAmmo;
+    // M18: a firearm's shot costs a hero Defense (meaningful cost; refused without it).
+    const cost = def.fire.defenseCost;
+    if (cost > 0 && f.team === 'hero' && !world.infiniteDefense) {
+      if (f.defense < cost) return Reject.NoDefense;
+      f.defense -= cost;
+    }
     item.ammo -= a.ammo;
   }
   return Reject.None;
+}
+
+/**
+ * M18 useful empty state: the input of a firearm's shot selects its `whenEmpty` strike once
+ * the weapon has too few rounds for the shot (the empty sidearm's pistol whip, the support
+ * gun's stock strike). Any other action index is returned unchanged.
+ */
+export function ammoChoice(world: World, f: Fighter, index: number): number {
+  const kit = kitOf(f);
+  const a = kit?.actions[index];
+  const item = heldItem(world, f);
+  if (!kit || !a || !item || a.ammo <= 0 || !isWeaponAction(f, index) || item.ammo >= a.ammo)
+    return index;
+  const alt = kit.actions.findIndex(
+    (b, i) =>
+      i !== index &&
+      isWeaponAction(f, i) &&
+      b.tags.includes('whenEmpty') &&
+      b.context === a.context &&
+      b.dir === a.dir,
+  );
+  return alt >= 0 ? alt : index;
 }

@@ -123,6 +123,12 @@ export class ArenaView {
     }
   }
 
+  /** M18: a greenhouse room draws its own greybox room, so the arena's layers stay hidden. */
+  setBackdropVisible(on: boolean): void {
+    // The decorative foreground follows the quality setting (update); only hiding touches it.
+    for (const l of this.layers) if (!on || l.name !== 'fg') l.obj.setVisible(on);
+  }
+
   /** Boss state for the sprite picker (null outside a boss arena). */
   bossView(enc: Encounter | null): BossView | undefined {
     const b = enc?.boss;

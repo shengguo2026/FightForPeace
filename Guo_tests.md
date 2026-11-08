@@ -743,3 +743,110 @@ Keys on the bike: **P1** W / S steer, D faster, A slower, T attack (W/S + T kick
 13. **Difficulties:** try Easy (fewer riders, softer hits, slower wind-ups) and Hard (two riders can attack at once, but never both the same hero). The warnings and the rescue time stay the same on every difficulty.
 14. **STEADYRIDE:** in the Arena panel tick **STEADYRIDE** and start again (or tick *Steering assistance* for a stronger lane pull). Hits still shake the bike but Stability stays full. At the gate the Response Record says "Cheat-Assisted: story progress only, no records".
 15. **Languages:** switch to 简体中文 and Deutsch in Settings: the HUD, the move names, the Road Rider moves, the equipment and the Response Record are translated.
+
+## M18 · Advanced weapons, containers and the Preservation Ledger (0.18.0)
+
+There's a new **Greenhouse Test Room**. It is greybox (simple shapes, no final art) and is where all the new Stage 2 systems come together.
+
+**Preservation Ledger.** This is the panel at the top right. It tracks crop beds, a medicinal bed, seedlings on a rack, fish and shrimp tanks, an aeration line, a circulation pump, filtration, glazing and the loading shutter. Each one shows:
+
+- a condition bar
+- its state in words: sound, damaged, critical, safe fallback or lost
+
+Above the list is a grade: Flourishing, Sustained, Strained or Damaged.
+
+**Damage.** Enemy strikes, bodies knocked into things, a falling rack and a grenade blast all cost condition. Damage is bounded: each hit takes at most a fixed amount, and a short pause follows before the next one counts. Essential systems never drop below **safe fallback**. Hold **Interact** (J) next to anything damaged to repair it.
+
+**Containers.**
+
+- *Protected* containers (tote, meal carrier, cabinets, locker) open with **Interact** and never take damage.
+- *Breakable* ones (Raider Case, Stolen Cargo Crate, Damaged Irrigation Housing) open only when you hit them.
+
+They hold greenhouse food and weapons.
+
+**Pantry.** You eat food by walking over it:
+
+- Wrap and Rice Bowl restore Health.
+- Broth restores Defense.
+- Rice Cake fills the Attack Bar.
+- The rare Harvest Stew gives a bit of all three.
+
+A hero who is already full leaves the food for the partner.
+
+**New weapons.**
+
+- **Service Lance:** two-handed, long reach. Its hook pulls enemies. Press Interact next to a fallen rack while holding it to right the rack at once.
+- **Six-Round Sidearm:** exactly 6 shots. Each shot shows a red warning line first, locks you in place and costs Defense. When it's empty, the same button does a pistol-whip.
+- **Support Gun:** 24 rounds, shoots 3-round bursts with recoil. When it's empty you strike with the stock.
+- **Breaching Grenade:** see the drill below.
+
+**Room pieces.**
+
+- **Seedling rack:** hits make it loose, then it topples onto enemies and drops a support rail you can use as a weapon.
+- **Purge-jet valve:** a warned water jet along a marked lane. It pushes everyone and hurts only enemies.
+- **Redirect wheel:** hold Interact to swing the jet to the other lane and stabilise the tanks. It's faster with two players.
+- **Cargo strap:** ties up the enemy nearest to it inside the marked cargo bay.
+- **Grenade drill:** a thrower on the right visibly removes, arms, aims and throws a grenade. Each step has a caption and a sound.
+
+**Choices I made (tell me if you want them different):**
+
+- Heroes' own strikes never damage crops or systems. Only enemies, knocked bodies, the rack and blasts do.
+- The purge jet pushes heroes but never hurts them.
+- If you interrupt the thrower before it arms the grenade, the grenade drops unarmed and is made safe as soon as you pick it up.
+- The grade thresholds are candidates: 90 / 70 / 45.
+- Until M19 adds the Stage 2 enemies, the room's enemies are Recruits and Runners standing in for the Claim-Hands.
+- The room lives only in the Lab for now.
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+Open `http://localhost:5173/?greenhouse=greenhouse-test-room` to go straight into the room. Add `&difficulty=hard` for another difficulty. You can also open `http://localhost:5173/?lab`, press F1 and pick **Greenhouse Test Room (Preservation Ledger, greybox)** in the Arena panel. If Vite prints another port, use that one. Stop the server with `Ctrl+C`.
+
+To test the branch before it is merged, instead of `main`:
+
+```powershell
+git fetch origin claude/project-thread-mh263l
+git checkout claude/project-thread-mh263l
+pnpm install
+pnpm dev
+```
+
+Optional, the automated checks:
+
+```powershell
+pnpm typecheck
+pnpm test
+pnpm e2e
+```
+
+**Interact** is **J** for P1 and **Num 3** for P2 (the same key as Grab).
+
+### Test steps
+
+1. **Open the room:** go to `http://localhost:5173/?greenhouse=greenhouse-test-room`. You see the greybox greenhouse with every object labelled. The Ledger panel at the top right shows **Flourishing · 100%**, circulation running, and every asset as *sound*.
+2. **Protected container:** walk to the **Clinic Cabinet** (back left). The prompt says "Interact: open". Press **J**: the cabinet opens and the Community Harvest Stew appears. Walk over the stew to eat it once you've taken some damage.
+3. **Maintenance Locker:** open it the same way. Pick up the **Service Lance** with J and try its moves: Attack, the long Forward Attack, the hook (Back Attack), and air, dash, low and throw.
+4. **Breakable containers:** hit the **Raider Case** (middle) until it breaks open. It holds the **Six-Round Sidearm** and a Rice Cake. Try to hit a protected container: nothing happens to it.
+5. **Sidearm:** pick it up and attack. A red line flashes first, then the shot fires, and Defense goes down a little. Fire all 6 shots: the weapon tag counts down to 0/6. After that the same button does a pistol-whip. With too little Defense, the shot is refused ("not enough Defense to fire").
+6. **Pantry:** take some hits, then walk over the **Fresh Greenhouse Wrap** (left): Health goes up and the wrap is gone. With full Health you walk over food without eating it.
+7. **Ledger damage and repair:** let the enemies fight near the crop beds or tanks. When a strike reaches an asset, its bar drops and its state word changes (damaged, critical). The grade in the panel follows. Stand next to the damaged asset and **hold J**: "Hold Interact: repair", and the bar refills step by step. If you let go, the repair stops.
+8. **Safe fallback:** keep letting enemies hit the **Circulation Pump** (right). It stops at *safe fallback*, never *lost*. While it's down, the panel says "Circulation: DOWN: tanks draining" and the fish and shrimp tanks slowly lose condition (never below a floor).
+9. **Redirect wheel:** hold J at the wheel (middle back) until the bar fills. "FLOW REDIRECTED": the jet lane switches and the tanks are stabilised for a while. In co-op (Num 4 to join P2), with both heroes holding, it fills about three times faster.
+10. **Purge jet:** press J at the **Purge valve**. The current lane flashes (warning) and then the jet fires along it. Enemies in the lane are pushed and hurt; heroes are only pushed.
+11. **Seedling rack:** knock enemies into the rack (left) or let them hit it. It shows **LOOSE**, then **TOPPLED**: enemies under it are knocked down, the seedlings take damage, and a **Support Rail** drops (pick it up as a weapon). Hold J next to the fallen rack to right it, or press J once while holding the Service Lance ("Interact: fit the coupling hook").
+12. **Cargo strap:** pull an enemy into the orange cargo bay (bottom right) and press J at the strap anchor. "STRAPPED": the enemy is held for a few seconds.
+13. **Grenade drill:** after a few seconds the thrower on the right starts. Each step gets a warning caption near the bottom of the screen: the grenade is drawn, then armed ("Interrupt now!"), then aimed at you, then thrown. The aim line and blast circle are drawn, and once it's armed a fuse ring and "fuse 2.1 s" count down.
+    - Hit the thrower **before it arms**: the grenade drops unarmed; pick it up to make it safe ("GRENADE SECURED").
+    - Let it land and **pick the live grenade up with J and throw it back**: the fuse doesn't reset.
+    - Or just get clear: the blast pushes everyone in the circle and does limited damage to nearby assets.
+14. **Support Gun:** in the Lab (`?lab`), F2, set *Dummy 1 weapon* to **Finite Burst-Command Support Gun**. Its bursts fire 3 rounds with recoil. Disarm it and pick it up: you get exactly the rounds that were left. When it's empty, the button does a stock strike.
+15. **Arena panel:** press **F1** in the room. The Arena panel lists the Ledger (every asset with its condition and state) and the record: containers opened or broken, food eaten, repairs, asset hits, rack, jet, redirects, lashes and grenades.
+16. **Languages:** switch to 简体中文 and Deutsch in Settings. The Ledger panel, asset and container names, prompts, captions and callouts are translated.

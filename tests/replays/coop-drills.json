@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "rulesVersion": "m17",
+  "rulesVersion": "m18",
   "seed": 51,
   "options": {
     "dummies": 1,
     "infiniteMeter": true
   },
-  "expectedHash": 1944997949,
+  "expectedHash": 1712386889,
   "frames": [
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":1,"moveZ":-1,"pressed":0,"held":0,"dirPressed":9}],

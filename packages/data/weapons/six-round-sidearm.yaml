@@ -1,0 +1,61 @@
+# Deliberate Six-Round Sidearm (Stage 2 spec §9.2): a finite-ammunition precision pickup.
+# Exactly six rounds travel with the physical weapon (exact transfer on drop, disarm and
+# pickup); there is no reload. A shot shows its aim line for the whole startup (the warned
+# line), commits the holder (no cancels, long recovery) and costs Defense (`fire`). Empty,
+# the same input is a pistol-whip strike (tag whenEmpty), so the empty weapon stays useful.
+# Shots follow every legal combat rule (surrender, Resolve, protected recovery). M18
+# candidates; the shot is a long thin hitbox, so it reaches across the screen.
+id: six-round-sidearm
+name: Six-Round Sidearm
+class: firearm
+hands: 1
+ammo: 6
+fire: { defenseCost: 15 }
+integrity: { max: 60, worn: 40, critical: 20, hit: 4, guard: 2, clash: 6, throw: 15, deflect: 4 }
+gripResistance: 30
+pickup: 8
+throw:
+  speed: 13
+  lift: 3
+  responses: [blockable, exactDeflectable, counterReturnable, strikeDeflectable]
+actions:
+  - id: sidearm-shot
+    name: Deliberate Shot
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 20, active: 2, recovery: 26, blockstun: 16 }
+    hitbox: { x: 40, w: 860, y: 140, h: 30, depth: 22 }
+    damage: 70
+    reaction: { kind: knockdown, hitstun: 30, push: 4, lift: 4 }
+    costs: { stun: 20, scale: 20, starter: 30, guard: 20 }
+    meter: 3
+    ammo: 1
+    tags: [warnedLine, committed]
+    note: The aim line is drawn for the whole startup; the shot cannot be cancelled.
+
+  - id: sidearm-whip
+    name: Pistol Whip
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 8, active: 3, recovery: 16 }
+    hitbox: { x: 20, w: 90, y: 130, h: 90, depth: 30 }
+    damage: 45
+    reaction: { kind: stagger, hitstun: 22, push: 4 }
+    costs: { stun: 12, scale: 10 }
+    meter: 4
+    clash: light
+    disarmPower: 30
+    tags: [whenEmpty]
+    note: The empty sidearm's strike; it replaces the shot once the last round is gone.
+
+  - id: sidearm-throw
+    name: Sidearm Throw
+    category: weaponThrow
+    input: { context: weaponThrow, dir: neutral }
+    frames: { startup: 10, active: 1, recovery: 14, blockstun: 12 }
+    hitbox: { x: 0, w: 60, y: 110, h: 50, depth: 30 }
+    damage: 35
+    reaction: { kind: stagger, hitstun: 22, push: 5 }
+    costs: { stun: 12, scale: 10 }
+    meter: 3
+    breakPower: 20

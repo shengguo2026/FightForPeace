@@ -1,0 +1,27 @@
+# Low-Fragmentation Breaching Grenade (Stage 2 spec §9.3): one per authored filtration
+# encounter. The fuse, blast and the thrower's remove/arm/aim/release sequence are in
+# greenhouse.yaml (`grenade`); this file is the physical item: picked up with Interact and
+# returned with Interact (the weapon throw). Retrieval never resets the fuse. An unarmed
+# grenade is secured when a hero picks it up. M18 candidates.
+id: breaching-grenade
+name: Breaching Grenade
+class: recoverableThrown
+hands: 1
+integrity: { max: 10, worn: 8, critical: 4, hit: 0, guard: 0, clash: 0, throw: 0 }
+gripResistance: 10
+pickup: 6
+throw:
+  speed: 9
+  lift: 6
+  responses: [blockable, strikeDeflectable]
+actions:
+  - id: grenade-return
+    name: Grenade Return
+    category: weaponThrow
+    input: { context: weaponThrow, dir: neutral }
+    frames: { startup: 8, active: 1, recovery: 14, blockstun: 8 }
+    hitbox: { x: 0, w: 40, y: 90, h: 40, depth: 28 }
+    damage: 10
+    reaction: { kind: stagger, hitstun: 14, push: 2 }
+    costs: { stun: 5, scale: 5 }
+    meter: 1

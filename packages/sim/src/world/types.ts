@@ -1,4 +1,5 @@
 import type { Pursuit } from '../mounted/pursuit';
+import type { Greenhouse } from '../preservation/greenhouse';
 import type { CheatState } from '../cheats/cheats';
 import type { RngState } from '../math/rng';
 
@@ -936,6 +937,8 @@ export interface World {
   cheats: CheatState;
   /** M17 mounted pursuit (null outside a Guided Pursuit Corridor). */
   pursuit: Pursuit | null;
+  /** M18 greenhouse room: Preservation Ledger, containers, pantry, fixtures (or null). */
+  greenhouse: Greenhouse | null;
 }
 
 // --- M9 stage journey --------------------------------------------------------------------

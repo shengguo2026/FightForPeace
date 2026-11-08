@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "rulesVersion": "m17",
+  "rulesVersion": "m18",
   "seed": 23,
   "options": {
     "dummies": 1,
@@ -11,7 +11,7 @@
       "approach": true
     }
   },
-  "expectedHash": 224275233,
+  "expectedHash": 2276512692,
   "frames": [
     [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":8}],
     [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],

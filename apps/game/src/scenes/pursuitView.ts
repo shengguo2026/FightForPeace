@@ -58,7 +58,7 @@ const style = (size: number, color = '#ffffff'): Phaser.Types.GameObjects.Text.T
 });
 
 /** A reusable pool of text objects (world or screen space). */
-class TextPool {
+export class TextPool {
   private items: Phaser.GameObjects.Text[] = [];
   private used = 0;
   constructor(

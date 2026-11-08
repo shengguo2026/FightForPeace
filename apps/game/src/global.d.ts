@@ -208,6 +208,12 @@ export interface FfpDebugHook {
   rideTo(x: number): void;
   /** M17: sets a rider's Stability (0 = critical next frame is the warned state). */
   setStability(slot: number, value: number): void;
+  /** M18: starts a greenhouse room (room id) at a difficulty. */
+  startGreenhouse(room: string, difficulty?: string): void;
+  /** M18 greenhouse room: the Preservation Ledger, containers, grenade drill and record. */
+  greenhouse(): DebugGreenhouse | null;
+  /** M18: damages a Ledger asset (room name, e.g. bed-west) within the asset rules. */
+  damageAsset(name: string, amount: number): void;
   /** M9 stage run: beat, phase, locks, continues, workers, evidence and counters. */
   run(): DebugRun | null;
   /** M9: moves the heroes' centre to beat x (pixels), e.g. next to a worker or a lock. */
@@ -250,6 +256,24 @@ export interface DebugEncounter {
   boss: { phase: number; resolve: number; stagger: number; pending: boolean } | null;
   threat: number;
   budget: number;
+}
+
+export interface DebugGreenhouse {
+  room: string;
+  grade: string;
+  score: number;
+  assets: {
+    name: string;
+    kind: string;
+    x: number;
+    z: number;
+    condition: number;
+    max: number;
+    state: number;
+  }[];
+  containers: { kind: string; x: number; z: number; opened: boolean }[];
+  grenadePhase: number;
+  record: Record<string, number>;
 }
 
 export interface DebugPursuit {
