@@ -850,3 +850,68 @@ pnpm e2e
 14. **Support Gun:** in the Lab (`?lab`), F2, set *Dummy 1 weapon* to **Finite Burst-Command Support Gun**. Its bursts fire 3 rounds with recoil. Disarm it and pick it up: you get exactly the rounds that were left. When it's empty, the button does a stock strike.
 15. **Arena panel:** press **F1** in the room. The Arena panel lists the Ledger (every asset with its condition and state) and the record: containers opened or broken, food eaten, repairs, asset hits, rack, jet, redirects, lashes and grenades.
 16. **Languages:** switch to 简体中文 and Deutsch in Settings. The Ledger panel, asset and container names, prompts, captions and callouts are translated.
+
+## M19 · Stage 2 enemies and Marek Vane (0.19.0)
+
+What's new: eight Stage 2 enemy roles with Elite and Master versions per difficulty, one trial room per role, two Stage 2 beats (Loading Yard, Filtration Control), the River Road mounted intercept, and Marek Vane's fight in the Dispatch Yard with Tomas Rell as a story character.
+
+Choices you may want changed (all candidates):
+
+- **Difficulty:** Elite versions from Hard, Master versions at Ultimate. The Escort Enforcer appears from Hard, the Signalman from Extreme. At most one firearm aim at a time up to Hard, two from Extreme.
+- **Intercept opening:** if you crash Marek's bike, he starts the yard knocked down with half his Resolve. If he is still riding at the finish, he only starts knocked down.
+- **Marek's summon:** a hit does not cancel Command Pressure. His supports arrive once per phase.
+- **Scorched Claim** starts below about 30% Health in his unarmed phase. Interrupting it costs him Resolve; if he finishes it, the research cargo is left Critical, never lost.
+- **Capture:** breaking his Resolve at 30% Health or less is the clean surrender. Taking his Health to 0 while he still has Resolve is the forced capture.
+- Tomas's lines are short placeholder story text.
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+If Vite prints another port than 5173, use that one. Stop the server with `Ctrl+C`.
+
+To test the branch before it is merged, instead of `main`:
+
+```powershell
+git fetch origin claude/project-thread-lbfhn9
+git checkout claude/project-thread-lbfhn9
+pnpm install
+pnpm dev
+```
+
+Optional, the automated checks:
+
+```powershell
+pnpm typecheck
+pnpm test
+pnpm e2e
+```
+
+Every room below also opens from the Lab: `http://localhost:5173/?lab`, press **F1**, and pick it in the Arena panel. Add `&difficulty=easy|medium|hard|extreme|ultimate` to any room URL.
+
+### Test steps
+
+1. **Claim Hand:** open `http://localhost:5173/?greenhouse=trial-claimhand`. They walk in with the Claim-Hand art. When their quick jab connects, it chains into a heavier cross.
+2. **Glasshouse Runner:** `?greenhouse=trial-glassrunner`. Fast runners that dart in and out between the crop beds.
+3. **Cargo Reaver:** `?greenhouse=trial-reaver`. Let one grab you: the Aisle Turn swings you round to its other side before the hit.
+4. **Revolver Marauder:** `?greenhouse=trial-marauder`. Each one starts with a revolver (3 rounds on Easy up to 6 on Extreme). A red line flashes before each shot. On Medium only one Marauder aims at a time. When the gun is empty, they throw it away (Empty Cast) and fight by hand. Knock the gun out of their hands: they never pick up another firearm.
+5. **Systems Saboteur:** `?greenhouse=trial-saboteur`. The Saboteur walks to a control and works on it in three steps (Access, Tamper, Commit), each with a caption. Hit it during a step: the step is lost and it backs away (Exit Route). Leave it alone: the control goes to *safe fallback* (repairable with J, never lost). Two Saboteurs never sabotage at the same time.
+6. **Filtration beat:** `?greenhouse=beat-filtration`. Here the Saboteur is the grenade thrower. Hit it before it arms the grenade: it drops it and is shaken.
+7. **Road Rider on foot:** `?greenhouse=trial-rider`. They arrive knocked down off their bikes and get up protected.
+8. **Stage 2 Enforcer:** `?greenhouse=trial-enforcer2&difficulty=hard`. It walks in front of a Marauder as a shield (Lockstep Escort). Hit the Enforcer to break the escort.
+9. **Jackal Signalman:** `?greenhouse=trial-signalman&difficulty=extreme`. It calls orders with a caption. **Crossfang**: two allies come at you from above and below in depth. Hit the Signalman during its call: "Signal break" and it has to wait before calling again. With `&difficulty=ultimate`, it can also pull a wounded ally out: an arrow warns at the edge where the replacement will enter.
+10. **Loading Yard beat:** `?greenhouse=beat-loading-yard`. Mixed Stage 2 group in one room.
+11. **Mounted intercept:** `?pursuit=marek-intercept`. Ride right with **D**. Marek appears on his own dark bike with the orange name tag and never rides away. Break his Stability (attacks when it is critical) to crash him: the result says so, and after a moment the Dispatch Yard opens with Marek knocked down and only half his Resolve. If you reach the gate while he is still riding, he starts knocked down with full Resolve.
+12. **Marek, phase 1 (Armed Command):** `?greenhouse=boss-marek` (or `&intercept=1` for the crashed opening). Tomas stands at the left with a subtitle line. The boss bar shows "Phase 1: Armed Command", his Resolve and "24 rounds". He fires three-round Jackal Bursts after a red warning line, and once in the phase calls his supports (Claim Hands on Easy and Medium, Elite Claim Hand and Elite Marauder on Hard).
+13. **Disarm transition:** break his Resolve. He drops the support gun. Pick it up with **J**: "Disarmed" and the fight changes to phase 2. If he empties the gun first, he throws it aside and the phase changes too.
+14. **Predator Unbound and Scorched Claim:** in phase 2 he fights unarmed and faster. When his Health is low, he runs to the **Research Cargo**: the asset shows THREATENED. Hit him during it to stop it (his Resolve drops). If he finishes, the cargo goes to Critical.
+15. **Capture:** break his Resolve when he is at 30% Health or less: he kneels and surrenders, and the supports lose their nerve. In another run, take his Health to 0 while his Resolve still has some left: he is pinned for the forced capture. Each ending has its own caption and art.
+16. **Every difficulty:** repeat steps 12 to 15 with `&difficulty=easy` and `&difficulty=ultimate`. Ultimate has Master supports and stronger numbers.
+17. **Languages:** switch to 简体中文 and Deutsch in Settings. Enemy names, room names, captions, Tomas's lines and the intercept text are translated.
