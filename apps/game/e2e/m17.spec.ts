@@ -5,6 +5,13 @@ test.describe.configure({ timeout: 120_000 });
 async function startPursuit(page: Page, query = '') {
   await page.goto(`/?pursuit=perimeter-pursuit${query}`);
   await page.waitForFunction(() => (window.__ffp?.pursuit()?.riders.length ?? 0) > 0);
+  // The page may still be loading or not yet focused: wait until the simulation runs
+  // (the bike rolls forward on its own) and Player 1's hint bar is shown.
+  const x0 = await page.evaluate(() => window.__ffp!.pursuit()!.riders[0]!.x);
+  await page.waitForFunction((x) => window.__ffp!.pursuit()!.riders[0]!.x > x, x0, {
+    timeout: 20_000,
+  });
+  await expect(page.getByTestId('hint-p1')).toBeVisible({ timeout: 20_000 });
 }
 
 test('the greybox pursuit rides solo: steering, progress and mounted hints', async ({ page }) => {
