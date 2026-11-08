@@ -983,9 +983,9 @@ Stage 2 also opens from the Lab: `http://localhost:5173/?lab`, press **F1**, and
 
 Findings from the M7 tests: a hero holding a weapon was drawn smaller than without it, and walking heroes slid without visible steps.
 
-- **Size:** some hero sheets were drawn at another figure size than the hero's idle sheet: Mountain's staff sheets about 12 % smaller, Mountain's guard, counter, breaker, hurt, grab and dash sheets 5–12 % larger, River's walk about 12 % larger. Each such sheet now carries a draw scale so a hero keeps one size across poses. Wind and Fire were already consistent.
-- **Walking with a weapon:** there is no armed walk cycle in the art yet, so an armed hero showed one frozen cell while moving. With the staff the hero now steps between the ready stance and the mid-stride cell; with the handwheel the carry shifts between its two stances. A proper armed walk needs new art (see the thread).
-- **Walking without a weapon** plays the six-cell walk sheet, but in all four heroes' delivered walk sheets cells 4–6 repeat cells 1–3, so the same leg and arm always lead. That needs redrawn sheets: prompts are in the project files (`art/prompts/codex_redo_walk_cycles.md`, also new armed walk sheets the game picks up automatically).
+- **Size:** some hero sheets were drawn at another figure size than the hero's idle sheet (Mountain's staff sheets about 12 % smaller, several of his other sheets and River's walk larger). Each such sheet now carries a draw scale, so a hero keeps one size across poses.
+- **Walking:** the delivered walk sheets repeated half a walk cycle, so the arms and legs never swapped. All four heroes now have redrawn walk sheets (Mountain, Wind, Fire v2; River v3) with a full two-step cycle.
+- **Walking with a weapon:** Mountain and River have new staff and handwheel walk sheets. Wind and Fire have no weapon sheets yet (as before).
 
 ### Get and start the build
 
@@ -1003,13 +1003,9 @@ If Vite prints another port than 5173, use that one. Stop the server with `Ctrl+
 ### Test steps
 
 1. Open `http://localhost:5173/?lab` and press **F1** to hide the panels. Mountain stands next to the workstaff on the floor.
-2. **Staff size:** note Mountain's head height against the barricade, walk to the staff and pick it up (**J**). Mountain stays the same size holding it. Drop or throw it again (as in your M7 test): still the same size.
-3. **Staff walk:** with the staff, walk left and right (**A**, **D**): the feet alternate between the stance and a step instead of sliding in one pose.
-4. **Handwheel:** pick up the handwheel. Same size as without it; walking shifts the stance.
-5. **Unarmed walk:** drop the weapon and walk: the walk sheet plays as before (the arms and legs still don't swap until the redrawn walk sheets arrive).
-6. **Other poses:** without a weapon, guard (**G**), dash (**D D**), grab the dummy (**J**) and get hit: Mountain keeps one size in every pose.
-7. **River:** press **Num 4** so Player 2 (River) joins. Walk River with the arrow keys: River is the same size walking and standing (before, the walk was visibly larger). River picks up the staff and the handwheel with **Num 3**: same size.
-8. **Mountain's new walk (v2 sheet):** without a weapon, walk Mountain left and right. His arms and legs now swap every step (left arm forward with the right leg, then the other way round), and he is the same size walking and standing.
-9. **Wind and Fire walk (v2 sheets):** in the Lab press **F2**, set *Player 1 hero* to **wind**, close F2 and walk: arms and legs swap every step. Repeat with **fire**; both are the same size walking and standing.
-10. **River's walk (v3 sheet):** press **Num 4** so River joins and walk her with the arrow keys: her arms and legs swap every step and she is the same size walking and standing.
-11. **Mountain's armed walks (new sheets):** pick up the staff with Mountain and walk: a real walk cycle with the staff held steady across the body, legs swapping every step, same size as standing. Same with the handwheel held in front of the chest. River still steps between two stances with a weapon until her armed walk sheets arrive.
+2. **Mountain's walk:** without a weapon, walk left and right (**A**, **D**). His arms and legs swap every step (left arm forward with the right leg, then the other way round), and he is the same size walking and standing.
+3. **Staff size and walk:** note Mountain's head height against the barricade, then pick up the staff (**J**). He stays the same size. Walk: a real walk cycle with the staff held steady across the body, legs swapping every step. Drop or throw the staff (as in your M7 test): still the same size.
+4. **Handwheel:** pick up the handwheel. Same size as without it; walking is a real walk cycle with the wheel held in front of the chest.
+5. **Other poses:** without a weapon, guard (**G**), dash (**D D**), grab the dummy (**J**) and get hit: Mountain keeps one size in every pose.
+6. **River:** press **Num 4** so Player 2 (River) joins. Walk her with the arrow keys: arms and legs swap every step, same size walking and standing. She picks up the staff, then the handwheel (**Num 3**), and walks with each: same size, a real walk cycle with the weapon held steady.
+7. **Wind and Fire:** in the Lab press **F2**, set *Player 1 hero* to **wind**, close F2 and walk: arms and legs swap every step, same size walking and standing. Repeat with **fire**.

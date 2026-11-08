@@ -243,6 +243,8 @@ SHEET_SCALE = {
     "fire-walk": 0.9,
     "mountain-staff-walk": 0.92,
     "mountain-handwheel-walk": 0.86,
+    "river-staff-walk": 0.88,
+    "river-handwheel-walk": 0.88,
     "river-walk": 0.88,
     "river-handwheel": 0.95,
 }
