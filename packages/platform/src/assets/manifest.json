@@ -7067,7 +7067,8 @@
             "foot": 350
           },
           null
-        ]
+        ],
+        "scale": 0.88
       }
     },
     "hero.mountain.sheet.dash": {
@@ -7114,7 +7115,8 @@
             "x1": 317,
             "foot": 354
           }
-        ]
+        ],
+        "scale": 0.92
       }
     },
     "hero.mountain.sheet.exact-counter": {
@@ -7156,7 +7158,8 @@
             "foot": 353
           },
           null
-        ]
+        ],
+        "scale": 0.88
       }
     },
     "hero.mountain.sheet.grab-throw": {
@@ -7203,7 +7206,8 @@
             "x1": 332,
             "foot": 350
           }
-        ]
+        ],
+        "scale": 0.92
       }
     },
     "hero.mountain.sheet.guard": {
@@ -7250,7 +7254,8 @@
             "x1": 313,
             "foot": 352
           }
-        ]
+        ],
+        "scale": 0.88
       }
     },
     "hero.mountain.sheet.handwheel": {
@@ -7292,7 +7297,8 @@
             "foot": 348
           },
           null
-        ]
+        ],
+        "scale": 1.04
       }
     },
     "hero.mountain.sheet.hurt": {
@@ -7339,7 +7345,8 @@
             "x1": 369,
             "foot": 340
           }
-        ]
+        ],
+        "scale": 0.88
       }
     },
     "hero.mountain.sheet.idle": {
@@ -7517,7 +7524,8 @@
             "x1": 324,
             "foot": 349
           }
-        ]
+        ],
+        "scale": 1.13
       }
     },
     "hero.mountain.sheet.staff-b": {
@@ -7564,7 +7572,8 @@
             "x1": 317,
             "foot": 349
           }
-        ]
+        ],
+        "scale": 1.13
       }
     },
     "hero.mountain.sheet.team-attack": {
@@ -7606,7 +7615,8 @@
             "foot": 350
           },
           null
-        ]
+        ],
+        "scale": 0.95
       }
     },
     "hero.mountain.sheet.walk": {
@@ -8672,7 +8682,8 @@
             "foot": 348
           },
           null
-        ]
+        ],
+        "scale": 0.95
       }
     },
     "hero.river.sheet.hurt": {
@@ -9033,7 +9044,8 @@
             "x1": 276,
             "foot": 354
           }
-        ]
+        ],
+        "scale": 0.88
       }
     },
     "hero.wind.pose.aerial.crosswind-heel": {

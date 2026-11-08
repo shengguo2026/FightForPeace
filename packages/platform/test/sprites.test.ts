@@ -130,3 +130,26 @@ test('an armed founder stands with the staff; loose weapons show their condition
   wheel.state = ItemState.Flying;
   expect([1, 2, 3]).toContain(pick.item(wheel, 5)!.cell);
 });
+
+test('an armed founder steps while walking instead of sliding on one cell', () => {
+  const w = createWorld(1);
+  const f = heroOf(w, 0)!;
+  claim(w, f, spawnItem(w, weaponIndex('workstaff'), f.x, f.z));
+  f.state = MoveState.Walk;
+  const cells = new Set([0, 6, 12, 18, 24].map((t) => pick.fighter(f, t)!.cell));
+  expect(pick.fighter(f, 0)!.sheet).toBe('hero.mountain.sheet.staff-a');
+  expect([...cells].sort()).toEqual([0, 1]);
+});
+
+test('weapon sheets are drawn at the same figure size as the idle sheet', () => {
+  // The founders' staff sheets were drawn about 12 % smaller than their idle sheets.
+  const size = (id: string) => reg.sheet(id)!.sheet.scale ?? 1;
+  expect(size('hero.mountain.sheet.staff-a')).toBeGreaterThan(1.1);
+  expect(size('hero.mountain.sheet.staff-b')).toBeGreaterThan(1.1);
+  expect(size('hero.river.sheet.walk')).toBeLessThan(0.9);
+  for (const s of reg.sheets()) {
+    const k = s.sheet.scale ?? 1;
+    expect(k, s.id).toBeGreaterThan(0.8);
+    expect(k, s.id).toBeLessThan(1.2);
+  }
+});

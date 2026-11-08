@@ -40,6 +40,12 @@ export interface SheetMeta {
   /** Ground line in cell pixels: the median foot of the sheet's cells. */
   ground: number;
   cells: (CellBox | null)[];
+  /**
+   * Draw scale that corrects a sheet drawn at a different figure size from the hero's idle
+   * sheet (e.g. the founders' staff sheets), so a hero keeps one size across poses.
+   * Absent means 1.
+   */
+  scale?: number;
 }
 
 /** A background layer image (Stage areas): size, opaque rows and whether it tiles. */

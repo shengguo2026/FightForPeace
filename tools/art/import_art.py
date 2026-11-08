@@ -216,6 +216,25 @@ def refit(img: Image.Image, scale: float) -> Image.Image:
     return out
 
 
+# Sheets whose figure was drawn at another size than the hero's idle sheet: the draw scale
+# the renderer applies so a hero keeps one size across poses (measured by eye against the
+# idle sheet, head and shoulders over a common foot line). Wind and Fire are consistent.
+SHEET_SCALE = {
+    "mountain-staff-a": 1.13,
+    "mountain-staff-b": 1.13,
+    "mountain-handwheel": 1.04,
+    "mountain-guard": 0.88,
+    "mountain-exact-counter": 0.88,
+    "mountain-breaker-pickup": 0.88,
+    "mountain-hurt": 0.88,
+    "mountain-grab-throw": 0.92,
+    "mountain-dash": 0.92,
+    "mountain-team-attack": 0.95,
+    "river-walk": 0.88,
+    "river-handwheel": 0.95,
+}
+
+
 def convert(src: Path, name: str) -> dict:
     img = Image.open(src).convert("RGBA")
     if img.size != (1536, 1024):
@@ -231,10 +250,10 @@ def convert(src: Path, name: str) -> dict:
     # The sheet's ground line: the median foot. Standing cells sit on it; jumps and
     # launches keep the lift they were drawn with.
     ground = feet[len(feet) // 2] if feet else CELL
-    return {
-        "url": f"art/{name}.webp",
-        "sheet": {"cols": COLS, "rows": ROWS, "cell": CELL, "ground": ground, "cells": cells},
-    }
+    sheet = {"cols": COLS, "rows": ROWS, "cell": CELL, "ground": ground, "cells": cells}
+    if name in SHEET_SCALE:
+        sheet["scale"] = SHEET_SCALE[name]
+    return {"url": f"art/{name}.webp", "sheet": sheet}
 
 
 def convert_layer(src: Path, name: str, tiled: bool) -> dict:
