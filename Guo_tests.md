@@ -966,13 +966,13 @@ Stage 2 also opens from the Lab: `http://localhost:5173/?lab`, press **F1**, and
 
 1. **Full journey:** open `http://localhost:5173/?stage=2&difficulty=easy`. The top line reads "Stage 2 · Beat 1/14: Perimeter Pursuit". Ride right with **D** and stop the raiders. When the pursuit completes, the stage moves on by itself to the Loading Yard (Checkpoint 1).
 2. **Room beats:** in the Loading Yard, the Preservation Ledger panel is at the top right. Clear the raiders, then walk right past "GO →" into the Aquaculture Hall.
-3. **Branch choice:** after clearing the Aquaculture Hall, two signs appear at the right edge. Leave on the **upper** lane: you enter the Emergency Aeration Annex (Beat 4). Free the maintenance worker (hold **J**) and stop the Saboteur, then leave: the banner says the branch is completed and names its museum artifact.
+3. **Branch choice:** after clearing the Aquaculture Hall, two signs appear at the right edge. Leave on the **upper** lane: you enter the Emergency Aeration Annex (Beat 4). Free the maintenance worker (hold **J**) and stop the Saboteur, then leave: the banner says "BRANCH COMPLETE". The results later list it as completed with its museum artifact (Early Aerator Impeller).
 4. **Skip a branch:** start again with `?stage=2&beat=6&difficulty=easy` (Crop Channels). Leave on the **lower** lane: you go straight to the Medicinal Wing and the Seed Reserve Bay counts as skipped.
-5. **Fail a branch:** `?stage=2&beat=7&difficulty=easy` (Seed Reserve Bay). Let the raiders break both seed reserves, then leave: the branch is failed, and the stage still goes on.
+5. **Fail a branch:** `?stage=2&beat=7&difficulty=easy` (Seed Reserve Bay). Let the raiders break both seed reserves, then leave: the banner says "BRANCH GOAL MISSED", and the stage still goes on.
 6. **Weapon carry:** pick up a weapon in one room and walk into the next: the hero still holds it with the same durability.
 7. **Checkpoints and continues:** get knocked out after the Hygiene Vestibule (Checkpoint 2). A continue puts you back at the vestibule with the Ledger and branch results as they were there.
 8. **Intercept:** `?stage=2&beat=13&difficulty=easy`. Ride the dispatch bikes and crash Marek's bike. The Dispatch Yard then opens with Marek knocked down and half his Resolve.
-9. **Capture and evidence:** in the Dispatch Yard, capture Marek (break his Resolve at low Health, or take his Health to 0). The weapon crate appears ("Evidence ready"); hold **J** at it.
+9. **Capture and evidence:** in the Dispatch Yard, capture Marek (break his Resolve at low Health, or take his Health to 0). The banner says "MAREK CAPTURED · SECURE THE CRATE"; hold **J** at the weapon crate.
 10. **Epilogue:** the epilogue cards come one by one: the capture, the Ledger lines per system, one card per completed branch, the community recovery by Preservation grade, and the empty depot. Use **Next**, or **Skip to the results**.
 11. **Results:** the Stage 2 results show Preservation, Civil-Protection Response, Continues and Time with grades, the Preservation and Response lines, Marek's capture line, "Optional branches" with each outcome, and the itemised Preservation Ledger.
 12. **Co-op:** repeat step 1 with two players (P2 joins as usual). Both ride in the pursuit and both carry weapons between rooms.
