@@ -6,7 +6,9 @@ import {
   COOP,
   DIFFICULTIES,
   ENEMIES,
+  CORRIDORS,
   HEROES,
+  MOUNTED,
   PROFILES,
   PROGRESSION,
   STAGES,
@@ -50,6 +52,17 @@ export function dataCatalog(): Record<string, string> {
       if (b.clue) out[`${k}.clue`] = b.clue.text;
       if (b.evidence) out[`${k}.evidence`] = b.evidence.text;
     }
+  }
+  // M17 mounted names: each hero's mounted kit, the Road Rider, corridors and equipment.
+  HEROES.forEach((h, i) => {
+    for (const a of MOUNTED.heroes[i] ?? []) out[`mounted.${h.id}.${a.id}`] = a.name;
+  });
+  out[`rider.${MOUNTED.rider.id}.name`] = MOUNTED.rider.name;
+  for (const a of MOUNTED.rider.actions) out[`rider.${a.id}`] = a.name;
+  for (const c of CORRIDORS) {
+    out[`corridor.${c.id}.name`] = c.name;
+    out[`corridor.${c.id}.goal`] = c.goal;
+    for (const e of c.equipment) out[`corridor.${c.id}.equipment.${e.id}`] = e.name;
   }
   // M11 progression names: store outfits and badges, achievements, Academy routes and lessons.
   for (const s of PROGRESSION.store) if (s.name) out[`${s.id}.name`] = s.name;

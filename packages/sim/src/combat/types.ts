@@ -748,3 +748,161 @@ export interface ProgressionDef {
   achievements: readonly AchievementDef[];
   academy: readonly AcademyRouteDef[];
 }
+
+// --- M17 mounted system ------------------------------------------------------------------
+
+/** Mounted action slots (shared by every hero). Numbers are data codes; never renumber. */
+export const MountedSlot = {
+  Neutral: 0,
+  Directional: 1,
+  Hop: 2,
+  Lean: 3,
+  Special: 4,
+  Ultimate: 5,
+} as const;
+
+/** Where a mounted Special moves before its strike. */
+export const Seek = { None: 0, Threat: 1, Partner: 2, Ahead: 3 } as const;
+
+/** One hero's mounted action (fixed point for distances and speeds, frames at 60 Hz). */
+export interface MountedActionDef {
+  id: string;
+  name: string;
+  slot: number;
+  startup: number;
+  active: number;
+  recovery: number;
+  /** Alongside box (neutral, Special): |dx| ≤ reachX, |dz| ≤ reachZ. */
+  reachX: number;
+  reachZ: number;
+  /** Directional kick: the neighbouring lane from `near` to `far` across the road. */
+  near: number;
+  far: number;
+  damage: number;
+  stability: number;
+  /** Attack Bar gain on a hit (meter units). */
+  meter: number;
+  /** Steering penalty after a whiff (frames). */
+  miss: number;
+  /** Evasion window (action frames, inclusive; to < from = none). */
+  evadeFrom: number;
+  evadeTo: number;
+  /** Lean: Stability restored when the window evades an attack. */
+  restore: number;
+  seek: number;
+  /** Frames of partner protection (Escort, Ultimates). */
+  guard: number;
+  /** Forward speed added during the action. */
+  boost: number;
+  /** Ultimate: reach along the road. */
+  radius: number;
+}
+
+export interface BikeDef {
+  id: string;
+  name: string;
+  plates: string[];
+  base: number;
+  min: number;
+  max: number;
+  accel: number;
+  brake: number;
+  steer: number;
+  laneDrift: number;
+  assistDrift: number;
+  stability: number;
+  recover: { delay: number; every: number; amount: number };
+  wobble: number;
+  impact: { barrier: number; gate: number; push: number };
+  crash: number;
+  protect: number;
+  rescue: { window: number; x: number; z: number; restore: number };
+  tether: { soft: number; hard: number; slow: number; assist: number };
+  hop: {
+    frames: number;
+    height: number;
+    rampFrames: number;
+    rampHeight: number;
+    shift: number;
+    shiftFrames: number;
+  };
+}
+
+/** Road Rider action kinds. Numbers are data codes; never renumber. */
+export const RiderKind = { Check: 0, Boot: 1, Cutoff: 2, Fade: 3, Brace: 4, Breakaway: 5 } as const;
+
+export interface RiderActionDef {
+  id: string;
+  name: string;
+  kind: number;
+  windup: number;
+  active: number;
+  recovery: number;
+  reachX: number;
+  reachZ: number;
+  damage: number;
+  stability: number;
+}
+
+export interface RoadRiderDef {
+  id: string;
+  name: string;
+  health: number;
+  stability: number;
+  recover: { delay: number; every: number; amount: number };
+  warn: number;
+  catchUp: number;
+  steer: number;
+  settle: number;
+  crash: number;
+  braceShare: number;
+  breakaway: number;
+  actions: RiderActionDef[];
+}
+
+export interface MountedDifficultyDef {
+  /** Road Rider Stability in percent of the base value. */
+  riderStability: number;
+  /** Road Rider damage (Health and Stability) in percent. */
+  damage: number;
+  /** Extra telegraph frames (Easy). */
+  windup: number;
+  /** Committed mounted attacks at a time (never two on one hero). */
+  committed: number;
+  /** Every n-th hit on an approaching rider is braced (0 = never). */
+  brace: number;
+}
+
+/** Obstacle kinds. Numbers are data codes; never renumber. */
+export const ObstacleKind = { Barrier: 0, Gate: 1, Ramp: 2 } as const;
+
+export interface CorridorDef {
+  id: string;
+  name: string;
+  goal: string;
+  start: number;
+  finish: number;
+  length: number;
+  road: { at: number; top: number; bottom: number }[];
+  obstacles: { at: number; z: number; kind: number; hw: number; hd: number }[];
+  equipment: { id: string; name: string; at: number; side: number }[];
+  checkpoints: number[];
+  waves: {
+    at: number;
+    /** Lowest difficulty index that has this wave. */
+    min: number;
+    /** Equipment index the wave's rider goes for (-1 = the heroes). */
+    target: number;
+    riders: { from: number; lane: number }[];
+  }[];
+}
+
+export interface MountedDef {
+  bike: BikeDef;
+  rider: RoadRiderDef;
+  /** Easy … Ultimate. */
+  difficulty: MountedDifficultyDef[];
+  /** Six actions per roster hero, in slot order (HERO_DATA order). */
+  heroes: MountedActionDef[][];
+  corridors: CorridorDef[];
+}

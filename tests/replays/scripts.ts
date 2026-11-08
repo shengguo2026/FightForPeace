@@ -10,6 +10,9 @@ import {
   type World,
   type WorldOptions,
   createWorld,
+  CORRIDORS,
+  ObstacleKind,
+  PursuitPhase,
   escapeOpen,
   fx,
   heroOf,
@@ -780,6 +783,65 @@ export const pairScripts: ReplayScript[] = PAIRS.map(([a, b], i) => ({
   frames: pairDrills(a, b, 80 + i),
 }));
 
+/**
+ * M17: the Guided Pursuit Corridor ridden end to end by a simple rider bot: holds forward,
+ * steers around barriers and gates, strikes Road Riders alongside, uses the Special and
+ * the Ultimate now and then.
+ */
+function pursuitRide(heroes: string[], seed: number): FrameInput[][] {
+  const options = pursuitOptions(heroes);
+  const world = createWorld(seed, options);
+  const c = CORRIDORS[0]!;
+  const frames: FrameInput[][] = [];
+  for (let i = 0; i < 9000 && world.pursuit!.phase !== PursuitPhase.Complete; i += 1) {
+    const row = heroes.map((_, slot) => {
+      const r = world.pursuit!.riders.find((x) => x.slot === slot);
+      let moveZ: -1 | 0 | 1 = 0;
+      let near = false;
+      if (r) {
+        for (const o of c.obstacles) {
+          if (o.kind === ObstacleKind.Ramp) continue;
+          const dx = o.at - r.x;
+          if (dx > 0 && dx < fx(420) && Math.abs(o.z - r.z) < o.hd + fx(60))
+            moveZ = r.z >= o.z ? 1 : -1;
+        }
+        near = world.pursuit!.enemies.some(
+          (e) => Math.abs(e.x - r.x) < fx(140) && Math.abs(e.z - r.z) < fx(110),
+        );
+      }
+      const pressed =
+        near && i % 12 === slot * 6
+          ? ActionBit.Attack
+          : i % 300 === 150
+            ? ActionBit.Special
+            : i % 400 === 0
+              ? ActionBit.Ultimate
+              : 0;
+      return { moveX: 1 as const, moveZ, pressed, held: pressed, dirPressed: 0 };
+    });
+    frames.push(row);
+    step(world, row);
+  }
+  for (let i = 0; i < 30; i += 1) frames.push(heroes.map(() => ({ ...IDLE })));
+  return frames;
+}
+
+const IDLE: FrameInput = { moveX: 0, moveZ: 0, pressed: 0, held: 0, dirPressed: 0 };
+
+function pursuitOptions(heroes: string[]): WorldOptions {
+  return { pursuit: 'perimeter-pursuit', heroes };
+}
+
+export const pursuitScripts: ReplayScript[] = [
+  ['fire'],
+  ['mountain', 'wind'],
+].map((heroes, i) => ({
+  name: `pursuit-${heroes.join('-')}`,
+  seed: 90 + i,
+  options: pursuitOptions(heroes),
+  frames: pursuitRide(heroes, 90 + i),
+}));
+
 export const SCRIPTS = [
   walkSquare,
   dashJump,
@@ -795,6 +857,7 @@ export const SCRIPTS = [
   stageRescueScript,
   ...heroKitScripts,
   ...pairScripts,
+  ...pursuitScripts,
 ];
 
 export type { ReplayLog };

@@ -10,6 +10,7 @@ import {
   heroFiles,
   loadCoop,
   loadHero,
+  loadMounted,
   loadStage,
   stageFileList,
 } from '../src/generate';
@@ -425,4 +426,34 @@ test('beats follow in file order unless they branch with next', () => {
     "objective: 'Cross the dry fields toward the bridge'\n    next: [rescue]",
   );
   expect(() => loadStage(skip, KITS, 0)).toThrow(/bridge: no beat leads here/);
+});
+
+describe('mounted system (M17)', () => {
+  const MOUNTED = readFileSync(new URL('../mounted/mounted.yaml', import.meta.url), 'utf8');
+  const IDS = ['mountain', 'river', 'wind', 'fire'];
+  const mounted = (src = MOUNTED) => loadMounted(src, IDS) as {
+    heroes: { slot: number }[][];
+    corridors: { id: string }[];
+  };
+
+  test('mounted.yaml compiles: six slots per hero in roster order, one corridor', () => {
+    const m = mounted();
+    expect(m.heroes).toHaveLength(4);
+    for (const kit of m.heroes) expect(kit.map((a) => a.slot)).toEqual([0, 1, 2, 3, 4, 5]);
+    expect(m.corridors.map((c) => c.id)).toEqual(['perimeter-pursuit']);
+  });
+
+  test('a hero without a mounted kit is rejected', () => {
+    expect(() => loadMounted(MOUNTED, [...IDS, 'lake'])).toThrow(/hero "lake" has no mounted kit/);
+  });
+
+  test('a kit missing its lean is rejected', () => {
+    const bad = MOUNTED.replace(/slot: lean/, 'slot: hop');
+    expect(() => mounted(bad)).toThrow(/needs exactly one "lean" action/);
+  });
+
+  test('a wave that targets unknown equipment is rejected', () => {
+    const bad = MOUNTED.replace('target: valve', 'target: windmill');
+    expect(() => mounted(bad)).toThrow(/targets unknown "windmill"/);
+  });
 });

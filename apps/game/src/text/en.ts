@@ -27,6 +27,15 @@ export const TEXT = {
   teamInvite: 'Team Attack! Press {action:TeamAttack} to join in',
   teamWaiting: 'Team Attack: waiting for your partner',
   hintTeam: 'Team {action:TeamAttack}',
+  // --- M17 mounted pursuit (the hero's mounted move names fill {name}) ---
+  hintRideSteer: 'Steer {dir:Up}{dir:Down} · faster {dir:Right} · slower {dir:Left}',
+  hintRideAttack: '{action:Attack} {name}',
+  hintRideKick: '{dir:Up}/{dir:Down}+{action:Attack} {name}',
+  hintRideHop: '{action:Jump} {name}',
+  hintRideLean: '{action:Guard} {name}',
+  hintRideSpecial: '{action:Special} {name}',
+  hintRideUltimate: '{action:Ultimate} {name} (full bar)',
+  hintRideRescue: 'Rescue {action:TeamAttack} beside a downed partner',
   controllerLost: 'Player {player} lost their controller.',
   // --- M9 stage journey (hold Interact next to something) ---
   holdWorker: 'Hold {action:Interact} to free the worker',

@@ -197,6 +197,17 @@ export interface FfpDebugHook {
   dummyToPillar(): void;
   /** M7: starts an arena at a difficulty (ids), or the Lab again (null). */
   startArena(arena: string | null, difficulty?: string, beat?: number): void;
+  /** M17: starts a mounted pursuit (corridor id) with options. */
+  startPursuit(
+    corridor: string,
+    options?: { difficulty?: string; steady?: boolean; assist?: boolean },
+  ): void;
+  /** M17 mounted pursuit: riders, Road Riders, equipment and the Response Record. */
+  pursuit(): DebugPursuit | null;
+  /** M17: moves every rider forward to corridor x (pixels), keeping their lanes. */
+  rideTo(x: number): void;
+  /** M17: sets a rider's Stability (0 = critical next frame is the warned state). */
+  setStability(slot: number, value: number): void;
   /** M9 stage run: beat, phase, locks, continues, workers, evidence and counters. */
   run(): DebugRun | null;
   /** M9: moves the heroes' centre to beat x (pixels), e.g. next to a worker or a lock. */
@@ -241,7 +252,31 @@ export interface DebugEncounter {
   budget: number;
 }
 
-export interface DebugRun {
+export interface DebugPursuit {
+  corridor: string;
+  phase: number;
+  checkpoint: number;
+  camX: number;
+  riders: {
+    slot: number;
+    hero: string;
+    state: number;
+    x: number;
+    z: number;
+    speed: number;
+    stability: number;
+    critical: boolean;
+    health: number;
+  }[];
+  enemies: { id: number; state: number; x: number; z: number; stability: number; target: number }[];
+  equipment: number[];
+  record: Record<string, number>;
+  grades: { id: string; score: number; grade: string }[];
+  mastery: boolean;
+  cheatAssisted: boolean;
+}
+
+interface DebugRun {
   beat: number;
   beatId: string;
   phase: number;

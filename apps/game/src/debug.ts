@@ -18,6 +18,10 @@ import {
   RunPhase,
   beatOf,
   codesOf,
+  CORRIDORS,
+  Cheat,
+  HEROES,
+  responseRecord,
 } from '@ffp/sim';
 import type { QualityGovernor } from '@ffp/platform';
 import type { GameSession } from './game';
@@ -243,6 +247,67 @@ export function installDebugHook(
     startArena: (arena, difficulty = 'medium', beat = 0) => {
       if (arena) lab.arenaPick.value = { arena, difficulty, beat };
       session.startArena(arena, difficulty, beat);
+    },
+    startPursuit: (corridor, options = {}) => {
+      const difficulty = options.difficulty ?? 'medium';
+      lab.arenaPick.value = { arena: corridor, difficulty, beat: 0 };
+      const steady = options.steady ? Cheat.STEADYRIDE : 0;
+      session.startArena(corridor, difficulty, 0, {
+        steeringAssist: options.assist ?? false,
+        ...(steady ? { cheats: { hero: [steady, steady], session: 0 } } : {}),
+      });
+    },
+    pursuit: () => {
+      const p = session.world.pursuit;
+      if (!p) return null;
+      const rec = responseRecord(p);
+      return {
+        corridor: CORRIDORS[p.corridor]!.id,
+        phase: p.phase,
+        checkpoint: p.checkpoint,
+        camX: p.camX / 256,
+        riders: p.riders.map((r) => {
+          const f = heroOf(session.world, r.slot);
+          return {
+            slot: r.slot,
+            hero: f ? (HEROES[f.hero]?.id ?? '') : '',
+            state: r.state,
+            x: r.x / 256,
+            z: r.z / 256,
+            speed: r.speed / 256,
+            stability: r.stability,
+            critical: r.critical,
+            health: f?.health ?? 0,
+          };
+        }),
+        enemies: p.enemies.map((e) => ({
+          id: e.id,
+          state: e.state,
+          x: e.x / 256,
+          z: e.z / 256,
+          stability: e.stability,
+          target: e.target,
+        })),
+        equipment: [...p.equipment],
+        record: { ...p.record },
+        grades: rec.lines.map((l) => ({ ...l })),
+        mastery: rec.mastery,
+        cheatAssisted: session.world.cheats.marked,
+      };
+    },
+    rideTo: (x) => {
+      const p = session.world.pursuit;
+      if (!p) return;
+      const lead = Math.max(...p.riders.map((r) => r.x));
+      for (const r of p.riders) r.x = x * 256 - (lead - r.x);
+      p.camX = Math.max(0, x * 256 - 760 * 256);
+    },
+    setStability: (slot, value) => {
+      const r = session.world.pursuit?.riders.find((x) => x.slot === slot);
+      if (r) {
+        r.stability = value;
+        r.critical = value === 0;
+      }
     },
     run: () => {
       const w = session.world;

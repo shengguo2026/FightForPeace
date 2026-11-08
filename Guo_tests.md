@@ -633,7 +633,7 @@ pnpm smoke:portable
 
 ## M16 · Four heroes: Wind Sentinel and Fire Warden (0.16.0)
 
-The twins join the roster. **Wind Sentinel** is a fast, mobile guard: quick jabs, a whiff-punish follow-up, wide sweeps and launchers. **Fire Warden** is a planted bruiser: some of her moves turn into a takedown when they connect ("contact-confirmed"), and big enemies (the Black-Iron Enforcer and the Commander) resist those takedowns unless they are staggered or guard-crushed. Every hero can now pair with every other one (six pairs, never the same hero twice). The twins together get two extra handoffs, **Crosswind Temper** (Wind → Fire) and **Rising Ember Relay** (Fire → Wind), and their own team finisher, **Twin Guardians' Accord**. Any pair that includes a founder (Mountain or River) uses Confluence Strike, as before.
+The twins join the roster. **Wind Sentinel** is a fast, mobile guard: quick jabs, a whiff-punish follow-up, wide sweeps and launchers. **Fire Warden** is a planted bruiser: some of his moves turn into a takedown when they connect ("contact-confirmed"), and big enemies (the Black-Iron Enforcer and the Commander) resist those takedowns unless they are staggered or guard-crushed. Every hero can now pair with every other one (six pairs, never the same hero twice). The twins together get two extra handoffs, **Crosswind Temper** (Wind → Fire) and **Rising Ember Relay** (Fire → Wind), and their own team finisher, **Twin Guardians' Accord**. Any pair that includes a founder (Mountain or River) uses Confluence Strike, as before.
 
 Two readings I chose (tell me if you want them different): mixed pairs (a founder with a twin) use Confluence Strike, and Wind's Clear-Sky Return only follows Slipstream Backfist when the backfist hits an enemy in the recovery of its own attack (a whiff punish), or when the Lab's "Counter-hit dummies" option is on.
 
@@ -685,3 +685,61 @@ Keys as before. Player 1: move W A S D, Attack T, Jump Y, Guard G, Grab J, Speci
 11. **Twin Guardians' Accord:** still Wind + Fire, both meters full. P1 T to stagger, B to invite, P2 Num 0: the finisher is **Twin Guardians' Accord** (its own effect burst, not Confluence Strike). The Accord is also allowed against the resisting Commander in the boss fight, where Confluence Strike is refused.
 12. **Languages:** switch to 简体中文 in Settings: the twins are 风神 and 火神, and their moves, the Accord and the two handoff routes are translated. Deutsch keeps the English hero names with German move names.
 13. **Founders unchanged:** Mountain Guardian and River Scout play exactly as in M15 (the old golden replays were re-recorded only because the save state now carries the new fields; their results did not change).
+
+## M17 · Mounted system: the greybox pursuit corridor (0.17.0)
+
+The heroes can now ride. Each player gets a **civil-protection bike** (same bike, different plate: P1 **CP-07**, P2 **CP-12**) on a guided pursuit road: the bike always rolls forward at a safe speed, you steer freely across the road (soft lanes pull you back gently when you let go), and you can ride a bit faster or slower. Each hero has **Health** and a visible **Stability** bar. Hits from **Road Riders** and riding into barriers cost Stability; at 0 the bar flashes (**critical, warned**) and the next hit is a **safe crash**: the hero slides off and comes back at the last recovery gate (solo), or, in co-op, waits for a **rescue** (the partner rides alongside and presses Team Attack). Stability slowly refills when you are not hit. A mounted hit never takes the last Health point.
+
+Every hero has six mounted moves: Attack (alongside), Up/Down + Attack (a kick into the next lane), Jump (hop over barriers; on a ramp it is a long ramp hop), Guard (lean: dodges an attack at the right moment and gives a little Stability back), Special (free) and Ultimate (needs a full Attack Bar). Road Riders come in warned (they ride beside you for a moment first), never more than one attack at a time on Medium (two on Hard and above, never both on one hero), and some go after the **equipment** by the road (valve, irrigation pump, signal mast): hit them during their wind-up to save it. At the gate you get the **Civil-Protection Response Record** (Response, Protection, Control, Stability, Assistance, each S/A/B/C, plus Mounted Mastery). The new cheat **STEADYRIDE** keeps Stability full (hits still shake you; the run is marked Cheat-Assisted).
+
+Readings I chose (tell me if you want them different): the pursuit is in the **Lab only** for now (it comes into the stage flow later); a Road Rider knocked off its bike stays at the road edge (fighting on foot comes in M19); the rescue button is **Team Attack** (B / Num 0) next to the downed partner.
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+Open `http://localhost:5173/?pursuit=perimeter-pursuit` to start the pursuit directly (add `&difficulty=hard`, for example, for another difficulty), or `http://localhost:5173/?lab` and pick it in the Arena panel. If Vite prints another port, use that one. Stop the server with `Ctrl+C`.
+
+To test the branch before it is merged instead of `main`:
+
+```powershell
+git fetch origin claude/project-thread-hli672
+git checkout claude/project-thread-hli672
+pnpm install
+pnpm dev
+```
+
+Optional, the automated checks:
+
+```powershell
+pnpm typecheck
+pnpm test
+pnpm e2e
+```
+
+Keys on the bike: **P1** W / S steer, D faster, A slower, T attack (W/S + T kick), Y hop, G lean, U Special, H Ultimate, B rescue. **P2** ↑ / ↓ steer, → faster, ← slower, Num 4 attack, Num 5 hop, Num 1 lean, Num 6 Special, Num 2 Ultimate, Num 0 rescue. The hint bar at the bottom shows each hero's move names.
+
+### Test steps
+
+1. **Start the pursuit:** open `http://localhost:5173/?lab`, press **F1**, pick **Perimeter Pursuit (mounted pursuit, greybox)** on **Medium**, and start it. You ride Mountain Guardian on the CP-07 bike. The top shows the goal, a progress bar with the recovery gates, and "…% to the gate".
+2. **Riding:** let go of every key: the bike keeps rolling and settles into a lane. Hold W or S: it steers smoothly and stops at the road edge (also where the road narrows and bends). Hold D: faster; hold A: slower, but never stopped.
+3. **Obstacles:** ride into an orange barrier: the bike shakes and Stability drops (Health does not). Next time press **Y** just before it: you hop over it with no loss. Hop on a ramp: a longer, higher hop.
+4. **Road Riders:** the first one appears after the first obstacles and rides beside you before it attacks (its wind-up is shown). Hit it with **T** when it is right beside you, or **W/S + T** when it is one lane away (a missed kick makes your steering sluggish for a moment). Hit it until its bar is empty (critical): the next hit knocks it off its bike and it stays at the road edge.
+5. **Lean:** when a Road Rider winds up, press **G** at the right moment: "EVADED" and a little Stability back.
+6. **Crash and recovery (solo):** let Road Riders hit you until Stability is 0: the bar flashes and "CRITICAL" appears. The next hit is a safe crash: you slide off and restart at the last recovery gate with full Stability and a short protection. Nothing else is lost.
+7. **Equipment:** near the valve (top of the road) a Road Rider heads for it. Hit it while it winds up: "INTERCEPT", and the valve stays whole. If you let it kick, the valve is shown damaged and Protection in the record goes down.
+8. **Special and Ultimate:** U uses Rampart Escort (no bar needed). Fill the Attack Bar by hitting riders, then H: Open Gate Convoy clears the riders around you and empties the bar.
+9. **Response Record:** ride to the greenhouse gate. The Civil-Protection Response Record shows the five lines with S/A/B/C. Home rides again, End goes back to the Lab.
+10. **All four heroes:** repeat a short ride with River Scout, Wind Sentinel and Fire Warden (F2, *Player 1 hero*). Each has its own six mounted moves (the hint bar names them). Fire Warden's lean is shorter and his missed kick costs more than Wind Sentinel's.
+11. **Co-op:** press **Num 4** to join Player 2 on the CP-12 bike. The camera follows both; if one rides far ahead, that bike slows down and the other gets a little boost, so nobody leaves the screen. The bikes can overlap and never hit each other.
+12. **Co-op rescue:** let P2 crash (Stability 0, then one more hit). "RESCUE!" appears over P2 with a short countdown. Ride P1 next to it and press **B**: "RESCUED", P2 rides on with a little Stability. Try again and do not rescue: P2 waits and rejoins at the next recovery gate. If both crash, both restart at the last recovery gate.
+13. **Difficulties:** try Easy (fewer riders, softer hits, slower wind-ups) and Hard (two riders can attack at once, but never both the same hero). The warnings and the rescue time stay the same on every difficulty.
+14. **STEADYRIDE:** in the Arena panel tick **STEADYRIDE** and start again (or tick *Steering assistance* for a stronger lane pull). Hits still shake the bike but Stability stays full. At the gate the Response Record says "Cheat-Assisted: story progress only, no records".
+15. **Languages:** switch to 简体中文 and Deutsch in Settings: the HUD, the move names, the Road Rider moves, the equipment and the Response Record are translated.

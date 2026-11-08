@@ -3,7 +3,7 @@ import { audio } from './media/audio';
 import * as Phaser from 'phaser';
 import { render, h } from 'preact';
 import { DEFAULT_KEYBOARD_P1, QualityGovernor, rebind } from '@ffp/platform';
-import { HEROES, STAGES, equip, heroOf, stageResults } from '@ffp/sim';
+import { CORRIDORS, Cheat, HEROES, STAGES, equip, heroOf, stageResults } from '@ffp/sim';
 import { GameSession, MAX_STEPS_PER_FRAME } from './game';
 import { capabilities, perf } from './system/probe';
 import { EQUIP_TEXT } from './text/en';
@@ -130,11 +130,19 @@ export function startGame(): void {
     resetEnvironment: () => session.resetEnvironment(),
     dummyToPillar: () => session.dummyToPillar(),
     startArena: (arena) => {
-      session.startArena(arena, lab.arenaPick.value.difficulty, lab.arenaPick.value.beat);
+      const ride = lab.pursuitPick.value;
+      const steady = ride.steady ? Cheat.STEADYRIDE : 0;
+      session.startArena(arena, lab.arenaPick.value.difficulty, lab.arenaPick.value.beat, {
+        steeringAssist: ride.assist,
+        ...(steady && arena && CORRIDORS.some((c) => c.id === arena)
+          ? { cheats: { hero: [steady, steady], session: 0 } }
+          : {}),
+      });
       // Arena play needs the screen: the Defense panel closes (F8 opens it again).
       if (arena) lab.defenseOpen.value = false;
     },
     pickArena: (pick) => (lab.arenaPick.value = { ...lab.arenaPick.value, ...pick }),
+    pickPursuit: (pick) => (lab.pursuitPick.value = { ...lab.pursuitPick.value, ...pick }),
     setQuality: (setting) => quality.set(setting),
     practise: (slot, recipeId) => {
       const hero = heroOf(session.world, slot);
@@ -149,7 +157,8 @@ export function startGame(): void {
   const params = new URLSearchParams(location.search);
   const stageParam = params.get('stage');
   const useShell =
-    params.has('shell') || !((devBuild && navigator.webdriver) || params.has('lab') || stageParam);
+    params.has('shell') ||
+    !((devBuild && navigator.webdriver) || params.has('lab') || stageParam || params.has('pursuit'));
   const shell = new Shell(session, lab, __FFP_VERSION__);
   // M14: key names (Space, Ctrl, Enter…) follow the interface language.
   effect(() => session.labels.setKeyNames(locale.value));
@@ -203,6 +212,19 @@ export function startGame(): void {
     actions.startArena(id);
     lab.visible.value = false;
     shell.go('game');
+  }
+
+  // M17: `?pursuit=perimeter-pursuit` (optionally `&difficulty=hard`) opens the mounted
+  // pursuit in the Lab at once (F1 shows the arena panel).
+  const pursuitParam = params.get('pursuit');
+  if (pursuitParam && CORRIDORS.some((c) => c.id === pursuitParam)) {
+    lab.arenaPick.value = {
+      arena: pursuitParam,
+      difficulty: params.get('difficulty') ?? lab.arenaPick.value.difficulty,
+      beat: 0,
+    };
+    actions.startArena(pursuitParam);
+    lab.visible.value = false;
   }
 
   /** The shell wants menu input: a menu screen, or the pause menu or results over play. */

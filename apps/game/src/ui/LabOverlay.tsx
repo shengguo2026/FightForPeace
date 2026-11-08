@@ -11,6 +11,9 @@ import {
   arenaNames,
   stageNames,
   difficultyNames,
+  CORRIDORS,
+  MountedSlot,
+  mountedKit,
 } from '@ffp/sim';
 import type { KeyboardP2Preset, LayoutName, QualitySetting } from '@ffp/platform';
 import { LINK_TEXT, TEXT, moveInputText, profileText } from '../text/en';
@@ -53,6 +56,8 @@ export interface LabActions {
   /** M7: starts (or restarts) the picked arena; null goes back to the Lab. */
   startArena(arena: string | null): void;
   pickArena(pick: Partial<{ arena: string; difficulty: string; beat: number }>): void;
+  /** M17: pursuit options (steering assistance, STEADYRIDE) for the next start. */
+  pickPursuit(pick: Partial<{ assist: boolean; steady: boolean }>): void;
   /** M8 Auto Quality: auto, or a fixed presentation level. */
   setQuality(setting: QualitySetting): void;
 }
@@ -361,14 +366,26 @@ function ArenaPanel({ state, actions }: { state: LabState; actions: LabActions }
       name: `Stage ${i + 1}: ${s.name} (full journey)`,
       minDifficulty: 0,
       beats: s.beats,
+      allDifficulties: true,
     })),
-    ...arenaNames().map((a) => ({ ...a, beats: [] as string[] })),
+    // M17: the mounted Guided Pursuit Corridors (all five difficulties).
+    ...CORRIDORS.map((c) => ({
+      id: c.id,
+      name: `${c.name} (mounted pursuit, greybox)`,
+      minDifficulty: 0,
+      beats: [] as string[],
+      allDifficulties: true,
+    })),
+    ...arenaNames().map((a) => ({ ...a, beats: [] as string[], allDifficulties: false })),
   ];
+  const isPursuit = CORRIDORS.some((c) => c.id === pick.arena);
   const diffs = difficultyNames();
   const arena = arenas.find((a) => a.id === pick.arena) ?? arenas[0]!;
   const diff = diffs.find((d) => d.id === pick.difficulty) ?? diffs[1]!;
   const isStage = arena.beats.length > 0;
-  const allowed = diffs.filter((_, i) => i >= arena.minDifficulty && (isStage || i <= 2));
+  const allowed = diffs.filter(
+    (_, i) => i >= arena.minDifficulty && (arena.allDifficulties || i <= 2),
+  );
   const beatName = (b: string, i: number) => `${i + 1}. ${b}`;
   const view = state.arena.value;
   const button = (label: string, testId: string, run: () => void) => (
@@ -393,7 +410,7 @@ function ArenaPanel({ state, actions }: { state: LabState; actions: LabActions }
         onChange={(name) => {
           const a = arenas.find((x) => x.name === name)!;
           const d = diffs.findIndex((x) => x.id === pick.difficulty);
-          const tooHard = a.beats.length === 0 && d > 2;
+          const tooHard = !a.allDifficulties && d > 2;
           actions.pickArena({
             arena: a.id,
             difficulty:
@@ -426,6 +443,22 @@ function ArenaPanel({ state, actions }: { state: LabState; actions: LabActions }
           }
           testId="arena-beat"
         />
+      ) : null}
+      {isPursuit ? (
+        <div>
+          <Check
+            label="Steering assistance (stronger lane guidance)"
+            checked={state.pursuitPick.value.assist}
+            onChange={(on) => actions.pickPursuit({ assist: on })}
+            testId="pursuit-assist"
+          />
+          <Check
+            label="STEADYRIDE for both players (marks the run Cheat-Assisted)"
+            checked={state.pursuitPick.value.steady}
+            onChange={(on) => actions.pickPursuit({ steady: on })}
+            testId="pursuit-steadyride"
+          />
+        </div>
       ) : null}
       <div style={{ margin: '4px 0' }}>
         {button(view.running ? 'Restart' : 'Start', 'arena-start', () =>
@@ -920,13 +953,30 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
       ) : null}
       <GrabCues players={players} grab={state.grab.value} />
       <TeamCue state={state} />
-      <HintBar players={players} />
+      <HintBar players={players} riding={state.riding.value} />
     </>
   );
 }
 
 /** Bottom-of-screen control hints, drawn from each player's own bindings. */
-function HintBar({ players }: { players: PlayerView[] }) {
+/** M17: the mounted controls with the hero's own mounted move names. */
+function rideHints(heroId: string): { text: string; name?: string }[] {
+  const i = HEROES.findIndex((h) => h.id === heroId);
+  const kit = mountedKit(Math.max(0, i));
+  const n = (slot: number) => kit[slot]?.name ?? '';
+  return [
+    { text: TEXT.hintRideSteer },
+    { text: TEXT.hintRideAttack, name: n(MountedSlot.Neutral) },
+    { text: TEXT.hintRideKick, name: n(MountedSlot.Directional) },
+    { text: TEXT.hintRideHop, name: n(MountedSlot.Hop) },
+    { text: TEXT.hintRideLean, name: n(MountedSlot.Lean) },
+    { text: TEXT.hintRideSpecial, name: n(MountedSlot.Special) },
+    { text: TEXT.hintRideUltimate, name: n(MountedSlot.Ultimate) },
+    { text: TEXT.hintRideRescue },
+  ];
+}
+
+function HintBar({ players, riding }: { players: PlayerView[]; riding: boolean }) {
   return (
     <div
       style={{
@@ -948,7 +998,19 @@ function HintBar({ players }: { players: PlayerView[] }) {
           return (
             <div style={{ ...panel, font: 'inherit' }} data-testid={`hint-p${p.slot + 1}`}>
               <span style={{ color }}>P{p.slot + 1}</span>{' '}
-              {[
+              {riding
+                ? rideHints(p.heroId).map((h) => (
+                    <span style={{ marginRight: '12px' }}>
+                      <PromptText
+                        text={h.text}
+                        ctx={p.ctx}
+                        color={color}
+                        values={h.name === undefined ? undefined : { name: h.name }}
+                      />
+                    </span>
+                  ))
+                : null}
+              {riding ? null : [
                 TEXT.hintMove,
                 TEXT.hintDash,
                 TEXT.hintJump,

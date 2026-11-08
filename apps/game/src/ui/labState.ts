@@ -173,6 +173,10 @@ export interface LabState {
   /** Arena (name) and difficulty (name) picked in the arena panel. */
   arenaPick: Signal<{ arena: string; difficulty: string; beat: number }>;
   arena: Signal<ArenaPanelView>;
+  /** M17: pursuit options picked in the arena panel. */
+  pursuitPick: Signal<{ assist: boolean; steady: boolean }>;
+  /** M17: a mounted pursuit is running (the hint bar shows the mounted controls). */
+  riding: Signal<boolean>;
   /** M8: paused because the window lost focus (not a user or controller pause). */
   focusPaused: Signal<boolean>;
   coop: Signal<CoopPanelView>;
@@ -220,6 +224,8 @@ export function createLabState(visible: boolean): LabState {
     weapons: signal({ players: [], items: [], scenery: [], lastEvent: '' }),
     arenaPick: signal({ arena: 'stage1', difficulty: 'medium', beat: 0 }),
     arena: signal({ running: false, lines: [] }),
+    pursuitPick: signal({ assist: false, steady: false }),
+    riding: signal(false),
     focusPaused: signal(false),
     coop: signal({ lines: [], invite: null }),
     quality: signal({ setting: 'auto', level: 'high', ms: 16.7 }),

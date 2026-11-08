@@ -50,6 +50,7 @@ import { METER } from '../combat/meter';
 import { Cheat, heroCheat, newCheatState, setCheats } from '../cheats/cheats';
 import { NO_TAP, stepHero } from '../movement/controller';
 import { ON_FOOT } from '../movement/profile';
+import { corridorIndex, encodePursuit, setupPursuit, stepPursuit } from '../mounted/pursuit';
 import {
   type FacingMode,
   type Fighter,
@@ -66,7 +67,7 @@ export const DUMMY_HEALTH = 1000;
 export const HERO_HEALTH = 1000;
 
 /** Version of the byte layout written by encodeWorld. Bump on any layout change. */
-export const STATE_FORMAT = 13;
+export const STATE_FORMAT = 14;
 
 /** Walking speeds (fixed point per frame), kept as exports for existing callers. */
 export const WALK_SPEED_X = ON_FOOT.walkX;
@@ -129,6 +130,10 @@ export interface WorldOptions {
    * carries an earlier mark over (Continue, restart from a checkpoint of a marked run).
    */
   cheats?: { hero: readonly number[]; session: number; marked?: boolean; firstBeat?: number };
+  /** M17: a corridor id (CORRIDORS); the world becomes a mounted Guided Pursuit. */
+  pursuit?: string;
+  /** M17: optional steering assistance in the pursuit (stronger soft-lane guidance). */
+  steeringAssist?: boolean;
 }
 
 export interface LoadoutChange {
@@ -348,8 +353,17 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
     coop: newCoopState(),
     run: null,
     cheats: newCheatState(),
+    pursuit: null,
   };
   world.bodies.sort((a, b) => a.id - b.id);
+  if (options.pursuit !== undefined) {
+    // The Lab's dummies stay behind: the corridor has its own Road Riders.
+    world.bodies = world.bodies.filter((b) => b.team === 'hero');
+    const diff = options.difficulty === undefined ? MEDIUM : difficultyIndex(options.difficulty);
+    if (options.cheats) setCheats(world, options.cheats.hero, options.cheats.session);
+    setupPursuit(world, corridorIndex(options.pursuit), diff, options.steeringAssist ?? false);
+    return world;
+  }
   if (options.stage !== undefined) {
     const diff = options.difficulty === undefined ? MEDIUM : difficultyIndex(options.difficulty);
     // Cheats are in effect while the first beat is set up (FULLPANTRY's food).
@@ -511,6 +525,20 @@ function spawnHero(world: World, slot: number): void {
 export function step(world: World, inputs: readonly (FrameInput | undefined)[]): void {
   for (let slot = 0; slot < Math.min(inputs.length, MAX_PLAYERS); slot += 1) {
     if (inputs[slot] && !heroOf(world, slot)) spawnHero(world, slot);
+  }
+  // M17: a mounted pursuit runs its own corridor step (riders, Road Riders, Stability).
+  if (world.pursuit) {
+    for (const f of world.bodies) if (f.team === 'hero') applyHeroChoice(world, f);
+    stepPursuit(
+      world,
+      [0, 1].map((slot) => normalize(inputs[slot])),
+    );
+    for (const f of world.bodies) {
+      if (world.infiniteMeter && f.team === 'hero') f.meter = METER.max;
+      if (heroCheat(world, f, Cheat.BRIGHTSPIRIT)) f.meter = METER.max;
+    }
+    world.frame += 1;
+    return;
   }
   // M9 stage flow (locks, exit, transitions, continues) before the encounter steps.
   stepRun(world);
@@ -820,6 +848,7 @@ export function encodeWorld(world: World): Uint8Array {
   w.i32(c.firstFrame);
   w.i32(c.firstBeat);
   w.u32(c.used);
+  encodePursuit(w, world.pursuit);
   return w.bytes();
 }
 
