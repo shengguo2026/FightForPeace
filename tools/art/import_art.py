@@ -45,6 +45,7 @@ APPROVED = {
     "HERO-MTN-WALK": "HERO-MTN-WALK_v2.png",
     "HERO-WND-WALK": "HERO-WND-WALK_v2.png",
     "HERO-FIR-WALK": "HERO-FIR-WALK_v2.png",
+    "HERO-RIV-WALK": "HERO-RIV-WALK_v3.png",
 }
 
 HEROES = {
