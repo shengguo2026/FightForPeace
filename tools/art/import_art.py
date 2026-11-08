@@ -241,6 +241,8 @@ SHEET_SCALE = {
     "mountain-team-attack": 0.95,
     "mountain-walk": 0.95,
     "fire-walk": 0.9,
+    "mountain-staff-walk": 0.92,
+    "mountain-handwheel-walk": 0.86,
     "river-walk": 0.88,
     "river-handwheel": 0.95,
 }

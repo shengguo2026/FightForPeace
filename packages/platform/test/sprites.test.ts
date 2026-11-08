@@ -138,9 +138,18 @@ test('an armed founder steps while walking instead of sliding on one cell', () =
   const f = heroOf(w, 0)!;
   claim(w, f, spawnItem(w, weaponIndex('workstaff'), f.x, f.z));
   f.state = MoveState.Walk;
-  const cells = new Set([0, 6, 12, 18, 24].map((t) => pick.fighter(f, t)!.cell));
-  expect(pick.fighter(f, 0)!.sheet).toBe('hero.mountain.sheet.staff-a');
-  expect([...cells].sort()).toEqual([0, 1]);
+  // Mountain has a drawn staff walk cycle.
+  const cells = new Set([0, 6, 12, 18, 24, 30].map((t) => pick.fighter(f, t)!.cell));
+  expect(pick.fighter(f, 0)!.sheet).toBe('hero.mountain.sheet.staff-walk');
+  expect(cells.size).toBe(6);
+  // River has none yet: she steps between the staff ready stance and mid-stride.
+  const rw = createWorld(1, { heroes: ['river', 'mountain'] });
+  const r = heroOf(rw, 0)!;
+  claim(rw, r, spawnItem(rw, weaponIndex('workstaff'), r.x, r.z));
+  r.state = MoveState.Walk;
+  const rc = new Set([0, 6, 12, 18, 24].map((t) => pick.fighter(r, t)!.cell));
+  expect(pick.fighter(r, 0)!.sheet).toBe('hero.river.sheet.staff-a');
+  expect([...rc].sort()).toEqual([0, 1]);
 });
 
 test('weapon sheets are drawn at the same figure size as the idle sheet', () => {

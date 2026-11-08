@@ -7302,6 +7302,54 @@
         "scale": 1.04
       }
     },
+    "hero.mountain.sheet.handwheel-walk": {
+      "url": "art/mountain-handwheel-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 373,
+        "cells": [
+          {
+            "x0": 72,
+            "y0": 32,
+            "x1": 322,
+            "foot": 375
+          },
+          {
+            "x0": 104,
+            "y0": 38,
+            "x1": 288,
+            "foot": 374
+          },
+          {
+            "x0": 95,
+            "y0": 24,
+            "x1": 270,
+            "foot": 373
+          },
+          {
+            "x0": 82,
+            "y0": 26,
+            "x1": 332,
+            "foot": 367
+          },
+          {
+            "x0": 89,
+            "y0": 37,
+            "x1": 293,
+            "foot": 367
+          },
+          {
+            "x0": 84,
+            "y0": 16,
+            "x1": 279,
+            "foot": 364
+          }
+        ],
+        "scale": 0.86
+      }
+    },
     "hero.mountain.sheet.hurt": {
       "url": "art/mountain-hurt.webp",
       "sheet": {
@@ -7575,6 +7623,54 @@
           }
         ],
         "scale": 1.13
+      }
+    },
+    "hero.mountain.sheet.staff-walk": {
+      "url": "art/mountain-staff-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 360,
+        "cells": [
+          {
+            "x0": 68,
+            "y0": 43,
+            "x1": 314,
+            "foot": 360
+          },
+          {
+            "x0": 81,
+            "y0": 43,
+            "x1": 313,
+            "foot": 360
+          },
+          {
+            "x0": 57,
+            "y0": 32,
+            "x1": 288,
+            "foot": 359
+          },
+          {
+            "x0": 65,
+            "y0": 43,
+            "x1": 314,
+            "foot": 361
+          },
+          {
+            "x0": 80,
+            "y0": 43,
+            "x1": 313,
+            "foot": 361
+          },
+          {
+            "x0": 57,
+            "y0": 31,
+            "x1": 288,
+            "foot": 360
+          }
+        ],
+        "scale": 0.92
       }
     },
     "hero.mountain.sheet.team-attack": {
