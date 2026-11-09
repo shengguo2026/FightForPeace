@@ -252,6 +252,10 @@ SHEET_SCALE = {
     "wind-handwheel": 1.04,
     "wind-staff-walk": 0.96,
     "wind-handwheel-walk": 0.96,
+    "fire-staff-a": 0.95,
+    "fire-staff-b": 0.95,
+    "fire-staff-walk": 0.88,
+    "fire-handwheel-walk": 0.89,
 }
 
 
