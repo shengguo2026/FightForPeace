@@ -133,8 +133,8 @@ test('an armed founder stands with the staff; loose weapons show their condition
   expect([1, 2, 3]).toContain(pick.item(wheel, 5)!.cell);
 });
 
-test('a hero without weapon sheets holds the prop sprite; a founder does not', () => {
-  for (const id of ['wind', 'fire']) {
+test('a hero without weapon sheets holds the prop sprite; heroes with them do not', () => {
+  for (const id of ['fire']) {
     const w = createWorld(1, { heroes: [id] });
     const f = heroOf(w, 0)!;
     expect(pick.heldProp(f)).toBeNull();
@@ -145,10 +145,13 @@ test('a hero without weapon sheets holds the prop sprite; a founder does not', (
     claim(w2, g, spawnItem(w2, weaponIndex('handwheel'), g.x, g.z));
     expect(pick.heldProp(g)).toMatchObject({ sheet: 'prop.handwheel', cell: 1 });
   }
-  const w = createWorld(1);
-  const f = heroOf(w, 0)!;
-  claim(w, f, spawnItem(w, weaponIndex('handwheel'), f.x, f.z));
-  expect(pick.heldProp(f)).toBeNull();
+  for (const id of ['mountain', 'river', 'wind']) {
+    const w = createWorld(1, { heroes: [id] });
+    const f = heroOf(w, 0)!;
+    claim(w, f, spawnItem(w, weaponIndex('handwheel'), f.x, f.z));
+    expect(pick.heldProp(f)).toBeNull();
+    expect(pick.fighter(f, 0)).toEqual({ sheet: `hero.${id}.sheet.handwheel`, cell: 0 });
+  }
 });
 
 test('an armed founder steps while walking instead of sliding on one cell', () => {

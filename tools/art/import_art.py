@@ -247,6 +247,11 @@ SHEET_SCALE = {
     "river-handwheel-walk": 0.88,
     "river-walk": 0.88,
     "river-handwheel": 0.95,
+    "wind-staff-a": 1.06,
+    "wind-staff-b": 1.06,
+    "wind-handwheel": 1.04,
+    "wind-staff-walk": 0.96,
+    "wind-handwheel-walk": 0.96,
 }
 
 
