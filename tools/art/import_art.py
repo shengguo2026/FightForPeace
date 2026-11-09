@@ -45,7 +45,7 @@ APPROVED = {
     "HERO-MTN-WALK": "HERO-MTN-WALK_v2.png",
     "HERO-WND-WALK": "HERO-WND-WALK_v2.png",
     "HERO-FIR-WALK": "HERO-FIR-WALK_v2.png",
-    "HERO-RIV-WALK": "HERO-RIV-WALK_v3.png",
+    "HERO-RIV-WALK": "HERO-RIV-WALK_v4.png",
 }
 
 HEROES = {
@@ -247,6 +247,15 @@ SHEET_SCALE = {
     "river-handwheel-walk": 0.88,
     "river-walk": 0.88,
     "river-handwheel": 0.95,
+    "wind-staff-a": 1.06,
+    "wind-staff-b": 1.06,
+    "wind-handwheel": 1.04,
+    "wind-staff-walk": 0.96,
+    "wind-handwheel-walk": 0.96,
+    "fire-staff-a": 0.95,
+    "fire-staff-b": 0.95,
+    "fire-staff-walk": 0.88,
+    "fire-handwheel-walk": 0.89,
 }
 
 

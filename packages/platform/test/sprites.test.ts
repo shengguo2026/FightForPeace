@@ -69,7 +69,7 @@ test('character sheets share one ground line (aerial sheets are drawn in the air
       continue;
     // The twins' sheets were drawn a few pixels higher (Rising Cast stands on 317).
     expect(s.sheet.ground, s.id).toBeGreaterThan(310);
-    // River's v3 walk stands lower in its cells (376 of 384); the renderer stands every
+    // River's walk (v3, v4) stands lower in its cells (375 of 384); the renderer stands every
     // sheet on its own ground line, so only feet touching the cell edge would be wrong.
     expect(s.sheet.ground, s.id).toBeLessThan(380);
   }
@@ -133,22 +133,19 @@ test('an armed founder stands with the staff; loose weapons show their condition
   expect([1, 2, 3]).toContain(pick.item(wheel, 5)!.cell);
 });
 
-test('a hero without weapon sheets holds the prop sprite; a founder does not', () => {
-  for (const id of ['wind', 'fire']) {
-    const w = createWorld(1, { heroes: [id] });
-    const f = heroOf(w, 0)!;
-    expect(pick.heldProp(f)).toBeNull();
-    claim(w, f, spawnItem(w, weaponIndex('workstaff'), f.x, f.z));
-    expect(pick.heldProp(f)).toMatchObject({ sheet: 'prop.workstaff', cell: 1 });
-    const w2 = createWorld(1, { heroes: [id] });
-    const g = heroOf(w2, 0)!;
-    claim(w2, g, spawnItem(w2, weaponIndex('handwheel'), g.x, g.z));
-    expect(pick.heldProp(g)).toMatchObject({ sheet: 'prop.handwheel', cell: 1 });
+test('every hero holds the Stage 1 weapons in its own poses (no placeholder prop)', () => {
+  for (const h of HEROES) {
+    for (const [weapon, sheet] of [
+      ['workstaff', 'staff-a'],
+      ['handwheel', 'handwheel'],
+    ] as const) {
+      const w = createWorld(1, { heroes: [h.id] });
+      const f = heroOf(w, 0)!;
+      claim(w, f, spawnItem(w, weaponIndex(weapon), f.x, f.z));
+      expect(pick.heldProp(f)).toBeNull();
+      expect(pick.fighter(f, 0)).toEqual({ sheet: `hero.${h.id}.sheet.${sheet}`, cell: 0 });
+    }
   }
-  const w = createWorld(1);
-  const f = heroOf(w, 0)!;
-  claim(w, f, spawnItem(w, weaponIndex('handwheel'), f.x, f.z));
-  expect(pick.heldProp(f)).toBeNull();
 });
 
 test('an armed founder steps while walking instead of sliding on one cell', () => {
