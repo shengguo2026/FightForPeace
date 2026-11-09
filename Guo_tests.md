@@ -1040,3 +1040,24 @@ If Vite prints another port than 5173, use that one. Stop the server with `Ctrl+
 4. **Wind:** press **F2**, set *Player 1 hero* to **wind**, close F2 and F1. Pick up the handwheel: she holds it in front of her chest, and it follows her when she walks and turns. Pick up the staff: she holds it slanted in front of her.
 5. **Fire:** repeat step 4 with **fire**.
 6. **Academy:** Village → Academy → Free Practice with Wind or Fire; pick up the weapons there: the same as in step 4.
+
+## Fix · River's walk with relaxed arms (v4)
+
+River's walk sheet v4 replaces v3: her arms now hang and swing loosely at hip height instead of one forearm staying raised. Same size and stride as v3.
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+### Test steps
+
+1. Open `http://localhost:5173/?lab`, press **Num 4** so Player 2 (River) joins, and press **F1** to hide the panels.
+2. Walk River left and right with the arrow keys: both arms swing low and relaxed, no forearm raised in front of the chest; legs and arms still swap every step.
+3. She is the same size walking as standing, and next to Mountain looks as before.

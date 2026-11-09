@@ -69,7 +69,7 @@ test('character sheets share one ground line (aerial sheets are drawn in the air
       continue;
     // The twins' sheets were drawn a few pixels higher (Rising Cast stands on 317).
     expect(s.sheet.ground, s.id).toBeGreaterThan(310);
-    // River's v3 walk stands lower in its cells (376 of 384); the renderer stands every
+    // River's walk (v3, v4) stands lower in its cells (375 of 384); the renderer stands every
     // sheet on its own ground line, so only feet touching the cell edge would be wrong.
     expect(s.sheet.ground, s.id).toBeLessThan(380);
   }
