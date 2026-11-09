@@ -84,7 +84,13 @@ export function inputFor(a: ActionDef, facing: number, dash = false): FrameInput
 }
 
 /** Is it the moment for the next step? (The hero can act, or its last step connected.) */
-function moment(world: World, h: Fighter, st: PilotState, a: ActionDef | null, jump: boolean): boolean {
+function moment(
+  world: World,
+  h: Fighter,
+  st: PilotState,
+  a: ActionDef | null,
+  jump: boolean,
+): boolean {
   if (st.pressedAt < 0) return free(h);
   const since = world.frame - st.pressedAt;
   if (since < 2) return false;
@@ -95,7 +101,9 @@ function moment(world: World, h: Fighter, st: PilotState, a: ActionDef | null, j
     return (
       (connected && st.step > 1) ||
       (free(h) &&
-        world.bodies.some((b) => b.team !== h.team && b.state === MoveState.Down && Math.abs(b.x - h.x) < fx(320)))
+        world.bodies.some(
+          (b) => b.team !== h.team && b.state === MoveState.Down && Math.abs(b.x - h.x) < fx(320),
+        ))
     );
   if (a && a.context === 'air')
     return (h.state === MoveState.Air && h.stateFrame > 2 && h.action < 0) || connected;
@@ -168,7 +176,10 @@ function advance(world: World, h: Fighter, st: PilotState, input: FrameInput): F
 }
 
 /** Recipe steps from action ids of a hero's kit (`jump` for a jump-chase hint). */
-export function stepsFromIds(kitActions: readonly { id: string }[], ids: readonly string[]): RecipeStep[] {
+export function stepsFromIds(
+  kitActions: readonly { id: string }[],
+  ids: readonly string[],
+): RecipeStep[] {
   const out: RecipeStep[] = [];
   for (const id of ids) {
     if (id === 'jump') out.push({ jump: true, any: [] });

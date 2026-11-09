@@ -61,6 +61,9 @@ import { presentation } from '../shell/presentation';
  * Loose and flying weapon props, drawn at the size the heroes' weapon sheets show them in
  * hand (the handwheel about 100 px across, the workstaff about a hero's height).
  */
+/** Frames between two hit flashes on the same fighter. */
+const FLASH_GAP = 12;
+
 const PROP_SCALE: Partial<Record<string, number>> = { handwheel: 0.3, workstaff: 0.9 };
 
 export const VIEW_WIDTH = 1920;
@@ -165,6 +168,8 @@ export class StageScene extends Phaser.Scene {
   /** Placeholder weapons in the hands of heroes without weapon sheets (by fighter id). */
   private heldSprites = new Map<number, Phaser.GameObjects.Sprite>();
   private heldKeep = new Set<number>();
+  /** World frame of each fighter's latest hit flash (by fighter id). */
+  private flashAt = new Map<number, number>();
   /** M9 stage objects: workers, their pen, food, the cache, the clue and the evidence. */
   private runSprites = new Map<number, Phaser.GameObjects.Sprite>();
   /** M19 story NPCs of a greenhouse room (Tomas Rell in Marek's yard). */
@@ -472,6 +477,7 @@ export class StageScene extends Phaser.Scene {
     this.lastDefense.clear();
     this.lastGrab.clear();
     this.lastWeapon.clear();
+    this.flashAt.clear();
   }
 
   /** Depth of anything standing on the floor at screen row z (bodies, items, scenery). */
@@ -544,8 +550,22 @@ export class StageScene extends Phaser.Scene {
     sp.setPosition(p.x, p.z - p.y);
     sp.setDepth(this.depthAt(p.z));
     sp.setAlpha(f.protectedRecovery ? 0.55 : f.state === MoveState.Dash ? 0.85 : 1);
-    // Hit flash: the first frames of hit-stun draw the figure solid white.
+    // Hit flash: the first frames of hit-stun draw the figure solid white. A new flash
+    // starts at most every FLASH_GAP frames, so a target hit again and again (two heroes
+    // in co-op) blinks instead of staying a white silhouette.
     if (f.state === MoveState.Hitstun && f.stateFrame < 4) {
+      const start = frame - f.stateFrame;
+      const last = this.flashAt.get(f.id);
+      if (last === undefined || start - last >= FLASH_GAP || start < last)
+        this.flashAt.set(f.id, start);
+    }
+    const flashStart = this.flashAt.get(f.id);
+    const flashing =
+      f.state === MoveState.Hitstun &&
+      flashStart !== undefined &&
+      frame - flashStart < 4 &&
+      frame >= flashStart;
+    if (flashing) {
       // Reduced flashing (M10): a soft red tint instead of the solid white flash.
       sp.setTint(presentation.reducedFlashing ? 0xffb0b0 : 0xffffff);
       sp.setTintMode(

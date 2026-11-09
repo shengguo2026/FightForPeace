@@ -220,7 +220,11 @@ function exactBlock(
 /** A normal guard of `a` (chip damage, Defense cost, block-stun or Guard Crush). */
 export function normalGuard(world: World, att: Fighter, a: ActionDef, t: Fighter): void {
   const c = world.frame;
-  dealDamage(world, t, outgoingDamage(world, att, Math.trunc((a.damage * DEFENSE.chipPercent) / 100)));
+  dealDamage(
+    world,
+    t,
+    outgoingDamage(world, att, Math.trunc((a.damage * DEFENSE.chipPercent) / 100)),
+  );
   // Simultaneous guarded contacts add their guard damage but crush only once.
   if (t.state === MoveState.GuardCrush && t.defFrame === c) return;
   // A held guard-modifier item scales the cost (campaign guardrail M6).

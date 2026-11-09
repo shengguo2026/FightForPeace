@@ -186,7 +186,8 @@ export const M17_DE: Catalog = {
   'ride.masteryNo': 'diesmal nicht',
   'ride.cheat': 'Mit Cheats: nur Story-Fortschritt, keine Rekorde',
   'ride.again': 'Pos1: noch einmal fahren · Ende: zurück ins Lab',
-  'prompt.hintRideSteer': 'Lenken {dir:Up}{dir:Down} · schneller {dir:Right} · langsamer {dir:Left}',
+  'prompt.hintRideSteer':
+    'Lenken {dir:Up}{dir:Down} · schneller {dir:Right} · langsamer {dir:Left}',
   'prompt.hintRideAttack': '{action:Attack} {name}',
   'prompt.hintRideKick': '{dir:Up}/{dir:Down}+{action:Attack} {name}',
   'prompt.hintRideHop': '{action:Jump} {name}',

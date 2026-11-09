@@ -361,25 +361,6 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
       sign.setText(t(i === 0 ? 'm20.sign.branch' : 'm20.sign.main', { name }));
       sign.setPosition(beat.width - 60, i === 0 ? 690 : 900);
     });
-    // The river runs again (placeholder until the ending clips arrive in M13): water
-    // flows back into the dry bed on the plate's left side once the Commander yields.
-    if (beat.evidence && run.evidence >= 1 && !beat.room) {
-      const since = e.kind === RunEvent.RiverRestored ? frame - e.frame : 600;
-      const fill = Math.min(1, since / 180);
-      const w = this.world;
-      const top = 350;
-      const bottom = 612;
-      const right = 120 + 560 * fill;
-      w.fillStyle(0x4aa8e8, 0.42 * fill);
-      w.fillTriangle(0, top, right, bottom, 0, bottom);
-      w.fillStyle(0xbfe8ff, 0.5 * fill);
-      for (let i = 0; i < 7; i += 1) {
-        const t = ((frame * 2 + i * 90) % 600) / 600;
-        const x = t * right * 0.9;
-        const y = top + (bottom - top) * (0.35 + 0.6 * t) - (i % 3) * 18;
-        if (x < right - 40) w.fillRect(x, y, 46, 4);
-      }
-    }
     if (run.phase === RunPhase.Transition) {
       const t = frame - run.phaseFrame;
       const half = def.rules.transition / 2;
@@ -478,7 +459,9 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
     // A stage lock's boss bar goes once the lock is cleared (the Commander has surrendered).
     if (arena.stage && enc.result !== 0) this.bossName.setText('');
     else this.drawBoss(enc, bodies);
-    this.drawDevices(enc);
+    // The winch ring and its crank pips go with the boss bar once the lock is cleared, so
+    // after the surrender the only floor marker is the evidence crate's glow.
+    if (!(arena.stage && enc.result !== 0)) this.drawDevices(enc);
     this.drawWarnings(enc, bodies, frame);
     this.drawTags(enc, bodies);
     this.drawM19(enc, bodies, frame);

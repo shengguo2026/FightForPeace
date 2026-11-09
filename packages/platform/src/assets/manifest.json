@@ -5169,7 +5169,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.81
       }
     },
     "hero.fire.pose.dash.breach-step": {
@@ -5280,7 +5281,8 @@
           },
           null,
           null
-        ]
+        ],
+        "scale": 0.88
       }
     },
     "hero.fire.pose.ground.rising-cast": {
@@ -5317,7 +5319,8 @@
           },
           null,
           null
-        ]
+        ],
+        "scale": 1.16
       }
     },
     "hero.fire.pose.low.ashline-reap": {
@@ -5354,7 +5357,8 @@
           },
           null,
           null
-        ]
+        ],
+        "scale": 0.87
       }
     },
     "hero.fire.pose.special.flashpoint-clinch": {
@@ -5512,7 +5516,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.89
       }
     },
     "hero.fire.pose.standing.flashpoint-drive": {
@@ -5823,7 +5828,8 @@
             "x1": 288,
             "foot": 340
           }
-        ]
+        ],
+        "scale": 0.89
       }
     },
     "hero.fire.sheet.breaker-pickup": {
@@ -6619,7 +6625,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.85
       }
     },
     "hero.mountain.pose.aerial.stonefall-knee": {
@@ -6651,7 +6658,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.79
       }
     },
     "hero.mountain.pose.dash.rampart-charge": {
@@ -6683,7 +6691,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.75
       }
     },
     "hero.mountain.pose.ground.foundation-rise": {
@@ -6757,7 +6766,8 @@
           },
           null,
           null
-        ]
+        ],
+        "scale": 0.71
       }
     },
     "hero.mountain.pose.ground.settling-palm": {
@@ -6789,7 +6799,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.74
       }
     },
     "hero.mountain.pose.low.faultline-reap": {
@@ -6826,7 +6837,8 @@
           },
           null,
           null
-        ]
+        ],
+        "scale": 0.88
       }
     },
     "hero.mountain.pose.special.gatebreaker-advance": {
@@ -6868,7 +6880,8 @@
             "foot": 348
           },
           null
-        ]
+        ],
+        "scale": 0.86
       }
     },
     "hero.mountain.pose.special.rising-rampart": {
@@ -6979,7 +6992,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.79
       }
     },
     "hero.mountain.pose.standing.anchor-hook": {
@@ -7043,7 +7057,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.87
       }
     },
     "hero.mountain.pose.standing.gatepost-hammer": {
@@ -7144,7 +7159,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.78
       }
     },
     "hero.mountain.pose.standing.masons-touch": {
@@ -7176,7 +7192,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.83
       }
     },
     "hero.mountain.pose.standing.stone-shoulder": {
@@ -7213,7 +7230,8 @@
           },
           null,
           null
-        ]
+        ],
+        "scale": 0.91
       }
     },
     "hero.mountain.pose.ultimate.rivergate-oath": {
@@ -7351,7 +7369,7 @@
             "foot": 354
           }
         ],
-        "scale": 0.92
+        "scale": 0.82
       }
     },
     "hero.mountain.sheet.exact-counter": {
@@ -8123,7 +8141,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.78
       }
     },
     "hero.river.pose.dash.rapid-crossing": {
@@ -8187,7 +8206,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.89
       }
     },
     "hero.river.pose.ground.skipping-current": {
@@ -8219,7 +8239,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.9
       }
     },
     "hero.river.pose.low.undertow-slide": {
@@ -8288,7 +8309,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.91
       }
     },
     "hero.river.pose.special.ebbstep-return": {
@@ -8330,7 +8352,8 @@
             "foot": 347
           },
           null
-        ]
+        ],
+        "scale": 0.86
       }
     },
     "hero.river.pose.special.gale-wheel": {
@@ -8377,7 +8400,8 @@
             "x1": 312,
             "foot": 348
           }
-        ]
+        ],
+        "scale": 0.92
       }
     },
     "hero.river.pose.special.waterspout-rise": {
@@ -8419,7 +8443,8 @@
             "foot": 354
           },
           null
-        ]
+        ],
+        "scale": 0.9
       }
     },
     "hero.river.pose.standing.ebb-heel": {
@@ -8451,7 +8476,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.84
       }
     },
     "hero.river.pose.standing.northbank-arc": {
@@ -8589,7 +8615,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.85
       }
     },
     "hero.river.pose.standing.southbank-slide": {
@@ -8653,7 +8680,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.82
       }
     },
     "hero.river.pose.ultimate.floodline-passage": {
@@ -8700,7 +8728,8 @@
             "x1": 372,
             "foot": 354
           }
-        ]
+        ],
+        "scale": 0.83
       }
     },
     "hero.river.pose.ultimate.tempest-crossing": {
@@ -8747,7 +8776,8 @@
             "x1": 324,
             "foot": 348
           }
-        ]
+        ],
+        "scale": 0.92
       }
     },
     "hero.river.sheet.breaker-pickup": {
@@ -8789,7 +8819,8 @@
             "foot": 350
           },
           null
-        ]
+        ],
+        "scale": 0.85
       }
     },
     "hero.river.sheet.dash": {
@@ -8836,7 +8867,8 @@
             "x1": 317,
             "foot": 354
           }
-        ]
+        ],
+        "scale": 0.83
       }
     },
     "hero.river.sheet.exact-counter": {
@@ -8878,7 +8910,8 @@
             "foot": 351
           },
           null
-        ]
+        ],
+        "scale": 0.88
       }
     },
     "hero.river.sheet.grab-throw": {
@@ -8925,7 +8958,8 @@
             "x1": 311,
             "foot": 351
           }
-        ]
+        ],
+        "scale": 0.89
       }
     },
     "hero.river.sheet.guard": {
@@ -8972,7 +9006,8 @@
             "x1": 276,
             "foot": 327
           }
-        ]
+        ],
+        "scale": 0.94
       }
     },
     "hero.river.sheet.handwheel": {
@@ -9110,7 +9145,8 @@
             "x1": 352,
             "foot": 340
           }
-        ]
+        ],
+        "scale": 0.88
       }
     },
     "hero.river.sheet.idle": {
@@ -9542,7 +9578,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.88
       }
     },
     "hero.wind.pose.aerial.tailwind-chase": {
@@ -9690,7 +9727,8 @@
           },
           null,
           null
-        ]
+        ],
+        "scale": 1.23
       }
     },
     "hero.wind.pose.low.grass-cutter-sweep": {
@@ -10038,7 +10076,8 @@
           },
           null,
           null
-        ]
+        ],
+        "scale": 1.15
       }
     },
     "hero.wind.pose.standing.slipstream-backfist": {
@@ -10332,7 +10371,8 @@
             "foot": 368
           },
           null
-        ]
+        ],
+        "scale": 0.86
       }
     },
     "hero.wind.sheet.exact-counter": {
@@ -10695,7 +10735,8 @@
             "x1": 349,
             "foot": 352
           }
-        ]
+        ],
+        "scale": 0.88
       }
     },
     "hero.wind.sheet.knockdown": {

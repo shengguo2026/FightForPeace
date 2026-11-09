@@ -431,6 +431,12 @@ export class GameSession {
     extra: Pick<WorldOptions, 'loadouts' | 'cheats'> = {},
     seed = this.seed,
   ): void {
+    // One hero per player, never the same one twice: a solo start gives the seat a partner
+    // may join later the first roster hero Player 1 is not playing.
+    if (heroes.length === 1) {
+      const spare = HEROES.find((h) => h.id !== heroes[0]);
+      if (spare) heroes = [heroes[0]!, spare.id];
+    }
     this.startArena(stage, difficulty, beat, { ...extra, heroes }, seed);
     heroes.forEach((id, slot) => setHero(this.world, slot, id));
     // The stage opens with the chosen heroes, not the previous ones for a first step.

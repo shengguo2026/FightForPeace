@@ -910,7 +910,8 @@ export const M11_DE: Catalog = {
   'cheat.TRUSTYTOOLS.name': 'Treues Werkzeug',
   'cheat.TRUSTYTOOLS.desc': 'Werkzeuge und Waffen nutzen sich nie ab.',
   'cheat.STEADYRIDE.name': 'Sicherer Ritt',
-  'cheat.STEADYRIDE.desc': 'Die Stabilität deines Motorrads sinkt nie (Treffer rütteln dich trotzdem).',
+  'cheat.STEADYRIDE.desc':
+    'Die Stabilität deines Motorrads sinkt nie (Treffer rütteln dich trotzdem).',
   'cheat.QUIETCROWD.name': 'Ruhige Menge',
   'cheat.QUIETCROWD.desc': 'Gegnergruppen greifen so sanft an wie auf Leicht.',
   'cheat.FULLPANTRY.name': 'Volle Speisekammer',

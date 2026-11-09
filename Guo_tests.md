@@ -1066,3 +1066,34 @@ pnpm dev
 4. **Wind:** press **F2**, set *Player 1 hero* to **wind**, close F2 and F1. Pick up the handwheel (**J**): she holds it in both hands at chest height; walk: a real walk cycle with the wheel held steady. Throw it (**J**): wind-up and release poses.
 5. Pick up the staff: she holds it across her body; walk with it; attack (**T**, forward + **T**, up + **T**, in the air): her own staff poses. Wind keeps one size with and without a weapon.
 6. Repeat steps 4 and 5 with **fire**: his own weapon poses, one size with and without a weapon.
+
+## Fix · M11 visual findings (chest marker, co-op hints, water, hero size, P2 hero, hit flash)
+
+Six fixes from the M11 tests:
+
+1. Beat 8: after the boss gives up, the orange winch ring and its three pips disappear, so the only floor marker left is the glow on the evidence chest.
+2. The hold prompts (chest, door, winch) sit above the controls bar at the bottom, also in co-op where both players' bars are shown.
+3. The blue water triangle on the left side of Stage 1 is removed.
+4. Heroes no longer grow when they attack: about 40 action poses that were drawn larger (or smaller) than the idle sheet are now scaled to the idle size, mostly Mountain and River, and a few of Wind and Fire.
+5. One hero per player: in a solo start, Player 2 joining later gets a different hero from Player 1 (the first one in the roster Player 1 is not playing).
+6. The white hit flash shows at most once every 12 frames per enemy, so an enemy hit by both heroes in a row no longer stays white (it looked like a grey ghost under the dimmed view).
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+### Test steps
+
+1. Open `http://localhost:5173/`, start Stage 1 solo with **River**. On the left of the start area there is no blue triangle of water any more.
+2. Press **Num 4** so Player 2 joins: Player 2 is **not** River (it is Mountain). Start again solo with **Mountain**: Player 2 joins as River.
+3. With both players on the field, walk to an item or door with a hold prompt: the prompt sits above both control bars and is fully readable.
+4. Attack with every hero (jabs, specials, dashes, grabs): the hero keeps the same size as when standing. River and Mountain were the most visible before.
+5. In co-op, both heroes hit the same enemy at once: the enemy flashes white briefly, but never stays white or grey for a second.
+6. Play to beat 8 and beat the boss: after the surrender, the winch ring and its pips are gone, and the evidence chest has the only glow. Walk to it: the hold prompt is visible, also in co-op.

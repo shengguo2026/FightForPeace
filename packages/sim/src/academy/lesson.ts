@@ -40,7 +40,12 @@ export function newTracker(world: World, slot = 0): LessonTracker {
 }
 
 /** Goals that happened this step for the hero in `slot`. */
-export function goalsNow(world: World, slot: number, t: LessonTracker, recipe: string | null): LessonGoal[] {
+export function goalsNow(
+  world: World,
+  slot: number,
+  t: LessonTracker,
+  recipe: string | null,
+): LessonGoal[] {
   const h = heroOf(world, slot);
   if (!h) return [];
   const out: LessonGoal[] = [];
@@ -50,7 +55,8 @@ export function goalsNow(world: World, slot: number, t: LessonTracker, recipe: s
   if (h.defFrame !== t.lastDefFrame && h.defFrame >= 0) {
     t.lastDefFrame = h.defFrame;
     if (h.defEvent === DefEvent.Guard) out.push('guard');
-    if (h.defEvent === DefEvent.Exact || h.defEvent === DefEvent.ExactBreak) out.push('exact', 'guard');
+    if (h.defEvent === DefEvent.Exact || h.defEvent === DefEvent.ExactBreak)
+      out.push('exact', 'guard');
     if (h.defEvent === DefEvent.Counter) out.push('counter');
   }
   const kit = HEROES[h.hero];
