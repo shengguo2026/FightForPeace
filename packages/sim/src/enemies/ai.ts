@@ -300,7 +300,13 @@ function stepGuard(world: World, f: Fighter): boolean {
   return true;
 }
 
-export function raiseGuard(world: World, f: Fighter, toward: Fighter, hold: number, exact: boolean): void {
+export function raiseGuard(
+  world: World,
+  f: Fighter,
+  toward: Fighter,
+  hold: number,
+  exact: boolean,
+): void {
   face(f, toward.x);
   f.vx = 0;
   f.vz = 0;

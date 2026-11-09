@@ -98,7 +98,10 @@ export const CHEAT_REGISTRY_VERSION = 1;
  * spaces, hyphens and underscores equivalent (and dropped). Nothing is ever guessed.
  */
 export function canonicalCode(input: string): string {
-  return input.trim().toUpperCase().replace(/[\s_-]+/g, '');
+  return input
+    .trim()
+    .toUpperCase()
+    .replace(/[\s_-]+/g, '');
 }
 
 export type CodeMatch = { kind: 'cheat'; cheat: CheatDef } | { kind: 'preset'; preset: PresetDef };
@@ -138,7 +141,8 @@ export function presetName(codes: readonly string[]): string | null {
 export function supersededCodes(codes: readonly string[]): CheatCode[] {
   const set = new Set(codes);
   const out = new Set<CheatCode>();
-  for (const c of CHEATS) if (set.has(c.code)) for (const s of c.supersedes) if (set.has(s)) out.add(s);
+  for (const c of CHEATS)
+    if (set.has(c.code)) for (const s of c.supersedes) if (set.has(s)) out.add(s);
   return sortCodes(out);
 }
 

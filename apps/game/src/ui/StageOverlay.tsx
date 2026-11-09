@@ -62,7 +62,7 @@ export function StageHud({ state }: { state: LabState }) {
           position: 'absolute',
           left: 0,
           right: 0,
-          bottom: '64px',
+          bottom: `${promptBottom()}px`,
           display: 'flex',
           justifyContent: 'center',
           gap: '24px',
@@ -110,6 +110,17 @@ const GRADE_COLORS: Record<string, string> = {
   B: '#8fc7ff',
   C: '#d0d0d0',
 };
+
+/**
+ * The hold prompts sit just above the control hint bar, whose height grows when the hints
+ * of two players wrap onto several lines (co-op), so a prompt is never hidden behind it.
+ */
+function promptBottom(): number {
+  let bar = 0;
+  for (const el of document.querySelectorAll('[data-testid^="hint-p"]'))
+    bar = Math.max(bar, (el as HTMLElement).offsetHeight);
+  return Math.max(64, Math.ceil(bar) + 20);
+}
 
 /** M9 results screen: the list of grades, the overall grade, the counters and the hook. */
 export function ResultsOverlay({

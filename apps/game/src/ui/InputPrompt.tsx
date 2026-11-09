@@ -41,7 +41,8 @@ export function InputPrompt({ prompt, color }: { prompt: Prompt; color?: string 
       return (
         <span
           style={{ ...padGlyph, ...style }}
-          role="img" aria-label={a11y}
+          role="img"
+          aria-label={a11y}
           data-prompt="pad"
           data-asset={`ui.prompt.pad.${prompt.family}.${prompt.button}`}
         >

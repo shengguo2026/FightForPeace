@@ -171,9 +171,12 @@ test('weapon sheets are drawn at the same figure size as the idle sheet', () => 
   expect(size('hero.mountain.sheet.staff-a')).toBeGreaterThan(1.1);
   expect(size('hero.mountain.sheet.staff-b')).toBeGreaterThan(1.1);
   expect(size('hero.river.sheet.walk')).toBeLessThan(0.9);
+  // Action poses drawn larger than idle are scaled down, so a hero keeps its size when it hits.
+  expect(size('hero.river.pose.standing.reed-tap')).toBeLessThan(0.9);
+  expect(size('hero.mountain.pose.ground.settling-palm')).toBeLessThan(0.8);
   for (const s of reg.sheets()) {
     const k = s.sheet.scale ?? 1;
-    expect(k, s.id).toBeGreaterThan(0.8);
-    expect(k, s.id).toBeLessThan(1.2);
+    expect(k, s.id).toBeGreaterThan(0.7);
+    expect(k, s.id).toBeLessThan(1.3);
   }
 });
