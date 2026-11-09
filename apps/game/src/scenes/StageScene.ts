@@ -57,6 +57,12 @@ import { playEventSounds } from '../media/sounds';
 import { callout, dt } from '../text/i18n';
 import { presentation } from '../shell/presentation';
 
+/**
+ * Loose and flying weapon props, drawn at the size the heroes' weapon sheets show them in
+ * hand (the handwheel about 100 px across, the workstaff about a hero's height).
+ */
+const PROP_SCALE: Partial<Record<string, number>> = { handwheel: 0.3, workstaff: 0.9 };
+
 export const VIEW_WIDTH = 1920;
 export const VIEW_HEIGHT = 1080;
 const FLOOR_TOP = 620;
@@ -156,6 +162,9 @@ export class StageScene extends Phaser.Scene {
   private sprites = new Map<number, Phaser.GameObjects.Sprite>();
   private itemSprites = new Map<number, Phaser.GameObjects.Sprite>();
   private propSprites = new Map<number, Phaser.GameObjects.Sprite>();
+  /** Placeholder weapons in the hands of heroes without weapon sheets (by fighter id). */
+  private heldSprites = new Map<number, Phaser.GameObjects.Sprite>();
+  private heldKeep = new Set<number>();
   /** M9 stage objects: workers, their pen, food, the cache, the clue and the evidence. */
   private runSprites = new Map<number, Phaser.GameObjects.Sprite>();
   /** M19 story NPCs of a greenhouse room (Tomas Rell in Marek's yard). */
@@ -282,6 +291,7 @@ export class StageScene extends Phaser.Scene {
       this.drawShadow(p);
       if (f.state === MoveState.Guard || f.state === MoveState.Blockstun) this.drawGuard(f, p);
       const top = this.drawSprite(f, p, snap.frame) ?? this.drawBody(f, p);
+      this.drawHeldProp(f, p, snap.frame);
       this.label(f, p, top);
       this.weapon(f, p, top, time, snap.items);
       this.feedback(f, p, top, time);
@@ -302,6 +312,8 @@ export class StageScene extends Phaser.Scene {
     // Boxes go on top of every body, so a hitbox inside a target stays visible.
     if (collision) for (const { f, p } of drawn) this.drawBoxes(f, p);
     this.dropStale(this.sprites, new Set(current.map((b) => b.id)));
+    this.dropStale(this.heldSprites, this.heldKeep);
+    this.heldKeep = new Set();
     this.environmentCallout(snap.environment, time);
     const events = this.tracker.update({
       frame: snap.frame,
@@ -437,6 +449,7 @@ export class StageScene extends Phaser.Scene {
     for (const map of [
       this.sprites,
       this.itemSprites,
+      this.heldSprites,
       this.propSprites,
       this.runSprites,
       this.npcSprites,
@@ -481,6 +494,31 @@ export class StageScene extends Phaser.Scene {
       sp.destroy();
       map.delete(id);
     }
+  }
+
+  /**
+   * A hero without weapon pose art (Wind and Fire with the Stage 1 workstaff or handwheel)
+   * holds the prop sprite in front of the chest, so the pickup stays visible. Heroes with
+   * the weapon sheets carry the weapon in their pose art and draw nothing here.
+   */
+  private drawHeldProp(f: Fighter, p: Pos, frame: number): void {
+    const hold = this.picker.heldProp(f);
+    const body = this.sprites.get(f.id);
+    if (!hold || !body?.visible || !this.textures.exists(hold.sheet)) return;
+    const meta = this.assets.sheet(hold.sheet)?.sheet;
+    if (!meta) return;
+    this.heldKeep.add(f.id);
+    const sp = this.sprite(this.heldSprites, f.id, hold.sheet);
+    sp.setTexture(hold.sheet, hold.cell);
+    sp.setOrigin(0.5, 0.5);
+    sp.setScale(hold.scale * body.scaleX);
+    sp.setRotation(f.facing * hold.angle);
+    sp.setFlipX(f.facing === -1);
+    // Small bob while walking so the carried prop moves with the stride.
+    const bob = f.state === MoveState.Walk ? Math.abs(((frame % 20) - 10) / 10) * 6 : 0;
+    sp.setPosition(p.x + f.facing * hold.dx * body.scaleX, p.z - p.y - hold.dy * body.scaleX + bob);
+    sp.setAlpha(body.alpha);
+    sp.setDepth(body.depth + 0.0001);
   }
 
   /**
@@ -712,7 +750,8 @@ export class StageScene extends Phaser.Scene {
       sp.setTexture(pick.sheet, pick.cell);
       const cell = meta.cells[pick.cell];
       sp.setOrigin(0.5, cell ? cell.foot / meta.cell : 1);
-      sp.setScale(0.6);
+      // Each prop is drawn at the size the heroes' weapon poses show it in hand.
+      sp.setScale(PROP_SCALE[WEAPONS[item.def]?.id ?? ''] ?? 0.6);
       sp.setPosition(x, z - y);
       sp.setDepth(this.depthAt(z));
       const flying = item.state === ItemState.Flying;
