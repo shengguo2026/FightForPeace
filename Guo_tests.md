@@ -1009,3 +1009,34 @@ If Vite prints another port than 5173, use that one. Stop the server with `Ctrl+
 5. **Other poses:** without a weapon, guard (**G**), dash (**D D**), grab the dummy (**J**) and get hit: Mountain keeps one size in every pose.
 6. **River:** press **Num 4** so Player 2 (River) joins. Walk her with the arrow keys: arms and legs swap every step, same size walking and standing. She picks up the staff, then the handwheel (**Num 3**), and walks with each: same size, a real walk cycle with the weapon held steady.
 7. **Wind and Fire:** in the Lab press **F2**, set *Player 1 hero* to **wind**, close F2 and walk: arms and legs swap every step, same size walking and standing. Repeat with **fire**.
+
+## Fix · Weapon size on the floor and Wind and Fire holding weapons (after the M10 tests)
+
+Findings from the M10 tests:
+
+- **Handwheel size:** the handwheel on the floor was drawn about twice as wide as the one in a hero's hands. Loose and flying weapons are now drawn at the size the hero sheets show them in hand: the handwheel is much smaller on the floor, and the workstaff on the floor is now about as long as a hero is tall (it was shorter than in the hands).
+- **Wind and Fire with a weapon:** they have no Stage 1 weapon sheets yet, so their hands looked empty. Until those sheets are drawn (prompts in `art/prompts/codex_m10_findings.md` in the project files), they hold the weapon's prop picture in front of the chest. When the sheets are imported, the real poses replace it automatically.
+- **River's walk:** a new walk sheet (v4) with relaxed arms is requested in the same prompt file; the game keeps v3 until it is delivered.
+- **Move Preview for complex moves:** added to the roadmap under M21.
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+If Vite prints another port than 5173, use that one. Stop the server with `Ctrl+C`.
+
+### Test steps
+
+1. Open `http://localhost:5173/?lab` and press **F1** to hide the panels. The handwheel on the floor is now small (about the size Mountain holds it in his hands); the workstaff on the floor is long.
+2. Pick up the handwheel with Mountain (**J**): it looks the same size in his hands as on the floor. Throw it (**J** next to nothing) and watch it spin and land: same size all the way.
+3. Drop it and pick up the staff: about as long on the floor as in his hands.
+4. **Wind:** press **F2**, set *Player 1 hero* to **wind**, close F2 and F1. Pick up the handwheel: she holds it in front of her chest, and it follows her when she walks and turns. Pick up the staff: she holds it slanted in front of her.
+5. **Fire:** repeat step 4 with **fire**.
+6. **Academy:** Village → Academy → Free Practice with Wind or Fire; pick up the weapons there: the same as in step 4.

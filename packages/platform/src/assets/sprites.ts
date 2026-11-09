@@ -536,6 +536,26 @@ export class SpritePicker {
     }
   }
 
+  /**
+   * The prop a hero holds when its own sheets have no pose with that weapon (the twins and
+   * the Stage 1 workstaff or handwheel): sheet, cell, scale, tilt (radians, toward the
+   * facing side) and the hand point (px forward of and above the ground point). Null when
+   * the hero's pose art already shows the weapon, or for any other weapon.
+   */
+  heldProp(
+    f: Fighter,
+  ): (SpriteFrame & { scale: number; angle: number; dx: number; dy: number }) | null {
+    const hero = HEROES[f.hero];
+    const weapon = f.wkit >= 0 ? WEAPONS[f.wkit] : undefined;
+    if (f.team !== 'hero' || !hero || !weapon) return null;
+    const base = `hero.${hero.id}.sheet`;
+    if (weapon.id === 'workstaff' && !this.has(`${base}.staff-a`) && this.has('prop.workstaff'))
+      return { sheet: 'prop.workstaff', cell: 1, scale: 0.9, angle: 0.5, dx: 30, dy: 170 };
+    if (weapon.id === 'handwheel' && !this.has(`${base}.handwheel`) && this.has('prop.handwheel'))
+      return { sheet: 'prop.handwheel', cell: 1, scale: 0.3, angle: 0, dx: 55, dy: 185 };
+    return null;
+  }
+
   /** Sheet and cell for a loose or flying weapon (held weapons are part of the pose art). */
   item(item: Item, frame: number): SpriteFrame | null {
     const def = WEAPONS[item.def];
