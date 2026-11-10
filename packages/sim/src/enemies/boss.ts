@@ -330,6 +330,10 @@ export function startPhase(world: World, f: Fighter, n: number): void {
 /** Adds an enemy (encounter id sequence); used by waves and boss phases. */
 export function spawnEnemy(world: World, kit: number, x: number, z: number): Fighter {
   const enc = world.encounter!;
+  // A new lock starts its id sequence again, but an enemy who surrendered in an earlier lock
+  // still kneels there: skip ids still in use, so two bodies never share one id (they would
+  // share one sprite and name, and the kneeling figure would flicker over the new enemy).
+  while (world.bodies.some((b) => b.id === enc.nextId)) enc.nextId += 1;
   const id = enc.nextId;
   enc.nextId += 1;
   const f = createEnemy(id, kit, x, z);

@@ -1097,3 +1097,32 @@ pnpm dev
 4. Attack with every hero (jabs, specials, dashes, grabs): the hero keeps the same size as when standing. River and Mountain were the most visible before.
 5. In co-op, both heroes hit the same enemy at once: the enemy flashes white briefly, but never stays white or grey for a second.
 6. Play to beat 8 and beat the boss: after the surrender, the winch ring and its pips are gone, and the evidence chest has the only glow. Walk to it: the hold prompt is visible, also in co-op.
+
+## Fix · Kneeling ghosts, leftover names, localized labels and title music (after the M11 fix tests)
+
+Five fixes from the second round of M11 tests:
+
+1. Kneeling ghosts in co-op: a new camera lock started its enemy numbering again, so a new enemy could get the same number as a recruit still kneeling from the lock before. The two then shared one picture, which flickered between the kneeling recruit and the new enemy. New enemies now skip numbers that are still in use.
+2. The controls bar at the bottom and the pause line use the chosen language.
+3. Names of enemies who fled or were cleared are removed, and an enemy who flees, kneels or is defeated no longer carries its name.
+4. The words over the fighters use the chosen language: "P1 · River" (P1 · 河神), enemy names, enemy move names and their defense words, "Ultimate ready", ESCAPE / GRABBED / RESTRAINED and the weapon names with their condition.
+5. Title music: browsers allow sound only after the first key press or click. The title music was asked for before that and was lost; it now starts with your first key press or click.
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+### Test steps
+
+1. Open `http://localhost:5173/` in a fresh tab and press any key or click: the title music starts right away.
+2. In Settings choose **中文**. Start Stage 1 solo and let Player 2 join with **Num 4**: the controls bar at the bottom is in Chinese for both players, and the names over the heroes read "P1 · 河神" and "P2 · 山神". Click outside the game window: the pause line is in Chinese.
+3. Fill the Ultimate bar: "奥义就绪" shows under the hero. Enemy names over their heads are Chinese.
+4. Play beat 1 in co-op on Easy. In the first fight one recruit kneels. In the second fight (shield enemy) no grey figure flickers over the enemies.
+5. After each fight, no enemy names stay floating where the enemies were.

@@ -13,6 +13,7 @@ import {
   PROFILES,
   PROGRESSION,
   STAGES,
+  WEAPONS,
 } from '@ffp/sim';
 import { EN } from './strings.en';
 import { ZH_CN } from './strings.zh-CN';
@@ -39,6 +40,7 @@ export function dataCatalog(): Record<string, string> {
     for (const a of e.actions) out[`enemy.${e.id}.action.${a.id}`] = a.name;
     PROFILES[i]?.boss?.phases.forEach((p, n) => (out[`enemy.${e.id}.phase.${n}`] = p.name));
   });
+  for (const w of WEAPONS) out[`weapon.${w.id}.name`] = w.name;
   for (const a of ARENAS) if (!a.stage) out[`arena.${a.id}.name`] = a.name;
   for (const d of DIFFICULTIES) out[`difficulty.${d.id}`] = d.name;
   for (const f of COOP.finishers) out[`coop.finisher.${f.id}`] = f.name;

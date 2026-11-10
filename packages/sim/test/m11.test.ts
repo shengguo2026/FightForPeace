@@ -74,7 +74,8 @@ describe('Elder’s Secrets catalogue (Appendix E)', () => {
       'PEACEFULPATH',
       'UNSTOPPABLE',
     ]);
-    for (const p of PRESETS) for (const c of p.codes) expect(CHEATS.some((x) => x.code === c)).toBe(true);
+    for (const p of PRESETS)
+      for (const c of p.codes) expect(CHEATS.some((x) => x.code === c)).toBe(true);
   });
 
   test('typed codes: case, surrounding spaces, spaces, hyphens and underscores; no guessing', () => {

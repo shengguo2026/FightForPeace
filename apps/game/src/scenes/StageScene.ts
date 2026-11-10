@@ -39,7 +39,6 @@ import {
   type Encounter,
   type Greenhouse,
 } from '@ffp/sim';
-import { profileText } from '../text/en';
 import {
   AssetRegistry,
   type PlaceholderFamily,
@@ -54,7 +53,7 @@ import { GreenhouseView } from './greenhouseView';
 import { EffectsLayer } from './effects';
 import { PresentationTracker } from '@ffp/platform';
 import { playEventSounds } from '../media/sounds';
-import { callout, dt } from '../text/i18n';
+import { callout, dt, heroName, locale, t as tr, type TextId } from '../text/i18n';
 import { presentation } from '../shell/presentation';
 
 /**
@@ -103,7 +102,6 @@ const WEAPON_CALLOUTS: Partial<Record<number, { text: string; color: string }>> 
   [WeaponEvent.Return]: { text: 'RETURNED', color: '#ffd166' },
   [WeaponEvent.StruckAside]: { text: 'STRUCK ASIDE', color: '#7df9ff' },
 };
-const CONDITION_TEXT = ['Ready', 'Worn', 'Critical'];
 const CONDITION_COLOR = [0x7ddc7d, 0xe0c050, 0xe05050];
 const POPUP_MS = 700;
 const CALLOUT_MS = 900;
@@ -316,7 +314,22 @@ export class StageScene extends Phaser.Scene {
     for (const pr of snap.projectiles) this.drawProjectile(pr);
     // Boxes go on top of every body, so a hitbox inside a target stays visible.
     if (collision) for (const { f, p } of drawn) this.drawBoxes(f, p);
-    this.dropStale(this.sprites, new Set(current.map((b) => b.id)));
+    const live = new Set(current.map((b) => b.id));
+    this.dropStale(this.sprites, live);
+    // Names, move names and cues of fighters who left (fled, cleared) go with them.
+    for (const map of [
+      this.labels,
+      this.moveLabels,
+      this.comboLabels,
+      this.cues,
+      this.weaponTags,
+      this.ready,
+    ])
+      for (const [id, t] of map)
+        if (!live.has(id)) {
+          t.destroy();
+          map.delete(id);
+        }
     this.dropStale(this.heldSprites, this.heldKeep);
     this.heldKeep = new Set();
     this.environmentCallout(snap.environment, time);
@@ -892,7 +905,8 @@ export class StageScene extends Phaser.Scene {
       g.fillStyle(CONDITION_COLOR[cond]!, 1);
       g.fillRect(p.x - w / 2, y, (w * item.integrity) / def.integrity.max, 6);
       const ammo = def.ammo > 0 ? ` · ${item.ammo}/${def.ammo}` : '';
-      tag.setText(`${def.name} · ${CONDITION_TEXT[cond]}${ammo}`);
+      const name = dt(`weapon.${def.id}.name`, def.name);
+      tag.setText(`${name} · ${tr(`over.condition.${cond}` as TextId)}${ammo}`);
       tag.setPosition(p.x, y - 2);
       tag.setVisible(true);
     } else tag.setVisible(false);
@@ -1051,23 +1065,20 @@ export class StageScene extends Phaser.Scene {
   private label(f: Fighter, p: Pos, top: number): void {
     let t = this.labels.get(f.id);
     if (!t) {
-      const name = HEROES[f.hero]?.name.split(' ')[0] ?? '';
-      const text =
-        f.team === 'hero'
-          ? `P${f.slot + 1} · ${name}`
-          : this.inArena
-            ? (ENEMIES[f.hero]?.name ?? '')
-            : `Dummy ${f.id - 100}`;
-      t = this.add.text(0, 0, text, { fontFamily: 'system-ui, sans-serif', fontSize: '26px' });
+      t = this.add.text(0, 0, '', { fontFamily: 'system-ui, sans-serif', fontSize: '26px' });
       t.setOrigin(0.5, 1);
       t.setDepth(10);
       this.labels.set(f.id, t);
     }
-    if (f.team === 'hero') {
-      const name = HEROES[f.hero]?.name.split(' ')[0] ?? '';
-      t.setText(`P${f.slot + 1} · ${name}`);
-    }
+    t.setText(this.nameOf(f));
     t.setPosition(p.x, top - 8);
+    // An enemy out of the fight (fleeing, kneeling, defeated) no longer carries its name.
+    t.setVisible(
+      f.team !== 'enemy' ||
+        (f.state !== MoveState.Flee &&
+          f.state !== MoveState.Surrender &&
+          f.state !== MoveState.Defeated),
+    );
     // Current move name above the label while the Lab is visible.
     let m = this.moveLabels.get(f.id);
     if (!m) {
@@ -1083,11 +1094,33 @@ export class StageScene extends Phaser.Scene {
     const a =
       f.state === MoveState.Attack && f.action >= 0 ? kitOf(f)?.actions[f.action] : undefined;
     // An enemy attack is always announced with its defense profile in words (telegraph).
-    const profile = f.team === 'enemy' && a ? profileText(a.tags) : '';
-    const text = a && (f.team === 'enemy' || this.opts.showLabels()) ? a.name : '';
+    const profile = f.team === 'enemy' && a ? overProfile(a.tags) : '';
+    const text = a && (f.team === 'enemy' || this.opts.showLabels()) ? this.moveName(f, a) : '';
     m.setText(profile ? `${text}\n${profile}` : text);
     m.setColor(a?.tags.includes('unblockable') ? '#ff8080' : '#ffe9a8');
     m.setPosition(p.x, top - 38);
+  }
+
+  /** The name over a fighter in the chosen language: P1 · River, an enemy's name. */
+  private nameOf(f: Fighter): string {
+    if (f.team === 'hero') {
+      const id = HEROES[f.hero]?.id ?? '';
+      const full = heroName(id);
+      // English and German keep the short form (Mountain, River); Chinese the full name.
+      const name = locale.value === 'zh-CN' ? full : full.split(' ')[0];
+      return `P${f.slot + 1} · ${name}`;
+    }
+    if (!this.inArena) return `Dummy ${f.id - 100}`;
+    const e = ENEMIES[f.hero];
+    return e ? dt(`enemy.${e.id}.name`, e.name) : '';
+  }
+
+  /** A running move's name in the chosen language (data name as the fallback). */
+  private moveName(f: Fighter, a: { id: string; name: string }): string {
+    const owner = f.team === 'hero' ? HEROES[f.hero] : ENEMIES[f.hero];
+    const key =
+      f.team === 'hero' ? `hero.${owner?.id}.action.${a.id}` : `enemy.${owner?.id}.action.${a.id}`;
+    return dt(key, a.name);
   }
 
   /** Damage pop-ups, the combo counter and the ground-window marker on targets. */
@@ -1185,7 +1218,7 @@ export class StageScene extends Phaser.Scene {
   private readyLabel(f: Fighter, x: number, y: number, full: boolean): void {
     let t = this.ready.get(f.id);
     if (!t) {
-      t = this.add.text(0, 0, 'ULTIMATE READY', {
+      t = this.add.text(0, 0, '', {
         fontFamily: 'system-ui, sans-serif',
         fontSize: '18px',
         fontStyle: 'bold',
@@ -1197,6 +1230,7 @@ export class StageScene extends Phaser.Scene {
       t.setDepth(12);
       this.ready.set(f.id, t);
     }
+    t.setText(tr('hud.ready'));
     t.setVisible(full);
     t.setPosition(x, y);
   }
@@ -1248,13 +1282,13 @@ export class StageScene extends Phaser.Scene {
     let text = '';
     let color = '#ffffff';
     if (escape) {
-      text = 'ESCAPE!';
+      text = tr('over.escape');
       color = '#ffd166';
     } else if (f.state === MoveState.Grabbed) {
-      text = 'GRABBED';
+      text = tr('over.grabbed');
       color = '#c8a2ff';
     } else if (f.state === MoveState.Restrained) {
-      text = `RESTRAINED ${Math.max(0, f.stun - f.stateFrame)}`;
+      text = tr('over.restrained', { n: Math.max(0, f.stun - f.stateFrame) });
       color = '#ff9a9a';
     }
     c.setText(text);
@@ -1303,4 +1337,15 @@ interface Pos {
 function interpolate(a: Fighter, b: Fighter, alpha: number): Pos {
   const lerp = (p: number, q: number) => fxToPixels(p + (q - p) * alpha);
   return { x: lerp(a.x, b.x), z: lerp(a.z, b.z), y: lerp(a.y, b.y) };
+}
+
+/** An enemy attack's defense profile in words, in the chosen language. */
+function overProfile(tags: readonly string[]): string {
+  const parts: string[] = [];
+  if (tags.includes('unblockable')) parts.push(tr('over.unblockable'));
+  else if (tags.includes('guardPiercing')) parts.push(tr('over.piercesGuard'));
+  else if (tags.includes('guardPressure')) parts.push(tr('over.guardPressure'));
+  if (tags.includes('counterable') && !tags.includes('uncounterable'))
+    parts.push(tr('over.counterable'));
+  return parts.join(' · ');
 }
