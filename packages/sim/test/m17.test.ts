@@ -80,10 +80,38 @@ function strikeNext(w: World, e: RoadRider, kind = 0) {
 describe('M17 data: bike, kits, Road Rider and corridor', () => {
   test('every roster hero has the six confirmed mounted actions in slot order', () => {
     const names: Record<string, string[]> = {
-      mountain: ["Mason's Reach", 'Bank-Sweep Kick', 'Stone-Step Hop', 'Anchor Lean', 'Rampart Escort', 'Open Gate Convoy'],
-      river: ['Reed-Tap Pass', 'Current Kick', 'Rapids Hop', 'Eddy Lean', 'Riverline Overtake', 'Floodline Run'],
-      wind: ['Passing Palm', 'Crosswind Kick', 'Wind-Lane Hop', 'Crosswind Lean', 'Guardian Cut-In', 'Open Road Vigil'],
-      fire: ['Road-Hammer Elbow', 'Passing Heel', 'Breach-Line Hop', 'Iron Lean', 'Convoy Break', "Warden's Passage"],
+      mountain: [
+        "Mason's Reach",
+        'Bank-Sweep Kick',
+        'Stone-Step Hop',
+        'Anchor Lean',
+        'Rampart Escort',
+        'Open Gate Convoy',
+      ],
+      river: [
+        'Reed-Tap Pass',
+        'Current Kick',
+        'Rapids Hop',
+        'Eddy Lean',
+        'Riverline Overtake',
+        'Floodline Run',
+      ],
+      wind: [
+        'Passing Palm',
+        'Crosswind Kick',
+        'Wind-Lane Hop',
+        'Crosswind Lean',
+        'Guardian Cut-In',
+        'Open Road Vigil',
+      ],
+      fire: [
+        'Road-Hammer Elbow',
+        'Passing Heel',
+        'Breach-Line Hop',
+        'Iron Lean',
+        'Convoy Break',
+        "Warden's Passage",
+      ],
     };
     HEROES.forEach((h, i) => {
       const kit = mountedKit(i);
@@ -104,7 +132,9 @@ describe('M17 data: bike, kits, Road Rider and corridor', () => {
     const wind = mountedKit(HEROES.findIndex((h) => h.id === 'wind'));
     const span = (a: (typeof fire)[number]) => a.evadeTo - a.evadeFrom;
     expect(span(fire[MountedSlot.Lean]!)).toBeLessThan(span(wind[MountedSlot.Lean]!));
-    expect(fire[MountedSlot.Directional]!.miss).toBeGreaterThan(wind[MountedSlot.Directional]!.miss);
+    expect(fire[MountedSlot.Directional]!.miss).toBeGreaterThan(
+      wind[MountedSlot.Directional]!.miss,
+    );
   });
 
   test('the Road Rider has its six working actions and no weapons', () => {
@@ -196,7 +226,10 @@ describe('M17 co-op: shared camera, tether, no collisions between partners', () 
     b.x = a.x;
     b.z = a.z;
     const health = [heroOf(w, 0)!.health, heroOf(w, 1)!.health];
-    run(w, 40, (i) => [press(i % 20 === 0 ? ActionBit.Attack : 0), press(i % 20 === 5 ? ActionBit.Attack : 0)]);
+    run(w, 40, (i) => [
+      press(i % 20 === 0 ? ActionBit.Attack : 0),
+      press(i % 20 === 5 ? ActionBit.Attack : 0),
+    ]);
     expect(rider(w, 0).z).toBe(rider(w, 1).z);
     expect([heroOf(w, 0)!.health, heroOf(w, 1)!.health]).toEqual(health);
     expect([rider(w, 0).stability, rider(w, 1).stability]).toEqual([B.stability, B.stability]);
@@ -357,36 +390,39 @@ describe('M17 Stability: warned critical state, safe crash and recovery', () => 
 });
 
 describe('M17 rider-delivered attacks for all four heroes', () => {
-  test.each(HEROES.map((h, i) => [h.id, i] as const))('%s: neutral, directional, Special', (id, i) => {
-    const kit = mountedKit(i);
-    // Neutral: the rider right alongside.
-    let w = ride([id]);
-    placeAt(w);
-    let e = alongside(w, 0, 80);
-    const s0 = e.stability;
-    run(w, kit[0]!.startup + 2, (k) => [press(k === 0 ? ActionBit.Attack : 0)]);
-    expect(e.stability).toBe(s0 - kit[0]!.stability);
-    expect(heroOf(w, 0)!.meter).toBe(kit[0]!.meter);
-    // Directional: a kick into the neighbouring lane, held direction.
-    w = ride([id]);
-    placeAt(w);
-    e = alongside(w, 0, 150);
-    run(w, kit[1]!.startup + 2, (k) => [press(k === 0 ? ActionBit.Attack : 0, { moveZ: 1 })]);
-    expect(e.stability).toBe(s0 - kit[1]!.stability);
-    // A whiffed kick costs steering for a while.
-    w = ride([id]);
-    placeAt(w);
-    run(w, kit[1]!.startup + kit[1]!.active + kit[1]!.recovery + 1, (k) => [
-      press(k === 0 ? ActionBit.Attack : 0, { moveZ: -1 }),
-    ]);
-    expect(rider(w).penaltyUntil).toBeGreaterThan(w.frame);
-    // Special moves to the threat (or ahead) and strikes it.
-    w = ride([id]);
-    placeAt(w);
-    e = alongside(w, 0, 90, kit[4]!.seek === 3 ? 150 : 0);
-    run(w, kit[4]!.startup + 4, (k) => [press(k === 0 ? ActionBit.Special : 0)]);
-    expect(e.stability).toBeLessThan(s0);
-  });
+  test.each(HEROES.map((h, i) => [h.id, i] as const))(
+    '%s: neutral, directional, Special',
+    (id, i) => {
+      const kit = mountedKit(i);
+      // Neutral: the rider right alongside.
+      let w = ride([id]);
+      placeAt(w);
+      let e = alongside(w, 0, 80);
+      const s0 = e.stability;
+      run(w, kit[0]!.startup + 2, (k) => [press(k === 0 ? ActionBit.Attack : 0)]);
+      expect(e.stability).toBe(s0 - kit[0]!.stability);
+      expect(heroOf(w, 0)!.meter).toBe(kit[0]!.meter);
+      // Directional: a kick into the neighbouring lane, held direction.
+      w = ride([id]);
+      placeAt(w);
+      e = alongside(w, 0, 150);
+      run(w, kit[1]!.startup + 2, (k) => [press(k === 0 ? ActionBit.Attack : 0, { moveZ: 1 })]);
+      expect(e.stability).toBe(s0 - kit[1]!.stability);
+      // A whiffed kick costs steering for a while.
+      w = ride([id]);
+      placeAt(w);
+      run(w, kit[1]!.startup + kit[1]!.active + kit[1]!.recovery + 1, (k) => [
+        press(k === 0 ? ActionBit.Attack : 0, { moveZ: -1 }),
+      ]);
+      expect(rider(w).penaltyUntil).toBeGreaterThan(w.frame);
+      // Special moves to the threat (or ahead) and strikes it.
+      w = ride([id]);
+      placeAt(w);
+      e = alongside(w, 0, 90, kit[4]!.seek === 3 ? 150 : 0);
+      run(w, kit[4]!.startup + 4, (k) => [press(k === 0 ? ActionBit.Special : 0)]);
+      expect(e.stability).toBeLessThan(s0);
+    },
+  );
 
   test.each(HEROES.map((h, i) => [h.id, i] as const))(
     '%s: the Ultimate needs a full Attack Bar, spends it and clears the pressure',
@@ -458,7 +494,12 @@ describe('M17 Road Rider: lane pressure, commitments and safe dismount', () => {
       const w = ride([...heroes], { difficulty });
       placeAt(w);
       for (let k = 0; k < 4; k += 1) {
-        const e = addRoadRider(P(w), rider(w, 0).x - fx(300 + 200 * k), laneZ(C, rider(w).x, 0), w.frame);
+        const e = addRoadRider(
+          P(w),
+          rider(w, 0).x - fx(300 + 200 * k),
+          laneZ(C, rider(w).x, 0),
+          w.frame,
+        );
         e.state = EnemyState.Approach;
       }
       let peak = 0;
@@ -633,7 +674,9 @@ describe('M17 STEADYRIDE and the other cheats', () => {
   });
 
   test('Stability never decreases; hit reactions and impacts still happen; Cheat-Assisted', () => {
-    const w = ride(['wind'], { cheats: { hero: [cheatMask(['STEADYRIDE'], 'hero'), 0], session: 0 } });
+    const w = ride(['wind'], {
+      cheats: { hero: [cheatMask(['STEADYRIDE'], 'hero'), 0], session: 0 },
+    });
     expect(w.cheats.marked).toBe(true);
     placeAt(w);
     const e = alongside(w);
@@ -692,30 +735,33 @@ function bot(w: World, slot: number, i: number): FrameInput {
 }
 
 describe('M17 Response Record, completion and determinism', () => {
-  test.each(HEROES.map((h) => h.id))('%s completes the corridor solo; the record grades it', (id) => {
-    const w = ride([id]);
-    let i = 0;
-    for (; i < 12000 && P(w).phase !== PursuitPhase.Complete; i += 1) step(w, [bot(w, 0, i)]);
-    expect(P(w).phase).toBe(PursuitPhase.Complete);
-    const rec = responseRecord(P(w));
-    expect(rec.lines.map((l) => l.id)).toEqual([
-      'response',
-      'protection',
-      'control',
-      'stability',
-      'assistance',
-    ]);
-    for (const l of rec.lines) {
-      expect(l.score).toBeGreaterThanOrEqual(0);
-      expect(l.score).toBeLessThanOrEqual(100);
-    }
-    expect(P(w).record.dismounted).toBeGreaterThan(0);
-    // The record stops with the pursuit.
-    const frames = P(w).record.frames;
-    run(w, 30);
-    expect(P(w).record.frames).toBe(frames);
-    expect(P(w).riders.every((r) => r.state === RiderState.Done)).toBe(true);
-  });
+  test.each(HEROES.map((h) => h.id))(
+    '%s completes the corridor solo; the record grades it',
+    (id) => {
+      const w = ride([id]);
+      let i = 0;
+      for (; i < 12000 && P(w).phase !== PursuitPhase.Complete; i += 1) step(w, [bot(w, 0, i)]);
+      expect(P(w).phase).toBe(PursuitPhase.Complete);
+      const rec = responseRecord(P(w));
+      expect(rec.lines.map((l) => l.id)).toEqual([
+        'response',
+        'protection',
+        'control',
+        'stability',
+        'assistance',
+      ]);
+      for (const l of rec.lines) {
+        expect(l.score).toBeGreaterThanOrEqual(0);
+        expect(l.score).toBeLessThanOrEqual(100);
+      }
+      expect(P(w).record.dismounted).toBeGreaterThan(0);
+      // The record stops with the pursuit.
+      const frames = P(w).record.frames;
+      run(w, 30);
+      expect(P(w).record.frames).toBe(frames);
+      expect(P(w).riders.every((r) => r.state === RiderState.Done)).toBe(true);
+    },
+  );
 
   test('every pair completes in co-op; no rider is ever off the shared screen', () => {
     const ids = HEROES.map((h) => h.id);

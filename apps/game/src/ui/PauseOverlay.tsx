@@ -1,4 +1,4 @@
-import { TEXT } from '../text/en';
+import { t } from '../text/i18n';
 import { PLAYER_COLORS, PromptText } from './InputPrompt';
 import type { LabState } from './labState';
 
@@ -35,17 +35,21 @@ export function PauseOverlay({ state, menu }: { state: LabState; menu?: () => bo
           waiting.map((slot) => (
             <div data-testid="pause-controller-lost">
               <div style={{ color: PLAYER_COLORS[slot] }}>
-                <PromptText text={TEXT.controllerLost} ctx={ctx} values={{ player: slot + 1 }} />
+                <PromptText
+                  text={t('prompt.controllerLost')}
+                  ctx={ctx}
+                  values={{ player: slot + 1 }}
+                />
               </div>
-              <PromptText text={TEXT.controllerReconnect} ctx={ctx} />
+              <PromptText text={t('prompt.controllerReconnect')} ctx={ctx} />
             </div>
           ))
         ) : state.focusPaused.value ? (
           <div data-testid="pause-focus">
-            <PromptText text={TEXT.pausedFocus} ctx={players[0]!.ctx} />
+            <PromptText text={t('prompt.pausedFocus')} ctx={players[0]!.ctx} />
           </div>
         ) : (
-          <PromptText text={TEXT.paused} ctx={players[0]!.ctx} />
+          <PromptText text={t('prompt.paused')} ctx={players[0]!.ctx} />
         )}
       </div>
     </div>

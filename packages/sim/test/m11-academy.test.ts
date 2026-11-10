@@ -38,7 +38,13 @@ describe('recipe playback (Academy demonstrations, My Combos)', () => {
 
   test('steps from action ids, with jump hints and alternatives', () => {
     const kit = HEROES[0]!.actions;
-    const s = stepsFromIds(kit, ['high-bank-lift', 'jump', 'rafter-palm', 'lockgate-press|foundation-rise', 'nope']);
+    const s = stepsFromIds(kit, [
+      'high-bank-lift',
+      'jump',
+      'rafter-palm',
+      'lockgate-press|foundation-rise',
+      'nope',
+    ]);
     expect(s).toHaveLength(4);
     expect(s[1]!.jump).toBe(true);
     expect(s[3]!.any).toHaveLength(2);

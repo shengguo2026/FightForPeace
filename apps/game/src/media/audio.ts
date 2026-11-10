@@ -46,6 +46,8 @@ export class AudioEngine {
   };
   /** Music is held quieter while this is below 1 (pause menu, cinematics with their own sound). */
   private hold = 1;
+  /** True while audio is not running yet (the director's commands could not be played). */
+  private silent = false;
   /** Everything the engine started (sounds and music), newest last, for tests. */
   readonly played: string[] = [];
 
@@ -158,7 +160,30 @@ export class AudioEngine {
   /** Executes the director's commands; call every animation frame. */
   tick(nowMs: number): void {
     const cmds = this.director.update(nowMs);
-    if (!this.ctx || !this.buses) return;
+    if (!this.ctx || !this.buses || (this.ctx.state !== 'running' && this.musicNodes.size === 0)) {
+      // Before the first key press or click the browser keeps audio off, so the commands
+      // are lost; the score that should be playing then starts once audio is allowed.
+      this.silent = true;
+      return;
+    }
+    if (this.silent) {
+      this.silent = false;
+      const now = this.director.playing;
+      const st = now ? this.director.cue(now.cue)?.states[now.state] : undefined;
+      if (now && st && !st.once && !this.musicNodes.has(now.asset))
+        this.run(
+          {
+            kind: 'start',
+            asset: now.asset,
+            at: nowMs,
+            loop: true,
+            fadeMs: 600,
+            cue: now.cue,
+            state: now.state,
+          },
+          nowMs,
+        );
+    }
     for (const c of cmds) this.run(c, nowMs);
   }
 

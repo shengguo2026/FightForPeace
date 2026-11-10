@@ -17,7 +17,8 @@ import {
   mountedKit,
 } from '@ffp/sim';
 import type { KeyboardP2Preset, LayoutName, QualitySetting } from '@ffp/platform';
-import { LINK_TEXT, TEXT, moveInputText, profileText } from '../text/en';
+import { LINK_TEXT, moveInputText, profileText } from '../text/en';
+import { t as tx } from '../text/i18n';
 import { InputPrompt, PLAYER_COLORS, PromptText } from './InputPrompt';
 import type {
   DefenseView,
@@ -82,7 +83,7 @@ function PlayerPanel({ p }: { p: PlayerView }) {
       >
         <div style={{ color }}>Player {p.slot + 1} · not joined</div>
         <div>
-          <PromptText text={TEXT.joinKeyboard} ctx={p.ctx} color={color} />
+          <PromptText text={tx('prompt.joinKeyboard')} ctx={p.ctx} color={color} />
         </div>
         <div>or Start on a second gamepad</div>
       </div>
@@ -974,14 +975,14 @@ function rideHints(heroId: string): { text: string; name?: string }[] {
   const kit = mountedKit(Math.max(0, i));
   const n = (slot: number) => kit[slot]?.name ?? '';
   return [
-    { text: TEXT.hintRideSteer },
-    { text: TEXT.hintRideAttack, name: n(MountedSlot.Neutral) },
-    { text: TEXT.hintRideKick, name: n(MountedSlot.Directional) },
-    { text: TEXT.hintRideHop, name: n(MountedSlot.Hop) },
-    { text: TEXT.hintRideLean, name: n(MountedSlot.Lean) },
-    { text: TEXT.hintRideSpecial, name: n(MountedSlot.Special) },
-    { text: TEXT.hintRideUltimate, name: n(MountedSlot.Ultimate) },
-    { text: TEXT.hintRideRescue },
+    { text: tx('prompt.hintRideSteer') },
+    { text: tx('prompt.hintRideAttack'), name: n(MountedSlot.Neutral) },
+    { text: tx('prompt.hintRideKick'), name: n(MountedSlot.Directional) },
+    { text: tx('prompt.hintRideHop'), name: n(MountedSlot.Hop) },
+    { text: tx('prompt.hintRideLean'), name: n(MountedSlot.Lean) },
+    { text: tx('prompt.hintRideSpecial'), name: n(MountedSlot.Special) },
+    { text: tx('prompt.hintRideUltimate'), name: n(MountedSlot.Ultimate) },
+    { text: tx('prompt.hintRideRescue') },
   ];
 }
 
@@ -1022,20 +1023,20 @@ function HintBar({ players, riding }: { players: PlayerView[]; riding: boolean }
               {riding
                 ? null
                 : [
-                    TEXT.hintMove,
-                    TEXT.hintDash,
-                    TEXT.hintJump,
-                    TEXT.hintAttack,
-                    TEXT.hintAirAttack,
-                    TEXT.hintLowAttack,
-                    TEXT.hintGuard,
-                    TEXT.hintCounter,
-                    TEXT.hintBreaker,
-                    TEXT.hintSpecial,
-                    TEXT.hintUltimate,
-                    TEXT.hintGrab,
-                    TEXT.hintEscape,
-                    TEXT.hintTeam,
+                    tx('prompt.hintMove'),
+                    tx('prompt.hintDash'),
+                    tx('prompt.hintJump'),
+                    tx('prompt.hintAttack'),
+                    tx('prompt.hintAirAttack'),
+                    tx('prompt.hintLowAttack'),
+                    tx('prompt.hintGuard'),
+                    tx('prompt.hintCounter'),
+                    tx('prompt.hintBreaker'),
+                    tx('prompt.hintSpecial'),
+                    tx('prompt.hintUltimate'),
+                    tx('prompt.hintGrab'),
+                    tx('prompt.hintEscape'),
+                    tx('prompt.hintTeam'),
                   ].map((t) => (
                     <span style={{ marginRight: '12px' }}>
                       <PromptText text={t} ctx={p.ctx} color={color} />
@@ -1072,9 +1073,9 @@ function GrabCues({ players, grab }: { players: PlayerView[]; grab: GrabPlayerVi
         if (!p) return null;
         const color = PLAYER_COLORS[v.slot];
         let text = '';
-        if (v.escape) text = TEXT.escapeNow;
-        else if (v.state === 'RESTRAINED') text = TEXT.restrained;
-        else if (v.state === 'holding a grab') text = TEXT.grabRoute;
+        if (v.escape) text = tx('prompt.escapeNow');
+        else if (v.state === 'RESTRAINED') text = tx('prompt.restrained');
+        else if (v.state === 'holding a grab') text = tx('prompt.grabRoute');
         if (!text) return null;
         return (
           <div
@@ -1125,11 +1126,11 @@ function TeamCue({ state }: { state: LabState }) {
         data-testid="team-invite"
       >
         <span style={{ color: PLAYER_COLORS[inv.to] }}>P{inv.to + 1}</span>{' '}
-        <PromptText text={TEXT.teamInvite} ctx={to.ctx} color={PLAYER_COLORS[inv.to]} />{' '}
+        <PromptText text={tx('prompt.teamInvite')} ctx={to.ctx} color={PLAYER_COLORS[inv.to]} />{' '}
         <span data-testid="team-invite-left">{inv.left}</span>
         <div style={{ fontWeight: 'normal', fontSize: '16px' }}>
           {inv.name} · <span style={{ color: PLAYER_COLORS[inv.from] }}>P{inv.from + 1}</span>{' '}
-          <PromptText text={TEXT.teamWaiting} ctx={from.ctx} />
+          <PromptText text={tx('prompt.teamWaiting')} ctx={from.ctx} />
         </div>
       </div>
     </div>
