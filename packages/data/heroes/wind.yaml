@@ -443,6 +443,60 @@ actions:
     meter: 0
     tags: [teamFinisher, terminalKnockdown, finalReaction]
 
+  # M21 purchased-move catalogue (Stage 2 spec Appendix A): optional Specials in the empty
+  # `Up` and `Down` slots and one directional Ultimate sidegrade. Each trades something
+  # against the starting kit (tactical purpose in the comment). Combat Lab Candidates.
+  # Crosswind Arc: a rising crescent anti-air that holds ground (no retreat like Skyward
+  # Sentinel), slower to start and less damage.
+  - id: crosswind-arc
+    name: Crosswind Arc
+    category: special
+    input: { context: special, dir: up }
+    slots: [up]
+    catalogue: true
+    frames: { startup: 9, active: 5, recovery: 28 }
+    hitbox: { x: 0, w: 105, y: 130, h: 230, depth: 40 }
+    damage: 56
+    reaction: { kind: launch, hitstun: 30, push: 1, lift: 13, airPop: 12 }
+    costs: { stun: 14, scale: 12, starter: 15, juggle: 30 }
+    meter: 5
+    tags: [handoffAirborne, handoffTemper]
+    links:
+      - { to: jump, input: neutral, category: jumpChase, on: [hit] }
+
+  # Low Gust Sweep: a long low sweep that knocks down crowds at the feet; slow recovery.
+  - id: low-gust-sweep
+    name: Low Gust Sweep
+    category: special
+    input: { context: special, dir: down }
+    slots: [down]
+    catalogue: true
+    frames: { startup: 8, active: 4, recovery: 30 }
+    hitbox: { x: 10, w: 135, y: 0, h: 80, depth: 44 }
+    damage: 50
+    reaction: { kind: knockdown, hitstun: 26, push: 5, lift: 4 }
+    costs: { stun: 12, scale: 12, starter: 15 }
+    meter: 5
+    moves:
+      - { from: 1, to: 8, forward: 2 }
+
+  # Eye of the Storm: a defensive whirl that clears space all around (rescue space) with a
+  # brief invulnerable start; far less damage than Four-Wind Vigil.
+  - id: eye-of-the-storm
+    name: Eye of the Storm
+    category: ultimate
+    input: { context: ultimate, dir: backward }
+    slots: [backward]
+    catalogue: true
+    frames: { startup: 5, active: 12, recovery: 42 }
+    hitbox: { x: -80, w: 250, y: 40, h: 260, depth: 70 }
+    damage: 210
+    reaction: { kind: knockdown, hitstun: 30, push: 15, lift: 7 }
+    costs: { stun: 10, scale: 0 }
+    meter: 0
+    tags: [terminalKnockdown]
+    invulnerable: { from: 1, to: 5 }
+
 recipes:
   - id: foundation
     name: Foundation
@@ -457,3 +511,23 @@ recipes:
     family: ground
     steps: [grass-cutter-sweep, skimming-palm, updraft-release]
     setup: { counterHit: true }
+
+# M21 Move Preview showcases (see mountain.yaml).
+showcases:
+  - id: horizon-vigil
+    name: Horizon to Vigil
+    meter: 100
+    steps: [windmark-jab, crossline-reverse, horizon-heel, four-wind-vigil]
+  - id: headwind-passage
+    name: Headwind Passage
+    meter: 50
+    steps: [windmark-jab, headwind-entry, gale-passage]
+  - id: crosswind-temper
+    name: Crosswind Temper (with Fire Warden)
+    partner: fire
+    steps: [northwind-rise, p2:rising-brand]
+  - id: horizon-accord
+    name: "Horizon into Twin Guardians' Accord (with Fire Warden)"
+    partner: fire
+    meter: 100
+    steps: [windmark-jab, crossline-reverse, horizon-heel, team, p2:team]

@@ -49,6 +49,8 @@ export * from './stage/run';
 export * from './cheats/cheats';
 export * from './academy/pilot';
 export * from './academy/lesson';
+export * from './academy/showcase';
+export * from './stage/tally';
 export * from './net/snapshot';
 export * from './net/proxy';
 export * from './mounted/pursuit';

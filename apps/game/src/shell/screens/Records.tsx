@@ -1,4 +1,11 @@
-import { ACHIEVEMENTS, STORY_STAGE1, achievementProgress, masteryLevel } from '@ffp/platform';
+import {
+  ACHIEVEMENTS,
+  STORY_STAGE1,
+  achievementProgress,
+  masteryLevel,
+  stageOfContent,
+  stageOpen,
+} from '@ffp/platform';
 import { HERO_ROSTER } from '../shell';
 import { clock } from '@ffp/sim';
 import { difficultyName, dt, heroName, locale, stageName, t, type TextId } from '../../text/i18n';
@@ -71,7 +78,12 @@ export function RecordsScreen({ shell }: { shell: Shell }) {
               </div>
             ))}
             <h2>{t('records.achievements')}</h2>
-            {ACHIEVEMENTS.map((a) => {
+            {ACHIEVEMENTS.filter((a) => {
+              // M21: a later stage's achievements show once that stage is open (no spoilers).
+              const c = 'content' in a.rule ? a.rule.content : undefined;
+              const st = c ? stageOfContent(c) : null;
+              return !st || stageOpen(p, st);
+            }).map((a) => {
               const got = p.progress.achievements[a.id] !== undefined;
               const prog = achievementProgress(p, a);
               return (

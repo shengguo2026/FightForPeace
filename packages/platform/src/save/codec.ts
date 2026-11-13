@@ -1,9 +1,6 @@
-import {
-  SAVE_VERSION,
-  normalizeProfile,
-  type Profile,
-} from './schema';
+import { SAVE_VERSION, normalizeProfile, type Profile } from './schema';
 import { emptyProgress } from './progress';
+import { migrateToCampaign } from './migrate3';
 
 /**
  * Save envelopes: canonical JSON (sorted keys) of the data plus a CRC-32 checksum, the
@@ -71,19 +68,24 @@ export function encodeProfile(p: Profile, now = Date.now()): string {
 }
 
 export type DecodeResult =
-  | { ok: true; profile: Profile; version: number; migrated: boolean }
-  | { ok: false; error: string };
+  { ok: true; profile: Profile; version: number; migrated: boolean } | { ok: false; error: string };
 
 /** Older schema versions, upgraded one step at a time (version n → n + 1). */
-export const MIGRATIONS: Record<number, (data: Record<string, unknown>) => Record<string, unknown>> =
-  {
-    // 1 → 2 (M11): the progress record and per-hero cheat preferences. Existing stage
-    // clears keep their mission records; their Credits are not paid out retroactively.
-    1: (d) => {
-      const cheats = (d.cheats ?? {}) as Record<string, unknown>;
-      return { ...d, cheats: { ...cheats, heroPrefs: {} }, progress: emptyProgress() };
-    },
-  };
+export const MIGRATIONS: Record<
+  number,
+  (data: Record<string, unknown>) => Record<string, unknown>
+> = {
+  // 1 → 2 (M11): the progress record and per-hero cheat preferences. Existing stage
+  // clears keep their mission records; their Credits are not paid out retroactively.
+  1: (d) => {
+    const cheats = (d.cheats ?? {}) as Record<string, unknown>;
+    return { ...d, cheats: { ...cheats, heroPrefs: {} }, progress: emptyProgress() };
+  },
+  // 2 → 3 (M21): the campaign record and typed Museum, Dossier and research records;
+  // Stage 2 records kept under the provisional M20 key move to the stable content ID;
+  // stages already completed are recorded and their Museum entries unlocked.
+  2: (d) => migrateToCampaign(d),
+};
 
 export function migrate(data: unknown, from: number): unknown {
   let d = data as Record<string, unknown>;
@@ -104,8 +106,7 @@ export function decodeProfile(text: string): DecodeResult {
     return { ok: false, error: 'not JSON' };
   }
   if (env.format !== PROFILE_FORMAT) return { ok: false, error: 'not a profile' };
-  if (typeof env.version !== 'number' || env.version < 1)
-    return { ok: false, error: 'no version' };
+  if (typeof env.version !== 'number' || env.version < 1) return { ok: false, error: 'no version' };
   if (env.version > SAVE_VERSION)
     return { ok: false, error: `made by a newer game (save version ${env.version})` };
   if (crc32(canonicalJson(env.data)) !== env.checksum)

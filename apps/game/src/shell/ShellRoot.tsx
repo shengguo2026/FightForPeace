@@ -26,6 +26,8 @@ import { StoreScreen } from './screens/Store';
 import { SettingsScreen } from './screens/Settings';
 import { SetupScreen } from './screens/Setup';
 import { VillageScreen } from './screens/Village';
+import { MuseumScreen } from './screens/Museum';
+import { MoveListScreen, PreviewHud, WhatsNewScreen } from './screens/Preview';
 import { NetLobbyScreen, NetOverlay, WifiScreen } from './screens/Wifi';
 
 /** Whether the pause the player asked for is showing (not a focus or controller pause). */
@@ -42,13 +44,20 @@ export function ShellRoot({ shell, state }: { shell: Shell; state: LabState }) {
       {shell.toast.value}
     </div>
   ) : null;
-  if (screen === 'game' || screen === 'lab' || screen === 'lesson' || screen === 'practice') {
+  if (
+    screen === 'game' ||
+    screen === 'lab' ||
+    screen === 'lesson' ||
+    screen === 'practice' ||
+    screen === 'preview'
+  ) {
     return (
       <>
         {screen === 'game' && !state.results.value ? <HudClusters /> : null}
         {screen === 'game' && shell.ending.value ? <EndingScreen shell={shell} /> : null}
         {screen === 'lesson' ? <LessonHud shell={shell} /> : null}
         {screen === 'practice' ? <PracticeHud shell={shell} /> : null}
+        {screen === 'preview' ? <PreviewHud shell={shell} /> : null}
         {screen === 'game' && shell.net.active ? <NetOverlay shell={shell} /> : null}
         {menuPaused(state) && !state.results.value ? (
           <PauseMenu shell={shell} state={state} />
@@ -99,6 +108,12 @@ export function ShellRoot({ shell, state }: { shell: Shell; state: LabState }) {
         return <WifiScreen shell={shell} />;
       case 'netLobby':
         return <NetLobbyScreen shell={shell} />;
+      case 'museum':
+        return <MuseumScreen shell={shell} />;
+      case 'whatsNew':
+        return <WhatsNewScreen shell={shell} />;
+      case 'movelist':
+        return <MoveListScreen shell={shell} />;
     }
   })();
   return (

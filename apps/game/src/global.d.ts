@@ -166,12 +166,18 @@ export interface FfpDebugHook {
     grantCredits(n: number): void;
     /** Ends the running stage as if the evidence had been secured. */
     finishStage(): void;
-    lesson(): { phase: string; met: string[]; done: number; count: number } | null;
+    lesson(): { lesson: string; phase: string; met: string[]; done: number; count: number } | null;
     lastCombo(): { steps: string[]; hits: number } | null;
     cheats(): { hero: string[][]; session: string[]; marked: boolean };
     pilotActive(): boolean;
     /** M14: text that fell back to English or is missing (localization QA). */
     diagnostics(): string[];
+    /** M21: records a completed stage on the active profile (opens the next one). */
+    completeStage(stage: string): void;
+    /** M21: the Move Preview state, or null. */
+    preview(): { mode: string; landed: boolean[]; current: number; plays: number } | null;
+    /** M21: the running stage's id, or null. */
+    stageId(): string | null;
   };
   runReplay(log: ReplayLog): number;
   /** Replaces real gamepads with these virtual ones from now on. */

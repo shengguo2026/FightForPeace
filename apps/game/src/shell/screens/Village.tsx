@@ -4,13 +4,13 @@ import { locale, difficultyName, stageName, t } from '../../text/i18n';
 import type { Shell } from '../shell';
 import { useNav } from '../hooks';
 import { ART, MenuIcon, Panel, Screen, hoverFocus } from '../ui';
-import { AssetRegistry, STAGE1_TITLE_LOOP, STORE } from '@ffp/platform';
+import { AssetRegistry, STAGE1_TITLE_LOOP, STORE, museumNew } from '@ffp/platform';
 
 /** M13: the seamless Flow title loop behind the village menu (muted, decorative). */
 const titleLoop = new AssetRegistry().video(STAGE1_TITLE_LOOP.clip);
 import { itemName } from './Store';
 
-type Item = 'continue' | 'play' | 'academy' | 'store' | 'records' | 'guide' | 'settings';
+type Item = 'continue' | 'play' | 'academy' | 'store' | 'records' | 'museum' | 'guide' | 'settings';
 
 /**
  * The Hybrid Village Command Menu (Module 16): the illustrated village with a short focus
@@ -34,6 +34,7 @@ export function VillageScreen({ shell }: { shell: Shell }) {
     academy: t('menu.academyDetail'),
     store: t('menu.storeDetail'),
     records: t('records.collection'),
+    museum: t('m21.museumDetail'),
     guide: t('menu.guideDetail'),
     settings: t('settings.title'),
   };
@@ -59,6 +60,7 @@ export function VillageScreen({ shell }: { shell: Shell }) {
       <span style={{ fontSize: '22px' }}>{label}</span>
     </button>
   );
+  const fresh = p ? museumNew(p) : 0;
   const badgeItem = STORE.find((s) => s.id === p?.progress.badge);
   const badge = badgeItem ? itemName(badgeItem) : '';
   const storage =
@@ -116,6 +118,13 @@ export function VillageScreen({ shell }: { shell: Shell }) {
           {item('academy', t('menu.academy'), 1, () => shell.go('academy'))}
           {item('store', t('menu.store'), 2, () => shell.go('store'))}
           {item('records', t('menu.records'), 3, () => shell.go('records'))}
+          {item(
+            'museum',
+            fresh > 0 ? `${t('m21.museum')} · ${t('m21.newMark', { n: fresh })}` : t('m21.museum'),
+            0,
+            () => shell.go('museum'),
+            'icons-extra',
+          )}
           {item('guide', t('menu.guide'), 4, () => {
             shell.guideFrom.value = 'village';
             shell.go('guide');

@@ -4,8 +4,11 @@ import {
   DEFAULT_KEYBOARD_P1,
   DEFAULT_SETTINGS,
   ProfileStore,
-  STORY_STAGE1,
   WriterLock,
+  completeStage,
+  noteStageStart,
+  whatsNewDue,
+  markWhatsNewSeen,
   createGuest,
   createProfile,
   MemoryBackend,
@@ -33,6 +36,8 @@ import {
   type WorldOptions,
 } from '@ffp/sim';
 import {
+  DOSSIER,
+  MUSEUM,
   contentIdOf,
   equippedTechniques,
   loadoutChanges,
@@ -42,7 +47,7 @@ import {
 } from '@ffp/platform';
 import type { GameSession } from '../game';
 import type { LabState } from '../ui/labState';
-import { setLocale, t } from '../text/i18n';
+import { setLocale, stageName, t } from '../text/i18n';
 import { presentation } from './presentation';
 import { audio } from '../media/audio';
 import { can } from '../system/probe';
@@ -80,10 +85,14 @@ export type Screen =
   | 'practice'
   | 'combos'
   | 'wifi'
-  | 'netLobby';
+  | 'netLobby'
+  | 'museum'
+  | 'whatsNew'
+  | 'movelist'
+  | 'preview';
 
 /** Screens during which the simulation runs. */
-const LIVE: ReadonlySet<Screen> = new Set(['game', 'lab', 'lesson', 'practice']);
+const LIVE: ReadonlySet<Screen> = new Set(['game', 'lab', 'lesson', 'practice', 'preview']);
 
 /** Cheats chosen for the next run (canonical codes): hero codes per player, session codes. */
 export interface CheatDraft {
@@ -145,6 +154,12 @@ export class Shell {
   readonly cheatConsent = signal<boolean[]>([]);
   /** M13: the ending cinematic's state while it plays over the finished stage (null: none). */
   readonly ending = signal<StoryState | null>(null);
+  /** M21: what the last finished run completed (stages it opened, Museum entries). */
+  readonly completion = signal<{ opened: string[]; unlocked: string[]; first: boolean } | null>(
+    null,
+  );
+  /** M21: the What's New briefing shown (its stage) and where it continues to. */
+  readonly whatsNew = signal<{ stage: string; then: Screen }>({ stage: 'stage2', then: 'academy' });
   /** Where Elder's Secrets and the Guide return to. */
   readonly secretsFrom = signal<Screen>('guide');
   readonly guideFrom = signal<Screen>('village');
@@ -180,6 +195,8 @@ export class Shell {
 
   go(screen: Screen): void {
     this.screen.value = screen;
+    // The Lab's panels (F1) belong to the Lab: lessons, previews and stages start clean.
+    if (screen !== 'lab') this.lab.visible.value = false;
     this.session.held = !LIVE.has(screen);
     this.session.devices.flush();
   }
@@ -471,7 +488,29 @@ export class Shell {
     );
     if (this.partner.value) this.update((p) => (p.lastHeroes = [heroes[1]!]), 1);
     this.ready.value = heroes.map(() => false);
-    this.go('intro');
+    const stage = this.stagePick.value.stage;
+    // M21: the Stage 1 intro stays Stage 1's; a later stage shows What's New once per
+    // profile before its first run, then its own briefing.
+    if (stage === 'stage1') this.go('intro');
+    else this.openWhatsNew(stage, 'briefing');
+  }
+
+  /** M21: the What's New briefing of `stage` when it is still due, else straight to `then`. */
+  openWhatsNew(stage: string, then: Screen, always = false): void {
+    const p = this.active.value;
+    if (!always && (!p || whatsNewDue(p, stage).length === 0)) {
+      this.go(then);
+      return;
+    }
+    this.whatsNew.value = { stage, then };
+    this.go('whatsNew');
+  }
+
+  /** The What's New briefing was read: it is not shown again before a run. */
+  whatsNewDone(): void {
+    const w = this.whatsNew.value;
+    this.update((p) => markWhatsNewSeen(p, w.stage));
+    this.go(w.then);
   }
 
   chosenHeroes(): string[] {
@@ -541,6 +580,8 @@ export class Shell {
       start.seed,
     );
     start.facing.forEach((f, slot) => setFacingMode(this.session.world, slot, f));
+    this.completion.value = null;
+    this.update((p) => void noteStageStart(p, start.stage));
     this.go('game');
   }
 
@@ -587,6 +628,14 @@ export class Shell {
       };
     }
     this.applyOutfits(heroes);
+    this.completion.value = null;
+    // M21: a run of the stage began (Museum entries of the stage's start).
+    if (!from || from.beat === 0) {
+      const stage = from?.stage ?? pick.stage;
+      this.update((p) => void noteStageStart(p, stage));
+      if (this.partner.value && !this.partner.value.guest)
+        this.update((p) => void noteStageStart(p, stage), 1);
+    }
     this.session.startStage(
       from?.stage ?? pick.stage,
       from?.difficulty ?? pick.difficulty,
@@ -759,7 +808,7 @@ export class Shell {
         }
         recordClear(
           x,
-          stage.id === 'stage1' ? STORY_STAGE1 : `story.${stage.id}`,
+          contentIdOf(stage.id),
           {
             grade: results.overall,
             timeFrames: results.stats.frames,
@@ -770,8 +819,22 @@ export class Shell {
         );
         x.checkpoint = null;
       };
-      this.update(record);
-      if (this.partner.value && !this.partner.value.guest) this.update(record, 1);
+      // M21: a full run completes the stage, Cheat-Assisted included (story progress is
+      // narrative): it opens the next stage and its Museum, Dossier and research entries.
+      const complete = (x: Profile) => {
+        if (results.startBeat > 0) return;
+        const c = completeStage(x, stage.id, results);
+        if (x.id === p.id) this.completion.value = c;
+      };
+      this.update((x) => {
+        complete(x);
+        record(x);
+      });
+      if (this.partner.value && !this.partner.value.guest)
+        this.update((x) => {
+          complete(x);
+          record(x);
+        }, 1);
       this.settle(results, heroes);
     }
   }
@@ -808,6 +871,18 @@ export class Shell {
       out.push(s);
     });
     this.settlement.value = out;
+  }
+
+  /** M21: the results lines of what the run completed. */
+  completionLines(): string[] {
+    const c = this.completion.value;
+    if (!c) return [];
+    const out = c.opened.map((s) => t('m21.stageOpened', { stage: stageName(s) }));
+    const museum = c.unlocked.filter((id) => MUSEUM.some((m) => m.id === id)).length;
+    if (museum > 0) out.push(t('m21.museumNew', { n: museum }));
+    const dossier = c.unlocked.filter((id) => DOSSIER.some((d) => d.id === id)).length;
+    if (dossier > 0) out.push(t('m21.dossierNew'));
+    return out;
   }
 
   /** A lesson state was reached: say so, with the Credits it paid. */

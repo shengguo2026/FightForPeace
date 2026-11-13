@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "rulesVersion": "m20",
+  "rulesVersion": "m21",
   "seed": 72,
   "options": {
     "dummies": 1,
@@ -10,7 +10,7 @@
       "wind"
     ]
   },
-  "expectedHash": 3974763913,
+  "expectedHash": 397825983,
   "frames": [
     [{"moveX":1,"moveZ":-1,"pressed":0,"held":0,"dirPressed":9}],
     [{"moveX":1,"moveZ":-1,"pressed":0,"held":0,"dirPressed":0}],

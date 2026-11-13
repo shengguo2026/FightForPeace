@@ -6,7 +6,8 @@ import { emptyProgress, normalizeProgress, type ProgressRecord } from './progres
 
 /**
  * Profile schema (spec §15.1). Version 1 (M10); version 2 (M11) adds `progress` and the
- * cheat preference fields. Every change to this shape bumps
+ * cheat preference fields; version 3 (M21) adds `campaign` and gives the reserved Museum,
+ * Sponsor Dossier and research slots their records. Every change to this shape bumps
  * SAVE_VERSION and adds a migration in migrate.ts; old saves are migrated on load and the
  * original is kept until the migrated copy is written.
  *
@@ -15,7 +16,7 @@ import { emptyProgress, normalizeProgress, type ProgressRecord } from './progres
  * `curated.<name>`, `chronicle.<name>`), a Run Archive slot, and reserved Museum, Sponsor
  * Dossier and research-milestone records.
  */
-export const SAVE_VERSION = 2;
+export const SAVE_VERSION = 3;
 
 export type PromptStyle = 'auto' | 'xbox' | 'playstation' | 'nintendo' | 'generic';
 export type FacingPreference = 'manual' | 'assisted';
@@ -109,6 +110,33 @@ export interface RunArchiveEntry {
   heroes: string[];
 }
 
+/** M21 campaign progress: stages completed and started, What's New briefings seen. */
+export interface CampaignRecord {
+  completed: string[];
+  started: string[];
+  whatsNewSeen: string[];
+}
+
+/** M21 Museum: unlocked entry ids (when) and the entries the player has opened. */
+export interface MuseumRecord {
+  unlocked: Record<string, number>;
+  viewed: string[];
+}
+
+export interface DossierRecord {
+  unlocked: Record<string, number>;
+}
+
+/** M21 formula research: completed milestones and recorded inputs (when). */
+export interface ResearchRecord {
+  milestones: Record<string, number>;
+  inputs: Record<string, number>;
+}
+
+export function emptyCampaign(): CampaignRecord {
+  return { completed: [], started: [], whatsNewSeen: [] };
+}
+
 export interface Profile {
   id: string;
   name: string;
@@ -127,10 +155,11 @@ export interface Profile {
   /** Story decisions by stable ID, e.g. `story.stage3.kael-reunion` → `meet_now`. */
   storyChoices: Record<string, string>;
   runArchive: RunArchiveEntry[];
-  /** Reserved for later milestones (Stage 2 Museum, Sponsor Dossier, research). */
-  museum: Record<string, unknown>;
-  sponsorDossier: Record<string, unknown>;
-  research: Record<string, unknown>;
+  /** M21: campaign progress, Museum, Sponsor Dossier and formula research. */
+  campaign: CampaignRecord;
+  museum: MuseumRecord;
+  sponsorDossier: DossierRecord;
+  research: ResearchRecord;
   /**
    * Versioned cheat-registry state (Elder's Secrets, M11): reusable hero-scoped
    * preferences per hero id (canonical codes). A new run starts without them unless the
@@ -183,9 +212,10 @@ export function createProfile(name: string, locale: Locale, now = Date.now()): P
     missions: {},
     storyChoices: {},
     runArchive: [],
-    museum: {},
-    sponsorDossier: {},
-    research: {},
+    campaign: emptyCampaign(),
+    museum: { unlocked: {}, viewed: [] },
+    sponsorDossier: { unlocked: {} },
+    research: { milestones: {}, inputs: {} },
     cheats: { registryVersion: 1, enabled: [], heroPrefs: {} },
     progress: emptyProgress(),
   };
@@ -217,7 +247,8 @@ export function normalizeSettings(raw: unknown): ProfileSettings {
       ['auto', 'xbox', 'playstation', 'nintendo', 'generic'] as const,
       d.promptStyle,
     ),
-    layout: r.layout === null ? null : pick(r.layout, ['qwerty', 'qwertz', 'azerty'] as const, 'qwerty'),
+    layout:
+      r.layout === null ? null : pick(r.layout, ['qwerty', 'qwertz', 'azerty'] as const, 'qwerty'),
     hudScale: clamp(Math.round(num(r.hudScale, d.hudScale)), 75, 150),
     highContrast: bool(r.highContrast, d.highContrast),
     reducedFlashing: bool(r.reducedFlashing, d.reducedFlashing),
@@ -307,7 +338,9 @@ export function normalizeProfile(raw: unknown): Profile {
                     ? cp.cheats.hero
                         .slice(0, 2)
                         .map((l) =>
-                          Array.isArray(l) ? l.filter((c): c is string => typeof c === 'string') : [],
+                          Array.isArray(l)
+                            ? l.filter((c): c is string => typeof c === 'string')
+                            : [],
                         )
                     : [],
                   session: Array.isArray(cp.cheats.session)
@@ -320,7 +353,9 @@ export function normalizeProfile(raw: unknown): Profile {
             loadout: Array.isArray(cp.loadout)
               ? cp.loadout
                   .slice(0, 2)
-                  .map((l) => (Array.isArray(l) ? l.filter((c): c is string => typeof c === 'string') : []))
+                  .map((l) =>
+                    Array.isArray(l) ? l.filter((c): c is string => typeof c === 'string') : [],
+                  )
               : [],
           }
         : null,
@@ -330,8 +365,7 @@ export function normalizeProfile(raw: unknown): Profile {
             clears: Math.max(0, Math.round(num(v.clears, 0))),
             bestGrade: typeof v.bestGrade === 'string' ? v.bestGrade : null,
             bestTimeFrames: typeof v.bestTimeFrames === 'number' ? v.bestTimeFrames : null,
-            highestDifficulty:
-              typeof v.highestDifficulty === 'string' ? v.highestDifficulty : null,
+            highestDifficulty: typeof v.highestDifficulty === 'string' ? v.highestDifficulty : null,
             lastPlayedAt: num(v.lastPlayedAt, 0),
           }
         : undefined,
@@ -348,19 +382,47 @@ export function normalizeProfile(raw: unknown): Profile {
             : [],
         }))
       : [],
-    museum: isObj(raw.museum) ? raw.museum : {},
-    sponsorDossier: isObj(raw.sponsorDossier) ? raw.sponsorDossier : {},
-    research: isObj(raw.research) ? raw.research : {},
+    campaign: normalizeCampaign(raw.campaign),
+    museum: {
+      unlocked: stamps(isObj(raw.museum) ? raw.museum.unlocked : null),
+      viewed: strings(isObj(raw.museum) ? raw.museum.viewed : null, 500),
+    },
+    sponsorDossier: {
+      unlocked: stamps(isObj(raw.sponsorDossier) ? raw.sponsorDossier.unlocked : null),
+    },
+    research: {
+      milestones: stamps(isObj(raw.research) ? raw.research.milestones : null),
+      inputs: stamps(isObj(raw.research) ? raw.research.inputs : null),
+    },
     cheats: {
       registryVersion: Math.max(1, Math.round(num(cheats.registryVersion, 1))),
       enabled: Array.isArray(cheats.enabled)
         ? cheats.enabled.filter((c): c is string => typeof c === 'string')
         : [],
       heroPrefs: record(cheats.heroPrefs, (v) =>
-        Array.isArray(v) ? v.filter((c): c is string => typeof c === 'string').slice(0, 12) : undefined,
+        Array.isArray(v)
+          ? v.filter((c): c is string => typeof c === 'string').slice(0, 12)
+          : undefined,
       ),
     },
     progress: normalizeProgress(raw.progress),
+  };
+}
+
+function strings(v: unknown, max = 100): string[] {
+  return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string').slice(0, max) : [];
+}
+
+function stamps(v: unknown): Record<string, number> {
+  return record(v, (x) => (typeof x === 'number' && Number.isFinite(x) ? x : undefined));
+}
+
+export function normalizeCampaign(raw: unknown): CampaignRecord {
+  const r = isObj(raw) ? raw : {};
+  return {
+    completed: strings(r.completed),
+    started: strings(r.started),
+    whatsNewSeen: strings(r.whatsNewSeen),
   };
 }
 
@@ -407,4 +469,3 @@ export function recordClear(
     ...p.runArchive,
   ].slice(0, 20);
 }
-

@@ -131,6 +131,13 @@ function zeroStats(): RunStats {
     evidence: 0,
     bestHits: 0,
     bestDamage: 0,
+    reciprocal: 0,
+    accord: 0,
+    calls: 0,
+    callsBroken: 0,
+    breachesStopped: 0,
+    breachesDone: 0,
+    grenadeDamage: 0,
   };
 }
 

@@ -216,8 +216,33 @@ export interface HeroDef {
   tags: readonly string[];
   actions: readonly ActionDef[];
   recipes: readonly RecipeDef[];
+  /** M21 Move Preview showcases (heroes only; enemy kits have none). */
+  showcases?: readonly ShowcaseDef[];
   /** M19 enemy kits: the art key its sheets use (a variant shares its base kit's art). */
   art?: string;
+}
+
+/** One step of a showcase route: which player slot acts and the accepted actions. */
+export interface ShowcaseStep {
+  /** 0 the hero, 1 the demonstration partner. */
+  slot: number;
+  /** A jump chase (pressed, never matched against hits). */
+  jump: boolean;
+  /** Team Attack: an invitation (the partner's team step confirms it). */
+  team: boolean;
+  /** Action indices (into that slot's kit) accepted for this step. */
+  any: readonly number[];
+}
+
+/** M21 Move Preview showcase (roadmap decision 4): an authored freestyle route. */
+export interface ShowcaseDef {
+  id: string;
+  name: string;
+  /** Attack meter both heroes start with, in percent. */
+  meter: number;
+  /** The demonstration partner's hero id (null: solo). */
+  partner: string | null;
+  steps: readonly ShowcaseStep[];
 }
 
 /** Clash strength tiers. Numbers are part of the data; never renumber. */
@@ -773,6 +798,8 @@ export interface StoreItemDef {
   band: 'low' | 'medium' | 'high';
   /** Content ID whose first clear reveals the entry (null: visible from first launch). */
   reveal: string | null;
+  /** M21: campaign stage id whose opening reveals the entry (null: none). */
+  revealStage?: string | null;
   /** Achievement needed before the entry can be bought (null: none). */
   requires: string | null;
   /** Hero Mastery level that grants a technique without Credits (0: no such path). */
@@ -797,20 +824,77 @@ export interface AchievementDef {
   /** Tests story occurrence only: allowed in Cheat-Assisted runs (without Credits). */
   narrative: boolean;
   rule: {
-    kind: 'clear' | 'heroes' | 'stat' | 'academy';
+    kind:
+      | 'clear'
+      | 'heroes'
+      | 'stat'
+      | 'academy'
+      | 'preservation'
+      | 'response'
+      | 'stats'
+      | 'capture'
+      | 'branch'
+      | 'branches';
     content: string | null;
     rank: string | null;
     difficulty: string | null;
     count: number;
-    stat: 'bestHits' | 'revives' | 'allClues' | null;
+    stat: RunStatName | null;
     min: number;
     coop: boolean;
     state: 'certified' | 'mastered' | null;
+    /** M21: run counters that must all be within their bounds (kind stats). */
+    all?: readonly { stat: RunStatName; min: number | null; max: number | null }[];
+    /** M21: Preservation grade id (kind preservation). */
+    grade?: string | null;
+    /** M21: most mounted rewinds allowed (kind response). */
+    rewinds?: number | null;
+    /** M21 capture: route, how the gun was lost, least rounds then, Scorched Claim allowed. */
+    route?: 'surrender' | 'forced' | null;
+    gun?: 'disarmed' | 'broken' | 'emptied' | null;
+    rounds?: number;
+    scorch?: boolean;
+    /** M21: branch id (kind branch). */
+    branch?: string | null;
   };
 }
 
+/** Run counters an achievement may name (M11 and M21; `callsUnbroken` is derived). */
+export type RunStatName =
+  | 'bestHits'
+  | 'revives'
+  | 'allClues'
+  | 'reciprocal'
+  | 'accord'
+  | 'calls'
+  | 'callsBroken'
+  | 'callsUnbroken'
+  | 'breachesStopped'
+  | 'breachesDone'
+  | 'grenadeDamage';
+
 export type LessonGoal =
-  'walk' | 'jump' | 'dash' | 'recipe' | 'guard' | 'exact' | 'counter' | 'special' | 'ultimate';
+  | 'walk'
+  | 'jump'
+  | 'dash'
+  | 'recipe'
+  | 'guard'
+  | 'exact'
+  | 'counter'
+  | 'special'
+  | 'ultimate'
+  // M21 drill goals, read from the drill room's own records.
+  | 'reciprocal'
+  | 'teamFinisher'
+  | 'pursuitControl'
+  | 'pursuitSave'
+  | 'firearmShot'
+  | 'grenadeReturn'
+  | 'disarm'
+  | 'repair'
+  | 'containerOpen'
+  | 'callBreak'
+  | 'breachStop';
 
 export interface LessonPhaseDef {
   goals: readonly LessonGoal[];
@@ -830,6 +914,10 @@ export interface LessonDef {
   trainer: boolean;
   /** Attack meter the lesson starts with, in percent. */
   meter: number;
+  /** M21: the lesson's fixed hero (null: the hero chosen in the Academy). */
+  hero?: string | null;
+  /** M21 drill: a test room, corridor, or pair showcase with its partner (null: the yard). */
+  drill?: { room: string | null; corridor: string | null; showcase: string | null } | null;
   guided: readonly LessonGoal[];
   trial: LessonPhaseDef;
   mastery: LessonPhaseDef;
@@ -855,6 +943,48 @@ export interface ProgressionDef {
   store: readonly StoreItemDef[];
   achievements: readonly AchievementDef[];
   academy: readonly AcademyRouteDef[];
+  /** M21 campaign layer: stages in Story Mode order. */
+  campaign: readonly CampaignStageDef[];
+  /** M21 Village Museum and Archive. */
+  museum: readonly MuseumEntryDef[];
+  dossier: readonly DossierEntryDef[];
+  research: {
+    milestones: readonly { id: string; stage: string | null }[];
+    inputs: readonly { id: string; milestone: string; stage: string; unlock: UnlockDef }[];
+  };
+}
+
+/** M21 unlock rule: always, start, complete, open, or branch (with its id). */
+export interface UnlockDef {
+  kind: 'always' | 'start' | 'complete' | 'open' | 'branch' | string;
+  branch: string | null;
+}
+
+export interface CampaignStageDef {
+  /** Stage file id (`stage2`). */
+  id: string;
+  /** Story content ID (`story.stage2.prosperity-under-siege`). */
+  content: string;
+  /** The stage that must be completed once first (null: open from the start). */
+  opens: string | null;
+  /** What's New briefing cards shown before the first run (text keys). */
+  whatsNew: readonly string[];
+}
+
+export interface MuseumEntryDef {
+  id: string;
+  section: 'picture' | 'cinema' | 'music' | 'sound' | 'collection' | string;
+  stage: string;
+  /** Shell art key, cinematic id, `cue:state`, sound id or artifact id. */
+  asset: string;
+  unlock: UnlockDef;
+}
+
+export interface DossierEntryDef {
+  id: string;
+  kind: 'fact' | 'theory' | string;
+  stage: string;
+  unlock: UnlockDef;
 }
 
 // --- M17 mounted system ------------------------------------------------------------------

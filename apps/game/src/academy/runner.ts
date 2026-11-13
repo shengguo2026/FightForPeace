@@ -11,6 +11,16 @@ import {
   stepGuided,
   stepPhase,
   stepsFromIds,
+  followShowcase,
+  newFollow,
+  newShowcase,
+  noteLanded,
+  showcaseInputs,
+  showcasesOf,
+  type FollowState,
+  type ShowcaseDef,
+  type ShowcaseState,
+  type ShowcaseStep,
   type FrameInput,
   type LessonDef,
   type LessonGoal,
@@ -23,6 +33,7 @@ import {
 import {
   ACADEMY_ROUTES,
   STORE,
+  stageOpen,
   advanceLesson,
   itemDef,
   saveCombo,
@@ -64,6 +75,27 @@ export interface RecordedCombo {
   damage: number;
   cheats: string[];
   needs: string[];
+}
+
+/** M21 Move Preview: what the Preview screen shows. */
+export interface PreviewView {
+  hero: string;
+  /** showcase, recipe or technique, and its id (store id for a technique). */
+  kind: 'showcase' | 'recipe' | 'technique';
+  id: string;
+  name: string;
+  partner: string | null;
+  steps: readonly ShowcaseStep[];
+  /** Steps that landed in the current playback or attempt. */
+  landed: boolean[];
+  /** The next step to land (steps.length when the route is complete). */
+  current: number;
+  mode: 'watch' | 'try';
+  paused: boolean;
+  half: boolean;
+  /** Playbacks finished (watch) and complete attempts (try). */
+  plays: number;
+  performed: number;
 }
 
 export interface PracticeView {
@@ -131,6 +163,16 @@ export class Academy {
   private playback: MyCombo | null = null;
   private practiceCheats: string[] = [];
   private practiceTrial: string[] = [];
+  readonly preview = signal<PreviewView | null>(null);
+  /** Where the Preview returns to. */
+  previewFrom: 'academy' | 'store' | 'movelist' = 'movelist';
+  private sc: ShowcaseDef | null = null;
+  private scState: ShowcaseState | null = null;
+  private follow: FollowState | null = null;
+  private partnerInput: FrameInput = IDLE;
+  private previewIdle = 0;
+  private stepUntil = -1;
+  private wantTry = false;
 
   constructor(private readonly shell: Shell) {}
 
@@ -145,13 +187,13 @@ export class Academy {
     const def = lessonDef(id);
     if (!def) return;
     this.def = def;
-    this.hero = this.shell.practice.value.hero;
+    this.hero = def.hero ?? this.shell.practice.value.hero;
     this.toPractice = false;
     this.lessonWorld();
     const view: LessonView = {
       lesson: id,
       hero: this.hero,
-      phase: def.demo ? 'demo' : 'guided',
+      phase: def.demo || def.drill?.showcase ? 'demo' : 'guided',
       goals: def.guided,
       met: [],
       done: 0,
@@ -162,8 +204,31 @@ export class Academy {
     };
     this.lesson.value = view;
     this.install((w) => this.lessonStep(w));
-    if (def.demo) this.startDemo();
+    if (def.demo || def.drill?.showcase) this.startDemo();
     this.shell.go('lesson');
+  }
+
+  /**
+   * The lesson after the current one in route order (M21 fix: "Next lesson"). The Stage 2
+   * route counts only once Stage 2 is open; null after the last open lesson.
+   */
+  nextLessonId(): string | null {
+    const cur = this.lesson.value?.lesson;
+    if (!cur) return null;
+    const me = this.shell.active.value;
+    const open = ACADEMY_ROUTES.filter(
+      (r) => r.id !== 'academy.stage2' || (!!me && stageOpen(me, 'stage2')),
+    ).flatMap((r) => [...r.lessons]);
+    const i = open.findIndex((l) => l.id === cur);
+    return i >= 0 ? (open[i + 1]?.id ?? null) : null;
+  }
+
+  /** Start the next lesson of the route at once (from the pause menu). */
+  nextLesson(): void {
+    const id = this.nextLessonId();
+    if (!id) return;
+    this.uninstall();
+    this.startLesson(id);
   }
 
   /** Restart the current lesson phase from a fresh practice yard. */
@@ -185,6 +250,34 @@ export class Academy {
 
   private lessonWorld(): void {
     const def = this.def!;
+    const drill = def.drill;
+    const s = this.shell.session;
+    s.partnerPilot = null;
+    if (drill?.room || drill?.corridor) {
+      // M21 drill: a Stage 2 test room or corridor on Easy with the lesson's hero.
+      s.startArena(drill.room ?? drill.corridor, 'easy', 0, {
+        heroes: [this.hero],
+        loadouts: this.shell.loadoutsFor([this.hero]),
+      });
+      this.tracker = newTracker(s.world, 0);
+      return;
+    }
+    if (drill?.showcase) {
+      // M21 pair drill: the practice yard with the showcase's demonstration partner, who
+      // answers the player's part of the route.
+      const sc = showcasesOf(this.hero).find((x) => x.id === drill.showcase) ?? null;
+      s.startShowcase(this.hero, sc, this.shell.loadoutsFor([this.hero]));
+      const h = heroOf(s.world, 0);
+      const p = heroOf(s.world, 1);
+      for (const x of [h, p])
+        if (x && def.meter) x.meter = Math.trunc((METER.max * def.meter) / 100);
+      if (sc) {
+        const follow = newFollow(sc.steps);
+        s.partnerPilot = (world) => followShowcase(world, sc.steps, follow);
+      }
+      this.tracker = newTracker(s.world, 0);
+      return;
+    }
     this.shell.session.startPractice({
       hero: this.hero,
       loadout: this.shell.loadoutsFor([this.hero]),
@@ -197,6 +290,31 @@ export class Academy {
   }
 
   private startDemo(): void {
+    const drill = this.def?.drill;
+    if (drill?.showcase) {
+      // A pair drill demonstrates its showcase with both heroes.
+      const sc = showcasesOf(this.hero).find((x) => x.id === drill.showcase);
+      if (sc) {
+        const st = newShowcase(sc.steps);
+        this.pilotState = newPilot();
+        this.demoIdle = 0;
+        let partner = IDLE;
+        this.shell.session.partnerPilot = () => partner;
+        this.shell.session.pilot = (world, own) => {
+          if (own.pressed & ActionBit.Attack) {
+            this.toPractice = true;
+            return IDLE;
+          }
+          const inputs = showcaseInputs(world, sc.steps, st);
+          partner = inputs[1];
+          if (st.done) this.pilotState.done = true;
+          return inputs[0];
+        };
+        const after = (world: World) => noteLanded(world, sc.steps, st);
+        this.shell.session.afterStep.push(after);
+        return;
+      }
+    }
     const kit = HEROES.find((h) => h.id === this.hero)!;
     const recipe = kit.recipes.find((r) => r.id === this.def?.demo);
     this.steps = recipe ? [...recipe.steps] : [];
@@ -216,15 +334,17 @@ export class Academy {
     const def = this.def;
     if (!v || !def || !this.tracker) return;
     const next: LessonView = { ...v };
-    if (def.meter > 0) {
-      const h = heroOf(world, 0);
-      if (h && h.action < 0 && h.meter < METER.max) h.meter = METER.max;
-    }
+    if (def.meter > 0)
+      for (const slot of [0, 1]) {
+        const h = heroOf(world, slot);
+        if (h && h.action < 0 && h.meter < METER.max) h.meter = METER.max;
+      }
     switch (v.phase) {
       case 'demo': {
         if (this.toPractice) {
           this.toPractice = false;
           this.shell.session.pilot = null;
+          this.shell.session.afterStep.length = 1;
           this.lessonWorld();
           this.lesson.value = {
             ...next,
@@ -240,6 +360,7 @@ export class Academy {
           this.demoIdle += 1;
           if (this.demoIdle > 90) {
             // Play the demonstration again from a fresh yard.
+            this.shell.session.afterStep.length = 1;
             this.lessonWorld();
             this.startDemo();
             next.demoPlays += 1;
@@ -484,5 +605,233 @@ export class Academy {
     const s = this.shell.session;
     s.afterStep.length = 0;
     s.pilot = null;
+    s.partnerPilot = null;
+    s.speed = 1;
+    s.held = false;
+  }
+
+  // --- M21 Move Preview -----------------------------------------------------------------
+
+  /** The route a Preview plays: a showcase, a recipe or one catalogue technique. */
+  private routeOf(
+    hero: string,
+    kind: PreviewView['kind'],
+    id: string,
+  ): { sc: ShowcaseDef; name: string; trial: string[]; counterHit: boolean } | null {
+    const kit = HEROES.find((h) => h.id === hero);
+    if (!kit) return null;
+    if (kind === 'showcase') {
+      const sc = showcasesOf(hero).find((x) => x.id === id);
+      return sc ? { sc, name: sc.name, trial: [], counterHit: false } : null;
+    }
+    if (kind === 'recipe') {
+      const r = kit.recipes.find((x) => x.id === id);
+      if (!r) return null;
+      const steps = r.steps.map((s) => ({ slot: 0, jump: s.jump, team: false, any: [...s.any] }));
+      return {
+        sc: { id: r.id, name: r.name, meter: 0, partner: null, steps },
+        name: r.name,
+        trial: [],
+        counterHit: r.counterHit,
+      };
+    }
+    const item = itemDef(id);
+    const ai = kit.actions.findIndex((a) => a.id === item?.action);
+    if (!item || ai < 0) return null;
+    const a = kit.actions[ai]!;
+    return {
+      sc: {
+        id,
+        name: a.name,
+        meter: item.kind === 'ultimate' ? 100 : 50,
+        partner: null,
+        steps: [{ slot: 0, jump: false, team: false, any: [ai] }],
+      },
+      name: a.name,
+      trial: [id],
+      counterHit: false,
+    };
+  }
+
+  /** Opens the Preview: the route loops on a training dummy until the player tries it. */
+  startPreview(
+    hero: string,
+    kind: PreviewView['kind'],
+    id: string,
+    from: Academy['previewFrom'],
+  ): void {
+    const r = this.routeOf(hero, kind, id);
+    if (!r) return;
+    this.previewFrom = from;
+    this.hero = hero;
+    this.sc = r.sc;
+    this.practiceTrial = r.trial;
+    this.preview.value = {
+      hero,
+      kind,
+      id,
+      name: r.name,
+      partner: r.sc.partner,
+      steps: r.sc.steps,
+      landed: r.sc.steps.map(() => false),
+      current: 0,
+      mode: 'watch',
+      paused: false,
+      half: false,
+      plays: 0,
+      performed: 0,
+    };
+    this.watchWorld(r.counterHit);
+    this.shell.go('preview');
+  }
+
+  private previewWorld(counterHit: boolean): void {
+    const s = this.shell.session;
+    const owned = this.shell.loadoutsFor([this.hero])[0] ?? [];
+    const trial = trialLoadout(this.practiceTrial);
+    const loadout = [
+      ...owned.filter((o) => !trial.some((t) => t.kind === o.kind && t.dir === o.dir)),
+      ...trial,
+    ];
+    s.startShowcase(this.hero, this.sc, [loadout]);
+    if (counterHit) s.world.dummy.counterHit = true;
+    s.afterStep.length = 0;
+    s.pilot = null;
+    s.partnerPilot = null;
+    this.previewIdle = 0;
+  }
+
+  private watchWorld(counterHit = false): void {
+    const sc = this.sc!;
+    this.previewWorld(counterHit);
+    const st = newShowcase(sc.steps);
+    this.scState = st;
+    this.follow = null;
+    const s = this.shell.session;
+    s.pilot = (world, own) => {
+      // As in a lesson's demonstration, Attack takes over: Try it.
+      if (own.pressed & ActionBit.Attack) this.wantTry = true;
+      const inputs = showcaseInputs(world, sc.steps, st);
+      this.partnerInput = inputs[1];
+      return inputs[0];
+    };
+    if (sc.partner) s.partnerPilot = () => this.partnerInput;
+    s.afterStep.push((world) => this.previewStep(world));
+  }
+
+  private previewStep(world: World): void {
+    const v = this.preview.value;
+    const sc = this.sc;
+    if (!v || !sc) return;
+    if (v.mode === 'watch') {
+      if (this.wantTry) {
+        this.wantTry = false;
+        this.tryIt();
+        return;
+      }
+      const st = this.scState!;
+      noteLanded(world, sc.steps, st);
+      if (st.done) {
+        this.previewIdle += 1;
+        if (this.previewIdle > 70) {
+          // Loop: the same route again from a fresh yard.
+          this.watchWorld();
+          this.preview.value = {
+            ...v,
+            plays: v.plays + 1,
+            landed: sc.steps.map(() => false),
+            current: 0,
+          };
+          return;
+        }
+      }
+      // Step: pause again once the next step has landed.
+      const landed = st.landed.map((f) => f >= 0);
+      const count = landed.filter(Boolean).length;
+      if (this.stepUntil >= 0 && (count >= this.stepUntil || st.done)) {
+        this.stepUntil = -1;
+        this.shell.session.held = true;
+        this.update({ landed, current: st.step, paused: true });
+        return;
+      }
+      this.update({ landed, current: Math.min(st.step, sc.steps.length) });
+    } else {
+      const f = this.follow!;
+      noteLanded(world, sc.steps, f.route);
+      const landed = f.route.landed.map((x) => x >= 0);
+      this.update({ landed, current: f.route.step, performed: f.performed });
+    }
+  }
+
+  private update(part: Partial<PreviewView>): void {
+    const v = this.preview.value;
+    if (!v) return;
+    const next = { ...v, ...part };
+    if (JSON.stringify(next) !== JSON.stringify(v)) this.preview.value = next;
+  }
+
+  togglePause(): void {
+    const v = this.preview.value;
+    if (!v) return;
+    this.stepUntil = -1;
+    this.shell.session.held = !v.paused;
+    this.update({ paused: !v.paused });
+  }
+
+  /** Plays on until the next step lands, then pauses. */
+  stepOnce(): void {
+    const v = this.preview.value;
+    if (!v || v.mode !== 'watch') return;
+    this.stepUntil = v.landed.filter(Boolean).length + 1;
+    this.shell.session.held = false;
+    this.update({ paused: false });
+  }
+
+  toggleHalf(): void {
+    const v = this.preview.value;
+    if (!v) return;
+    this.shell.session.speed = v.half ? 1 : 0.5;
+    this.update({ half: !v.half });
+  }
+
+  /** Try it: the player performs the route; steps tick off as they land. */
+  tryIt(): void {
+    const v = this.preview.value;
+    const sc = this.sc;
+    if (!v || !sc) return;
+    this.previewWorld(false);
+    this.stepUntil = -1;
+    this.shell.session.held = false;
+    const f = newFollow(sc.steps);
+    this.follow = f;
+    if (sc.partner) this.shell.session.partnerPilot = (world) => followShowcase(world, sc.steps, f);
+    else this.shell.session.afterStep.push((world) => void followShowcase(world, sc.steps, f));
+    this.shell.session.afterStep.push((world) => this.previewStep(world));
+    this.update({ mode: 'try', paused: false, landed: sc.steps.map(() => false), current: 0 });
+  }
+
+  /** Back to watching the route. */
+  watchAgain(): void {
+    if (!this.preview.value) return;
+    this.stepUntil = -1;
+    this.shell.session.held = false;
+    this.watchWorld();
+    this.update({
+      mode: 'watch',
+      paused: false,
+      landed: this.sc!.steps.map(() => false),
+      current: 0,
+    });
+  }
+
+  leavePreview(): void {
+    this.uninstall();
+    this.preview.value = null;
+    this.sc = null;
+    this.scState = null;
+    this.follow = null;
+    this.practiceTrial = [];
+    this.shell.session.startArena(null);
+    this.shell.go(this.previewFrom);
   }
 }

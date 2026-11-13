@@ -17,6 +17,7 @@ import {
 } from '../world/types';
 import { TEAM_FINISHERS, logCoop } from './data';
 import { partnerOf, targetState } from './handoff';
+import { tally } from '../stage/tally';
 
 /**
  * Authored Team Finishers with Invite and Confirm (F&D §6.5): an eligible hero presses
@@ -203,6 +204,8 @@ export function stepTeam(world: World, inputs: readonly (FrameInput | undefined)
  * target), the target held for the strike, and both team parts begin together.
  */
 function commit(world: World, fin: TeamFinisherDef, a: Fighter, b: Fighter, t: Fighter): void {
+  // M21: the twins' Accord counts for Guardians in Accord (both heroes committed).
+  if (fin.id === 'twin-accord') tally(world, 'accord');
   for (const h of [a, b]) if (!world.infiniteMeter) h.meter -= fin.cost * METER.unit;
   const side = a.x <= t.x ? -1 : 1;
   const { minX, maxX } = world.bounds;

@@ -462,3 +462,21 @@ recipes:
     family: ground
     steps: [faultline-reap, settling-palm, lockgate-press|foundation-rise]
     setup: { counterHit: true }
+
+# M21 Move Preview showcases (roadmap decision 4): authored freestyle chains that show a
+# correct input chain (starter, route moves, finisher). Steps name actions; "jump" is the
+# jump chase; "p2:<id>" is the demonstration partner's move (`partner` names the hero).
+# `meter` is the Attack meter both heroes start with (percent). CI replays every showcase
+# and fails when a step does not connect.
+showcases:
+  - id: rampart-oath
+    name: Rampart to Oath
+    meter: 100
+    steps: [masons-touch, brace-elbow, gatepost-hammer, rivergate-oath]
+  - id: high-bank-relay
+    name: High-Bank Relay
+    steps: [masons-touch, high-bank-lift, jump, rafter-palm, stonefall-knee]
+  - id: shoulder-gatebreaker
+    name: Shoulder into Gatebreaker
+    meter: 50
+    steps: [masons-touch, stone-shoulder, gatebreaker-advance]

@@ -180,3 +180,19 @@ test('weapon sheets are drawn at the same figure size as the idle sheet', () => 
     expect(k, s.id).toBeLessThan(1.3);
   }
 });
+
+test('a fleeing enemy is drawn running the way it moves (Stage 1 and Stage 2 exit sheets)', () => {
+  // Stage 1 exit sheets draw the flee run facing left, the M19 sheets facing right: the
+  // renderer flips by drawnLeft, so the run faces the fighter's facing either way.
+  const flee = (id: string) => {
+    const w = createWorld(1, { heroes: ['mountain'] });
+    const f = w.bodies.find((b) => b.team === 'enemy') ?? heroOf(w, 0)!;
+    f.team = 'enemy';
+    f.hero = ENEMIES.findIndex((e) => e.id === id);
+    f.state = MoveState.Flee;
+    return pick.fighter(f, 0);
+  };
+  expect(flee('recruit')?.drawnLeft).toBe(true);
+  for (const id of ['claimhand', 'marauder', 'saboteur', 'signalman', 'enforcer2'])
+    expect(flee(id)?.drawnLeft, id).toBe(false);
+});

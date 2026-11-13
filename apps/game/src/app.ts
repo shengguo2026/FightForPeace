@@ -187,6 +187,7 @@ export function startGame(): void {
         village: () => useShell && shell.fromShell.value,
         continuedFrom: () => shell.continued.value?.beat ?? null,
         settlement: () => (useShell ? shell.settlement.value : []),
+        completion: () => (useShell ? shell.completionLines() : []),
         again: () => !shell.net.active,
         hidden: () => useShell && shell.ending.value !== null,
         onAgain: () => {

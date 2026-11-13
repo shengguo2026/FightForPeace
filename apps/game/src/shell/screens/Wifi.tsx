@@ -1,5 +1,6 @@
 import { useLayoutEffect, useState } from 'preact/hooks';
 import { DIFFICULTIES } from '@ffp/sim';
+import { campaignList } from '@ffp/platform';
 import { difficultyName, heroName, locale, stageName, t, type TextId } from '../../text/i18n';
 import { PLAYER_COLORS, PromptText } from '../../ui/InputPrompt';
 import { DEFAULT_ROOM_PORT } from '../../net/netplay';
@@ -204,6 +205,12 @@ export function NetLobbyScreen({ shell }: { shell: Shell }) {
     if (status !== 'lobby' && status !== 'playing') shell.go('wifi');
   }, [status]);
   if (status !== 'lobby' || !lobby) return null;
+  const own = shell.active.value;
+  const stages = own
+    ? campaignList(own)
+        .filter((c) => c.open)
+        .map((c) => c.def.id)
+    : ['stage1'];
   const me = net.localSlot;
   const host = net.role.value === 'host';
   const card = (slot: number) => {
@@ -264,7 +271,19 @@ export function NetLobbyScreen({ shell }: { shell: Shell }) {
         {card(1)}
       </div>
       <Panel style={{ width: '860px', marginTop: '14px' }}>
-        <p style={{ margin: '0 0 6px' }}>{stageName(lobby.stage)}</p>
+        {host && stages.length > 1 ? (
+          <Choice
+            label={t('play.stage')}
+            value={lobby.stage}
+            options={stages.map((s) => ({ value: s, label: stageName(s) }))}
+            onChange={(v) => net.setStage(v)}
+            testId="net-stage"
+          />
+        ) : (
+          <p style={{ margin: '0 0 6px' }} data-testid="net-stage-name">
+            {stageName(lobby.stage)}
+          </p>
+        )}
         {host ? (
           <Choice
             label={t('play.difficulty')}

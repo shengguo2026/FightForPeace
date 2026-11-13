@@ -2,6 +2,7 @@ import { type ActionDef, TargetState } from '../combat/types';
 import { CoopEvent, type Fighter, MoveState, type World } from '../world/types';
 import { baseKit } from '../combat/roster';
 import { COOP, logCoop, senderRow } from './data';
+import { tally } from '../stage/tally';
 
 /**
  * Organic Tagged Handoffs (F&D §6.5): a sender's tagged hit opens an authored target-state
@@ -63,7 +64,10 @@ export function canClaim(
 export function claimHandoff(world: World, att: Fighter, t: Fighter): void {
   logCoop(world, CoopEvent.HandoffClaim, att.id, t.handoffFrom, t.id, t.handoff);
   world.coop.handoffs += 1;
-  if (handoffRoute(t)) world.coop.reciprocal += 1;
+  if (handoffRoute(t)) {
+    world.coop.reciprocal += 1;
+    tally(world, 'reciprocal');
+  }
   t.handoff = 0;
   t.handoffFrom = 0;
   t.handoffRow = 0;

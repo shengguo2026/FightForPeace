@@ -7,6 +7,7 @@ import { DEFENSE } from '../combat/defense';
 import { METER } from '../combat/meter';
 import { dealDamage } from '../combat/damage';
 import { ITEM, heldItem, payIntegrity, spawnItem } from '../combat/held';
+import { tally } from '../stage/tally';
 import { enter, enterProtection, interrupt } from '../combat/reactions';
 import { baseKit, TRAINER_KIT } from '../combat/roster';
 import { IMPACT } from '../combat/environment';
@@ -1184,7 +1185,8 @@ function blast(world: World): void {
     const dir = t.x >= spot.x ? 1 : -1;
     knock(world, t, dir, t.id === GRENADIER_ID ? 0 : G.damage, G.push, G.lift);
   }
-  for (const a of gh.assets) if (inside(a, kindDef(a).hw)) damageAsset(world, a, G.ledger);
+  for (const a of gh.assets)
+    if (inside(a, kindDef(a).hw)) tally(world, 'grenadeDamage', damageAsset(world, a, G.ledger));
   const r = roomOf(gh);
   if (r.rack && gh.rack && inside(r.rack, fx(40))) loosenRack(world, G.ledger);
   for (const c of gh.containers) {

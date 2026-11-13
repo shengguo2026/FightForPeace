@@ -41,6 +41,9 @@ import {
   proxyInput,
   restoreWorld,
   snapshotWorld,
+  setupShowcase,
+  showcaseOptions,
+  type ShowcaseDef,
 } from '@ffp/sim';
 
 const IDLE: FrameInput = { moveX: 0, moveZ: 0, pressed: 0, held: 0, dirPressed: 0 };
@@ -158,6 +161,13 @@ export class GameSession {
    * passed in, so a press can stop the playback.
    */
   pilot: ((world: World, own: FrameInput) => FrameInput) | null = null;
+  /**
+   * M21 Move Preview and pair lessons: while set, Player 2's seat is the demonstration
+   * partner and its input comes from this pilot.
+   */
+  partnerPilot: ((world: World) => FrameInput) | null = null;
+  /** M21 Move Preview: simulation speed (1 normal, 0.5 half speed). Local play only. */
+  speed = 1;
   /** M11: run after every simulation step (Academy lesson goals). */
   readonly afterStep: ((world: World) => void)[] = [];
   /** M12: the Wi-Fi lockstep driver (null: solo and same-device play). */
@@ -196,6 +206,17 @@ export class GameSession {
     const d = this.world.bodies.find((b) => b.team === 'enemy');
     if (h && d) this.placeHero(0, d, 160);
     if (h && options.meter) h.meter = Math.trunc((METER.max * options.meter) / 100);
+    this.previous = cloneFighters(this.world.bodies);
+    this.generation += 1;
+  }
+
+  /**
+   * M21 Move Preview: the practice yard with one training dummy, the hero in front of it
+   * and, for a pair route, the demonstration partner behind it (Player 2's seat).
+   */
+  startShowcase(hero: string, sc: ShowcaseDef | null, loadout?: WorldOptions['loadouts']): void {
+    this.world = createWorld(this.seed, showcaseOptions(hero, sc, { loadouts: loadout }));
+    setupShowcase(this.world, sc);
     this.previous = cloneFighters(this.world.bodies);
     this.generation += 1;
   }
@@ -274,7 +295,7 @@ export class GameSession {
     this.devices.poll();
     const paused = this.devices.paused || this.held;
     // While paused the accumulator is not fed, so no time debt builds up.
-    const { steps, alpha } = this.accumulator.advance(paused ? 0 : elapsedMs);
+    const { steps, alpha } = this.accumulator.advance(paused ? 0 : elapsedMs * this.speed);
     const inputs: FrameInput[][] = [];
     for (let i = 0; i < (paused ? 0 : steps); i += 1) {
       this.runStepHooks();
@@ -282,6 +303,7 @@ export class GameSession {
       this.previous = cloneFighters(this.world.bodies);
       const frame = this.devices.sampleFrame();
       if (this.pilot) frame[0] = this.pilot(this.world, frame[0] ?? IDLE);
+      if (this.partnerPilot) frame[1] = this.partnerPilot(this.world);
       inputs.push(frame);
       step(this.world, frame);
       for (const after of this.afterStep) after(this.world);

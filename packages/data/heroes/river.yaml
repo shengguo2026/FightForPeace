@@ -461,3 +461,17 @@ recipes:
     family: ground
     steps: [undertow-slide, skipping-current, rising-eddy]
     setup: { counterHit: true }
+
+# M21 Move Preview showcases (see mountain.yaml).
+showcases:
+  - id: current-to-tempest
+    name: Current to Tempest
+    meter: 100
+    steps: [reed-tap, turning-current, open-channel-kick, tempest-crossing]
+  - id: northbank-skyline
+    name: Northbank Skyline
+    steps: [reed-tap, northbank-arc, jump, reedwing-tap, current-chase]
+  - id: rapids-gale
+    name: Rapids into Gale Wheel
+    meter: 50
+    steps: [reed-tap, rapids-step, gale-wheel]

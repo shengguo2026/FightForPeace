@@ -1169,6 +1169,16 @@ export interface RunStats {
   /** M11: most hits and most damage of one hero combo on one enemy. */
   bestHits: number;
   bestDamage: number;
+  /** M21 achievement counters (state format 18): Reciprocal Handoffs claimed and Twin
+   * Guardians' Accord landed, Signalman calls made and broken before they confirmed,
+   * Control Breaches stopped and completed, Ledger damage done by the breaching grenade. */
+  reciprocal: number;
+  accord: number;
+  calls: number;
+  callsBroken: number;
+  breachesStopped: number;
+  breachesDone: number;
+  grenadeDamage: number;
 }
 
 /** What a checkpoint keeps: the beat to restart, each hero's meter and the counters. */

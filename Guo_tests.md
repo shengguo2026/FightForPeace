@@ -1126,3 +1126,81 @@ pnpm dev
 3. Fill the Ultimate bar: "奥义就绪" shows under the hero. Enemy names over their heads are Chinese.
 4. Play beat 1 in co-op on Easy. In the first fight one recruit kneels. In the second fight (shield enemy) no grey figure flickers over the enemies.
 5. After each fight, no enemy names stay floating where the enemies were.
+
+## M21 · Campaign, Museum, Store and research (0.21.0)
+
+What's new: Stage 2 now opens from the normal Play flow once Stage 1 has been completed on the profile, with its own What's New cards and briefing. The village has a Museum (pictures, cinema, music, sounds, collection, and an Investigation page with the Sponsor Dossier and formula research). The Store has two Stage 2 outfits per hero and three bought moves each for Wind Sentinel and Fire Warden, every technique with its tactical purpose and a Preview. The Academy has a Move List with a Move Preview (watch a route, pause, step, half speed, then Try it) and a Stage 2 route of twelve lessons. Twelve Stage 2 achievements count from Stage 2 runs. Saves move to version 3: an existing profile that cleared Stage 1 opens Stage 2 automatically.
+
+Choices you may want changed (all candidates):
+
+- **Twins' move names:** Wind Sentinel: Crosswind Arc (Up + Special), Low Gust Sweep (Down + Special), Eye of the Storm (Backward + Ultimate). Fire Warden: Kindling Uppercut (Up + Special), Hearth Sweep (Down + Special), Banked Coals (Backward + Ultimate). Crosswind Arc and Kindling Uppercut are visible from the start; the others appear after a Stage 1 clear. Prices and Hero Mastery levels follow the slice moves.
+- **Stage 2 unlock:** any full Stage 1 run that reaches the end opens Stage 2, Cheat-Assisted included (story progress is narrative). A Lab run from a later beat does not.
+- **What's New** shows once per profile before the first Stage 2 run; the Academy has a button to read it again.
+- **The Stage 1 intro and ending** stay Stage 1 only. Stage 2 has a five-line briefing; its chapters and cinematics are M22.
+- **Museum:** pages of a stage that is not open are hidden; locked entries of an open stage show as "Undiscovered". Collection objects use a colour card until their art exists. Music plays the existing Stage 1 cues.
+- **Seize the Moment** (achievement) counts as "support gun disarmed with at least one round left"; whether the hero then used or secured the gun is not tracked yet.
+- **Stage 2 outfits** use the same placeholder colour treatment as the slice outfits.
+- **My Combos** keeps its existing Watch playback; the Preview buttons are in the Move List and the Store.
+
+### Get and start the build
+
+To test the branch before it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-2c2k3w
+git checkout claude/project-thread-2c2k3w
+pnpm install
+pnpm dev
+```
+
+After it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+If Vite prints another port than 5173, use that one. Stop the server with `Ctrl+C`.
+
+Optional, the automated checks:
+
+```powershell
+pnpm typecheck
+pnpm test
+pnpm e2e
+```
+
+### Test steps
+
+Open `http://localhost:5173/` (the shell). Your saved profile is migrated to save version 3 when it loads.
+
+1. **Migration:** with your existing profile (which cleared Stage 1), open **Play → Solo**. On the stage screen, the Stage choice now offers "Prosperity Under Siege" as well as Stage 1. Your Credits, outfits, techniques, Hero Mastery and records are unchanged (check **Records**).
+2. **Locked stage on a new profile:** create a new profile (Settings → Profiles), go to **Play → Solo**. Only Stage 1 can be picked; a line under it reads "🔒 Prosperity Under Siege · opens after you complete The Broken Water Pact once".
+3. **Unlock:** with that new profile, play Stage 1 to the end (or with Elder's Secrets to make it quicker). On the results, a green line says "New stage open: Prosperity Under Siege" and how many Museum entries are new.
+4. **Stage 2 from the shell:** **Play → Solo**, change the Stage choice to "Prosperity Under Siege", pick a hero. The What's New cards appear (six: twins, mounted pursuit, Ledger, weapons, containers, enemy roles); use **Next** or **Skip**. Then the elder's Stage 2 briefing and the objective, then readiness and the stage starts on the Perimeter Pursuit. Play it a second time: What's New does not show again.
+5. **Co-op and Wi-Fi:** repeat step 4 in same-device co-op. Over Wi-Fi, the host now has a Stage choice in the network lobby (only stages open on the host's profile).
+6. **Museum:** from the village choose **Museum** (it shows "· n new" when there is something unseen). Try each section: a picture opens large; Cinema → Play shows the Stage 1 intro or ending (Esc or Skip returns); Music → Listen plays the cue (Stop ends it, leaving the Museum stops it); Sounds → Play; Collection shows the brass gears with its text. Undiscovered entries are greyed out with no name.
+7. **Investigation:** Museum → Investigation shows the Sponsor Dossier (confirmed facts and the current theory) and Formula research with four milestones. After you finish Stage 2, Quarantine and Provenance is complete, the theory changes to one supplier, and the sealed weapon crate appears in the Collection. Completed branches add their artifacts (for example the Early Aerator Impeller).
+8. **Stage 2 outfits:** **Store → Wardrobe** lists two new outfits per hero (Greenhouse Builder, Harvest Heritage, Channel Patrol, Lantern Festival, Greenhouse Response, Prosperity Festival, Pump-House Response, Ember Heritage). Buy one, wear it, and start a stage: the hero has its colour.
+9. **Technique Library:** **Store → Techniques**: focus a move to see its input, slot and tactical purpose. Press **Preview**: the move plays on a training dummy; **Back** returns to the Store.
+10. **Move List and Preview:** **Academy → Move List and Preview**. Pick a hero, then a showcase route (for Fire Warden, "Furnace to Crucible"). The route plays on a dummy and loops; the steps are listed in your keys and the current step is highlighted in yellow, landed steps get a ✓.
+11. **Preview controls:** click **Pause**, **Step** (plays to the next step and pauses), **Half speed**. With the keyboard, press **Esc** for the same controls in the pause menu.
+12. **Try it:** press **Try it** (or your Attack key while watching). Now you play: perform the steps and watch them tick off; "Route complete!" shows at the end. **Watch again** returns to the demonstration.
+13. **Pair route:** Wind Sentinel → "Crosswind Temper (with Fire Warden)": Fire Warden joins as the demonstration partner and answers your hit. Try it and land the Reciprocal Handoff with the partner.
+14. **Stage 2 Academy:** in the Academy, the "Stage 2 Academy" route lists twelve lessons (locked with a note on a profile without Stage 2). Try "Reciprocal Handoffs" (demonstration with the partner, then practise) and "Return the breaching grenade" (opens the filtration room on Easy). The lesson's goal shows at the top.
+15. **Achievements:** **Records** lists the twelve Stage 2 achievements once Stage 2 is open. "Peace in the Glasshouse" is earned by finishing Stage 2 (also Cheat-Assisted, without Credits); branch achievements by completing that branch.
+16. **Languages:** switch to 简体中文 and Deutsch in Settings. Stage select, What's New, the Museum, the Dossier, research, the Move List, Preview controls, the new moves, outfits, achievements and lessons are translated.
+
+### Fix · M21 findings (Guo, 13 Nov)
+
+1. **Fleeing enemies:** play Stage 2 and defeat the claimhands, glassrunners and reavers. When they flee, each one faces the way it runs (left when running left). The same check holds in Stage 1.
+2. **Museum icon:** in the village menu, **Museum** now has its own icon (a small museum building).
+3. **Museum menu:** **Museum** opens a list of sections (Picture, Cinema, Music, Sounds, Collection, Investigation), each with "· n new" when something is unseen. Pick one: the title reads "Museum · Picture" and only that section's entries are listed; focusing an entry shows it on the right. **All sections** (or Esc) goes back to the section list; Esc again returns to the village.
+4. **Store previews:** **Store → Wardrobe**: focus an outfit; the right panel shows the hero in the standard colours and in this outfit, side by side. **Store → Collection**: focusing a badge shows how it appears in the village footer next to your name.
+5. **Next lesson:** start any Academy lesson, press **Esc**: the pause menu has **Next lesson**, which starts the following lesson of the route at once. When a lesson is mastered, the lesson panel also names the next lesson.
+6. **Lab panels:** open the Training Lab (the panels with "F1 hide · F2 settings" show), go back and start an Academy lesson: the Lab panels no longer show over the lesson. The F keys belong to the Lab and work there as before.

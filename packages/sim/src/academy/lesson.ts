@@ -3,7 +3,7 @@ import { recipeDone } from '../combat/recipes';
 import { HEROES } from '../combat/roster';
 import { routeAction } from '../combat/roster';
 import type { LessonGoal, LessonPhaseDef } from '../combat/types';
-import { DefEvent, MoveState, type World } from '../world/types';
+import { DefEvent, EncEvent, GunLost, ItemState, MoveState, type World } from '../world/types';
 import { heroOf } from '../world/world';
 
 /**
@@ -22,6 +22,25 @@ export interface LessonTracker {
   lastDefFrame: number;
   /** Route length of the followed dummy already counted (special/ultimate/recipe goals). */
   seenRoute: number[];
+  /** M21 drill counters as last seen (a rise meets the goal), and held firearms' rounds. */
+  drill: Record<string, number>;
+  rounds: Record<number, number>;
+}
+
+/** M21 drill counters read from the drill room's records (never changed by a lesson). */
+export function drillCounters(world: World): Record<string, number> {
+  const gh = world.greenhouse;
+  const p = world.pursuit;
+  return {
+    reciprocal: world.coop.reciprocal,
+    teamFinisher: world.coop.finishers,
+    pursuitControl: p?.record.dismounted ?? 0,
+    pursuitSave: p?.record.saves ?? 0,
+    grenadeReturn: gh?.record.returned ?? 0,
+    repair: gh?.record.repairs ?? 0,
+    containerOpen: gh?.record.opened ?? 0,
+    disarm: world.encounter?.boss?.gunLost === GunLost.Disarmed ? 1 : 0,
+  };
 }
 
 /** A hero has to walk this far for the walk goal. */
@@ -36,7 +55,32 @@ export function newTracker(world: World, slot = 0): LessonTracker {
     startX: h?.x ?? 0,
     lastDefFrame: h?.defFrame ?? -1,
     seenRoute: world.bodies.map(() => 0),
+    drill: drillCounters(world),
+    rounds: {},
   };
+}
+
+/** M21 drill goals that happened this step (counters that rose, events of this frame). */
+function drillGoals(world: World, t: LessonTracker, out: LessonGoal[]): void {
+  const now = drillCounters(world);
+  for (const [k, v] of Object.entries(now)) {
+    if (v > (t.drill[k] ?? 0)) out.push(k as LessonGoal);
+    t.drill[k] = v;
+  }
+  const ev = world.encounter?.event;
+  if (ev && ev.frame === world.frame) {
+    if (ev.kind === EncEvent.CallBroken) out.push('callBreak');
+    if (ev.kind === EncEvent.BreachStopped) out.push('breachStop');
+  }
+  const heroes = new Set(world.bodies.filter((b) => b.team === 'hero').map((b) => b.id));
+  const held: Record<number, number> = {};
+  for (const it of world.items) {
+    if (it.state !== ItemState.Held || !heroes.has(it.holder)) continue;
+    held[it.id] = it.ammo;
+    const before = t.rounds[it.id];
+    if (before !== undefined && it.ammo < before) out.push('firearmShot');
+  }
+  t.rounds = held;
 }
 
 /** Goals that happened this step for the hero in `slot`. */
@@ -49,6 +93,7 @@ export function goalsNow(
   const h = heroOf(world, slot);
   if (!h) return [];
   const out: LessonGoal[] = [];
+  drillGoals(world, t, out);
   if (Math.abs(h.x - t.startX) >= WALK_GOAL) out.push('walk');
   if (h.state === MoveState.Air && h.y > 0) out.push('jump');
   if (h.state === MoveState.Dash) out.push('dash');

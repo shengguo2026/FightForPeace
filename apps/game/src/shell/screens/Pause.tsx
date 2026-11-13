@@ -20,9 +20,15 @@ type Item =
   | 'secrets'
   | 'guide'
   | 'lessonRestart'
+  | 'lessonNext'
   | 'lessonLeave'
   | 'saveCombo'
-  | 'practiceLeave';
+  | 'practiceLeave'
+  | 'previewPlay'
+  | 'previewStep'
+  | 'previewHalf'
+  | 'previewTry'
+  | 'previewLeave';
 
 const HOW_TO: TextId[] = [
   'pause.howTo1',
@@ -40,6 +46,7 @@ const HOW_TO: TextId[] = [
 export function PauseMenu({ shell, state }: { shell: Shell; state: LabState }) {
   void locale.value;
   const [focused, setFocused] = useState<Item>('resume');
+  const pv = shell.academy.preview.value;
   const confirm = shell.pauseConfirm.value;
   const players = state.players.value;
   const ctx = players[0]?.ctx;
@@ -153,11 +160,18 @@ export function PauseMenu({ shell, state }: { shell: Shell; state: LabState }) {
       case 'guide':
         return <p>{t('menu.guideDetail')}</p>;
       case 'lessonRestart':
+      case 'lessonNext':
       case 'lessonLeave':
         return <p>{t('lesson.pauseDetail')}</p>;
       case 'saveCombo':
       case 'practiceLeave':
         return <p>{t('practice.pauseDetail')}</p>;
+      case 'previewPlay':
+      case 'previewStep':
+      case 'previewHalf':
+      case 'previewTry':
+      case 'previewLeave':
+        return <p>{t('m21.previewPauseDetail')}</p>;
       case 'restart':
         return <p>{t('pause.confirmRestart')}</p>;
       case 'village':
@@ -217,6 +231,12 @@ export function PauseMenu({ shell, state }: { shell: Shell; state: LabState }) {
                 shell.academy.restartLesson();
                 shell.resume();
               })}
+              {shell.academy.nextLessonId()
+                ? item('lessonNext', t('m21.nextLesson'), () => {
+                    shell.academy.nextLesson();
+                    shell.resume();
+                  })
+                : null}
               {item('lessonLeave', t('lesson.leave'), () => {
                 shell.resume();
                 shell.academy.leaveLesson();
@@ -239,6 +259,36 @@ export function PauseMenu({ shell, state }: { shell: Shell; state: LabState }) {
                 shell.academy.leavePractice(
                   shell.academy.practice.value?.playing ? 'combos' : 'academy',
                 );
+              })}
+            </>
+          ) : null}
+          {shell.screen.value === 'preview' && pv ? (
+            <>
+              {item('previewPlay', pv.paused ? t('m21.resume') : t('m21.pause'), () => {
+                shell.academy.togglePause();
+                shell.resume();
+              })}
+              {pv.mode === 'watch'
+                ? item('previewStep', t('m21.step'), () => {
+                    shell.academy.stepOnce();
+                    shell.resume();
+                  })
+                : null}
+              {item('previewHalf', pv.half ? t('m21.fullSpeed') : t('m21.halfSpeed'), () =>
+                shell.academy.toggleHalf(),
+              )}
+              {item(
+                'previewTry',
+                pv.mode === 'watch' ? t('m21.tryIt') : t('m21.watchAgain'),
+                () => {
+                  if (pv.mode === 'watch') shell.academy.tryIt();
+                  else shell.academy.watchAgain();
+                  shell.resume();
+                },
+              )}
+              {item('previewLeave', t('m21.leavePreview'), () => {
+                shell.resume();
+                shell.academy.leavePreview();
               })}
             </>
           ) : null}
