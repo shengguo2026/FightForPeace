@@ -195,6 +195,8 @@ export class Shell {
 
   go(screen: Screen): void {
     this.screen.value = screen;
+    // The Lab's panels (F1) belong to the Lab: lessons, previews and stages start clean.
+    if (screen !== 'lab') this.lab.visible.value = false;
     this.session.held = !LIVE.has(screen);
     this.session.devices.flush();
   }

@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { HEROES, type StoreItemDef } from '@ffp/sim';
 import {
   ACHIEVEMENTS,
@@ -185,7 +185,27 @@ function StoreDetail({
           />
         </p>
       ) : null}
+      {item.kind === 'outfit' && item.hero && item.tint ? (
+        <OutfitPreview hero={item.hero} tint={item.tint} />
+      ) : null}
       {item.kind === 'badge' ? <p>{t('store.kind.badge')}</p> : null}
+      {item.kind === 'badge' ? (
+        <div class="ffp-hint" data-testid="store-badge-preview" style={{ margin: '8px 0' }}>
+          {t('m21.badgePreview')}
+          <div
+            style={{
+              marginTop: '6px',
+              padding: '6px 10px',
+              borderRadius: '6px',
+              background: 'rgba(0,0,0,0.45)',
+              display: 'inline-block',
+            }}
+          >
+            {t('menu.profile', { name: p.name })} ·{' '}
+            <b style={{ color: '#f2c36b' }}>{itemName(item)}</b>
+          </div>
+        </div>
+      ) : null}
       <p>{t('store.price', { n: item.price })}</p>
       {item.mastery > 0 && item.hero ? (
         <p class="ffp-hint">
@@ -218,6 +238,55 @@ function StoreDetail({
           onPress={() => shell.update((x) => toggleGoal(x, item.id))}
         />
       ) : null}
+    </div>
+  );
+}
+
+/**
+ * M21: the outfit on the hero, beside the standard look. The outfits are a colour
+ * treatment of the hero's sprite until their art exists, drawn here the way the stage
+ * draws it (multiplied by the tint).
+ */
+function OutfitPreview({ hero, tint }: { hero: string; tint: string }) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvas = ref.current;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
+    const img = new Image();
+    img.onload = () => {
+      const cell = img.width / 3;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const draw = (x: number, colour: string | null) => {
+        const off = document.createElement('canvas');
+        off.width = cell;
+        off.height = cell;
+        const o = off.getContext('2d')!;
+        o.drawImage(img, 0, 0, cell, cell, 0, 0, cell, cell);
+        if (colour) {
+          o.globalCompositeOperation = 'multiply';
+          o.fillStyle = colour;
+          o.fillRect(0, 0, cell, cell);
+          o.globalCompositeOperation = 'destination-in';
+          o.drawImage(img, 0, 0, cell, cell, 0, 0, cell, cell);
+        }
+        ctx.drawImage(off, x, 0, canvas.height, canvas.height);
+      };
+      draw(0, null);
+      draw(canvas.width - canvas.height, tint);
+    };
+    img.src = `art/${hero}-idle.webp`;
+  }, [hero, tint]);
+  return (
+    <div data-testid="store-outfit-preview" style={{ margin: '6px 0' }}>
+      <canvas ref={ref} width={400} height={200} style={{ width: '400px', height: '200px' }} />
+      <div
+        class="ffp-hint"
+        style={{ display: 'flex', justifyContent: 'space-between', width: '400px' }}
+      >
+        <span>{t('m21.outfitStandard')}</span>
+        <span>{t('m21.outfitThis')}</span>
+      </div>
     </div>
   );
 }

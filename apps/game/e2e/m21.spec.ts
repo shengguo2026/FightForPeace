@@ -84,27 +84,36 @@ test('the Museum shows open stages only, and Stage 2 entries after Stage 1', asy
   await open(page);
   await page.getByTestId('menu-museum').click();
   await expect(page.getByTestId('museum')).toBeVisible();
+  // Two levels: the sections first, then one section's entries.
+  await expect(page.getByTestId('museum-entry-picture.keyart-title')).toHaveCount(0);
+  await page.getByTestId('museum-section-picture').click();
   await expect(page.getByTestId('museum-entry-picture.keyart-title')).toBeVisible();
   await expect(page.getByTestId('museum-locked-picture.s1-end-01')).toBeVisible();
   await expect(page.getByTestId('museum-entry-picture.select-wind')).toHaveCount(0);
   await page.getByTestId('museum-entry-picture.keyart-title').click();
   await expect(page.getByTestId('museum-picture')).toBeVisible();
+  await page.getByTestId('museum-sections').click();
   await page.getByTestId('museum-section-investigation').click();
   await expect(page.getByTestId('museum-investigation')).toContainText('No findings yet');
+  await page.keyboard.press('Escape');
   await page.getByTestId('museum-back').click();
 
   await page.evaluate(() => window.__ffp!.shell.completeStage('stage1'));
   await page.getByTestId('menu-museum').click();
+  await page.getByTestId('museum-section-picture').click();
   await expect(page.getByTestId('museum-entry-picture.select-wind')).toBeVisible();
+  await page.getByTestId('museum-sections').click();
   await page.getByTestId('museum-section-collection').click();
   await expect(page.getByTestId('museum-entry-collection.brass-gears')).toBeVisible();
   await expect(page.getByTestId('museum-locked-collection.sealed-weapon-crate')).toBeVisible();
   await page.getByTestId('museum-entry-collection.brass-gears').click();
   await expect(page.getByTestId('museum-collection-desc')).toContainText('sluice');
+  await page.getByTestId('museum-sections').click();
   await page.getByTestId('museum-section-music').click();
   await page.getByTestId('museum-entry-music.stage1.river-before-silence').click();
   await page.getByTestId('museum-listen').click();
   await expect(page.getByTestId('museum-listen')).toHaveText(/Stop/);
+  await page.getByTestId('museum-sections').click();
   await page.getByTestId('museum-section-investigation').click();
   await expect(page.getByTestId('dossier-fact')).toHaveCount(1);
   await expect(page.getByTestId('dossier-theory')).toContainText('outside the valley');
@@ -126,6 +135,10 @@ test('Stage 2 outfits and the twins’ techniques in the Store, with a Preview',
   await page.evaluate(() => window.__ffp!.shell.completeStage('stage1'));
   await page.getByTestId('menu-store').click();
   await page.getByTestId('store-group-wardrobe').click();
+  await page.getByTestId('store-item-greenhouse-builder').focus();
+  await expect(page.getByTestId('store-outfit-preview')).toBeVisible();
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: 'test-results/m21-wardrobe.png' });
   await page.getByTestId('store-item-greenhouse-builder').click();
   await expect(page.getByTestId('store-status-greenhouse-builder')).toContainText('Owned');
   await page.getByTestId('store-group-technique').click();
@@ -187,4 +200,28 @@ test("a Stage 2 Academy lesson and What's New from the Academy", async ({ page }
   await page.screenshot({ path: 'test-results/m21-lesson.png' });
   // Both twins are on the yard: the demonstration partner joins the player's hero.
   expect(await page.evaluate(() => window.__ffp!.hero(1) !== undefined)).toBe(true);
+  // The Lab's panels stay hidden in a lesson, and the pause menu offers the next lesson.
+  await expect(page.getByText('Lab · F1 hide · F2 settings')).toHaveCount(0);
+  const first = await page.evaluate(() => window.__ffp!.shell.lesson()!.lesson);
+  await page.keyboard.press('Escape');
+  await page.getByTestId('pause-lessonNext').click();
+  await page.waitForFunction(
+    (id) =>
+      window.__ffp!.shell.lesson()?.lesson !== id && window.__ffp!.shell.screen() === 'lesson',
+    first,
+  );
+});
+
+test('the Lab panels do not follow the player into a lesson', async ({ page }) => {
+  await open(page);
+  await page.getByTestId('menu-academy').click();
+  await page.getByTestId('academy-lab').click();
+  await expect(page.getByText('Lab · F1 hide · F2 settings')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await page.getByTestId('pause-village').click();
+  await page.getByTestId('pause-confirm-yes').click();
+  await page.getByTestId('menu-academy').click();
+  await page.getByTestId('lesson-move').click();
+  await page.waitForFunction(() => window.__ffp!.shell.screen() === 'lesson');
+  await expect(page.getByText('Lab · F1 hide · F2 settings')).toHaveCount(0);
 });

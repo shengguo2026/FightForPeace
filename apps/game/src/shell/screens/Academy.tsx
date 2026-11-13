@@ -226,6 +226,8 @@ export function LessonHud({ shell }: { shell: Shell }) {
   const kit = HEROES.find((h) => h.id === v.hero)!;
   const recipe = def.recipe ?? def.demo;
   const r = recipe ? kit.recipes.find((x) => x.id === recipe) : undefined;
+  const nextId = v.phase === 'done' ? shell.academy.nextLessonId() : null;
+  const next = nextId ? lessonDef(nextId) : undefined;
   return (
     <div class="ffp-hud" data-testid="lesson-hud">
       <div
@@ -252,6 +254,17 @@ export function LessonHud({ shell }: { shell: Shell }) {
         ) : v.phase === 'done' ? (
           <p style={{ margin: '6px 0' }}>
             <PromptText text={t('lesson.doneHint')} ctx={ctx} />
+            {next ? (
+              <>
+                <br />
+                <span data-testid="lesson-next-hint">
+                  <PromptText
+                    text={t('m21.nextHint', { name: dt(`${next.id}.name`, next.name) })}
+                    ctx={ctx}
+                  />
+                </span>
+              </>
+            ) : null}
           </p>
         ) : (
           <>

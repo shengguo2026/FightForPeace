@@ -262,6 +262,20 @@ const IDLE_SHEETS: Record<string, { sheet: string; idle: number[]; walk: number[
   rider: { sheet: 'on-foot', idle: [0], walk: [0, 1] },
 };
 const EXIT_DEFAULT = { surrender: 0, kneel: 1, flee: [2, 3] as [number, number] };
+/**
+ * The Stage 1 exit sheets draw their flee run facing left; the M19 (Stage 2) exit sheets
+ * draw it facing right like every other cell, so they flip as usual.
+ */
+const FLEE_DRAWN_RIGHT = new Set([
+  'claimhand',
+  'glassrunner',
+  'reaver',
+  'marauder',
+  'saboteur',
+  'rider',
+  'enforcer2',
+  'signalman',
+]);
 
 const PHASE_INDEX = { startup: 0, active: 1, recovery: 2 } as const;
 
@@ -525,7 +539,7 @@ export class SpritePicker {
         return s(react, f.stateFrame < f.stun / 2 ? 4 : 5);
       case MoveState.Flee: {
         const cell = loop(undefined, frame, 8, exit.flee);
-        return s(exitSheet, cell, true) ?? s('idle-walk', 2);
+        return s(exitSheet, cell, !FLEE_DRAWN_RIGHT.has(art)) ?? s('idle-walk', 2);
       }
       case MoveState.Surrender:
         return s(exitSheet, f.stateFrame < 40 ? exit.surrender : exit.kneel) ?? s(react, 3);

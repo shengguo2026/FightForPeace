@@ -121,8 +121,9 @@ export function VillageScreen({ shell }: { shell: Shell }) {
           {item(
             'museum',
             fresh > 0 ? `${t('m21.museum')} · ${t('m21.newMark', { n: fresh })}` : t('m21.museum'),
-            null,
+            0,
             () => shell.go('museum'),
+            'icons-extra',
           )}
           {item('guide', t('menu.guide'), 4, () => {
             shell.guideFrom.value = 'village';

@@ -20,6 +20,7 @@ type Item =
   | 'secrets'
   | 'guide'
   | 'lessonRestart'
+  | 'lessonNext'
   | 'lessonLeave'
   | 'saveCombo'
   | 'practiceLeave'
@@ -159,6 +160,7 @@ export function PauseMenu({ shell, state }: { shell: Shell; state: LabState }) {
       case 'guide':
         return <p>{t('menu.guideDetail')}</p>;
       case 'lessonRestart':
+      case 'lessonNext':
       case 'lessonLeave':
         return <p>{t('lesson.pauseDetail')}</p>;
       case 'saveCombo':
@@ -229,6 +231,12 @@ export function PauseMenu({ shell, state }: { shell: Shell; state: LabState }) {
                 shell.academy.restartLesson();
                 shell.resume();
               })}
+              {shell.academy.nextLessonId()
+                ? item('lessonNext', t('m21.nextLesson'), () => {
+                    shell.academy.nextLesson();
+                    shell.resume();
+                  })
+                : null}
               {item('lessonLeave', t('lesson.leave'), () => {
                 shell.resume();
                 shell.academy.leaveLesson();

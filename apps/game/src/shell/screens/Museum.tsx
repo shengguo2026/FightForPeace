@@ -49,14 +49,20 @@ const BEST = { workersFreed: 1, workersTotal: 1, clues: 1, cluesTotal: 1 };
 export function MuseumScreen({ shell }: { shell: Shell }) {
   void locale.value;
   const p = shell.active.value;
-  const [section, setSection] = useState<MuseumSection>('picture');
+  // Two levels: the section list (null), then one section's entries.
+  const [section, setSection] = useState<MuseumSection | null>(null);
+  const [last, setLast] = useState<MuseumSection>('picture');
   const [open, setOpen] = useState<string | null>(null);
   const [cinema, setCinema] = useState<string | null>(null);
   const leave = () => {
     museumListen.value = null;
     shell.go('village');
   };
-  useNav(() => (cinema ? setCinema(null) : leave()));
+  const toSections = () => {
+    setSection(null);
+    setOpen(null);
+  };
+  useNav(() => (cinema ? setCinema(null) : section ? toSections() : leave()));
   useEffect(() => () => void (museumListen.value = null), []);
   if (!p) return null;
   const s = p.settings;
@@ -75,40 +81,51 @@ export function MuseumScreen({ shell }: { shell: Shell }) {
         />
       );
   }
-  const entries = section === 'investigation' ? [] : museumSection(p, section);
+  const entries = !section || section === 'investigation' ? [] : museumSection(p, section);
+  const fresh = (sec: MuseumSection) =>
+    sec === 'investigation'
+      ? 0
+      : museumSection(p, sec).filter((x) => x.state === 'unlocked' && !x.viewed).length;
   const sel = MUSEUM.find((m) => m.id === open);
   const view = (e: MuseumEntryDef) => {
     setOpen(e.id);
     if (!p.guest) shell.update((x) => markViewed(x, e.id));
   };
   return (
-    <Screen bg={ART('menu-bg')} dim align="start" testId="museum">
+    <Screen key={section ?? 'sections'} bg={ART('menu-bg')} dim align="start" testId="museum">
       <div class="ffp-row" style={{ width: '90vw', alignItems: 'flex-start' }}>
         <Panel style={{ width: '520px', maxHeight: '88vh', overflow: 'auto' }}>
-          <h1 class="ffp-title">{t('m21.museum')}</h1>
-          <div class="ffp-row" style={{ gap: '6px', flexWrap: 'wrap' }}>
-            {MUSEUM_SECTIONS.map((sec, i) => (
-              <Button
-                label={t(`m21.section.${sec}` as TextId)}
-                testId={`museum-section-${sec}`}
-                mark={section === sec ? '●' : ''}
-                autofocus={i === 0}
-                onPress={() => {
-                  setSection(sec);
-                  setOpen(null);
-                }}
-              />
-            ))}
-          </div>
-          {section !== 'investigation' && entries.length === 0 ? (
+          <h1 class="ffp-title">
+            {section
+              ? `${t('m21.museum')} · ${t(`m21.section.${section}` as TextId)}`
+              : t('m21.museum')}
+          </h1>
+          {!section
+            ? MUSEUM_SECTIONS.map((sec) => (
+                <Button
+                  label={t(`m21.section.${sec}` as TextId)}
+                  testId={`museum-section-${sec}`}
+                  mark={fresh(sec) > 0 ? t('m21.newMark', { n: fresh(sec) }) : ''}
+                  autofocus={sec === last}
+                  onPress={() => {
+                    setSection(sec);
+                    setLast(sec);
+                    setOpen(null);
+                  }}
+                />
+              ))
+            : null}
+          {section && section !== 'investigation' && entries.length === 0 ? (
             <p data-testid="museum-empty">{t('m21.museumEmpty')}</p>
           ) : null}
-          {entries.map(({ def, state, viewed }) =>
+          {entries.map(({ def, state, viewed }, i) =>
             state === 'unlocked' ? (
               <Button
                 label={entryName(def)}
                 mark={viewed ? '' : t('m21.newMark', { n: 1 })}
                 testId={`museum-entry-${def.id}`}
+                autofocus={i === 0}
+                onFocus={() => setOpen(def.id)}
                 onPress={() => view(def)}
               />
             ) : (
@@ -121,7 +138,16 @@ export function MuseumScreen({ shell }: { shell: Shell }) {
             ),
           )}
           {p.guest ? <p class="ffp-hint">{t('m21.guestMuseum')}</p> : null}
-          <Button label={t('common.back')} onPress={leave} testId="museum-back" />
+          {section ? (
+            <Button
+              label={t('m21.allSections')}
+              onPress={toSections}
+              testId="museum-sections"
+              autofocus={section === 'investigation'}
+            />
+          ) : (
+            <Button label={t('common.back')} onPress={leave} testId="museum-back" />
+          )}
         </Panel>
         <Panel
           style={{
@@ -135,10 +161,10 @@ export function MuseumScreen({ shell }: { shell: Shell }) {
         >
           {section === 'investigation' ? (
             <Investigation shell={shell} />
-          ) : sel && sel.section === section ? (
+          ) : section && sel && sel.section === section ? (
             <EntryDetail e={sel} play={(c) => setCinema(c)} />
           ) : (
-            <p>{t(`m21.sectionIntro.${section}` as TextId)}</p>
+            <p>{t(`m21.sectionIntro.${section ?? last}` as TextId)}</p>
           )}
         </Panel>
       </div>

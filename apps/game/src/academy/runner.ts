@@ -33,6 +33,7 @@ import {
 import {
   ACADEMY_ROUTES,
   STORE,
+  stageOpen,
   advanceLesson,
   itemDef,
   saveCombo,
@@ -205,6 +206,29 @@ export class Academy {
     this.install((w) => this.lessonStep(w));
     if (def.demo || def.drill?.showcase) this.startDemo();
     this.shell.go('lesson');
+  }
+
+  /**
+   * The lesson after the current one in route order (M21 fix: "Next lesson"). The Stage 2
+   * route counts only once Stage 2 is open; null after the last open lesson.
+   */
+  nextLessonId(): string | null {
+    const cur = this.lesson.value?.lesson;
+    if (!cur) return null;
+    const me = this.shell.active.value;
+    const open = ACADEMY_ROUTES.filter(
+      (r) => r.id !== 'academy.stage2' || (!!me && stageOpen(me, 'stage2')),
+    ).flatMap((r) => [...r.lessons]);
+    const i = open.findIndex((l) => l.id === cur);
+    return i >= 0 ? (open[i + 1]?.id ?? null) : null;
+  }
+
+  /** Start the next lesson of the route at once (from the pause menu). */
+  nextLesson(): void {
+    const id = this.nextLessonId();
+    if (!id) return;
+    this.uninstall();
+    this.startLesson(id);
   }
 
   /** Restart the current lesson phase from a fresh practice yard. */

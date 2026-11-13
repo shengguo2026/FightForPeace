@@ -1195,3 +1195,12 @@ Open `http://localhost:5173/` (the shell). Your saved profile is migrated to sav
 14. **Stage 2 Academy:** in the Academy, the "Stage 2 Academy" route lists twelve lessons (locked with a note on a profile without Stage 2). Try "Reciprocal Handoffs" (demonstration with the partner, then practise) and "Return the breaching grenade" (opens the filtration room on Easy). The lesson's goal shows at the top.
 15. **Achievements:** **Records** lists the twelve Stage 2 achievements once Stage 2 is open. "Peace in the Glasshouse" is earned by finishing Stage 2 (also Cheat-Assisted, without Credits); branch achievements by completing that branch.
 16. **Languages:** switch to 简体中文 and Deutsch in Settings. Stage select, What's New, the Museum, the Dossier, research, the Move List, Preview controls, the new moves, outfits, achievements and lessons are translated.
+
+### Fix · M21 findings (Guo, 13 Nov)
+
+1. **Fleeing enemies:** play Stage 2 and defeat the claimhands, glassrunners and reavers. When they flee, each one faces the way it runs (left when running left). The same check holds in Stage 1.
+2. **Museum icon:** in the village menu, **Museum** now has its own icon (a small museum building).
+3. **Museum menu:** **Museum** opens a list of sections (Picture, Cinema, Music, Sounds, Collection, Investigation), each with "· n new" when something is unseen. Pick one: the title reads "Museum · Picture" and only that section's entries are listed; focusing an entry shows it on the right. **All sections** (or Esc) goes back to the section list; Esc again returns to the village.
+4. **Store previews:** **Store → Wardrobe**: focus an outfit; the right panel shows the hero in the standard colours and in this outfit, side by side. **Store → Collection**: focusing a badge shows how it appears in the village footer next to your name.
+5. **Next lesson:** start any Academy lesson, press **Esc**: the pause menu has **Next lesson**, which starts the following lesson of the route at once. When a lesson is mastered, the lesson panel also names the next lesson.
+6. **Lab panels:** open the Training Lab (the panels with "F1 hide · F2 settings" show), go back and start an Academy lesson: the Lab panels no longer show over the lesson. The F keys belong to the Lab and work there as before.
