@@ -156,6 +156,25 @@ SHELL = [
     ("ui/UI-S2-ICONS-MUSEUM.png", "icons-museum-s2", 768, 88),
 ]
 
+# Museum collection pieces with no picture of their own: one cell of a prop sheet (3x2, 512 px
+# cells), centred on a square transparent canvas like the delivered artifact pictures.
+ARTIFACT_CELLS = [
+    ("props/PROP-S2-EVIDENCE.png", 0, "artifact-sealed-weapon-crate"),
+    ("props/PROP-BARRICADE.png", 4, "artifact-brass-gears"),
+]
+
+
+def artifact_cell(src: Path, cell: int, out: Path) -> None:
+    im = Image.open(src).convert("RGBA")
+    c = im.width // 3
+    x, y = (cell % 3) * c, (cell // 3) * c
+    part = im.crop((x, y, x + c, y + c))
+    part = part.crop(part.getbbox())
+    side = round(max(part.size) * 1.18)
+    canvas = Image.new("RGBA", (side, side), (0, 0, 0, 0))
+    canvas.paste(part, ((side - part.width) // 2, (side - part.height) // 2))
+    canvas.resize((512, 512), Image.LANCZOS).save(out, "WEBP", quality=88, method=6)
+
 
 def run(*args: str) -> str:
     return subprocess.run(args, check=True, capture_output=True, text=True).stdout
@@ -294,6 +313,9 @@ def main() -> None:
             im = im.resize((width, round(im.height * width / im.width)), Image.LANCZOS)
             im.save(out / f"{name}.webp", "WEBP", quality=quality, method=6)
             print(f"art/shell/{name}.webp {(out / f'{name}.webp').stat().st_size // 1024} KB")
+        for rel, cell, name in ARTIFACT_CELLS:
+            artifact_cell(base / rel, cell, out / f"{name}.webp")
+            print(f"art/shell/{name}.webp (cell {cell} of {rel})")
     manifest["assets"] = dict(sorted(assets.items()))
     MANIFEST.write_text(json.dumps(manifest, indent=1) + "\n", encoding="utf-8")
     subprocess.run(["npx", "prettier", "--write", str(MANIFEST)], cwd=ROOT, check=False, shell=sys.platform == "win32")

@@ -174,6 +174,25 @@ test('an armed founder steps while walking instead of sliding on one cell', () =
   expect(pick.fighter(r, 0)!.sheet).toBe('hero.river.sheet.staff-walk');
 });
 
+test('M22: a hero walking with a Stage 2 weapon steps through the walk cycle, weapon in hand', () => {
+  for (const [weapon, sheet] of [
+    ['service-lance', 'prop.s2-lance'],
+    ['six-round-sidearm', 'prop.s2-firearms'],
+    ['support-gun', 'prop.s2-firearms'],
+  ] as const) {
+    const w = createWorld(1, { heroes: ['wind'] });
+    const f = heroOf(w, 0)!;
+    claim(w, f, spawnItem(w, weaponIndex(weapon), f.x, f.z));
+    // Standing: the ready stance from the weapon sheet, no extra prop.
+    expect(pick.heldProp(f)).toBeNull();
+    f.state = MoveState.Walk;
+    const cells = new Set([0, 10, 20, 30].map((t) => pick.fighter(f, t)!.cell));
+    expect(pick.fighter(f, 0)!.sheet).toBe('hero.wind.sheet.walk');
+    expect(cells.size).toBeGreaterThan(1);
+    expect(pick.heldProp(f)?.sheet, weapon).toBe(sheet);
+  }
+});
+
 test('weapon sheets are drawn at the same figure size as the idle sheet', () => {
   // The founders' staff sheets were drawn about 12 % smaller than their idle sheets.
   const size = (id: string) => reg.sheet(id)!.sheet.scale ?? 1;

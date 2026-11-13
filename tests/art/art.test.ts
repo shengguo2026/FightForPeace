@@ -46,3 +46,12 @@ test('M10 shell art: every image the menus name ships, and nothing else', () => 
   for (const n of named) expect(shipped, n).toContain(n);
   expect(shipped.length).toBeGreaterThan(0);
 });
+
+test('M22: every Museum collection piece ships its picture', () => {
+  const yaml = readFileSync(`${ROOT}packages/data/progression/progression.yaml`, 'utf8');
+  const assets = [...yaml.matchAll(/section: collection,[^}]*asset: ([a-z0-9-]+)/g)].map(
+    (m) => m[1]!,
+  );
+  expect(assets.length).toBeGreaterThanOrEqual(5);
+  for (const a of assets) expect(existsSync(`${PUBLIC}art/shell/artifact-${a}.webp`), a).toBe(true);
+});

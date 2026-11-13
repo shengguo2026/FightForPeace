@@ -107,6 +107,32 @@ const WEAPON_STANCE: Record<string, { sheet: string; cell: number }> = {
   'support-gun': { sheet: 'heavy', cell: 0 },
 };
 
+/** M22: how a Stage 2 weapon is carried when no pose art shows it (see heldProp). */
+const S2_HELD: Record<
+  string,
+  SpriteFrame & { scale: number; angle: number; dx: number; dy: number; mirror?: boolean }
+> = {
+  'service-lance': { sheet: 'prop.s2-lance', cell: 2, scale: 0.8, angle: 0.1, dx: 30, dy: 200 },
+  'six-round-sidearm': {
+    sheet: 'prop.s2-firearms',
+    cell: 0,
+    scale: 0.3,
+    angle: 0,
+    dx: 60,
+    dy: 190,
+    mirror: true,
+  },
+  'support-gun': {
+    sheet: 'prop.s2-firearms',
+    cell: 2,
+    scale: 0.55,
+    angle: 0,
+    dx: 40,
+    dy: 185,
+    mirror: true,
+  },
+};
+
 /** Shared-sheet poses for actions without a sheet of their own. */
 const CATEGORY_POSES: Partial<Record<string, { sheet: string; cells: Phased }>> = {
   counter: { sheet: 'exact-counter', cells: [2, 3, 4] },
@@ -424,7 +450,9 @@ export class SpritePicker {
       case MoveState.Walk:
         // Armed walk cycles where delivered; otherwise step between the staff ready stance
         // and its mid-stride cell, and shift the handwheel carry between its two stances.
-        if (stance && meta(stance.sheet)) return s(stance.sheet, stance.cell);
+        // Stage 2 weapons have no armed walk sheets yet: the plain walk cycle with the
+        // weapon drawn in hand (heldProp), so the legs keep stepping.
+        if (stance && meta(stance.sheet)) return s('walk', loop(meta('walk'), frame, 10));
         if (staff && meta('staff-walk'))
           return s('staff-walk', loop(meta('staff-walk'), frame, 10));
         if (wheel && meta('handwheel-walk'))
@@ -622,7 +650,9 @@ export class SpritePicker {
    */
   heldProp(
     f: Fighter,
-  ): (SpriteFrame & { scale: number; angle: number; dx: number; dy: number }) | null {
+  ):
+    | (SpriteFrame & { scale: number; angle: number; dx: number; dy: number; mirror?: boolean })
+    | null {
     const hero = HEROES[f.hero];
     const weapon = f.wkit >= 0 ? WEAPONS[f.wkit] : undefined;
     if (f.team !== 'hero' || !hero || !weapon) return null;
@@ -631,6 +661,13 @@ export class SpritePicker {
       return { sheet: 'prop.workstaff', cell: 1, scale: 0.9, angle: 0.5, dx: 30, dy: 170 };
     if (weapon.id === 'handwheel' && !this.has(`${base}.handwheel`) && this.has('prop.handwheel'))
       return { sheet: 'prop.handwheel', cell: 1, scale: 0.3, angle: 0, dx: 55, dy: 185 };
+    // M22: a Stage 2 weapon while walking (no armed walk sheets yet), or always for a hero
+    // without that weapon's stance sheet. The firearm pictures point left (mirror).
+    const stance = WEAPON_STANCE[weapon.id];
+    if (stance && (f.state === MoveState.Walk || !this.has(`${base}.${stance.sheet}`))) {
+      const held = S2_HELD[weapon.id];
+      if (held && this.has(held.sheet)) return held;
+    }
     return null;
   }
 

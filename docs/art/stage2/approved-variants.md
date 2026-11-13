@@ -26,4 +26,6 @@
 |---|---|
 | Ambience beds | synthesized loops per area (`amb.stage2.*`); a file with the same id replaces one |
 | New SFX (weapons, firearm warning, pursuit) | synthesized placeholders (`sfx.weapon.*`, `sfx.warn.*`, `sfx.ride.*`) |
+| Armed walk cycles (lance, revolver, heavy) | the plain walk cycle with the weapon picture in hand (`heldProp`); standing uses the weapon sheet's ready stance |
+| Museum pictures for the brass gears and the sealed crate | cut from `PROP-BARRICADE` cell 5 and `PROP-S2-EVIDENCE` cell 1 by the importer (`artifact-brass-gears`, `artifact-sealed-weapon-crate`) |
 | Narration voice | none: subtitles always; optional system voice (Windows TTS) as a prototype aid. A file `vo.<locale>.<line id>` replaces it |

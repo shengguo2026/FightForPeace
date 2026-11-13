@@ -229,13 +229,18 @@ function EntryDetail({ e, play }: { e: MuseumEntryDef; play: (cine: string) => v
       ) : null}
       {e.section === 'collection' ? (
         <>
-          <div
-            aria-hidden="true"
+          <img
+            src={ART(`artifact-${e.asset}`)}
+            alt={entryName(e)}
+            data-testid="museum-collection-art"
             style={{
-              height: '120px',
+              display: 'block',
+              width: '240px',
+              maxWidth: '100%',
+              aspectRatio: '1',
+              margin: '0 auto 10px',
               borderRadius: '8px',
-              background: 'linear-gradient(135deg, #6b5a3a, #c9a86a)',
-              marginBottom: '10px',
+              background: 'radial-gradient(circle, #c9a86a55, #6b5a3a22 70%)',
             }}
           />
           <p data-testid="museum-collection-desc">{t(`museum.${e.id}.desc` as TextId)}</p>

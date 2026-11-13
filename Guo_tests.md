@@ -1277,3 +1277,10 @@ Open `http://localhost:5173/` (the shell), with your profile that has Stage 2 op
 15. **Museum:** Picture has the Stage 2 key art, story pictures and the portraits of Tomas and Marek; Cinema plays the six chapters (the intro chapters after a Stage 2 start, the ending chapters after a clear); Music lists the seven cues and plays them.
 16. **Store:** **Store → Wardrobe**: the Stage 2 outfits show their delivered picture above the colour preview.
 17. **Languages:** switch to 简体中文 and Deutsch: chapter names, every subtitle, the voice settings, the captions and the Museum entries are translated.
+
+### Fixes after the first test
+
+Pull the branch again (`git pull`), then `pnpm install` and `pnpm dev` as above.
+
+1. **Walking with a weapon:** in Stage 2, pick up the lance, the sidearm and the support gun in turn and walk. The legs step through the walk cycle and the weapon is drawn in the hero's hand; standing still shows the weapon's ready stance as before. (Dedicated armed walk sheets were never delivered; see the reply in the thread.)
+2. **Museum collection:** **Museum → Collection**: each unlocked piece shows its picture above the description: the brass gears (after Stage 1), the aerator impeller, the seed tin and the field card (by branch) and the sealed weapon crate (after Stage 2).

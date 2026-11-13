@@ -119,6 +119,14 @@ test('voice language and the system voice are settings; the Museum holds Stage 2
   await page.getByTestId('museum-sections').click();
   await page.getByTestId('museum-section-cinema').click();
   await expect(page.getByTestId('museum-locked-cinema.stage2.interlude')).toBeVisible();
+  // Collection pieces show their picture (Stage 1 complete unlocks the brass gears).
+  await page.getByTestId('museum-sections').click();
+  await page.getByTestId('museum-section-collection').click();
+  await page.getByTestId('museum-entry-collection.brass-gears').click();
+  const art = page.getByTestId('museum-collection-art');
+  await expect(art).toBeVisible();
+  expect(await art.evaluate((i) => (i as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  await page.screenshot({ path: 'test-results/m22-collection.png' });
 });
 
 test('Stage 2 rooms draw their area art; the pursuit draws riders on their bikes', async ({

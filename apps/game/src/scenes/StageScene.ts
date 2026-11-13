@@ -640,7 +640,7 @@ export class StageScene extends Phaser.Scene {
     sp.setOrigin(0.5, 0.5);
     sp.setScale(hold.scale * body.scaleX);
     sp.setRotation(f.facing * hold.angle);
-    sp.setFlipX(f.facing === -1);
+    sp.setFlipX((f.facing === -1) !== (hold.mirror ?? false));
     // Small bob while walking so the carried prop moves with the stride.
     const bob = f.state === MoveState.Walk ? Math.abs(((frame % 20) - 10) / 10) * 6 : 0;
     sp.setPosition(p.x + f.facing * hold.dx * body.scaleX, p.z - p.y - hold.dy * body.scaleX + bob);
