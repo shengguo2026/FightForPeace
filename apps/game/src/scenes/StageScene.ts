@@ -199,7 +199,7 @@ export class StageScene extends Phaser.Scene {
   /** Approved sprite sheets from the asset manifest (M6: the first real art). */
   preload(): void {
     for (const s of this.assets.sheets())
-      this.load.spritesheet(s.id, s.url, { frameWidth: s.sheet.cell, frameHeight: s.sheet.cell });
+      this.load.spritesheet(s.id, s.url, { frameWidth: s.sheet.w ?? s.sheet.cell, frameHeight: s.sheet.cell });
     this.arena.preload();
   }
 

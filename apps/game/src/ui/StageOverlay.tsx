@@ -122,6 +122,9 @@ function promptBottom(): number {
   return Math.max(64, Math.ceil(bar) + 20);
 }
 
+/** M22: epilogue cards told by the Stage 2 ending chapters instead. */
+const CHAPTER_CARDS = /^(formula|seal|justice|recovery\.|depot)/;
+
 /** M9 results screen: the list of grades, the overall grade, the counters and the hook. */
 export function ResultsOverlay({
   state,
@@ -133,6 +136,8 @@ export function ResultsOverlay({
   completion,
   again,
   hidden,
+  chapters,
+  onEpilogueDone,
 }: {
   state: LabState;
   /** M13: hidden while the ending cinematic plays over it. */
@@ -149,13 +154,27 @@ export function ResultsOverlay({
   settlement?: () => readonly (Settlement | null)[];
   /** M21: what the run completed (a stage opened, new Museum entries). */
   completion?: () => readonly string[];
+  /**
+   * M22: the Community Recovery and Justice chapters play after the in-engine epilogue
+   * cards (they tell the formula, seal, justice, recovery and depot cards' story), so
+   * those cards are left out here; `onEpilogueDone` starts them.
+   */
+  chapters?: () => boolean;
+  onEpilogueDone?: () => void;
 }) {
   const r = state.results.value;
   // M20: the layered epilogue's cards come one by one before the results (Next / Skip).
   const [seen, setSeen] = useState<{ of: unknown; page: number }>({ of: null, page: 0 });
   if (!r || hidden?.()) return null;
   const page = seen.of === r ? seen.page : 0;
-  const cards = r.epilogue ?? [];
+  const chaptered = chapters?.() ?? false;
+  const cards = (r.epilogue ?? []).filter(
+    (_, i) => !chaptered || !CHAPTER_CARDS.test(r.epilogueIds?.[i] ?? ''),
+  );
+  const turn = (to: number) => {
+    setSeen({ of: r, page: to });
+    if (to >= cards.length && chaptered) onEpilogueDone?.();
+  };
   const toVillage = village?.() ?? false;
   const cont = continuedFrom?.() ?? null;
   const settled = settlement?.() ?? [];
@@ -196,8 +215,8 @@ export function ResultsOverlay({
           <div data-testid="epilogue-card" style={{ marginBottom: '20px' }}>
             {cards[page]}
           </div>
-          {button(t('m20.next'), 'epilogue-next', () => setSeen({ of: r, page: page + 1 }))}
-          {button(t('m20.skip'), 'epilogue-skip', () => setSeen({ of: r, page: cards.length }))}
+          {button(t('m20.next'), 'epilogue-next', () => turn(page + 1))}
+          {button(t('m20.skip'), 'epilogue-skip', () => turn(cards.length))}
         </div>
       </div>
     );

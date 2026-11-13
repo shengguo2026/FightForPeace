@@ -48,6 +48,13 @@ export interface ProfileSettings {
   cinematics: 'video' | 'stills';
   /** M13: cosmetic sparks and particles (impact cores, telegraphs and cues always stay). */
   particles: 'full' | 'reduced' | 'off';
+  /**
+   * M22: the language narration and dialogue are spoken in, independent of the text
+   * language ('text' follows it; 'off' keeps subtitles only).
+   */
+  voiceLanguage: 'text' | 'en' | 'zh-CN' | 'de' | 'off';
+  /** M22: speak lines without a voice file with the system voice (temporary, off by default). */
+  systemVoice: boolean;
 }
 
 export const DEFAULT_SETTINGS: ProfileSettings = {
@@ -70,6 +77,8 @@ export const DEFAULT_SETTINGS: ProfileSettings = {
   volumeInterface: 80,
   cinematics: 'video',
   particles: 'full',
+  voiceLanguage: 'text',
+  systemVoice: false,
 };
 
 /** A saved Continue point: the last checkpoint the profile reached in a stage. */
@@ -265,6 +274,12 @@ export function normalizeSettings(raw: unknown): ProfileSettings {
     volumeInterface: vol('volumeInterface'),
     cinematics: pick(r.cinematics, ['video', 'stills'] as const, d.cinematics),
     particles: pick(r.particles, ['full', 'reduced', 'off'] as const, d.particles),
+    voiceLanguage: pick(
+      r.voiceLanguage,
+      ['text', 'en', 'zh-CN', 'de', 'off'] as const,
+      d.voiceLanguage,
+    ),
+    systemVoice: bool(r.systemVoice, d.systemVoice),
   };
 }
 

@@ -6,8 +6,12 @@ import {
   type SfxCategory,
   SfxMixer,
   STAGE1_MUSIC,
+  STAGE2_MUSIC,
 } from '@ffp/platform';
-import { synthMusic, synthSfx } from './synth';
+import { synthAmbience, synthMusic, synthSfx } from './synth';
+
+/** MP3 encoder delay (LAME: 576 + decoder 529 samples) when a decoder keeps the padding. */
+const MP3_DELAY = 1105;
 
 export interface Volumes {
   master: number;
@@ -26,7 +30,7 @@ export interface Volumes {
  * user gesture (browsers block audio before it). Presentation only.
  */
 export class AudioEngine {
-  readonly director = new MusicDirector(STAGE1_MUSIC);
+  readonly director = new MusicDirector([...STAGE1_MUSIC, ...STAGE2_MUSIC]);
   readonly mixer = new SfxMixer();
   private ctx: AudioContext | null = null;
   private buses: Record<
@@ -36,6 +40,12 @@ export class AudioEngine {
   private buffers = new Map<string, Promise<AudioBuffer | null>>();
   private musicNodes = new Map<string, { src: AudioBufferSourceNode; gain: GainNode }>();
   private voices = new Map<number, AudioBufferSourceNode>();
+  /** M22: the narration line playing on the voice bus. */
+  private line: AudioBufferSourceNode | null = null;
+  /** M22: the ambience bed playing now (id and its nodes). */
+  private bed: { id: string; src: AudioBufferSourceNode; gain: GainNode } | null = null;
+  private bedWant: string | null = null;
+  private bedLoading: string | null = null;
   private volumes: Volumes = {
     master: 0.8,
     music: 0.7,
@@ -224,6 +234,12 @@ export class AudioEngine {
       const src = ctx.createBufferSource();
       src.buffer = buf;
       src.loop = loop;
+      // M22: a delivered loop whose decoder kept the MP3 padding loops on its exact bars.
+      const ms = this.assets.audio(c.asset)?.audio.ms;
+      if (loop && ms && buf.duration * 1000 > ms + 20) {
+        src.loopStart = MP3_DELAY / buf.sampleRate;
+        src.loopEnd = src.loopStart + ms / 1000;
+      }
       const gain = ctx.createGain();
       const start = Math.max(at, ctx.currentTime);
       gain.gain.setValueAtTime(fade > 0 ? 0 : 1, start);
@@ -275,6 +291,86 @@ export class AudioEngine {
       }
     });
     return true;
+  }
+
+  /**
+   * M22: a narration or dialogue line from a delivered voice file on the voice bus (the
+   * previous line stops); music and ambience dip under it. Returns false when audio is
+   * not running or the file is missing.
+   */
+  voice(asset: string): boolean {
+    if (!this.ctx || !this.buses || this.ctx.state !== 'running' || !this.assets.audio(asset))
+      return false;
+    const ctx = this.ctx;
+    const bus = this.buses.voice;
+    this.stopVoice();
+    this.played.push(`voice:${asset}`);
+    void this.buffer(asset, (c) => c.createBuffer(1, 1, 22050)).then((buf) => {
+      if (!buf) return;
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(bus);
+      src.start();
+      this.line = src;
+      this.duck(0.55, buf.duration * 1000);
+    });
+    return true;
+  }
+
+  stopVoice(): void {
+    try {
+      this.line?.stop();
+    } catch {
+      /* ended */
+    }
+    this.line = null;
+  }
+
+  /**
+   * M22: the ambience bed (water circulation, pumps, aeration, night exteriors) on its own
+   * bus under the music; null fades it out. A new bed crossfades over 1.5 s. Ids without a
+   * delivered file play a synthesized placeholder bed.
+   */
+  ambience(id: string | null): void {
+    this.bedWant = id;
+    const ctx = this.ctx;
+    const bus = this.buses?.ambience;
+    if (!ctx || !bus || ctx.state !== 'running') return;
+    if ((this.bed?.id ?? null) === id || (id !== null && this.bedLoading === id)) return;
+    const old = this.bed;
+    if (old) {
+      const t = ctx.currentTime;
+      old.gain.gain.setValueAtTime(old.gain.gain.value, t);
+      old.gain.gain.linearRampToValueAtTime(0, t + 1.5);
+      try {
+        old.src.stop(t + 1.6);
+      } catch {
+        /* ended */
+      }
+      this.bed = null;
+    }
+    if (id === null) return;
+    this.bedLoading = id;
+    this.played.push(`ambience:${id}`);
+    void this.buffer(id, (c) => synthAmbience(c, id)).then((buf) => {
+      if (this.bedLoading === id) this.bedLoading = null;
+      if (!buf || this.bedWant !== id || !this.ctx || this.bed) return;
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.loop = true;
+      const gain = ctx.createGain();
+      const t = ctx.currentTime;
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(1, t + 1.5);
+      src.connect(gain).connect(bus);
+      src.start();
+      this.bed = { id, src, gain };
+    });
+  }
+
+  /** The ambience bed asked for now (tests). */
+  get ambienceId(): string | null {
+    return this.bedWant;
   }
 
   /** Brief bounded music and ambience duck for an essential cue. */

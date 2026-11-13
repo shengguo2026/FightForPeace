@@ -9,8 +9,18 @@ import { HERO_ROSTER, type Shell } from '../shell';
 import { useNav } from '../hooks';
 import type { NavEvent } from '../nav';
 import { ART, Button, Choice, Panel, Screen } from '../ui';
-import { STAGE1_ENDING, STAGE1_INTRO, campaignList } from '@ffp/platform';
+import {
+  type CinematicDef,
+  STAGE1_ENDING,
+  STAGE1_INTRO,
+  STAGE2_BRIEF_STILLS,
+  STAGE2_ENDING,
+  STAGE2_INTRO,
+  type StoryState,
+  campaignList,
+} from '@ffp/platform';
 import { Cinematic } from '../../media/Cinematic';
+import type { VoiceSettings } from '../../media/narration';
 
 /** Player 1's prompt context (bindings, labels, pad family) from the Lab's player views. */
 function ctxOf(shell: Shell, slot: number) {
@@ -346,13 +356,80 @@ export function HeroesScreen({ shell }: { shell: Shell }) {
   );
 }
 
+/** M22: the profile's narration settings for a cinematic. */
+export function voiceOf(shell: Shell): VoiceSettings | undefined {
+  const s = shell.active.value?.settings;
+  return s
+    ? {
+        voiceLanguage: s.voiceLanguage,
+        systemVoice: s.systemVoice,
+        volumeMaster: s.volumeMaster,
+        volumeVoice: s.volumeVoice,
+      }
+    : undefined;
+}
+
+/** M22: a chapter's localized title (`cine.stage2.roadside` → `m22.chapter.roadside`). */
+export function chapterTitle(def: CinematicDef): string {
+  return t(`m22.chapter.${def.id.split('.').pop()}` as TextId);
+}
+
+/**
+ * M22: several chapters in a row (each skippable on its own; Skip all leaves the
+ * sequence). Each chapter is a fresh cinematic with its own music, subtitles and voice.
+ */
+export function Chapters({
+  shell,
+  defs,
+  state,
+  testId,
+  onDone,
+}: {
+  shell: Shell;
+  defs: readonly CinematicDef[];
+  state?: StoryState;
+  testId: string;
+  onDone: () => void;
+}) {
+  const [i, setI] = useState(0);
+  const s = shell.active.value?.settings;
+  const def = defs[i];
+  if (!def) return null;
+  return (
+    <Cinematic
+      key={def.id}
+      def={def}
+      {...(state ? { state } : {})}
+      stills={s?.cinematics === 'stills'}
+      speakerLabels={s?.speakerLabels ?? true}
+      ctx={ctxOf(shell, 0)}
+      testId={testId}
+      title={chapterTitle(def)}
+      {...(voiceOf(shell) ? { voice: voiceOf(shell)! } : {})}
+      onDone={() => (i + 1 < defs.length ? setI(i + 1) : onDone())}
+      onSkipAll={onDone}
+    />
+  );
+}
+
 /**
  * The intro cinematic (M13): the six Flow clips with subtitles, or the same shots as
- * still pictures (setting, missing or failing clips). Skip, next and pause.
+ * still pictures (setting, missing or failing clips). Skip, next and pause. M22: Stage 2
+ * opens with its four chapters (Prosperity Interlude, Roadside Deception, Guest Under
+ * Observation, The Night Signal).
  */
 export function IntroScreen({ shell }: { shell: Shell }) {
   void locale.value;
   const s = shell.active.value?.settings;
+  if (shell.stagePick.value.stage === 'stage2')
+    return (
+      <Chapters
+        shell={shell}
+        defs={STAGE2_INTRO}
+        testId="intro"
+        onDone={() => shell.go('briefing')}
+      />
+    );
   return (
     <Cinematic
       def={STAGE1_INTRO}
@@ -360,12 +437,16 @@ export function IntroScreen({ shell }: { shell: Shell }) {
       speakerLabels={s?.speakerLabels ?? true}
       ctx={ctxOf(shell, 0)}
       testId="intro"
+      {...(voiceOf(shell) ? { voice: voiceOf(shell)! } : {})}
       onDone={() => shell.go('briefing')}
     />
   );
 }
 
-/** The ending cinematic over the finished stage (M13), chosen by the run's outcome. */
+/**
+ * The ending cinematic over the finished stage (M13), chosen by the run's outcome. M22:
+ * Stage 2's Community Recovery and Justice and Mystery Coda chapters, after its epilogue.
+ */
 export function EndingScreen({ shell }: { shell: Shell }) {
   void locale.value;
   const s = shell.active.value?.settings;
@@ -373,15 +454,26 @@ export function EndingScreen({ shell }: { shell: Shell }) {
   if (!state) return null;
   return (
     <div class="ffp-shell" style={{ pointerEvents: 'auto', zIndex: 40 }}>
-      <Cinematic
-        def={STAGE1_ENDING}
-        state={state}
-        stills={s?.cinematics === 'stills'}
-        speakerLabels={s?.speakerLabels ?? true}
-        ctx={ctxOf(shell, 0)}
-        testId="ending"
-        onDone={() => (shell.ending.value = null)}
-      />
+      {state.stage === 'stage2' ? (
+        <Chapters
+          shell={shell}
+          defs={STAGE2_ENDING}
+          state={state}
+          testId="ending"
+          onDone={() => (shell.ending.value = null)}
+        />
+      ) : (
+        <Cinematic
+          def={STAGE1_ENDING}
+          state={state}
+          stills={s?.cinematics === 'stills'}
+          speakerLabels={s?.speakerLabels ?? true}
+          ctx={ctxOf(shell, 0)}
+          testId="ending"
+          {...(voiceOf(shell) ? { voice: voiceOf(shell)! } : {})}
+          onDone={() => (shell.ending.value = null)}
+        />
+      )}
     </div>
   );
 }
@@ -454,8 +546,13 @@ export function BriefingScreen({ shell }: { shell: Shell }) {
   const heroes = shell.chosenHeroes();
   const pose = POSE[Math.min(line, BRIEF.length - 1)]!;
   const stage = shell.stagePick.value.stage;
+  // M22: the Stage 2 briefing over its own stills (the room, then the perimeter at night).
+  const bg =
+    stage === 'stage2'
+      ? STAGE2_BRIEF_STILLS[Math.min(line, BRIEF.length - 1)]!
+      : 's1-brief-01';
   return (
-    <Screen bg={ART('s1-brief-01')} testId="briefing">
+    <Screen bg={ART(bg)} testId="briefing">
       <div
         aria-hidden="true"
         style={{

@@ -33968,6 +33968,266 @@ export const PROGRESSION_DATA: ProgressionDef = {
       }
     },
     {
+      "id": "picture.keyart-s2",
+      "section": "picture",
+      "stage": "stage2",
+      "asset": "keyart-s2",
+      "unlock": {
+        "kind": "always",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s2-p01",
+      "section": "picture",
+      "stage": "stage2",
+      "asset": "s2-p01",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s2-p05",
+      "section": "picture",
+      "stage": "stage2",
+      "asset": "s2-p05",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s2-p12",
+      "section": "picture",
+      "stage": "stage2",
+      "asset": "s2-p12",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s2-r02",
+      "section": "picture",
+      "stage": "stage2",
+      "asset": "s2-r02",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s2-g03",
+      "section": "picture",
+      "stage": "stage2",
+      "asset": "s2-g03",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s2-n03",
+      "section": "picture",
+      "stage": "stage2",
+      "asset": "s2-n03",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s2-brief-02",
+      "section": "picture",
+      "stage": "stage2",
+      "asset": "s2-brief-02",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.portrait-tomas",
+      "section": "picture",
+      "stage": "stage2",
+      "asset": "portrait-tomas",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.portrait-marek",
+      "section": "picture",
+      "stage": "stage2",
+      "asset": "portrait-marek",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s2-c01f",
+      "section": "picture",
+      "stage": "stage2",
+      "asset": "s2-c01f",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s2-j04",
+      "section": "picture",
+      "stage": "stage2",
+      "asset": "s2-j04",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s2-j05",
+      "section": "picture",
+      "stage": "stage2",
+      "asset": "s2-j05",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "cinema.stage2.interlude",
+      "section": "cinema",
+      "stage": "stage2",
+      "asset": "cine.stage2.interlude",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "cinema.stage2.roadside",
+      "section": "cinema",
+      "stage": "stage2",
+      "asset": "cine.stage2.roadside",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "cinema.stage2.guest",
+      "section": "cinema",
+      "stage": "stage2",
+      "asset": "cine.stage2.guest",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "cinema.stage2.night",
+      "section": "cinema",
+      "stage": "stage2",
+      "asset": "cine.stage2.night",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "cinema.stage2.recovery",
+      "section": "cinema",
+      "stage": "stage2",
+      "asset": "cine.stage2.recovery",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "cinema.stage2.coda",
+      "section": "cinema",
+      "stage": "stage2",
+      "asset": "cine.stage2.coda",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage2.water-became-a-future",
+      "section": "music",
+      "stage": "stage2",
+      "asset": "mus.stage2.water-became-a-future:interlude",
+      "unlock": {
+        "kind": "always",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage2.roadside-vigil",
+      "section": "music",
+      "stage": "stage2",
+      "asset": "mus.stage2.roadside-vigil:vigil",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage2.glass-and-green",
+      "section": "music",
+      "stage": "stage2",
+      "asset": "mus.stage2.glass-and-green:explore",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage2.alarm-through-the-channels",
+      "section": "music",
+      "stage": "stage2",
+      "asset": "mus.stage2.alarm-through-the-channels:combat",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage2.protect-the-living-system",
+      "section": "music",
+      "stage": "stage2",
+      "asset": "mus.stage2.protect-the-living-system:danger",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage2.gilded-jackal",
+      "section": "music",
+      "stage": "stage2",
+      "asset": "mus.stage2.gilded-jackal:armed",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage2.what-we-protected",
+      "section": "music",
+      "stage": "stage2",
+      "asset": "mus.stage2.what-we-protected:ending",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
       "id": "sound.exact-block",
       "section": "sound",
       "stage": "stage1",

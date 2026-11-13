@@ -120,6 +120,16 @@ export function synthSfx(ctx: BaseAudioContext, id: string): AudioBuffer {
       phase: { ms: 1100, f0: 98, f1: 92, noise: 0.1, decay: 2.5 },
       run: { ms: 420, f0: 660, f1: 990, noise: 0, decay: 7 },
       ui: { ms: 60, f0: 900, f1: 900, noise: 0, decay: 50 },
+      // M22 Stage 2 placeholders: weapons, warnings, the mounted pursuit.
+      weapon: {
+        ms: variant === 'burst' ? 420 : variant === 'lance' ? 140 : 220,
+        f0: variant === 'lance' ? 900 : 160,
+        f1: variant === 'lance' ? 500 : 70,
+        noise: variant === 'lance' ? 0.4 : 0.85,
+        decay: variant === 'burst' ? 6 : 18,
+      },
+      warn: { ms: 320, f0: 880, f1: 660, noise: 0, decay: 6 },
+      ride: { ms: 300, f0: 140, f1: 70, noise: 0.7, decay: 9 },
     };
   const s = spec[fam] ?? { ms: 150, f0: 500, f1: 500, noise: 0.2, decay: 20 };
   const len = Math.round((s.ms / 1000) * RATE);
@@ -134,6 +144,56 @@ export function synthSfx(ctx: BaseAudioContext, id: string): AudioBuffer {
     phase += (2 * Math.PI * f) / RATE;
     const env = Math.exp(-t * s.decay) * Math.min(1, i / 40);
     d[i] = 0.5 * env * ((1 - s.noise) * Math.sin(phase) + s.noise * rnd());
+  }
+  return buf;
+}
+
+/**
+ * M22 placeholder ambience bed (6 s, seamless): filtered noise shaped by the id's kind
+ * (aeration bubbles, pump hum, irrigation drip, ventilation, night road with a distant
+ * engine, night yard with insects). Quiet on purpose: it sits under music and speech.
+ */
+export function synthAmbience(ctx: BaseAudioContext, id: string): AudioBuffer {
+  const len = RATE * 6;
+  const edge = Math.round(RATE * 0.05);
+  const buf = ctx.createBuffer(1, len, RATE);
+  const d = new Float32Array(len + edge);
+  const rnd = noise(hash(id));
+  const kind = id.split('.').pop() ?? '';
+  let lp = 0;
+  let lp2 = 0;
+  for (let i = 0; i < len + edge; i += 1) {
+    const t = i / RATE;
+    const n = rnd();
+    lp += (n - lp) * 0.04;
+    lp2 += (lp - lp2) * 0.04;
+    let v = 0.25 * lp2;
+    // Loop-periodic modulators (whole cycles in 6 s) keep the wrap seamless.
+    const cyc = (k: number) => Math.sin((2 * Math.PI * k * t) / 6);
+    if (kind === 'aeration') {
+      const bub = (t * 7) % 1;
+      v += 0.05 * Math.exp(-bub * 40) * Math.sin(2 * Math.PI * (600 + 300 * cyc(3)) * t);
+    } else if (kind === 'pumps') {
+      v += 0.04 * (1 + 0.3 * cyc(12)) * Math.sin(2 * Math.PI * 50 * t);
+      v += 0.02 * Math.sin(2 * Math.PI * 100 * t);
+    } else if (kind === 'irrigation') {
+      const drip = (t * 2.5) % 1;
+      v += 0.04 * Math.exp(-drip * 60) * Math.sin(2 * Math.PI * 1400 * t);
+    } else if (kind === 'ventilation') {
+      v = 0.35 * lp * (1 + 0.2 * cyc(2));
+    } else if (kind === 'night-road') {
+      v += 0.03 * (1 + 0.5 * cyc(1)) * Math.sin(2 * Math.PI * 38 * t);
+    } else if (kind === 'night-yard') {
+      const chirp = (t * 3) % 1;
+      v += 0.015 * (chirp < 0.08 ? 1 : 0) * Math.sin(2 * Math.PI * 4200 * t);
+    }
+    d[i] = v;
+  }
+  // The 50 ms after the loop end fade into its start, so the wrap continues the noise.
+  const out = buf.getChannelData(0);
+  for (let i = 0; i < len; i += 1) {
+    const k = i < edge ? i / edge : 1;
+    out[i] = d[i]! * k + (i < edge ? d[len + i]! * (1 - k) : 0);
   }
   return buf;
 }

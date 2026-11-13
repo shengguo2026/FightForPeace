@@ -54,13 +54,21 @@ test('Stage 1 founder, dummy, weapon and prop sheets are in the manifest', () =>
     expect(ids).toContain(`prop.${p}`);
 });
 
+/** M22: Stage 2 mounted hero sheets and the bikes are 2x2 grids (wide 576 px mounted cells). */
+const TWO_BY_TWO = /^(hero\.\w+\.sheet\.mount-|prop\.s2-bike-)/;
+
 test('every sheet is a 3x2 grid of 384 px cells (M13 effect sheets: 256 px)', () => {
-  for (const s of reg.sheets())
+  for (const s of reg.sheets()) {
+    if (TWO_BY_TWO.test(s.id)) {
+      expect([s.sheet.cols, s.sheet.rows]).toEqual([2, 2]);
+      continue;
+    }
     expect([s.sheet.cols, s.sheet.rows, s.sheet.cell]).toEqual([
       3,
       2,
       s.id.startsWith('vfx.') ? 256 : 384,
     ]);
+  }
 });
 
 test('character sheets share one ground line (aerial sheets are drawn in the air)', () => {

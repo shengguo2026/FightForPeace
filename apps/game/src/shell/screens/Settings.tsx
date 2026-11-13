@@ -198,6 +198,26 @@ export function AccessibilityPanel({ shell }: { shell: Shell }) {
         testId="setting-cinematics"
       />
       <Hint id="settings.cinematicsHint" />
+      <Choice
+        label={t('m22.settings.voice')}
+        scope={scope}
+        value={s.voiceLanguage}
+        options={(['text', 'en', 'zh-CN', 'de', 'off'] as const).map((v) => ({
+          value: v,
+          label: t(`m22.voice.${v}`),
+        }))}
+        onChange={(v) => set('voiceLanguage', v)}
+        testId="setting-voice-language"
+      />
+      <Choice
+        label={t('m22.settings.systemVoice')}
+        scope={scope}
+        value={s.systemVoice}
+        options={onOff()}
+        onChange={(v) => set('systemVoice', v)}
+        testId="setting-system-voice"
+      />
+      <Hint id="m22.settings.systemVoiceNote" />
       <Hint id="settings.presentationHint" />
     </>
   );

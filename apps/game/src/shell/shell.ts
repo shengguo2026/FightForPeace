@@ -27,6 +27,7 @@ import {
 } from '@ffp/platform';
 import {
   DIFFICULTIES,
+  GREENHOUSE,
   HEROES,
   STAGES,
   cheatMask,
@@ -154,6 +155,11 @@ export class Shell {
   readonly cheatConsent = signal<boolean[]>([]);
   /** M13: the ending cinematic's state while it plays over the finished stage (null: none). */
   readonly ending = signal<StoryState | null>(null);
+  /**
+   * M22: the Stage 2 ending chapters' state, waiting for the in-engine epilogue cards to
+   * finish (null: none; Wi-Fi games skip them as they skip the Stage 1 ending).
+   */
+  readonly chapters = signal<StoryState | null>(null);
   /** M21: what the last finished run completed (stages it opened, Museum entries). */
   readonly completion = signal<{ opened: string[]; unlocked: string[]; first: boolean } | null>(
     null,
@@ -491,8 +497,9 @@ export class Shell {
     const stage = this.stagePick.value.stage;
     // M21: the Stage 1 intro stays Stage 1's; a later stage shows What's New once per
     // profile before its first run, then its own briefing.
+    // M22: Stage 2 opens with its four story chapters, then the briefing.
     if (stage === 'stage1') this.go('intro');
-    else this.openWhatsNew(stage, 'briefing');
+    else this.openWhatsNew(stage, stage === 'stage2' ? 'intro' : 'briefing');
   }
 
   /** M21: the What's New briefing of `stage` when it is still due, else straight to `then`. */
@@ -550,6 +557,7 @@ export class Shell {
     this.continued.value = null;
     this.resultsRecorded = false;
     this.ending.value = null;
+    this.chapters.value = null;
     this.settlement.value = [];
     this.lastCheckpointKey = '';
     this.cheatDraft.value = { hero: [[], []], session: [] };
@@ -614,6 +622,7 @@ export class Shell {
     this.continued.value = from ?? null;
     this.resultsRecorded = false;
     this.ending.value = null;
+    this.chapters.value = null;
     this.settlement.value = [];
     this.lastCheckpointKey = '';
     this.lab.visible.value = false;
@@ -708,6 +717,7 @@ export class Shell {
       this.net.leave(this.lab.results.value ? 'finished' : 'left');
     this.pauseConfirm.value = null;
     this.ending.value = null;
+    this.chapters.value = null;
     this.session.devices.userPaused = false;
     this.session.startArena(null);
     this.session.devices.assignPlayers([this.session.devices.slots[0]?.device ?? 'kb:p1', null]);
@@ -792,10 +802,20 @@ export class Shell {
       // M13: the ending plays first (not in Wi-Fi games, where each player skips alone).
       if (!this.net.active && stage.id === 'stage1')
         this.ending.value = {
+          stage: 'stage1',
           workersFreed: run.stats.workersFreed,
           workersTotal: run.workersTotal,
           clues: run.stats.clues,
           cluesTotal: run.cluesTotal,
+        };
+      // M22: the Stage 2 chapters follow the epilogue cards (story state: the grade).
+      if (!this.net.active && stage.id === 'stage2')
+        this.chapters.value = {
+          stage: 'stage2',
+          preservation: Math.max(
+            0,
+            (GREENHOUSE?.grades ?? []).findIndex((g) => g.id === results.preservation?.grade),
+          ),
         };
       const heroes = this.session.world.playerHero
         .slice(0, this.playerCount() || 1)

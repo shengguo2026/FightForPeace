@@ -15,6 +15,7 @@ import { locale, t, tIn } from '../text/i18n';
 import { useNav } from '../shell/hooks';
 import { PromptText } from '../ui/InputPrompt';
 import { audio } from './audio';
+import { hush, narrate, type VoiceSettings } from './narration';
 
 const assets = new AssetRegistry();
 
@@ -42,6 +43,9 @@ export function Cinematic({
   ctx,
   testId,
   onDone,
+  voice,
+  title,
+  onSkipAll,
 }: {
   def: CinematicDef;
   state?: StoryState;
@@ -50,6 +54,12 @@ export function Cinematic({
   ctx: PromptContext;
   testId: string;
   onDone: () => void;
+  /** M22: speak each line (voice files or the temporary system voice; subtitles always). */
+  voice?: VoiceSettings;
+  /** M22: the chapter's localized title (multi-chapter sequences). */
+  title?: string;
+  /** M22: skips every remaining chapter of a sequence. */
+  onSkipAll?: () => void;
 }) {
   const player = useMemo(
     () => new CinematicPlayer<Locale>(resolveCinematic(def, MOTIFS, state)),
@@ -124,8 +134,15 @@ export function Cinematic({
     if (v.readyState >= 1 && Math.abs(v.currentTime * 1000 - frame.time) > 500)
       v.currentTime = Math.min(frame.time / 1000, Math.max(0, v.duration - 0.05) || 0);
   });
+  const sub = frame && shot ? player.subtitle(locale.value) : null;
+  // M22: speak a line when it appears (once per cue); stop speaking when the screen goes.
+  const lineKey = sub && frame ? `${frame.index}:${sub.cue.at}` : '';
+  useEffect(() => {
+    if (!sub || !voice || finished.current) return;
+    narrate(sub.cue.text, sub.locale, voice);
+  }, [lineKey]);
+  useEffect(() => () => hush(), [player]);
   if (!frame || !shot) return null;
-  const sub = player.subtitle(locale.value);
   const still = assets.url(shot.still);
   return (
     <div
@@ -174,7 +191,9 @@ export function Cinematic({
             objectFit: 'cover',
           }}
         >
-          <source src={clip.video.webm} type="video/webm" onError={() => undefined} />
+          {clip.video.webm ? (
+            <source src={clip.video.webm} type="video/webm" onError={() => undefined} />
+          ) : null}
           <source
             src={clip.video.mp4}
             type="video/mp4"
@@ -204,6 +223,23 @@ export function Cinematic({
           </div>
         ) : null}
       </div>
+      {title ? (
+        <div
+          class="ffp-hint"
+          data-testid={`${testId}-chapter`}
+          style={{
+            position: 'absolute',
+            top: '18px',
+            left: '24px',
+            background: 'rgba(0,0,0,0.5)',
+            padding: '4px 12px',
+            borderRadius: '6px',
+            fontSize: '22px',
+          }}
+        >
+          {title}
+        </div>
+      ) : null}
       <div
         style={{
           position: 'absolute',
@@ -246,6 +282,22 @@ export function Cinematic({
         >
           {t('play.skip')}
         </button>
+        {onSkipAll ? (
+          <button
+            type="button"
+            class="ffp-btn"
+            style={{ width: 'auto' }}
+            data-testid={`${testId}-skip-all`}
+            onClick={() => {
+              finished.current = true;
+              player.skip();
+              if (activeCinematic.value?.player === player) activeCinematic.value = null;
+              onSkipAll();
+            }}
+          >
+            {t('m22.skipAll')}
+          </button>
+        ) : null}
         <button
           type="button"
           class="ffp-btn"

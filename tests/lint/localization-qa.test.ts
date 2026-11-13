@@ -15,6 +15,9 @@ const SAME_EVERYWHERE = [
   /^cheat\.code\./,
   /^title\./,
   /^(enemy\.marek|m19\.tomas)\.name$/, // M19: people's names (Marek Vane, Tomas Rell)
+  /^speaker\.(wind|fire|tomas)$/, // M22: the same names as speakers
+  /^museum\.picture\.portrait-tomas\.name$/,
+  /^m22\.voice\.(en|zh-CN|de)$/, // M22: each voice language is named in its own language
 ];
 
 /** Words that may stand alone in Chinese or German text (names of formats and products). */

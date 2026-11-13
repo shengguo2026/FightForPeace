@@ -287,4 +287,6 @@ export interface ResultsView {
   sections?: { title: string; lines: string[] }[];
   /** M20: the layered epilogue's cards, shown one by one before the results. */
   epilogue?: string[];
+  /** M22: the epilogue cards' ids (`formula`, `recovery.secure` …), same order. */
+  epilogueIds?: string[];
 }
