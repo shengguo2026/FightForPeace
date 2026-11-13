@@ -101,10 +101,10 @@ const WEAPON_POSES: Record<
 };
 
 /** M22: the ready stance a hero holds a Stage 2 weapon in (idle and walking). */
-const WEAPON_STANCE: Record<string, { sheet: string; cell: number }> = {
-  'service-lance': { sheet: 'lance-a', cell: 1 },
-  'six-round-sidearm': { sheet: 'revolver', cell: 3 },
-  'support-gun': { sheet: 'heavy', cell: 0 },
+const WEAPON_STANCE: Record<string, { sheet: string; cell: number; walk: string }> = {
+  'service-lance': { sheet: 'lance-a', cell: 1, walk: 'lance-walk' },
+  'six-round-sidearm': { sheet: 'revolver', cell: 3, walk: 'revolver-walk' },
+  'support-gun': { sheet: 'heavy', cell: 0, walk: 'heavy-walk' },
 };
 
 /** M22: how a Stage 2 weapon is carried when no pose art shows it (see heldProp). */
@@ -450,8 +450,9 @@ export class SpritePicker {
       case MoveState.Walk:
         // Armed walk cycles where delivered; otherwise step between the staff ready stance
         // and its mid-stride cell, and shift the handwheel carry between its two stances.
-        // Stage 2 weapons have no armed walk sheets yet: the plain walk cycle with the
-        // weapon drawn in hand (heldProp), so the legs keep stepping.
+        // Stage 2 armed walk sheets where delivered; until then the plain walk cycle with
+        // the weapon drawn in hand (heldProp), so the legs keep stepping.
+        if (stance && meta(stance.walk)) return s(stance.walk, loop(meta(stance.walk), frame, 10));
         if (stance && meta(stance.sheet)) return s('walk', loop(meta('walk'), frame, 10));
         if (staff && meta('staff-walk'))
           return s('staff-walk', loop(meta('staff-walk'), frame, 10));
@@ -664,7 +665,8 @@ export class SpritePicker {
     // M22: a Stage 2 weapon while walking (no armed walk sheets yet), or always for a hero
     // without that weapon's stance sheet. The firearm pictures point left (mirror).
     const stance = WEAPON_STANCE[weapon.id];
-    if (stance && (f.state === MoveState.Walk || !this.has(`${base}.${stance.sheet}`))) {
+    const walking = f.state === MoveState.Walk && !this.has(`${base}.${stance?.walk}`);
+    if (stance && (walking || !this.has(`${base}.${stance.sheet}`))) {
       const held = S2_HELD[weapon.id];
       if (held && this.has(held.sheet)) return held;
     }

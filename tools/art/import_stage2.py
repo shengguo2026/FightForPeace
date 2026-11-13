@@ -103,7 +103,8 @@ LAYERS = ["FAR", "MID", "FLOOR", "FG"]  # PLATEs are reference paintings
 HERO_FOLDERS = {"wind": ("heroes/wind", "HERO-WND"), "fire": ("heroes/fire", "HERO-FIR"),
                 "mountain": ("heroes/mountain", "HERO-MTN"), "river": ("heroes/river", "HERO-RIV")}
 WEAPON_SHEETS = {"lance-a": ["LANCE-A", "LANCE"], "lance-b": ["LANCE-B"], "revolver": ["REVOLVER"],
-                 "heavy": ["HEAVY"]}
+                 "heavy": ["HEAVY"], "lance-walk": ["LANCE-WALK"], "revolver-walk": ["REVOLVER-WALK"],
+                 "heavy-walk": ["HEAVY-WALK"]}
 # Weapon sheets drawn larger than the hero's idle sheet (standing height measured at
 # ingest): shown at this scale so the hero keeps one size.
 WEAPON_SCALE = {"fire": 0.92, "mountain": 0.9, "river": 0.92}
