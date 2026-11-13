@@ -104,6 +104,9 @@ HERO_FOLDERS = {"wind": ("heroes/wind", "HERO-WND"), "fire": ("heroes/fire", "HE
                 "mountain": ("heroes/mountain", "HERO-MTN"), "river": ("heroes/river", "HERO-RIV")}
 WEAPON_SHEETS = {"lance-a": ["LANCE-A", "LANCE"], "lance-b": ["LANCE-B"], "revolver": ["REVOLVER"],
                  "heavy": ["HEAVY"]}
+# Weapon sheets drawn larger than the hero's idle sheet (standing height measured at
+# ingest): shown at this scale so the hero keeps one size.
+WEAPON_SCALE = {"fire": 0.92, "mountain": 0.9, "river": 0.92}
 MOUNT_SHEETS = ["RIDE", "ATTACK", "DEFENSE", "SPECIAL", "ULTIMATE", "STABILITY"]
 
 # Other sprite sheets: logical id -> (source, grid cols, rows).
@@ -260,6 +263,8 @@ def main() -> None:
                 if p is None:
                     continue
                 entry = grid_sheet(p, f"{hero}-{key}", 3, 2, keep)
+                if hero in WEAPON_SCALE:
+                    entry["sheet"]["scale"] = WEAPON_SCALE[hero]
                 assets[f"hero.{hero}.sheet.{key}"] = provenance(entry, f"{folder}/{p.name}", edits="75 %")
             for m in MOUNT_SHEETS:
                 p = import_art.source(base, folder, f"{prefix}-MOUNT-{m}")

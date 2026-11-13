@@ -1208,3 +1208,72 @@ Open `http://localhost:5173/` (the shell). Your saved profile is migrated to sav
 ### Fix · rescued workers run the way they move (Guo, 13 Nov)
 
 1. Play Stage 2 to the Emergency Aeration Annex (or Stage 1's fields) and free a worker. After cheering, the worker runs home to the left: the body and legs now run left (the head looks back over the shoulder, as drawn).
+
+## M22 · Stage 2 media and localization (0.22.0)
+
+What's new: all approved Stage 2 art, clips and music are in the game. Stage 2 now opens with four story chapters (Prosperity Interlude, Roadside Deception, Guest Under Observation, The Night Signal) and ends with two (Community Recovery, Justice and Mystery), all subtitled in English, Chinese and German. The score Prosperity Under Siege plays through the stage, including Marek's four states with short transition stingers. The twelve Stage 2 areas have their backgrounds; the pursuit shows the riders on their bikes; the heroes hold the lance, sidearm and support gun in their own poses; the greenhouse objectives, containers, food, villagers and loose weapons use their art. Settings has a voice language and an optional system voice. The Museum has Stage 2 pictures, the six chapters and the seven cues.
+
+Choices you may want changed (all candidates):
+
+- **Narration text:** I wrote the subtitle lines for all 33 clips from the spec and the clip descriptions (the elder narrates the Interlude; the twins, Tomas and a narrator speak in the other chapters). Change any wording and I will update all three languages.
+- **Clip audio:** every clip plays silent with the chapter's music under it (the Flow soundtrack is removed).
+- **Voice:** there are no recorded voice files yet, so lines are subtitles only. "System voice for narration" (off by default) reads the line with the Windows voice as a prototype; it is never saved as a file and is not for the commercial release.
+- **Ambience and sound effects:** no recordings were delivered, so the area beds (night road, night yard, aeration, ventilation, irrigation, pumps) and the new weapon, warning and pursuit sounds are synthesized placeholders. A raised firearm plays a priority warning and shows a caption ("[a firearm is raised]").
+- **Stage 2 ending order:** the in-game epilogue cards (capture, Ledger, branches) come first, then the two chapters, then the results. Community Recovery shows the "flourishing" inserts for Flourishing and Secure and the "damaged but recoverable" inserts for Strained and Recovered, and its last line names the grade.
+- **Outfits:** the Store shows the delivered outfit pictures; in the stage the outfit is still a colour tint of the standard sheets.
+- **Visual effects sheets** (wind, fire, gunfire, grenade, water, mount, warnings) are imported but the effects still use the M13 effect art.
+
+### Get and start the build
+
+To test the branch before it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-phmsb9
+git checkout claude/project-thread-phmsb9
+pnpm install
+pnpm dev
+```
+
+After it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+If Vite prints another port than 5173, use that one. Stop the server with `Ctrl+C`.
+
+Optional, the automated checks:
+
+```powershell
+pnpm typecheck
+pnpm test
+pnpm e2e
+```
+
+### Test steps
+
+Open `http://localhost:5173/` (the shell), with your profile that has Stage 2 open.
+
+1. **Title loop:** the village plays the Stage 2 title loop over the Stage 2 menu picture.
+2. **Intro chapters:** **Play → Solo**, choose "Prosperity Under Siege", pick a hero (skip What's New if it shows). The chapter name "Prosperity Interlude" shows at the top; the twelve Interlude clips play with the elder's subtitles and the music "Water Became a Future". No Flow soundtrack plays.
+3. **Skip:** **Skip** ends the current chapter and starts the next (Roadside Deception, then Guest Under Observation, then The Night Signal). **Skip all chapters** goes straight to the briefing. Esc pauses.
+4. **Still pictures:** Settings → Accessibility → Cinematics: **Still pictures**. Start Stage 2 again: the same chapters play as still pictures at the same pace with the same subtitles.
+5. **Speakers:** with Speaker labels on, the lines name Wind Sentinel, Fire Warden, Tomas Rell, the Elder or the Narrator.
+6. **Pursuit:** on the Perimeter Pursuit, the road background shows (night road, glasshouses). Your hero rides the bike from the art: steering up or down tilts the bike, attacks, the hop and the lean have their own poses, a crash and a downed rider too. The raiders and, in the Intercept, Marek ride their own bikes. Music: "Roadside Vigil", then Marek's "Gilded Jackal" mounted state.
+7. **Rooms:** every Stage 2 room has its background (yard, aquaculture hall, annex, vestibule, crop channels, seed bay, medicinal wing, prep room, filtration, production hall, dispatch yard). Objectives (aeration line, filtration, pump, medicinal beds, seed reserve, dispatch control), containers, the shutter and the seedling rack use their pictures and change when damaged, opened or broken; labels and bars still show the state in words.
+8. **Music in the rooms:** exploring plays "Glass and Green", a fight switches to "Alarm Through the Channels", and when a Ledger asset turns Critical "Protect the Living System" takes over. Each area has its ambience bed under the music (quiet placeholder sounds).
+9. **Villagers:** the maintenance worker in the Aeration Annex and the researcher in the Prep Room are drawn with the Stage 2 villager art (trapped or hiding, helped up, walking to safety).
+10. **Weapons:** pick up the lance, the sidearm and the support gun: the hero holds each in its own stance and attacks with the weapon's poses (Wind and Fire use both lance sheets; Mountain and River the shared one). Weapons on the floor use their pictures (a bent lance when it is worn, an open cylinder when the sidearm is empty).
+11. **Firearm warning:** when Marek or a hero raises a firearm, a warning sound plays and a caption "[a firearm is raised]" shows at the bottom; the shot or burst follows with its own caption.
+12. **Marek's music:** in the Dispatch Yard the armed phase plays "Gilded Jackal" armed, Predator Unbound switches with a stinger, Scorched Claim and the surrender each have their own state.
+13. **Ending:** finish Stage 2. The epilogue cards come first, then "Community Recovery" (its inserts and last line follow your Preservation grade), then "Justice and Mystery", then the results with "What We Protected".
+14. **Voice settings:** Settings → Accessibility: **Voice language** (Same as text, English, 简体中文, Deutsch, Off) and **System voice for narration**. Turn the system voice on and play a chapter: the lines are read aloud by Windows in the chosen language (if Windows has that voice installed); turn it off: subtitles only.
+15. **Museum:** Picture has the Stage 2 key art, story pictures and the portraits of Tomas and Marek; Cinema plays the six chapters (the intro chapters after a Stage 2 start, the ending chapters after a clear); Music lists the seven cues and plays them.
+16. **Store:** **Store → Wardrobe**: the Stage 2 outfits show their delivered picture above the colour preview.
+17. **Languages:** switch to 简体中文 and Deutsch: chapter names, every subtitle, the voice settings, the captions and the Museum entries are translated.

@@ -7362,7 +7362,8 @@
             "x1": 357,
             "foot": 360
           }
-        ]
+        ],
+        "scale": 0.92
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-HEAVY.png",
@@ -7592,7 +7593,8 @@
             "x1": 357,
             "foot": 360
           }
-        ]
+        ],
+        "scale": 0.92
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-LANCE-A.png",
@@ -7644,7 +7646,8 @@
             "x1": 311,
             "foot": 360
           }
-        ]
+        ],
+        "scale": 0.92
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-LANCE-B.png",
@@ -7942,7 +7945,8 @@
             "x1": 357,
             "foot": 360
           }
-        ]
+        ],
+        "scale": 0.92
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-REVOLVER.png",
@@ -9266,7 +9270,8 @@
             "x1": 357,
             "foot": 360
           }
-        ]
+        ],
+        "scale": 0.9
       },
       "provenance": {
         "source": "heroes/mountain/HERO-MTN-HEAVY.png",
@@ -9497,7 +9502,8 @@
             "x1": 357,
             "foot": 360
           }
-        ]
+        ],
+        "scale": 0.9
       },
       "provenance": {
         "source": "heroes/mountain/HERO-MTN-LANCE.png",
@@ -9795,7 +9801,8 @@
             "x1": 357,
             "foot": 360
           }
-        ]
+        ],
+        "scale": 0.9
       },
       "provenance": {
         "source": "heroes/mountain/HERO-MTN-REVOLVER.png",
@@ -11167,7 +11174,8 @@
             "x1": 357,
             "foot": 360
           }
-        ]
+        ],
+        "scale": 0.92
       },
       "provenance": {
         "source": "heroes/river/HERO-RIV-HEAVY.png",
@@ -11398,7 +11406,8 @@
             "x1": 357,
             "foot": 360
           }
-        ]
+        ],
+        "scale": 0.92
       },
       "provenance": {
         "source": "heroes/river/HERO-RIV-LANCE.png",
@@ -11696,7 +11705,8 @@
             "x1": 357,
             "foot": 360
           }
-        ]
+        ],
+        "scale": 0.92
       },
       "provenance": {
         "source": "heroes/river/HERO-RIV-REVOLVER.png",
