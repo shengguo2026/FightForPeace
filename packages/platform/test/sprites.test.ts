@@ -55,7 +55,8 @@ test('Stage 1 founder, dummy, weapon and prop sheets are in the manifest', () =>
 });
 
 /** M22: Stage 2 mounted hero sheets and the bikes are 2x2 grids (wide 576 px mounted cells). */
-const TWO_BY_TWO = /^(hero\.\w+\.sheet\.mount-|prop\.s2-bike-)/;
+const TWO_BY_TWO =
+  /^(hero\.\w+\.sheet\.mount-|prop\.s2-bike-|enemy\.rider\.sheet\.mount-|enemy\.marek\.sheet\.mounted)/;
 
 test('every sheet is a 3x2 grid of 384 px cells (M13 effect sheets: 256 px)', () => {
   for (const s of reg.sheets()) {

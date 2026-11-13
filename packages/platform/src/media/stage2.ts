@@ -162,7 +162,12 @@ export const S2_CODA: CinematicDef = {
 };
 
 /** The chapters before a Stage 2 run, in order (each skippable on its own). */
-export const STAGE2_INTRO: readonly CinematicDef[] = [S2_INTERLUDE, S2_ROADSIDE, S2_GUEST, S2_NIGHT];
+export const STAGE2_INTRO: readonly CinematicDef[] = [
+  S2_INTERLUDE,
+  S2_ROADSIDE,
+  S2_GUEST,
+  S2_NIGHT,
+];
 /** The chapters after the in-engine epilogue and before the results. */
 export const STAGE2_ENDING: readonly CinematicDef[] = [S2_RECOVERY, S2_CODA];
 /** All six chapters (Museum Cinema). */
@@ -175,7 +180,13 @@ export const STAGE2_TITLE_LOOP = {
 };
 
 /** The briefing's still per line (the civil-protection room, then the perimeter at night). */
-export const STAGE2_BRIEF_STILLS = ['s2-brief-01', 's2-brief-01', 's2-brief-02', 's2-brief-02', 's2-brief-02'];
+export const STAGE2_BRIEF_STILLS = [
+  's2-brief-01',
+  's2-brief-01',
+  's2-brief-02',
+  's2-brief-02',
+  's2-brief-02',
+];
 
 const loop = (id: string, bars: number, bpm?: number) => ({
   asset: `mus.stage2.${id}`,

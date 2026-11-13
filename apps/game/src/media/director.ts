@@ -5,15 +5,7 @@ import {
   STAGE2_BEAT_MUSIC,
   STAGE2_ROOM_AREA,
 } from '@ffp/platform';
-import {
-  AssetState,
-  CORRIDORS,
-  MoveState,
-  ROOMS,
-  RunPhase,
-  STAGES,
-  type World,
-} from '@ffp/sim';
+import { AssetState, CORRIDORS, MoveState, ROOMS, RunPhase, STAGES, type World } from '@ffp/sim';
 import type { Screen } from '../shell/shell';
 import { activeCinematic } from './Cinematic';
 import { audio } from './audio';

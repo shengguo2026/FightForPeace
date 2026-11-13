@@ -21,12 +21,15 @@ export const M22_EN = {
 
   // Chapter 1 · Prosperity Interlude (the elder).
   's2.line.p01': 'The water came back to the valley. This time, we promised, it would stay.',
-  's2.line.p02': 'We built a reserve, stone by stone, so that a dry year could never again empty our homes.',
-  's2.line.p03': 'Through every season we raised channels and glasshouses, and learned as we built.',
+  's2.line.p02':
+    'We built a reserve, stone by stone, so that a dry year could never again empty our homes.',
+  's2.line.p03':
+    'Through every season we raised channels and glasshouses, and learned as we built.',
   's2.line.p04': 'Vegetables grew in water and light, row after patient row.',
   's2.line.p05':
     'Fish, shrimp and plants learned to feed one another: clean water in, clean water out.',
-  's2.line.p06': 'Our healers studied the old medicinal plants beside the clinic, carefully and slowly.',
+  's2.line.p06':
+    'Our healers studied the old medicinal plants beside the clinic, carefully and slowly.',
   's2.line.p07': 'What the harvest earned, we gave back to the school.',
   's2.line.p08': 'New homes, a clinic, a council hall. A market where people lingered again.',
   's2.line.p09': 'Our young people trained to protect, with better gear and clearer rules.',
@@ -39,7 +42,8 @@ export const M22_EN = {
   's2.line.r01b': 'Quiet is when we look twice.',
   's2.line.r02a': 'Help me! They will kill me!',
   's2.line.r02b': 'Behind us. Stay down.',
-  's2.line.r03a': 'The riders turn back the moment the patrol stands between them and the stranger.',
+  's2.line.r03a':
+    'The riders turn back the moment the patrol stands between them and the stranger.',
   's2.line.r03b': 'He is bleeding. The clinic, now.',
   's2.line.r04': 'Treat him first. Questions can wait until he can stand.',
 
@@ -74,10 +78,12 @@ export const M22_EN = {
     'The clinic seals the material in quarantine until it can be independently tested.',
   's2.line.j02':
     'Marek Vane and his riders are examined, recorded and handed to the Regional Civil Protection Council, with a receipt for every one.',
-  's2.line.j03': 'At dawn, Tomas is escorted out of the valley with food and care, never to return.',
+  's2.line.j03':
+    'At dawn, Tomas is escorted out of the valley with food and care, never to return.',
   's2.line.j04': 'This seal. We have seen it before, on the equipment of the first raid.',
   's2.line.seal': 'The same seal, the same order codes. Someone is paying for all of this.',
-  's2.line.j05': 'The trail leads to an abandoned depot, cleared in a hurry. The sponsor remains unknown.',
+  's2.line.j05':
+    'The trail leads to an abandoned depot, cleared in a hurry. The sponsor remains unknown.',
 
   // The Prosperity Under Siege score (Museum Music Hall).
   'music.stage2.1': 'Water Became a Future',
@@ -208,7 +214,8 @@ export const M22_ZH: Catalog = {
   'm22.voice.de': 'Deutsch',
   'm22.voice.off': '关闭（仅字幕）',
   'm22.settings.systemVoice': '旁白使用系统语音',
-  'm22.settings.systemVoiceNote': '没有录制语音时，用电脑自带的语音朗读台词。这是原型辅助功能；字幕始终显示。',
+  'm22.settings.systemVoiceNote':
+    '没有录制语音时，用电脑自带的语音朗读台词。这是原型辅助功能；字幕始终显示。',
 
   'm22.cap.aim': '[有人举起枪]',
   'm22.cap.shot': '[枪声]',
@@ -295,7 +302,8 @@ export const M22_DE: Catalog = {
   's2.line.c02': 'Zuerst werden die Verletzten versorgt. Das Fest kann warten.',
   's2.line.c03': 'Die Ernte lebt noch, und das Dorf bringt sie gemeinsam ein.',
   's2.line.c03f': 'Die Pflanzkanäle stehen voll und grün.',
-  's2.line.c03d': 'Einige Beete sind verloren. Das Saatgut aus der Reserve wird sie neu bepflanzen.',
+  's2.line.c03d':
+    'Einige Beete sind verloren. Das Saatgut aus der Reserve wird sie neu bepflanzen.',
 
   's2.line.j01a': 'Tomas übergibt die echte Formel, mit seinen Notizen und ihrer Herkunft.',
   's2.line.j01b': 'Nützliches Wissen ist willkommen. Unschuld kann es nicht kaufen.',
@@ -305,7 +313,8 @@ export const M22_DE: Catalog = {
     'Marek Vane und seine Reiter werden untersucht, erfasst und dem Regionalen Zivilschutzrat übergeben, mit einer Quittung für jeden Einzelnen.',
   's2.line.j03':
     'Im Morgengrauen wird Tomas mit Proviant und versorgt aus dem Tal geleitet. Er darf nie zurückkehren.',
-  's2.line.j04': 'Dieses Siegel. Wir haben es schon gesehen, auf der Ausrüstung des ersten Überfalls.',
+  's2.line.j04':
+    'Dieses Siegel. Wir haben es schon gesehen, auf der Ausrüstung des ersten Überfalls.',
   's2.line.seal': 'Dasselbe Siegel, dieselben Bestellnummern. Jemand bezahlt für all das.',
   's2.line.j05':
     'Die Spur führt zu einem verlassenen Depot, in aller Eile geräumt. Der Geldgeber bleibt unbekannt.',

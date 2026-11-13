@@ -34,7 +34,11 @@ import {
   kitOf,
   phaseOf,
   RiderState,
+  MOUNTED,
+  mountedKit,
+  riderActionLength,
   runningAction,
+  CORRIDORS,
   ROOMS,
   type Encounter,
   type Greenhouse,
@@ -43,6 +47,10 @@ import {
   AssetRegistry,
   type PlaceholderFamily,
   RENDER_SCALE,
+  STAGE2_ROOM_AREA,
+  enemyMountCell,
+  heroMountCell,
+  type MountPick,
   type QualityLevel,
   SpritePicker,
   workerFlip,
@@ -64,7 +72,32 @@ import { presentation } from '../shell/presentation';
 /** Frames between two hit flashes on the same fighter. */
 const FLASH_GAP = 12;
 
-const PROP_SCALE: Partial<Record<string, number>> = { handwheel: 0.3, workstaff: 0.9 };
+/**
+ * M22 Stage 2 villagers per beat: the cells while bound (in a fight, otherwise), just freed
+ * and after, and leaving. NPC-S2-WORKER: 0 wrench, 1 trapped, 2 waving, 3 helped up,
+ * 4 walking to safety, 5 bow. NPC-S2-RESEARCHER: 0 working, 1 hiding, 2 relieved,
+ * 3 following, 4 handing over the ledger, 5 walking to safety.
+ */
+const S2_WORKERS: Partial<
+  Record<
+    string,
+    { sheet: string; bound: [number, number]; freed: [number, number]; leaving: number }
+  >
+> = {
+  'aeration-annex': { sheet: 'npc.s2-worker.sheet', bound: [1, 2], freed: [3, 5], leaving: 4 },
+  'prep-room': { sheet: 'npc.s2-researcher.sheet', bound: [1, 1], freed: [2, 4], leaving: 5 },
+};
+
+const PROP_SCALE: Partial<Record<string, number>> = {
+  handwheel: 0.3,
+  workstaff: 0.9,
+  // M22: the Stage 2 weapon props at their in-hand size.
+  'service-lance': 0.9,
+  'six-round-sidearm': 0.3,
+  'support-gun': 0.55,
+  'breaching-grenade': 0.22,
+  'support-rail': 0.9,
+};
 
 export const VIEW_WIDTH = 1920;
 export const VIEW_HEIGHT = 1080;
@@ -199,7 +232,10 @@ export class StageScene extends Phaser.Scene {
   /** Approved sprite sheets from the asset manifest (M6: the first real art). */
   preload(): void {
     for (const s of this.assets.sheets())
-      this.load.spritesheet(s.id, s.url, { frameWidth: s.sheet.w ?? s.sheet.cell, frameHeight: s.sheet.cell });
+      this.load.spritesheet(s.id, s.url, {
+        frameWidth: s.sheet.w ?? s.sheet.cell,
+        frameHeight: s.sheet.cell,
+      });
     this.arena.preload();
   }
 
@@ -259,15 +295,25 @@ export class StageScene extends Phaser.Scene {
       snap.stageWidth,
       this.opts.quality?.() ?? 'high',
       snap.run,
+      stage2AreaOf(snap.greenhouse?.room, snap.pursuit?.corridor),
     );
+    const art = this.arena.hasStage2Backdrop();
     this.labFloor.setVisible(
       snap.encounter === null && snap.pursuit === null && snap.greenhouse === null,
     );
     this.shutterId = snap.greenhouse?.shutterId ?? 0;
-    this.arena.setBackdropVisible(snap.greenhouse === null);
-    // M18: a greenhouse room draws its own greybox room over the hidden arena's backdrop.
+    this.arena.setBackdropVisible(snap.greenhouse === null || art);
+    // M18: a greenhouse room draws its own greybox room over the hidden arena's backdrop
+    // (M22: over the Stage 2 area's art, it draws only its interactive pieces).
     if (snap.greenhouse) {
-      this.greenhouse.draw(snap.greenhouse, current, snap.items, snap.frame, snap.greenhouseHints);
+      this.greenhouse.draw(
+        snap.greenhouse,
+        current,
+        snap.items,
+        snap.frame,
+        snap.greenhouseHints,
+        art,
+      );
     } else this.greenhouse.hide();
     if (snap.pursuit) {
       this.drawPursuit(snap, time);
@@ -345,6 +391,9 @@ export class StageScene extends Phaser.Scene {
     });
     this.effects.play(events, time, this.opts.quality?.() ?? 'high');
     playEventSounds(events);
+    for (const e of events)
+      if (e.kind === 'firearm')
+        this.arena.soundCaption(tr(`m22.cap.${e.what === 'aim' ? 'aim' : e.what}`), this.time.now);
     this.effects.update(time, Math.min(50, time - this.lastTime));
     this.lastTime = time;
     this.updatePopups(time);
@@ -366,12 +415,43 @@ export class StageScene extends Phaser.Scene {
       snap.cheatAssisted,
       snap.infiniteMeter,
       !!snap.run,
+      this.arena.hasStage2Backdrop(),
     );
     const keep = new Set<number>();
+    const mountKeep = new Set<number>();
+    const art = new Set<string>();
+    const scale = 0.62;
     for (const f of snap.current) {
       if (f.team !== 'hero') continue;
       const r = p.riders.find((x) => x.slot === f.slot);
       if (!r || r.state === RiderState.Out) continue;
+      // M22: the hero on the Stage 2 mounted sheets when the hero has them.
+      const kit = mountedKit(f.hero);
+      const a = r.action >= 0 ? kit[r.action] : undefined;
+      const pick = heroMountCell(HEROES[f.hero]?.id ?? '', {
+        state: r.state,
+        critical: r.critical,
+        slot: a?.slot ?? -1,
+        actionAge: snap.frame - r.actionAt,
+        actionLength: a ? riderActionLength(r, a) : 0,
+        steer: fxToPixels(r.targetZ - r.z),
+        braking: r.speed < MOUNTED.bike.base * 0.85,
+        stateAge: snap.frame - r.since,
+      });
+      if (
+        pick &&
+        this.mountSprite(
+          1000 + f.id,
+          pick,
+          fxToPixels(r.x),
+          fxToPixels(r.z) - fxToPixels(r.y),
+          scale,
+        )
+      ) {
+        mountKeep.add(1000 + f.id);
+        art.add(`h${r.slot}`);
+        continue;
+      }
       const down = r.state === RiderState.Crash || r.state === RiderState.Downed;
       const pos = {
         x: fxToPixels(r.x) - (r.state === RiderState.Done || down ? 110 : 0),
@@ -385,8 +465,33 @@ export class StageScene extends Phaser.Scene {
         sp?.setDepth(2);
       }
     }
+    for (const e of p.enemies) {
+      const pick = enemyMountCell(e);
+      if (this.mountSprite(-1 - e.id, pick, fxToPixels(e.x), fxToPixels(e.z), scale))
+        (mountKeep.add(-1 - e.id), art.add(`e${e.id}`));
+    }
+    this.dropStale(this.mountSprites, mountKeep);
+    this.pursuit.mountArt = art;
     this.dropStale(this.sprites, keep);
     this.updatePopups(time);
+  }
+
+  /** M22: mounted sprites (riders on their bikes), keyed apart from the fighters'. */
+  private mountSprites = new Map<number, Phaser.GameObjects.Sprite>();
+
+  /** Draws one mounted cell at a rider's road position; false when the sheet is missing. */
+  private mountSprite(key: number, pick: MountPick, x: number, z: number, scale: number): boolean {
+    const meta = this.assets.sheet(pick.sheet)?.sheet;
+    if (!meta || !this.textures.exists(pick.sheet)) return false;
+    const sp = this.sprite(this.mountSprites, key, pick.sheet);
+    sp.setVisible(true);
+    sp.setTexture(pick.sheet, pick.cell);
+    sp.setOrigin(0.5, meta.ground / meta.cell);
+    sp.setScale(scale);
+    sp.setFlipX(false);
+    sp.setPosition(x, z);
+    sp.setDepth(2);
+    return true;
   }
 
   /**
@@ -691,7 +796,21 @@ export class StageScene extends Phaser.Scene {
               ? 3
               : 4
             : 5;
-      const sheet = w.look === 1 ? 'npc.worker-b.sheet' : 'npc.worker-a.sheet';
+      // M22: Stage 2's villagers (the annex's maintenance worker, the prep room's
+      // researcher) on their own sheets.
+      const s2 = S2_WORKERS[beat.id];
+      const s2cell = s2
+        ? w.state === WorkerState.Bound
+          ? fighting
+            ? s2.bound[0]
+            : s2.bound[1]
+          : w.state === WorkerState.Freed
+            ? age < 20
+              ? s2.freed[0]
+              : s2.freed[1]
+            : s2.leaving
+        : -1;
+      const sheet = s2 ? s2.sheet : w.look === 1 ? 'npc.worker-b.sheet' : 'npc.worker-a.sheet';
       const meta = this.assets.sheet(sheet)?.sheet;
       keep.add(910 + i);
       g.fillStyle(0x000000, 0.3);
@@ -703,13 +822,17 @@ export class StageScene extends Phaser.Scene {
       }
       const sp = this.sprite(this.runSprites, 910 + i, sheet);
       sp.setVisible(true);
-      sp.setTexture(sheet, cell);
+      sp.setTexture(sheet, s2 ? s2cell : cell);
       sp.setOrigin(0.5, meta.ground / meta.cell);
       sp.setScale(0.95);
       sp.setPosition(x, z);
       sp.setDepth(this.depthAt(z));
       // A worker running home moves left; the sheet is mirrored only where needed.
-      sp.setFlipX(workerFlip(cell, w.state === WorkerState.Leaving ? -1 : 0));
+      sp.setFlipX(
+        s2
+          ? w.state === WorkerState.Leaving
+          : workerFlip(cell, w.state === WorkerState.Leaving ? -1 : 0),
+      );
     });
     if (beat.cache) prop(920, 'prop.barricade', 3, beat.cache.x, beat.cache.z, 120);
     run.pickups.forEach((p, i) => {
@@ -1349,4 +1472,15 @@ function overProfile(tags: readonly string[]): string {
   if (tags.includes('counterable') && !tags.includes('uncounterable'))
     parts.push(tr('over.counterable'));
   return parts.join(' · ');
+}
+
+/** M22: the Stage 2 area (backdrop art) of a greenhouse room or a pursuit corridor. */
+function stage2AreaOf(room: number | undefined, corridor: number | undefined): string | null {
+  const id =
+    room !== undefined
+      ? ROOMS[room]?.id
+      : corridor !== undefined
+        ? CORRIDORS[corridor]?.id
+        : undefined;
+  return id ? (STAGE2_ROOM_AREA[id] ?? null) : null;
 }

@@ -16,7 +16,9 @@ export interface VoiceSettings {
 
 function synth(): SpeechSynthesis | null {
   try {
-    return typeof window !== 'undefined' && 'speechSynthesis' in window ? window.speechSynthesis : null;
+    return typeof window !== 'undefined' && 'speechSynthesis' in window
+      ? window.speechSynthesis
+      : null;
   } catch {
     return null;
   }

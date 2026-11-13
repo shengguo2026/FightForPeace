@@ -117,6 +117,15 @@ SHEETS = {
     "prop.s2-bike-parked": ("vehicles/VEH-BIKE-HERO-PARKED.png", 2, 2),
     "prop.s2-bike-down": ("vehicles/VEH-BIKE-RAIDER-DOWN.png", 2, 2),
 }
+# M22 fix: the Road Rider's and Marek's mounted sheets are 2x2 mounted grids (M19 cut them
+# as 3x2 pose grids); same file names, re-cut.
+ENEMY_MOUNT = {
+    "enemy.rider.sheet.mount-ride": ("enemies/rider/ENM-RIDER-MOUNT-RIDE.png", "rider-mount-ride"),
+    "enemy.rider.sheet.mount-attack": ("enemies/rider/ENM-RIDER-MOUNT-ATTACK.png", "rider-mount-attack"),
+    "enemy.rider.sheet.mount-stability": ("enemies/rider/ENM-RIDER-MOUNT-STABILITY.png", "rider-mount-stability"),
+    "enemy.marek.sheet.mounted": ("enemies/marek/ENM-MAREK-MOUNTED.png", "marek-mounted"),
+    "enemy.marek.sheet.mounted-break": ("enemies/marek/ENM-MAREK-MOUNTED-BREAK.png", "marek-mounted-break"),
+}
 PROPS = ["LANCE", "FIREARMS", "FOOD", "CONTAINERS-A", "CONTAINERS-B", "BREAKABLES", "ENV-A",
          "ENV-B", "OBJECTIVES", "OBJECTIVES-DAMAGED", "EVIDENCE", "ARTIFACTS", "ROAD", "ENV-MISC"]
 VFX = ["S2-WIND", "S2-FIRE", "S2-GUNFIRE", "S2-GRENADE", "S2-WATER", "S2-MOUNT", "S2-WARNINGS"]
@@ -263,6 +272,8 @@ def main() -> None:
         for key, (rel, cols, rows) in SHEETS.items():
             name = key.replace(".sheet", "").replace(".", "-")
             assets[key] = provenance(grid_sheet(base / rel, name, cols, rows, keep), rel, edits="75 %")
+        for key, (rel, name) in ENEMY_MOUNT.items():
+            assets[key] = provenance(grid_sheet(base / rel, name, 2, 2, False), rel, edits="75 %")
         for prop in PROPS:
             rel = f"props/PROP-S2-{prop}.png"
             key = f"prop.s2-{prop.lower()}"

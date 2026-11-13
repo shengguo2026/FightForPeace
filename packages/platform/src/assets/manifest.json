@@ -3940,7 +3940,7 @@
     "enemy.marek.sheet.mounted": {
       "url": "art/marek-mounted.webp",
       "sheet": {
-        "cols": 3,
+        "cols": 2,
         "rows": 2,
         "cell": 384,
         "ground": 354,
@@ -3948,46 +3948,40 @@
           {
             "x0": 77,
             "y0": 14,
-            "x1": 384,
-            "foot": 349
-          },
-          {
-            "x0": 0,
-            "y0": 122,
-            "x1": 384,
+            "x1": 498,
             "foot": 354
           },
           {
-            "x0": 0,
+            "x0": 72,
             "y0": 24,
-            "x1": 311,
+            "x1": 503,
             "foot": 354
           },
           {
             "x0": 136,
             "y0": 32,
-            "x1": 384,
+            "x1": 441,
             "foot": 354
           },
           {
-            "x0": 0,
-            "y0": 71,
-            "x1": 384,
-            "foot": 315
-          },
-          {
-            "x0": 0,
+            "x0": 148,
             "y0": 38,
-            "x1": 236,
+            "x1": 428,
             "foot": 354
           }
-        ]
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "enemies/marek/ENM-MAREK-MOUNTED.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
       }
     },
     "enemy.marek.sheet.mounted-break": {
       "url": "art/marek-mounted-break.webp",
       "sheet": {
-        "cols": 3,
+        "cols": 2,
         "rows": 2,
         "cell": 384,
         "ground": 354,
@@ -3995,40 +3989,34 @@
           {
             "x0": 82,
             "y0": 30,
-            "x1": 384,
-            "foot": 341
-          },
-          {
-            "x0": 0,
-            "y0": 92,
-            "x1": 384,
+            "x1": 494,
             "foot": 354
           },
           {
-            "x0": 0,
+            "x0": 21,
             "y0": 62,
-            "x1": 364,
+            "x1": 556,
             "foot": 354
           },
           {
             "x0": 29,
-            "y0": 72,
-            "x1": 384,
+            "y0": 33,
+            "x1": 547,
             "foot": 354
           },
           {
-            "x0": 0,
-            "y0": 33,
-            "x1": 384,
-            "foot": 353
-          },
-          {
-            "x0": 0,
+            "x0": 32,
             "y0": 34,
-            "x1": 351,
+            "x1": 543,
             "foot": 354
           }
-        ]
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "enemies/marek/ENM-MAREK-MOUNTED-BREAK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
       }
     },
     "enemy.marek.sheet.phase": {
@@ -4907,7 +4895,7 @@
     "enemy.rider.sheet.mount-attack": {
       "url": "art/rider-mount-attack.webp",
       "sheet": {
-        "cols": 3,
+        "cols": 2,
         "rows": 2,
         "cell": 384,
         "ground": 354,
@@ -4915,46 +4903,40 @@
           {
             "x0": 83,
             "y0": 43,
-            "x1": 384,
+            "x1": 493,
             "foot": 354
           },
           {
-            "x0": 0,
-            "y0": 140,
-            "x1": 384,
-            "foot": 354
-          },
-          {
-            "x0": 0,
+            "x0": 83,
             "y0": 43,
-            "x1": 301,
+            "x1": 493,
             "foot": 354
           },
           {
             "x0": 83,
             "y0": 40,
-            "x1": 384,
+            "x1": 493,
             "foot": 354
           },
           {
-            "x0": 0,
-            "y0": 140,
-            "x1": 384,
-            "foot": 354
-          },
-          {
-            "x0": 0,
+            "x0": 83,
             "y0": 43,
-            "x1": 301,
+            "x1": 493,
             "foot": 354
           }
-        ]
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "enemies/rider/ENM-RIDER-MOUNT-ATTACK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
       }
     },
     "enemy.rider.sheet.mount-ride": {
       "url": "art/rider-mount-ride.webp",
       "sheet": {
-        "cols": 3,
+        "cols": 2,
         "rows": 2,
         "cell": 384,
         "ground": 354,
@@ -4962,46 +4944,40 @@
           {
             "x0": 83,
             "y0": 29,
-            "x1": 384,
+            "x1": 493,
             "foot": 354
           },
           {
-            "x0": 0,
-            "y0": 39,
-            "x1": 384,
-            "foot": 354
-          },
-          {
-            "x0": 0,
+            "x0": 85,
             "y0": 33,
-            "x1": 300,
+            "x1": 492,
             "foot": 354
           },
           {
             "x0": 78,
             "y0": 88,
-            "x1": 384,
+            "x1": 498,
             "foot": 354
           },
           {
-            "x0": 0,
-            "y0": 144,
-            "x1": 384,
-            "foot": 354
-          },
-          {
-            "x0": 0,
+            "x0": 118,
             "y0": 59,
-            "x1": 266,
+            "x1": 458,
             "foot": 354
           }
-        ]
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "enemies/rider/ENM-RIDER-MOUNT-RIDE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
       }
     },
     "enemy.rider.sheet.mount-stability": {
       "url": "art/rider-mount-stability.webp",
       "sheet": {
-        "cols": 3,
+        "cols": 2,
         "rows": 2,
         "cell": 384,
         "ground": 354,
@@ -5009,40 +4985,34 @@
           {
             "x0": 91,
             "y0": 59,
-            "x1": 384,
-            "foot": 352
-          },
-          {
-            "x0": 0,
-            "y0": 129,
-            "x1": 384,
+            "x1": 485,
             "foot": 354
           },
           {
-            "x0": 0,
+            "x0": 118,
             "y0": 73,
-            "x1": 266,
+            "x1": 458,
             "foot": 354
           },
           {
             "x0": 54,
-            "y0": 210,
-            "x1": 384,
+            "y0": 184,
+            "x1": 521,
             "foot": 354
           },
           {
-            "x0": 0,
+            "x0": 55,
             "y0": 151,
-            "x1": 384,
-            "foot": 354
-          },
-          {
-            "x0": 0,
-            "y0": 152,
-            "x1": 328,
+            "x1": 520,
             "foot": 354
           }
-        ]
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "enemies/rider/ENM-RIDER-MOUNT-STABILITY.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
       }
     },
     "enemy.rider.sheet.on-foot": {

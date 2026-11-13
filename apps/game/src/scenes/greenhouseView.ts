@@ -18,6 +18,7 @@ import {
   fxToPixels,
   ledgerGrade,
 } from '@ffp/sim';
+import { AssetRegistry } from '@ffp/platform';
 import { audio } from '../media/audio';
 import { dt, t, type TextId } from '../text/i18n';
 import { TextPool } from './pursuitView';
@@ -29,6 +30,38 @@ const CAPTION_FRAMES = 150;
 const STATE_COLOR = [0x6fd18a, 0xffd166, 0xff6b4a, 0x8fb8ff, 0x777777];
 const STATE_TEXT = ['#c9f5d4', '#ffe7a3', '#ffb3a3', '#cfe0ff', '#bbbbbb'];
 const CATEGORY_COLOR = [0xd8c7a0, 0x5fb7d9, 0x7cc46a, 0xb0b6c0, 0xd8c7a0];
+
+/**
+ * M22 Stage 2 prop art for the room's pieces (sheet, cell per state). Ledger objectives:
+ * PROP-S2-OBJECTIVES, damaged from Damaged on (OBJECTIVES-DAMAGED); containers closed and
+ * opened; breakables by integrity; pantry food. Pieces without art keep their greybox.
+ */
+const OBJECTIVE_CELL: Partial<Record<string, number>> = {
+  aeration: 0,
+  filtration: 1,
+  pump: 2,
+  'medicinal-bed': 3,
+  'seed-reserve': 4,
+  'dispatch-control': 5,
+};
+const CONTAINER_ART: Partial<Record<string, { sheet: string; cells: readonly number[] }>> = {
+  'harvest-tote': { sheet: 'prop.s2-containers-a', cells: [0, 1] },
+  'meal-carrier': { sheet: 'prop.s2-containers-a', cells: [2, 3] },
+  'clinic-cabinet': { sheet: 'prop.s2-containers-a', cells: [4, 5] },
+  'maintenance-locker': { sheet: 'prop.s2-containers-b', cells: [0, 1] },
+  'emergency-cabinet': { sheet: 'prop.s2-containers-b', cells: [2, 3] },
+  'raider-case': { sheet: 'prop.s2-containers-b', cells: [4, 5] },
+  // Breakables: intact, damaged, broken open.
+  'stolen-cargo-crate': { sheet: 'prop.s2-breakables', cells: [0, 1, 2] },
+  'damaged-irrigation-housing': { sheet: 'prop.s2-breakables', cells: [3, 4, 5] },
+};
+const FOOD_CELL: Partial<Record<string, number>> = {
+  'greenhouse-wrap': 0,
+  'herb-fish-bowl': 1,
+  'mineral-broth': 2,
+  'honey-rice-cake': 3,
+  'harvest-stew': 4,
+};
 
 const EVENT: Partial<Record<number, { key: TextId; color: string; sfx?: string }>> = {
   [GhEvent.Opened]: { key: 'gh.ev.opened', color: '#7ddc7d', sfx: 'sfx.rescue.open' },
@@ -79,8 +112,40 @@ export class GreenhouseView {
   private callout: { text: string; color: string; x: number; z: number; until: number } | null =
     null;
   private caption: { text: string; until: number } | null = null;
+  /** M22: prop sprites by piece key, and the keys drawn this frame. */
+  private readonly assets = new AssetRegistry();
+  private readonly props = new Map<string, Phaser.GameObjects.Image>();
+  private readonly used = new Set<string>();
 
   constructor(private readonly scene: Phaser.Scene) {}
+
+  /**
+   * M22: draws one prop cell standing on (x, z), `h` pixels tall; false when the art is
+   * missing (the greybox piece is drawn instead).
+   */
+  private prop(key: string, sheet: string, cell: number, x: number, z: number, h: number): boolean {
+    const meta = this.assets.sheet(sheet)?.sheet;
+    const c = meta?.cells[cell];
+    if (!meta || !c || !this.scene.textures.exists(sheet)) return false;
+    let img = this.props.get(key);
+    if (!img) {
+      img = this.scene.add.image(0, 0, sheet, cell);
+      this.props.set(key, img);
+    }
+    img.setTexture(sheet, cell).setVisible(true);
+    img.setOrigin(0.5, c.foot / meta.cell);
+    img.setScale(h / Math.max(1, c.foot - c.y0));
+    img.setPosition(x, z);
+    img.setDepth(1 + z / 10000);
+    this.used.add(key);
+    return true;
+  }
+
+  /** M22: hides the prop sprites not drawn this frame. */
+  private endProps(): void {
+    for (const [k, img] of this.props) if (!this.used.has(k)) img.setVisible(false);
+    this.used.clear();
+  }
 
   create(): void {
     this.floor = this.scene.add.graphics().setDepth(-0.5);
@@ -92,6 +157,8 @@ export class GreenhouseView {
   }
 
   hide(): void {
+    this.used.clear();
+    this.endProps();
     for (const g of [this.floor, this.back, this.front, this.hud]) g.clear();
     this.words.begin();
     this.words.end();
@@ -105,6 +172,8 @@ export class GreenhouseView {
     items: readonly Item[],
     frame: number,
     hints: readonly { x: number; z: number; hint: number }[],
+    /** M22: the area's backdrop art is drawn, so the greybox walls and floor are not. */
+    art = false,
   ): void {
     for (const g of [this.floor, this.back, this.front, this.hud]) g.clear();
     this.words.begin();
@@ -113,19 +182,21 @@ export class GreenhouseView {
     const G = GREENHOUSE!;
     const width = room.width;
     const blink = Math.floor(frame / 8) % 2 === 0;
-    // Glass walls and the floor (greybox).
-    const f = this.floor;
-    f.fillStyle(0x203a34, 1);
-    f.fillRect(0, 0, width, 1080);
-    f.fillStyle(0x6f9c8f, 0.35);
-    f.fillRect(0, 120, width, 460);
-    f.lineStyle(2, 0xbfe6dc, 0.35);
-    for (let x = 0; x <= width; x += 160) f.lineBetween(x, 120, x, 580);
-    f.lineBetween(0, 340, width, 340);
-    f.fillStyle(0x4b5a50, 1);
-    f.fillRect(0, 580, width, 500);
-    f.lineStyle(2, 0x5f7064, 1);
-    for (let x = 0; x <= width; x += 120) f.lineBetween(x, 580, x, 1080);
+    // Glass walls and the floor (greybox; M22: the Stage 2 area's art when it is drawn).
+    if (!art) {
+      const f = this.floor;
+      f.fillStyle(0x203a34, 1);
+      f.fillRect(0, 0, width, 1080);
+      f.fillStyle(0x6f9c8f, 0.35);
+      f.fillRect(0, 120, width, 460);
+      f.lineStyle(2, 0xbfe6dc, 0.35);
+      for (let x = 0; x <= width; x += 160) f.lineBetween(x, 120, x, 580);
+      f.lineBetween(0, 340, width, 340);
+      f.fillStyle(0x4b5a50, 1);
+      f.fillRect(0, 580, width, 500);
+      f.lineStyle(2, 0x5f7064, 1);
+      for (let x = 0; x <= width; x += 120) f.lineBetween(x, 580, x, 1080);
+    }
     // Purge-jet lanes (the current one marked; warned and active phases pulse).
     const jet = room.jet;
     if (jet && gh.jet) {
@@ -219,7 +290,35 @@ export class GreenhouseView {
       const lost = a.state === AssetState.Lost;
       const isShutter = room.shutter && gh.assets[room.shutter.asset] === a;
       const isRack = room.rack && gh.assets[room.rack.asset] === a;
-      if (isRack && gh.rack) {
+      const objCell = OBJECTIVE_CELL[k.id];
+      const damaged = a.state >= AssetState.Damaged;
+      const art =
+        isRack && gh.rack
+          ? gh.rack.state === RackState.Toppled
+            ? this.prop(`a${ai}`, 'prop.s2-env-b', 0, x, z + hd, Math.max(80, h * 0.5))
+            : this.prop(
+                `a${ai}`,
+                'prop.s2-env-a',
+                gh.rack.state === RackState.Loose ? 5 : damaged ? 4 : 3,
+                x,
+                z + hd,
+                h,
+              )
+          : isShutter
+            ? this.prop(`a${ai}`, 'prop.s2-env-a', lost ? 0 : damaged ? 2 : 1, x, z + hd, h)
+            : objCell !== undefined
+              ? this.prop(
+                  `a${ai}`,
+                  damaged ? 'prop.s2-objectives-damaged' : 'prop.s2-objectives',
+                  objCell,
+                  x,
+                  z + hd,
+                  Math.max(110, h),
+                )
+              : false;
+      if (art) {
+        // Damage is also written in the label and the bar (never art alone).
+      } else if (isRack && gh.rack) {
         this.drawRack(gh, x, z, hw, h, a.state);
       } else {
         const color = lost ? 0x555555 : CATEGORY_COLOR[k.category]!;
@@ -276,16 +375,36 @@ export class GreenhouseView {
       const [x, z, hw, hd, h] = [px(c.x), px(c.z), px(k.hw), px(k.hd), px(k.h)];
       const color = k.hostile ? 0x7a4a2a : 0x3d6b8a;
       const height = c.opened && k.hostile ? h * 0.4 : h;
-      this.back.fillStyle(0x000000, 0.25);
-      this.back.fillEllipse(x, z + hd, hw * 2.2, 20);
-      this.back.fillStyle(color, c.opened ? 0.5 : 1);
-      this.back.fillRect(x - hw, z + hd - height, hw * 2, height);
-      this.back.lineStyle(2, k.hostile ? 0xffb020 : 0x9fd3ff, 1);
-      this.back.strokeRect(x - hw, z + hd - height, hw * 2, height);
-      if (c.opened && !k.hostile) {
-        // An open door.
-        this.back.fillStyle(0x1b1d22, 0.8);
-        this.back.fillRect(x - hw + 4, z + hd - height + 4, hw * 2 - 8, height - 8);
+      const ca = CONTAINER_ART[k.id];
+      const broken = c.opened
+        ? ca && ca.cells.length > 2
+          ? 2
+          : 1
+        : c.integrity < k.integrity && ca && ca.cells.length > 2
+          ? 1
+          : 0;
+      const art = ca
+        ? this.prop(
+            `c${c.id}`,
+            ca.sheet,
+            ca.cells[Math.min(broken, ca.cells.length - 1)]!,
+            x,
+            z + hd,
+            Math.max(70, h * 1.4),
+          )
+        : false;
+      if (!art) {
+        this.back.fillStyle(0x000000, 0.25);
+        this.back.fillEllipse(x, z + hd, hw * 2.2, 20);
+        this.back.fillStyle(color, c.opened ? 0.5 : 1);
+        this.back.fillRect(x - hw, z + hd - height, hw * 2, height);
+        this.back.lineStyle(2, k.hostile ? 0xffb020 : 0x9fd3ff, 1);
+        this.back.strokeRect(x - hw, z + hd - height, hw * 2, height);
+        if (c.opened && !k.hostile) {
+          // An open door.
+          this.back.fillStyle(0x1b1d22, 0.8);
+          this.back.fillRect(x - hw + 4, z + hd - height + 4, hw * 2 - 8, height - 8);
+        }
       }
       if (k.hostile && !c.opened && c.integrity < k.integrity)
         this.bar(
@@ -312,13 +431,16 @@ export class GreenhouseView {
       if (p.taken) continue;
       const def = G.pantry[p.item]!;
       const [x, z] = [px(p.x), px(p.z)];
-      this.back.fillStyle(
-        def.rare ? 0xffd166 : def.health > 0 ? 0xff9a7a : def.defense > 0 ? 0x8fd3ff : 0xc3a6ff,
-        1,
-      );
-      this.back.fillCircle(x, z - 14, 14);
-      this.back.lineStyle(2, 0xffffff, 0.9);
-      this.back.strokeCircle(x, z - 14, 14);
+      const food = FOOD_CELL[def.id];
+      if (food === undefined || !this.prop(`p${p.id}`, 'prop.s2-food', food, x, z, 46)) {
+        this.back.fillStyle(
+          def.rare ? 0xffd166 : def.health > 0 ? 0xff9a7a : def.defense > 0 ? 0x8fd3ff : 0xc3a6ff,
+          1,
+        );
+        this.back.fillCircle(x, z - 14, 14);
+        this.back.lineStyle(2, 0xffffff, 0.9);
+        this.back.strokeCircle(x, z - 14, 14);
+      }
       this.words.put(x, z - 42, dt(`gh.item.${def.id}`, def.name), 14, '#fff3d6');
     }
     // Weapon names on the floor (greybox items have no art yet).
@@ -329,6 +451,7 @@ export class GreenhouseView {
       const ammo = def.ammo > 0 ? ` ${it.ammo}/${def.ammo}` : '';
       this.words.put(px(it.x), px(it.z) - px(it.y) - 30, `${def.name}${ammo}`, 15, '#ffe7a3');
     }
+    this.endProps();
     this.drawGrenade(gh, bodies, items, frame, blink);
     // Interaction prompts over the heroes.
     for (const h of hints)

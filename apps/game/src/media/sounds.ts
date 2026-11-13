@@ -46,6 +46,13 @@ export function soundOf(
       return { id: 'sfx.team.finisher', category: 'confirm' };
     case 'bossPhase':
       return { id: 'sfx.phase.boss', category: 'critical' };
+    case 'firearm':
+      // M22: the raise is an essential warning (mixer priority, captioned on screen).
+      if (e.what === 'aim') return { id: 'sfx.warn.aim', category: 'critical' };
+      return {
+        id: e.what === 'burst' ? 'sfx.weapon.burst' : 'sfx.weapon.shot',
+        category: 'weapon',
+      };
     case 'run': {
       const id = RUN_SOUNDS[e.event];
       return id ? { id, category: 'ui' } : null;

@@ -89,9 +89,7 @@ export class IndexedDbBackend implements SaveBackend {
 
   async list(prefix: string): Promise<string[]> {
     const keys = await request(this.store('readonly').getAllKeys());
-    return keys
-      .filter((k): k is string => typeof k === 'string' && k.startsWith(prefix))
-      .sort();
+    return keys.filter((k): k is string => typeof k === 'string' && k.startsWith(prefix)).sort();
   }
 }
 

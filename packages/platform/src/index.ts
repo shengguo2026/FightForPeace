@@ -30,3 +30,4 @@ export * from './media/stage2';
 export * from './media/voice';
 export * from './system/capabilities';
 export * from './system/perf';
+export * from './assets/mounted';

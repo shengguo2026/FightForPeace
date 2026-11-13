@@ -548,9 +548,7 @@ export function BriefingScreen({ shell }: { shell: Shell }) {
   const stage = shell.stagePick.value.stage;
   // M22: the Stage 2 briefing over its own stills (the room, then the perimeter at night).
   const bg =
-    stage === 'stage2'
-      ? STAGE2_BRIEF_STILLS[Math.min(line, BRIEF.length - 1)]!
-      : 's1-brief-01';
+    stage === 'stage2' ? STAGE2_BRIEF_STILLS[Math.min(line, BRIEF.length - 1)]! : 's1-brief-01';
   return (
     <Screen bg={ART(bg)} testId="briefing">
       <div

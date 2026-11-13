@@ -193,10 +193,15 @@ export function normalizeProgress(raw: unknown): ProgressRecord {
     records: map(r.records, (v) => (isObj(v) ? map(v, record) : undefined)),
     cheatHighest: map(r.cheatHighest, (v) => (typeof v === 'string' ? v : undefined)),
     academy: map(r.academy, (v) =>
-      typeof v === 'string' && (LESSON as readonly string[]).includes(v) ? (v as LessonState) : undefined,
+      typeof v === 'string' && (LESSON as readonly string[]).includes(v)
+        ? (v as LessonState)
+        : undefined,
     ),
     combos: Array.isArray(r.combos)
-      ? r.combos.map(combo).filter((c): c is MyCombo => !!c).slice(0, 20)
+      ? r.combos
+          .map(combo)
+          .filter((c): c is MyCombo => !!c)
+          .slice(0, 20)
       : [],
   };
 }

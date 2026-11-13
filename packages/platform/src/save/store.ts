@@ -63,9 +63,7 @@ export class ProfileStore {
 
   async listIds(): Promise<string[]> {
     const names = await this.backend.list('profile.');
-    return names
-      .map((n) => n.slice('profile.'.length))
-      .filter((id) => !id.includes('.'));
+    return names.map((n) => n.slice('profile.'.length)).filter((id) => !id.includes('.'));
   }
 
   /** Every profile that loads (damaged ones without a good snapshot are skipped). */
@@ -136,9 +134,7 @@ export class ProfileStore {
   /** The daily backups of a profile, newest first. */
   async backups(id: string): Promise<{ name: string; day: string }[]> {
     const names = await this.backend.list(`backup.${id}.`);
-    return names
-      .reverse()
-      .map((name) => ({ name, day: name.slice(`backup.${id}.`.length) }));
+    return names.reverse().map((name) => ({ name, day: name.slice(`backup.${id}.`.length) }));
   }
 
   /** Restores a daily backup (the current save becomes the previous snapshot). */
