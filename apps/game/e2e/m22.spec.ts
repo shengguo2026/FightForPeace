@@ -45,7 +45,7 @@ test('Stage 2 opens with its four chapters, subtitled, skippable one by one or a
   await expect(page.getByTestId('intro-caption')).toContainText('The water came back');
   expect((await media(page)).cine?.id).toBe('cine.stage2.interlude');
   // No voice file and no system voice: the subtitle carries the line.
-  expect((await media(page)).narration).toContain('none:s2.line.p01');
+  await expect.poll(async () => (await media(page)).narration).toContain('none:s2.line.p01');
   await page.screenshot({ path: 'test-results/m22-interlude.png' });
   await page.getByTestId('intro-skip').click();
   await expect(page.getByTestId('intro-chapter')).toHaveText('Roadside Deception');
