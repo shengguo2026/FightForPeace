@@ -488,6 +488,59 @@ actions:
     meter: 0
     tags: [teamFinisher, terminalKnockdown, finalReaction]
 
+  # M21 purchased-move catalogue (Stage 2 spec Appendix A): optional Specials in the empty
+  # `Up` and `Down` slots and one directional Ultimate sidegrade. Combat Lab Candidates.
+  # Kindling Uppercut: a short rising uppercut that launches for a jump chase; shorter
+  # reach and less damage than Furnace Rising, no backstep.
+  - id: kindling-uppercut
+    name: Kindling Uppercut
+    category: special
+    input: { context: special, dir: up }
+    slots: [up]
+    catalogue: true
+    frames: { startup: 8, active: 4, recovery: 29 }
+    hitbox: { x: 15, w: 95, y: 120, h: 220, depth: 38 }
+    damage: 58
+    reaction: { kind: launch, hitstun: 30, push: 1, lift: 14, airPop: 12 }
+    costs: { stun: 14, scale: 12, starter: 15, juggle: 30 }
+    meter: 5
+    tags: [handoffAirborne]
+    links:
+      - { to: jump, input: neutral, category: jumpChase, on: [hit] }
+
+  # Hearth Sweep: a stepping low sweep that trips a single target; slow recovery.
+  - id: hearth-sweep
+    name: Hearth Sweep
+    category: special
+    input: { context: special, dir: down }
+    slots: [down]
+    catalogue: true
+    frames: { startup: 9, active: 4, recovery: 28 }
+    hitbox: { x: 15, w: 120, y: 0, h: 80, depth: 40 }
+    damage: 52
+    reaction: { kind: knockdown, hitstun: 26, push: 4, lift: 4 }
+    costs: { stun: 12, scale: 12, starter: 15 }
+    meter: 5
+    moves:
+      - { from: 1, to: 9, forward: 3 }
+
+  # Banked Coals: a braced turning burst that pushes everyone out with a brief
+  # invulnerable start; no clinch conversion and less damage than Warden's Crucible.
+  - id: banked-coals
+    name: Banked Coals
+    category: ultimate
+    input: { context: ultimate, dir: backward }
+    slots: [backward]
+    catalogue: true
+    frames: { startup: 6, active: 10, recovery: 42 }
+    hitbox: { x: -60, w: 230, y: 40, h: 260, depth: 66 }
+    damage: 200
+    reaction: { kind: knockdown, hitstun: 30, push: 14, lift: 7 }
+    costs: { stun: 10, scale: 0 }
+    meter: 0
+    tags: [terminalKnockdown]
+    invulnerable: { from: 1, to: 6 }
+
 recipes:
   - id: foundation
     name: Foundation
@@ -501,3 +554,18 @@ recipes:
     name: Low to ground
     family: ground
     steps: [ashline-reap, pressure-seal, rising-cast|final-measure]
+
+# M21 Move Preview showcases (see mountain.yaml).
+showcases:
+  - id: furnace-crucible
+    name: Furnace to Crucible
+    meter: 100
+    steps: [spark-jab, hammer-cross, furnace-heel, wardens-crucible]
+  - id: flashpoint-route
+    name: Flashpoint Route
+    meter: 50
+    steps: [spark-jab, flashpoint-drive, flashpoint-clinch]
+  - id: rising-ember-relay
+    name: Rising Ember Relay (with Wind Sentinel)
+    partner: wind
+    steps: [ashline-reap, rising-cast, p2:headwind-entry]

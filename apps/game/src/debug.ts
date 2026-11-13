@@ -16,6 +16,7 @@ import {
   usage,
   MoveState,
   RunPhase,
+  STAGES,
   beatOf,
   codesOf,
   CORRIDORS,
@@ -28,7 +29,7 @@ import {
   damageAsset,
   lockCount,
 } from '@ffp/sim';
-import type { QualityGovernor } from '@ffp/platform';
+import { completeStage, type QualityGovernor } from '@ffp/platform';
 import type { GameSession } from './game';
 import type { LabState } from './ui/labState';
 import type { Shell } from './shell/shell';
@@ -158,6 +159,18 @@ export function installDebugHook(
       pilotActive: () => session.pilot !== null,
       // M14: text that fell back to English or is missing (localization QA).
       diagnostics: () => [...textDiagnostics()],
+      // M21 test hooks.
+      completeStage: (stage) => shell.update((p) => void completeStage(p, stage, null)),
+      preview: () => {
+        const v = shell.academy.preview.value;
+        return v
+          ? { mode: v.mode, landed: [...v.landed], current: v.current, plays: v.plays }
+          : null;
+      },
+      stageId: () => {
+        const r = session.world.run;
+        return r ? (STAGES[r.stage]?.id ?? null) : null;
+      },
     },
     frame: () => session.world.frame,
     body: (id) => {

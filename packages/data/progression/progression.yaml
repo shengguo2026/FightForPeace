@@ -96,6 +96,124 @@ store:
     reveal: always
     requires: { achievement: ach.stage1.river-flows }
 
+  # --- M21 · Stage 2 (Stage 2 spec §14.3, Appendix A) ------------------------------------
+  # Two Stage 2 outfits per hero (F&D §13; story line §6.1, §6.2): visual only, revealed
+  # when Stage 2 opens, a colour treatment until their art exists.
+  - id: store.wardrobe.mountain.greenhouse-builder
+    group: wardrobe
+    hero: mountain
+    kind: outfit
+    name: Greenhouse Builder
+    tint: '#b9d7b0'
+    band: medium
+    reveal: { open: stage2 }
+  - id: store.wardrobe.mountain.harvest-heritage
+    group: wardrobe
+    hero: mountain
+    kind: outfit
+    name: Harvest Heritage
+    tint: '#e6c27a'
+    band: medium
+    reveal: { open: stage2 }
+  - id: store.wardrobe.river.channel-patrol
+    group: wardrobe
+    hero: river
+    kind: outfit
+    name: Channel Patrol
+    tint: '#9fc8e0'
+    band: medium
+    reveal: { open: stage2 }
+  - id: store.wardrobe.river.lantern-festival
+    group: wardrobe
+    hero: river
+    kind: outfit
+    name: Lantern Festival
+    tint: '#f0a58c'
+    band: medium
+    reveal: { open: stage2 }
+  - id: store.wardrobe.wind.greenhouse-response
+    group: wardrobe
+    hero: wind
+    kind: outfit
+    name: Greenhouse Response
+    tint: '#cfe0c4'
+    band: medium
+    reveal: { open: stage2 }
+  - id: store.wardrobe.wind.prosperity-festival
+    group: wardrobe
+    hero: wind
+    kind: outfit
+    name: Prosperity Festival
+    tint: '#d9efe9'
+    band: medium
+    reveal: { open: stage2 }
+  - id: store.wardrobe.fire.pump-house-response
+    group: wardrobe
+    hero: fire
+    kind: outfit
+    name: Pump-House Response
+    tint: '#f0a066'
+    band: medium
+    reveal: { open: stage2 }
+  - id: store.wardrobe.fire.ember-heritage
+    group: wardrobe
+    hero: fire
+    kind: outfit
+    name: Ember Heritage
+    tint: '#d98a8a'
+    band: medium
+    reveal: { open: stage2 }
+  # The twins' purchased-move catalogue (Appendix A): two optional Specials and one
+  # directional Ultimate sidegrade each, with the Hero Mastery path as for the founders.
+  - id: store.technique.wind.crosswind-arc
+    group: technique
+    hero: wind
+    kind: special
+    action: crosswind-arc
+    band: medium
+    reveal: always
+    mastery: 3
+  - id: store.technique.wind.low-gust-sweep
+    group: technique
+    hero: wind
+    kind: special
+    action: low-gust-sweep
+    band: medium
+    reveal: { open: stage2 }
+    mastery: 4
+  - id: store.technique.wind.eye-of-the-storm
+    group: technique
+    hero: wind
+    kind: ultimate
+    action: eye-of-the-storm
+    band: high
+    reveal: { open: stage2 }
+    mastery: 5
+  - id: store.technique.fire.kindling-uppercut
+    group: technique
+    hero: fire
+    kind: special
+    action: kindling-uppercut
+    band: medium
+    reveal: always
+    mastery: 3
+  - id: store.technique.fire.hearth-sweep
+    group: technique
+    hero: fire
+    kind: special
+    action: hearth-sweep
+    band: medium
+    reveal: { open: stage2 }
+    mastery: 4
+  - id: store.technique.fire.banked-coals
+    group: technique
+    hero: fire
+    kind: ultimate
+    action: banked-coals
+    band: high
+    reveal: { open: stage2 }
+    mastery: 5
+
 # Achievement foundation: data-defined tracks by group, keyed by content ID. Only
 # `narrative` achievements can be earned in a Cheat-Assisted run, and then without Credits.
 achievements:
@@ -141,6 +259,84 @@ achievements:
     credits: 100
     rule: { kind: academy, state: certified, count: 1 }
 
+  # --- M21 · the twelve Stage 2 achievements (Stage 2 spec §14.1) -------------------------
+  # Only the clear is narrative (earned in Cheat-Assisted play, without Credits).
+  - id: ach.stage2.peace-in-the-glasshouse
+    group: story
+    name: Peace in the Glasshouse
+    credits: 150
+    narrative: true
+    rule: { kind: clear, content: story.stage2.prosperity-under-siege }
+  - id: ach.stage2.every-system-breathing
+    group: stageMastery
+    name: Every System Breathing
+    credits: 300
+    rule: { kind: preservation, content: story.stage2.prosperity-under-siege, grade: flourishing }
+  - id: ach.stage2.first-to-the-alarm
+    group: stageMastery
+    name: First to the Alarm
+    credits: 250
+    rule: { kind: response, content: story.stage2.prosperity-under-siege, rank: S, rewinds: 0 }
+  - id: ach.stage2.guardians-in-accord
+    group: coop
+    name: Guardians in Accord
+    credits: 200
+    rule:
+      kind: stats
+      content: story.stage2.prosperity-under-siege
+      coop: true
+      all: [{ stat: reciprocal, min: 1 }, { stat: accord, min: 1 }]
+  - id: ach.stage2.breach-denied
+    group: combatTechnique
+    name: Breach Denied
+    credits: 200
+    rule:
+      kind: stats
+      content: story.stage2.prosperity-under-siege
+      all:
+        - { stat: breachesStopped, min: 1 }
+        - { stat: breachesDone, max: 0 }
+        - { stat: grenadeDamage, max: 0 }
+  - id: ach.stage2.seize-the-moment
+    group: combatTechnique
+    name: Seize the Moment
+    credits: 200
+    rule: { kind: capture, content: story.stage2.prosperity-under-siege, gun: disarmed, rounds: 1 }
+  - id: ach.stage2.strength-without-vengeance
+    group: stageMastery
+    name: Strength Without Vengeance
+    credits: 250
+    rule: { kind: capture, content: story.stage2.prosperity-under-siege, route: surrender, scorch: false }
+  - id: ach.stage2.silence-the-signal
+    group: difficulty
+    name: Silence the Signal
+    credits: 300
+    rule:
+      kind: stats
+      content: story.stage2.prosperity-under-siege
+      difficulty: extreme
+      all: [{ stat: calls, min: 1 }, { stat: callsUnbroken, max: 0 }]
+  - id: ach.stage2.breath-beneath-the-water
+    group: discovery
+    name: Breath Beneath the Water
+    credits: 150
+    rule: { kind: branch, content: story.stage2.prosperity-under-siege, branch: aeration }
+  - id: ach.stage2.seeds-for-tomorrow
+    group: discovery
+    name: Seeds for Tomorrow
+    credits: 150
+    rule: { kind: branch, content: story.stage2.prosperity-under-siege, branch: seed }
+  - id: ach.stage2.knowledge-has-many-roots
+    group: discovery
+    name: Knowledge Has Many Roots
+    credits: 150
+    rule: { kind: branch, content: story.stage2.prosperity-under-siege, branch: medicinal }
+  - id: ach.stage2.guardian-of-every-wing
+    group: discovery
+    name: Guardian of Every Wing
+    credits: 300
+    rule: { kind: branches, content: story.stage2.prosperity-under-siege, count: 3 }
+
 # One representative Academy route (spec §14.2): every lesson runs Demonstration, Guided
 # Practice, Independent Trial and an optional Mastery Goal. Goals: walk, jump, dash,
 # recipe (the hero's recipe id), guard, exact, counter, special, ultimate. `frames` is a
@@ -177,3 +373,172 @@ academy:
         guided: [special]
         trial: { goals: [ultimate], count: 1, frames: 0 }
         mastery: { goals: [special, ultimate], count: 1, frames: 600 }
+
+  # --- M21 · Stage 2 Academy (Stage 2 spec §15) -------------------------------------------
+  # `hero` fixes the lesson's hero. A `drill` lesson opens a Stage 2 test room or corridor
+  # (or, with `showcase`, the practice yard with the showcase's demonstration partner, who
+  # answers your part of the route) and reads its goal from the room's own records.
+  - id: academy.stage2
+    name: Stage 2 Academy
+    lessons:
+      - id: academy.stage2.wind
+        course: specialization
+        name: 'Wind Sentinel: precision chain'
+        hero: wind
+        demo: foundation
+        guided: [recipe]
+        recipe: foundation
+        trial: { goals: [recipe], count: 3, frames: 0 }
+        mastery: { goals: [recipe], count: 3, frames: 900 }
+      - id: academy.stage2.fire
+        course: specialization
+        name: 'Fire Warden: momentum chain'
+        hero: fire
+        demo: foundation
+        guided: [recipe]
+        recipe: foundation
+        trial: { goals: [recipe], count: 3, frames: 0 }
+        mastery: { goals: [recipe], count: 3, frames: 900 }
+      - id: academy.stage2.handoff
+        course: conversion
+        name: Reciprocal Handoffs
+        hero: wind
+        drill: { showcase: crosswind-temper }
+        guided: [reciprocal]
+        trial: { goals: [reciprocal], count: 2, frames: 0 }
+        mastery: { goals: [reciprocal], count: 3, frames: 1200 }
+      - id: academy.stage2.accord
+        course: resources
+        name: "Twin Guardians' Accord"
+        hero: wind
+        meter: 100
+        drill: { showcase: horizon-accord }
+        guided: [teamFinisher]
+        trial: { goals: [teamFinisher], count: 1, frames: 0 }
+        mastery: { goals: [teamFinisher], count: 1, frames: 900 }
+      - id: academy.stage2.mounted
+        course: specialization
+        name: Mounted Stability and protection
+        drill: { corridor: perimeter-pursuit }
+        guided: [pursuitControl]
+        trial: { goals: [pursuitControl], count: 2, frames: 0 }
+        mastery: { goals: [pursuitSave], count: 1, frames: 0 }
+      - id: academy.stage2.revolver
+        course: specialization
+        name: The deliberate revolver
+        drill: { room: trial-marauder }
+        guided: [firearmShot]
+        trial: { goals: [firearmShot], count: 2, frames: 0 }
+        mastery: { goals: [firearmShot], count: 3, frames: 1800 }
+      - id: academy.stage2.grenade
+        course: defense
+        name: Return the breaching grenade
+        drill: { room: beat-filtration }
+        guided: [grenadeReturn]
+        trial: { goals: [grenadeReturn], count: 1, frames: 0 }
+        mastery: { goals: [grenadeReturn], count: 2, frames: 0 }
+      - id: academy.stage2.support-gun
+        course: mastery
+        name: Disarm the support gun
+        drill: { room: boss-marek }
+        guided: [disarm]
+        trial: { goals: [disarm], count: 1, frames: 0 }
+        mastery: { goals: [disarm], count: 1, frames: 3600 }
+      - id: academy.stage2.preservation
+        course: resources
+        name: Preservation and repair
+        drill: { room: greenhouse-test-room }
+        guided: [repair]
+        trial: { goals: [repair], count: 2, frames: 0 }
+        mastery: { goals: [repair], count: 3, frames: 1800 }
+      - id: academy.stage2.containers
+        course: resources
+        name: Ownership-aware containers
+        drill: { room: trial-claimhand }
+        guided: [containerOpen]
+        trial: { goals: [containerOpen], count: 2, frames: 0 }
+        mastery: { goals: [containerOpen], count: 2, frames: 1200 }
+      - id: academy.stage2.signal
+        course: defense
+        name: 'New roles: the Jackal Signalman'
+        drill: { room: trial-signalman }
+        guided: [callBreak]
+        trial: { goals: [callBreak], count: 1, frames: 0 }
+        mastery: { goals: [callBreak], count: 2, frames: 0 }
+      - id: academy.stage2.saboteur
+        course: defense
+        name: 'New roles: the Systems Saboteur'
+        drill: { room: trial-saboteur }
+        guided: [breachStop]
+        trial: { goals: [breachStop], count: 1, frames: 0 }
+        mastery: { goals: [breachStop], count: 2, frames: 0 }
+
+# --- M21 campaign layer (roadmap Stage 2 decision 2) --------------------------------------
+# The stage list in Story Mode order. A stage opens when the stage it names was completed
+# once on the profile (any full run, Cheat-Assisted included: story progress is narrative).
+# `whatsNew` names the briefing shown once before the stage's first run. Later Story Mode
+# and Stage Challenge read this same list.
+campaign:
+  - { id: stage1, content: story.stage1.broken-water-pact }
+  - id: stage2
+    content: story.stage2.prosperity-under-siege
+    opens: { complete: stage1 }
+    whatsNew: [twins, mounted, ledger, weapons, containers, enemies]
+
+# --- M21 Village Museum and Archive (Stage 2 spec §14.2, F&D §9.1) ------------------------
+# Every entry has a stable ID, a section, the stage whose pages it belongs to (pages of a
+# stage that is not open are never shown), the installed asset it presents and its unlock:
+# always; start (a run of the stage began); complete (the stage was completed, narrative);
+# branch (that optional branch completed in a finished run); open (the stage is open).
+# Names and descriptions are localized by `museum.<id>.name` / `.desc`.
+museum:
+  - { id: picture.s1-intro-01, section: picture, stage: stage1, asset: s1-intro-01, unlock: start }
+  - { id: picture.s1-intro-03, section: picture, stage: stage1, asset: s1-intro-03, unlock: start }
+  - { id: picture.s1-intro-05, section: picture, stage: stage1, asset: s1-intro-05, unlock: start }
+  - { id: picture.s1-brief-01, section: picture, stage: stage1, asset: s1-brief-01, unlock: start }
+  - { id: picture.s1-end-01, section: picture, stage: stage1, asset: s1-end-01, unlock: complete }
+  - { id: picture.s1-end-03, section: picture, stage: stage1, asset: s1-end-03, unlock: complete }
+  - { id: picture.keyart-title, section: picture, stage: stage1, asset: keyart-title, unlock: always }
+  - { id: picture.select-wind, section: picture, stage: stage2, asset: select-wind, unlock: open }
+  - { id: picture.select-fire, section: picture, stage: stage2, asset: select-fire, unlock: open }
+  - { id: cinema.stage1.intro, section: cinema, stage: stage1, asset: cine.stage1.intro, unlock: start }
+  - { id: cinema.stage1.ending, section: cinema, stage: stage1, asset: cine.stage1.ending, unlock: complete }
+  - { id: music.stage1.river-before-silence, section: music, stage: stage1, asset: 'mus.stage1.river-before-silence:title', unlock: always }
+  - { id: music.stage1.fields-without-water, section: music, stage: stage1, asset: 'mus.stage1.fields-without-water:explore', unlock: start }
+  - { id: music.stage1.bridge-under-watch, section: music, stage: stage1, asset: 'mus.stage1.bridge-under-watch:combat', unlock: start }
+  - { id: music.stage1.mill-in-motion, section: music, stage: stage1, asset: 'mus.stage1.mill-in-motion:explore', unlock: complete }
+  - { id: music.stage1.through-the-dry-canal, section: music, stage: stage1, asset: 'mus.stage1.through-the-dry-canal:danger', unlock: complete }
+  - { id: music.stage1.keeper-of-the-gate, section: music, stage: stage1, asset: 'mus.stage1.keeper-of-the-gate:phase1', unlock: complete }
+  - { id: music.stage1.river-returned, section: music, stage: stage1, asset: 'mus.stage1.river-returned:victory', unlock: complete }
+  - { id: sound.exact-block, section: sound, stage: stage1, asset: sfx.exact.confirm, unlock: always }
+  - { id: sound.heavy-hit, section: sound, stage: stage1, asset: sfx.hit.heavy, unlock: always }
+  - { id: sound.ultimate, section: sound, stage: stage1, asset: sfx.ultimate.start, unlock: start }
+  - { id: sound.team-finisher, section: sound, stage: stage1, asset: sfx.team.finisher, unlock: start }
+  - { id: sound.worker-freed, section: sound, stage: stage1, asset: sfx.run.worker-freed, unlock: start }
+  - { id: sound.river-restored, section: sound, stage: stage1, asset: sfx.run.river-restored, unlock: complete }
+  - { id: collection.brass-gears, section: collection, stage: stage1, asset: brass-gears, unlock: complete }
+  - { id: collection.early-aerator-impeller, section: collection, stage: stage2, asset: early-aerator-impeller, unlock: { branch: aeration } }
+  - { id: collection.first-harvest-seed-tin, section: collection, stage: stage2, asset: first-harvest-seed-tin, unlock: { branch: seed } }
+  - { id: collection.medicinal-cooperative-field-card, section: collection, stage: stage2, asset: medicinal-cooperative-field-card, unlock: { branch: medicinal } }
+  - { id: collection.sealed-weapon-crate, section: collection, stage: stage2, asset: sealed-weapon-crate, unlock: complete }
+
+# Sponsor Dossier (Investigation): confirmed facts and the current theory (the newest
+# unlocked theory replaces the older ones). No empty slots, no counts (F&D §9.1).
+dossier:
+  - { id: fact.brass-gears, kind: fact, stage: stage1, unlock: complete }
+  - { id: theory.outside-hand, kind: theory, stage: stage1, unlock: complete }
+  - { id: fact.crate-seal, kind: fact, stage: stage2, unlock: complete }
+  - { id: fact.order-code, kind: fact, stage: stage2, unlock: complete }
+  - { id: theory.one-supplier, kind: theory, stage: stage2, unlock: complete }
+
+# Formula research (Stage 2 spec §14.4): four milestones; Stage 2 completes the first and
+# records inputs for the second. Fictional and non-actionable text only.
+research:
+  milestones:
+    - { id: quarantine-provenance, complete: { stage: stage2 } }
+    - { id: independent-replication }
+    - { id: safety-review }
+    - { id: approved-preparation }
+  inputs:
+    - { id: formula-handover, milestone: independent-replication, stage: stage2, unlock: complete }
+    - { id: provenance-ledger, milestone: independent-replication, stage: stage2, unlock: { branch: medicinal } }

@@ -3,13 +3,13 @@ import { useLayoutEffect, useState } from 'preact/hooks';
 import type { DeviceId } from '@ffp/platform';
 import { DIFFICULTIES, HEROES, STAGES, defaultLoadout, equipMove, SLOTS } from '@ffp/sim';
 import { moveInputText } from '../../text/en';
-import { difficultyName, dt, heroName, locale, stageName, t } from '../../text/i18n';
+import { difficultyName, dt, heroName, locale, stageName, t, type TextId } from '../../text/i18n';
 import { PLAYER_COLORS, PromptText } from '../../ui/InputPrompt';
 import { HERO_ROSTER, type Shell } from '../shell';
 import { useNav } from '../hooks';
 import type { NavEvent } from '../nav';
 import { ART, Button, Choice, Panel, Screen } from '../ui';
-import { STAGE1_ENDING, STAGE1_INTRO } from '@ffp/platform';
+import { STAGE1_ENDING, STAGE1_INTRO, campaignList } from '@ffp/platform';
 import { Cinematic } from '../../media/Cinematic';
 
 /** Player 1's prompt context (bindings, labels, pad family) from the Lab's player views. */
@@ -206,6 +206,15 @@ export function StageScreen({ shell }: { shell: Shell }) {
   const stage = STAGES.find((s) => s.id === pick.stage);
   const di = DIFFICULTIES.findIndex((d) => d.id === pick.difficulty);
   const continues = stage?.continues[di] ?? 0;
+  // M21: every campaign stage of the data, in Story Mode order; locked ones say why.
+  const me = shell.active.value;
+  const list = me ? campaignList(me) : [];
+  const open = list.filter((c) => c.open).map((c) => c.def.id);
+  const locked = list.filter((c) => !c.open);
+  if (open.length === 0) open.push('stage1');
+  useLayoutEffect(() => {
+    if (!open.includes(pick.stage)) shell.setStagePick({ stage: open[0]! });
+  }, [pick.stage, open.join()]);
   return (
     <Screen bg={ART('s1-intro-01')} dim align="start" testId="stage-select">
       <Panel style={{ width: '640px' }}>
@@ -213,9 +222,16 @@ export function StageScreen({ shell }: { shell: Shell }) {
         <Choice
           label={t('play.stage')}
           value={pick.stage}
-          options={[{ value: 'stage1', label: stageName('stage1') }]}
+          options={open.map((id) => ({ value: id, label: stageName(id) }))}
           onChange={(v) => shell.setStagePick({ stage: v })}
+          testId="stage-pick"
         />
+        {locked.map((c) => (
+          <p class="ffp-hint" data-testid={`stage-locked-${c.def.id}`}>
+            🔒 {stageName(c.def.id)} ·{' '}
+            {t('m21.stageLocked', { stage: stageName(c.def.opens ?? 'stage1') })}
+          </p>
+        ))}
         <Choice
           label={t('play.difficulty')}
           value={pick.difficulty}
@@ -371,6 +387,10 @@ export function EndingScreen({ shell }: { shell: Shell }) {
 }
 
 const BRIEF = [1, 2, 3, 4, 5] as const;
+/** The briefing lines of a stage (M21: Stage 2 has its own). */
+function briefKey(stage: string, n: (typeof BRIEF)[number]): TextId {
+  return stage === 'stage2' ? `m21.brief.stage2.${n}` : `brief.${n}`;
+}
 /** Elder briefing pose (cell of the 3 × 2 sheet) for each line. */
 const POSE = [0, 1, 3, 4, 2];
 
@@ -433,6 +453,7 @@ export function BriefingScreen({ shell }: { shell: Shell }) {
   const speaker = shell.active.value?.settings.speakerLabels ?? true;
   const heroes = shell.chosenHeroes();
   const pose = POSE[Math.min(line, BRIEF.length - 1)]!;
+  const stage = shell.stagePick.value.stage;
   return (
     <Screen bg={ART('s1-brief-01')} testId="briefing">
       <div
@@ -454,7 +475,7 @@ export function BriefingScreen({ shell }: { shell: Shell }) {
         <div style={{ position: 'absolute', bottom: '60px', left: '30%', right: '4%' }}>
           <div class="ffp-caption" data-testid="briefing-line" style={{ textAlign: 'left' }}>
             {speaker ? <b>{t('speaker.elder')}: </b> : null}
-            {t(`brief.${BRIEF[line]!}`)}
+            {t(briefKey(stage, BRIEF[line]!))}
           </div>
           <div class="ffp-hint" style={{ marginTop: '8px' }}>
             <PromptText text={t('play.skipHint')} ctx={ctxOf(shell, 0)} />{' '}
@@ -477,7 +498,9 @@ export function BriefingScreen({ shell }: { shell: Shell }) {
           <Panel style={{ flex: 1, overflow: 'auto' }} testId="briefing-summary">
             <h1 class="ffp-title">{t('play.briefingTitle')}</h1>
             <h3>{t('play.objective')}</h3>
-            <p data-testid="briefing-objective">{t('brief.objective')}</p>
+            <p data-testid="briefing-objective">
+              {t(stage === 'stage2' ? 'm21.brief.stage2.objective' : 'brief.objective')}
+            </p>
             <h3>{t('play.loadout')}</h3>
             {heroes.map((h, slot) => (
               <Loadout heroId={h} slot={slot} shell={shell} />
@@ -486,7 +509,7 @@ export function BriefingScreen({ shell }: { shell: Shell }) {
             {BRIEF.map((n) => (
               <p class="ffp-hint">
                 {speaker ? <b>{t('speaker.elder')}: </b> : null}
-                {t(`brief.${n}`)}
+                {t(briefKey(stage, n))}
               </p>
             ))}
             <Button

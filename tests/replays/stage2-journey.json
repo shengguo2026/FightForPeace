@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "rulesVersion": "m20",
+  "rulesVersion": "m21",
   "seed": 99,
   "options": {
     "stage": "stage2",
@@ -11,7 +11,7 @@
     ],
     "difficulty": "medium"
   },
-  "expectedHash": 2293980805,
+  "expectedHash": 1241214013,
   "frames": [
     [{"moveX":1,"moveZ":1,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":1,"moveZ":1,"pressed":0,"held":0,"dirPressed":0},{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],

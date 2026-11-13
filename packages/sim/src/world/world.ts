@@ -77,7 +77,7 @@ export const DUMMY_HEALTH = 1000;
 export const HERO_HEALTH = 1000;
 
 /** Version of the byte layout written by encodeWorld. Bump on any layout change. */
-export const STATE_FORMAT = 17;
+export const STATE_FORMAT = 18;
 
 /** Walking speeds (fixed point per frame), kept as exports for existing callers. */
 export const WALK_SPEED_X = ON_FOOT.walkX;
@@ -1029,6 +1029,13 @@ function encodeStats(w: ByteWriter, s: RunStats): void {
   w.u32(s.evidence);
   w.u32(s.bestHits);
   w.u32(s.bestDamage);
+  w.u32(s.reciprocal);
+  w.u32(s.accord);
+  w.u32(s.calls);
+  w.u32(s.callsBroken);
+  w.u32(s.breachesStopped);
+  w.u32(s.breachesDone);
+  w.u32(s.grenadeDamage);
 }
 
 function encodeEncounter(w: ByteWriter, world: World): void {

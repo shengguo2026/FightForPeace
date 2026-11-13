@@ -54,9 +54,11 @@ test('the schema has the guardrail records from the start', () => {
   expect(p.storyChoices).toEqual({});
   expect(p.missions).toEqual({});
   expect(p.runArchive).toEqual([]);
-  expect(p.museum).toEqual({});
-  expect(p.sponsorDossier).toEqual({});
-  expect(p.research).toEqual({});
+  // M21 (save version 3): the reserved slots are typed records.
+  expect(p.museum).toEqual({ unlocked: {}, viewed: [] });
+  expect(p.sponsorDossier).toEqual({ unlocked: {} });
+  expect(p.research).toEqual({ milestones: {}, inputs: {} });
+  expect(p.campaign).toEqual({ completed: [], started: [], whatsNewSeen: [] });
   expect(p.cheats.registryVersion).toBe(1);
 });
 
@@ -83,12 +85,14 @@ test('migrations run step by step from the stored version, on a copy', () => {
   };
   try {
     const old = { id: 'p1', title: 'Old' };
-    // 0 → 1 (this test's step) → 2 (M11: progress and cheat preferences).
-    expect(migrate(old, 0)).toEqual({
+    // 0 → 1 (this test's step) → 2 (M11: progress and cheat preferences) → 3 (M21:
+    // campaign records, normalized).
+    expect(migrate(old, 0)).toMatchObject({
       id: 'p1',
       name: 'Old',
       cheats: { heroPrefs: {} },
       progress: emptyProgress(),
+      campaign: { completed: [], started: [], whatsNewSeen: [] },
     });
     expect(old).toEqual({ id: 'p1', title: 'Old' });
     expect(() => migrate(old, -1)).toThrow('no migration from save version -1');
@@ -136,7 +140,12 @@ test('guests are never written', async () => {
 test('export, preview and merge import never overwrite', async () => {
   const a = setup();
   const p = createProfile('Guo', 'zh-CN');
-  recordClear(p, STORY_STAGE1, { grade: 'A', timeFrames: 36000, difficulty: 'medium', heroes: ['mountain'] }, ['easy', 'medium', 'hard']);
+  recordClear(
+    p,
+    STORY_STAGE1,
+    { grade: 'A', timeFrames: 36000, difficulty: 'medium', heroes: ['mountain'] },
+    ['easy', 'medium', 'hard'],
+  );
   await a.store.save(p);
   const file = await a.store.exportBackup();
   expect(decodeBackup(file).ok).toBe(true);
@@ -185,16 +194,43 @@ test('a damaged backup file is refused', async () => {
 test('device record defaults and round-trips', async () => {
   const { store } = setup();
   expect((await store.device()).setupDone).toBe(false);
-  await store.saveDevice({ version: 1, setupDone: true, lastProfile: 'x', locale: 'de', uiScale: 125 });
-  expect(await store.device()).toEqual({ version: SAVE_VERSION, setupDone: true, lastProfile: 'x', locale: 'de', uiScale: 125 });
+  await store.saveDevice({
+    version: 1,
+    setupDone: true,
+    lastProfile: 'x',
+    locale: 'de',
+    uiScale: 125,
+  });
+  expect(await store.device()).toEqual({
+    version: SAVE_VERSION,
+    setupDone: true,
+    lastProfile: 'x',
+    locale: 'de',
+    uiScale: 125,
+  });
 });
 
 test('mission records keep the best grade, time and difficulty', () => {
   const p = createProfile('A', 'en');
   const order = ['easy', 'medium', 'hard'];
-  recordClear(p, STORY_STAGE1, { grade: 'B', timeFrames: 50000, difficulty: 'hard', heroes: [] }, order);
-  recordClear(p, STORY_STAGE1, { grade: 'S', timeFrames: 60000, difficulty: 'easy', heroes: [] }, order);
-  expect(p.missions[STORY_STAGE1]).toMatchObject({ clears: 2, bestGrade: 'S', bestTimeFrames: 50000, highestDifficulty: 'hard' });
+  recordClear(
+    p,
+    STORY_STAGE1,
+    { grade: 'B', timeFrames: 50000, difficulty: 'hard', heroes: [] },
+    order,
+  );
+  recordClear(
+    p,
+    STORY_STAGE1,
+    { grade: 'S', timeFrames: 60000, difficulty: 'easy', heroes: [] },
+    order,
+  );
+  expect(p.missions[STORY_STAGE1]).toMatchObject({
+    clears: 2,
+    bestGrade: 'S',
+    bestTimeFrames: 50000,
+    highestDifficulty: 'hard',
+  });
   expect(p.runArchive.length).toBe(2);
 });
 

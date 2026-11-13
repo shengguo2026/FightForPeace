@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "rulesVersion": "m20",
+  "rulesVersion": "m21",
   "seed": 95,
   "options": {
     "greenhouse": "greenhouse-test-room",
@@ -9,7 +9,7 @@
       "wind"
     ]
   },
-  "expectedHash": 1114478694,
+  "expectedHash": 3842870101,
   "frames": [
     [{"moveX":-1,"moveZ":-1,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":-1,"moveZ":-1,"pressed":0,"held":0,"dirPressed":0},{"moveX":1,"moveZ":-1,"pressed":0,"held":0,"dirPressed":0}],

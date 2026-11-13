@@ -34,6 +34,8 @@ export function dataCatalog(): Record<string, string> {
     out[`hero.${h.id}.name`] = h.name;
     for (const a of h.actions) out[`hero.${h.id}.action.${a.id}`] = a.name;
     for (const r of h.recipes) out[`hero.${h.id}.recipe.${r.id}`] = r.name;
+    // M21 Move Preview: showcase routes.
+    for (const sc of h.showcases ?? []) out[`hero.${h.id}.showcase.${sc.id}`] = sc.name;
   }
   ENEMIES.forEach((e, i) => {
     out[`enemy.${e.id}.name`] = e.name;

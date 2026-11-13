@@ -396,6 +396,17 @@ export class NetPlay {
     }
   }
 
+  /** M21, host only: the stage (one the host's profile has open); readiness is cleared. */
+  setStage(stage: string): void {
+    const l = this.lobby.value;
+    if (!l || this.role.value !== 'host') return;
+    this.shell.stagePick.value = { ...this.shell.stagePick.value, stage };
+    this.setLobby(l, (n) => {
+      n.stage = stage;
+      n.players = n.players.map((p) => ({ ...p, ready: false }));
+    });
+  }
+
   /** Host only: a shared rule; every player's readiness is cleared (Module 16). */
   setDifficulty(difficulty: string): void {
     const l = this.lobby.value;

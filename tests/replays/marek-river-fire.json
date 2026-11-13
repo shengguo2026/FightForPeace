@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "rulesVersion": "m20",
+  "rulesVersion": "m21",
   "seed": 97,
   "options": {
     "greenhouse": "boss-marek",
@@ -11,7 +11,7 @@
     "difficulty": "hard",
     "intercept": 1
   },
-  "expectedHash": 3612080436,
+  "expectedHash": 3513014385,
   "frames": [
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],

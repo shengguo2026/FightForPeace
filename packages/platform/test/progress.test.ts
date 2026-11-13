@@ -43,6 +43,13 @@ function results(over: Partial<StageResults> = {}): StageResults {
       food: 1,
       downs: 0,
       revives: 0,
+      reciprocal: 0,
+      accord: 0,
+      calls: 0,
+      callsBroken: 0,
+      breachesStopped: 0,
+      breachesDone: 0,
+      grenadeDamage: 0,
       workersFreed: 2,
       clues: 1,
       evidence: 0,
@@ -246,7 +253,10 @@ describe('the bounded store (D10)', () => {
     for (const hero of ['mountain', 'river']) {
       expect(STORE.filter((s) => s.hero === hero && s.kind === 'special')).toHaveLength(1);
       expect(STORE.filter((s) => s.hero === hero && s.kind === 'ultimate')).toHaveLength(1);
-      expect(STORE.filter((s) => s.hero === hero && s.kind === 'outfit')).toHaveLength(1);
+      // M21 adds two Stage 2 outfits per hero, revealed when Stage 2 opens.
+      const outfits = STORE.filter((s) => s.hero === hero && s.kind === 'outfit');
+      expect(outfits.filter((s) => !s.revealStage)).toHaveLength(1);
+      expect(outfits.filter((s) => s.revealStage === 'stage2')).toHaveLength(2);
     }
     expect(STORE.filter((s) => s.kind === 'badge')).toHaveLength(2);
     expect(itemDef('store.technique.mountain.skybreak-column')!.price).toBe(800);

@@ -3,6 +3,7 @@ import { MoveState, RunPhase, STAGES, type World } from '@ffp/sim';
 import type { Screen } from '../shell/shell';
 import { activeCinematic } from './Cinematic';
 import { audio } from './audio';
+import { museumListen } from '../shell/screens/Museum';
 
 export interface MusicContext {
   screen: Screen;
@@ -15,7 +16,7 @@ export interface MusicContext {
 }
 
 /** Screens with no score of their own (the Lab and Academy drills stay quiet). */
-const QUIET: ReadonlySet<Screen> = new Set(['lab', 'lesson', 'practice', 'boot']);
+const QUIET: ReadonlySet<Screen> = new Set(['lab', 'lesson', 'practice', 'preview', 'boot']);
 
 /**
  * M13: which cue and state of the Stage 1 score plays now. Menus play the title state;
@@ -29,6 +30,8 @@ export function musicFor(c: MusicContext): { cue: string; state: string } | null
   if (cine) return cine.video ? null : (cine.music ?? null);
   const screen = c.screen === 'settings' ? c.settingsFrom : c.screen;
   if (QUIET.has(screen)) return null;
+  // M21: the Museum's Music page plays the chosen cue and state.
+  if (screen === 'museum' && museumListen.value) return museumListen.value;
   if (screen !== 'game') return { cue: 'mus.stage1.river-before-silence', state: 'title' };
   const run = c.world.run;
   if (!run) return null;

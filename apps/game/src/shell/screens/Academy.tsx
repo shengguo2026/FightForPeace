@@ -1,6 +1,13 @@
 import { useState } from 'preact/hooks';
 import { CHEATS, HEROES, type ActionDef, type LessonGoal, type RecipeStep } from '@ffp/sim';
-import { ACADEMY_ROUTES, MY_COMBOS_CAP, STORE, deleteCombo, renameCombo } from '@ffp/platform';
+import {
+  ACADEMY_ROUTES,
+  MY_COMBOS_CAP,
+  STORE,
+  deleteCombo,
+  renameCombo,
+  stageOpen,
+} from '@ffp/platform';
 import type { PromptContext } from '@ffp/platform';
 import { PromptText } from '../../ui/InputPrompt';
 import { moveInputText } from '../../text/en';
@@ -77,6 +84,8 @@ export function AcademyScreen({ shell }: { shell: Shell }) {
   const heroOptions = HERO_ROSTER.map((h) => ({ value: h as string, label: heroName(h) }));
   const [focus, setFocus] = useState<string | null>(null);
   const def = focus ? lessonDef(focus) : undefined;
+  const me = shell.active.value;
+  const stage2 = !!me && stageOpen(me, 'stage2');
   return (
     <Screen bg={ART('menu-bg')} dim align="start" testId="academy">
       <div class="ffp-row" style={{ width: '88vw', alignItems: 'flex-start' }}>
@@ -92,9 +101,15 @@ export function AcademyScreen({ shell }: { shell: Shell }) {
           {ACADEMY_ROUTES.map((r) => (
             <>
               <h2 style={{ margin: '12px 0 4px' }}>{dt(`${r.id}.name`, r.name)}</h2>
-              {r.lessons.map((l, i) => (
+              {r.id === 'academy.stage2' && !stage2 ? (
+                <p class="ffp-hint" data-testid="academy-stage2-locked">
+                  {t('m21.academyLocked')}
+                </p>
+              ) : null}
+              {(r.id === 'academy.stage2' && !stage2 ? [] : r.lessons).map((l, i) => (
                 <Button
                   label={`${i + 1}. ${dt(`${l.id}.name`, l.name)}`}
+                  detail={l.hero ? heroName(l.hero) : undefined}
                   mark={t(STATE_KEY[shell.academy.stateOf(l.id)]!)}
                   testId={`lesson-${l.id.split('.').pop()}`}
                   autofocus={i === 0}
@@ -105,6 +120,22 @@ export function AcademyScreen({ shell }: { shell: Shell }) {
             </>
           ))}
           <h2 style={{ margin: '12px 0 4px' }}>{t('academy.more')}</h2>
+          <Button
+            label={t('m21.moveList')}
+            detail={t('m21.moveListDetail')}
+            testId="academy-movelist"
+            onFocus={() => setFocus(null)}
+            onPress={() => shell.go('movelist')}
+          />
+          {stage2 ? (
+            <Button
+              label={t('m21.whatsNewTitle')}
+              detail={t('m21.whatsNewDetail')}
+              testId="academy-whats-new"
+              onFocus={() => setFocus(null)}
+              onPress={() => shell.openWhatsNew('stage2', 'academy', true)}
+            />
+          ) : null}
           <Button
             label={t('academy.practice')}
             detail={t('academy.practiceDetail')}
@@ -136,6 +167,12 @@ export function AcademyScreen({ shell }: { shell: Shell }) {
             <>
               <h2 style={{ marginTop: 0 }}>{dt(`${def.id}.name`, def.name)}</h2>
               <p>{t(`academy.course.${def.course}` as TextId)}</p>
+              {def.hero ? <p data-testid="lesson-hero">{heroName(def.hero)}</p> : null}
+              {def.drill && ctx0(shell) ? (
+                <p data-testid="lesson-drill">
+                  <PromptText text={t(GOAL_KEY[def.guided[0]!])} ctx={ctx0(shell)!} />
+                </p>
+              ) : null}
               <p class="ffp-hint">{t('academy.phases')}</p>
               <p class="ffp-hint">{t('academy.rewards', { certified: 100, mastered: 150 })}</p>
             </>
@@ -158,6 +195,17 @@ const GOAL_KEY: Record<LessonGoal, TextId> = {
   counter: 'lesson.goal.counter',
   special: 'lesson.goal.special',
   ultimate: 'lesson.goal.ultimate',
+  reciprocal: 'm21.goal.reciprocal',
+  teamFinisher: 'm21.goal.teamFinisher',
+  pursuitControl: 'm21.goal.pursuitControl',
+  pursuitSave: 'm21.goal.pursuitSave',
+  firearmShot: 'm21.goal.firearmShot',
+  grenadeReturn: 'm21.goal.grenadeReturn',
+  disarm: 'm21.goal.disarm',
+  repair: 'm21.goal.repair',
+  containerOpen: 'm21.goal.containerOpen',
+  callBreak: 'm21.goal.callBreak',
+  breachStop: 'm21.goal.breachStop',
 };
 
 const PHASE_KEY: Record<string, TextId> = {

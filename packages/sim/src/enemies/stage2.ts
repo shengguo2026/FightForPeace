@@ -34,6 +34,7 @@ import {
   stepGrenadier,
 } from '../preservation/greenhouse';
 import { face, paced, raiseGuard, walkTo } from './ai';
+import { tally } from '../stage/tally';
 
 /**
  * M19 Stage 2 roles (Stage 2 spec §11, §12): difficulty variants, firearm rules for the
@@ -276,6 +277,7 @@ export function specialInterrupted(world: World, f: Fighter): void {
     case Special.Breach: {
       f.interrupts += 1;
       if (enc.sabotage === f.id) enc.sabotage = 0;
+      tally(world, 'breachesStopped');
       event(world, EncEvent.BreachStopped, f.id, f.breach);
       f.breach = 1;
       f.objectiveAt = world.frame + paced(world, profileOf(f)?.objective?.cooldown ?? 300);
@@ -291,6 +293,7 @@ export function specialInterrupted(world: World, f: Fighter): void {
       f.interrupts += 1;
       if (enc.call === f.id) enc.call = 0;
       enc.callReadyAt = world.frame + S2.callGap;
+      tally(world, 'callsBroken');
       event(world, EncEvent.CallBroken, f.id, f.callKind);
       f.callKind = 0;
       const i = actionIndex(f, 'signal-break');
@@ -347,6 +350,7 @@ export function completeSpecial(world: World, f: Fighter, a: ActionDef): void {
     f.breach = 0;
     f.breachAsset = 0;
     f.objectiveAt = world.frame + paced(world, obj?.cooldown ?? 300);
+    tally(world, 'breachesDone');
     event(world, EncEvent.BreachDone, f.id, idx);
     return;
   }
@@ -532,6 +536,7 @@ export function tryCall(world: World, f: Fighter, prof: EnemyProfile, target: Fi
     f.callKind = c.kind;
     f.readyAt[commandSlot(i)] = world.frame + paced(world, c.cooldown);
     enc.call = f.id;
+    tally(world, 'calls');
     event(world, EncEvent.Call, f.id, c.kind);
     return true;
   }

@@ -2457,6 +2457,126 @@ export const HERO_DATA: readonly HeroDef[] = [
         ],
         "counterHit": true
       }
+    ],
+    "showcases": [
+      {
+        "id": "rampart-oath",
+        "name": "Rampart to Oath",
+        "meter": 100,
+        "partner": null,
+        "steps": [
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              0
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              1
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              2
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              19
+            ]
+          }
+        ]
+      },
+      {
+        "id": "high-bank-relay",
+        "name": "High-Bank Relay",
+        "meter": 0,
+        "partner": null,
+        "steps": [
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              0
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              5
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": true,
+            "team": false,
+            "any": []
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              7
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "id": "shoulder-gatebreaker",
+        "name": "Shoulder into Gatebreaker",
+        "meter": 50,
+        "partner": null,
+        "steps": [
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              0
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              3
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              17
+            ]
+          }
+        ]
+      }
     ]
   },
   {
@@ -4962,6 +5082,126 @@ export const HERO_DATA: readonly HeroDef[] = [
         ],
         "counterHit": true
       }
+    ],
+    "showcases": [
+      {
+        "id": "current-to-tempest",
+        "name": "Current to Tempest",
+        "meter": 100,
+        "partner": null,
+        "steps": [
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              0
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              1
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              2
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              19
+            ]
+          }
+        ]
+      },
+      {
+        "id": "northbank-skyline",
+        "name": "Northbank Skyline",
+        "meter": 0,
+        "partner": null,
+        "steps": [
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              0
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              5
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": true,
+            "team": false,
+            "any": []
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              7
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              8
+            ]
+          }
+        ]
+      },
+      {
+        "id": "rapids-gale",
+        "name": "Rapids into Gale Wheel",
+        "meter": 50,
+        "partner": null,
+        "steps": [
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              0
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              3
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              17
+            ]
+          }
+        ]
+      }
     ]
   },
   {
@@ -7252,6 +7492,227 @@ export const HERO_DATA: readonly HeroDef[] = [
         ],
         "links": [],
         "pose": "hero.wind.pose.team.twin-accord"
+      },
+      {
+        "id": "crosswind-arc",
+        "name": "Crosswind Arc",
+        "category": "special",
+        "context": "special",
+        "dir": 3,
+        "startup": 9,
+        "active": [
+          5
+        ],
+        "recovery": 28,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 0,
+          "w": 26880,
+          "y": 33280,
+          "h": 58880,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 56,
+        "reaction": {
+          "kind": "launch",
+          "hitstun": 30,
+          "push": 256,
+          "lift": 3328,
+          "airPop": 3072,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 15,
+        "juggleCost": 30,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [
+          3
+        ],
+        "catalogue": true,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 28,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "handoffAirborne",
+          "handoffTemper"
+        ],
+        "links": [
+          {
+            "kind": "jump",
+            "to": -1,
+            "dir": 0,
+            "category": "jumpChase",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.wind.pose.special.crosswind-arc"
+      },
+      {
+        "id": "low-gust-sweep",
+        "name": "Low Gust Sweep",
+        "category": "special",
+        "context": "special",
+        "dir": 4,
+        "startup": 8,
+        "active": [
+          4
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 22,
+        "hitbox": {
+          "x": 2560,
+          "w": 34560,
+          "y": 0,
+          "h": 20480,
+          "depth": 11264
+        },
+        "hurtbox": "standing",
+        "damage": 50,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": 1280,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 12,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [
+          4
+        ],
+        "catalogue": true,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 25,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 8,
+            "forward": 512,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "hero.wind.pose.special.low-gust-sweep"
+      },
+      {
+        "id": "eye-of-the-storm",
+        "name": "Eye of the Storm",
+        "category": "ultimate",
+        "context": "ultimate",
+        "dir": 2,
+        "startup": 5,
+        "active": [
+          12
+        ],
+        "recovery": 42,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": -20480,
+          "w": 64000,
+          "y": 10240,
+          "h": 66560,
+          "depth": 17920
+        },
+        "hurtbox": "standing",
+        "damage": 210,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 3840,
+          "lift": 1792,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [
+          2
+        ],
+        "catalogue": true,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          1,
+          5
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 105,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "terminalKnockdown"
+        ],
+        "links": [],
+        "pose": "hero.wind.pose.ultimate.eye-of-the-storm"
       }
     ],
     "recipes": [
@@ -7336,6 +7797,148 @@ export const HERO_DATA: readonly HeroDef[] = [
           }
         ],
         "counterHit": true
+      }
+    ],
+    "showcases": [
+      {
+        "id": "horizon-vigil",
+        "name": "Horizon to Vigil",
+        "meter": 100,
+        "partner": null,
+        "steps": [
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              0
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              1
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              2
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              19
+            ]
+          }
+        ]
+      },
+      {
+        "id": "headwind-passage",
+        "name": "Headwind Passage",
+        "meter": 50,
+        "partner": null,
+        "steps": [
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              0
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              3
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              17
+            ]
+          }
+        ]
+      },
+      {
+        "id": "crosswind-temper",
+        "name": "Crosswind Temper (with Fire Warden)",
+        "meter": 0,
+        "partner": "fire",
+        "steps": [
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              5
+            ]
+          },
+          {
+            "slot": 1,
+            "jump": false,
+            "team": false,
+            "any": [
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "id": "horizon-accord",
+        "name": "Horizon into Twin Guardians' Accord (with Fire Warden)",
+        "meter": 100,
+        "partner": "fire",
+        "steps": [
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              0
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              1
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              2
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": true,
+            "any": []
+          },
+          {
+            "slot": 1,
+            "jump": false,
+            "team": true,
+            "any": []
+          }
+        ]
       }
     ]
   },
@@ -9862,6 +10465,226 @@ export const HERO_DATA: readonly HeroDef[] = [
         ],
         "links": [],
         "pose": "hero.fire.pose.team.twin-accord"
+      },
+      {
+        "id": "kindling-uppercut",
+        "name": "Kindling Uppercut",
+        "category": "special",
+        "context": "special",
+        "dir": 3,
+        "startup": 8,
+        "active": [
+          4
+        ],
+        "recovery": 29,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 3840,
+          "w": 24320,
+          "y": 30720,
+          "h": 56320,
+          "depth": 9728
+        },
+        "hurtbox": "standing",
+        "damage": 58,
+        "reaction": {
+          "kind": "launch",
+          "hitstun": 30,
+          "push": 256,
+          "lift": 3584,
+          "airPop": 3072,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 15,
+        "juggleCost": 30,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [
+          3
+        ],
+        "catalogue": true,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 29,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "handoffAirborne"
+        ],
+        "links": [
+          {
+            "kind": "jump",
+            "to": -1,
+            "dir": 0,
+            "category": "jumpChase",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "hero.fire.pose.special.kindling-uppercut"
+      },
+      {
+        "id": "hearth-sweep",
+        "name": "Hearth Sweep",
+        "category": "special",
+        "context": "special",
+        "dir": 4,
+        "startup": 9,
+        "active": [
+          4
+        ],
+        "recovery": 28,
+        "landing": false,
+        "blockstun": 22,
+        "hitbox": {
+          "x": 3840,
+          "w": 30720,
+          "y": 0,
+          "h": 20480,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 52,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": 1024,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 12,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [
+          4
+        ],
+        "catalogue": true,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 26,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 9,
+            "forward": 768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "hero.fire.pose.special.hearth-sweep"
+      },
+      {
+        "id": "banked-coals",
+        "name": "Banked Coals",
+        "category": "ultimate",
+        "context": "ultimate",
+        "dir": 2,
+        "startup": 6,
+        "active": [
+          10
+        ],
+        "recovery": 42,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": -15360,
+          "w": 58880,
+          "y": 10240,
+          "h": 66560,
+          "depth": 16896
+        },
+        "hurtbox": "standing",
+        "damage": 200,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 3584,
+          "lift": 1792,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [
+          2
+        ],
+        "catalogue": true,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          1,
+          6
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 100,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "terminalKnockdown"
+        ],
+        "links": [],
+        "pose": "hero.fire.pose.ultimate.banked-coals"
       }
     ],
     "recipes": [
@@ -9947,6 +10770,112 @@ export const HERO_DATA: readonly HeroDef[] = [
           }
         ],
         "counterHit": false
+      }
+    ],
+    "showcases": [
+      {
+        "id": "furnace-crucible",
+        "name": "Furnace to Crucible",
+        "meter": 100,
+        "partner": null,
+        "steps": [
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              0
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              1
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              2
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              21
+            ]
+          }
+        ]
+      },
+      {
+        "id": "flashpoint-route",
+        "name": "Flashpoint Route",
+        "meter": 50,
+        "partner": null,
+        "steps": [
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              0
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              3
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              18
+            ]
+          }
+        ]
+      },
+      {
+        "id": "rising-ember-relay",
+        "name": "Rising Ember Relay (with Wind Sentinel)",
+        "meter": 0,
+        "partner": "wind",
+        "steps": [
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              14
+            ]
+          },
+          {
+            "slot": 0,
+            "jump": false,
+            "team": false,
+            "any": [
+              11
+            ]
+          },
+          {
+            "slot": 1,
+            "jump": false,
+            "team": false,
+            "any": [
+              3
+            ]
+          }
+        ]
       }
     ]
   }
@@ -31447,6 +32376,7 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "price": 800,
       "band": "medium",
       "reveal": null,
+      "revealStage": null,
       "requires": null,
       "mastery": 3
     },
@@ -31461,6 +32391,7 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "price": 1500,
       "band": "high",
       "reveal": "story.stage1.broken-water-pact",
+      "revealStage": null,
       "requires": null,
       "mastery": 5
     },
@@ -31475,6 +32406,7 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "price": 800,
       "band": "medium",
       "reveal": null,
+      "revealStage": null,
       "requires": null,
       "mastery": 3
     },
@@ -31489,6 +32421,7 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "price": 1500,
       "band": "high",
       "reveal": "story.stage1.broken-water-pact",
+      "revealStage": null,
       "requires": null,
       "mastery": 5
     },
@@ -31503,6 +32436,7 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "price": 800,
       "band": "medium",
       "reveal": null,
+      "revealStage": null,
       "requires": null,
       "mastery": 0
     },
@@ -31517,6 +32451,7 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "price": 800,
       "band": "medium",
       "reveal": null,
+      "revealStage": null,
       "requires": null,
       "mastery": 0
     },
@@ -31531,6 +32466,7 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "price": 300,
       "band": "low",
       "reveal": null,
+      "revealStage": null,
       "requires": null,
       "mastery": 0
     },
@@ -31545,8 +32481,219 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "price": 300,
       "band": "low",
       "reveal": null,
+      "revealStage": null,
       "requires": "ach.stage1.river-flows",
       "mastery": 0
+    },
+    {
+      "id": "store.wardrobe.mountain.greenhouse-builder",
+      "group": "wardrobe",
+      "hero": "mountain",
+      "kind": "outfit",
+      "action": null,
+      "name": "Greenhouse Builder",
+      "tint": "#b9d7b0",
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage2",
+      "requires": null,
+      "mastery": 0
+    },
+    {
+      "id": "store.wardrobe.mountain.harvest-heritage",
+      "group": "wardrobe",
+      "hero": "mountain",
+      "kind": "outfit",
+      "action": null,
+      "name": "Harvest Heritage",
+      "tint": "#e6c27a",
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage2",
+      "requires": null,
+      "mastery": 0
+    },
+    {
+      "id": "store.wardrobe.river.channel-patrol",
+      "group": "wardrobe",
+      "hero": "river",
+      "kind": "outfit",
+      "action": null,
+      "name": "Channel Patrol",
+      "tint": "#9fc8e0",
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage2",
+      "requires": null,
+      "mastery": 0
+    },
+    {
+      "id": "store.wardrobe.river.lantern-festival",
+      "group": "wardrobe",
+      "hero": "river",
+      "kind": "outfit",
+      "action": null,
+      "name": "Lantern Festival",
+      "tint": "#f0a58c",
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage2",
+      "requires": null,
+      "mastery": 0
+    },
+    {
+      "id": "store.wardrobe.wind.greenhouse-response",
+      "group": "wardrobe",
+      "hero": "wind",
+      "kind": "outfit",
+      "action": null,
+      "name": "Greenhouse Response",
+      "tint": "#cfe0c4",
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage2",
+      "requires": null,
+      "mastery": 0
+    },
+    {
+      "id": "store.wardrobe.wind.prosperity-festival",
+      "group": "wardrobe",
+      "hero": "wind",
+      "kind": "outfit",
+      "action": null,
+      "name": "Prosperity Festival",
+      "tint": "#d9efe9",
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage2",
+      "requires": null,
+      "mastery": 0
+    },
+    {
+      "id": "store.wardrobe.fire.pump-house-response",
+      "group": "wardrobe",
+      "hero": "fire",
+      "kind": "outfit",
+      "action": null,
+      "name": "Pump-House Response",
+      "tint": "#f0a066",
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage2",
+      "requires": null,
+      "mastery": 0
+    },
+    {
+      "id": "store.wardrobe.fire.ember-heritage",
+      "group": "wardrobe",
+      "hero": "fire",
+      "kind": "outfit",
+      "action": null,
+      "name": "Ember Heritage",
+      "tint": "#d98a8a",
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage2",
+      "requires": null,
+      "mastery": 0
+    },
+    {
+      "id": "store.technique.wind.crosswind-arc",
+      "group": "technique",
+      "hero": "wind",
+      "kind": "special",
+      "action": "crosswind-arc",
+      "name": null,
+      "tint": null,
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": null,
+      "requires": null,
+      "mastery": 3
+    },
+    {
+      "id": "store.technique.wind.low-gust-sweep",
+      "group": "technique",
+      "hero": "wind",
+      "kind": "special",
+      "action": "low-gust-sweep",
+      "name": null,
+      "tint": null,
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage2",
+      "requires": null,
+      "mastery": 4
+    },
+    {
+      "id": "store.technique.wind.eye-of-the-storm",
+      "group": "technique",
+      "hero": "wind",
+      "kind": "ultimate",
+      "action": "eye-of-the-storm",
+      "name": null,
+      "tint": null,
+      "price": 1500,
+      "band": "high",
+      "reveal": null,
+      "revealStage": "stage2",
+      "requires": null,
+      "mastery": 5
+    },
+    {
+      "id": "store.technique.fire.kindling-uppercut",
+      "group": "technique",
+      "hero": "fire",
+      "kind": "special",
+      "action": "kindling-uppercut",
+      "name": null,
+      "tint": null,
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": null,
+      "requires": null,
+      "mastery": 3
+    },
+    {
+      "id": "store.technique.fire.hearth-sweep",
+      "group": "technique",
+      "hero": "fire",
+      "kind": "special",
+      "action": "hearth-sweep",
+      "name": null,
+      "tint": null,
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage2",
+      "requires": null,
+      "mastery": 4
+    },
+    {
+      "id": "store.technique.fire.banked-coals",
+      "group": "technique",
+      "hero": "fire",
+      "kind": "ultimate",
+      "action": "banked-coals",
+      "name": null,
+      "tint": null,
+      "price": 1500,
+      "band": "high",
+      "reveal": null,
+      "revealStage": "stage2",
+      "requires": null,
+      "mastery": 5
     }
   ],
   "achievements": [
@@ -31565,7 +32712,15 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "stat": null,
         "min": 1,
         "coop": false,
-        "state": null
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null
       }
     },
     {
@@ -31583,7 +32738,15 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "stat": null,
         "min": 1,
         "coop": false,
-        "state": null
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null
       }
     },
     {
@@ -31601,7 +32764,15 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "stat": null,
         "min": 1,
         "coop": false,
-        "state": null
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null
       }
     },
     {
@@ -31619,7 +32790,15 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "stat": null,
         "min": 1,
         "coop": false,
-        "state": null
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null
       }
     },
     {
@@ -31637,7 +32816,15 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "stat": "bestHits",
         "min": 12,
         "coop": false,
-        "state": null
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null
       }
     },
     {
@@ -31655,7 +32842,15 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "stat": "allClues",
         "min": 1,
         "coop": false,
-        "state": null
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null
       }
     },
     {
@@ -31673,7 +32868,15 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "stat": "revives",
         "min": 1,
         "coop": true,
-        "state": null
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null
       }
     },
     {
@@ -31691,7 +32894,365 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "stat": null,
         "min": 1,
         "coop": false,
-        "state": "certified"
+        "state": "certified",
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null
+      }
+    },
+    {
+      "id": "ach.stage2.peace-in-the-glasshouse",
+      "group": "story",
+      "name": "Peace in the Glasshouse",
+      "credits": 150,
+      "narrative": true,
+      "rule": {
+        "kind": "clear",
+        "content": "story.stage2.prosperity-under-siege",
+        "rank": null,
+        "difficulty": null,
+        "count": 1,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null
+      }
+    },
+    {
+      "id": "ach.stage2.every-system-breathing",
+      "group": "stageMastery",
+      "name": "Every System Breathing",
+      "credits": 300,
+      "narrative": false,
+      "rule": {
+        "kind": "preservation",
+        "content": "story.stage2.prosperity-under-siege",
+        "rank": null,
+        "difficulty": null,
+        "count": 1,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [],
+        "grade": "flourishing",
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null
+      }
+    },
+    {
+      "id": "ach.stage2.first-to-the-alarm",
+      "group": "stageMastery",
+      "name": "First to the Alarm",
+      "credits": 250,
+      "narrative": false,
+      "rule": {
+        "kind": "response",
+        "content": "story.stage2.prosperity-under-siege",
+        "rank": "S",
+        "difficulty": null,
+        "count": 1,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": 0,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null
+      }
+    },
+    {
+      "id": "ach.stage2.guardians-in-accord",
+      "group": "coop",
+      "name": "Guardians in Accord",
+      "credits": 200,
+      "narrative": false,
+      "rule": {
+        "kind": "stats",
+        "content": "story.stage2.prosperity-under-siege",
+        "rank": null,
+        "difficulty": null,
+        "count": 1,
+        "stat": null,
+        "min": 1,
+        "coop": true,
+        "state": null,
+        "all": [
+          {
+            "stat": "reciprocal",
+            "min": 1,
+            "max": null
+          },
+          {
+            "stat": "accord",
+            "min": 1,
+            "max": null
+          }
+        ],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null
+      }
+    },
+    {
+      "id": "ach.stage2.breach-denied",
+      "group": "combatTechnique",
+      "name": "Breach Denied",
+      "credits": 200,
+      "narrative": false,
+      "rule": {
+        "kind": "stats",
+        "content": "story.stage2.prosperity-under-siege",
+        "rank": null,
+        "difficulty": null,
+        "count": 1,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [
+          {
+            "stat": "breachesStopped",
+            "min": 1,
+            "max": null
+          },
+          {
+            "stat": "breachesDone",
+            "min": null,
+            "max": 0
+          },
+          {
+            "stat": "grenadeDamage",
+            "min": null,
+            "max": 0
+          }
+        ],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null
+      }
+    },
+    {
+      "id": "ach.stage2.seize-the-moment",
+      "group": "combatTechnique",
+      "name": "Seize the Moment",
+      "credits": 200,
+      "narrative": false,
+      "rule": {
+        "kind": "capture",
+        "content": "story.stage2.prosperity-under-siege",
+        "rank": null,
+        "difficulty": null,
+        "count": 1,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": "disarmed",
+        "rounds": 1,
+        "scorch": true,
+        "branch": null
+      }
+    },
+    {
+      "id": "ach.stage2.strength-without-vengeance",
+      "group": "stageMastery",
+      "name": "Strength Without Vengeance",
+      "credits": 250,
+      "narrative": false,
+      "rule": {
+        "kind": "capture",
+        "content": "story.stage2.prosperity-under-siege",
+        "rank": null,
+        "difficulty": null,
+        "count": 1,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": "surrender",
+        "gun": null,
+        "rounds": 0,
+        "scorch": false,
+        "branch": null
+      }
+    },
+    {
+      "id": "ach.stage2.silence-the-signal",
+      "group": "difficulty",
+      "name": "Silence the Signal",
+      "credits": 300,
+      "narrative": false,
+      "rule": {
+        "kind": "stats",
+        "content": "story.stage2.prosperity-under-siege",
+        "rank": null,
+        "difficulty": "extreme",
+        "count": 1,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [
+          {
+            "stat": "calls",
+            "min": 1,
+            "max": null
+          },
+          {
+            "stat": "callsUnbroken",
+            "min": null,
+            "max": 0
+          }
+        ],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null
+      }
+    },
+    {
+      "id": "ach.stage2.breath-beneath-the-water",
+      "group": "discovery",
+      "name": "Breath Beneath the Water",
+      "credits": 150,
+      "narrative": false,
+      "rule": {
+        "kind": "branch",
+        "content": "story.stage2.prosperity-under-siege",
+        "rank": null,
+        "difficulty": null,
+        "count": 1,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": "aeration"
+      }
+    },
+    {
+      "id": "ach.stage2.seeds-for-tomorrow",
+      "group": "discovery",
+      "name": "Seeds for Tomorrow",
+      "credits": 150,
+      "narrative": false,
+      "rule": {
+        "kind": "branch",
+        "content": "story.stage2.prosperity-under-siege",
+        "rank": null,
+        "difficulty": null,
+        "count": 1,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": "seed"
+      }
+    },
+    {
+      "id": "ach.stage2.knowledge-has-many-roots",
+      "group": "discovery",
+      "name": "Knowledge Has Many Roots",
+      "credits": 150,
+      "narrative": false,
+      "rule": {
+        "kind": "branch",
+        "content": "story.stage2.prosperity-under-siege",
+        "rank": null,
+        "difficulty": null,
+        "count": 1,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": "medicinal"
+      }
+    },
+    {
+      "id": "ach.stage2.guardian-of-every-wing",
+      "group": "discovery",
+      "name": "Guardian of Every Wing",
+      "credits": 300,
+      "narrative": false,
+      "rule": {
+        "kind": "branches",
+        "content": "story.stage2.prosperity-under-siege",
+        "rank": null,
+        "difficulty": null,
+        "count": 3,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null
       }
     }
   ],
@@ -31708,6 +33269,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
           "recipe": null,
           "trainer": false,
           "meter": 0,
+          "hero": null,
+          "drill": null,
           "guided": [
             "walk",
             "jump",
@@ -31740,6 +33303,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
           "recipe": "foundation",
           "trainer": false,
           "meter": 0,
+          "hero": null,
+          "drill": null,
           "guided": [
             "recipe"
           ],
@@ -31766,6 +33331,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
           "recipe": null,
           "trainer": true,
           "meter": 0,
+          "hero": null,
+          "drill": null,
           "guided": [
             "guard"
           ],
@@ -31792,6 +33359,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
           "recipe": null,
           "trainer": false,
           "meter": 100,
+          "hero": null,
+          "drill": null,
           "guided": [
             "special"
           ],
@@ -31812,8 +33381,790 @@ export const PROGRESSION_DATA: ProgressionDef = {
           }
         }
       ]
+    },
+    {
+      "id": "academy.stage2",
+      "name": "Stage 2 Academy",
+      "lessons": [
+        {
+          "id": "academy.stage2.wind",
+          "course": "specialization",
+          "name": "Wind Sentinel: precision chain",
+          "demo": "foundation",
+          "recipe": "foundation",
+          "trainer": false,
+          "meter": 0,
+          "hero": "wind",
+          "drill": null,
+          "guided": [
+            "recipe"
+          ],
+          "trial": {
+            "goals": [
+              "recipe"
+            ],
+            "count": 3,
+            "frames": 0
+          },
+          "mastery": {
+            "goals": [
+              "recipe"
+            ],
+            "count": 3,
+            "frames": 900
+          }
+        },
+        {
+          "id": "academy.stage2.fire",
+          "course": "specialization",
+          "name": "Fire Warden: momentum chain",
+          "demo": "foundation",
+          "recipe": "foundation",
+          "trainer": false,
+          "meter": 0,
+          "hero": "fire",
+          "drill": null,
+          "guided": [
+            "recipe"
+          ],
+          "trial": {
+            "goals": [
+              "recipe"
+            ],
+            "count": 3,
+            "frames": 0
+          },
+          "mastery": {
+            "goals": [
+              "recipe"
+            ],
+            "count": 3,
+            "frames": 900
+          }
+        },
+        {
+          "id": "academy.stage2.handoff",
+          "course": "conversion",
+          "name": "Reciprocal Handoffs",
+          "demo": null,
+          "recipe": null,
+          "trainer": false,
+          "meter": 0,
+          "hero": "wind",
+          "drill": {
+            "room": null,
+            "corridor": null,
+            "showcase": "crosswind-temper"
+          },
+          "guided": [
+            "reciprocal"
+          ],
+          "trial": {
+            "goals": [
+              "reciprocal"
+            ],
+            "count": 2,
+            "frames": 0
+          },
+          "mastery": {
+            "goals": [
+              "reciprocal"
+            ],
+            "count": 3,
+            "frames": 1200
+          }
+        },
+        {
+          "id": "academy.stage2.accord",
+          "course": "resources",
+          "name": "Twin Guardians' Accord",
+          "demo": null,
+          "recipe": null,
+          "trainer": false,
+          "meter": 100,
+          "hero": "wind",
+          "drill": {
+            "room": null,
+            "corridor": null,
+            "showcase": "horizon-accord"
+          },
+          "guided": [
+            "teamFinisher"
+          ],
+          "trial": {
+            "goals": [
+              "teamFinisher"
+            ],
+            "count": 1,
+            "frames": 0
+          },
+          "mastery": {
+            "goals": [
+              "teamFinisher"
+            ],
+            "count": 1,
+            "frames": 900
+          }
+        },
+        {
+          "id": "academy.stage2.mounted",
+          "course": "specialization",
+          "name": "Mounted Stability and protection",
+          "demo": null,
+          "recipe": null,
+          "trainer": false,
+          "meter": 0,
+          "hero": null,
+          "drill": {
+            "room": null,
+            "corridor": "perimeter-pursuit",
+            "showcase": null
+          },
+          "guided": [
+            "pursuitControl"
+          ],
+          "trial": {
+            "goals": [
+              "pursuitControl"
+            ],
+            "count": 2,
+            "frames": 0
+          },
+          "mastery": {
+            "goals": [
+              "pursuitSave"
+            ],
+            "count": 1,
+            "frames": 0
+          }
+        },
+        {
+          "id": "academy.stage2.revolver",
+          "course": "specialization",
+          "name": "The deliberate revolver",
+          "demo": null,
+          "recipe": null,
+          "trainer": false,
+          "meter": 0,
+          "hero": null,
+          "drill": {
+            "room": "trial-marauder",
+            "corridor": null,
+            "showcase": null
+          },
+          "guided": [
+            "firearmShot"
+          ],
+          "trial": {
+            "goals": [
+              "firearmShot"
+            ],
+            "count": 2,
+            "frames": 0
+          },
+          "mastery": {
+            "goals": [
+              "firearmShot"
+            ],
+            "count": 3,
+            "frames": 1800
+          }
+        },
+        {
+          "id": "academy.stage2.grenade",
+          "course": "defense",
+          "name": "Return the breaching grenade",
+          "demo": null,
+          "recipe": null,
+          "trainer": false,
+          "meter": 0,
+          "hero": null,
+          "drill": {
+            "room": "beat-filtration",
+            "corridor": null,
+            "showcase": null
+          },
+          "guided": [
+            "grenadeReturn"
+          ],
+          "trial": {
+            "goals": [
+              "grenadeReturn"
+            ],
+            "count": 1,
+            "frames": 0
+          },
+          "mastery": {
+            "goals": [
+              "grenadeReturn"
+            ],
+            "count": 2,
+            "frames": 0
+          }
+        },
+        {
+          "id": "academy.stage2.support-gun",
+          "course": "mastery",
+          "name": "Disarm the support gun",
+          "demo": null,
+          "recipe": null,
+          "trainer": false,
+          "meter": 0,
+          "hero": null,
+          "drill": {
+            "room": "boss-marek",
+            "corridor": null,
+            "showcase": null
+          },
+          "guided": [
+            "disarm"
+          ],
+          "trial": {
+            "goals": [
+              "disarm"
+            ],
+            "count": 1,
+            "frames": 0
+          },
+          "mastery": {
+            "goals": [
+              "disarm"
+            ],
+            "count": 1,
+            "frames": 3600
+          }
+        },
+        {
+          "id": "academy.stage2.preservation",
+          "course": "resources",
+          "name": "Preservation and repair",
+          "demo": null,
+          "recipe": null,
+          "trainer": false,
+          "meter": 0,
+          "hero": null,
+          "drill": {
+            "room": "greenhouse-test-room",
+            "corridor": null,
+            "showcase": null
+          },
+          "guided": [
+            "repair"
+          ],
+          "trial": {
+            "goals": [
+              "repair"
+            ],
+            "count": 2,
+            "frames": 0
+          },
+          "mastery": {
+            "goals": [
+              "repair"
+            ],
+            "count": 3,
+            "frames": 1800
+          }
+        },
+        {
+          "id": "academy.stage2.containers",
+          "course": "resources",
+          "name": "Ownership-aware containers",
+          "demo": null,
+          "recipe": null,
+          "trainer": false,
+          "meter": 0,
+          "hero": null,
+          "drill": {
+            "room": "trial-claimhand",
+            "corridor": null,
+            "showcase": null
+          },
+          "guided": [
+            "containerOpen"
+          ],
+          "trial": {
+            "goals": [
+              "containerOpen"
+            ],
+            "count": 2,
+            "frames": 0
+          },
+          "mastery": {
+            "goals": [
+              "containerOpen"
+            ],
+            "count": 2,
+            "frames": 1200
+          }
+        },
+        {
+          "id": "academy.stage2.signal",
+          "course": "defense",
+          "name": "New roles: the Jackal Signalman",
+          "demo": null,
+          "recipe": null,
+          "trainer": false,
+          "meter": 0,
+          "hero": null,
+          "drill": {
+            "room": "trial-signalman",
+            "corridor": null,
+            "showcase": null
+          },
+          "guided": [
+            "callBreak"
+          ],
+          "trial": {
+            "goals": [
+              "callBreak"
+            ],
+            "count": 1,
+            "frames": 0
+          },
+          "mastery": {
+            "goals": [
+              "callBreak"
+            ],
+            "count": 2,
+            "frames": 0
+          }
+        },
+        {
+          "id": "academy.stage2.saboteur",
+          "course": "defense",
+          "name": "New roles: the Systems Saboteur",
+          "demo": null,
+          "recipe": null,
+          "trainer": false,
+          "meter": 0,
+          "hero": null,
+          "drill": {
+            "room": "trial-saboteur",
+            "corridor": null,
+            "showcase": null
+          },
+          "guided": [
+            "breachStop"
+          ],
+          "trial": {
+            "goals": [
+              "breachStop"
+            ],
+            "count": 1,
+            "frames": 0
+          },
+          "mastery": {
+            "goals": [
+              "breachStop"
+            ],
+            "count": 2,
+            "frames": 0
+          }
+        }
+      ]
     }
-  ]
+  ],
+  "campaign": [
+    {
+      "id": "stage1",
+      "content": "story.stage1.broken-water-pact",
+      "opens": null,
+      "whatsNew": []
+    },
+    {
+      "id": "stage2",
+      "content": "story.stage2.prosperity-under-siege",
+      "opens": "stage1",
+      "whatsNew": [
+        "twins",
+        "mounted",
+        "ledger",
+        "weapons",
+        "containers",
+        "enemies"
+      ]
+    }
+  ],
+  "museum": [
+    {
+      "id": "picture.s1-intro-01",
+      "section": "picture",
+      "stage": "stage1",
+      "asset": "s1-intro-01",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s1-intro-03",
+      "section": "picture",
+      "stage": "stage1",
+      "asset": "s1-intro-03",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s1-intro-05",
+      "section": "picture",
+      "stage": "stage1",
+      "asset": "s1-intro-05",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s1-brief-01",
+      "section": "picture",
+      "stage": "stage1",
+      "asset": "s1-brief-01",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s1-end-01",
+      "section": "picture",
+      "stage": "stage1",
+      "asset": "s1-end-01",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s1-end-03",
+      "section": "picture",
+      "stage": "stage1",
+      "asset": "s1-end-03",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.keyart-title",
+      "section": "picture",
+      "stage": "stage1",
+      "asset": "keyart-title",
+      "unlock": {
+        "kind": "always",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.select-wind",
+      "section": "picture",
+      "stage": "stage2",
+      "asset": "select-wind",
+      "unlock": {
+        "kind": "open",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.select-fire",
+      "section": "picture",
+      "stage": "stage2",
+      "asset": "select-fire",
+      "unlock": {
+        "kind": "open",
+        "branch": null
+      }
+    },
+    {
+      "id": "cinema.stage1.intro",
+      "section": "cinema",
+      "stage": "stage1",
+      "asset": "cine.stage1.intro",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "cinema.stage1.ending",
+      "section": "cinema",
+      "stage": "stage1",
+      "asset": "cine.stage1.ending",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage1.river-before-silence",
+      "section": "music",
+      "stage": "stage1",
+      "asset": "mus.stage1.river-before-silence:title",
+      "unlock": {
+        "kind": "always",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage1.fields-without-water",
+      "section": "music",
+      "stage": "stage1",
+      "asset": "mus.stage1.fields-without-water:explore",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage1.bridge-under-watch",
+      "section": "music",
+      "stage": "stage1",
+      "asset": "mus.stage1.bridge-under-watch:combat",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage1.mill-in-motion",
+      "section": "music",
+      "stage": "stage1",
+      "asset": "mus.stage1.mill-in-motion:explore",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage1.through-the-dry-canal",
+      "section": "music",
+      "stage": "stage1",
+      "asset": "mus.stage1.through-the-dry-canal:danger",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage1.keeper-of-the-gate",
+      "section": "music",
+      "stage": "stage1",
+      "asset": "mus.stage1.keeper-of-the-gate:phase1",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage1.river-returned",
+      "section": "music",
+      "stage": "stage1",
+      "asset": "mus.stage1.river-returned:victory",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "sound.exact-block",
+      "section": "sound",
+      "stage": "stage1",
+      "asset": "sfx.exact.confirm",
+      "unlock": {
+        "kind": "always",
+        "branch": null
+      }
+    },
+    {
+      "id": "sound.heavy-hit",
+      "section": "sound",
+      "stage": "stage1",
+      "asset": "sfx.hit.heavy",
+      "unlock": {
+        "kind": "always",
+        "branch": null
+      }
+    },
+    {
+      "id": "sound.ultimate",
+      "section": "sound",
+      "stage": "stage1",
+      "asset": "sfx.ultimate.start",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "sound.team-finisher",
+      "section": "sound",
+      "stage": "stage1",
+      "asset": "sfx.team.finisher",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "sound.worker-freed",
+      "section": "sound",
+      "stage": "stage1",
+      "asset": "sfx.run.worker-freed",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "sound.river-restored",
+      "section": "sound",
+      "stage": "stage1",
+      "asset": "sfx.run.river-restored",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "collection.brass-gears",
+      "section": "collection",
+      "stage": "stage1",
+      "asset": "brass-gears",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "collection.early-aerator-impeller",
+      "section": "collection",
+      "stage": "stage2",
+      "asset": "early-aerator-impeller",
+      "unlock": {
+        "kind": "branch",
+        "branch": "aeration"
+      }
+    },
+    {
+      "id": "collection.first-harvest-seed-tin",
+      "section": "collection",
+      "stage": "stage2",
+      "asset": "first-harvest-seed-tin",
+      "unlock": {
+        "kind": "branch",
+        "branch": "seed"
+      }
+    },
+    {
+      "id": "collection.medicinal-cooperative-field-card",
+      "section": "collection",
+      "stage": "stage2",
+      "asset": "medicinal-cooperative-field-card",
+      "unlock": {
+        "kind": "branch",
+        "branch": "medicinal"
+      }
+    },
+    {
+      "id": "collection.sealed-weapon-crate",
+      "section": "collection",
+      "stage": "stage2",
+      "asset": "sealed-weapon-crate",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    }
+  ],
+  "dossier": [
+    {
+      "id": "fact.brass-gears",
+      "kind": "fact",
+      "stage": "stage1",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "theory.outside-hand",
+      "kind": "theory",
+      "stage": "stage1",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "fact.crate-seal",
+      "kind": "fact",
+      "stage": "stage2",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "fact.order-code",
+      "kind": "fact",
+      "stage": "stage2",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "theory.one-supplier",
+      "kind": "theory",
+      "stage": "stage2",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    }
+  ],
+  "research": {
+    "milestones": [
+      {
+        "id": "quarantine-provenance",
+        "stage": "stage2"
+      },
+      {
+        "id": "independent-replication",
+        "stage": null
+      },
+      {
+        "id": "safety-review",
+        "stage": null
+      },
+      {
+        "id": "approved-preparation",
+        "stage": null
+      }
+    ],
+    "inputs": [
+      {
+        "id": "formula-handover",
+        "milestone": "independent-replication",
+        "stage": "stage2",
+        "unlock": {
+          "kind": "complete",
+          "branch": null
+        }
+      },
+      {
+        "id": "provenance-ledger",
+        "milestone": "independent-replication",
+        "stage": "stage2",
+        "unlock": {
+          "kind": "branch",
+          "branch": "medicinal"
+        }
+      }
+    ]
+  }
 };
 
 export const MOUNTED_DATA: MountedDef | null = {

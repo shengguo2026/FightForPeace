@@ -195,6 +195,21 @@ function StoreDetail({
       {req && st === 'locked' ? (
         <p class="ffp-hint">{t('store.requires', { name: dt(`${req.id}.name`, req.name) })}</p>
       ) : null}
+      {item.group === 'technique' && a ? (
+        <>
+          <p data-testid="store-purpose">{t(`m21.purpose.${item.hero}.${a.id}` as TextId)}</p>
+          <p class="ffp-hint">
+            {t('m21.slot', {
+              slot: t(item.kind === 'ultimate' ? 'store.kind.ultimate' : 'store.kind.special'),
+            })}
+          </p>
+          <Button
+            label={t('m21.preview')}
+            testId="store-preview-move"
+            onPress={() => shell.academy.startPreview(item.hero!, 'technique', item.id, 'store')}
+          />
+        </>
+      ) : null}
       {item.group === 'technique' ? <p class="ffp-hint">{t('store.openLoadout')}</p> : null}
       {st !== 'owned' ? (
         <Button

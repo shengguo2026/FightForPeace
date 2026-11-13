@@ -130,6 +130,7 @@ export function ResultsOverlay({
   village,
   continuedFrom,
   settlement,
+  completion,
   again,
   hidden,
 }: {
@@ -146,6 +147,8 @@ export function ResultsOverlay({
   continuedFrom?: () => number | null;
   /** M11: each player's payout, records and achievements (null: not settled). */
   settlement?: () => readonly (Settlement | null)[];
+  /** M21: what the run completed (a stage opened, new Museum entries). */
+  completion?: () => readonly string[];
 }) {
   const r = state.results.value;
   // M20: the layered epilogue's cards come one by one before the results (Next / Skip).
@@ -292,6 +295,11 @@ export function ResultsOverlay({
         {settled.map((s, slot) =>
           s ? <Payout s={s} slot={slot} many={settled.length > 1} /> : null,
         )}
+        {(completion?.() ?? []).map((l) => (
+          <div data-testid="results-completion" style={{ marginTop: '8px', color: '#9fe3a8' }}>
+            {l}
+          </div>
+        ))}
         <div style={{ marginTop: '16px' }}>
           {(again?.() ?? true) ? button(t('results.again'), 'results-again', onAgain) : null}
           {toVillage

@@ -267,6 +267,26 @@ const Recipe = T.Object(
   { additionalProperties: false },
 );
 
+/**
+ * M21 Move Preview showcase: an authored route (roadmap decision 4). Steps name the hero's
+ * actions ("a|b" accepts either, "jump" is the jump chase); "p2:<id>" is a move of the
+ * demonstration partner named by `partner`; "team" presses Team Attack (invite, then the
+ * partner's "p2:team" confirms). `meter` is both heroes' starting meter (%).
+ */
+const Showcase = T.Object(
+  {
+    id: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
+    name: T.String({ minLength: 1 }),
+    meter: T.Optional(T.Integer({ minimum: 0, maximum: 100 })),
+    partner: T.Optional(T.String({ pattern: '^[a-z][a-z0-9-]*$' })),
+    steps: T.Array(T.String({ pattern: '^(p2:)?[a-z][a-z0-9|-]*$' }), {
+      minItems: 1,
+      maxItems: 12,
+    }),
+  },
+  { additionalProperties: false },
+);
+
 const DifficultyId = T.Union([
   T.Literal('easy'),
   T.Literal('medium'),
@@ -510,6 +530,8 @@ export const HeroSchema = T.Object(
     tags: T.Optional(T.Array(T.String({ pattern: '^[a-z][A-Za-z0-9]*$' }))),
     actions: T.Array(Action, { minItems: 1, maxItems: 48 }),
     recipes: T.Optional(T.Array(Recipe, { maxItems: 16 })),
+    /** M21 Move Preview showcases (heroes only): authored routes CI replays step by step. */
+    showcases: T.Optional(T.Array(Showcase, { maxItems: 8 })),
     /** Enemy kits (M7): role, AI, defense capability profile, morale and boss phases. */
     profile: T.Optional(Profile),
     /**
@@ -775,8 +797,61 @@ export function loadHero(
       }
     }
   }
+  const showIds = new Set<string>();
+  for (const sc of hero.showcases ?? []) {
+    if (showIds.has(sc.id)) problems.push(`duplicate showcase id "${sc.id}"`);
+    showIds.add(sc.id);
+    if (sc.steps.some((x) => x.startsWith('p2:')) && !sc.partner)
+      problems.push(`showcase "${sc.id}" has partner steps but no partner`);
+    if (sc.partner === hero.id) problems.push(`showcase "${sc.id}": the partner is another hero`);
+    for (const step of sc.steps) {
+      if (step === 'jump' || step === 'team' || step.startsWith('p2:')) continue;
+      for (const id of step.split('|'))
+        if (!ids.has(id)) problems.push(`showcase "${sc.id}" names unknown action "${id}"`);
+    }
+  }
   if (problems.length > 0) throw new HeroDataError(problems.map((p) => `${file}: ${p}`).join('\n'));
   return hero;
+}
+
+/**
+ * M21: compiles every hero's showcases once the roster is known (partner steps name the
+ * partner's actions). Steps become { slot, jump, any } with indices into that slot's kit.
+ */
+export function compileShowcases(heroes: readonly HeroYaml[]): unknown[][] {
+  const problems: string[] = [];
+  const out = heroes.map((h) =>
+    (h.showcases ?? []).map((sc) => {
+      const partner = sc.partner ? heroes.find((x) => x.id === sc.partner) : undefined;
+      if (sc.partner && !partner)
+        problems.push(`${h.id}: showcase "${sc.id}" names unknown partner "${sc.partner}"`);
+      const steps = sc.steps.map((raw) => {
+        const p2 = raw.startsWith('p2:');
+        const name = p2 ? raw.slice(3) : raw;
+        if (name === 'jump' || name === 'team')
+          return {
+            slot: p2 ? 1 : 0,
+            jump: name === 'jump',
+            team: name === 'team',
+            any: [] as number[],
+          };
+        const kit = p2 ? partner : h;
+        const any = name.split('|').map((id) => kit?.actions.findIndex((a) => a.id === id) ?? -1);
+        if (any.some((i) => i < 0))
+          problems.push(`${h.id}: showcase "${sc.id}" step "${raw}" is not in the kit`);
+        return { slot: p2 ? 1 : 0, jump: false, team: false, any };
+      });
+      return {
+        id: sc.id,
+        name: sc.name,
+        meter: sc.meter ?? 0,
+        partner: sc.partner ?? null,
+        steps,
+      };
+    }),
+  );
+  if (problems.length > 0) throw new HeroDataError(problems.join('\n'));
+  return out;
 }
 
 const DIFFICULTY_ORDER = ['easy', 'medium', 'hard', 'extreme', 'ultimate'] as const;
@@ -2000,11 +2075,52 @@ export function compileCoop(c: CoopYaml): unknown {
 const ContentId = T.String({ pattern: '^[a-z0-9]+(\\.[a-z0-9-]+)+$' });
 const Credits = T.Integer({ minimum: 0, maximum: 100000 });
 const RankLetter = T.Union([T.Literal('S'), T.Literal('A'), T.Literal('B'), T.Literal('C')]);
-const GoalName = T.Union(
-  ['walk', 'jump', 'dash', 'recipe', 'guard', 'exact', 'counter', 'special', 'ultimate'].map((g) =>
-    T.Literal(g),
-  ),
-);
+const GOAL_NAMES = [
+  'walk',
+  'jump',
+  'dash',
+  'recipe',
+  'guard',
+  'exact',
+  'counter',
+  'special',
+  'ultimate',
+  // M21 drill goals, read from the drill room's own records.
+  'reciprocal',
+  'teamFinisher',
+  'pursuitControl',
+  'pursuitSave',
+  'firearmShot',
+  'grenadeReturn',
+  'disarm',
+  'repair',
+  'containerOpen',
+  'callBreak',
+  'breachStop',
+] as const;
+const GoalName = T.Union(GOAL_NAMES.map((g) => T.Literal(g)));
+const StageRef = T.String({ pattern: '^stage[0-9]+$' });
+/** M21 unlock rules of Museum, Dossier and research entries. */
+const MuseumUnlock = T.Union([
+  T.Literal('always'),
+  T.Literal('start'),
+  T.Literal('complete'),
+  T.Literal('open'),
+  T.Object({ branch: KitId }, { additionalProperties: false }),
+]);
+const RUN_STATS = [
+  'bestHits',
+  'revives',
+  'allClues',
+  'reciprocal',
+  'accord',
+  'calls',
+  'callsBroken',
+  'callsUnbroken',
+  'breachesStopped',
+  'breachesDone',
+  'grenadeDamage',
+] as const;
 const LessonPhase = T.Object(
   {
     goals: T.Array(GoalName, { minItems: 1, maxItems: 4 }),
@@ -2080,6 +2196,8 @@ const ProgressionYaml = T.Object(
           reveal: T.Union([
             T.Literal('always'),
             T.Object({ clear: ContentId }, { additionalProperties: false }),
+            // M21: visible once a campaign stage is open (Stage 2's outfits and moves).
+            T.Object({ open: StageRef }, { additionalProperties: false }),
           ]),
           requires: T.Optional(
             T.Object({ achievement: ContentId }, { additionalProperties: false }),
@@ -2110,19 +2228,54 @@ const ProgressionYaml = T.Object(
           narrative: T.Optional(T.Boolean()),
           rule: T.Object(
             {
-              kind: T.Union([
-                T.Literal('clear'),
-                T.Literal('heroes'),
-                T.Literal('stat'),
-                T.Literal('academy'),
-              ]),
+              kind: T.Union(
+                [
+                  'clear',
+                  'heroes',
+                  'stat',
+                  'academy',
+                  // M21 Stage 2 rules (spec §14.1).
+                  'preservation',
+                  'response',
+                  'stats',
+                  'capture',
+                  'branch',
+                  'branches',
+                ].map((k) => T.Literal(k)),
+              ),
               content: T.Optional(ContentId),
               rank: T.Optional(RankLetter),
               difficulty: T.Optional(T.Union(DIFFICULTY_ORDER.map((d) => T.Literal(d)))),
               count: T.Optional(T.Integer({ minimum: 1, maximum: 100 })),
-              stat: T.Optional(
-                T.Union([T.Literal('bestHits'), T.Literal('revives'), T.Literal('allClues')]),
+              stat: T.Optional(T.Union(RUN_STATS.map((x) => T.Literal(x)))),
+              /** M21: every listed run counter within its bounds (kind stats). */
+              all: T.Optional(
+                T.Array(
+                  T.Object(
+                    {
+                      stat: T.Union(RUN_STATS.map((x) => T.Literal(x))),
+                      min: T.Optional(T.Integer({ minimum: 0, maximum: 100000 })),
+                      max: T.Optional(T.Integer({ minimum: 0, maximum: 100000 })),
+                    },
+                    { additionalProperties: false },
+                  ),
+                  { minItems: 1, maxItems: 6 },
+                ),
               ),
+              /** M21: Preservation grade id (kind preservation). */
+              grade: T.Optional(T.String({ pattern: '^[a-z]+$' })),
+              /** M21: most mounted rewinds allowed (kind response). */
+              rewinds: T.Optional(T.Integer({ minimum: 0, maximum: 100 })),
+              /** M21 capture rules: route, how the gun was lost, least rounds left, and
+               * whether a completed Scorched Claim is allowed. */
+              route: T.Optional(T.Union([T.Literal('surrender'), T.Literal('forced')])),
+              gun: T.Optional(
+                T.Union([T.Literal('disarmed'), T.Literal('broken'), T.Literal('emptied')]),
+              ),
+              rounds: T.Optional(T.Integer({ minimum: 0, maximum: 100 })),
+              scorch: T.Optional(T.Boolean()),
+              /** M21: branch id (kind branch). */
+              branch: T.Optional(KitId),
               min: T.Optional(T.Integer({ minimum: 1, maximum: 100000 })),
               coop: T.Optional(T.Boolean()),
               state: T.Optional(T.Union([T.Literal('certified'), T.Literal('mastered')])),
@@ -2158,6 +2311,19 @@ const ProgressionYaml = T.Object(
                 recipe: T.Optional(KitId),
                 trainer: T.Optional(T.Boolean()),
                 meter: T.Optional(T.Integer({ minimum: 0, maximum: 100 })),
+                /** M21: the lesson's fixed hero (else the Academy's chosen hero). */
+                hero: T.Optional(KitId),
+                /** M21 drill: a Stage 2 test room, a corridor, or a showcase with its partner. */
+                drill: T.Optional(
+                  T.Object(
+                    {
+                      room: T.Optional(KitId),
+                      corridor: T.Optional(KitId),
+                      showcase: T.Optional(KitId),
+                    },
+                    { additionalProperties: false },
+                  ),
+                ),
                 guided: T.Array(GoalName, { minItems: 1, maxItems: 4 }),
                 trial: LessonPhase,
                 mastery: LessonPhase,
@@ -2170,10 +2336,73 @@ const ProgressionYaml = T.Object(
         { additionalProperties: false },
       ),
     ),
+    campaign: T.Array(
+      T.Object(
+        {
+          id: StageRef,
+          content: ContentId,
+          opens: T.Optional(T.Object({ complete: StageRef }, { additionalProperties: false })),
+          whatsNew: T.Optional(T.Array(KitId, { minItems: 1, maxItems: 10 })),
+        },
+        { additionalProperties: false },
+      ),
+      { minItems: 1 },
+    ),
+    museum: T.Array(
+      T.Object(
+        {
+          id: T.String({ pattern: '^[a-z]+\\.[a-z0-9.-]+$' }),
+          section: T.Union(
+            ['picture', 'cinema', 'music', 'sound', 'collection'].map((x) => T.Literal(x)),
+          ),
+          stage: StageRef,
+          asset: T.String({ minLength: 1 }),
+          unlock: MuseumUnlock,
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    dossier: T.Array(
+      T.Object(
+        {
+          id: T.String({ pattern: '^[a-z]+\\.[a-z0-9-]+$' }),
+          kind: T.Union([T.Literal('fact'), T.Literal('theory')]),
+          stage: StageRef,
+          unlock: MuseumUnlock,
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    research: T.Object(
+      {
+        milestones: T.Array(
+          T.Object(
+            {
+              id: KitId,
+              complete: T.Optional(T.Object({ stage: StageRef }, { additionalProperties: false })),
+            },
+            { additionalProperties: false },
+          ),
+          { minItems: 1 },
+        ),
+        inputs: T.Array(
+          T.Object(
+            { id: KitId, milestone: KitId, stage: StageRef, unlock: MuseumUnlock },
+            { additionalProperties: false },
+          ),
+        ),
+      },
+      { additionalProperties: false },
+    ),
   },
   { additionalProperties: false },
 );
 type ProgressionYaml = Static<typeof ProgressionYaml>;
+
+/** M21: an unlock rule as data: { kind, branch } (branch only for branch rules). */
+function unlockOf(u: Static<typeof MuseumUnlock>): { kind: string; branch: string | null } {
+  return typeof u === 'string' ? { kind: u, branch: null } : { kind: 'branch', branch: u.branch };
+}
 
 /** Validates progression.yaml against the heroes it names. */
 export function loadProgression(
@@ -2212,7 +2441,33 @@ export function loadProgression(
     if (e.requires && !achievements.has(e.requires.achievement))
       problems.push(`${e.id}: unknown achievement "${e.requires.achievement}"`);
   }
-  for (const a of d.achievements) unique(a.id);
+  for (const a of d.achievements) {
+    unique(a.id);
+    const r = a.rule;
+    const need = (ok: boolean, what: string) => {
+      if (!ok) problems.push(`${a.id}: rule ${r.kind} needs ${what}`);
+    };
+    if (r.kind === 'stats') need(!!r.all, 'all');
+    if (r.kind === 'preservation') need(!!r.grade, 'grade');
+    if (r.kind === 'branch') need(!!r.branch, 'branch');
+    if (r.kind === 'stat') need(!!r.stat, 'stat');
+  }
+  const stageIds = new Set(d.campaign.map((c) => c.id));
+  for (const c of d.campaign) {
+    unique(`campaign.${c.id}`);
+    if (c.opens && !stageIds.has(c.opens.complete))
+      problems.push(`campaign ${c.id}: opens after unknown stage "${c.opens.complete}"`);
+  }
+  for (const e of d.store)
+    if (typeof e.reveal === 'object' && 'open' in e.reveal && !stageIds.has(e.reveal.open))
+      problems.push(`${e.id}: revealed by unknown campaign stage "${e.reveal.open}"`);
+  for (const m of [...d.museum, ...d.dossier, ...d.research.inputs]) {
+    unique(`museum.${m.id}`);
+    if (!stageIds.has(m.stage)) problems.push(`${m.id}: unknown campaign stage "${m.stage}"`);
+  }
+  const milestones = new Set(d.research.milestones.map((m) => m.id));
+  for (const i of d.research.inputs)
+    if (!milestones.has(i.milestone)) problems.push(`${i.id}: unknown milestone "${i.milestone}"`);
   for (const r of d.academy) {
     unique(r.id);
     for (const l of r.lessons) {
@@ -2244,7 +2499,8 @@ export function loadProgression(
       tint: e.tint ?? null,
       price: d.bands[e.band],
       band: e.band,
-      reveal: e.reveal === 'always' ? null : e.reveal.clear,
+      reveal: e.reveal !== 'always' && 'clear' in e.reveal ? e.reveal.clear : null,
+      revealStage: e.reveal !== 'always' && 'open' in e.reveal ? e.reveal.open : null,
       requires: e.requires?.achievement ?? null,
       mastery: e.mastery ?? 0,
     })),
@@ -2264,6 +2520,18 @@ export function loadProgression(
         min: a.rule.min ?? 1,
         coop: a.rule.coop ?? false,
         state: a.rule.state ?? null,
+        all: (a.rule.all ?? []).map((x) => ({
+          stat: x.stat,
+          min: x.min ?? null,
+          max: x.max ?? null,
+        })),
+        grade: a.rule.grade ?? null,
+        rewinds: a.rule.rewinds ?? null,
+        route: a.rule.route ?? null,
+        gun: a.rule.gun ?? null,
+        rounds: a.rule.rounds ?? 0,
+        scorch: a.rule.scorch ?? true,
+        branch: a.rule.branch ?? null,
       },
     })),
     academy: d.academy.map((r) => ({
@@ -2277,11 +2545,50 @@ export function loadProgression(
         recipe: l.recipe ?? null,
         trainer: l.trainer ?? false,
         meter: l.meter ?? 0,
+        hero: l.hero ?? null,
+        drill: l.drill
+          ? {
+              room: l.drill.room ?? null,
+              corridor: l.drill.corridor ?? null,
+              showcase: l.drill.showcase ?? null,
+            }
+          : null,
         guided: [...l.guided],
         trial: { ...l.trial, goals: [...l.trial.goals] },
         mastery: { ...l.mastery, goals: [...l.mastery.goals] },
       })),
     })),
+    campaign: d.campaign.map((c) => ({
+      id: c.id,
+      content: c.content,
+      opens: c.opens?.complete ?? null,
+      whatsNew: c.whatsNew ?? [],
+    })),
+    museum: d.museum.map((m) => ({
+      id: m.id,
+      section: m.section,
+      stage: m.stage,
+      asset: m.asset,
+      unlock: unlockOf(m.unlock),
+    })),
+    dossier: d.dossier.map((m) => ({
+      id: m.id,
+      kind: m.kind,
+      stage: m.stage,
+      unlock: unlockOf(m.unlock),
+    })),
+    research: {
+      milestones: d.research.milestones.map((m) => ({
+        id: m.id,
+        stage: m.complete?.stage ?? null,
+      })),
+      inputs: d.research.inputs.map((i) => ({
+        id: i.id,
+        milestone: i.milestone,
+        stage: i.stage,
+        unlock: unlockOf(i.unlock),
+      })),
+    },
   };
 }
 
@@ -3360,7 +3667,11 @@ export function generate(
   const load = (f: string, kind: 'hero' | 'enemy') =>
     loadHero(readFileSync(f, 'utf8'), basename(f), kind);
   const heroYaml = files.map((f) => load(f, 'hero'));
-  const roster = heroYaml.map((h) => compileHero(h, 'hero') as { id: string });
+  const showcases = compileShowcases(heroYaml);
+  const roster = heroYaml.map((h, i) => ({
+    ...(compileHero(h, 'hero') as { id: string }),
+    showcases: showcases[i] ?? [],
+  }));
   const heroes = JSON.stringify(roster, null, 2);
   // M19: every variant becomes its own kit right after its base (same actions and art).
   const baseEnemies = enemies.map((f) => load(f, 'enemy'));
@@ -3432,6 +3743,10 @@ export function generate(
         store: [],
         achievements: [],
         academy: [],
+        campaign: [],
+        museum: [],
+        dossier: [],
+        research: { milestones: [], inputs: [] },
       };
   const coop = coopFile
     ? compileCoop(loadCoop(readFileSync(coopFile, 'utf8'), heroYaml, basename(coopFile)))
@@ -3485,6 +3800,40 @@ export function generate(
             );
       }
     }
+  // M21: Academy drills name a known room, corridor or showcase of the lesson's hero.
+  type Drill = { room: string | null; corridor: string | null; showcase: string | null };
+  const routes =
+    (
+      progression as {
+        academy?: { lessons: { id: string; hero: string | null; drill: Drill | null }[] }[];
+      }
+    ).academy ?? [];
+  for (const r of routes)
+    for (const l of r.lessons) {
+      if (l.hero && !heroIds.includes(l.hero))
+        stageProblems.push(`progression.yaml: ${l.id}: unknown hero "${l.hero}"`);
+      const d = l.drill;
+      if (!d) continue;
+      if (d.room && !rooms.some((x) => x.id === d.room))
+        stageProblems.push(`progression.yaml: ${l.id}: unknown room "${d.room}"`);
+      if (d.corridor && !corridorIds.has(d.corridor))
+        stageProblems.push(`progression.yaml: ${l.id}: unknown corridor "${d.corridor}"`);
+      if (d.showcase) {
+        const h = heroYaml.find((x) => x.id === (l.hero ?? ''));
+        if (!h?.showcases?.some((s) => s.id === d.showcase && s.partner))
+          stageProblems.push(
+            `progression.yaml: ${l.id}: "${d.showcase}" is not a pair showcase of the lesson's hero`,
+          );
+      }
+      if ([d.room, d.corridor, d.showcase].filter(Boolean).length !== 1)
+        stageProblems.push(
+          `progression.yaml: ${l.id}: a drill names one room, corridor or showcase`,
+        );
+    }
+  // Campaign stages are stage files.
+  for (const c of (progression as { campaign?: { id: string }[] }).campaign ?? [])
+    if (!(stages as { id: string }[]).some((s) => s.id === c.id))
+      stageProblems.push(`progression.yaml: campaign stage "${c.id}" has no stage file`);
   if (stageProblems.length > 0) throw new HeroDataError(stageProblems.join('\n'));
   return `// GENERATED by packages/data/src/generate.ts from packages/data/heroes/*.yaml,
 // packages/data/enemies/*.yaml, packages/data/weapons/*.yaml,

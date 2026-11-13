@@ -1,14 +1,19 @@
 import {
   DIFFICULTIES,
+  GunLost,
   HEROES,
   PROGRESSION,
   type AchievementDef,
+  type RunStatName,
   type LoadoutChange,
   type StageResults,
   type StoreItemDef,
 } from '@ffp/sim';
 import type { Profile } from '../save/schema';
 import type { LessonState, ProgressRecord, StageRecord } from '../save/progress';
+import { stageOpen } from './campaign';
+
+export { contentIdOf } from './campaign';
 
 /**
  * M11 progression rules (spec §15.2–15.4, F&D §9): the Layered Result Payout, one-time
@@ -24,11 +29,6 @@ const LEDGER_CAP = 60;
 export const STORE: readonly StoreItemDef[] = P.store;
 export const ACHIEVEMENTS: readonly AchievementDef[] = P.achievements;
 export const ACADEMY_ROUTES = P.academy;
-
-/** The story content ID of a stage file id (`stage1` → `story.stage1.broken-water-pact`). */
-export function contentIdOf(stage: string): string {
-  return stage === 'stage1' ? 'story.stage1.broken-water-pact' : `story.${stage}`;
-}
 
 export interface PayoutLine {
   /** completion, difficulty, rank, firstClear, firstRank.S, allClues, achievement, mastery. */
@@ -92,7 +92,11 @@ export function rankIndex(rank: string): number {
 }
 
 /** Record category: Standard or Open loadout, solo or co-op, difficulty. */
-export function recordCategory(standard: boolean, mode: 'solo' | 'coop', difficulty: string): string {
+export function recordCategory(
+  standard: boolean,
+  mode: 'solo' | 'coop',
+  difficulty: string,
+): string {
   return `${standard ? 'standard' : 'open'}.${mode}.${difficulty}`;
 }
 
@@ -179,12 +183,19 @@ export function settleRun(p: Profile, report: RunReport, now = Date.now()): Sett
   out.lines.forEach((l) => (l.suppressed = suppressed));
   if (!suppressed) {
     out.total = out.lines.reduce((n, l) => n + l.amount, 0);
-    for (const l of out.lines) pay(pr, l.id === 'achievement' ? 'achievement' : 'payout', l.amount, l.ref ?? l.id, now);
+    for (const l of out.lines)
+      pay(pr, l.id === 'achievement' ? 'achievement' : 'payout', l.amount, l.ref ?? l.id, now);
   }
   return out;
 }
 
-function updateRecord(pr: ProgressRecord, cid: string, category: string, report: RunReport, now: number): boolean {
+function updateRecord(
+  pr: ProgressRecord,
+  cid: string,
+  category: string,
+  report: RunReport,
+  now: number,
+): boolean {
   const r = report.results;
   const all = (pr.records[cid] ??= {});
   const old: StageRecord | undefined = all[category];
@@ -257,19 +268,68 @@ export function achievementMet(p: Profile, a: AchievementDef, report: RunReport 
       return (pr.progress[`heroes:${report.contentId}`] ?? []).length >= rule.count;
     case 'stat': {
       if (rule.coop && report.mode !== 'coop') return false;
-      if (rule.stat === 'bestHits') return r.stats.bestHits >= rule.min;
-      if (rule.stat === 'revives') return r.stats.revives >= rule.min;
-      if (rule.stat === 'allClues')
-        return r.cluesTotal > 0 && r.stats.clues + r.stats.evidence >= r.cluesTotal;
-      return false;
+      if (!rule.stat) return false;
+      return runStat(r, rule.stat) >= rule.min;
     }
+    // --- M21 Stage 2 rules (spec §14.1) ---
+    case 'preservation':
+      return !!r.preservation && r.preservation.grade === rule.grade;
+    case 'response':
+      return (
+        !!r.response &&
+        rankIndex(r.response.grade) >= rankIndex(rule.rank ?? 'S') &&
+        r.response.rewinds <= (rule.rewinds ?? 0)
+      );
+    case 'stats':
+      if (rule.coop && report.mode !== 'coop') return false;
+      if (rule.difficulty && r.difficulty < DIFF_IDS.indexOf(rule.difficulty)) return false;
+      return (rule.all ?? []).every((x) => {
+        const v = runStat(r, x.stat);
+        return (x.min === null || v >= x.min) && (x.max === null || v <= x.max);
+      });
+    case 'capture': {
+      const c = r.capture;
+      if (!c) return false;
+      if (rule.route && c.route !== (rule.route === 'surrender' ? 1 : 2)) return false;
+      if (rule.gun) {
+        const want = {
+          disarmed: GunLost.Disarmed,
+          broken: GunLost.Broken,
+          emptied: GunLost.Emptied,
+        };
+        if (c.gunLost !== want[rule.gun] || c.gunAmmo < (rule.rounds ?? 0)) return false;
+      }
+      // A completed Scorched Claim (state 3) is not a clean capture.
+      if (rule.scorch === false && c.scorch === 3) return false;
+      return true;
+    }
+    case 'branch':
+      return r.branches.some((b) => b.id === rule.branch && b.outcome === 1);
+    case 'branches':
+      return r.branches.filter((b) => b.outcome === 1).length >= rule.count;
     default:
       return false;
   }
 }
 
+/** A run counter by name (M11 and M21 counters; `allClues` 1 when every clue was found). */
+export function runStat(r: RunReport['results'], stat: RunStatName): number {
+  const s = r.stats;
+  switch (stat) {
+    case 'allClues':
+      return r.cluesTotal > 0 && s.clues + s.evidence >= r.cluesTotal ? 1 : 0;
+    case 'callsUnbroken':
+      return Math.max(0, (s.calls ?? 0) - (s.callsBroken ?? 0));
+    default:
+      return s[stat] ?? 0;
+  }
+}
+
 /** Progress text values of an achievement (e.g. heroes 1/2), or null. */
-export function achievementProgress(p: Profile, a: AchievementDef): { n: number; of: number } | null {
+export function achievementProgress(
+  p: Profile,
+  a: AchievementDef,
+): { n: number; of: number } | null {
   if (a.rule.kind === 'heroes')
     return { n: (p.progress.progress[`heroes:${a.rule.content}`] ?? []).length, of: a.rule.count };
   if (a.rule.kind === 'academy')
@@ -294,7 +354,12 @@ export function lessonState(p: Profile, lessonId: string): LessonState {
  * Mastered after the mastery goal). States only rise; certification and mastery pay their
  * Credits once. Cheat Practice never calls this.
  */
-export function advanceLesson(p: Profile, lessonId: string, state: LessonState, now = Date.now()): AcademyAward {
+export function advanceLesson(
+  p: Profile,
+  lessonId: string,
+  state: LessonState,
+  now = Date.now(),
+): AcademyAward {
   const pr = p.progress;
   const before = lessonState(p, lessonId);
   const out: AcademyAward = { state: before, credits: 0, achievements: [] };
@@ -327,8 +392,13 @@ export type StoreStatus = 'owned' | 'available' | 'locked' | 'hidden';
 
 /** Revealed (visible) entries have met their reveal condition. */
 export function revealed(p: Profile, item: StoreItemDef): boolean {
+  // M21: entries of a later stage show once that stage is open.
+  if (item.revealStage) return stageOpen(p, item.revealStage);
   if (!item.reveal) return true;
-  return (p.missions[item.reveal]?.clears ?? 0) > 0 || p.progress.claimed.includes(`firstClear:${item.reveal}`);
+  return (
+    (p.missions[item.reveal]?.clears ?? 0) > 0 ||
+    p.progress.claimed.includes(`firstClear:${item.reveal}`)
+  );
 }
 
 /**
@@ -407,7 +477,11 @@ export function loadoutChanges(p: Profile | null, hero: string): LoadoutChange[]
   return (p.progress.equipped[hero]?.techniques ?? [])
     .map(itemDef)
     .filter((i): i is StoreItemDef => !!i && p.progress.owned.includes(i.id))
-    .map((i) => ({ kind: i.kind as 'special' | 'ultimate', dir: techniqueSlot(i), action: i.action }));
+    .map((i) => ({
+      kind: i.kind as 'special' | 'ultimate',
+      dir: techniqueSlot(i),
+      action: i.action,
+    }));
 }
 
 /** Equipped catalogue techniques of a hero (store ids). */
