@@ -166,7 +166,7 @@ export interface FfpDebugHook {
     grantCredits(n: number): void;
     /** Ends the running stage as if the evidence had been secured. */
     finishStage(): void;
-    lesson(): { phase: string; met: string[]; done: number; count: number } | null;
+    lesson(): { lesson: string; phase: string; met: string[]; done: number; count: number } | null;
     lastCombo(): { steps: string[]; hits: number } | null;
     cheats(): { hero: string[][]; session: string[]; marked: boolean };
     pilotActive(): boolean;
