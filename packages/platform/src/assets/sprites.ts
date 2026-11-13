@@ -277,6 +277,20 @@ const FLEE_DRAWN_RIGHT = new Set([
   'signalman',
 ]);
 
+/**
+ * The rescued workers' sheets (npc.worker-a/-b): 0 carrying, 1 burdened walk, 2 cowering,
+ * 3 freed, 4 cheering, 5 running home. Cells 0–4 face right; the running-home cell is drawn
+ * running left (looking back over the shoulder).
+ */
+export const WORKER_RUN_CELL = 5;
+
+/** Should a worker's cell be mirrored so it faces the way it moves (vx < 0: left)? */
+export function workerFlip(cell: number, vx: number): boolean {
+  if (vx === 0) return false;
+  const drawnLeft = cell === WORKER_RUN_CELL;
+  return vx < 0 ? !drawnLeft : drawnLeft;
+}
+
 const PHASE_INDEX = { startup: 0, active: 1, recovery: 2 } as const;
 
 function phase(f: Fighter, a: ActionDef): 0 | 1 | 2 {

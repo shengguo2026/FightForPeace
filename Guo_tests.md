@@ -1204,3 +1204,7 @@ Open `http://localhost:5173/` (the shell). Your saved profile is migrated to sav
 4. **Store previews:** **Store → Wardrobe**: focus an outfit; the right panel shows the hero in the standard colours and in this outfit, side by side. **Store → Collection**: focusing a badge shows how it appears in the village footer next to your name.
 5. **Next lesson:** start any Academy lesson, press **Esc**: the pause menu has **Next lesson**, which starts the following lesson of the route at once. When a lesson is mastered, the lesson panel also names the next lesson.
 6. **Lab panels:** open the Training Lab (the panels with "F1 hide · F2 settings" show), go back and start an Academy lesson: the Lab panels no longer show over the lesson. The F keys belong to the Lab and work there as before.
+
+### Fix · rescued workers run the way they move (Guo, 13 Nov)
+
+1. Play Stage 2 to the Emergency Aeration Annex (or Stage 1's fields) and free a worker. After cheering, the worker runs home to the left: the body and legs now run left (the head looks back over the shoulder, as drawn).

@@ -15,7 +15,7 @@ import {
   weaponIndex,
 } from '@ffp/sim';
 import { AssetRegistry } from '../src/assets/registry';
-import { SpritePicker } from '../src/assets/sprites';
+import { SpritePicker, WORKER_RUN_CELL, workerFlip } from '../src/assets/sprites';
 
 const reg = new AssetRegistry();
 const pick = new SpritePicker(reg);
@@ -195,4 +195,12 @@ test('a fleeing enemy is drawn running the way it moves (Stage 1 and Stage 2 exi
   expect(flee('recruit')?.drawnLeft).toBe(true);
   for (const id of ['claimhand', 'marauder', 'saboteur', 'signalman', 'enforcer2'])
     expect(flee(id)?.drawnLeft, id).toBe(false);
+});
+
+test('a rescued worker running home is drawn running left, the way it moves', () => {
+  // Workers run home leftward; the running-home cell is already drawn running left.
+  expect(workerFlip(WORKER_RUN_CELL, -1)).toBe(false);
+  expect(workerFlip(WORKER_RUN_CELL, 1)).toBe(true);
+  // Standing poses (drawn facing right) are not mirrored while the worker stands still.
+  for (const cell of [0, 1, 2, 3, 4]) expect(workerFlip(cell, 0)).toBe(false);
 });

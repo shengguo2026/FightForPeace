@@ -45,6 +45,7 @@ import {
   RENDER_SCALE,
   type QualityLevel,
   SpritePicker,
+  workerFlip,
 } from '@ffp/platform';
 import type { RenderSnapshot } from '../game';
 import { ArenaView } from './arenaView';
@@ -707,8 +708,8 @@ export class StageScene extends Phaser.Scene {
       sp.setScale(0.95);
       sp.setPosition(x, z);
       sp.setDepth(this.depthAt(z));
-      // The sheets face right; a worker running home runs left.
-      sp.setFlipX(w.state === WorkerState.Leaving);
+      // A worker running home moves left; the sheet is mirrored only where needed.
+      sp.setFlipX(workerFlip(cell, w.state === WorkerState.Leaving ? -1 : 0));
     });
     if (beat.cache) prop(920, 'prop.barricade', 3, beat.cache.x, beat.cache.z, 120);
     run.pickups.forEach((p, i) => {
