@@ -1284,3 +1284,4 @@ Pull the branch again (`git pull`), then `pnpm install` and `pnpm dev` as above.
 
 1. **Walking with a weapon:** in Stage 2, pick up the lance, the sidearm and the support gun in turn and walk. The legs step through the walk cycle and the weapon is drawn in the hero's hand; standing still shows the weapon's ready stance as before. (Dedicated armed walk sheets were never delivered; see the reply in the thread.)
 2. **Museum collection:** **Museum → Collection**: each unlocked piece shows its picture above the description: the brass gears (after Stage 1), the aerator impeller, the seed tin and the field card (by branch) and the sealed weapon crate (after Stage 2).
+3. **Riding move list in your language:** switch to 简体中文 (or Deutsch) and start the Perimeter Pursuit. The control list at the bottom names each riding move in that language (for Wind: 掠身掌, 横风踢, 风道跃, 横风侧倾, 守护切入, 通途守望).

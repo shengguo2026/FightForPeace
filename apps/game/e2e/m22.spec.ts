@@ -141,3 +141,16 @@ test('Stage 2 rooms draw their area art; the pursuit draws riders on their bikes
   await page.waitForTimeout(1500);
   await page.screenshot({ path: 'test-results/m22-pursuit.png' });
 });
+
+test('the riding move list at the bottom follows the language', async ({ page }) => {
+  await page.goto('/?stage=2&difficulty=easy');
+  await page.waitForFunction(() => (window.__ffp?.frame() ?? 0) > 60);
+  await expect(page.getByTestId('hint-p1')).toContainText("Mason's Reach");
+  // The dev server serves the game's own modules: switch the language in place.
+  await page.evaluate(async (path) => {
+    const i18n = (await import(/* @vite-ignore */ path)) as { setLocale: (l: string) => void };
+    i18n.setLocale('zh-CN');
+  }, '/src/text/i18n.ts');
+  await expect(page.getByTestId('hint-p1')).toContainText('石匠探手');
+  await expect(page.getByTestId('hint-p1')).not.toContainText("Mason's Reach");
+});
