@@ -36,6 +36,7 @@ import type { Shell } from './shell/shell';
 import { setFakePads, useFakePads } from './input/browserInput';
 import { activeCinematic } from './media/Cinematic';
 import { audio } from './media/audio';
+import { narrationLog } from './media/narration';
 import { EFFECT_STATS } from './scenes/effects';
 import { capabilities, perf } from './system/probe';
 import { textDiagnostics } from './text/i18n';
@@ -82,6 +83,8 @@ export function installDebugHook(
           played: [...audio.played],
           audioRunning: audio.running,
           effects: { ...EFFECT_STATS },
+          ambience: audio.ambienceId,
+          narration: [...narrationLog],
         };
       },
       advanceCine: (ms) => activeCinematic.value?.player.advance(ms),

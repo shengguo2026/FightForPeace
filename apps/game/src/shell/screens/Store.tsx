@@ -185,6 +185,14 @@ function StoreDetail({
           />
         </p>
       ) : null}
+      {item.kind === 'outfit' && OUTFIT_ART.has(item.id) ? (
+        <img
+          data-testid="store-outfit-art"
+          src={ART(`outfit-${item.id.split('.').slice(2).join('-')}`)}
+          alt={t('m21.outfitThis')}
+          style={{ display: 'block', height: '240px', margin: '6px 0' }}
+        />
+      ) : null}
       {item.kind === 'outfit' && item.hero && item.tint ? (
         <OutfitPreview hero={item.hero} tint={item.tint} />
       ) : null}
@@ -247,6 +255,23 @@ function StoreDetail({
  * treatment of the hero's sprite until their art exists, drawn here the way the stage
  * draws it (multiplied by the tint).
  */
+/**
+ * M22: Stage 2 outfits with delivered wardrobe art (shown above the in-stage tint preview;
+ * in the stage the outfit is still a tint of the standard sheets).
+ */
+const OUTFIT_ART: ReadonlySet<string> = new Set(
+  [
+    'wind.greenhouse-response',
+    'wind.prosperity-festival',
+    'fire.pump-house-response',
+    'fire.ember-heritage',
+    'mountain.greenhouse-builder',
+    'mountain.harvest-heritage',
+    'river.channel-patrol',
+    'river.lantern-festival',
+  ].map((o) => `store.wardrobe.${o}`),
+);
+
 function OutfitPreview({ hero, tint }: { hero: string; tint: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {

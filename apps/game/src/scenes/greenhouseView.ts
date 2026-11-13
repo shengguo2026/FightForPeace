@@ -324,7 +324,7 @@ export class GreenhouseView {
         const color = lost ? 0x555555 : CATEGORY_COLOR[k.category]!;
         this.back.fillStyle(0x000000, 0.25);
         this.back.fillEllipse(x, z + hd, hw * 2.2, 24);
-        this.back.fillStyle(color, isShutter ? 0.95 : 0.85);
+        this.back.fillStyle(color, isShutter ? 0.95 : art ? 0.3 : 0.85);
         this.back.fillRect(x - hw, z - h + hd, hw * 2, h);
         this.back.lineStyle(3, STATE_COLOR[a.state]!, 1);
         this.back.strokeRect(x - hw, z - h + hd, hw * 2, h);

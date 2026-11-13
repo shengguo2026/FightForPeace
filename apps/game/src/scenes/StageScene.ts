@@ -467,8 +467,10 @@ export class StageScene extends Phaser.Scene {
     }
     for (const e of p.enemies) {
       const pick = enemyMountCell(e);
-      if (this.mountSprite(-1 - e.id, pick, fxToPixels(e.x), fxToPixels(e.z), scale))
-        (mountKeep.add(-1 - e.id), art.add(`e${e.id}`));
+      if (this.mountSprite(-1 - e.id, pick, fxToPixels(e.x), fxToPixels(e.z), scale)) {
+        mountKeep.add(-1 - e.id);
+        art.add(`e${e.id}`);
+      }
     }
     this.dropStale(this.mountSprites, mountKeep);
     this.pursuit.mountArt = art;
