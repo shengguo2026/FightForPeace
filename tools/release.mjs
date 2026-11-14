@@ -118,7 +118,7 @@ export function assemble({
   const manifest = readFileSync(manifestFile, 'utf8');
   if (JSON.parse(manifest).game !== version) {
     throw new Error(
-      `${relative(REPO, manifestFile)} is for ${JSON.parse(manifest).game}, not ${version}. Run RECORD=1 pnpm vitest run packages/platform/test/release-manifest.test.ts.`,
+      `${relative(REPO, manifestFile)} is for ${JSON.parse(manifest).game}, not ${version}. Run RECORD=1 pnpm vitest run tests/release/manifest.test.ts.`,
     );
   }
   const name = `FightForPeace-${version}`;

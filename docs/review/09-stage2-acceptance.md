@@ -21,7 +21,7 @@
 | Controls | `tests/lint/prompt-matrix.test.ts` (every token of every catalogue, including the riding move list and Stage 2 lessons, × 3 layouts × 4 pad families × rebinding × players); `apps/game/e2e/m23.spec.ts`: German first launch on QWERTZ, STEADYRIDE chosen with the gamepad only | steps 5, 8 |
 | Localization and accessibility | `m23.spec.ts` in German and Chinese: stage select (Stage 2), Museum (all sections), Store, Records; the pursuit, a room, the epilogue and the results in play. No overflow, no fallback text, axe without serious or critical issues; `tests/lint/localization-qa.test.ts`, `catalogues.test.ts` | step 8 |
 | Performance | headless: `tests/perf/stage2-step-cost.test.ts` (crowded Ultimate co-op rooms, co-op pursuit, intercept, every Marek phase: under 4 ms per step); browser: `m23.spec.ts`, Filtration Control on Ultimate with Chromium throttled ×2 and the Canvas renderer | step 9 |
-| Release package | `docs/release/manifest.json` in the zip, checked by `packages/platform/test/release-manifest.test.ts` | step 1 |
+| Release package | `docs/release/manifest.json` in the zip, checked by `tests/release/manifest.test.ts` | step 1 |
 | Approach walks (lesson A5) | EW01–EW08 checked by eye, cell 1 against cell 4 (section 6) | step 7 |
 
 ## 2. Complete paths (bot, no cheats)

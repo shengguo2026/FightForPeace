@@ -2,8 +2,8 @@ import { RULES_VERSION, STATE_FORMAT, cheatRegistryHash, rulesHash } from '@ffp/
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, test } from 'vitest';
-import manifest from '../src/assets/manifest.json';
-import { NET_PROTOCOL, contentHash } from '../src/net/protocol';
+import manifest from '../../packages/platform/src/assets/manifest.json';
+import { NET_PROTOCOL, contentHash } from '../../packages/platform/src/net/protocol';
 
 /**
  * M23 release manifest (Stage 2 spec §18, "Release package"): what a release of this
@@ -15,7 +15,7 @@ import { NET_PROTOCOL, contentHash } from '../src/net/protocol';
  * is not recorded here fails, so a release never ships with an unrecorded rules or content
  * change.
  */
-const REPO = resolve(__dirname, '../../..');
+const REPO = resolve(__dirname, '../..');
 const FILE = join(REPO, 'docs/release/manifest.json');
 
 function build() {
