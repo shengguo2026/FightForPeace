@@ -1294,3 +1294,4 @@ Pull the branch again (`git pull`), then `pnpm install` and `pnpm dev` as above.
 2. **Enemy flee runs:** beat a Claim Hand, Reaver, Marauder, Saboteur, Glasshouse Runner, Signalman or Enforcer until it flees (or let the Road Rider lose its bike): it runs away on a six-pose run.
 3. **Extra walks:** the Road Rider on foot, the Revolver Marauder after losing its revolver and Marek in Scorched Claim step through a walk instead of sliding.
 4. **Villagers:** free the worker in the Aeration Annex and the botanist in the Prep Room: each walks out on a walk cycle.
+5. **Stage 1 runs (S1W01–S1W03):** in Stage 1, beat a Pressed Recruit until it flees: it runs away on a six-pose run instead of the old two poses. Free the workers: both kinds run home on a six-pose run, facing the way they go.

@@ -258,7 +258,11 @@ test('a fleeing enemy is drawn running the way it moves (Stage 1 and Stage 2 exi
     f.state = MoveState.Flee;
     return pick.fighter(f, 0);
   };
-  expect(flee('recruit')?.drawnLeft).toBe(true);
+  // M22: the Pressed Recruit's six-pose flee run (S1W01) replaces its two Stage 1 cells.
+  expect(flee('recruit')?.sheet).toBe('enemy.trainer.sheet.flee');
+  expect(flee('recruit')?.drawnLeft).toBeFalsy();
+  for (const id of ['npc.worker-a.run', 'npc.worker-b.run'])
+    expect(reg.sheet(id)?.sheet.cells.filter(Boolean)).toHaveLength(6);
   for (const id of ['claimhand', 'marauder', 'saboteur', 'signalman', 'enforcer2'])
     expect(flee(id)?.drawnLeft, id).toBe(false);
 });

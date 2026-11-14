@@ -6726,6 +6726,59 @@
         ]
       }
     },
+    "enemy.trainer.sheet.flee": {
+      "url": "art/trainer-flee.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 360,
+        "cells": [
+          {
+            "x0": 58,
+            "y0": 64,
+            "x1": 301,
+            "foot": 360
+          },
+          {
+            "x0": 82,
+            "y0": 55,
+            "x1": 257,
+            "foot": 360
+          },
+          {
+            "x0": 38,
+            "y0": 45,
+            "x1": 325,
+            "foot": 306
+          },
+          {
+            "x0": 41,
+            "y0": 65,
+            "x1": 323,
+            "foot": 361
+          },
+          {
+            "x0": 80,
+            "y0": 55,
+            "x1": 257,
+            "foot": 361
+          },
+          {
+            "x0": 37,
+            "y0": 47,
+            "x1": 342,
+            "foot": 304
+          }
+        ],
+        "scale": 1.0
+      },
+      "provenance": {
+        "source": "enemies/recruit/ENM-RECRUIT-FLEE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "enemy.trainer.sheet.idle-walk": {
       "url": "art/trainer-idle-walk.webp",
       "sheet": {
@@ -15858,6 +15911,59 @@
         ]
       }
     },
+    "npc.worker-a.run": {
+      "url": "art/npc-worker-a-run.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 360,
+        "cells": [
+          {
+            "x0": 61,
+            "y0": 37,
+            "x1": 307,
+            "foot": 361
+          },
+          {
+            "x0": 88,
+            "y0": 37,
+            "x1": 275,
+            "foot": 362
+          },
+          {
+            "x0": 37,
+            "y0": 25,
+            "x1": 324,
+            "foot": 324
+          },
+          {
+            "x0": 43,
+            "y0": 35,
+            "x1": 312,
+            "foot": 360
+          },
+          {
+            "x0": 85,
+            "y0": 34,
+            "x1": 275,
+            "foot": 360
+          },
+          {
+            "x0": 33,
+            "y0": 22,
+            "x1": 341,
+            "foot": 308
+          }
+        ],
+        "scale": 0.9
+      },
+      "provenance": {
+        "source": "npcs/NPC-WORKER-A-RUN.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "npc.worker-a.sheet": {
       "url": "art/npc-worker-a.webp",
       "sheet": {
@@ -15903,6 +16009,59 @@
             "foot": 353
           }
         ]
+      }
+    },
+    "npc.worker-b.run": {
+      "url": "art/npc-worker-b-run.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 63,
+            "y0": 42,
+            "x1": 308,
+            "foot": 356
+          },
+          {
+            "x0": 80,
+            "y0": 45,
+            "x1": 288,
+            "foot": 355
+          },
+          {
+            "x0": 40,
+            "y0": 40,
+            "x1": 315,
+            "foot": 329
+          },
+          {
+            "x0": 63,
+            "y0": 43,
+            "x1": 314,
+            "foot": 354
+          },
+          {
+            "x0": 88,
+            "y0": 42,
+            "x1": 272,
+            "foot": 354
+          },
+          {
+            "x0": 42,
+            "y0": 38,
+            "x1": 323,
+            "foot": 321
+          }
+        ],
+        "scale": 0.95
+      },
+      "provenance": {
+        "source": "npcs/NPC-WORKER-B-RUN.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
       }
     },
     "npc.worker-b.sheet": {

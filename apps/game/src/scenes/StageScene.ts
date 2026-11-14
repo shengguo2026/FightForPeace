@@ -831,14 +831,15 @@ export class StageScene extends Phaser.Scene {
               : s2.freed[1]
             : s2.leaving
         : -1;
-      // M22: leaving walks through the villager's walk cycle where it was delivered.
+      // M22: leaving walks (Stage 2) or runs home (Stage 1) through the villager's own
+      // cycle where it was delivered; those sheets face right like every other cell.
+      const cycle = s2 ? s2.walk : w.look === 1 ? 'npc.worker-b.run' : 'npc.worker-a.run';
       const walking =
-        s2 !== undefined &&
         w.state === WorkerState.Leaving &&
-        this.textures.exists(s2.walk) &&
-        this.assets.sheet(s2.walk) !== undefined;
+        this.textures.exists(cycle) &&
+        this.assets.sheet(cycle) !== undefined;
       const sheet = walking
-        ? s2.walk
+        ? cycle
         : s2
           ? s2.sheet
           : w.look === 1
@@ -857,7 +858,7 @@ export class StageScene extends Phaser.Scene {
       sp.setVisible(true);
       sp.setTexture(
         sheet,
-        walking ? Math.floor(frame / 9) % meta.cells.length : s2 ? s2cell : cell,
+        walking ? Math.floor(frame / (s2 ? 9 : 6)) % meta.cells.length : s2 ? s2cell : cell,
       );
       sp.setOrigin(0.5, meta.ground / meta.cell);
       sp.setScale(0.95 * (meta.scale ?? 1));
@@ -865,7 +866,7 @@ export class StageScene extends Phaser.Scene {
       sp.setDepth(this.depthAt(z));
       // A worker running home moves left; the sheet is mirrored only where needed.
       sp.setFlipX(
-        s2
+        s2 || walking
           ? w.state === WorkerState.Leaving
           : workerFlip(cell, w.state === WorkerState.Leaving ? -1 : 0),
       );

@@ -129,6 +129,11 @@ OTHER_WALKS = [  # (source, manifest id, file name, scale)
     ("enemies/marek/ENM-MAREK-SCORCHED-WALK.png", "enemy.marek.sheet.scorched-walk", "marek-scorched-walk", 0.9),
     ("npcs/NPC-S2-WORKER-WALK.png", "npc.s2-worker.walk", "npc-s2-worker-walk", 0.92),
     ("npcs/NPC-S2-RESEARCHER-WALK.png", "npc.s2-researcher.walk", "npc-s2-researcher-walk", 0.87),
+    # Stage 1 (S1W01-S1W03, codex_prompts_stage1_walks_flees.md): the Pressed Recruit wears
+    # the training dummy's sheets, so its flee run is the trainer's; the workers run home.
+    ("enemies/recruit/ENM-RECRUIT-FLEE.png", "enemy.trainer.sheet.flee", "trainer-flee", 1.0),
+    ("npcs/NPC-WORKER-A-RUN.png", "npc.worker-a.run", "npc-worker-a-run", 0.9),
+    ("npcs/NPC-WORKER-B-RUN.png", "npc.worker-b.run", "npc-worker-b-run", 0.95),
 ]
 # Weapon sheets drawn larger than the hero's idle sheet (standing height measured at
 # ingest): shown at this scale so the hero keeps one size.
