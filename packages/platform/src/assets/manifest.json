@@ -1895,6 +1895,59 @@
         ]
       }
     },
+    "enemy.claimhand.sheet.walk": {
+      "url": "art/claimhand-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 365,
+        "cells": [
+          {
+            "x0": 101,
+            "y0": 36,
+            "x1": 302,
+            "foot": 366
+          },
+          {
+            "x0": 116,
+            "y0": 37,
+            "x1": 265,
+            "foot": 365
+          },
+          {
+            "x0": 103,
+            "y0": 31,
+            "x1": 261,
+            "foot": 364
+          },
+          {
+            "x0": 86,
+            "y0": 36,
+            "x1": 306,
+            "foot": 366
+          },
+          {
+            "x0": 109,
+            "y0": 35,
+            "x1": 274,
+            "foot": 365
+          },
+          {
+            "x0": 125,
+            "y0": 30,
+            "x1": 277,
+            "foot": 363
+          }
+        ],
+        "scale": 0.9
+      },
+      "provenance": {
+        "source": "enemies/claimhand/ENM-CLAIMHAND-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "enemy.claimhand.sheet.weapon": {
       "url": "art/claimhand-weapon.webp",
       "sheet": {
