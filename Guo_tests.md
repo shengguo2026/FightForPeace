@@ -1317,7 +1317,7 @@ What changed in play:
 - **Keyboard and gamepad:** the Museum Investigation panel can be reached and scrolled with Tab and the arrow keys; in Elder's Secrets, D-pad down from the last cheat now reaches the "I understand" button.
 - **Release zip** contains `manifest.json` (versions, hashes, golden replays and the source of every approved file).
 
-Decisions for you (nothing changed):
+Decisions (Guo, 2026-11-14: keep all three as they are):
 
 - **After the last continue the whole stage starts again from the pursuit** (rule D8). Stage 2 is long, so on Medium this can mean 20 minutes again. If after your Easy run you would rather go back to the last checkpoint, say so.
 - **Hard Loading Yard** (Enforcer plus a Marauder) is the hardest early room on Hard solo. Kept as is unless it feels unfair.
