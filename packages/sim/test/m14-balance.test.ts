@@ -75,10 +75,13 @@ describe('Medium balance shape (twelve bot variants per beat)', () => {
     expect(coop).toBeGreaterThanOrEqual(sum(table['river medium']!.cleared));
   });
 
-  test('no ordinary Medium beat is a spike: each is cleared by a third of the variants', () => {
+  // M23: a quarter (was a third). The M23 AI fix stops enemies idling in the unsafe strip
+  // at a room's end wall, so the courtyard lost its passive edge enemies and Mountain's
+  // jab-only bot clears it in 3 of 12 (was 4); it stays no harder than the boss (below).
+  test('no ordinary Medium beat is a spike: each is cleared by a quarter of the variants', () => {
     for (const name of ['mountain', 'river'])
       table[`${name} medium`]!.cleared.forEach((n, beat) => {
-        if (beat !== BOSS) expect(n, `${name} ${BEATS[beat]}`).toBeGreaterThanOrEqual(4);
+        if (beat !== BOSS) expect(n, `${name} ${BEATS[beat]}`).toBeGreaterThanOrEqual(3);
       });
   });
 

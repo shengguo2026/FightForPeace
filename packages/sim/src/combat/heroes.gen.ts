@@ -24251,7 +24251,6 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
           "counter": false,
           "breaker": false,
           "supports": [
-            "claimhand",
             "claimhand"
           ],
           "eliteSupports": [
@@ -30741,7 +30740,7 @@ export const ARENA_DATA: readonly ArenaDef[] = [
       {
         "from": "claimhand",
         "to": "enforcer2",
-        "minDifficulty": 2,
+        "minDifficulty": 3,
         "count": 1
       }
     ],
@@ -31020,7 +31019,7 @@ export const ARENA_DATA: readonly ArenaDef[] = [
       {
         "from": "claimhand",
         "to": "enforcer2",
-        "minDifficulty": 2,
+        "minDifficulty": 3,
         "count": 1
       }
     ],

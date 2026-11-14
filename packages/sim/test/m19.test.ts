@@ -470,7 +470,7 @@ describe('M19 Marek Vane', () => {
 
   test('Command Pressure brings the phase’s supports once (variants by difficulty)', () => {
     for (const [d, kits] of [
-      ['medium', ['claimhand', 'claimhand']],
+      ['medium', ['claimhand']], // M23: one Claim Hand below Hard (solo Medium was a wall)
       ['hard', ['claimhand-elite', 'marauder-elite']],
     ] as const) {
       const w = yard(d);

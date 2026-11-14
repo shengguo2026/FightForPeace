@@ -641,7 +641,8 @@ rooms:
           - { kit: signalman, x: 2250, z: 880, minDifficulty: extreme }
           - { kit: glassrunner, x: 300, z: 900, coop: true }
     substitutions:
-      - { from: claimhand, to: enforcer2, minDifficulty: hard, count: 1 }
+      # M23: from Extreme (on Hard the Enforcer is met in the Loading Yard, Filtration and Production Hall).
+      - { from: claimhand, to: enforcer2, minDifficulty: extreme, count: 1 }
     assets:
       - { id: fish, kind: fish-tank, x: 1100, z: 650 }
       - { id: shrimp, kind: shrimp-tank, x: 1300, z: 650 }
@@ -767,7 +768,8 @@ rooms:
           - { kit: reaver, x: 2200, z: 820, minDifficulty: hard }
           - { kit: signalman, x: 2250, z: 700, minDifficulty: extreme }
     substitutions:
-      - { from: claimhand, to: enforcer2, minDifficulty: hard, count: 1 }
+      # M23: from Extreme (on Hard the Enforcer is met in the Loading Yard, Filtration and Production Hall).
+      - { from: claimhand, to: enforcer2, minDifficulty: extreme, count: 1 }
     assets:
       - { id: medicinal-west, kind: medicinal-bed, x: 900, z: 965 }
       - { id: medicinal-east, kind: medicinal-bed, x: 1500, z: 965 }
