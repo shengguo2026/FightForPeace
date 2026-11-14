@@ -19,6 +19,8 @@ export interface MusicContext {
   results: boolean;
   ending: boolean;
   paused: boolean;
+  /** The village music: the title screen of the latest completed stage (Guo, 14 Nov). */
+  title: { cue: string; state: string };
 }
 
 /** Screens with no score of their own (the Lab and Academy drills stay quiet). */
@@ -74,7 +76,7 @@ export function musicFor(c: MusicContext): { cue: string; state: string } | null
   if (QUIET.has(screen)) return null;
   // M21: the Museum's Music page plays the chosen cue and state.
   if (screen === 'museum' && museumListen.value) return museumListen.value;
-  if (screen !== 'game') return { cue: 'mus.stage1.river-before-silence', state: 'title' };
+  if (screen !== 'game') return c.title;
   const run = c.world.run;
   if (!run) return null;
   const beat = STAGES[run.stage]?.beats[run.beat];

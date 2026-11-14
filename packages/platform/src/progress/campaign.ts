@@ -53,6 +53,26 @@ export function stageCompleted(p: Profile, stage: string): boolean {
   return (p.missions[contentIdOf(stage)]?.clears ?? 0) > 0;
 }
 
+/**
+ * Does a finished run complete its stage? A run from the stage start does, and so does one
+ * resumed from a confirmed checkpoint (Continue, Restart from Checkpoint): story progress
+ * is kept (decision log 2026-10-31). Only Lab practice from a later beat does not.
+ */
+export function runCompletesStage(startBeat: number, fromCheckpoint: boolean): boolean {
+  return startBeat === 0 || fromCheckpoint;
+}
+
+/**
+ * The village title screen (Guo, 14 Nov): the one of the latest stage in campaign order that
+ * this profile completed at least once, at any difficulty, Cheat-Assisted included; the
+ * first stage's when none is completed (or there is no profile).
+ */
+export function titleScreenFor(p: Profile | null): CampaignStageDef['titleScreen'] {
+  let pick = CAMPAIGN[0]!.titleScreen;
+  if (p) for (const c of CAMPAIGN) if (stageCompleted(p, c.id)) pick = c.titleScreen;
+  return pick;
+}
+
 /** Can the stage be picked (its prerequisite stage was completed once)? */
 export function stageOpen(p: Profile, stage: string): boolean {
   const c = campaignStage(stage);

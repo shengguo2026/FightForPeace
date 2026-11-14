@@ -6,6 +6,7 @@ import {
   ProfileStore,
   WriterLock,
   completeStage,
+  runCompletesStage,
   noteStageStart,
   whatsNewDue,
   markWhatsNewSeen,
@@ -77,6 +78,7 @@ export type Screen =
   | 'lab'
   | 'settings'
   | 'records'
+  | 'profile'
   | 'store'
   | 'guide'
   | 'secrets'
@@ -141,6 +143,12 @@ export class Shell {
   readonly ready = signal<boolean[]>([]);
   /** Set when the running stage was started by Continue (results say so). */
   readonly continued = signal<CheckpointRecord | null>(null);
+  /**
+   * The running stage was resumed from a confirmed checkpoint (Continue or Restart from
+   * Checkpoint), not started at a later beat for practice: finishing it still completes
+   * the stage (Guo, 14 Nov).
+   */
+  private fromCheckpoint = false;
   /** Started from the shell's play flow (results offer the village). */
   readonly fromShell = signal(false);
   readonly pauseConfirm = signal<PauseConfirm>(null);
@@ -620,6 +628,7 @@ export class Shell {
     const pick = this.stagePick.value;
     const heroes = from ? from.heroes : this.chosenHeroes();
     this.continued.value = from ?? null;
+    this.fromCheckpoint = (from?.beat ?? 0) > 0;
     this.resultsRecorded = false;
     this.ending.value = null;
     this.chapters.value = null;
@@ -706,6 +715,7 @@ export class Shell {
 
   openLab(): void {
     this.fromShell.value = true;
+    this.fromCheckpoint = false;
     this.session.startArena(null);
     this.lab.visible.value = true;
     this.go('lab');
@@ -723,6 +733,7 @@ export class Shell {
     this.session.devices.assignPlayers([this.session.devices.slots[0]?.device ?? 'kb:p1', null]);
     this.partner.value = null;
     this.continued.value = null;
+    this.fromCheckpoint = false;
     this.session.pilot = null;
     this.session.afterStep.length = 0;
     // Session-scoped cheats are chosen again for every run.
@@ -737,6 +748,8 @@ export class Shell {
     const run = this.session.world.run;
     if (!run) return;
     const beat = run.checkpoint?.beat ?? run.startBeat;
+    // A run from the start or from a checkpoint stays one; Lab practice stays practice.
+    this.fromCheckpoint = run.startBeat === 0 || this.fromCheckpoint;
     const pick = this.stagePick.value;
     const heroes = [0, 1]
       .map((s) => this.session.world.playerHero[s])
@@ -842,7 +855,7 @@ export class Shell {
       // M21: a full run completes the stage, Cheat-Assisted included (story progress is
       // narrative): it opens the next stage and its Museum, Dossier and research entries.
       const complete = (x: Profile) => {
-        if (results.startBeat > 0) return;
+        if (!runCompletesStage(results.startBeat, this.fromCheckpoint)) return;
         const c = completeStage(x, stage.id, results);
         if (x.id === p.id) this.completion.value = c;
       };

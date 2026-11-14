@@ -154,3 +154,53 @@ test('the riding move list at the bottom follows the language', async ({ page })
   await expect(page.getByTestId('hint-p1')).toContainText('石匠探手');
   await expect(page.getByTestId('hint-p1')).not.toContainText("Mason's Reach");
 });
+
+test('the title screen follows the latest completed stage; Profile data shows it', async ({
+  page,
+}) => {
+  await open(page);
+  const viewProfile = async () => {
+    await page.getByTestId('menu-records').click();
+    await page.getByTestId('records-profile').click();
+    await expect(page.getByTestId('profile')).toBeVisible();
+  };
+  const backToVillage = async () => {
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('records')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('village')).toBeVisible();
+  };
+  await viewProfile();
+  await expect(page.getByTestId('profile-stage-stage2')).toHaveAttribute(
+    'data-state',
+    'profile.locked',
+  );
+  await expect(page.getByTestId('profile-title-screen')).toHaveAttribute('data-stage', 'stage1');
+  await page.getByTestId('profile-raw-toggle').click();
+  await expect(page.getByTestId('profile-raw')).toContainText('"campaign"');
+  await backToVillage();
+  // Stage 2 open is not enough: the title screen stays Stage 1's.
+  await page.evaluate(() => window.__ffp!.shell.completeStage('stage1'));
+  await viewProfile();
+  await expect(page.getByTestId('profile-stage-stage2')).toHaveAttribute(
+    'data-state',
+    'profile.stateOpen',
+  );
+  await expect(page.getByTestId('profile-title-screen')).toHaveAttribute('data-stage', 'stage1');
+  await backToVillage();
+  await page.evaluate(() => window.__ffp!.shell.completeStage('stage2'));
+  await viewProfile();
+  await expect(page.getByTestId('profile-stage-stage2')).toHaveAttribute(
+    'data-state',
+    'profile.completed',
+  );
+  await expect(page.getByTestId('profile-title-screen')).toHaveAttribute('data-stage', 'stage2');
+  await backToVillage();
+  // The village music follows the title screen too (Guo's pick: What We Protected).
+  await expect
+    .poll(async () => (await media(page)).music?.cue ?? null)
+    .toBe('mus.stage2.what-we-protected');
+  const loop = page.getByTestId('title-loop');
+  if ((await loop.count()) > 0)
+    await expect(loop).toHaveAttribute('data-clip', 'cine.stage2.title-loop');
+});

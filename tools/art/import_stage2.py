@@ -134,6 +134,16 @@ OTHER_WALKS = [  # (source, manifest id, file name, scale)
     ("enemies/recruit/ENM-RECRUIT-FLEE.png", "enemy.trainer.sheet.flee", "trainer-flee", 1.0),
     ("npcs/NPC-WORKER-A-RUN.png", "npc.worker-a.run", "npc-worker-a-run", 0.9),
     ("npcs/NPC-WORKER-B-RUN.png", "npc.worker-b.run", "npc-worker-b-run", 0.95),
+    # EW01-EW08: Stage 2 approach walks (the IDLE-WALK walk poses never swap legs). Scales
+    # match the walk poses of each IDLE-WALK sheet (measured at import, 2026-11-14).
+    ("enemies/claimhand/ENM-CLAIMHAND-WALK.png", "enemy.claimhand.sheet.walk", "claimhand-walk", 0.9),
+    ("enemies/reaver/ENM-REAVER-WALK.png", "enemy.reaver.sheet.walk", "reaver-walk", 0.97),
+    ("enemies/marauder/ENM-MARAUDER-WALK.png", "enemy.marauder.sheet.walk", "marauder-walk", 0.85),
+    ("enemies/saboteur/ENM-SABOTEUR-WALK.png", "enemy.saboteur.sheet.walk", "saboteur-walk", 0.9),
+    ("enemies/enforcer2/ENM-ENFORCER2-WALK.png", "enemy.enforcer2.sheet.walk", "enforcer2-walk", 0.94),
+    ("enemies/signalman/ENM-SIGNALMAN-WALK.png", "enemy.signalman.sheet.walk", "signalman-walk", 0.84),
+    ("enemies/marek/ENM-MAREK-WALK.png", "enemy.marek.sheet.walk", "marek-walk", 0.85),
+    ("enemies/marek/ENM-MAREK-UNBOUND-WALK.png", "enemy.marek.sheet.unbound-walk", "marek-unbound-walk", 0.87),
 ]
 # Weapon sheets drawn larger than the hero's idle sheet (standing height measured at
 # ingest): shown at this scale so the hero keeps one size.

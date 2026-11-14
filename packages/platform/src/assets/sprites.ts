@@ -585,16 +585,20 @@ export class SpritePicker {
         if (f.order === 2 && this.has(`${base}.stance`))
           return s('stance', loop(undefined, frame, 4, [3, 4]));
         {
-          // M22 walk cycles drawn for kits whose idle sheet had one walk pose: the Road Rider
-          // on foot, the disarmed Marauder, Marek's Scorched Claim.
+          // M22 walk cycles drawn on their own sheet: the Road Rider on foot, the disarmed
+          // Marauder, Marek's Scorched Claim and Predator Unbound, and the Stage 2 approach
+          // walks (EW01-EW08) whose IDLE-WALK walk poses never swap the legs. Kits without
+          // one (Stage 1) keep the walk poses of their idle sheet.
           const own =
-            art === 'rider' && idle.sheet === 'on-foot'
-              ? 'walk'
-              : idle.sheet === 'disarm'
-                ? 'disarmed-walk'
-                : idle.sheet === 'scorched'
-                  ? 'scorched-walk'
-                  : null;
+            idle.sheet === 'disarm'
+              ? 'disarmed-walk'
+              : idle.sheet === 'scorched'
+                ? 'scorched-walk'
+                : idle.sheet === 'unbound-idle-walk'
+                  ? 'unbound-walk'
+                  : idle.sheet === 'on-foot' || idle.sheet === 'idle-walk'
+                    ? 'walk'
+                    : null;
           const ownMeta = own ? this.has(`${base}.${own}`) : undefined;
           if (own && ownMeta) return s(own, loop(ownMeta, frame, 9));
         }

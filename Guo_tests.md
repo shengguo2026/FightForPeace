@@ -1295,3 +1295,12 @@ Pull the branch again (`git pull`), then `pnpm install` and `pnpm dev` as above.
 3. **Extra walks:** the Road Rider on foot, the Revolver Marauder after losing its revolver and Marek in Scorched Claim step through a walk instead of sliding.
 4. **Villagers:** free the worker in the Aeration Annex and the botanist in the Prep Room: each walks out on a walk cycle.
 5. **Stage 1 runs (S1W01–S1W03):** in Stage 1, beat a Pressed Recruit until it flees: it runs away on a six-pose run instead of the old two poses. Free the workers: both kinds run home on a six-pose run, facing the way they go.
+
+### Fixes after the M22 test on main (14 Nov)
+
+1. **Title screen follows the latest beaten stage:** with a profile that has Stage 2 open but not yet completed, the village shows the Stage 1 title loop and the Stage 1 menu picture. Complete Stage 2 once (any difficulty; Cheat-Assisted counts) and go back to the village: it now shows the Stage 2 dawn loop (glasshouses on the terraces, no fence or boat in front) over the Stage 2 menu picture, and the music changes from River Before Silence to What We Protected. A new profile shows Stage 1.
+2. **Stage 2 enemy walk (EW01–EW08):** in Stage 2, let a Claim Hand, Reaver, Revolver Marauder, Saboteur, Enforcer and Signalman walk toward your hero, and Marek in the Dispatch Yard (before and in Predator Unbound). Each one steps with the legs swapping on every step, keeps the same size as when standing, and still flees on its run.
+3. **Continue from a checkpoint counts:** start Stage 2, reach a checkpoint, quit to the village and pick **Continue**, then finish the stage. **Collection and Records → Profile data** now lists Stage 2 as completed and the village shows the Stage 2 title screen. (Before this fix a continued run did not complete the stage.)
+4. **Profile data:** **Collection and Records → Profile data** shows the loaded profile: name, dates, language, Credits, each stage's state (locked, open, started, completed), which title screen the village uses, the saved checkpoint, the stage records, unlock counts and the last heroes. **Show raw data** shows the whole save as text. Check it in 简体中文 and Deutsch too.
+5. **Joining midway (no change, for reference):** in a solo Stage 2 run, Player 2 joins with Numpad 4 (or Start on a free pad). More enemies attack at once right away; the extra co-op enemies come from the next wave. Finishing the run completes Stage 2 on your profile.
+

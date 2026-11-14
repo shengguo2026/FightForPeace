@@ -306,7 +306,13 @@ achievements:
     group: stageMastery
     name: Strength Without Vengeance
     credits: 250
-    rule: { kind: capture, content: story.stage2.prosperity-under-siege, route: surrender, scorch: false }
+    rule:
+      {
+        kind: capture,
+        content: story.stage2.prosperity-under-siege,
+        route: surrender,
+        scorch: false,
+      }
   - id: ach.stage2.silence-the-signal
     group: difficulty
     name: Silence the Signal
@@ -478,12 +484,26 @@ academy:
 # once on the profile (any full run, Cheat-Assisted included: story progress is narrative).
 # `whatsNew` names the briefing shown once before the stage's first run. Later Story Mode
 # and Stage Challenge read this same list.
+# titleScreen: the village title loop, its still, the menu picture and the music the stage brings
+# once it has been completed at least once (any difficulty, Cheat-Assisted included). The
+# village shows the title screen of the latest completed stage in this order, else stage1's.
 campaign:
-  - { id: stage1, content: story.stage1.broken-water-pact }
+  - id: stage1
+    content: story.stage1.broken-water-pact
+    titleScreen:
+      clip: cine.stage1.title-loop
+      still: story.stage1.title-loop
+      menuBg: menu-bg
+      music: { cue: mus.stage1.river-before-silence, state: title }
   - id: stage2
     content: story.stage2.prosperity-under-siege
     opens: { complete: stage1 }
     whatsNew: [twins, mounted, ledger, weapons, containers, enemies]
+    titleScreen:
+      clip: cine.stage2.title-loop
+      still: story.stage2.title-loop
+      menuBg: menu-bg-s2
+      music: { cue: mus.stage2.what-we-protected, state: ending }
 
 # --- M21 Village Museum and Archive (Stage 2 spec §14.2, F&D §9.1) ------------------------
 # Every entry has a stable ID, a section, the stage whose pages it belongs to (pages of a
@@ -498,18 +518,78 @@ museum:
   - { id: picture.s1-brief-01, section: picture, stage: stage1, asset: s1-brief-01, unlock: start }
   - { id: picture.s1-end-01, section: picture, stage: stage1, asset: s1-end-01, unlock: complete }
   - { id: picture.s1-end-03, section: picture, stage: stage1, asset: s1-end-03, unlock: complete }
-  - { id: picture.keyart-title, section: picture, stage: stage1, asset: keyart-title, unlock: always }
+  - {
+      id: picture.keyart-title,
+      section: picture,
+      stage: stage1,
+      asset: keyart-title,
+      unlock: always,
+    }
   - { id: picture.select-wind, section: picture, stage: stage2, asset: select-wind, unlock: open }
   - { id: picture.select-fire, section: picture, stage: stage2, asset: select-fire, unlock: open }
-  - { id: cinema.stage1.intro, section: cinema, stage: stage1, asset: cine.stage1.intro, unlock: start }
-  - { id: cinema.stage1.ending, section: cinema, stage: stage1, asset: cine.stage1.ending, unlock: complete }
-  - { id: music.stage1.river-before-silence, section: music, stage: stage1, asset: 'mus.stage1.river-before-silence:title', unlock: always }
-  - { id: music.stage1.fields-without-water, section: music, stage: stage1, asset: 'mus.stage1.fields-without-water:explore', unlock: start }
-  - { id: music.stage1.bridge-under-watch, section: music, stage: stage1, asset: 'mus.stage1.bridge-under-watch:combat', unlock: start }
-  - { id: music.stage1.mill-in-motion, section: music, stage: stage1, asset: 'mus.stage1.mill-in-motion:explore', unlock: complete }
-  - { id: music.stage1.through-the-dry-canal, section: music, stage: stage1, asset: 'mus.stage1.through-the-dry-canal:danger', unlock: complete }
-  - { id: music.stage1.keeper-of-the-gate, section: music, stage: stage1, asset: 'mus.stage1.keeper-of-the-gate:phase1', unlock: complete }
-  - { id: music.stage1.river-returned, section: music, stage: stage1, asset: 'mus.stage1.river-returned:victory', unlock: complete }
+  - {
+      id: cinema.stage1.intro,
+      section: cinema,
+      stage: stage1,
+      asset: cine.stage1.intro,
+      unlock: start,
+    }
+  - {
+      id: cinema.stage1.ending,
+      section: cinema,
+      stage: stage1,
+      asset: cine.stage1.ending,
+      unlock: complete,
+    }
+  - {
+      id: music.stage1.river-before-silence,
+      section: music,
+      stage: stage1,
+      asset: 'mus.stage1.river-before-silence:title',
+      unlock: always,
+    }
+  - {
+      id: music.stage1.fields-without-water,
+      section: music,
+      stage: stage1,
+      asset: 'mus.stage1.fields-without-water:explore',
+      unlock: start,
+    }
+  - {
+      id: music.stage1.bridge-under-watch,
+      section: music,
+      stage: stage1,
+      asset: 'mus.stage1.bridge-under-watch:combat',
+      unlock: start,
+    }
+  - {
+      id: music.stage1.mill-in-motion,
+      section: music,
+      stage: stage1,
+      asset: 'mus.stage1.mill-in-motion:explore',
+      unlock: complete,
+    }
+  - {
+      id: music.stage1.through-the-dry-canal,
+      section: music,
+      stage: stage1,
+      asset: 'mus.stage1.through-the-dry-canal:danger',
+      unlock: complete,
+    }
+  - {
+      id: music.stage1.keeper-of-the-gate,
+      section: music,
+      stage: stage1,
+      asset: 'mus.stage1.keeper-of-the-gate:phase1',
+      unlock: complete,
+    }
+  - {
+      id: music.stage1.river-returned,
+      section: music,
+      stage: stage1,
+      asset: 'mus.stage1.river-returned:victory',
+      unlock: complete,
+    }
   # M22: Stage 2 story stills, the six motion chapters and the seven-cue score.
   - { id: picture.keyart-s2, section: picture, stage: stage2, asset: keyart-s2, unlock: always }
   - { id: picture.s2-p01, section: picture, stage: stage2, asset: s2-p01, unlock: start }
@@ -519,35 +599,179 @@ museum:
   - { id: picture.s2-g03, section: picture, stage: stage2, asset: s2-g03, unlock: start }
   - { id: picture.s2-n03, section: picture, stage: stage2, asset: s2-n03, unlock: start }
   - { id: picture.s2-brief-02, section: picture, stage: stage2, asset: s2-brief-02, unlock: start }
-  - { id: picture.portrait-tomas, section: picture, stage: stage2, asset: portrait-tomas, unlock: start }
-  - { id: picture.portrait-marek, section: picture, stage: stage2, asset: portrait-marek, unlock: complete }
+  - {
+      id: picture.portrait-tomas,
+      section: picture,
+      stage: stage2,
+      asset: portrait-tomas,
+      unlock: start,
+    }
+  - {
+      id: picture.portrait-marek,
+      section: picture,
+      stage: stage2,
+      asset: portrait-marek,
+      unlock: complete,
+    }
   - { id: picture.s2-c01f, section: picture, stage: stage2, asset: s2-c01f, unlock: complete }
   - { id: picture.s2-j04, section: picture, stage: stage2, asset: s2-j04, unlock: complete }
   - { id: picture.s2-j05, section: picture, stage: stage2, asset: s2-j05, unlock: complete }
-  - { id: cinema.stage2.interlude, section: cinema, stage: stage2, asset: cine.stage2.interlude, unlock: start }
-  - { id: cinema.stage2.roadside, section: cinema, stage: stage2, asset: cine.stage2.roadside, unlock: start }
-  - { id: cinema.stage2.guest, section: cinema, stage: stage2, asset: cine.stage2.guest, unlock: start }
-  - { id: cinema.stage2.night, section: cinema, stage: stage2, asset: cine.stage2.night, unlock: start }
-  - { id: cinema.stage2.recovery, section: cinema, stage: stage2, asset: cine.stage2.recovery, unlock: complete }
-  - { id: cinema.stage2.coda, section: cinema, stage: stage2, asset: cine.stage2.coda, unlock: complete }
-  - { id: music.stage2.water-became-a-future, section: music, stage: stage2, asset: 'mus.stage2.water-became-a-future:interlude', unlock: always }
-  - { id: music.stage2.roadside-vigil, section: music, stage: stage2, asset: 'mus.stage2.roadside-vigil:vigil', unlock: start }
-  - { id: music.stage2.glass-and-green, section: music, stage: stage2, asset: 'mus.stage2.glass-and-green:explore', unlock: start }
-  - { id: music.stage2.alarm-through-the-channels, section: music, stage: stage2, asset: 'mus.stage2.alarm-through-the-channels:combat', unlock: start }
-  - { id: music.stage2.protect-the-living-system, section: music, stage: stage2, asset: 'mus.stage2.protect-the-living-system:danger', unlock: start }
-  - { id: music.stage2.gilded-jackal, section: music, stage: stage2, asset: 'mus.stage2.gilded-jackal:armed', unlock: complete }
-  - { id: music.stage2.what-we-protected, section: music, stage: stage2, asset: 'mus.stage2.what-we-protected:ending', unlock: complete }
-  - { id: sound.exact-block, section: sound, stage: stage1, asset: sfx.exact.confirm, unlock: always }
+  - {
+      id: cinema.stage2.interlude,
+      section: cinema,
+      stage: stage2,
+      asset: cine.stage2.interlude,
+      unlock: start,
+    }
+  - {
+      id: cinema.stage2.roadside,
+      section: cinema,
+      stage: stage2,
+      asset: cine.stage2.roadside,
+      unlock: start,
+    }
+  - {
+      id: cinema.stage2.guest,
+      section: cinema,
+      stage: stage2,
+      asset: cine.stage2.guest,
+      unlock: start,
+    }
+  - {
+      id: cinema.stage2.night,
+      section: cinema,
+      stage: stage2,
+      asset: cine.stage2.night,
+      unlock: start,
+    }
+  - {
+      id: cinema.stage2.recovery,
+      section: cinema,
+      stage: stage2,
+      asset: cine.stage2.recovery,
+      unlock: complete,
+    }
+  - {
+      id: cinema.stage2.coda,
+      section: cinema,
+      stage: stage2,
+      asset: cine.stage2.coda,
+      unlock: complete,
+    }
+  - {
+      id: music.stage2.water-became-a-future,
+      section: music,
+      stage: stage2,
+      asset: 'mus.stage2.water-became-a-future:interlude',
+      unlock: always,
+    }
+  - {
+      id: music.stage2.roadside-vigil,
+      section: music,
+      stage: stage2,
+      asset: 'mus.stage2.roadside-vigil:vigil',
+      unlock: start,
+    }
+  - {
+      id: music.stage2.glass-and-green,
+      section: music,
+      stage: stage2,
+      asset: 'mus.stage2.glass-and-green:explore',
+      unlock: start,
+    }
+  - {
+      id: music.stage2.alarm-through-the-channels,
+      section: music,
+      stage: stage2,
+      asset: 'mus.stage2.alarm-through-the-channels:combat',
+      unlock: start,
+    }
+  - {
+      id: music.stage2.protect-the-living-system,
+      section: music,
+      stage: stage2,
+      asset: 'mus.stage2.protect-the-living-system:danger',
+      unlock: start,
+    }
+  - {
+      id: music.stage2.gilded-jackal,
+      section: music,
+      stage: stage2,
+      asset: 'mus.stage2.gilded-jackal:armed',
+      unlock: complete,
+    }
+  - {
+      id: music.stage2.what-we-protected,
+      section: music,
+      stage: stage2,
+      asset: 'mus.stage2.what-we-protected:ending',
+      unlock: complete,
+    }
+  - {
+      id: sound.exact-block,
+      section: sound,
+      stage: stage1,
+      asset: sfx.exact.confirm,
+      unlock: always,
+    }
   - { id: sound.heavy-hit, section: sound, stage: stage1, asset: sfx.hit.heavy, unlock: always }
   - { id: sound.ultimate, section: sound, stage: stage1, asset: sfx.ultimate.start, unlock: start }
-  - { id: sound.team-finisher, section: sound, stage: stage1, asset: sfx.team.finisher, unlock: start }
-  - { id: sound.worker-freed, section: sound, stage: stage1, asset: sfx.run.worker-freed, unlock: start }
-  - { id: sound.river-restored, section: sound, stage: stage1, asset: sfx.run.river-restored, unlock: complete }
-  - { id: collection.brass-gears, section: collection, stage: stage1, asset: brass-gears, unlock: complete }
-  - { id: collection.early-aerator-impeller, section: collection, stage: stage2, asset: early-aerator-impeller, unlock: { branch: aeration } }
-  - { id: collection.first-harvest-seed-tin, section: collection, stage: stage2, asset: first-harvest-seed-tin, unlock: { branch: seed } }
-  - { id: collection.medicinal-cooperative-field-card, section: collection, stage: stage2, asset: medicinal-cooperative-field-card, unlock: { branch: medicinal } }
-  - { id: collection.sealed-weapon-crate, section: collection, stage: stage2, asset: sealed-weapon-crate, unlock: complete }
+  - {
+      id: sound.team-finisher,
+      section: sound,
+      stage: stage1,
+      asset: sfx.team.finisher,
+      unlock: start,
+    }
+  - {
+      id: sound.worker-freed,
+      section: sound,
+      stage: stage1,
+      asset: sfx.run.worker-freed,
+      unlock: start,
+    }
+  - {
+      id: sound.river-restored,
+      section: sound,
+      stage: stage1,
+      asset: sfx.run.river-restored,
+      unlock: complete,
+    }
+  - {
+      id: collection.brass-gears,
+      section: collection,
+      stage: stage1,
+      asset: brass-gears,
+      unlock: complete,
+    }
+  - {
+      id: collection.early-aerator-impeller,
+      section: collection,
+      stage: stage2,
+      asset: early-aerator-impeller,
+      unlock: { branch: aeration },
+    }
+  - {
+      id: collection.first-harvest-seed-tin,
+      section: collection,
+      stage: stage2,
+      asset: first-harvest-seed-tin,
+      unlock: { branch: seed },
+    }
+  - {
+      id: collection.medicinal-cooperative-field-card,
+      section: collection,
+      stage: stage2,
+      asset: medicinal-cooperative-field-card,
+      unlock: { branch: medicinal },
+    }
+  - {
+      id: collection.sealed-weapon-crate,
+      section: collection,
+      stage: stage2,
+      asset: sealed-weapon-crate,
+      unlock: complete,
+    }
 
 # Sponsor Dossier (Investigation): confirmed facts and the current theory (the newest
 # unlocked theory replaces the older ones). No empty slots, no counts (F&D §9.1).
@@ -568,4 +792,9 @@ research:
     - { id: approved-preparation }
   inputs:
     - { id: formula-handover, milestone: independent-replication, stage: stage2, unlock: complete }
-    - { id: provenance-ledger, milestone: independent-replication, stage: stage2, unlock: { branch: medicinal } }
+    - {
+        id: provenance-ledger,
+        milestone: independent-replication,
+        stage: stage2,
+        unlock: { branch: medicinal },
+      }

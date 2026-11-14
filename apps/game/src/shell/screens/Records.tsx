@@ -124,6 +124,11 @@ export function RecordsScreen({ shell }: { shell: Shell }) {
           ))
         )}
         <p class="ffp-hint">{t('records.collection')}</p>
+        <Button
+          label={t('profile.view')}
+          onPress={() => shell.go('profile')}
+          testId="records-profile"
+        />
         <Button label={t('common.back')} onPress={() => shell.go('village')} autofocus />
       </Panel>
     </Screen>

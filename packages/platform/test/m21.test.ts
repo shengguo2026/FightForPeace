@@ -24,6 +24,8 @@ import {
   settleRun,
   stageOpen,
   storeStatus,
+  titleScreenFor,
+  runCompletesStage,
   whatsNewDue,
   type Profile,
   type RunReport,
@@ -122,6 +124,29 @@ describe('the campaign layer', () => {
     expect(stageOpen(p, 'stage2')).toBe(true);
     // A second completion opens nothing new.
     expect(completeStage(p, 'stage1', null, 6)).toMatchObject({ first: false, opened: [] });
+  });
+
+  test('the title screen is the latest completed stage (opening Stage 2 is not enough)', () => {
+    expect(titleScreenFor(null).clip).toBe('cine.stage1.title-loop');
+    const p = createProfile('Guo', 'en');
+    expect(titleScreenFor(p)).toMatchObject({ clip: 'cine.stage1.title-loop', menuBg: 'menu-bg' });
+    completeStage(p, 'stage1', results({ stage: 'stage1' }), 5);
+    expect(stageOpen(p, 'stage2')).toBe(true);
+    expect(titleScreenFor(p).clip).toBe('cine.stage1.title-loop');
+    // A Cheat-Assisted clear at any difficulty counts.
+    completeStage(p, 'stage2', results({ cheatAssisted: true, difficulty: 0 }), 6);
+    expect(titleScreenFor(p)).toEqual({
+      clip: 'cine.stage2.title-loop',
+      still: 'story.stage2.title-loop',
+      menuBg: 'menu-bg-s2',
+      music: { cue: 'mus.stage2.what-we-protected', state: 'ending' },
+    });
+  });
+
+  test('a run resumed from a checkpoint completes the stage; Lab practice does not', () => {
+    expect(runCompletesStage(0, false)).toBe(true);
+    expect(runCompletesStage(3, true)).toBe(true);
+    expect(runCompletesStage(3, false)).toBe(false);
   });
 
   test("What's New is due once per profile before the first Stage 2 run", () => {
