@@ -95,10 +95,12 @@ The simulation keeps real time; drawing on a throttled software renderer is slow
 
 All eight sheets checked by eye, cell 1 against cell 4 (lower body enlarged): Claim Hand, Reaver, Marauder, Saboteur, Enforcer, Signalman, Marek and Marek Unbound each have the near leg forward in one of the two cells and the far leg forward in the other (the near leg is drawn over the far one and lit; knee pads and greaves show which is which). Cells 2 and 5 (the passing poses) also lift opposite legs. No sheet goes back to the Pictures repo. The swap is carried by overlap and shading, not by the silhouette, so it is subtle at game size: Guo_tests step 7 looks at it in motion.
 
-## 7. Open points for Guo (not changed in M23)
+## 7. Open points and Guo's decisions
 
-1. **Stage length and D8.** A full Stage 2 run takes a bot about 5–9 minutes, a human longer. After the last continue the whole stage starts again from the pursuit (rule D8), which on Medium can mean replaying 20+ minutes. M23 keeps D8 as decided; Guo decides after the human run whether the restart should go to the last checkpoint instead.
-2. **Hard Loading Yard.** The Enforcer plus a Marauder clears in only 1–6 of 12 bot variants solo on Hard. Kept as Hard's first wall; flagged for the manual look.
-3. **Stage 1 feel.** The F1 AI fix applies to Stage 1 too: Stage 1 got slightly harder for the bot (for example Mountain on Medium clears the courtyard in 3 of 12). Guo_tests step 10 checks it by hand.
+**Decided 2026-11-14 (Guo, after the M23 review):** points 1–3 stay as they are in M23.
+
+1. **Stage length and D8.** A full Stage 2 run takes a bot about 5–9 minutes, a human longer. After the last continue the whole stage starts again from the pursuit (rule D8), which on Medium can mean replaying 20+ minutes. **Decision: keep D8** (the stage restarts from the pursuit after the last continue).
+2. **Hard Loading Yard.** The Enforcer plus a Marauder clears in only 1–6 of 12 bot variants solo on Hard. **Decision: keep** it as Hard's first wall.
+3. **Stage 1 feel.** The F1 AI fix applies to Stage 1 too: Stage 1 got slightly harder for the bot (for example Mountain on Medium clears the courtyard in 3 of 12). **Decision: keep** the fix and the new Stage 1 balance.
 4. **Throttled co-op pursuit in the browser** is covered headless (step cost) rather than by its own throttled browser test.
 5. **Out of scope** (spec §19 E): final ambience, SFX and narration recordings remain placeholders (see `docs/art/stage2/approved-variants.md`).
