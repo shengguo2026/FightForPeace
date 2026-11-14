@@ -1285,3 +1285,12 @@ Pull the branch again (`git pull`), then `pnpm install` and `pnpm dev` as above.
 1. **Walking with a weapon:** in Stage 2, pick up the lance, the sidearm and the support gun in turn and walk. The legs step through the walk cycle and the weapon is drawn in the hero's hand; standing still shows the weapon's ready stance as before. (Dedicated armed walk sheets were never delivered; see the reply in the thread.)
 2. **Museum collection:** **Museum → Collection**: each unlocked piece shows its picture above the description: the brass gears (after Stage 1), the aerator impeller, the seed tin and the field card (by branch) and the sealed weapon crate (after Stage 2).
 3. **Riding move list in your language:** switch to 简体中文 (or Deutsch) and start the Perimeter Pursuit. The control list at the bottom names each riding move in that language (for Wind: 掠身掌, 横风踢, 风道跃, 横风侧倾, 守护切入, 通途守望).
+
+### Walk and flee sheets (AW01–AW25)
+
+Pull the branch again (`git pull`), then `pnpm install` and `pnpm dev` as above.
+
+1. **Armed walks:** in Stage 2, pick up the lance, the sidearm and the support gun in turn and walk, with each of the four heroes. The hero walks with the weapon in hand, drawn on the walk sheet (no floating weapon), and keeps the same size as when standing.
+2. **Enemy flee runs:** beat a Claim Hand, Reaver, Marauder, Saboteur, Glasshouse Runner, Signalman or Enforcer until it flees (or let the Road Rider lose its bike): it runs away on a six-pose run.
+3. **Extra walks:** the Road Rider on foot, the Revolver Marauder after losing its revolver and Marek in Scorched Claim step through a walk instead of sliding.
+4. **Villagers:** free the worker in the Aeration Annex and the botanist in the Prep Room: each walks out on a walk cycle.

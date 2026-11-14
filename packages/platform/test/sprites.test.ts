@@ -174,23 +174,61 @@ test('an armed founder steps while walking instead of sliding on one cell', () =
   expect(pick.fighter(r, 0)!.sheet).toBe('hero.river.sheet.staff-walk');
 });
 
-test('M22: a hero walking with a Stage 2 weapon steps through the walk cycle, weapon in hand', () => {
-  for (const [weapon, sheet] of [
-    ['service-lance', 'prop.s2-lance'],
-    ['six-round-sidearm', 'prop.s2-firearms'],
-    ['support-gun', 'prop.s2-firearms'],
-  ] as const) {
-    const w = createWorld(1, { heroes: ['wind'] });
+test('M22: a hero walking with a Stage 2 weapon steps through its armed walk sheet', () => {
+  for (const hero of ['wind', 'fire', 'mountain', 'river'])
+    for (const [weapon, sheet] of [
+      ['service-lance', 'lance-walk'],
+      ['six-round-sidearm', 'revolver-walk'],
+      ['support-gun', 'heavy-walk'],
+    ] as const) {
+      const w = createWorld(1, { heroes: [hero] });
+      const f = heroOf(w, 0)!;
+      claim(w, f, spawnItem(w, weaponIndex(weapon), f.x, f.z));
+      f.state = MoveState.Walk;
+      const cells = new Set([0, 6, 12, 18, 24, 30].map((t) => pick.fighter(f, t)!.cell));
+      expect(pick.fighter(f, 0)!.sheet).toBe(`hero.${hero}.sheet.${sheet}`);
+      expect(cells.size, `${hero} ${weapon}`).toBe(6);
+      // The weapon is in the drawing: no separate prop.
+      expect(pick.heldProp(f)).toBeNull();
+    }
+});
+
+test('M22: Stage 2 enemies flee on a six-pose run; the rider, disarmed Marauder and Scorched Marek walk', () => {
+  const enemy = (id: string, state: number) => {
+    const w = createWorld(1, { heroes: ['mountain'] });
     const f = heroOf(w, 0)!;
-    claim(w, f, spawnItem(w, weaponIndex(weapon), f.x, f.z));
-    // Standing: the ready stance from the weapon sheet, no extra prop.
-    expect(pick.heldProp(f)).toBeNull();
-    f.state = MoveState.Walk;
-    const cells = new Set([0, 10, 20, 30].map((t) => pick.fighter(f, t)!.cell));
-    expect(pick.fighter(f, 0)!.sheet).toBe('hero.wind.sheet.walk');
-    expect(cells.size).toBeGreaterThan(1);
-    expect(pick.heldProp(f)?.sheet, weapon).toBe(sheet);
+    f.team = 'enemy';
+    f.hero = ENEMIES.findIndex((e) => e.id === id);
+    f.wkit = -1;
+    f.item = 0;
+    f.state = state as MoveState;
+    return f;
+  };
+  for (const id of [
+    'claimhand',
+    'glassrunner',
+    'reaver',
+    'marauder',
+    'saboteur',
+    'rider',
+    'enforcer2',
+    'signalman',
+  ]) {
+    const f = enemy(id, MoveState.Flee);
+    const cells = new Set([0, 5, 10, 15, 20, 25].map((t) => pick.fighter(f, t)!.cell));
+    expect(pick.fighter(f, 0)!.sheet, id).toBe(`enemy.${id}.sheet.flee`);
+    expect(pick.fighter(f, 0)!.drawnLeft, id).toBeFalsy();
+    expect(cells.size, id).toBe(6);
   }
+  expect(pick.fighter(enemy('rider', MoveState.Walk), 0)!.sheet).toBe('enemy.rider.sheet.walk');
+  expect(pick.fighter(enemy('marauder', MoveState.Walk), 0)!.sheet).toBe(
+    'enemy.marauder.sheet.disarmed-walk',
+  );
+  const marek = enemy('marek', MoveState.Walk);
+  const boss = { id: marek.id, phase: 2, look: 3, shift: 0, shiftFrames: 1, stagger: 0 };
+  expect(pick.fighter(marek, 0, boss as never)!.sheet).toBe('enemy.marek.sheet.scorched-walk');
+  for (const id of ['npc.s2-worker.walk', 'npc.s2-researcher.walk'])
+    expect(reg.sheet(id)?.sheet.cols, id).toBe(3);
 });
 
 test('weapon sheets are drawn at the same figure size as the idle sheet', () => {

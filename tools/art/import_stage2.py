@@ -3,7 +3,7 @@
 
 Usage (from the repository root, with the pictures repository checked out beside it):
 
-    python3 tools/art/import_stage2.py ../pictures/FightForPeace [--only clips,stills,env,sheets,shell]
+    python3 tools/art/import_stage2.py ../pictures/FightForPeace [--only clips,stills,env,sheets,walks,shell]
 
 What it does (APPROVED_VARIANTS.md "Use" files only):
   * clips: the 32 story clips and the title loop (story/stage2) -> 960 px MP4 (H.264, fast
@@ -103,8 +103,33 @@ LAYERS = ["FAR", "MID", "FLOOR", "FG"]  # PLATEs are reference paintings
 HERO_FOLDERS = {"wind": ("heroes/wind", "HERO-WND"), "fire": ("heroes/fire", "HERO-FIR"),
                 "mountain": ("heroes/mountain", "HERO-MTN"), "river": ("heroes/river", "HERO-RIV")}
 WEAPON_SHEETS = {"lance-a": ["LANCE-A", "LANCE"], "lance-b": ["LANCE-B"], "revolver": ["REVOLVER"],
-                 "heavy": ["HEAVY"], "lance-walk": ["LANCE-WALK"], "revolver-walk": ["REVOLVER-WALK"],
-                 "heavy-walk": ["HEAVY-WALK"]}
+                 "heavy": ["HEAVY"]}
+# Walk and flee cycles (prompts in the Pictures repo's codex_prompts_stage2_armed_walks.md,
+# AW01-AW25): hero armed walks, enemy flee runs and extra walks, villager walks. The scale
+# is the one recorded at approval in APPROVED_VARIANTS.md, so the figure keeps its size.
+HERO_WALKS = {"lance-walk": "LANCE-WALK", "revolver-walk": "REVOLVER-WALK", "heavy-walk": "HEAVY-WALK"}
+WALK_SCALE = {
+    "wind-lance-walk": 1.0, "wind-revolver-walk": 0.95, "wind-heavy-walk": 0.95,
+    "fire-lance-walk": 0.95, "fire-revolver-walk": 0.88, "fire-heavy-walk": 0.88,
+    "mountain-lance-walk": 0.93, "mountain-revolver-walk": 0.85, "mountain-heavy-walk": 0.87,
+    "river-lance-walk": 0.92, "river-revolver-walk": 0.84, "river-heavy-walk": 0.84,
+}
+OTHER_WALKS = [  # (source, manifest id, file name, scale)
+    ("enemies/claimhand/ENM-CLAIMHAND-FLEE.png", "enemy.claimhand.sheet.flee", "claimhand-flee", 0.85),
+    ("enemies/glassrunner/ENM-GLASSRUNNER-FLEE.png", "enemy.glassrunner.sheet.flee", "glassrunner-flee", 0.95),
+    ("enemies/reaver/ENM-REAVER-FLEE.png", "enemy.reaver.sheet.flee", "reaver-flee", 0.9),
+    ("enemies/marauder/ENM-MARAUDER-FLEE.png", "enemy.marauder.sheet.flee", "marauder-flee", 0.85),
+    ("enemies/saboteur/ENM-SABOTEUR-FLEE.png", "enemy.saboteur.sheet.flee", "saboteur-flee", 0.9),
+    ("enemies/rider/ENM-RIDER-FLEE.png", "enemy.rider.sheet.flee", "rider-flee", 0.9),
+    ("enemies/enforcer2/ENM-ENFORCER2-FLEE.png", "enemy.enforcer2.sheet.flee", "enforcer2-flee", 0.95),
+    ("enemies/signalman/ENM-SIGNALMAN-FLEE.png", "enemy.signalman.sheet.flee", "signalman-flee", 0.85),
+    ("enemies/rider/ENM-RIDER-WALK.png", "enemy.rider.sheet.walk", "rider-walk", 0.86),
+    ("enemies/marauder/ENM-MARAUDER-DISARMED-WALK.png", "enemy.marauder.sheet.disarmed-walk",
+     "marauder-disarmed-walk", 0.84),
+    ("enemies/marek/ENM-MAREK-SCORCHED-WALK.png", "enemy.marek.sheet.scorched-walk", "marek-scorched-walk", 0.9),
+    ("npcs/NPC-S2-WORKER-WALK.png", "npc.s2-worker.walk", "npc-s2-worker-walk", 0.92),
+    ("npcs/NPC-S2-RESEARCHER-WALK.png", "npc.s2-researcher.walk", "npc-s2-researcher-walk", 0.87),
+]
 # Weapon sheets drawn larger than the hero's idle sheet (standing height measured at
 # ingest): shown at this scale so the hero keeps one size.
 WEAPON_SCALE = {"fire": 0.92, "mountain": 0.9, "river": 0.92}
@@ -202,9 +227,13 @@ def still(src: Path, name: str) -> str:
     return f"art/shell/{name}.webp"
 
 
-def grid_sheet(src: Path, name: str, cols: int, rows: int, keep: bool) -> dict:
-    """A cols x rows sheet scaled to 75 % (cells of 384 px height), cell bounds measured."""
+def grid_sheet(src: Path, name: str, cols: int, rows: int, keep: bool, clear: int = 0) -> dict:
+    """A cols x rows sheet scaled to 75 % (cells of 384 px height), cell bounds measured.
+    `clear` drops a faint background haze: pixels below that alpha become fully transparent."""
     img = Image.open(src).convert("RGBA")
+    if clear:
+        a = img.getchannel("A").point(lambda v: 0 if v < clear else v)
+        img.putalpha(a)
     cw, ch = img.width // cols, img.height // rows
     cw2, ch2 = int(cw * import_art.SCALE), int(ch * import_art.SCALE)
     img = img.resize((cols * cw2, rows * ch2), Image.Resampling.LANCZOS)
@@ -306,6 +335,23 @@ def main() -> None:
         for v in VFX:
             entry = import_media.vfx(base / "vfx" / f"VFX-{v}.png", v.lower())
             assets[f"vfx.{v.lower()}.sheet"] = entry
+    if want("walks"):
+        for hero, (folder, prefix) in HERO_FOLDERS.items():
+            for key, suffix in HERO_WALKS.items():
+                p = import_art.source(base, folder, f"{prefix}-{suffix}")
+                if p is None:
+                    print("missing:", f"{prefix}-{suffix}")
+                    continue
+                entry = grid_sheet(p, f"{hero}-{key}", 3, 2, keep, clear=16)
+                entry["sheet"]["scale"] = WALK_SCALE[f"{hero}-{key}"]
+                assets[f"hero.{hero}.sheet.{key}"] = provenance(entry, f"{folder}/{p.name}", edits="75 %")
+        for rel, key, name, scale in OTHER_WALKS:
+            if not (base / rel).exists():
+                print("missing:", rel)
+                continue
+            entry = grid_sheet(base / rel, name, 3, 2, keep, clear=16)
+            entry["sheet"]["scale"] = scale
+            assets[key] = provenance(entry, rel, edits="75 %")
     if want("shell"):
         out = PUBLIC / "art/shell"
         for rel, name, width, quality in SHELL:

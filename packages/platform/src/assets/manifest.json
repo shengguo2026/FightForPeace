@@ -1748,6 +1748,59 @@
         ]
       }
     },
+    "enemy.claimhand.sheet.flee": {
+      "url": "art/claimhand-flee.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 364,
+        "cells": [
+          {
+            "x0": 61,
+            "y0": 39,
+            "x1": 309,
+            "foot": 366
+          },
+          {
+            "x0": 83,
+            "y0": 36,
+            "x1": 285,
+            "foot": 366
+          },
+          {
+            "x0": 36,
+            "y0": 24,
+            "x1": 326,
+            "foot": 320
+          },
+          {
+            "x0": 49,
+            "y0": 39,
+            "x1": 329,
+            "foot": 364
+          },
+          {
+            "x0": 76,
+            "y0": 34,
+            "x1": 311,
+            "foot": 364
+          },
+          {
+            "x0": 43,
+            "y0": 23,
+            "x1": 351,
+            "foot": 307
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "enemies/claimhand/ENM-CLAIMHAND-FLEE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "enemy.claimhand.sheet.idle-walk": {
       "url": "art/claimhand-idle-walk.webp",
       "sheet": {
@@ -2782,6 +2835,59 @@
         ]
       }
     },
+    "enemy.enforcer2.sheet.flee": {
+      "url": "art/enforcer2-flee.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 357,
+        "cells": [
+          {
+            "x0": 57,
+            "y0": 43,
+            "x1": 329,
+            "foot": 357
+          },
+          {
+            "x0": 89,
+            "y0": 40,
+            "x1": 311,
+            "foot": 358
+          },
+          {
+            "x0": 63,
+            "y0": 26,
+            "x1": 333,
+            "foot": 334
+          },
+          {
+            "x0": 47,
+            "y0": 45,
+            "x1": 343,
+            "foot": 358
+          },
+          {
+            "x0": 84,
+            "y0": 40,
+            "x1": 330,
+            "foot": 357
+          },
+          {
+            "x0": 62,
+            "y0": 27,
+            "x1": 356,
+            "foot": 317
+          }
+        ],
+        "scale": 0.95
+      },
+      "provenance": {
+        "source": "enemies/enforcer2/ENM-ENFORCER2-FLEE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "enemy.enforcer2.sheet.idle-walk": {
       "url": "art/enforcer2-idle-walk.webp",
       "sheet": {
@@ -3062,6 +3168,59 @@
             "foot": 354
           }
         ]
+      }
+    },
+    "enemy.glassrunner.sheet.flee": {
+      "url": "art/glassrunner-flee.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 353,
+        "cells": [
+          {
+            "x0": 60,
+            "y0": 56,
+            "x1": 322,
+            "foot": 359
+          },
+          {
+            "x0": 84,
+            "y0": 57,
+            "x1": 289,
+            "foot": 359
+          },
+          {
+            "x0": 53,
+            "y0": 47,
+            "x1": 357,
+            "foot": 315
+          },
+          {
+            "x0": 45,
+            "y0": 57,
+            "x1": 329,
+            "foot": 353
+          },
+          {
+            "x0": 109,
+            "y0": 52,
+            "x1": 317,
+            "foot": 353
+          },
+          {
+            "x0": 49,
+            "y0": 45,
+            "x1": 369,
+            "foot": 305
+          }
+        ],
+        "scale": 0.95
+      },
+      "provenance": {
+        "source": "enemies/glassrunner/ENM-GLASSRUNNER-FLEE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
       }
     },
     "enemy.glassrunner.sheet.idle-run": {
@@ -3524,6 +3683,59 @@
         ]
       }
     },
+    "enemy.marauder.sheet.disarmed-walk": {
+      "url": "art/marauder-disarmed-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 366,
+        "cells": [
+          {
+            "x0": 70,
+            "y0": 11,
+            "x1": 301,
+            "foot": 367
+          },
+          {
+            "x0": 92,
+            "y0": 18,
+            "x1": 273,
+            "foot": 364
+          },
+          {
+            "x0": 112,
+            "y0": 8,
+            "x1": 272,
+            "foot": 363
+          },
+          {
+            "x0": 66,
+            "y0": 12,
+            "x1": 305,
+            "foot": 366
+          },
+          {
+            "x0": 99,
+            "y0": 19,
+            "x1": 276,
+            "foot": 366
+          },
+          {
+            "x0": 111,
+            "y0": 8,
+            "x1": 275,
+            "foot": 365
+          }
+        ],
+        "scale": 0.84
+      },
+      "provenance": {
+        "source": "enemies/marauder/ENM-MARAUDER-DISARMED-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "enemy.marauder.sheet.exit": {
       "url": "art/marauder-exit.webp",
       "sheet": {
@@ -3569,6 +3781,59 @@
             "foot": 354
           }
         ]
+      }
+    },
+    "enemy.marauder.sheet.flee": {
+      "url": "art/marauder-flee.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 369,
+        "cells": [
+          {
+            "x0": 42,
+            "y0": 51,
+            "x1": 301,
+            "foot": 369
+          },
+          {
+            "x0": 92,
+            "y0": 44,
+            "x1": 288,
+            "foot": 371
+          },
+          {
+            "x0": 45,
+            "y0": 32,
+            "x1": 350,
+            "foot": 318
+          },
+          {
+            "x0": 37,
+            "y0": 51,
+            "x1": 326,
+            "foot": 369
+          },
+          {
+            "x0": 99,
+            "y0": 43,
+            "x1": 298,
+            "foot": 371
+          },
+          {
+            "x0": 45,
+            "y0": 30,
+            "x1": 352,
+            "foot": 303
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "enemies/marauder/ENM-MARAUDER-FLEE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
       }
     },
     "enemy.marauder.sheet.idle-walk": {
@@ -4150,6 +4415,59 @@
         ]
       }
     },
+    "enemy.marek.sheet.scorched-walk": {
+      "url": "art/marek-scorched-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 359,
+        "cells": [
+          {
+            "x0": 58,
+            "y0": 34,
+            "x1": 319,
+            "foot": 358
+          },
+          {
+            "x0": 60,
+            "y0": 52,
+            "x1": 330,
+            "foot": 359
+          },
+          {
+            "x0": 77,
+            "y0": 24,
+            "x1": 308,
+            "foot": 358
+          },
+          {
+            "x0": 37,
+            "y0": 37,
+            "x1": 326,
+            "foot": 359
+          },
+          {
+            "x0": 64,
+            "y0": 52,
+            "x1": 354,
+            "foot": 359
+          },
+          {
+            "x0": 71,
+            "y0": 30,
+            "x1": 333,
+            "foot": 358
+          }
+        ],
+        "scale": 0.9
+      },
+      "provenance": {
+        "source": "enemies/marek/ENM-MAREK-SCORCHED-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "enemy.marek.sheet.stagger": {
       "url": "art/marek-stagger.webp",
       "sheet": {
@@ -4704,6 +5022,59 @@
         ]
       }
     },
+    "enemy.reaver.sheet.flee": {
+      "url": "art/reaver-flee.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 361,
+        "cells": [
+          {
+            "x0": 47,
+            "y0": 58,
+            "x1": 326,
+            "foot": 362
+          },
+          {
+            "x0": 65,
+            "y0": 57,
+            "x1": 288,
+            "foot": 363
+          },
+          {
+            "x0": 49,
+            "y0": 43,
+            "x1": 340,
+            "foot": 325
+          },
+          {
+            "x0": 34,
+            "y0": 58,
+            "x1": 325,
+            "foot": 361
+          },
+          {
+            "x0": 77,
+            "y0": 51,
+            "x1": 307,
+            "foot": 361
+          },
+          {
+            "x0": 41,
+            "y0": 41,
+            "x1": 355,
+            "foot": 317
+          }
+        ],
+        "scale": 0.9
+      },
+      "provenance": {
+        "source": "enemies/reaver/ENM-REAVER-FLEE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "enemy.reaver.sheet.grab": {
       "url": "art/reaver-grab.webp",
       "sheet": {
@@ -4892,6 +5263,59 @@
         ]
       }
     },
+    "enemy.rider.sheet.flee": {
+      "url": "art/rider-flee.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 361,
+        "cells": [
+          {
+            "x0": 38,
+            "y0": 52,
+            "x1": 329,
+            "foot": 362
+          },
+          {
+            "x0": 72,
+            "y0": 44,
+            "x1": 312,
+            "foot": 361
+          },
+          {
+            "x0": 31,
+            "y0": 36,
+            "x1": 354,
+            "foot": 320
+          },
+          {
+            "x0": 32,
+            "y0": 53,
+            "x1": 333,
+            "foot": 360
+          },
+          {
+            "x0": 78,
+            "y0": 48,
+            "x1": 324,
+            "foot": 361
+          },
+          {
+            "x0": 26,
+            "y0": 35,
+            "x1": 359,
+            "foot": 316
+          }
+        ],
+        "scale": 0.9
+      },
+      "provenance": {
+        "source": "enemies/rider/ENM-RIDER-FLEE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "enemy.rider.sheet.mount-attack": {
       "url": "art/rider-mount-attack.webp",
       "sheet": {
@@ -5060,6 +5484,59 @@
             "foot": 354
           }
         ]
+      }
+    },
+    "enemy.rider.sheet.walk": {
+      "url": "art/rider-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 368,
+        "cells": [
+          {
+            "x0": 80,
+            "y0": 19,
+            "x1": 308,
+            "foot": 368
+          },
+          {
+            "x0": 98,
+            "y0": 25,
+            "x1": 268,
+            "foot": 368
+          },
+          {
+            "x0": 117,
+            "y0": 17,
+            "x1": 259,
+            "foot": 369
+          },
+          {
+            "x0": 74,
+            "y0": 20,
+            "x1": 321,
+            "foot": 367
+          },
+          {
+            "x0": 96,
+            "y0": 26,
+            "x1": 269,
+            "foot": 368
+          },
+          {
+            "x0": 118,
+            "y0": 15,
+            "x1": 270,
+            "foot": 368
+          }
+        ],
+        "scale": 0.86
+      },
+      "provenance": {
+        "source": "enemies/rider/ENM-RIDER-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
       }
     },
     "enemy.runner.sheet.air": {
@@ -5436,6 +5913,59 @@
             "foot": 354
           }
         ]
+      }
+    },
+    "enemy.saboteur.sheet.flee": {
+      "url": "art/saboteur-flee.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 353,
+        "cells": [
+          {
+            "x0": 53,
+            "y0": 57,
+            "x1": 309,
+            "foot": 353
+          },
+          {
+            "x0": 95,
+            "y0": 52,
+            "x1": 287,
+            "foot": 353
+          },
+          {
+            "x0": 59,
+            "y0": 40,
+            "x1": 336,
+            "foot": 307
+          },
+          {
+            "x0": 37,
+            "y0": 61,
+            "x1": 317,
+            "foot": 356
+          },
+          {
+            "x0": 97,
+            "y0": 52,
+            "x1": 302,
+            "foot": 359
+          },
+          {
+            "x0": 50,
+            "y0": 42,
+            "x1": 360,
+            "foot": 314
+          }
+        ],
+        "scale": 0.9
+      },
+      "provenance": {
+        "source": "enemies/saboteur/ENM-SABOTEUR-FLEE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
       }
     },
     "enemy.saboteur.sheet.grenade": {
@@ -5953,6 +6483,59 @@
             "foot": 354
           }
         ]
+      }
+    },
+    "enemy.signalman.sheet.flee": {
+      "url": "art/signalman-flee.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 364,
+        "cells": [
+          {
+            "x0": 53,
+            "y0": 36,
+            "x1": 309,
+            "foot": 364
+          },
+          {
+            "x0": 55,
+            "y0": 38,
+            "x1": 271,
+            "foot": 364
+          },
+          {
+            "x0": 37,
+            "y0": 29,
+            "x1": 338,
+            "foot": 326
+          },
+          {
+            "x0": 36,
+            "y0": 37,
+            "x1": 332,
+            "foot": 365
+          },
+          {
+            "x0": 59,
+            "y0": 34,
+            "x1": 278,
+            "foot": 363
+          },
+          {
+            "x0": 26,
+            "y0": 25,
+            "x1": 351,
+            "foot": 310
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "enemies/signalman/ENM-SIGNALMAN-FLEE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
       }
     },
     "enemy.signalman.sheet.idle-walk": {
@@ -7371,6 +7954,59 @@
         "edits": "75 %"
       }
     },
+    "hero.fire.sheet.heavy-walk": {
+      "url": "art/fire-heavy-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 367,
+        "cells": [
+          {
+            "x0": 55,
+            "y0": 22,
+            "x1": 309,
+            "foot": 367
+          },
+          {
+            "x0": 83,
+            "y0": 28,
+            "x1": 314,
+            "foot": 367
+          },
+          {
+            "x0": 107,
+            "y0": 18,
+            "x1": 317,
+            "foot": 366
+          },
+          {
+            "x0": 53,
+            "y0": 23,
+            "x1": 325,
+            "foot": 367
+          },
+          {
+            "x0": 87,
+            "y0": 24,
+            "x1": 327,
+            "foot": 368
+          },
+          {
+            "x0": 100,
+            "y0": 16,
+            "x1": 333,
+            "foot": 364
+          }
+        ],
+        "scale": 0.88
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-HEAVY-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "hero.fire.sheet.hurt": {
       "url": "art/fire-hurt.webp",
       "sheet": {
@@ -7651,6 +8287,59 @@
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-LANCE-B.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.fire.sheet.lance-walk": {
+      "url": "art/fire-lance-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 362,
+        "cells": [
+          {
+            "x0": 35,
+            "y0": 55,
+            "x1": 365,
+            "foot": 363
+          },
+          {
+            "x0": 68,
+            "y0": 55,
+            "x1": 365,
+            "foot": 362
+          },
+          {
+            "x0": 76,
+            "y0": 38,
+            "x1": 367,
+            "foot": 361
+          },
+          {
+            "x0": 35,
+            "y0": 55,
+            "x1": 365,
+            "foot": 361
+          },
+          {
+            "x0": 68,
+            "y0": 55,
+            "x1": 365,
+            "foot": 362
+          },
+          {
+            "x0": 66,
+            "y0": 37,
+            "x1": 366,
+            "foot": 360
+          }
+        ],
+        "scale": 0.95
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-LANCE-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }
@@ -7950,6 +8639,59 @@
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-REVOLVER.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.fire.sheet.revolver-walk": {
+      "url": "art/fire-revolver-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 366,
+        "cells": [
+          {
+            "x0": 76,
+            "y0": 29,
+            "x1": 312,
+            "foot": 368
+          },
+          {
+            "x0": 85,
+            "y0": 29,
+            "x1": 281,
+            "foot": 367
+          },
+          {
+            "x0": 91,
+            "y0": 22,
+            "x1": 252,
+            "foot": 366
+          },
+          {
+            "x0": 77,
+            "y0": 23,
+            "x1": 314,
+            "foot": 361
+          },
+          {
+            "x0": 84,
+            "y0": 25,
+            "x1": 293,
+            "foot": 361
+          },
+          {
+            "x0": 85,
+            "y0": 14,
+            "x1": 259,
+            "foot": 359
+          }
+        ],
+        "scale": 0.88
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-REVOLVER-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }
@@ -9279,6 +10021,59 @@
         "edits": "75 %"
       }
     },
+    "hero.mountain.sheet.heavy-walk": {
+      "url": "art/mountain-heavy-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 369,
+        "cells": [
+          {
+            "x0": 55,
+            "y0": 28,
+            "x1": 341,
+            "foot": 370
+          },
+          {
+            "x0": 75,
+            "y0": 31,
+            "x1": 338,
+            "foot": 369
+          },
+          {
+            "x0": 105,
+            "y0": 24,
+            "x1": 351,
+            "foot": 371
+          },
+          {
+            "x0": 60,
+            "y0": 25,
+            "x1": 342,
+            "foot": 368
+          },
+          {
+            "x0": 85,
+            "y0": 27,
+            "x1": 352,
+            "foot": 366
+          },
+          {
+            "x0": 104,
+            "y0": 16,
+            "x1": 354,
+            "foot": 361
+          }
+        ],
+        "scale": 0.87
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-HEAVY-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "hero.mountain.sheet.hurt": {
       "url": "art/mountain-hurt.webp",
       "sheet": {
@@ -9507,6 +10302,59 @@
       },
       "provenance": {
         "source": "heroes/mountain/HERO-MTN-LANCE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.mountain.sheet.lance-walk": {
+      "url": "art/mountain-lance-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 363,
+        "cells": [
+          {
+            "x0": 49,
+            "y0": 42,
+            "x1": 370,
+            "foot": 363
+          },
+          {
+            "x0": 66,
+            "y0": 46,
+            "x1": 370,
+            "foot": 363
+          },
+          {
+            "x0": 77,
+            "y0": 32,
+            "x1": 371,
+            "foot": 362
+          },
+          {
+            "x0": 60,
+            "y0": 46,
+            "x1": 374,
+            "foot": 362
+          },
+          {
+            "x0": 69,
+            "y0": 46,
+            "x1": 372,
+            "foot": 363
+          },
+          {
+            "x0": 77,
+            "y0": 34,
+            "x1": 371,
+            "foot": 362
+          }
+        ],
+        "scale": 0.93
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-LANCE-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }
@@ -9806,6 +10654,59 @@
       },
       "provenance": {
         "source": "heroes/mountain/HERO-MTN-REVOLVER.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.mountain.sheet.revolver-walk": {
+      "url": "art/mountain-revolver-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 374,
+        "cells": [
+          {
+            "x0": 65,
+            "y0": 23,
+            "x1": 306,
+            "foot": 374
+          },
+          {
+            "x0": 82,
+            "y0": 27,
+            "x1": 280,
+            "foot": 374
+          },
+          {
+            "x0": 95,
+            "y0": 15,
+            "x1": 258,
+            "foot": 362
+          },
+          {
+            "x0": 68,
+            "y0": 23,
+            "x1": 308,
+            "foot": 375
+          },
+          {
+            "x0": 88,
+            "y0": 27,
+            "x1": 286,
+            "foot": 375
+          },
+          {
+            "x0": 76,
+            "y0": 14,
+            "x1": 279,
+            "foot": 368
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-REVOLVER-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }
@@ -11183,6 +12084,59 @@
         "edits": "75 %"
       }
     },
+    "hero.river.sheet.heavy-walk": {
+      "url": "art/river-heavy-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 371,
+        "cells": [
+          {
+            "x0": 74,
+            "y0": 12,
+            "x1": 311,
+            "foot": 371
+          },
+          {
+            "x0": 86,
+            "y0": 15,
+            "x1": 311,
+            "foot": 371
+          },
+          {
+            "x0": 67,
+            "y0": 9,
+            "x1": 283,
+            "foot": 370
+          },
+          {
+            "x0": 66,
+            "y0": 12,
+            "x1": 313,
+            "foot": 371
+          },
+          {
+            "x0": 86,
+            "y0": 15,
+            "x1": 311,
+            "foot": 372
+          },
+          {
+            "x0": 66,
+            "y0": 9,
+            "x1": 284,
+            "foot": 372
+          }
+        ],
+        "scale": 0.84
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-HEAVY-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "hero.river.sheet.hurt": {
       "url": "art/river-hurt.webp",
       "sheet": {
@@ -11411,6 +12365,59 @@
       },
       "provenance": {
         "source": "heroes/river/HERO-RIV-LANCE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.river.sheet.lance-walk": {
+      "url": "art/river-lance-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 361,
+        "cells": [
+          {
+            "x0": 57,
+            "y0": 37,
+            "x1": 342,
+            "foot": 361
+          },
+          {
+            "x0": 80,
+            "y0": 47,
+            "x1": 334,
+            "foot": 364
+          },
+          {
+            "x0": 83,
+            "y0": 35,
+            "x1": 342,
+            "foot": 365
+          },
+          {
+            "x0": 51,
+            "y0": 31,
+            "x1": 343,
+            "foot": 359
+          },
+          {
+            "x0": 79,
+            "y0": 42,
+            "x1": 339,
+            "foot": 361
+          },
+          {
+            "x0": 79,
+            "y0": 30,
+            "x1": 344,
+            "foot": 360
+          }
+        ],
+        "scale": 0.92
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-LANCE-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }
@@ -11710,6 +12717,59 @@
       },
       "provenance": {
         "source": "heroes/river/HERO-RIV-REVOLVER.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.river.sheet.revolver-walk": {
+      "url": "art/river-revolver-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 369,
+        "cells": [
+          {
+            "x0": 63,
+            "y0": 9,
+            "x1": 312,
+            "foot": 370
+          },
+          {
+            "x0": 94,
+            "y0": 17,
+            "x1": 282,
+            "foot": 369
+          },
+          {
+            "x0": 85,
+            "y0": 5,
+            "x1": 272,
+            "foot": 369
+          },
+          {
+            "x0": 62,
+            "y0": 9,
+            "x1": 315,
+            "foot": 368
+          },
+          {
+            "x0": 88,
+            "y0": 17,
+            "x1": 284,
+            "foot": 370
+          },
+          {
+            "x0": 89,
+            "y0": 9,
+            "x1": 277,
+            "foot": 368
+          }
+        ],
+        "scale": 0.84
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-REVOLVER-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }
@@ -13093,6 +14153,59 @@
         "edits": "75 %"
       }
     },
+    "hero.wind.sheet.heavy-walk": {
+      "url": "art/wind-heavy-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 366,
+        "cells": [
+          {
+            "x0": 43,
+            "y0": 22,
+            "x1": 322,
+            "foot": 367
+          },
+          {
+            "x0": 52,
+            "y0": 24,
+            "x1": 299,
+            "foot": 367
+          },
+          {
+            "x0": 78,
+            "y0": 15,
+            "x1": 296,
+            "foot": 366
+          },
+          {
+            "x0": 49,
+            "y0": 22,
+            "x1": 324,
+            "foot": 366
+          },
+          {
+            "x0": 61,
+            "y0": 22,
+            "x1": 301,
+            "foot": 366
+          },
+          {
+            "x0": 78,
+            "y0": 13,
+            "x1": 303,
+            "foot": 365
+          }
+        ],
+        "scale": 0.95
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-HEAVY-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "hero.wind.sheet.hurt": {
       "url": "art/wind-hurt.webp",
       "sheet": {
@@ -13372,6 +14485,59 @@
       },
       "provenance": {
         "source": "heroes/wind/HERO-WND-LANCE-B.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.wind.sheet.lance-walk": {
+      "url": "art/wind-lance-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 368,
+        "cells": [
+          {
+            "x0": 48,
+            "y0": 30,
+            "x1": 372,
+            "foot": 371
+          },
+          {
+            "x0": 65,
+            "y0": 36,
+            "x1": 349,
+            "foot": 368
+          },
+          {
+            "x0": 75,
+            "y0": 23,
+            "x1": 372,
+            "foot": 368
+          },
+          {
+            "x0": 32,
+            "y0": 30,
+            "x1": 372,
+            "foot": 368
+          },
+          {
+            "x0": 65,
+            "y0": 37,
+            "x1": 355,
+            "foot": 369
+          },
+          {
+            "x0": 76,
+            "y0": 21,
+            "x1": 373,
+            "foot": 368
+          }
+        ],
+        "scale": 1.0
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-LANCE-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }
@@ -13670,6 +14836,59 @@
       },
       "provenance": {
         "source": "heroes/wind/HERO-WND-REVOLVER.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.wind.sheet.revolver-walk": {
+      "url": "art/wind-revolver-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 372,
+        "cells": [
+          {
+            "x0": 42,
+            "y0": 18,
+            "x1": 290,
+            "foot": 372
+          },
+          {
+            "x0": 79,
+            "y0": 18,
+            "x1": 265,
+            "foot": 373
+          },
+          {
+            "x0": 105,
+            "y0": 18,
+            "x1": 266,
+            "foot": 373
+          },
+          {
+            "x0": 61,
+            "y0": 18,
+            "x1": 298,
+            "foot": 372
+          },
+          {
+            "x0": 83,
+            "y0": 18,
+            "x1": 265,
+            "foot": 372
+          },
+          {
+            "x0": 74,
+            "y0": 19,
+            "x1": 288,
+            "foot": 371
+          }
+        ],
+        "scale": 0.95
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-REVOLVER-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }
@@ -14387,6 +15606,59 @@
         "edits": "75 %"
       }
     },
+    "npc.s2-researcher.walk": {
+      "url": "art/npc-s2-researcher-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 371,
+        "cells": [
+          {
+            "x0": 75,
+            "y0": 25,
+            "x1": 293,
+            "foot": 371
+          },
+          {
+            "x0": 92,
+            "y0": 33,
+            "x1": 233,
+            "foot": 371
+          },
+          {
+            "x0": 93,
+            "y0": 23,
+            "x1": 237,
+            "foot": 371
+          },
+          {
+            "x0": 62,
+            "y0": 27,
+            "x1": 290,
+            "foot": 370
+          },
+          {
+            "x0": 81,
+            "y0": 24,
+            "x1": 229,
+            "foot": 372
+          },
+          {
+            "x0": 86,
+            "y0": 23,
+            "x1": 299,
+            "foot": 371
+          }
+        ],
+        "scale": 0.87
+      },
+      "provenance": {
+        "source": "npcs/NPC-S2-RESEARCHER-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "npc.s2-worker.sheet": {
       "url": "art/npc-s2-worker.webp",
       "sheet": {
@@ -14435,6 +15707,59 @@
       },
       "provenance": {
         "source": "npcs/NPC-S2-WORKER.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "npc.s2-worker.walk": {
+      "url": "art/npc-s2-worker-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 366,
+        "cells": [
+          {
+            "x0": 63,
+            "y0": 42,
+            "x1": 278,
+            "foot": 369
+          },
+          {
+            "x0": 100,
+            "y0": 46,
+            "x1": 260,
+            "foot": 367
+          },
+          {
+            "x0": 108,
+            "y0": 30,
+            "x1": 270,
+            "foot": 366
+          },
+          {
+            "x0": 64,
+            "y0": 36,
+            "x1": 293,
+            "foot": 359
+          },
+          {
+            "x0": 91,
+            "y0": 35,
+            "x1": 257,
+            "foot": 360
+          },
+          {
+            "x0": 83,
+            "y0": 35,
+            "x1": 283,
+            "foot": 361
+          }
+        ],
+        "scale": 0.92
+      },
+      "provenance": {
+        "source": "npcs/NPC-S2-WORKER-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }

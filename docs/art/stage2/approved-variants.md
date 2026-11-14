@@ -16,6 +16,7 @@
 | Hero mounted sheets (ride, attack, defense, special, ultimate, stability) | 2x2 sheets with 576 px wide cells | `hero.<hero>.sheet.mount-*` |
 | Road Rider and Marek mounted sheets | re-cut in M22 as 2x2 sheets (M19 had cut them as 3x2) | `enemy.rider.sheet.mount-*`, `enemy.marek.sheet.mounted*` |
 | Stage 2 villagers, parked and downed bikes, props, effect sheets | sprite sheets | `npc.s2-*.sheet`, `prop.s2-*`, `vfx.s2-*.sheet` |
+| Walk and flee cycles AW01–AW25 (`codex_prompts_stage2_armed_walks.md`): hero armed walks, enemy flee runs, the rider's, disarmed Marauder's and Scorched Marek's walks, the annex worker's and botanist's walks | 3x2 sheets at the scale recorded at approval (`--only=walks`) | `hero.<hero>.sheet.<lance\|revolver\|heavy>-walk`, `enemy.<kit>.sheet.flee`, `enemy.rider.sheet.walk`, `enemy.marauder.sheet.disarmed-walk`, `enemy.marek.sheet.scorched-walk`, `npc.s2-<worker\|researcher>.walk` |
 | Key art, menu and Museum backgrounds, outfit pictures, portraits, artifacts, badges, Museum icons | shell pictures | `art/shell/*.webp` |
 
 `python tools/audio/build_stage2_score.py <Pictures>/FightForPeace/music` cuts the seven cues (06A–06D become Marek's states) into whole-bar loops, once sections and two-bar stingers on the 129 BPM grid, normalized to −16 LUFS with peaks at −1 dBFS, MP3 160 kbit/s: `mus.stage2.<cue>.<state>` and `mus.stage2.gilded-jackal.sting-*`.
@@ -26,6 +27,5 @@
 |---|---|
 | Ambience beds | synthesized loops per area (`amb.stage2.*`); a file with the same id replaces one |
 | New SFX (weapons, firearm warning, pursuit) | synthesized placeholders (`sfx.weapon.*`, `sfx.warn.*`, `sfx.ride.*`) |
-| Armed walk cycles (`HERO-<code>-<LANCE\|REVOLVER\|HEAVY>-WALK`, prompts in the Pictures repo's `codex_prompts_stage2_armed_walks.md`) | the plain walk cycle with the weapon picture in hand; the importer and the game pick a delivered sheet up as `hero.<hero>.sheet.<lance\|revolver\|heavy>-walk` |
 | Museum pictures for the brass gears and the sealed crate | cut from `PROP-BARRICADE` cell 5 and `PROP-S2-EVIDENCE` cell 1 by the importer (`artifact-brass-gears`, `artifact-sealed-weapon-crate`) |
 | Narration voice | none: subtitles always; optional system voice (Windows TTS) as a prototype aid. A file `vo.<locale>.<line id>` replaces it |

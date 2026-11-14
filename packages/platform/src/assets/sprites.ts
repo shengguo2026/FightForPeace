@@ -584,6 +584,20 @@ export class SpritePicker {
         // M19 Lockstep Escort: the screening steps of the Stage 2 Enforcer.
         if (f.order === 2 && this.has(`${base}.stance`))
           return s('stance', loop(undefined, frame, 4, [3, 4]));
+        {
+          // M22 walk cycles drawn for kits whose idle sheet had one walk pose: the Road Rider
+          // on foot, the disarmed Marauder, Marek's Scorched Claim.
+          const own =
+            art === 'rider' && idle.sheet === 'on-foot'
+              ? 'walk'
+              : idle.sheet === 'disarm'
+                ? 'disarmed-walk'
+                : idle.sheet === 'scorched'
+                  ? 'scorched-walk'
+                  : null;
+          const ownMeta = own ? this.has(`${base}.${own}`) : undefined;
+          if (own && ownMeta) return s(own, loop(ownMeta, frame, 9));
+        }
         return s(idle.sheet, loop(undefined, frame, 8, idle.walk));
       case MoveState.Guard:
         return (
@@ -631,6 +645,9 @@ export class SpritePicker {
         if (art === 'rider') return s('on-foot', 0);
         return s(react, f.stateFrame < f.stun / 2 ? 4 : 5);
       case MoveState.Flee: {
+        // M22: a six-pose flee run where delivered (drawn facing right like every cell).
+        const run = this.has(`${base}.flee`);
+        if (run) return s('flee', loop(run, frame, 12));
         const cell = loop(undefined, frame, 8, exit.flee);
         return s(exitSheet, cell, !FLEE_DRAWN_RIGHT.has(art)) ?? s('idle-walk', 2);
       }

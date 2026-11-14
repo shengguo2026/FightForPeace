@@ -81,11 +81,30 @@ const FLASH_GAP = 12;
 const S2_WORKERS: Partial<
   Record<
     string,
-    { sheet: string; bound: [number, number]; freed: [number, number]; leaving: number }
+    {
+      sheet: string;
+      bound: [number, number];
+      freed: [number, number];
+      leaving: number;
+      /** M22: the walk-to-safety cycle, drawn while leaving. */
+      walk: string;
+    }
   >
 > = {
-  'aeration-annex': { sheet: 'npc.s2-worker.sheet', bound: [1, 2], freed: [3, 5], leaving: 4 },
-  'prep-room': { sheet: 'npc.s2-researcher.sheet', bound: [1, 1], freed: [2, 4], leaving: 5 },
+  'aeration-annex': {
+    sheet: 'npc.s2-worker.sheet',
+    bound: [1, 2],
+    freed: [3, 5],
+    leaving: 4,
+    walk: 'npc.s2-worker.walk',
+  },
+  'prep-room': {
+    sheet: 'npc.s2-researcher.sheet',
+    bound: [1, 1],
+    freed: [2, 4],
+    leaving: 5,
+    walk: 'npc.s2-researcher.walk',
+  },
 };
 
 const PROP_SCALE: Partial<Record<string, number>> = {
@@ -812,7 +831,19 @@ export class StageScene extends Phaser.Scene {
               : s2.freed[1]
             : s2.leaving
         : -1;
-      const sheet = s2 ? s2.sheet : w.look === 1 ? 'npc.worker-b.sheet' : 'npc.worker-a.sheet';
+      // M22: leaving walks through the villager's walk cycle where it was delivered.
+      const walking =
+        s2 !== undefined &&
+        w.state === WorkerState.Leaving &&
+        this.textures.exists(s2.walk) &&
+        this.assets.sheet(s2.walk) !== undefined;
+      const sheet = walking
+        ? s2.walk
+        : s2
+          ? s2.sheet
+          : w.look === 1
+            ? 'npc.worker-b.sheet'
+            : 'npc.worker-a.sheet';
       const meta = this.assets.sheet(sheet)?.sheet;
       keep.add(910 + i);
       g.fillStyle(0x000000, 0.3);
@@ -824,9 +855,12 @@ export class StageScene extends Phaser.Scene {
       }
       const sp = this.sprite(this.runSprites, 910 + i, sheet);
       sp.setVisible(true);
-      sp.setTexture(sheet, s2 ? s2cell : cell);
+      sp.setTexture(
+        sheet,
+        walking ? Math.floor(frame / 9) % meta.cells.length : s2 ? s2cell : cell,
+      );
       sp.setOrigin(0.5, meta.ground / meta.cell);
-      sp.setScale(0.95);
+      sp.setScale(0.95 * (meta.scale ?? 1));
       sp.setPosition(x, z);
       sp.setDepth(this.depthAt(z));
       // A worker running home moves left; the sheet is mirrored only where needed.
