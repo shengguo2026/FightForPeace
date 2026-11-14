@@ -2,8 +2,6 @@ import {
   type FrameInput,
   type World,
   ActionBit,
-  PROXY_ALLOWED,
-  PROXY_GRACE_FRAMES,
   actionable,
   createWorld,
   hashWorld,
@@ -12,25 +10,18 @@ import {
   snapshotWorld,
   step,
 } from '@ffp/sim';
-import { describe, expect, it } from 'vitest';
 import {
-  ABSENT_MS,
-  COUNTDOWN_MS,
-  COURTESY_MS,
-  HASH_EVERY,
-  MAX_DELAY,
-  MIGRATE_MS,
   NET_PROTOCOL,
-  ROLLBACK_WINDOW,
   RollbackSession,
   type Compat,
   type NetMessage,
   type StartInfo,
-  checkCompat,
-  chooseDelay,
-  memoryPair,
 } from '../src/index';
 
+/**
+ * The simulated two-game network of the M15 tests (moved here in M23 so the Stage 2
+ * Wi-Fi tests share it): a link with latency, jitter and drops, and a game per side.
+ */
 /** Deterministic made-up play: walks, jumps and attacks, different per slot. */
 export function play(slot: number, f: number): FrameInput {
   const r = Math.imul(f * 2654435761 + slot * 40503, 2246822519) >>> 0;
@@ -45,7 +36,13 @@ export function play(slot: number, f: number): FrameInput {
 }
 
 export const OPTS = { stage: 'stage1', difficulty: 'medium' } as const;
-export const COMPAT: Compat = { game: 't', protocol: NET_PROTOCOL, rules: 1, content: 2, cheats: 3 };
+export const COMPAT: Compat = {
+  game: 't',
+  protocol: NET_PROTOCOL,
+  rules: 1,
+  content: 2,
+  cheats: 3,
+};
 export const START: StartInfo = {
   seed: 5,
   stage: 'stage1',

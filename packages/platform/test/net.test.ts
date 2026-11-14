@@ -1,14 +1,10 @@
 import {
-  type FrameInput,
-  type World,
   ActionBit,
   PROXY_ALLOWED,
   PROXY_GRACE_FRAMES,
-  actionable,
   createWorld,
   hashWorld,
   proxyInput,
-  restoreWorld,
   snapshotWorld,
   step,
 } from '@ffp/sim';
@@ -20,28 +16,14 @@ import {
   HASH_EVERY,
   MAX_DELAY,
   MIGRATE_MS,
-  NET_PROTOCOL,
   ROLLBACK_WINDOW,
-  RollbackSession,
   type Compat,
   type NetMessage,
-  type StartInfo,
   checkCompat,
   chooseDelay,
   memoryPair,
 } from '../src/index';
-
-import {
-  COMPAT,
-  Net,
-  OPTS,
-  START,
-  pair,
-  play,
-  replay,
-  run,
-  settle,
-} from './netHarness';
+import { COMPAT, OPTS, START, pair, play, replay, run, settle } from './netHarness';
 
 describe('M15 lobby checks and delay', () => {
   const base: Compat = { game: '0.15.0', protocol: 2, rules: 11, content: 22, cheats: 33 };

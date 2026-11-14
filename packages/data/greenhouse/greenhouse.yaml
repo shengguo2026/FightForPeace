@@ -535,6 +535,8 @@ rooms:
           - { kit: reaver, x: 2100, z: 860 }
           - { kit: glassrunner, x: 2200, z: 720, minDifficulty: medium }
           - { kit: signalman, x: 2250, z: 900, minDifficulty: extreme }
+          # M23: Ultimate's own extra (without one it measured easier than Extreme).
+          - { kit: glassrunner, x: 2100, z: 740, minDifficulty: ultimate }
     substitutions:
       - { from: claimhand, to: enforcer2, minDifficulty: hard, count: 1 }
     assets:
@@ -567,6 +569,9 @@ rooms:
           - { kit: claimhand, x: 1750, z: 900 }
           - { kit: enforcer2, x: 1800, z: 820, minDifficulty: hard }
           - { kit: signalman, x: 1850, z: 700, minDifficulty: extreme }
+          # M23: Ultimate's own extra (without one it measured easier than Extreme).
+          - { kit: claimhand, x: 1700, z: 860, minDifficulty: ultimate }
+          - { kit: glassrunner, x: 1820, z: 780, minDifficulty: ultimate, coop: true }
     assets:
       - { id: filtration, kind: filtration, x: 1720, z: 650 }
       - { id: pump, kind: pump, x: 1580, z: 660 }
@@ -639,6 +644,8 @@ rooms:
           - { kit: claimhand, x: 1900, z: 940 }
           - { kit: reaver, x: 2150, z: 720, minDifficulty: hard }
           - { kit: signalman, x: 2250, z: 880, minDifficulty: extreme }
+          # M23: Ultimate's own extra (without one it measured easier than Extreme).
+          - { kit: claimhand, x: 2100, z: 720, minDifficulty: ultimate }
           - { kit: glassrunner, x: 300, z: 900, coop: true }
     substitutions:
       # M23: from Extreme (on Hard the Enforcer is met in the Loading Yard, Filtration and Production Hall).
@@ -703,6 +710,8 @@ rooms:
           - { kit: claimhand, x: 2100, z: 760 }
           - { kit: marauder, x: 2250, z: 900, minDifficulty: hard }
           - { kit: signalman, x: 2200, z: 700, minDifficulty: extreme }
+          # M23: Ultimate's own extra (without one it measured easier than Extreme).
+          - { kit: glassrunner, x: 2050, z: 860, minDifficulty: ultimate }
           - { kit: glassrunner, x: 300, z: 860, coop: true }
     assets:
       - { id: bed-west, kind: crop-bed, x: 760, z: 950 }
@@ -767,6 +776,9 @@ rooms:
           - { kit: claimhand, x: 2000, z: 780, minDifficulty: medium }
           - { kit: reaver, x: 2200, z: 820, minDifficulty: hard }
           - { kit: signalman, x: 2250, z: 700, minDifficulty: extreme }
+          # M23: Ultimate's own extra (without one it measured easier than Extreme).
+          - { kit: glassrunner, x: 2100, z: 860, minDifficulty: ultimate }
+          - { kit: claimhand, x: 2220, z: 780, minDifficulty: ultimate, coop: true }
     substitutions:
       # M23: from Extreme (on Hard the Enforcer is met in the Loading Yard, Filtration and Production Hall).
       - { from: claimhand, to: enforcer2, minDifficulty: extreme, count: 1 }
@@ -813,6 +825,8 @@ rooms:
           - { kit: glassrunner, x: 2200, z: 900 }
           - { kit: enforcer2, x: 2250, z: 820, minDifficulty: hard }
           - { kit: signalman, x: 2300, z: 700, minDifficulty: extreme }
+          # M23: Ultimate's own extra (without one it measured easier than Extreme).
+          - { kit: claimhand, x: 2150, z: 860, minDifficulty: ultimate }
           - { kit: claimhand, x: 300, z: 880, coop: true }
     assets:
       - { id: pump, kind: pump, x: 1700, z: 660 }
