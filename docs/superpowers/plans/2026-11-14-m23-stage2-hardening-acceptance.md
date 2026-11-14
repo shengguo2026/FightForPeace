@@ -42,19 +42,19 @@ completion, and Guo's manual steps judge feel. Exact balance values stay product
 
 ## Tasks
 
-- [ ] Complete-path harness; find and fix what stops a clean run.
-- [ ] Progression sweep (spine and every branch); fix blockers.
-- [ ] Balance harness and Stage 2 balance table; tune data where an invariant fails.
-- [ ] Outcome coverage: clean / Cheat-Assisted, both captures, every branch outcome, every grade, every Marek phase.
-- [ ] Checkpoint, profile rewards once, backup and import with Stage 2 progress.
-- [ ] Wi-Fi: six pairs, soak, disconnect/rejoin, host migration.
-- [ ] Anti-infinite and stress; headless step budget.
-- [ ] Controls: prompt matrix for Stage 2, QWERTZ and gamepad-only cheat in e2e.
-- [ ] Localization and accessibility sweep of Stage 2 screens; fix findings.
-- [ ] Throttled performance in a crowded room and the co-op pursuit.
-- [ ] Release manifest and its test.
-- [ ] EW01–EW08 walk check (A5).
-- [ ] Acceptance record `docs/review/09-stage2-acceptance.md`, version 0.23.0, README, `lessons_learned.md` for every new finding, `Guo_tests.md` M23 section.
+- [x] Complete-path harness; find and fix what stops a clean run.
+- [x] Progression sweep (spine and every branch); fix blockers.
+- [x] Balance harness and Stage 2 balance table; tune data where an invariant fails.
+- [x] Outcome coverage: clean / Cheat-Assisted, both captures, every branch outcome, every grade, every Marek phase.
+- [x] Checkpoint, profile rewards once, backup and import with Stage 2 progress.
+- [x] Wi-Fi: six pairs, soak, disconnect/rejoin, host migration.
+- [x] Anti-infinite and stress; headless step budget.
+- [x] Controls: prompt matrix for Stage 2, QWERTZ and gamepad-only cheat in e2e.
+- [x] Localization and accessibility sweep of Stage 2 screens; fix findings.
+- [x] Throttled performance in a crowded room and the co-op pursuit.
+- [x] Release manifest and its test.
+- [x] EW01–EW08 walk check (A5).
+- [x] Acceptance record `docs/review/09-stage2-acceptance.md`, version 0.23.0, README, `lessons_learned.md` for every new finding, `Guo_tests.md` M23 section.
 
 ## Manual part (Guo_tests M23)
 

@@ -1304,3 +1304,75 @@ Pull the branch again (`git pull`), then `pnpm install` and `pnpm dev` as above.
 4. **Profile data:** **Collection and Records → Profile data** shows the loaded profile: name, dates, language, Credits, each stage's state (locked, open, started, completed), which title screen the village uses, the saved checkpoint, the stage records, unlock counts and the last heroes. **Show raw data** shows the whole save as text. Check it in 简体中文 and Deutsch too.
 5. **Joining midway (no change, for reference):** in a solo Stage 2 run, Player 2 joins with Numpad 4 (or Start on a free pad). More enemies attack at once right away; the extra co-op enemies come from the next wave. Finishing the run completes Stage 2 on your profile.
 
+
+## M23 · Stage 2 hardening and acceptance (0.23.0)
+
+What's new: the automated Stage 2 acceptance (every hero and pair, every difficulty, every beat and branch, checkpoints, Wi-Fi for all six pairs, controls, German and Chinese screens, performance) and the fixes it found. The record with all numbers is `docs/review/09-stage2-acceptance.md`.
+
+What changed in play:
+
+- **Enemies no longer freeze at the room's end wall.** An enemy knocked into the strip at the edge (where enemies may not attack) used to stand there for good; it now walks back in. This applies to Stage 1 too, so Stage 1 fights can feel slightly busier.
+- **Difficulty:** Ultimate now adds one enemy in six Stage 2 rooms (two more in co-op), so it is harder than Extreme again. On Hard the Enforcer is in the Loading Yard, Filtration and Production Hall only (the Aquaculture Hall and Medicinal Wing get it from Extreme). On Easy and Medium, Marek calls one Claim Hand instead of two.
+- **German and Chinese:** room names in the top bar of a Stage 2 room (and Stage 1 locks) are now translated.
+- **Keyboard and gamepad:** the Museum Investigation panel can be reached and scrolled with Tab and the arrow keys; in Elder's Secrets, D-pad down from the last cheat now reaches the "I understand" button.
+- **Release zip** contains `manifest.json` (versions, hashes, golden replays and the source of every approved file).
+
+Decisions for you (nothing changed):
+
+- **After the last continue the whole stage starts again from the pursuit** (rule D8). Stage 2 is long, so on Medium this can mean 20 minutes again. If after your Easy run you would rather go back to the last checkpoint, say so.
+- **Hard Loading Yard** (Enforcer plus a Marauder) is the hardest early room on Hard solo. Kept as is unless it feels unfair.
+
+### Get and start the build
+
+To test the branch before it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-gmw83a
+git checkout claude/project-thread-gmw83a
+git pull origin claude/project-thread-gmw83a
+pnpm install
+pnpm dev
+```
+
+After it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+If Vite prints another port than 5173, use that one. Stop the server with `Ctrl+C`.
+
+For the Wi-Fi steps, build the zip on this PC and copy it to the second PC:
+
+```powershell
+pnpm release
+explorer release
+```
+
+Optional, the automated checks (the browser tests take about an hour):
+
+```powershell
+pnpm typecheck
+pnpm test
+pnpm e2e
+```
+
+### Test steps
+
+Open `http://localhost:5173/` (the shell), with your profile that has Stage 2 open.
+
+1. **Version and zip:** the corner of the village shows 0.23.0. Unzip `release\FightForPeace-0.23.0.zip`: it has `manifest.json` next to `VERSION`, and its `"game"` is `0.23.0`.
+2. **Stage 1 feel:** play the Stage 1 courtyard and the sluice on Medium. Knock an enemy hard into the right-hand wall: it gets up and walks back into the fight instead of standing at the wall. Say if Stage 1 now feels too hard.
+3. **Wi-Fi with three pairs (two PCs):** start the zip on both PCs (`start.bat`); host on one, join on the other. Play Stage 2 on Medium as Mountain + River, then Wind + Fire, then River + Wind, each at least to the Aquaculture Hall. Then, in a room, **pull the network cable or switch Wi-Fi off** on the host for about 10 seconds and back on: the guest takes over, then the host rejoins with the code shown; nothing is duplicated (no second weapon, no extra enemy).
+4. **Checkpoints:** start Stage 2 on Medium, reach the Loading Yard checkpoint and a later room, quit to the village, pick **Continue**: you are back at the checkpoint with the same Ledger and continues. Lose all continues once: the stage starts again at the Perimeter Pursuit.
+5. **Gamepad only:** with a real controller, start Stage 2 solo, press **A** once (the pad becomes Player 1), then **Start** → **Elder's Secrets**, choose **Steady Ride** with the D-pad and A, go down to **I understand** (it is reached now) and **Done**. The pause menu shows the Cheat-Assisted mark.
+6. **A human run on Easy:** play Stage 2 on Easy from the pursuit to the crate without cheats. Note how long it took, how many continues you used and whether anything felt stuck or unfair.
+7. **Medium, Hard and Ultimate look:** play the Loading Yard, Filtration Control and the Dispatch Yard on each (`http://localhost:5173/?stage=2&beat=2&difficulty=hard`, `beat=10`, `beat=14`; change `difficulty=` to `medium` or `ultimate`). Ultimate should feel harder than Hard; attacks stay readable. Watch the enemies walk in: the legs swap on every step (EW01–EW08).
+8. **German keyboard and languages:** switch to Deutsch with the QWERTZ layout: the riding move list in the pursuit names the right keys (Y and Z swapped). In Deutsch and 简体中文, the room name in the top bar of the Aquaculture Hall is translated, and the Museum Investigation panel can be scrolled after pressing Tab.
+9. **Low-end laptop:** start the zip on the oldest laptop you have and play Filtration Control on Ultimate in co-op (`?stage=2&beat=10&difficulty=ultimate`, join Player 2 with Numpad 4). The game stays at normal speed (Auto Quality may lower the picture); **Settings → System check** shows the measured frame time.
