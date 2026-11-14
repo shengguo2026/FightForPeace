@@ -1,49 +1,31 @@
 # Fight For Peace — Stage 2: which file the game uses
 
-**Status:** 2026-10-25, after the asset review (`spec-review/05-stage2-asset-review.md`) and the creator's music decision.
-**Rule:** implementation imports only the file in the **Use** column. Files under "Not used" are kept for history. When a pending item is regenerated, this list is updated before it is integrated.
+**Status:** 2026-11-13, M22 (all approved Stage 2 art, clips and music ingested).
+**Source of truth:** `FightForPeace/APPROVED_VARIANTS.md` in the Pictures repository. Its **Use** column names the file the game imports; this page only records how M22 brought those files into the game. When an approval changes there, re-run the importer below.
 
-## Characters
+## How the files are imported
 
-| Asset | Use | Not used | Notes |
-|---|---|---|---|
-| Wind Sentinel (风神) default model sheet | `wind-sentinel-default-model-sheet-v2.png` | `…-v1.png` | v1 palette too close to River Scout; semi-realistic faces. Canonical hair: braid from crown to shoulder blades (full-body back view). Keep shin guards slim in poses. |
-| Fire Warden (火神) default model sheet | `fire-warden-default-model-sheet-v2.png` | `…-v1.png` | Longer forearm guard on the **left** arm in every pose. |
-| Human likeness references | `athletic-daughter-age-18-reference-v1.png`, `fire-warden-human-reference-v1.png` | — | **Reference only.** Never shipped, never used as Flow ingredients or start frames (same rule as the elder photo, D1). Record creator consent in the manifest. |
+`python tools/art/import_stage2.py <Pictures>/FightForPeace` (options `--only=clips,stills,env,sheets,shell` and `--keep-existing`) writes the files under `apps/game/public/` and their entries in `packages/platform/src/assets/manifest.json`, with provenance:
 
-Model sheets are references for later pose generation, like Stage 1's R-03/R-04; the game itself ships pose sheets generated from them.
-
-## Prosperity Interlude start frames (stills)
-
-| Asset | Use | Notes |
+| Delivered | In the game | Manifest ids |
 |---|---|---|
-| P01–P05 | `P01-water-returns-v1.png` … `P05-aquaponic-cycle-v1.png` | All approved. Also serve as the mandatory still fallbacks for their clips. |
+| 32 story clips (`story/stage2/<code>-*.mp4`, the approved version and trim per clip) and the title loop | MP4 (H.264, 960 px, CRF 30) **without the Flow soundtrack** | `cine.stage2.<code>` (`video.audio: false`) |
+| Approved start frames, the C01/C03 flourishing and damaged inserts, the briefing pictures, the documents and the seal | WebP stills, also the fallback for every clip | `story.stage2.<code>` |
+| 12 environments × FAR, MID, FLOOR (`_tiled`), FG (PLATEs are reference paintings) | WebP layers, loaded when a run first enters the area | `bg.stage2.<area>.<layer>` |
+| Hero weapon sheets (lance A/B, revolver, heavy) | 3x2 sheets; Fire, Mountain and River shown at 0.92/0.90/0.92 to match their idle height | `hero.<hero>.sheet.<lance-a\|lance-b\|revolver\|heavy>` |
+| Hero mounted sheets (ride, attack, defense, special, ultimate, stability) | 2x2 sheets with 576 px wide cells | `hero.<hero>.sheet.mount-*` |
+| Road Rider and Marek mounted sheets | re-cut in M22 as 2x2 sheets (M19 had cut them as 3x2) | `enemy.rider.sheet.mount-*`, `enemy.marek.sheet.mounted*` |
+| Stage 2 villagers, parked and downed bikes, props, effect sheets | sprite sheets | `npc.s2-*.sheet`, `prop.s2-*`, `vfx.s2-*.sheet` |
+| Walk and flee cycles AW01–AW25 (`codex_prompts_stage2_armed_walks.md`): hero armed walks, enemy flee runs, the rider's, disarmed Marauder's and Scorched Marek's walks, the annex worker's and botanist's walks | 3x2 sheets at the scale recorded at approval (`--only=walks`) | `hero.<hero>.sheet.<lance\|revolver\|heavy>-walk`, `enemy.<kit>.sheet.flee`, `enemy.rider.sheet.walk`, `enemy.marauder.sheet.disarmed-walk`, `enemy.marek.sheet.scorched-walk`, `npc.s2-<worker\|researcher>.walk` |
+| Key art, menu and Museum backgrounds, outfit pictures, portraits, artifacts, badges, Museum icons | shell pictures | `art/shell/*.webp` |
 
-## Prosperity Interlude clips
+`python tools/audio/build_stage2_score.py <Pictures>/FightForPeace/music` cuts the seven cues (06A–06D become Marek's states) into whole-bar loops, once sections and two-bar stingers on the 129 BPM grid, normalized to −16 LUFS with peaks at −1 dBFS, MP3 160 kbit/s: `mus.stage2.<cue>.<state>` and `mus.stage2.gilded-jackal.sting-*`.
 
-All clips: strip the generated audio track during editing (music, narration and ambience are separate layers).
+## Not delivered yet (placeholders in the game)
 
-| Clip | Use | In → out | Not used | Notes |
-|---|---|---|---|---|
-| P01 Water returns | `P01-water-returns-v1.mp4` | 0.0 → 8.0 s | — | The dissolve to the rice-field channel at 5.4–6.0 s is the intended ending. |
-| P02 Building a reserve | `P02-building-a-reserve-v1.mp4` | 0.0 → 8.0 s | — | |
-| P03 Seasons of construction | **pending v2** | — | `P03-seasons-of-construction-v1.mp4` | v1 turns photorealistic after ~2.2 s. Regenerate with prompt 3 of `art/prompts/stage2_regeneration_prompts.md` after the Flow daily reset. Until then the P03 still is the placeholder. |
-| P04 Hydroponic cultivation | `P04-hydroponic-cultivation-v1.mp4` | 0.0 → 3.5 s | the rest | Second half switches to open tubs and hanging lamps. |
-| P05 Aquaponic cycle | `P05-aquaponic-cycle-v1.mp4` | 0.0 → 3.0 s | the rest | Prawns turn into crayfish after 3 s. Optional v2 (prompt 4) would replace this trim. |
-
-## Music (Prosperity Under Siege)
-
-| Cue | Use | Not used | Notes |
-|---|---|---|---|
-| 1 Water Became a Future | `01_Water Became a Future.mp3` | — | |
-| 2 Roadside Vigil | `02_Roadside Vigil.mp3` | — | |
-| 3 Glass and Green | `03_Glass and Green.mp3` | — | |
-| 4 Alarm Through the Channels | `04_Alarm Through the Channels.mp3` | — | Not on Cue 5's tempo grid: Cue 5 is an **alternate loop** switched at phrase boundaries, not a layer on top. |
-| 5 Protect the Living System | `05_Protect the Living System.mp3` (v1) | `…_v2.mp3` | v1 ≈117 BPM is closer to the 116 BPM target than v2 (≈96 BPM). |
-| 6A Mounted pursuit | `06A_Mounted pursuit.mp3` | — | ≈123 BPM |
-| 6B Armed command | `06B_Armed command.mp3` (v1) | `…_v2.mp3` | v2 is an extension of 06C ("Predator Unbound Extended"), not a new state. |
-| 6C Predator Unbound | `06C_Predator Unbound.mp3` | — | ≈129 BPM, F minor (anchor) |
-| 6D Scorched Claim and surrender | `06D_Scorched Claim and surrender_v2.mp3` | `06D_Scorched Claim and surrender.mp3` (v1) | Same ≈129 BPM grid as 06C. Probably E minor: shift +1 semitone in editing if confirmed by ear. Confirm both endings by ear. |
-| 7 What We Protected | `07_What We Protected.mp3` | — | |
-
-Boss phase changes between states with different tempo or key use authored transition stingers (decision log §14). All cues: normalize to one loudness target and limit to about −1 dBTP for browser export; record the Flow Music titles and the `superiorcone` artist tag in the provenance manifest.
+| Layer | What plays now |
+|---|---|
+| Ambience beds | synthesized loops per area (`amb.stage2.*`); a file with the same id replaces one |
+| New SFX (weapons, firearm warning, pursuit) | synthesized placeholders (`sfx.weapon.*`, `sfx.warn.*`, `sfx.ride.*`) |
+| Museum pictures for the brass gears and the sealed crate | cut from `PROP-BARRICADE` cell 5 and `PROP-S2-EVIDENCE` cell 1 by the importer (`artifact-brass-gears`, `artifact-sealed-weapon-crate`) |
+| Narration voice | none: subtitles always; optional system voice (Windows TTS) as a prototype aid. A file `vo.<locale>.<line id>` replaces it |

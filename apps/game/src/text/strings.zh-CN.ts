@@ -9,6 +9,7 @@ import { M18_ZH } from './strings.m18';
 import { M19_ZH_ALL } from './strings.m19';
 import { M20_ZH } from './strings.m20';
 import { M21_ZH } from './strings.m21';
+import { M22_ZH } from './strings.m22';
 import { LABELS_ZH } from './strings.labels';
 
 /** M10 catalogue (zh-CN). Keys mirror strings.en.ts and the generated data names. */
@@ -601,5 +602,6 @@ export const ZH_CN: Catalog = {
   ...M19_ZH_ALL,
   ...M20_ZH,
   ...M21_ZH,
+  ...M22_ZH,
   ...LABELS_ZH,
 };

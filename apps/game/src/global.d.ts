@@ -106,6 +106,9 @@ export interface DebugMedia {
   played: string[];
   audioRunning: boolean;
   effects: Record<string, number>;
+  /** M22: the ambience bed playing (null: none) and the narration log. */
+  ambience: string | null;
+  narration: string[];
 }
 
 export interface FfpDebugHook {

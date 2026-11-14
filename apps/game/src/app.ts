@@ -190,6 +190,13 @@ export function startGame(): void {
         completion: () => (useShell ? shell.completionLines() : []),
         again: () => !shell.net.active,
         hidden: () => useShell && shell.ending.value !== null,
+        // M22: Stage 2's Community Recovery and Justice chapters after the epilogue cards.
+        chapters: () => useShell && shell.chapters.value !== null,
+        onEpilogueDone: () => {
+          // The chapters state stays set until the next run, so the cards stay filtered.
+          const c = shell.chapters.value;
+          if (c) shell.ending.value = { ...c };
+        },
         onAgain: () => {
           if (useShell && shell.fromShell.value) shell.startStage();
           else actions.startArena(lab.arenaPick.value.arena);

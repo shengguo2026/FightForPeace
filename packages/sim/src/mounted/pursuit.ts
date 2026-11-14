@@ -434,7 +434,8 @@ export function evading(r: HeroRider, hero: number, frame: number): boolean {
   return t >= a.evadeFrom && t <= a.evadeTo;
 }
 
-function actionLength(r: HeroRider, a: MountedActionDef): number {
+/** Frames a rider's running action lasts (a hop: its airtime plus recovery). */
+export function riderActionLength(r: HeroRider, a: MountedActionDef): number {
   if (a.slot === MountedSlot.Hop) return r.hopFrames + a.recovery;
   return a.startup + a.active + a.recovery;
 }
@@ -583,7 +584,7 @@ function stepRider(
     const T = r.hopFrames;
     r.y = Math.trunc((4 * r.hopHeight * t * (T - t)) / (T * T));
   } else r.y = 0;
-  if (a && t + 1 >= actionLength(r, a)) endAction(r, a, frame);
+  if (a && t + 1 >= riderActionLength(r, a)) endAction(r, a, frame);
 }
 
 /** A Road Rider holding the lane ahead (Cutoff Line) caps the speed of a rider behind it. */

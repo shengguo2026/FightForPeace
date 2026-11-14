@@ -36,7 +36,10 @@ export interface CellBox {
 export interface SheetMeta {
   cols: number;
   rows: number;
+  /** Cell height (and width, unless `w` is given). */
   cell: number;
+  /** M22: cell width of a sheet with wide cells (mounted and bike sheets, 2 x 2 grids). */
+  w?: number;
   /** Ground line in cell pixels: the median foot of the sheet's cells. */
   ground: number;
   cells: (CellBox | null)[];
@@ -59,9 +62,12 @@ export interface LayerMeta {
   tiled: boolean;
 }
 
-/** M13: a browser-ready clip in two encodings (WebM VP9 first, MP4 H.264 fallback). */
+/**
+ * M13: a browser-ready clip in two encodings (WebM VP9 first, MP4 H.264 fallback). M22:
+ * Stage 2 clips ship as MP4 only (`webm` absent).
+ */
 export interface VideoMeta {
-  webm: string;
+  webm?: string;
   mp4: string;
   ms: number;
   w: number;

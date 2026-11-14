@@ -70,6 +70,9 @@ test('Stage 2 is locked until Stage 1 is completed, then opens from stage select
   await expect(page.getByTestId('whats-new-title')).toHaveText('The twin guardians');
   await page.screenshot({ path: 'test-results/m21-whats-new.png' });
   for (let i = 0; i < 6; i += 1) await page.getByTestId('whats-new-next').click();
+  // M22: the four story chapters come before the briefing (Skip all ends them).
+  await expect(page.getByTestId('intro')).toBeVisible();
+  await page.getByTestId('intro-skip-all').click();
   await expect(page.getByTestId('briefing')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.getByTestId('briefing-objective')).toContainText('Prosperity Greenhouses');

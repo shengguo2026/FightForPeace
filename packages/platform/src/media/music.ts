@@ -14,6 +14,11 @@ export interface MusicStateDef {
   bars: number;
   /** Plays once instead of looping (a victory or ending state). */
   once?: boolean;
+  /**
+   * M22: this state's own tempo when it differs from the cue's (a boss family built from
+   * several delivered cues): bar lines while it plays follow it.
+   */
+  bpm?: number;
 }
 
 export interface MusicStinger {
@@ -61,8 +66,9 @@ export interface MusicNow {
 const CROSSFADE_BARS = 1;
 const STOP_FADE_MS = 1200;
 
-export function barMs(cue: MusicCueDef): number {
-  return (60_000 / cue.bpm) * cue.beatsPerBar;
+export function barMs(cue: MusicCueDef, state?: string): number {
+  const bpm = (state ? cue.states[state]?.bpm : undefined) ?? cue.bpm;
+  return (60_000 / bpm) * cue.beatsPerBar;
 }
 
 export class MusicDirector {
@@ -103,7 +109,7 @@ export class MusicDirector {
   private nextBar(now: number): number {
     const p = this.now_;
     if (!p) return now;
-    const bar = barMs(this.cues.get(p.cue)!);
+    const bar = barMs(this.cues.get(p.cue)!, p.state);
     const n = Math.ceil((now - p.since) / bar - 1e-9);
     return p.since + Math.max(1, n) * bar;
   }
@@ -158,7 +164,7 @@ export class MusicDirector {
       return out;
     }
     // A new cue: crossfade over one bar of the old cue, starting at its next bar line.
-    const fade = CROSSFADE_BARS * barMs(this.cues.get(p.cue)!);
+    const fade = CROSSFADE_BARS * barMs(this.cues.get(p.cue)!, p.state);
     out.push({ kind: 'stop', asset: p.asset, at, fadeMs: fade });
     out.push(this.start(def, w.state, at, fade));
     this.pending = { at, next: { cue: w.cue, state: w.state, asset: st.asset, since: at } };

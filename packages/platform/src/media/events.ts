@@ -15,6 +15,7 @@ import {
   type StageRun,
   fxToPixels,
   kitOf,
+  phaseOf,
   routeAction,
 } from '@ffp/sim';
 import { type Tier, tierOfAction } from './spectacle';
@@ -57,7 +58,23 @@ export type PresentationEvent =
   | { id: string; kind: 'ultimate'; fighter: number; hero: string; x: number; y: number }
   | { id: string; kind: 'team'; move: string; x: number; y: number }
   | { id: string; kind: 'bossPhase'; phase: number; x: number; y: number }
-  | { id: string; kind: 'run'; event: number; detail: number };
+  | { id: string; kind: 'run'; event: number; detail: number }
+  | {
+      id: string;
+      kind: 'firearm';
+      /** M22: a firearm is raised (essential warning), fires once, or fires a burst. */
+      what: 'aim' | 'shot' | 'burst';
+      fighter: number;
+      x: number;
+      y: number;
+    };
+
+/** M22: firearm actions (the warning plays at their start, the shot when they fire). */
+export const FIREARM_ACTIONS: Readonly<Record<string, 'shot' | 'burst'>> = {
+  'sidearm-shot': 'shot',
+  'support-burst': 'burst',
+  'jackal-burst': 'burst',
+};
 
 export interface EventSnapshot {
   frame: number;
@@ -194,6 +211,18 @@ export class PresentationTracker {
           push({ id: `${s.frame}:land:${f.id}`, kind: 'land', fighter: f.id, x, y, own });
         if (f.state === MoveState.Down)
           push({ id: `${s.frame}:down:${f.id}`, kind: 'knockdown', fighter: f.id, x, y, own });
+      }
+      // M22: firearms warn when raised (every team) and sound when they fire.
+      if (f.state === MoveState.Attack && f.action >= 0) {
+        const a = kitOf(f)?.actions[f.action];
+        const fire = a ? FIREARM_ACTIONS[a.id] : undefined;
+        if (a && fire) {
+          const start = s.frame - f.stateFrame;
+          if (f.action !== prev.action || prev.state !== MoveState.Attack)
+            push({ id: `${start}:aim:${f.id}`, kind: 'firearm', what: 'aim', fighter: f.id, x, y });
+          if (phaseOf(a, f.stateFrame + 1).phase === 'active')
+            push({ id: `${start}:fire:${f.id}`, kind: 'firearm', what: fire, fighter: f.id, x, y });
+        }
       }
       if (f.action !== prev.action && f.action >= 0 && f.team === 'hero') {
         const a = kitOf(f)?.actions[f.action];

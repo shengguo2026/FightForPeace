@@ -18,6 +18,8 @@ import {
   roadAt,
 } from '@ffp/sim';
 import { difficultyName, dt, heroName, t, type TextId } from '../text/i18n';
+import { type SfxCategory } from '@ffp/platform';
+import { audio } from '../media/audio';
 
 const VIEW_W = 1920;
 const VIEW_H = 1080;
@@ -29,6 +31,17 @@ const MAREK_COLOR = 0x4a2a4f;
 const MAREK_MARK = 0xc9a24a;
 const CALLOUT_FRAMES = 50;
 const px = fxToPixels;
+
+/** M22: placeholder ride sounds of pursuit events (synthesized until files arrive). */
+const EVENT_SOUND: Partial<Record<number, { id: string; category: SfxCategory }>> = {
+  [RideEvent.Crash]: { id: 'sfx.ride.crash', category: 'critical' },
+  [RideEvent.Impact]: { id: 'sfx.ride.impact', category: 'contact' },
+  [RideEvent.Hit]: { id: 'sfx.ride.hit', category: 'contact' },
+  [RideEvent.Ramp]: { id: 'sfx.ride.ramp', category: 'debris' },
+  [RideEvent.Brace]: { id: 'sfx.ride.brace', category: 'contact' },
+  [RideEvent.Breakaway]: { id: 'sfx.ride.engine', category: 'crowd' },
+  [RideEvent.Critical]: { id: 'sfx.warn.critical', category: 'critical' },
+};
 
 const EVENT_TEXT: Partial<Record<number, { key: string; color: string }>> = {
   [RideEvent.Critical]: { key: 'ride.critical', color: '#ff5050' },
@@ -107,6 +120,14 @@ export class PursuitView {
   private words!: TextPool;
   private hudWords!: TextPool;
 
+  /** M22: whether the corridor's Stage 2 road art is drawn under the greybox. */
+  private art = false;
+  /**
+   * M22: riders the scene draws with mounted art (`h<slot>` heroes, `e<id>` Road Riders
+   * and Marek); their greybox bikes and figures are skipped.
+   */
+  mountArt: ReadonlySet<string> = new Set();
+
   constructor(private readonly scene: Phaser.Scene) {}
 
   create(): void {
@@ -140,7 +161,10 @@ export class PursuitView {
     infiniteMeter: boolean,
     /** M20: a stage run's corridor beat; the stage HUD names the beat and the goal. */
     inRun = false,
+    /** M22: the road's backdrop art is drawn (the greybox ground is then translucent). */
+    art = false,
   ): void {
+    this.art = art;
     for (const g of [this.ground, this.back, this.front, this.hud]) g.clear();
     this.words.begin();
     this.hudWords.begin();
@@ -153,16 +177,23 @@ export class PursuitView {
       const x = px(e.x);
       const z = px(e.z);
       const down = e.state === EnemyState.Crash || e.state === EnemyState.Down;
+      const art = this.mountArt.has(`e${e.id}`);
       // M19: Marek on his aubergine bike (brass mark), named, with Stability only.
-      this.bike(
-        x,
-        z,
-        0,
-        e.boss ? MAREK_COLOR : RIDER_COLOR,
-        e.boss ? MAREK_MARK : RIDER_MARK,
-        down,
-      );
-      if (e.state === EnemyState.Down) {
+      if (art) {
+        this.back.fillStyle(0x000000, 0.35);
+        this.back.fillEllipse(x, z, 220, 34);
+      } else
+        this.bike(
+          x,
+          z,
+          0,
+          e.boss ? MAREK_COLOR : RIDER_COLOR,
+          e.boss ? MAREK_MARK : RIDER_MARK,
+          down,
+        );
+      if (art) {
+        /* the scene draws the rider and bike */
+      } else if (e.state === EnemyState.Down) {
         // Dismounted at the road edge: the rider stands beside the settled bike.
         this.front.fillStyle(0x5a3a22, 1);
         this.front.fillRect(x - 70, z - 110, 26, 100);
@@ -238,7 +269,10 @@ export class PursuitView {
       const y = px(r.y);
       const color = HERO_COLORS[r.slot] ?? 0xffffff;
       const down = r.state === RiderState.Crash || r.state === RiderState.Downed;
-      this.bike(x, z, y, color, 0xffffff, down);
+      if (this.mountArt.has(`h${r.slot}`)) {
+        this.back.fillStyle(0x000000, 0.35);
+        this.back.fillEllipse(x, z, 220, 34);
+      } else this.bike(x, z, y, color, 0xffffff, down);
       this.words.put(x, z + 30, MOUNTED.bike.plates[r.slot] ?? '', 16, '#e8e8e8');
       if (r.protectUntil > frame && blink) {
         this.back.lineStyle(3, 0xffffff, 0.6);
@@ -305,10 +339,12 @@ export class PursuitView {
   private drawRoad(p: Pursuit, cam: number, frame: number): void {
     const c = CORRIDORS[p.corridor]!;
     const g = this.ground;
-    g.fillStyle(0x1d2a20, 1);
-    g.fillRect(cam - 20, 0, VIEW_W + 40, VIEW_H);
-    g.fillStyle(0x23331f, 1);
-    g.fillRect(cam - 20, 520, VIEW_W + 40, VIEW_H - 520);
+    if (!this.art) {
+      g.fillStyle(0x1d2a20, 1);
+      g.fillRect(cam - 20, 0, VIEW_W + 40, VIEW_H);
+      g.fillStyle(0x23331f, 1);
+      g.fillRect(cam - 20, 520, VIEW_W + 40, VIEW_H - 520);
+    }
     const step = 40;
     const from = Math.floor(cam / step) * step - step;
     const to = cam + VIEW_W + step;
@@ -319,7 +355,7 @@ export class PursuitView {
       top.push(new Phaser.Math.Vector2(x, px(r.top)));
       bottom.push(new Phaser.Math.Vector2(x, px(r.bottom)));
     }
-    g.fillStyle(0x464a52, 1);
+    g.fillStyle(0x464a52, this.art ? 0.28 : 1);
     g.fillPoints([...top, ...bottom.reverse()], true);
     bottom.reverse();
     g.lineStyle(4, 0xe8e8e8, 0.9);
@@ -455,7 +491,19 @@ export class PursuitView {
     g.fillRect(x, y, Math.round((w * Math.max(0, value)) / Math.max(1, max)), h);
   }
 
+  /** M22: pursuit events already sounded (kind/frame/position). */
+  private sounded = new Set<string>();
+
   private callout(kind: number, at: number, frame: number, x: number, y: number): void {
+    const snd = EVENT_SOUND[kind];
+    if (snd && frame - at <= 2 && frame >= at) {
+      const key = `${kind}/${at}`;
+      if (!this.sounded.has(key)) {
+        this.sounded.add(key);
+        if (this.sounded.size > 256) this.sounded.clear();
+        audio.sfx(snd.id, snd.category);
+      }
+    }
     const e = EVENT_TEXT[kind];
     if (!e || frame - at > CALLOUT_FRAMES) return;
     this.words.put(x, y - (frame - at) * 0.6, t(e.key as TextId), 26, e.color);

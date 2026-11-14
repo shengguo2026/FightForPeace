@@ -6,6 +6,9 @@ import {
   MUSEUM_SECTIONS,
   STAGE1_ENDING,
   STAGE1_INTRO,
+  STAGE1_MUSIC,
+  STAGE2_CHAPTERS,
+  STAGE2_MUSIC,
   dossierView,
   markViewed,
   museumSection,
@@ -22,23 +25,26 @@ import { ART, Button, Panel, Screen } from '../ui';
 /** M21: the Museum's music choice (the director plays it while the Museum is open). */
 export const museumListen = signal<{ cue: string; state: string } | null>(null);
 
-/** Music entries reuse the Stage 1 score's localized cue titles (`music.stage1.N`). */
-const MUSIC_ENTRIES = MUSEUM.filter((m) => m.section === 'music').map((m) => m.id);
+/** Music entries reuse the score's localized cue titles (the cue's `title`). */
+const SCORE = [...STAGE1_MUSIC, ...STAGE2_MUSIC];
 
 /** The localized name of a Museum entry. */
 export function entryName(e: MuseumEntryDef): string {
-  const music = MUSIC_ENTRIES.indexOf(e.id);
-  if (music >= 0) return t(`music.stage1.${music + 1}` as TextId);
+  if (e.section === 'music') {
+    const cue = SCORE.find((c) => c.id === e.asset.split(':')[0]);
+    if (cue?.title) return t(cue.title as TextId);
+  }
   return t(`museum.${e.id}.name` as TextId);
 }
 
 const CINEMA: Record<string, typeof STAGE1_INTRO> = {
   'cine.stage1.intro': STAGE1_INTRO,
   'cine.stage1.ending': STAGE1_ENDING,
+  ...Object.fromEntries(STAGE2_CHAPTERS.map((c) => [c.id, c])),
 };
 
 /** The ending as the best outcome (the Museum shows the whole story). */
-const BEST = { workersFreed: 1, workersTotal: 1, clues: 1, cluesTotal: 1 };
+const BEST = { workersFreed: 1, workersTotal: 1, clues: 1, cluesTotal: 1, preservation: 0 };
 
 /**
  * M21 Village Museum and Archive (Stage 2 spec §14.2, F&D §9.1): Picture, Cinema, Music,
@@ -223,13 +229,18 @@ function EntryDetail({ e, play }: { e: MuseumEntryDef; play: (cine: string) => v
       ) : null}
       {e.section === 'collection' ? (
         <>
-          <div
-            aria-hidden="true"
+          <img
+            src={ART(`artifact-${e.asset}`)}
+            alt={entryName(e)}
+            data-testid="museum-collection-art"
             style={{
-              height: '120px',
+              display: 'block',
+              width: '240px',
+              maxWidth: '100%',
+              aspectRatio: '1',
+              margin: '0 auto 10px',
               borderRadius: '8px',
-              background: 'linear-gradient(135deg, #6b5a3a, #c9a86a)',
-              marginBottom: '10px',
+              background: 'radial-gradient(circle, #c9a86a55, #6b5a3a22 70%)',
             }}
           />
           <p data-testid="museum-collection-desc">{t(`museum.${e.id}.desc` as TextId)}</p>

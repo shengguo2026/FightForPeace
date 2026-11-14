@@ -44,8 +44,17 @@ export interface BossView {
 
 type Phased = readonly [startup: number, active: number, recovery: number];
 
-/** Weapon core actions on the founders' weapon sheets. */
-const WEAPON_POSES: Record<string, { sheet: string; cells: Phased }> = {
+/** The lance's reach on the shared lance sheet (heroes without the second lance sheet). */
+const LANCE_A_REACH = { sheet: 'lance-a', cells: [1, 2, 2] } as const;
+
+/**
+ * Weapon core actions on the weapon sheets (M22: the Stage 2 lance, sidearm, support gun
+ * and grenade sheets; `fallback` for heroes with only the shared lance sheet).
+ */
+const WEAPON_POSES: Record<
+  string,
+  { sheet: string; cells: Phased; fallback?: { sheet: string; cells: Phased } }
+> = {
   'staff-thrust': { sheet: 'staff-a', cells: [2, 3, 3] },
   'staff-sweep': { sheet: 'staff-a', cells: [2, 4, 4] },
   'staff-overhead': { sheet: 'staff-a', cells: [0, 5, 5] },
@@ -62,6 +71,66 @@ const WEAPON_POSES: Record<string, { sheet: string; cells: Phased }> = {
   'board-swing': { sheet: 'staff-a', cells: [2, 4, 4] },
   'board-throw': { sheet: 'staff-b', cells: [4, 4, 4] },
   'wheel-throw': { sheet: 'handwheel', cells: [1, 2, 2] },
+  // M22 Telescoping Service Lance: lance-a (0 pick-up, 1 ready, 2 jab, 3 twist, 4 hook,
+  // 5 throw), lance-b (0 thrust, 1 vault, 2 diving reach, 3 low stance, 4 aerial, 5 ground).
+  'lance-jab': { sheet: 'lance-a', cells: [1, 2, 2] },
+  'lance-twist': { sheet: 'lance-a', cells: [1, 3, 3] },
+  'lance-extend': { sheet: 'lance-b', cells: [1, 0, 0], fallback: LANCE_A_REACH },
+  'lance-reach': { sheet: 'lance-b', cells: [1, 0, 0], fallback: LANCE_A_REACH },
+  'lance-hook': { sheet: 'lance-a', cells: [2, 4, 4] },
+  'lance-vault': { sheet: 'lance-b', cells: [1, 1, 2], fallback: LANCE_A_REACH },
+  'lance-low': {
+    sheet: 'lance-b',
+    cells: [3, 3, 3],
+    fallback: { sheet: 'lance-a', cells: [1, 3, 3] },
+  },
+  'lance-air': { sheet: 'lance-b', cells: [4, 4, 4], fallback: LANCE_A_REACH },
+  'lance-ground': { sheet: 'lance-b', cells: [5, 5, 5], fallback: LANCE_A_REACH },
+  'lance-dash': { sheet: 'lance-b', cells: [0, 0, 0], fallback: LANCE_A_REACH },
+  'lance-throw': { sheet: 'lance-a', cells: [5, 5, 5] },
+  // Six-round sidearm (revolver: 0 pick-up, 1 aim, 2 recoil, 3 ready, 4 whip, 5 throw).
+  'sidearm-shot': { sheet: 'revolver', cells: [1, 2, 3] },
+  'sidearm-whip': { sheet: 'revolver', cells: [3, 4, 4] },
+  'sidearm-throw': { sheet: 'revolver', cells: [5, 5, 5] },
+  // Support gun and grenade (heavy: 0 ready, 1 burst, 2 stock, 3 gun throw, 4 grenade
+  // pick-up, 5 grenade throw).
+  'support-burst': { sheet: 'heavy', cells: [0, 1, 1] },
+  'support-stock': { sheet: 'heavy', cells: [0, 2, 2] },
+  'support-throw': { sheet: 'heavy', cells: [3, 3, 3] },
+  'grenade-return': { sheet: 'heavy', cells: [4, 5, 5] },
+};
+
+/** M22: the ready stance a hero holds a Stage 2 weapon in (idle and walking). */
+const WEAPON_STANCE: Record<string, { sheet: string; cell: number; walk: string }> = {
+  'service-lance': { sheet: 'lance-a', cell: 1, walk: 'lance-walk' },
+  'six-round-sidearm': { sheet: 'revolver', cell: 3, walk: 'revolver-walk' },
+  'support-gun': { sheet: 'heavy', cell: 0, walk: 'heavy-walk' },
+};
+
+/** M22: how a Stage 2 weapon is carried when no pose art shows it (see heldProp). */
+const S2_HELD: Record<
+  string,
+  SpriteFrame & { scale: number; angle: number; dx: number; dy: number; mirror?: boolean }
+> = {
+  'service-lance': { sheet: 'prop.s2-lance', cell: 2, scale: 0.8, angle: 0.1, dx: 30, dy: 200 },
+  'six-round-sidearm': {
+    sheet: 'prop.s2-firearms',
+    cell: 0,
+    scale: 0.3,
+    angle: 0,
+    dx: 60,
+    dy: 190,
+    mirror: true,
+  },
+  'support-gun': {
+    sheet: 'prop.s2-firearms',
+    cell: 2,
+    scale: 0.55,
+    angle: 0,
+    dx: 40,
+    dy: 185,
+    mirror: true,
+  },
 };
 
 /** Shared-sheet poses for actions without a sheet of their own. */
@@ -329,8 +398,9 @@ export class SpritePicker {
       this.has(`${base}.sheet.${key}`) ? { sheet: `${base}.sheet.${key}`, cell } : null;
     const meta = (key: string) => this.has(`${base}.sheet.${key}`);
     const weapon = f.wkit >= 0 ? WEAPONS[f.wkit] : undefined;
-    const staff = weapon?.melee === true;
-    const wheel = weapon !== undefined && !staff;
+    const stance = weapon ? WEAPON_STANCE[weapon.id] : undefined;
+    const staff = weapon?.melee === true && weapon.id !== 'service-lance';
+    const wheel = weapon !== undefined && !staff && !stance;
     switch (f.state) {
       case MoveState.Attack: {
         const a = f.action >= 0 ? kitOf(f)?.actions[f.action] : undefined;
@@ -339,7 +409,11 @@ export class SpritePicker {
         const wp = WEAPON_POSES[a.id];
         // A hero without Stage 1 weapon sheets (the twins) swings with its neutral starter.
         if (wp && a.pose.startsWith('weapon.'))
-          return s(wp.sheet, wp.cells[p]) ?? this.starter(hero.actions[0]!, p);
+          return (
+            s(wp.sheet, wp.cells[p]) ??
+            (wp.fallback ? s(wp.fallback.sheet, wp.fallback.cells[p]) : null) ??
+            this.starter(hero.actions[0]!, p)
+          );
         const posed = HERO_POSES[hero.id]?.[a.id];
         if (posed && this.has(`${base}.${posed.sheet}`)) {
           const [start, active, end] = posed.cells;
@@ -369,12 +443,17 @@ export class SpritePicker {
         return s('idle', 0);
       }
       case MoveState.Idle:
+        if (stance && meta(stance.sheet)) return s(stance.sheet, stance.cell);
         if (staff && meta('staff-a')) return s('staff-a', 0);
         if (wheel && meta('handwheel')) return s('handwheel', 0);
         return s('idle', loop(meta('idle'), frame, 6));
       case MoveState.Walk:
         // Armed walk cycles where delivered; otherwise step between the staff ready stance
         // and its mid-stride cell, and shift the handwheel carry between its two stances.
+        // Stage 2 armed walk sheets where delivered; until then the plain walk cycle with
+        // the weapon drawn in hand (heldProp), so the legs keep stepping.
+        if (stance && meta(stance.walk)) return s(stance.walk, loop(meta(stance.walk), frame, 10));
+        if (stance && meta(stance.sheet)) return s('walk', loop(meta('walk'), frame, 10));
         if (staff && meta('staff-walk'))
           return s('staff-walk', loop(meta('staff-walk'), frame, 10));
         if (wheel && meta('handwheel-walk'))
@@ -505,6 +584,20 @@ export class SpritePicker {
         // M19 Lockstep Escort: the screening steps of the Stage 2 Enforcer.
         if (f.order === 2 && this.has(`${base}.stance`))
           return s('stance', loop(undefined, frame, 4, [3, 4]));
+        {
+          // M22 walk cycles drawn for kits whose idle sheet had one walk pose: the Road Rider
+          // on foot, the disarmed Marauder, Marek's Scorched Claim.
+          const own =
+            art === 'rider' && idle.sheet === 'on-foot'
+              ? 'walk'
+              : idle.sheet === 'disarm'
+                ? 'disarmed-walk'
+                : idle.sheet === 'scorched'
+                  ? 'scorched-walk'
+                  : null;
+          const ownMeta = own ? this.has(`${base}.${own}`) : undefined;
+          if (own && ownMeta) return s(own, loop(ownMeta, frame, 9));
+        }
         return s(idle.sheet, loop(undefined, frame, 8, idle.walk));
       case MoveState.Guard:
         return (
@@ -552,6 +645,9 @@ export class SpritePicker {
         if (art === 'rider') return s('on-foot', 0);
         return s(react, f.stateFrame < f.stun / 2 ? 4 : 5);
       case MoveState.Flee: {
+        // M22: a six-pose flee run where delivered (drawn facing right like every cell).
+        const run = this.has(`${base}.flee`);
+        if (run) return s('flee', loop(run, frame, 12));
         const cell = loop(undefined, frame, 8, exit.flee);
         return s(exitSheet, cell, !FLEE_DRAWN_RIGHT.has(art)) ?? s('idle-walk', 2);
       }
@@ -572,7 +668,9 @@ export class SpritePicker {
    */
   heldProp(
     f: Fighter,
-  ): (SpriteFrame & { scale: number; angle: number; dx: number; dy: number }) | null {
+  ):
+    | (SpriteFrame & { scale: number; angle: number; dx: number; dy: number; mirror?: boolean })
+    | null {
     const hero = HEROES[f.hero];
     const weapon = f.wkit >= 0 ? WEAPONS[f.wkit] : undefined;
     if (f.team !== 'hero' || !hero || !weapon) return null;
@@ -581,6 +679,14 @@ export class SpritePicker {
       return { sheet: 'prop.workstaff', cell: 1, scale: 0.9, angle: 0.5, dx: 30, dy: 170 };
     if (weapon.id === 'handwheel' && !this.has(`${base}.handwheel`) && this.has('prop.handwheel'))
       return { sheet: 'prop.handwheel', cell: 1, scale: 0.3, angle: 0, dx: 55, dy: 185 };
+    // M22: a Stage 2 weapon while walking (no armed walk sheets yet), or always for a hero
+    // without that weapon's stance sheet. The firearm pictures point left (mirror).
+    const stance = WEAPON_STANCE[weapon.id];
+    const walking = f.state === MoveState.Walk && !this.has(`${base}.${stance?.walk}`);
+    if (stance && (walking || !this.has(`${base}.${stance.sheet}`))) {
+      const held = S2_HELD[weapon.id];
+      if (held && this.has(held.sheet)) return held;
+    }
     return null;
   }
 
@@ -599,6 +705,17 @@ export class SpritePicker {
       };
     if (def.id === 'timber-board' && this.has('prop.sluiceboards'))
       return { sheet: 'prop.sluiceboards', cell: 4 };
+    // M22 Stage 2 weapons: the lance by condition (extended, loose collars, bent), the
+    // sidearm (cylinder open when empty), the support gun, the grenade, the support rail.
+    const S2_ITEM: Partial<Record<string, SpriteFrame>> = {
+      'service-lance': { sheet: 'prop.s2-lance', cell: flying ? 1 : [2, 4, 5][cond]! },
+      'six-round-sidearm': { sheet: 'prop.s2-firearms', cell: item.ammo === 0 ? 1 : 0 },
+      'support-gun': { sheet: 'prop.s2-firearms', cell: 2 },
+      'breaching-grenade': { sheet: 'prop.s2-firearms', cell: 4 },
+      'support-rail': { sheet: 'prop.s2-env-b', cell: 1 },
+    };
+    const s2 = S2_ITEM[def.id];
+    if (s2 && this.has(s2.sheet)) return s2;
     return null;
   }
 }

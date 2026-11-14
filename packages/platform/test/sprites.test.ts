@@ -54,13 +54,22 @@ test('Stage 1 founder, dummy, weapon and prop sheets are in the manifest', () =>
     expect(ids).toContain(`prop.${p}`);
 });
 
+/** M22: Stage 2 mounted hero sheets and the bikes are 2x2 grids (wide 576 px mounted cells). */
+const TWO_BY_TWO =
+  /^(hero\.\w+\.sheet\.mount-|prop\.s2-bike-|enemy\.rider\.sheet\.mount-|enemy\.marek\.sheet\.mounted)/;
+
 test('every sheet is a 3x2 grid of 384 px cells (M13 effect sheets: 256 px)', () => {
-  for (const s of reg.sheets())
+  for (const s of reg.sheets()) {
+    if (TWO_BY_TWO.test(s.id)) {
+      expect([s.sheet.cols, s.sheet.rows]).toEqual([2, 2]);
+      continue;
+    }
     expect([s.sheet.cols, s.sheet.rows, s.sheet.cell]).toEqual([
       3,
       2,
       s.id.startsWith('vfx.') ? 256 : 384,
     ]);
+  }
 });
 
 test('character sheets share one ground line (aerial sheets are drawn in the air)', () => {
@@ -165,6 +174,63 @@ test('an armed founder steps while walking instead of sliding on one cell', () =
   expect(pick.fighter(r, 0)!.sheet).toBe('hero.river.sheet.staff-walk');
 });
 
+test('M22: a hero walking with a Stage 2 weapon steps through its armed walk sheet', () => {
+  for (const hero of ['wind', 'fire', 'mountain', 'river'])
+    for (const [weapon, sheet] of [
+      ['service-lance', 'lance-walk'],
+      ['six-round-sidearm', 'revolver-walk'],
+      ['support-gun', 'heavy-walk'],
+    ] as const) {
+      const w = createWorld(1, { heroes: [hero] });
+      const f = heroOf(w, 0)!;
+      claim(w, f, spawnItem(w, weaponIndex(weapon), f.x, f.z));
+      f.state = MoveState.Walk;
+      const cells = new Set([0, 6, 12, 18, 24, 30].map((t) => pick.fighter(f, t)!.cell));
+      expect(pick.fighter(f, 0)!.sheet).toBe(`hero.${hero}.sheet.${sheet}`);
+      expect(cells.size, `${hero} ${weapon}`).toBe(6);
+      // The weapon is in the drawing: no separate prop.
+      expect(pick.heldProp(f)).toBeNull();
+    }
+});
+
+test('M22: Stage 2 enemies flee on a six-pose run; the rider, disarmed Marauder and Scorched Marek walk', () => {
+  const enemy = (id: string, state: number) => {
+    const w = createWorld(1, { heroes: ['mountain'] });
+    const f = heroOf(w, 0)!;
+    f.team = 'enemy';
+    f.hero = ENEMIES.findIndex((e) => e.id === id);
+    f.wkit = -1;
+    f.item = 0;
+    f.state = state as MoveState;
+    return f;
+  };
+  for (const id of [
+    'claimhand',
+    'glassrunner',
+    'reaver',
+    'marauder',
+    'saboteur',
+    'rider',
+    'enforcer2',
+    'signalman',
+  ]) {
+    const f = enemy(id, MoveState.Flee);
+    const cells = new Set([0, 5, 10, 15, 20, 25].map((t) => pick.fighter(f, t)!.cell));
+    expect(pick.fighter(f, 0)!.sheet, id).toBe(`enemy.${id}.sheet.flee`);
+    expect(pick.fighter(f, 0)!.drawnLeft, id).toBeFalsy();
+    expect(cells.size, id).toBe(6);
+  }
+  expect(pick.fighter(enemy('rider', MoveState.Walk), 0)!.sheet).toBe('enemy.rider.sheet.walk');
+  expect(pick.fighter(enemy('marauder', MoveState.Walk), 0)!.sheet).toBe(
+    'enemy.marauder.sheet.disarmed-walk',
+  );
+  const marek = enemy('marek', MoveState.Walk);
+  const boss = { id: marek.id, phase: 2, look: 3, shift: 0, shiftFrames: 1, stagger: 0 };
+  expect(pick.fighter(marek, 0, boss as never)!.sheet).toBe('enemy.marek.sheet.scorched-walk');
+  for (const id of ['npc.s2-worker.walk', 'npc.s2-researcher.walk'])
+    expect(reg.sheet(id)?.sheet.cols, id).toBe(3);
+});
+
 test('weapon sheets are drawn at the same figure size as the idle sheet', () => {
   // The founders' staff sheets were drawn about 12 % smaller than their idle sheets.
   const size = (id: string) => reg.sheet(id)!.sheet.scale ?? 1;
@@ -192,7 +258,11 @@ test('a fleeing enemy is drawn running the way it moves (Stage 1 and Stage 2 exi
     f.state = MoveState.Flee;
     return pick.fighter(f, 0);
   };
-  expect(flee('recruit')?.drawnLeft).toBe(true);
+  // M22: the Pressed Recruit's six-pose flee run (S1W01) replaces its two Stage 1 cells.
+  expect(flee('recruit')?.sheet).toBe('enemy.trainer.sheet.flee');
+  expect(flee('recruit')?.drawnLeft).toBeFalsy();
+  for (const id of ['npc.worker-a.run', 'npc.worker-b.run'])
+    expect(reg.sheet(id)?.sheet.cells.filter(Boolean)).toHaveLength(6);
   for (const id of ['claimhand', 'marauder', 'saboteur', 'signalman', 'enforcer2'])
     expect(flee(id)?.drawnLeft, id).toBe(false);
 });

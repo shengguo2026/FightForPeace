@@ -116,6 +116,9 @@ export class ArenaView {
   private objective!: Phaser.GameObjects.Text;
   /** M19: the encounter's event caption (calls, breaches, the gun, capture) and subtitles. */
   private caption!: Phaser.GameObjects.Text;
+  /** M22: captions of essential sounds (a raised firearm, shots), localized. */
+  private soundText!: Phaser.GameObjects.Text;
+  private soundUntil = 0;
   private subtitle!: Phaser.GameObjects.Text;
   private go!: Phaser.GameObjects.Text;
   /** Full-screen black for the fade between two beats. */
@@ -135,7 +138,40 @@ export class ArenaView {
   ) {}
 
   preload(): void {
-    for (const l of this.assets.layers()) this.scene.load.image(l.id, l.url);
+    // M22: Stage 2's twelve areas load when a run first enters them (see rebuild).
+    for (const l of this.assets.layers())
+      if (!l.id.startsWith('bg.stage2.')) this.scene.load.image(l.id, l.url);
+  }
+
+  /** M22: the Stage 2 area whose layers are drawn now (null: the arena's Stage 1 area). */
+  private s2area: string | null = null;
+  /** M22: Stage 2 layer textures being loaded. */
+  private readonly loading = new Set<string>();
+
+  /** M22: whether a Stage 2 area's backdrop is drawn (its rooms then skip the greybox). */
+  hasStage2Backdrop(): boolean {
+    return this.s2area !== null && this.layers.length > 0;
+  }
+
+  /**
+   * M22: loads a Stage 2 area's layers on first use; the backdrop is rebuilt once they
+   * arrive (until then the room's greybox shows).
+   */
+  private ensureStage2(area: string): void {
+    const want = this.assets
+      .layers()
+      .filter((l) => l.id.startsWith(`bg.stage2.${area}.`))
+      .filter((l) => !this.scene.textures.exists(l.id) && !this.loading.has(l.id));
+    if (want.length === 0) return;
+    for (const l of want) {
+      this.loading.add(l.id);
+      this.scene.load.image(l.id, l.url);
+    }
+    this.scene.load.once(Phaser.Loader.Events.COMPLETE, () => {
+      for (const l of want) this.loading.delete(l.id);
+      this.key = '';
+    });
+    this.scene.load.start();
   }
 
   create(): void {
@@ -180,6 +216,14 @@ export class ArenaView {
       strokeThickness: 8,
     });
     this.caption.setOrigin(0.5, 0).setScrollFactor(0).setDepth(21);
+    this.soundText = this.scene.add.text(VIEW_W / 2, 1010, '', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '26px',
+      color: '#ffe7a3',
+      backgroundColor: '#000000aa',
+      padding: { x: 10, y: 4 },
+    });
+    this.soundText.setOrigin(0.5, 1).setScrollFactor(0).setDepth(21);
     this.subtitle = this.scene.add.text(VIEW_W / 2, VIEW_H - 120, '', {
       ...style,
       fontSize: '30px',
@@ -203,6 +247,12 @@ export class ArenaView {
       t.setScrollFactor(0).setDepth(21);
       this.warnTexts.push(t);
     }
+  }
+
+  /** M22: shows a sound caption for a moment (the newest replaces the last). */
+  soundCaption(text: string, now: number): void {
+    this.soundText.setText(text);
+    this.soundUntil = now + 1400;
   }
 
   /** M18: a greenhouse room draws its own greybox room, so the arena's layers stay hidden. */
@@ -248,11 +298,22 @@ export class ArenaView {
     stageWidth: number,
     quality: QualityLevel = 'high',
     run: StageRun | null = null,
+    /** M22: the Stage 2 area of the room or corridor being played (its own art). */
+    stage2Area: string | null = null,
   ): void {
     const arena = enc ? ARENAS[enc.arena] : undefined;
     // Keyed by what is drawn, so the camera locks of one stage beat share one backdrop.
-    const key = arena ? `${arena.area}/${arena.backdrop}/${arena.width}` : 'lab';
-    if (key !== this.key) this.rebuild(arena, stageWidth);
+    const key = stage2Area
+      ? `s2/${stage2Area}/${stageWidth}`
+      : arena
+        ? `${arena.area}/${arena.backdrop}/${arena.width}`
+        : 'lab';
+    if (key !== this.key) {
+      this.s2area = stage2Area;
+      if (stage2Area) this.ensureStage2(stage2Area);
+      this.rebuild(arena, stageWidth);
+      this.key = key;
+    }
     const cam = this.scene.cameras.main;
     if (enc) {
       const target = fxToPixels(enc.viewMin);
@@ -281,6 +342,10 @@ export class ArenaView {
       } else if (l.name === 'far' || l.name === 'mid') {
         l.obj.setScrollFactor(frozen ? 0 : l.factor, 1);
       }
+    }
+    if (this.soundUntil > 0 && this.scene.time.now > this.soundUntil) {
+      this.soundText.setText('');
+      this.soundUntil = 0;
     }
     this.drawHud(enc, bodies, frame);
     this.drawStage(run, frame);
@@ -373,16 +438,17 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
   private rebuild(arena: (typeof ARENAS)[number] | undefined, stageWidth: number): void {
     for (const l of this.layers) l.obj.destroy();
     this.layers = [];
-    this.key = arena ? arena.id : 'lab';
     this.beeped.clear();
     const cam = this.scene.cameras.main;
     this.boundsWidth = stageWidth;
     cam.setBounds(0, 0, Math.max(VIEW_W, stageWidth), VIEW_H);
-    if (!arena) return;
-    const id = (layer: string) => `bg.stage1.${arena.area}.${layer}`;
+    const s2 = this.s2area;
+    if (!arena && !s2) return;
+    const id = (layer: string) =>
+      s2 ? `bg.stage2.${s2}.${layer}` : `bg.stage1.${arena!.area}.${layer}`;
     const has = (layer: string) =>
       this.assets.layer(id(layer)) !== undefined && this.scene.textures.exists(id(layer));
-    if (arena.backdrop === 'plate' && has('plate')) {
+    if (!s2 && arena?.backdrop === 'plate' && has('plate')) {
       const meta = this.assets.layer(id('plate'))!.layer;
       const scale = Math.max(VIEW_W / meta.w, VIEW_H / meta.h);
       // The plate's floor line meets the walkable band's top edge.

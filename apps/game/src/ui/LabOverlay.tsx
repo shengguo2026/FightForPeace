@@ -18,7 +18,7 @@ import {
 } from '@ffp/sim';
 import type { KeyboardP2Preset, LayoutName, QualitySetting } from '@ffp/platform';
 import { LINK_TEXT, moveInputText, profileText } from '../text/en';
-import { t as tx } from '../text/i18n';
+import { dt, t as tx } from '../text/i18n';
 import { InputPrompt, PLAYER_COLORS, PromptText } from './InputPrompt';
 import type {
   DefenseView,
@@ -973,7 +973,10 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
 function rideHints(heroId: string): { text: string; name?: string }[] {
   const i = HEROES.findIndex((h) => h.id === heroId);
   const kit = mountedKit(Math.max(0, i));
-  const n = (slot: number) => kit[slot]?.name ?? '';
+  const n = (slot: number) => {
+    const a = kit[slot];
+    return a ? dt(`mounted.${heroId}.${a.id}`, a.name) : '';
+  };
   return [
     { text: tx('prompt.hintRideSteer') },
     { text: tx('prompt.hintRideAttack'), name: n(MountedSlot.Neutral) },

@@ -846,6 +846,7 @@ export function refreshStage(session: GameSession, lab: LabState): void {
     ],
     sections: stage2Sections(r),
     epilogue: r.epilogue.map((k) => dt(`epilogue.${r.stage}.${k}`, k)),
+    epilogueIds: [...r.epilogue],
   };
   lab.results.value = view;
 }
