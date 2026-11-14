@@ -108,7 +108,7 @@ export function assemble({
   outDir,
   portableDir = PORTABLE,
   noticeText = notices(),
-  manifestFile = join(REPO, 'docs', 'release', 'manifest.json'),
+  manifestFile = join(REPO, 'docs', 'release-manifest.json'),
 }) {
   if (!existsSync(join(gameDir, 'index.html'))) {
     throw new Error(`No built game in ${gameDir}. Run pnpm build first.`);

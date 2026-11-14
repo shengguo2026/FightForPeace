@@ -1,5 +1,5 @@
 import { RULES_VERSION, STATE_FORMAT, cheatRegistryHash, rulesHash } from '@ffp/sim';
-import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { describe, expect, test } from 'vitest';
 import manifest from '../../packages/platform/src/assets/manifest.json';
@@ -16,7 +16,7 @@ import { NET_PROTOCOL, contentHash } from '../../packages/platform/src/net/proto
  * change.
  */
 const REPO = resolve(__dirname, '../..');
-const FILE = join(REPO, 'docs/release/manifest.json');
+const FILE = join(REPO, 'docs/release-manifest.json');
 
 function build() {
   const replays = join(REPO, 'tests/replays');
@@ -52,9 +52,9 @@ function build() {
 }
 
 describe('release manifest', () => {
-  test('docs/release/manifest.json matches this build (RECORD=1 rewrites it)', () => {
+  test('docs/release-manifest.json matches this build (RECORD=1 rewrites it)', () => {
     const now = build();
-    if (process.env.RECORD || !existsSync(FILE))
+    if (process.env.RECORD)
       writeFileSync(FILE, `${JSON.stringify(now, null, 2)}\n`);
     expect(JSON.parse(readFileSync(FILE, 'utf8'))).toEqual(now);
   });
