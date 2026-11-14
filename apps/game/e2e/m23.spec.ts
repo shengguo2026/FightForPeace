@@ -47,7 +47,13 @@ async function overflowing(page: Page, scope: string): Promise<string[]> {
       if (el.offsetParent === null) continue;
       const r = el.getBoundingClientRect();
       if (r.width === 0) continue;
-      const cut = el.scrollWidth > el.clientWidth + 2 && getComputedStyle(el).overflowX !== 'auto';
+      // An inline box (a hint inside a paragraph) wraps and has no clientWidth of its own;
+      // Firefox still reports a scrollWidth for it.
+      const style = getComputedStyle(el);
+      const cut =
+        style.display !== 'inline' &&
+        el.scrollWidth > el.clientWidth + 2 &&
+        style.overflowX !== 'auto';
       const outside = r.right > vw + 2 || r.left < -2;
       if (cut || outside)
         out.push(`${el.dataset.testid ?? el.className}: "${el.innerText.slice(0, 60)}"`);
@@ -216,12 +222,26 @@ function pad(press: string[] = []) {
   };
 }
 
-/** One button press on the fake gamepad (down for a few frames, then up). */
+/** Waits for `n` animation frames: the shell reads the pads once per frame. */
+async function frames(page: Page, n: number) {
+  await page.evaluate(
+    (n) =>
+      new Promise<void>((done) => {
+        let k = n;
+        const f = () => (--k <= 0 ? done() : requestAnimationFrame(f));
+        requestAnimationFrame(f);
+      }),
+    n,
+  );
+}
+
+/** One button press on the fake gamepad: down for a few frames, then up for a few (a fixed
+ * time was too short when WebKit in CI drew slowly, and the press was never seen). */
 async function tap(page: Page, button: string) {
   await page.evaluate((p) => window.__ffp!.fakePads([p]), pad([button]));
-  await page.waitForTimeout(80);
+  await frames(page, 3);
   await page.evaluate((p) => window.__ffp!.fakePads([p]), pad());
-  await page.waitForTimeout(80);
+  await frames(page, 3);
 }
 
 /** Moves menu focus with the D-pad until `testId` has it, then presses South. */
@@ -270,7 +290,9 @@ test('a Stage 2 cheat (STEADYRIDE) is chosen with the gamepad only', async ({ pa
   await padChoose(page, 'pause-secrets');
   await expect(page.getByTestId('secrets-p1-STEADYRIDE')).toBeVisible();
   await padChoose(page, 'secrets-p1-STEADYRIDE');
+  await expect(page.getByTestId('secrets-p1-STEADYRIDE')).toContainText('✓');
   await padChoose(page, 'secrets-accept-p1');
+  await expect(page.getByTestId('secrets-accept-p1')).toContainText('✓');
   await padChoose(page, 'secrets-done');
   await expect(page.getByTestId('pause-cheat')).toBeVisible();
   const c = await page.evaluate(() => window.__ffp!.shell.cheats());

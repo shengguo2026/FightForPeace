@@ -184,7 +184,7 @@ These were fixed in code, but the pattern matters for every new stage.
 | Lab panels stayed open in an Academy lesson | M21 tests | Leaving a screen closes everything it opened. |
 | Museum and Store missing an icon, a second menu level and previews | M21 tests | New menus follow the existing pattern: icon, two levels for long lists, a preview for every buyable item. |
 | The release manifest was written to `docs/release/`, which `.gitignore`'s `release/` also matches, so it never reached CI and the Windows zip job failed (M23); the test had quietly recreated the missing file locally | M23 CI, portable-windows | A recorded file is checked with `git check-ignore` before it is committed, and a record test never creates its own expected file unless asked (`RECORD=1`). |
-| CI flakes: Firefox dash double-tap, a WebKit subtitle check that read too early, a timing-sensitive performance test | M3, M22 and the hero-size fix | Browser tests step by simulation frames and wait for state, never for wall-clock time. |
+| CI flakes: Firefox dash double-tap, a WebKit subtitle check that read too early, a timing-sensitive performance test, an 80 ms fake-gamepad tap WebKit never saw and an overflow check that Firefox failed on inline text (M23) | M3, M22, the hero-size fix and M23 CI | Browser tests step by simulation frames and wait for state, never for wall-clock time. |
 
 ## F · Found by the Stage 2 acceptance harness (M23)
 
