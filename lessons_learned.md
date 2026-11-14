@@ -105,17 +105,19 @@ The biggest and most repeated gap. Three times a whole class of sheets was found
 
 ### C3 · Story clips with people kept failing in Google Flow
 
-- **What happened:** Stage 2 clips needed many retries (camera moves, walking, handovers, vanishing props, invented text, "Audio generation failed"). The first Stage 3 clip with people (H01) failed three times.
-- **Caught:** throughout the Stage 2 clip runs; decided 2026-11-10.
-- **Fix:** Stage 3 decision: story scenes with people are **still sequences** (start picture, slow pan, cross-fade to the end picture, subtitles, music, skippable). Only people-free title loops stay Flow clips. All lessons are in `FLOW_LESSONS.md`.
-- **Rule:** plan every new story scene as a still sequence with a start and end picture. Plan a Flow clip only for scenes without people, and write it with the template in `FLOW_LESSONS.md`.
+- **What happened:** Stage 2 clips needed many retries (camera moves, walking, handovers, vanishing props, invented text, "Audio generation failed"). For Stage 3 we generated a start frame **and** an end frame for every clip so Flow only had to fill the motion between them, and it still did not work as expected: the first Stage 3 clip with people (H01) failed three times (audio errors, a stray caption, the elder walking off, a zoom in the middle), and Flow's 1280x720 output is softer than our 1536x864 stills.
+- **Caught:** throughout the Stage 2 clip runs; decided by Guo on 2026-11-10.
+- **Fix:** Stage 3 decision: story scenes with people are **still sequences**: the approved start picture with a slow zoom or pan, a 1 s cross-fade to the end picture, localized subtitles in the calm bottom fifth, music under it, tap to advance and skippable. The game's cinematic player got this still-sequence mode. **Google Flow clips are used only for the people-free title or intro loops** (Stage 3 F01). All Flow lessons are in `FLOW_LESSONS.md`.
+- **Rule:** plan every new story scene as a still sequence with a start and end picture, subtitles in all three languages, and a transition (cross-fade, zoom, pan). Plan the number of Flow clips per stage at **one** (the title loop) and never more than a few people-free shots; write each with the template in `FLOW_LESSONS.md`. Don't plan any clip whose action needs walking, a handover or a camera move.
 
 ### C4 · Music generation ignored key and structure
 
 - **What happened:** Garran's states 06B and 06C came out in D minor and F minor instead of C minor, even with the key first in the prompt, and one clipped at +0.7 dB. The "six stingers" file came back as one 2-minute piece. Title loops did not join seamlessly.
 - **Caught:** Claude's measurement of every delivery (Stage 3 music review, 2026-11-03; Stage 2 title loop).
 - **Fix:** pitch-shifted to C minor, cut the stingers from phrase ends, crossfaded loop ends.
+- **Overall:** Flow music worked much better than Flow video, but most cues still needed a correction (pitch shift, peak trim, cutting) and some needed a regeneration with an adjusted prompt, so every cue costs review and editing time.
 - **Rule:** every music delivery is measured (length, LUFS, peaks, tempo, key) before approval. Cues that must layer or switch share key and tempo, stated first in the prompt, and a pitch shift is the planned fallback. Stingers are cut from a longer cue rather than asked for as several pieces in one file.
+- **Rule (fewer cues):** plan **fewer music files** for later stages. Reuse existing cues where the mood fits (exploration beds, stingers, the elder's theme, village and Museum music) and only commission what is new to the stage, typically one exploration cue, one combat cue and one boss cue. Make boss states from one long cue cut into sections instead of four separate generations, and cut stingers from the stage's own cues. The music direction document (`docs/production/campaign_music_direction.md`) names 7 cues per stage today; trim that list per stage before writing its music prompts.
 
 ### C5 · Whole categories of assets had no prompt list
 
@@ -185,21 +187,22 @@ Run this for Stage 4 onwards, each Curated Mission and every other mode. Stage 4
 
 4. Every playable hero × every weapon of the stage has stance/attack sheets **and** an armed walk (A2). Heroes added since the last stage are included.
 5. Every character has every on-screen movement as a cycle of 4–6 cells: walk, run, flee or withdraw, walk away after rescue, and each state variant (dismounted, disarmed, phase change, injured). Characters that never move are listed as "stands only" (A3).
-6. Every story scene is a still sequence with a start and end picture; Flow clips only for scenes without people (C3).
-7. Music, stingers, ambience, effects, UI icons, Museum entries and narration text each say "prompted in file X" or "placeholder until milestone Y" (C5).
-8. Every asset names the milestone that brings it into the game (D5).
+6. Every story scene is a still sequence with a start and end picture, localized subtitles and a transition; the stage plans one Flow clip (the title loop) and none with people (C3).
+7. The music list is the smallest that works: existing cues reused where they fit, new cues only for what is new, boss states and stingers cut from longer cues (C4).
+8. Music, stingers, ambience, effects, UI icons, Museum entries and narration text each say "prompted in file X" or "placeholder until milestone Y" (C5).
+9. Every asset names the milestone that brings it into the game (D5).
 
 **Prompt text**
 
-9. Locomotion prompts name the leading leg and arm in every cell, forbid repeating the first half, and end with the self-check (A1).
-10. Every character prompt says it faces right in every pose, including flee and exit poses (A4).
-11. Every gameplay sheet attaches the model sheet and the IDLE sheet and says "exactly as tall as the idle sheet"; armed sheets also attach the weapon sheet (B1).
-12. Every prop states its size relative to hero height (B2).
-13. The standard clauses are in: cell margin, transparent gaps, nothing in a neighbouring cell, no decals, motion lines or text, copy props exactly from the attached sheet (B3).
-14. Anchors come first in the file, are reviewed as a cast for distinct looks and unique ID colours, and later prompts attach the approved version (B4).
+10. Locomotion prompts name the leading leg and arm in every cell, forbid repeating the first half, and end with the self-check (A1).
+11. Every character prompt says it faces right in every pose, including flee and exit poses (A4).
+12. Every gameplay sheet attaches the model sheet and the IDLE sheet and says "exactly as tall as the idle sheet"; armed sheets also attach the weapon sheet (B1).
+13. Every prop states its size relative to hero height (B2).
+14. The standard clauses are in: cell margin, transparent gaps, nothing in a neighbouring cell, no decals, motion lines or text, copy props exactly from the attached sheet (B3).
+15. Anchors come first in the file, are reviewed as a cast for distinct looks and unique ID colours, and later prompts attach the approved version (B4).
 
 **Back-apply and publish**
 
-15. Every new lesson found while writing is also checked against the stages already prompted, even ones that are "complete" (A2: the Stage 2 armed walks were missed this way).
-16. The prompt file is written with a file editor, `git status` shows only the intended files, and it is pushed to Pictures `main` after a `git pull` (D1–D3).
-17. A new lesson found later is added to this file in the same PR as its fix.
+16. Every new lesson found while writing is also checked against the stages already prompted, even ones that are "complete" (A2: the Stage 2 armed walks were missed this way).
+17. The prompt file is written with a file editor, `git status` shows only the intended files, and it is pushed to Pictures `main` after a `git pull` (D1–D3).
+18. A new lesson found later is added to this file in the same PR as its fix.
