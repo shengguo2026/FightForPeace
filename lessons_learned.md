@@ -4,6 +4,8 @@ This file records every step we missed or had to correct compared with the origi
 
 Each lesson has four parts: **what happened**, **where it was caught**, **the fix**, and **the rule** to follow from now on.
 
+**This is a living file.** It is the base of everything learned up to M22. Every new finding from later tests, reviews or stages is added here as a new lesson (same four parts), in the same PR as its fix, and the pre-flight checklist is updated when the finding needs a new check.
+
 Related files:
 
 - Google Flow clip lessons are kept in one place and not repeated here: [`FightForPeace/FLOW_LESSONS.md`](https://github.com/shengguo2026/Pictures/blob/main/FightForPeace/FLOW_LESSONS.md) in the Pictures repo (copy in the project files at `art/FLOW_LESSONS.md`).
@@ -144,12 +146,17 @@ The biggest and most repeated gap. Three times a whole class of sheets was found
 - **What happened:** three times (walk redo, M10 findings, Stage 2 armed walks) the prompt file was first only in the project files or on a PR branch, and Guo had to ask for it on `main` so Codex could read it.
 - **Rule:** new or extended prompt files go straight to `FightForPeace/` on Pictures `main` as a docs-only commit, and the reply links the file on `main`.
 
-### D4 · Documents drifted out of date
+### D4 · Prompt file names
+
+- **What happened:** the main prompt files followed one pattern (`codex_prompts_stage1.md` to `codex_prompts_stage3.md`, `flow_prompts_stage3.md`, `music_prompts_stage3.md`), but prompts added later for missing media went sometimes into their own file (`codex_prompts_stage2_armed_walks.md`, `codex_redo_walk_cycles.md`, `codex_m10_findings.md`) and sometimes to the end of the main file (Stage 3 #362–#380).
+- **Rule (agreed with Guo, 2026-11-14):** keep the current names for every later stage and mission: `codex_prompts_stageN.md` (pictures), `flow_prompts_stageN.md` (Flow clips) and `music_prompts_stageN.md` (music), in `FightForPeace/` of the Pictures repo. Prompts added later for missing or redone media go into a separate file named after the main file plus a topic, like `codex_prompts_stage2_armed_walks.md` (for example `codex_prompts_stage4_flee_runs.md`), not at the end of the main file. The main file's overview points to each added file. Stage 3 #362–#380 stay where they are, since they are already numbered in the main file's index.
+
+### D5 · Documents drifted out of date
 
 - **What happened:** `APPROVED_VARIANTS.md` still listed P06–P11 as pending and had the N01 row backwards. The game repo's `docs/art/stage2/approved-variants.md` and the project-files copy were behind. The portable `README.txt` still said "milestone M12". The refinement copy of `Features_Decisions.md` had lost the 2026-10-21 to 2026-10-31 decisions, and documents lived in two places with different names (campaign review G3, G4).
 - **Rule:** one source of truth per document, and the other copies point to it. The PR that imports or approves an asset also updates `APPROVED_VARIANTS.md`. Each milestone checks the README and version strings.
 
-### D5 · Delivered art is not automatically in the game
+### D6 · Delivered art is not automatically in the game
 
 - **What happened:** Stage 1 and 2 art sat in the Pictures repo while the game drew placeholders, until M6 (first real art) and M22. Even in M22 some items stayed placeholders (outfits as a tint, Stage 2 effects).
 - **Rule:** every prompted asset names the milestone that brings it into the game. Each media milestone ends with a list: delivered and used, delivered but deferred (with the milestone), not delivered.
@@ -190,7 +197,7 @@ Run this for Stage 4 onwards, each Curated Mission and every other mode. Stage 4
 6. Every story scene is a still sequence with a start and end picture, localized subtitles and a transition; the stage plans one Flow clip (the title loop) and none with people (C3).
 7. The music list is the smallest that works: existing cues reused where they fit, new cues only for what is new, boss states and stingers cut from longer cues (C4).
 8. Music, stingers, ambience, effects, UI icons, Museum entries and narration text each say "prompted in file X" or "placeholder until milestone Y" (C5).
-9. Every asset names the milestone that brings it into the game (D5).
+9. Every asset names the milestone that brings it into the game (D6).
 
 **Prompt text**
 
@@ -204,5 +211,5 @@ Run this for Stage 4 onwards, each Curated Mission and every other mode. Stage 4
 **Back-apply and publish**
 
 16. Every new lesson found while writing is also checked against the stages already prompted, even ones that are "complete" (A2: the Stage 2 armed walks were missed this way).
-17. The prompt file is written with a file editor, `git status` shows only the intended files, and it is pushed to Pictures `main` after a `git pull` (D1–D3).
-18. A new lesson found later is added to this file in the same PR as its fix.
+17. The prompt file is written with a file editor, `git status` shows only the intended files, and it is pushed to Pictures `main` after a `git pull` (D1–D3). Its name follows D4: `codex_prompts_stageN.md`, `flow_prompts_stageN.md`, `music_prompts_stageN.md`, and later additions in `codex_prompts_stageN_<topic>.md`.
+18. This file stays the living base: every new finding is added here as a lesson in the same PR as its fix, and this checklist gets a new item when the finding needs one.
