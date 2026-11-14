@@ -14,6 +14,7 @@ import {
   StageScreen,
 } from './screens/PlayFlow';
 import { RecordsScreen } from './screens/Records';
+import { ProfileScreen } from './screens/Profile';
 import {
   AcademyScreen,
   CombosScreen,
@@ -92,6 +93,8 @@ export function ShellRoot({ shell, state }: { shell: Shell; state: LabState }) {
         return <SettingsScreen shell={shell} />;
       case 'records':
         return <RecordsScreen shell={shell} />;
+      case 'profile':
+        return <ProfileScreen shell={shell} />;
       case 'store':
         return <StoreScreen shell={shell} />;
       case 'guide':

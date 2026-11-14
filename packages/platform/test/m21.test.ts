@@ -25,6 +25,7 @@ import {
   stageOpen,
   storeStatus,
   titleScreenFor,
+  runCompletesStage,
   whatsNewDue,
   type Profile,
   type RunReport,
@@ -139,6 +140,12 @@ describe('the campaign layer', () => {
       still: 'story.stage2.title-loop',
       menuBg: 'menu-bg-s2',
     });
+  });
+
+  test('a run resumed from a checkpoint completes the stage; Lab practice does not', () => {
+    expect(runCompletesStage(0, false)).toBe(true);
+    expect(runCompletesStage(3, true)).toBe(true);
+    expect(runCompletesStage(3, false)).toBe(false);
   });
 
   test("What's New is due once per profile before the first Stage 2 run", () => {
