@@ -237,13 +237,19 @@ export function Panel({
   children,
   style,
   testId,
+  scrollLabel,
 }: {
   children: ComponentChildren;
   style?: CSSProperties;
   testId?: string;
+  /** M23: a panel that scrolls is a named region the keyboard can reach and scroll. */
+  scrollLabel?: string;
 }) {
+  const scroll = scrollLabel
+    ? { tabIndex: 0, role: 'region' as const, 'aria-label': scrollLabel }
+    : {};
   return (
-    <div class="ffp-panel" style={style} data-testid={testId}>
+    <div class="ffp-panel" style={style} data-testid={testId} {...scroll}>
       {children}
     </div>
   );

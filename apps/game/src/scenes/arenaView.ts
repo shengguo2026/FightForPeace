@@ -21,7 +21,7 @@ import {
 } from '@ffp/sim';
 import type { AssetRegistry, BossView, QualityLevel } from '@ffp/platform';
 import { ARENA_TEXT, STAGE_TEXT } from '../text/en';
-import { dt, difficultyName, t, type TextId } from '../text/i18n';
+import { arenaName, dt, difficultyName, t, type TextId } from '../text/i18n';
 import { presentation } from '../shell/presentation';
 
 /** Localized stage and arena words (English from en.ts is the fallback). */
@@ -520,7 +520,7 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
     const waves = arena.waves.length;
     const left = bodies.filter((b) => b.team === 'enemy' && !b.ko && !nonCombatant(b)).length;
     this.title.setText(
-      `${dt(`arena.${arena.id}.name`, arena.name)} · ${difficultyName(diff.id)} · ${A('wave')} ${Math.max(1, enc.wave + 1)}/${waves} · ${left} ${A('left')}`,
+      `${arenaName(arena)} · ${difficultyName(diff.id)} · ${A('wave')} ${Math.max(1, enc.wave + 1)}/${waves} · ${left} ${A('left')}`,
     );
     // A stage lock's boss bar goes once the lock is cleared (the Commander has surrendered).
     if (arena.stage && enc.result !== 0) this.bossName.setText('');

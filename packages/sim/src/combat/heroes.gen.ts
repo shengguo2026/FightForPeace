@@ -24251,7 +24251,6 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
           "counter": false,
           "breaker": false,
           "supports": [
-            "claimhand",
             "claimhand"
           ],
           "eliteSupports": [
@@ -30533,6 +30532,13 @@ export const ARENA_DATA: readonly ArenaDef[] = [
             "z": 900,
             "minDifficulty": 3,
             "coop": false
+          },
+          {
+            "kit": "glassrunner",
+            "x": 2100,
+            "z": 740,
+            "minDifficulty": 4,
+            "coop": false
           }
         ]
       }
@@ -30619,6 +30625,20 @@ export const ARENA_DATA: readonly ArenaDef[] = [
             "z": 700,
             "minDifficulty": 3,
             "coop": false
+          },
+          {
+            "kit": "claimhand",
+            "x": 1700,
+            "z": 860,
+            "minDifficulty": 4,
+            "coop": false
+          },
+          {
+            "kit": "glassrunner",
+            "x": 1820,
+            "z": 780,
+            "minDifficulty": 4,
+            "coop": true
           }
         ]
       }
@@ -30728,6 +30748,13 @@ export const ARENA_DATA: readonly ArenaDef[] = [
             "coop": false
           },
           {
+            "kit": "claimhand",
+            "x": 2100,
+            "z": 720,
+            "minDifficulty": 4,
+            "coop": false
+          },
+          {
             "kit": "glassrunner",
             "x": 300,
             "z": 900,
@@ -30741,7 +30768,7 @@ export const ARENA_DATA: readonly ArenaDef[] = [
       {
         "from": "claimhand",
         "to": "enforcer2",
-        "minDifficulty": 2,
+        "minDifficulty": 3,
         "count": 1
       }
     ],
@@ -30869,6 +30896,13 @@ export const ARENA_DATA: readonly ArenaDef[] = [
             "x": 2200,
             "z": 700,
             "minDifficulty": 3,
+            "coop": false
+          },
+          {
+            "kit": "glassrunner",
+            "x": 2050,
+            "z": 860,
+            "minDifficulty": 4,
             "coop": false
           },
           {
@@ -31012,6 +31046,20 @@ export const ARENA_DATA: readonly ArenaDef[] = [
             "z": 700,
             "minDifficulty": 3,
             "coop": false
+          },
+          {
+            "kit": "glassrunner",
+            "x": 2100,
+            "z": 860,
+            "minDifficulty": 4,
+            "coop": false
+          },
+          {
+            "kit": "claimhand",
+            "x": 2220,
+            "z": 780,
+            "minDifficulty": 4,
+            "coop": true
           }
         ]
       }
@@ -31020,7 +31068,7 @@ export const ARENA_DATA: readonly ArenaDef[] = [
       {
         "from": "claimhand",
         "to": "enforcer2",
-        "minDifficulty": 2,
+        "minDifficulty": 3,
         "count": 1
       }
     ],
@@ -31153,6 +31201,13 @@ export const ARENA_DATA: readonly ArenaDef[] = [
             "x": 2300,
             "z": 700,
             "minDifficulty": 3,
+            "coop": false
+          },
+          {
+            "kit": "claimhand",
+            "x": 2150,
+            "z": 860,
+            "minDifficulty": 4,
             "coop": false
           },
           {

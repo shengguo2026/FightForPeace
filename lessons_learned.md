@@ -1,4 +1,4 @@
-# Lessons learned (Stages 1–3, M0–M22)
+# Lessons learned (Stages 1–3, M0–M23)
 
 This file records every step we missed or had to correct compared with the original plan, so the prompt files and specs for Stages 4–8, the Curated Missions and the other modes don't repeat them. Read it, then run the **pre-flight checklist** at the end before writing any new stage's prompt files.
 
@@ -183,7 +183,40 @@ These were fixed in code, but the pattern matters for every new stage.
 | Title music lost before the first click (browser autoplay rule) | M11 tests | Audio requested before the first input is queued and started on that input. |
 | Lab panels stayed open in an Academy lesson | M21 tests | Leaving a screen closes everything it opened. |
 | Museum and Store missing an icon, a second menu level and previews | M21 tests | New menus follow the existing pattern: icon, two levels for long lists, a preview for every buyable item. |
-| CI flakes: Firefox dash double-tap, a WebKit subtitle check that read too early, a timing-sensitive performance test | M3, M22 and the hero-size fix | Browser tests step by simulation frames and wait for state, never for wall-clock time. |
+| The release manifest was written to `docs/release/`, which `.gitignore`'s `release/` also matches, so it never reached CI and the Windows zip job failed (M23); the test had quietly recreated the missing file locally | M23 CI, portable-windows | A recorded file is checked with `git check-ignore` before it is committed, and a record test never creates its own expected file unless asked (`RECORD=1`). |
+| CI flakes: Firefox dash double-tap, a WebKit subtitle check that read too early, a timing-sensitive performance test, an 80 ms fake-gamepad tap WebKit never saw and an overflow check that Firefox failed on inline text (M23) | M3, M22, the hero-size fix and M23 CI | Browser tests step by simulation frames and wait for state, never for wall-clock time. |
+
+## F · Found by the Stage 2 acceptance harness (M23)
+
+The M23 harnesses (complete paths, progression sweep, balance, browser sweep in German and Chinese) found these before any player did. Details and numbers: `docs/review/09-stage2-acceptance.md`.
+
+### F1 · An enemy knocked into the end wall stood there forever
+
+- **What happened:** an enemy knocked outside the combat-safe zone (the strip at the room's edge where the director forbids attacks) kept walking to its ring spot, which was inside that strip, so it stood idle for good and the room never ended (Marek on Hard, Mountain + Wind). M14 had seen the same pattern in Stage 1 and blamed the test bot.
+- **Caught:** the M23 progression sweep's stall detector.
+- **Fix:** an enemy outside the safe zone clamps its ring spot to inside the zone, including its walk tolerance (`packages/sim/src/enemies/ai.ts`). Stage 1 balance moved slightly with it (snapshot updated; Guo_tests M23 asks for a Stage 1 feel check).
+- **Rule:** a stall is never "the bot's fault" until the enemy's own state has been checked. Any rule that forbids an action in a zone also makes sure the actor can leave that zone.
+
+### F2 · Ultimate was easier than Extreme
+
+- **What happened:** Ultimate only scaled numbers that were already near their caps, so the balance harness measured it as easier than Extreme in solo and level with it for the twins. A Hard-only substitution (the Enforcer) was a wall in five rooms, and Marek's two Claim Hands on Medium were more than solo heroes could clear.
+- **Caught:** the M23 balance harness (every beat, every difficulty, 12 bot variants).
+- **Fix:** Ultimate adds one enemy in six rooms (and two more in co-op); the Hard Enforcer stays in three rooms and moves to Extreme in the other two; Medium Marek has one Claim Hand.
+- **Rule:** each difficulty step has its own roster lever, not only a multiplier, and the balance harness runs on every difficulty before a stage is accepted (pre-flight item 19).
+
+### F3 · Stage 2 room names stayed in English
+
+- **What happened:** the room HUD title looked up `arena.<room>-waves.name`, a key only Lab arenas have, so every Stage 2 room and Stage 1 lock showed its English name in German and Chinese, although the translated room and beat names existed.
+- **Caught:** the M23 browser sweep (fallback list must be empty).
+- **Fix:** `arenaName()` in `apps/game/src/text/i18n.ts` uses the beat or room name key.
+- **Rule:** the per-language browser sweep for a stage asserts the fallback list is empty on every in-play screen, not only on menus.
+
+### F4 · Keyboard and gamepad gaps in menus
+
+- **What happened:** the Museum Investigation panel scrolled but could not be reached by the keyboard (axe: scrollable-region-focusable); and the D-pad skipped the full-width "I understand" consent button for cheats, jumping to Done, because navigation compared box centres.
+- **Caught:** the M23 browser sweep (axe) and the gamepad-only cheat test.
+- **Fix:** scrolling panels are focusable named regions (`Panel scrollLabel`); D-pad navigation measures the gap between boxes (`apps/game/src/shell/nav.ts`).
+- **Rule:** every new menu gets a gamepad-only e2e path through its main action and an axe check.
 
 ---
 
@@ -220,3 +253,7 @@ Run this for Stage 4 onwards, each Curated Mission and every other mode. Stage 4
 16. Every new lesson found while writing is also checked against the stages already prompted, even ones that are "complete" (A2: the Stage 2 armed walks were missed this way).
 17. The prompt file is written with a file editor, `git status` shows only the intended files, and it is pushed to Pictures `main` after a `git pull` (D1–D3). Its name follows D4: `codex_prompts_stageN.md`, `flow_prompts_stageN.md`, `music_prompts_stageN.md`, and later additions in `codex_prompts_stageN_<topic>.md`.
 18. This file stays the living base: every new finding is added here as a lesson in the same PR as its fix, and this checklist gets a new item when the finding needs one.
+
+**Before the stage's acceptance**
+
+19. The balance harness runs every beat on every difficulty and each difficulty has its own roster lever (F2); the complete-path, progression (with stall detector) and German/Chinese browser sweeps pass with no fallback text (F1, F3); every new menu has a gamepad-only path and an axe check (F4).

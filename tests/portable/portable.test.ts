@@ -202,7 +202,18 @@ describe('release zip', () => {
   it('packs the game with start scripts, "/" names and the right line endings', () => {
     const game = fakeGame();
     const out = join(tmp, 'release');
-    const { zipPath, names } = assemble({ version: '9.9.9', gameDir: game, outDir: out });
+    const manifestFile = join(tmp, 'manifest.json');
+    writeFileSync(manifestFile, JSON.stringify({ game: '9.9.9', rulesVersion: 'test' }));
+    // M23: the manifest must be the one recorded for this version.
+    expect(() => assemble({ version: '9.9.8', gameDir: game, outDir: out, manifestFile })).toThrow(
+      /manifest\.json is for 9\.9\.9/,
+    );
+    const { zipPath, names } = assemble({
+      version: '9.9.9',
+      gameDir: game,
+      outDir: out,
+      manifestFile,
+    });
     const root = 'FightForPeace-9.9.9';
     for (const n of names) {
       expect(n.startsWith(`${root}/`)).toBe(true);
@@ -215,6 +226,7 @@ describe('release zip', () => {
         `${root}/README.txt`,
         `${root}/THIRD-PARTY-NOTICES.txt`,
         `${root}/VERSION`,
+        `${root}/manifest.json`,
         `${root}/runtime.json`,
         `${root}/server/server.mjs`,
         `${root}/server/room.mjs`,

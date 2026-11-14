@@ -28,6 +28,7 @@ import { pickupEligible, requestPickup, stepPickup } from '../combat/items';
 import { nonCombatant } from '../combat/damage';
 import { actionIndex, attacksOf, bossPhase, difficultyOf, livingHeroes, profileOf } from './data';
 import {
+  SAFE_MARGIN,
   holdsReservation,
   judge,
   logDecision,
@@ -905,8 +906,14 @@ function tactical(world: World, f: Fighter, prof: EnemyProfile, t: Fighter): voi
       f.aiMode = AiMode.Hold;
       break;
   }
-  const minX = world.bounds.minX + fx(40);
-  const maxX = world.bounds.maxX - fx(40);
+  // M23: an enemy outside the combat-safe zone may not attack (Verdict.Hidden). Knocked
+  // into the room's end wall, it used to hold its ring spot there forever (the clamp kept
+  // it within 40 px of the wall, inside the 80 px unsafe strip): Marek stood idle beside two
+  // heroes for minutes. Out of the safe zone, it now steps back in past the strip (its walk
+  // tolerance included).
+  const edge = visible(world, f) ? fx(40) : SAFE_MARGIN + fx(40);
+  const minX = world.bounds.minX + edge;
+  const maxX = world.bounds.maxX - edge;
   x = Math.min(maxX, Math.max(minX, x));
   z = Math.min(world.bounds.maxZ, Math.max(world.bounds.minZ, z));
   walkTo(f, prof, x, z, fx(24), fx(12));

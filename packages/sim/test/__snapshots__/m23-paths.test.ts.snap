@@ -1,0 +1,201 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > easy, fire 1`] = `
+{
+  "continues": 5,
+  "habit": 0,
+  "lastRunMinutes": 9,
+  "restarts": 0,
+  "totalMinutes": 9,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > easy, mountain + river 1`] = `
+{
+  "continues": 2,
+  "habit": 0,
+  "lastRunMinutes": 6,
+  "restarts": 0,
+  "totalMinutes": 6,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > easy, mountain 1`] = `
+{
+  "continues": 4,
+  "habit": 0,
+  "lastRunMinutes": 6,
+  "restarts": 0,
+  "totalMinutes": 6,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > easy, river + fire 1`] = `
+{
+  "continues": 2,
+  "habit": 0,
+  "lastRunMinutes": 5,
+  "restarts": 0,
+  "totalMinutes": 5,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > easy, river 1`] = `
+{
+  "continues": 4,
+  "habit": 1,
+  "lastRunMinutes": 7,
+  "restarts": 0,
+  "totalMinutes": 7,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > easy, wind + fire 1`] = `
+{
+  "continues": 2,
+  "habit": 0,
+  "lastRunMinutes": 5,
+  "restarts": 0,
+  "totalMinutes": 5,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > easy, wind 1`] = `
+{
+  "continues": 5,
+  "habit": 1,
+  "lastRunMinutes": 8,
+  "restarts": 2,
+  "totalMinutes": 19,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > hard, mountain + river 1`] = `
+{
+  "continues": 2,
+  "habit": 1,
+  "lastRunMinutes": 6,
+  "restarts": 2,
+  "totalMinutes": 13,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > hard, river + fire 1`] = `
+{
+  "continues": 2,
+  "habit": 0,
+  "lastRunMinutes": 6,
+  "restarts": 3,
+  "totalMinutes": 18,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > hard, wind + fire 1`] = `
+{
+  "continues": 2,
+  "habit": 0,
+  "lastRunMinutes": 6,
+  "restarts": 16,
+  "totalMinutes": 82,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > medium, fire 1`] = `
+{
+  "continues": 3,
+  "habit": 0,
+  "lastRunMinutes": 6,
+  "restarts": 3,
+  "totalMinutes": 19,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > medium, mountain + fire 1`] = `
+{
+  "continues": 1,
+  "habit": 0,
+  "lastRunMinutes": 5,
+  "restarts": 0,
+  "totalMinutes": 5,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > medium, mountain + river 1`] = `
+{
+  "continues": 3,
+  "habit": 0,
+  "lastRunMinutes": 6,
+  "restarts": 0,
+  "totalMinutes": 6,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > medium, mountain + wind 1`] = `
+{
+  "continues": 3,
+  "habit": 0,
+  "lastRunMinutes": 7,
+  "restarts": 0,
+  "totalMinutes": 7,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > medium, mountain 1`] = `
+{
+  "continues": 3,
+  "habit": 0,
+  "lastRunMinutes": 6,
+  "restarts": 3,
+  "totalMinutes": 20,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > medium, river + fire 1`] = `
+{
+  "continues": 1,
+  "habit": 0,
+  "lastRunMinutes": 5,
+  "restarts": 0,
+  "totalMinutes": 5,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > medium, river + wind 1`] = `
+{
+  "continues": 2,
+  "habit": 0,
+  "lastRunMinutes": 5,
+  "restarts": 0,
+  "totalMinutes": 5,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > medium, river 1`] = `
+{
+  "continues": 3,
+  "habit": 0,
+  "lastRunMinutes": 6,
+  "restarts": 7,
+  "totalMinutes": 40,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > medium, wind + fire 1`] = `
+{
+  "continues": 2,
+  "habit": 0,
+  "lastRunMinutes": 5,
+  "restarts": 1,
+  "totalMinutes": 12,
+}
+`;
+
+exports[`Stage 2 from the pursuit to the crate, without cheats > medium, wind 1`] = `
+{
+  "continues": 3,
+  "habit": 0,
+  "lastRunMinutes": 6,
+  "restarts": 16,
+  "totalMinutes": 83,
+}
+`;

@@ -32,7 +32,7 @@ function toward(w: World, slot: number, x: number, z: number): FrameInput {
 export function stageBotInput(
   w: World,
   slot = 0,
-  style: { guardEvery?: number; attackEvery?: number } = {},
+  style: { guardEvery?: number; attackEvery?: number; lane?: number } = {},
 ): FrameInput {
   const h = heroOf(w, slot);
   const run = w.run;
@@ -56,6 +56,7 @@ export function stageBotInput(
   if (run.evidence === 1 && beat.evidence)
     return toward(w, slot, fx(beat.evidence.x), fx(beat.evidence.z));
   if (run.clue === 1 && beat.clue) return toward(w, slot, fx(beat.clue.x), fx(beat.clue.z));
-  // Walk right along a clear lane (below the mill pillar, above the cog).
-  return { ...toward(w, slot, h.x + fx(400), fx(880)), moveX: 1 };
+  // Walk right along a clear lane (below the mill pillar, above the cog). M23: `lane` 700
+  // leaves a branching room on its upper lane, so the optional branch is taken.
+  return { ...toward(w, slot, h.x + fx(400), fx(style.lane ?? 880)), moveX: 1 };
 }

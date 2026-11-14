@@ -164,6 +164,7 @@ export function MuseumScreen({ shell }: { shell: Shell }) {
             overflow: 'auto',
           }}
           testId="museum-detail"
+          scrollLabel={t(`m21.section.${section ?? last}` as TextId)}
         >
           {section === 'investigation' ? (
             <Investigation shell={shell} />
