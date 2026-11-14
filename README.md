@@ -99,6 +99,8 @@ If Node.js 24 is not installed, the first start downloads a pinned Node.js 24 in
 
 **Media (M13):** the intro and ending cinematics play the delivered Flow clips with subtitles (Settings → Accessibility → Cinematics switches to still pictures), the village menu shows the title loop, and Stage 1 has its adaptive score (placeholder loops until the recordings arrive; the victory stinger is real). New clips, stills, effect sheets or music are imported with `python3 tools/art/import_media.py ../pictures/FightForPeace [victory-stinger.mp3]`. Details: `docs/superpowers/plans/2026-11-06-m13-media-and-cinematics.md`.
 
+**Release manifest (M23):** the zip carries `manifest.json` (a copy of `docs/release/manifest.json`): the game, rules, protocol, state-format and cheat-registry versions, the rules and content hashes Wi-Fi peers compare, every golden replay hash and the source of each approved art, clip and music file. `pnpm test` fails when the rules, content or version change without it; `RECORD=1 pnpm vitest run packages/platform/test/release-manifest.test.ts` records it (after an art import or a version bump). Stage 2 acceptance: `docs/review/09-stage2-acceptance.md`.
+
 ## Developer commands
 
 | Command | What it does |

@@ -100,7 +100,7 @@ export function notices(packages = BUNDLED, find = packageDir) {
 
 /**
  * Assembles the release folder and zip. Returns the paths and the zip's entry names.
- * @param {{ version: string, gameDir: string, outDir: string, portableDir?: string }} o
+ * @param {{ version: string, gameDir: string, outDir: string, portableDir?: string, noticeText?: string, manifestFile?: string }} o
  */
 export function assemble({
   version,
@@ -108,9 +108,18 @@ export function assemble({
   outDir,
   portableDir = PORTABLE,
   noticeText = notices(),
+  manifestFile = join(REPO, 'docs', 'release', 'manifest.json'),
 }) {
   if (!existsSync(join(gameDir, 'index.html'))) {
     throw new Error(`No built game in ${gameDir}. Run pnpm build first.`);
+  }
+  // M23: the release manifest (versions, hashes, golden replays, provenance) goes into the
+  // zip; it must be the one recorded for this version.
+  const manifest = readFileSync(manifestFile, 'utf8');
+  if (JSON.parse(manifest).game !== version) {
+    throw new Error(
+      `${relative(REPO, manifestFile)} is for ${JSON.parse(manifest).game}, not ${version}. Run RECORD=1 pnpm vitest run packages/platform/test/release-manifest.test.ts.`,
+    );
   }
   const name = `FightForPeace-${version}`;
   const stage = join(outDir, name);
@@ -126,6 +135,7 @@ export function assemble({
     'runtime.json': lf(read('runtime.json')),
     'THIRD-PARTY-NOTICES.txt': crlf(noticeText),
     VERSION: `${version}\n`,
+    'manifest.json': lf(manifest),
     'server/server.mjs': lf(read('server.mjs')),
     'server/room.mjs': lf(read('room.mjs')),
     'server/get-node.ps1': crlf(read('get-node.ps1')),
