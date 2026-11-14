@@ -245,7 +245,7 @@ profile:
         armed: support-gun
         untilDisarmed: true
         summon: command-pressure
-        supports: [claimhand, claimhand]
+        supports: [claimhand]
         # Hard and above: a Marauder joins the Claim Hand (variants by difficulty).
         eliteSupports: [claimhand, marauder]
         coopSupports: { minDifficulty: extreme, kits: [glassrunner] }

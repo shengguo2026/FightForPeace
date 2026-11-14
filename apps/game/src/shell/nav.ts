@@ -127,9 +127,16 @@ export function moveFocus(root: HTMLElement, dir: NavDir): void {
     const dx = ex - cx;
     const dy = ey - cy;
     const along = dir === 'up' ? -dy : dir === 'down' ? dy : dir === 'left' ? -dx : dx;
-    const across = dir === 'up' || dir === 'down' ? Math.abs(dx) : Math.abs(dy);
+    // M23: across is the gap between the two boxes (0 when they overlap), not between their
+    // centres: a full-width button under a column (the cheat consent row) used to lose to a
+    // narrower button further down whose centre happened to be nearer.
+    const vertical = dir === 'up' || dir === 'down';
+    const gap = vertical
+      ? Math.max(0, e.left - r.right, r.left - e.right)
+      : Math.max(0, e.top - r.bottom, r.top - e.bottom);
+    const centre = vertical ? Math.abs(dx) : Math.abs(dy);
     if (along <= 1) continue;
-    const score = along + across * 2;
+    const score = along + gap * 2 + centre / 100;
     if (score < bestScore) {
       bestScore = score;
       best = el;

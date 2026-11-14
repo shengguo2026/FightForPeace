@@ -7,6 +7,7 @@ export function assemble(o: {
   outDir: string;
   portableDir?: string;
   noticeText?: string;
+  manifestFile?: string;
 }): { stage: string; zipPath: string; names: string[] };
 export const BUNDLED: string[];
 export function notices(packages?: string[], find?: (name: string) => string): string;

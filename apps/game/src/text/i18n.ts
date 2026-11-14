@@ -126,6 +126,18 @@ export function dt(key: string, fallback: string): string {
 /** A call-out word drawn over a fighter (EXACT, CLASH …). */
 export const callout = (word: string) => dt(calloutKey(word), word);
 
+/**
+ * An arena's display name (M23). Lab arenas have their own key; a stage camera lock
+ * (`stage2.beat.n`) takes its beat's name and a greenhouse room arena (`<room>-waves`) its
+ * room's name, which are already translated (they used to fall back to English).
+ */
+export function arenaName(a: { id: string; name: string; stage: boolean }): string {
+  if (!a.stage) return dt(`arena.${a.id}.name`, a.name);
+  if (a.id.endsWith('-waves')) return dt(`gh.room.${a.id.slice(0, -'-waves'.length)}`, a.name);
+  const [stage, beat] = a.id.split('.');
+  return dt(`stage.${stage}.beat.${beat}.name`, a.name);
+}
+
 export const heroName = (id: string) =>
   dt(`hero.${id}.name`, HEROES.find((h) => h.id === id)?.name ?? id);
 
