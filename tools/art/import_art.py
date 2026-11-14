@@ -56,7 +56,7 @@ HEROES = {
     "fire": ("heroes/fire", "HERO-FIR"),
 }
 # Sheets a hero may lack without it being reported (the twins have no Stage 1 weapon sheets).
-OPTIONAL_COMMON = {"staff-a", "staff-b", "handwheel", "staff-walk", "handwheel-walk"}
+OPTIONAL_COMMON = {"staff-a", "staff-b", "handwheel", "staff-walk", "handwheel-walk", "back-throw"}
 
 # Movement and reaction sheets every founder has (logical id suffix -> sheet name suffix).
 HERO_COMMON = {
@@ -70,6 +70,9 @@ HERO_COMMON = {
     "exact-counter": "EXACT-COUNTER",
     "breaker-pickup": "BREAKER-PICKUP",
     "grab-throw": "GRAB-THROW",
+    # Back-throw sheet (codex_prompts_stage2_back_throws.md, BT01: Wind so far); heroes
+    # without it use pose 4 of GRAB-THROW.
+    "back-throw": "BACK-THROW",
     "staff-a": "STAFF-A",
     "staff-b": "STAFF-B",
     "handwheel": "HANDWHEEL",
@@ -251,6 +254,7 @@ SHEET_SCALE = {
     "wind-handwheel": 1.04,
     "wind-staff-walk": 0.96,
     "wind-handwheel-walk": 0.96,
+    "wind-back-throw": 0.96,
     "fire-staff-a": 0.95,
     "fire-staff-b": 0.95,
     "fire-staff-walk": 0.88,

@@ -143,17 +143,28 @@ const CATEGORY_POSES: Partial<Record<string, { sheet: string; cells: Phased }>> 
 
 /**
  * M16 poses drawn from another sheet or with authored cells: `sheet` is a key under
- * `hero.<id>.` (an action's own pose or a shared sheet), `cells` the startup cell, the
- * active cells (spread evenly over the active frames) and the recovery cell.
+ * `hero.<id>.` (an action's own pose or a shared sheet), `cells` the startup, active and
+ * recovery cells (a list is spread evenly over that phase's frames). `fallback` is used
+ * while `sheet` is not delivered.
  */
-type Posed = { sheet: string; cells: readonly [number, readonly number[], number] };
+type Cells = number | readonly number[];
+type Posed = {
+  sheet: string;
+  cells: readonly [Cells, Cells, Cells];
+  fallback?: { sheet: string; cells: readonly [Cells, Cells, Cells] };
+};
 const HERO_POSES: Record<string, Record<string, Posed>> = {
   wind: {
     'open-gate-return': { sheet: 'sheet.exact-counter', cells: [1, [2, 3], 5] },
     'patrol-grip': { sheet: 'sheet.grab-throw', cells: [0, [0], 0] },
     'breeze-turn': { sheet: 'sheet.grab-throw', cells: [1, [1], 1] },
     'clear-path-cast': { sheet: 'sheet.grab-throw', cells: [2, [2], 2] },
-    'clear-path-turn': { sheet: 'sheet.grab-throw', cells: [3, [3], 3] },
+    // Back throw on its own sheet (BT01): pivot, load, release, follow-through, recovery.
+    'clear-path-turn': {
+      sheet: 'sheet.back-throw',
+      cells: [[1, 2], [3], [4, 5]],
+      fallback: { sheet: 'sheet.grab-throw', cells: [3, [3], 3] },
+    },
     'sentinel-heel': { sheet: 'sheet.grab-throw', cells: [4, [4], 4] },
     'four-wind-vigil': { sheet: 'pose.ultimate.four-wind-vigil', cells: [0, [1, 2, 3, 4], 5] },
     'twin-accord': { sheet: 'pose.team.twin-accord', cells: [0, [1, 2, 3], 5] },
@@ -165,7 +176,7 @@ const HERO_POSES: Record<string, Record<string, Posed>> = {
     'collar-tie': { sheet: 'sheet.grab-throw', cells: [0, [0], 0] },
     'iron-clinch': { sheet: 'sheet.grab-throw', cells: [1, [1], 1] },
     'foundry-reap': { sheet: 'sheet.grab-throw', cells: [2, [2], 2] },
-    'foundry-turn': { sheet: 'sheet.grab-throw', cells: [3, [3], 3] },
+    'foundry-turn': { sheet: 'sheet.grab-throw', cells: [0, [3], 3] },
     'kiln-door-release': { sheet: 'sheet.grab-throw', cells: [4, [4], 4] },
     'flashpoint-clinch': { sheet: 'pose.special.flashpoint-clinch', cells: [0, [1], 5] },
     'flashpoint-takedown': { sheet: 'pose.special.flashpoint-clinch', cells: [2, [2, 3], 4] },
@@ -175,8 +186,18 @@ const HERO_POSES: Record<string, Record<string, Posed>> = {
     'twin-accord': { sheet: 'pose.team.twin-accord', cells: [0, [1, 2, 3, 4], 5] },
     'confluence-strike': { sheet: 'sheet.team-attack', cells: [0, [1, 2, 3], 4] },
   },
-  mountain: { 'confluence-strike': { sheet: 'sheet.team-attack', cells: [0, [1, 2, 3], 4] } },
-  river: { 'confluence-strike': { sheet: 'sheet.team-attack', cells: [0, [1, 2, 3], 4] } },
+  mountain: {
+    // Back throw: pose 4 of the grab sheet (pivot, arms over the shoulder), not the
+    // forward heave the shared throw pose shows. Held from mid-startup to late recovery:
+    // the active phase alone (3 frames) is too short to see.
+    'turning-weir': { sheet: 'sheet.grab-throw', cells: [[1, 3], [3], [3, 3, 5]] },
+    'confluence-strike': { sheet: 'sheet.team-attack', cells: [0, [1, 2, 3], 4] },
+  },
+  river: {
+    // Back throw: pose 4 of the grab sheet (rolling backward, feet over the head).
+    'eddy-swing': { sheet: 'sheet.grab-throw', cells: [[1, 3], [3], [3, 3, 5]] },
+    'confluence-strike': { sheet: 'sheet.team-attack', cells: [0, [1, 2, 3], 4] },
+  },
 };
 
 /** The training dummy (Pressed Recruit) attack sheet: raise, contact, recover; rush. */
@@ -414,16 +435,16 @@ export class SpritePicker {
             (wp.fallback ? s(wp.fallback.sheet, wp.fallback.cells[p]) : null) ??
             this.starter(hero.actions[0]!, p)
           );
-        const posed = HERO_POSES[hero.id]?.[a.id];
+        const authored = HERO_POSES[hero.id]?.[a.id];
+        const posed =
+          authored && !this.has(`${base}.${authored.sheet}`) ? authored.fallback : authored;
         if (posed && this.has(`${base}.${posed.sheet}`)) {
-          const [start, active, end] = posed.cells;
-          let cell = p === 0 ? start : end;
-          if (p === 1) {
+          const list = posed.cells[p];
+          let cell = typeof list === 'number' ? list : list[0]!;
+          if (typeof list !== 'number' && list.length > 1) {
             const at = phaseOf(a, f.stateFrame + 1);
             cell =
-              active[
-                Math.min(active.length - 1, Math.floor(((at.at - 1) * active.length) / at.of))
-              ]!;
+              list[Math.min(list.length - 1, Math.floor(((at.at - 1) * list.length) / at.of))]!;
           }
           return { sheet: `${base}.${posed.sheet}`, cell };
         }

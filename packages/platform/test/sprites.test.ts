@@ -115,6 +115,60 @@ test('every action of every hero, with and without a weapon, is drawable in ever
   }
 });
 
+test('a back throw is drawn as a turn toward the back, not the forward throw', () => {
+  const backs: Record<string, [forward: string, back: string]> = {
+    mountain: ['sluicegate-toss', 'turning-weir'],
+    river: ['downstream-fling', 'eddy-swing'],
+    wind: ['clear-path-cast', 'clear-path-turn'],
+    fire: ['foundry-reap', 'foundry-turn'],
+  };
+  for (const [id, [fwd, back]] of Object.entries(backs)) {
+    const f = hero(id);
+    const kit = kitOf(f)!;
+    const frames = (actionId: string) => {
+      const i = kit.actions.findIndex((a) => a.id === actionId);
+      expect(i, actionId).toBeGreaterThanOrEqual(0);
+      startAction(f, i);
+      const a = kit.actions[i]!;
+      const seen: string[] = [];
+      for (let n = 0; n < totalFrames(a); n += 1) {
+        f.stateFrame = n;
+        const s = pick.fighter(f, 0)!;
+        seen.push(`${s.sheet}#${s.cell}`);
+      }
+      return seen;
+    };
+    const forward = new Set(frames(fwd));
+    const backward = frames(back);
+    // The release (active) frame of the back throw never repeats a forward-throw pose.
+    const release = backward[a(kit, back).startup]!;
+    expect(forward.has(release), `${id} ${release}`).toBe(false);
+    // A single back-throw pose stays on screen long enough to see (at least a fifth of a
+    // second); Wind's own sheet moves through several poses instead (checked below).
+    if (id !== 'wind') {
+      const shown = backward.filter((c) => c === release).length;
+      expect(shown, `${id} back-throw pose frames`).toBeGreaterThanOrEqual(12);
+    }
+  }
+  // Wind plays the whole BT01 back-throw sheet: pivot, load, release, follow-through, recovery.
+  const w = hero('wind');
+  const kit = kitOf(w)!;
+  const i = kit.actions.findIndex((x) => x.id === 'clear-path-turn');
+  startAction(w, i);
+  const cells = new Set<number>();
+  for (let n = 0; n < totalFrames(kit.actions[i]!); n += 1) {
+    w.stateFrame = n;
+    const s = pick.fighter(w, 0)!;
+    expect(s.sheet).toBe('hero.wind.sheet.back-throw');
+    cells.add(s.cell);
+  }
+  expect([...cells].sort()).toEqual([1, 2, 3, 4, 5]);
+});
+
+function a(kit: NonNullable<ReturnType<typeof kitOf>>, id: string) {
+  return kit.actions.find((x) => x.id === id)!;
+}
+
 test('the training dummy uses the recruit sheets', () => {
   const w = createWorld(1, { dummies: 1 });
   const d = w.bodies.find((b) => b.team === 'enemy')!;
