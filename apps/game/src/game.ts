@@ -1,5 +1,9 @@
 import {
   type FacingMode,
+  type SharedState,
+  becomeSupporter,
+  claimCache,
+  handOver,
   MoveState,
   type TrainerSettings,
   type RecipeDef,
@@ -100,6 +104,8 @@ export interface RenderSnapshot {
   /** M17: the run is Cheat-Assisted; the Lab's infinite Attack Bar is on. */
   cheatAssisted: boolean;
   infiniteMeter: boolean;
+  /** M24 shared systems (movers, platforms, stations, incidents), or null. */
+  shared: SharedState | null;
 }
 
 /**
@@ -438,6 +444,7 @@ export class GameSession {
         : [],
       cheatAssisted: this.world.cheats.marked,
       infiniteMeter: this.world.infiniteMeter,
+      shared: this.world.shared ?? null,
     };
   }
 
@@ -475,6 +482,23 @@ export class GameSession {
   }
 
   /** Lab: puts Dummy 1 next to the right stage edge and Player 1 in front of it. */
+  /**
+   * M24 Lab: the hand-over scene's buttons. 'handover' swaps Player 1 to another roster hero
+   * (bars by percentage, never up; held item into the cache); 'claim' takes the cache;
+   * 'support' turns Player 2 into the co-op supporter.
+   */
+  m24Action(kind: 'handover' | 'claim' | 'support'): void {
+    const w = this.world;
+    if (kind === 'claim') claimCache(w, 0);
+    else if (kind === 'support') becomeSupporter(w, 1);
+    else {
+      const f = heroOf(w, 0);
+      if (!f) return;
+      const next = HEROES[(f.hero + 1) % HEROES.length]!;
+      handOver(w, 0, next.id);
+    }
+  }
+
   dummyToWall(): void {
     const d = this.world.bodies.find((b) => b.team === 'enemy');
     if (!d) return;

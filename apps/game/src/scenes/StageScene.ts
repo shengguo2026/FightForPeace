@@ -59,6 +59,7 @@ import type { RenderSnapshot } from '../game';
 import { ArenaView } from './arenaView';
 import { PursuitView } from './pursuitView';
 import { GreenhouseView } from './greenhouseView';
+import { SharedView } from './sharedView';
 import { EffectsLayer } from './effects';
 import { PresentationTracker } from '@ffp/platform';
 import { playEventSounds } from '../media/sounds';
@@ -236,6 +237,7 @@ export class StageScene extends Phaser.Scene {
   private readonly arena = new ArenaView(this, this.assets);
   private readonly pursuit = new PursuitView(this);
   private readonly greenhouse = new GreenhouseView(this);
+  private readonly sharedView = new SharedView(this);
   /** M13: presentation events (stable ids) for sound and the effect layers. */
   private readonly tracker = new PresentationTracker();
   private readonly effects = new EffectsLayer(this, this.assets);
@@ -273,6 +275,7 @@ export class StageScene extends Phaser.Scene {
     this.arena.create();
     this.pursuit.create();
     this.greenhouse.create();
+    this.sharedView.create();
     this.effects.create();
     this.opts.onReady?.();
   }
@@ -335,6 +338,7 @@ export class StageScene extends Phaser.Scene {
       );
     } else this.greenhouse.hide();
     if (snap.pursuit) {
+      this.sharedView.hide();
       this.drawPursuit(snap, time);
       return;
     }
@@ -342,6 +346,8 @@ export class StageScene extends Phaser.Scene {
     this.boss = this.arena.bossView(snap.encounter, current, snap.frame);
     this.inArena = snap.encounter !== null;
     this.drawScenery(snap.environment, snap.frame, collision);
+    // M24 shared systems (placeholder boxes and labels).
+    this.sharedView.draw(snap.shared, current, snap.items, snap.frame);
     this.drawItems(snap.items, snap.frame);
     this.drawRun(snap.run, current, snap.frame);
     this.drawNpcs(snap.greenhouse, snap.encounter, snap.frame);

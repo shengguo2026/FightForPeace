@@ -1,3 +1,4 @@
+import { waveHeld } from '../shared/robot';
 import { fx } from '../math/fixed';
 import { type Encounter, type Fighter, HazardPhase, MoveState, type World } from '../world/types';
 import { LAB_LAYOUT } from '../world/stage';
@@ -100,9 +101,11 @@ export function setupDevices(world: World): void {
   });
 }
 
-/** The stage layout an arena uses for weapons and scenery (the mill beat). */
+/** The stage layout an arena uses for weapons and scenery (the mill beat, M24 own scenery). */
 export function arenaLayout(arena: number) {
-  return ARENAS[arena]?.layout === 'mill' ? LAB_LAYOUT : null;
+  const a = ARENAS[arena];
+  if (a?.layout === 'mill') return LAB_LAYOUT;
+  return a?.scenery ?? null;
 }
 
 /**
@@ -127,7 +130,12 @@ export function updateView(world: World): void {
 /** Enemies of the current wave still in the fight. */
 export function fighting(world: World): Fighter[] {
   return world.bodies.filter(
-    (b) => b.team === 'enemy' && profileOf(b) && !b.ko && !nonCombatant(b),
+    (b) =>
+      b.team === 'enemy' &&
+      profileOf(b) &&
+      !b.ko &&
+      !nonCombatant(b) &&
+      !profileOf(b)!.noncombatant,
   );
 }
 
@@ -197,7 +205,7 @@ export function stepEncounter(world: World): void {
   if (boss && !boss.ko) return;
   const wave = arena.waves[enc.wave];
   if (enc.wave + 1 < arena.waves.length) {
-    if (left <= (wave?.next ?? 0)) spawnWave(world, enc.wave + 1);
+    if (left <= (wave?.next ?? 0) && !waveHeld(world)) spawnWave(world, enc.wave + 1);
     return;
   }
   if (left === 0 && enc.entryKit < 0) enc.result = Result.Cleared;

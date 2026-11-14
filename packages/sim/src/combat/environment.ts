@@ -1,6 +1,7 @@
 import { fx } from '../math/fixed';
 import { dealDamage } from './damage';
 import { BODY_HALF_D, BODY_HALF_W } from '../movement/profile';
+import { logOpened, opensAtOnce, propertyIncident, strikeMovers } from '../shared/scenery';
 import {
   BreakState,
   DefEvent,
@@ -91,8 +92,12 @@ export function createEnvironment(layout: StageLayout): Environment {
       power: 0,
       thresholds: b.thresholds,
       state: BreakState.Intact,
-      fragment: weaponIndex(b.fragment),
+      fragment: b.fragment ? weaponIndex(b.fragment) : -1,
       spawned: false,
+      // M24 tags, property class and damage cluster (static data, not encoded).
+      ...(b.tags && b.tags.length > 0 ? { tags: [...b.tags] } : {}),
+      ...(b.property ? { property: b.property } : {}),
+      ...(b.cluster ? { cluster: b.cluster } : {}),
     })),
     hazards: layout.hazards.map((h) => ({
       id: id++,
@@ -211,11 +216,20 @@ export function strikeScenery(
   a: ActionDef,
   box: { x0: number; x1: number; y0: number; z: number; depth: number },
 ): void {
-  if (a.breakPower <= 0) return;
+  // M24: a hero's strike in a moving hazard's warning may redirect it.
+  if (world.shared) strikeMovers(world, att, box);
   for (const b of world.environment.breakables) {
     if (b.state === BreakState.Broken || att.propHits.includes(b.id)) continue;
     if (box.x0 >= b.x + b.hw || box.x1 <= b.x - b.hw || box.y0 >= b.h) continue;
     if (Math.abs(box.z - b.z) > box.depth + b.hd) continue;
+    // M24: a tool whose `opens` lists one of its tags breaks it at once (pry bar, tire iron).
+    if (b.tags && opensAtOnce(world, att, b)) {
+      att.propHits.push(b.id);
+      addBreakPower(world, b.id, b.thresholds[2], att.id);
+      logOpened(world, b, att.id);
+      continue;
+    }
+    if (a.breakPower <= 0) continue;
     att.propHits.push(b.id);
     addBreakPower(world, b.id, a.breakPower, att.id);
   }
@@ -239,7 +253,9 @@ export function addBreakPower(world: World, id: number, power: number, by: numbe
           ? BreakState.Loosened
           : BreakState.Intact;
   log(world, EnvEvent.Break, by, b.id, 0, power, b.state);
-  if (b.state !== BreakState.Broken || b.spawned) return;
+  // M24: protected property damaged by a hero is an avoidable incident (once per cluster).
+  if (b.property) propertyIncident(world, b, by);
+  if (b.state !== BreakState.Broken || b.spawned || b.fragment < 0) return;
   b.spawned = true;
   const frag = spawnItem(world, b.fragment, b.x, b.z + b.hd + fx(30));
   // The fragment falls out of the frame and lands through the ordinary landing rules.
@@ -340,53 +356,71 @@ export function hazardHits(world: World): void {
   for (const h of world.environment.hazards) {
     if (h.phase !== HazardPhase.Active) continue;
     for (const t of [...world.bodies].sort((a, b) => a.id - b.id)) {
-      if (t.y >= h.h || world.frame < t.hazardSafeUntil) continue;
-      if (t.protectedRecovery || t.cinematic) continue;
-      if (
-        t.state === MoveState.Grabbed ||
-        t.state === MoveState.Grabbing ||
-        t.state === MoveState.Restrained ||
-        t.state === MoveState.Down ||
-        t.state === MoveState.GetUp
-      )
-        continue;
+      if (t.y >= h.h) continue;
       if (!overlapsFoot({ x: t.x, z: t.z, hw: BODY_HALF_W, hd: BODY_HALF_D }, h)) continue;
-      t.hazardSafeUntil = world.frame + HAZARD.safe;
-      const dirX = t.x >= h.x ? 1 : -1;
-      const dirZ = t.z >= h.z ? 1 : -1;
-      if (t.team === 'hero' && isGuarding(t) && inArc(t.guardX, t.guardZ, h.x - t.x, h.z - t.z)) {
-        if (!world.infiniteDefense) t.defense = Math.max(0, t.defense - HAZARD.guardCost);
-        enter(t, MoveState.Blockstun, HAZARD.guardStun);
-        t.vx = dirX * HAZARD.pushX;
-        t.vz = 0;
-        t.z += dirZ * HAZARD.pushZ * 4;
-        logDefense(world, t, DefEvent.Guard, 0);
-        log(world, EnvEvent.HazardGuard, t.id, h.id, 0, 0, 0);
-        continue;
-      }
-      const ctx = t.ctx;
-      const dmg = ctx.open
-        ? Math.max(1, Math.trunc((h.damage * Math.max(DAMAGE_FLOOR, ctx.scale)) / 100))
-        : h.damage;
-      dealDamage(world, t, dmg);
-      if (ctx.open) {
-        ctx.damage += dmg;
-        ctx.lastDamage = dmg;
-        ctx.hits += 1;
-      }
-      interrupt(t);
-      if (t.team === 'hero') logDefense(world, t, DefEvent.Hit, 0);
-      // Knocked clear of the cog in protected recovery: it cannot trap anyone.
-      t.state = MoveState.Launched;
-      t.stateFrame = 0;
-      t.vx = dirX * HAZARD.pushX;
-      t.vz = dirZ * HAZARD.pushZ;
-      t.vy = HAZARD.lift;
-      t.y = Math.max(t.y, 1);
-      t.bounce = 0;
-      t.airRecover = false;
-      enterProtection(world, t, Protect.GetUp);
-      log(world, EnvEvent.HazardHit, t.id, h.id, 0, dmg, 0);
+      hazardStrike(world, t, h.x, h.z, h.damage, h.id);
     }
   }
+}
+
+/**
+ * One hazard contact on `t` (the cog, and M24's moving hazards): skipped while the target is
+ * safe, protected, held, restrained or down; a hero's normal guard facing it blocks;
+ * otherwise damage and a protected knock clear. Returns whether it connected.
+ */
+export function hazardStrike(
+  world: World,
+  t: Fighter,
+  hx: number,
+  hz: number,
+  damage: number,
+  prop: number,
+): boolean {
+  if (world.frame < t.hazardSafeUntil) return false;
+  if (t.protectedRecovery || t.cinematic) return false;
+  if (
+    t.state === MoveState.Grabbed ||
+    t.state === MoveState.Grabbing ||
+    t.state === MoveState.Restrained ||
+    t.state === MoveState.Down ||
+    t.state === MoveState.GetUp
+  )
+    return false;
+  t.hazardSafeUntil = world.frame + HAZARD.safe;
+  const dirX = t.x >= hx ? 1 : -1;
+  const dirZ = t.z >= hz ? 1 : -1;
+  if (t.team === 'hero' && isGuarding(t) && inArc(t.guardX, t.guardZ, hx - t.x, hz - t.z)) {
+    if (!world.infiniteDefense) t.defense = Math.max(0, t.defense - HAZARD.guardCost);
+    enter(t, MoveState.Blockstun, HAZARD.guardStun);
+    t.vx = dirX * HAZARD.pushX;
+    t.vz = 0;
+    t.z += dirZ * HAZARD.pushZ * 4;
+    logDefense(world, t, DefEvent.Guard, 0);
+    log(world, EnvEvent.HazardGuard, t.id, prop, 0, 0, 0);
+    return true;
+  }
+  const ctx = t.ctx;
+  const dmg = ctx.open
+    ? Math.max(1, Math.trunc((damage * Math.max(DAMAGE_FLOOR, ctx.scale)) / 100))
+    : damage;
+  dealDamage(world, t, dmg);
+  if (ctx.open) {
+    ctx.damage += dmg;
+    ctx.lastDamage = dmg;
+    ctx.hits += 1;
+  }
+  interrupt(t);
+  if (t.team === 'hero') logDefense(world, t, DefEvent.Hit, 0);
+  // Knocked clear of the hazard in protected recovery: it cannot trap anyone.
+  t.state = MoveState.Launched;
+  t.stateFrame = 0;
+  t.vx = dirX * HAZARD.pushX;
+  t.vz = dirZ * HAZARD.pushZ;
+  t.vy = HAZARD.lift;
+  t.y = Math.max(t.y, 1);
+  t.bounce = 0;
+  t.airRecover = false;
+  enterProtection(world, t, Protect.GetUp);
+  log(world, EnvEvent.HazardHit, t.id, prop, 0, dmg, 0);
+  return true;
 }

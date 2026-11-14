@@ -39,6 +39,74 @@ bike:
   # Hops: a plain hop, the long ramp hop, and the lane shift with a direction held.
   hop: { frames: 28, height: 70, rampFrames: 44, rampHeight: 120, shift: 110, shiftFrames: 14 }
 
+# M24 mount catalogue (Combat Constitution audit E10): further mounts a corridor names with
+# `mount`. Placeholder values for the Lab pursuit; Stage 3 (horses), Stage 4 (utility bikes),
+# Stages 6-8 (response and cargo bikes) and the Medicine Road author their own. A 'dismount'
+# mount at zero Stability is lost for the run: the hero finishes the corridor on foot.
+mounts:
+  - id: mountain-horse
+    name: Mountain Horse (test)
+    # Identification variants, one per player slot (one shared art package).
+    plates: [CP-07, CP-12]
+    kind: horse
+    atZero: dismount
+    fallback: 3
+    speed: { base: 7, min: 4, max: 10, accel: 0.25, brake: 0.4 }
+    # Steering across road depth (pixels per frame) and the soft-lane pull with no vertical
+    # input (stronger with optional steering assistance).
+    steer: 6
+    laneDrift: 1
+    assistDrift: 3
+    stability: 90
+    # A short damage-free interval, then Stability returns a little at a time.
+    recover: { delay: 150, every: 6, amount: 1 }
+    # Steering wobble after a hit or an impact (steering is halved).
+    wobble: 18
+    # Obstacle impact: Stability loss (no Health) and the push out of the obstacle.
+    impact: { barrier: 20, gate: 25, push: 60 }
+    # Controlled skid after a crash, then protected recovery after any recovery.
+    crash: 60
+    protect: 120
+    # Co-op rescue: one clearly telegraphed window; the partner rides alongside and presses
+    # Team Attack. Success restores limited Stability.
+    rescue: { window: 180, x: 220, z: 140, restore: 40 }
+    # Shared-camera tether: beyond `soft` the leader slows and the trailer is assisted;
+    # the leader can never open the gap beyond `hard` (no teleport in normal play).
+    tether: { soft: 600, hard: 1000, slow: 3, assist: 2 }
+    # Hops: a plain hop, the long ramp hop, and the lane shift with a direction held.
+    hop: { frames: 28, height: 70, rampFrames: 44, rampHeight: 120, shift: 110, shiftFrames: 14 }
+  - id: utility-bike
+    name: Utility Bike (test)
+    # Identification variants, one per player slot (one shared art package).
+    plates: [CP-07, CP-12]
+    kind: bike
+    atZero: recover
+    fallback: 3
+    speed: { base: 7, min: 4, max: 10, accel: 0.18, brake: 0.3 }
+    # Steering across road depth (pixels per frame) and the soft-lane pull with no vertical
+    # input (stronger with optional steering assistance).
+    steer: 6
+    laneDrift: 1
+    assistDrift: 3
+    stability: 120
+    # A short damage-free interval, then Stability returns a little at a time.
+    recover: { delay: 150, every: 6, amount: 1 }
+    # Steering wobble after a hit or an impact (steering is halved).
+    wobble: 18
+    # Obstacle impact: Stability loss (no Health) and the push out of the obstacle.
+    impact: { barrier: 20, gate: 25, push: 60 }
+    # Controlled skid after a crash, then protected recovery after any recovery.
+    crash: 60
+    protect: 120
+    # Co-op rescue: one clearly telegraphed window; the partner rides alongside and presses
+    # Team Attack. Success restores limited Stability.
+    rescue: { window: 180, x: 220, z: 140, restore: 40 }
+    # Shared-camera tether: beyond `soft` the leader slows and the trailer is assisted;
+    # the leader can never open the gap beyond `hard` (no teleport in normal play).
+    tether: { soft: 600, hard: 1000, slow: 3, assist: 2 }
+    # Hops: a plain hop, the long ramp hop, and the lane shift with a direction held.
+    hop: { frames: 28, height: 70, rampFrames: 44, rampHeight: 120, shift: 110, shiftFrames: 14 }
+
 # Road Rider: the Lane-Pressure Pursuer. Rider-delivered attacks only; no ramming.
 roadRider:
   id: road-rider
@@ -497,3 +565,26 @@ corridors:
     waves:
       - { at: 5200, min: medium, riders: [{ from: behind, lane: 2 }] }
       - { at: 9000, min: hard, riders: [{ from: ahead, lane: 0 }] }
+
+  # M24 Lab pursuit (E10): a short corridor ridden on the test horse; at zero Stability the
+  # horse is lost and the hero finishes on foot, regrouping at the end.
+  - id: pursuit-m24-mounts
+    name: 'M24 Lab: Mount Catalogue'
+    goal: Ride the trail; lose the horse safely if Stability runs out
+    mount: mountain-horse
+    start: 300
+    finish: 7400
+    length: 8400
+    road:
+      - { at: 0, top: 640, bottom: 980 }
+      - { at: 8400, top: 640, bottom: 980 }
+    obstacles:
+      - { at: 1800, z: 810, kind: barrier }
+      - { at: 2600, z: 700, kind: barrier }
+      - { at: 2600, z: 920, kind: barrier }
+      - { at: 4200, z: 760, kind: gate }
+    equipment: []
+    checkpoints: [2400, 5000]
+    waves:
+      - { at: 1200, min: easy, riders: [{ from: behind, lane: 2 }] }
+      - { at: 3600, min: easy, riders: [{ from: ahead, lane: 0 }] }

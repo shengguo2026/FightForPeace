@@ -12,6 +12,7 @@ import {
   loadHero,
   loadGreenhouse,
   loadMounted,
+  loadArenas,
   loadStage,
   loadWeapon,
   stageFileList,
@@ -521,11 +522,15 @@ describe('mounted system (M17)', () => {
       corridors: { id: string }[];
     };
 
-  test('mounted.yaml compiles: six slots per hero in roster order, two corridors', () => {
+  test('mounted.yaml compiles: six slots per hero in roster order, the Stage 2 corridors first, then the M24 Lab corridor', () => {
     const m = mounted();
     expect(m.heroes).toHaveLength(4);
     for (const kit of m.heroes) expect(kit.map((a) => a.slot)).toEqual([0, 1, 2, 3, 4, 5]);
-    expect(m.corridors.map((c) => c.id)).toEqual(['perimeter-pursuit', 'marek-intercept']);
+    expect(m.corridors.map((c) => c.id)).toEqual([
+      'perimeter-pursuit',
+      'marek-intercept',
+      'pursuit-m24-mounts',
+    ]);
   });
 
   test('a hero without a mounted kit is rejected', () => {
@@ -622,5 +627,125 @@ describe('greenhouse systems (M18)', () => {
     expect(() =>
       loadWeapon(melee.replace('ammo', 'x') + 'fire: { defenseCost: 5 }\n', 'h.yaml'),
     ).toThrow(/only firearms have a fire cost/);
+  });
+});
+
+describe('M24 shared systems data', () => {
+  const read = (dir: string, f: string) =>
+    readFileSync(new URL(`../${dir}/${f}`, import.meta.url), 'utf8');
+  const enemy = (f: string) => read('enemies', f);
+  const KITS = ['recruit', 'm24-shield-escort'];
+  const WEAPON_IDS = ['workstaff', 'm24-pry-bar'];
+
+  test('every M24 placeholder file compiles', () => {
+    for (const f of [
+      'm24-heavy-gun',
+      'm24-concussion',
+      'm24-pry-bar',
+      'm24-hook-pole',
+      'm24-ration',
+    ])
+      expect(() => loadWeapon(read('weapons', `${f}.yaml`), `${f}.yaml`)).not.toThrow();
+    for (const f of [
+      'm24-shield-escort',
+      'm24-mounted-raider',
+      'm24-rival',
+      'm24-bystander',
+      'm24-feinter',
+      'm24-false-merchant',
+      'm24-marshal',
+    ])
+      expect(() => loadHero(enemy(`${f}.yaml`), `${f}.yaml`, 'enemy')).not.toThrow();
+  });
+
+  test('bad M24 enemy fields are rejected with a clear message', () => {
+    const feinter = enemy('m24-feinter.yaml');
+    expect(() =>
+      loadHero(feinter.replace('feint: { at: 10', 'feint: { at: 40'), 'f.yaml', 'enemy'),
+    ).toThrow(/a feint must stop by frame 16/);
+    const merchant = enemy('m24-false-merchant.yaml');
+    expect(() => loadHero(merchant.replace(/ {2}reveal: .*\n/, ''), 'm.yaml', 'enemy')).toThrow(
+      /disguised entry .* needs `reveal`/,
+    );
+    const marshal = enemy('m24-marshal.yaml');
+    expect(() => loadHero(marshal.replace(/ {2}gear:\n.*\n/, ''), 'b.yaml', 'enemy')).toThrow(
+      /requires gear it has not/,
+    );
+    expect(() =>
+      loadHero(marshal.replace(/ {2}mount:\n( {4}.*\n)+/, ''), 'b.yaml', 'enemy'),
+    ).toThrow(/requires a dismount but has no mount/);
+    const by = enemy('m24-bystander.yaml');
+    expect(() =>
+      loadHero(
+        by.replace(
+          'attacks: []',
+          'attacks:\n    - { action: club-swing, threat: 12, cooldown: 70 }',
+        ),
+        'n.yaml',
+        'enemy',
+      ),
+    ).toThrow(/a noncombatant has no attacks/);
+  });
+
+  test('bad M24 weapon fields are rejected', () => {
+    const ration = read('weapons', 'm24-ration.yaml');
+    expect(() => loadWeapon(ration.replace(/^provision: .*\n/m, ''), 'r.yaml')).toThrow(
+      /provision block/,
+    );
+    const pry = read('weapons', 'm24-pry-bar.yaml');
+    expect(() => loadWeapon(pry + 'heat: { per: 10, max: 100, cool: 1 }\n', 'p.yaml')).toThrow(
+      /only firearms have heat/,
+    );
+    expect(() =>
+      loadWeapon(
+        pry + 'blast: { fuse: 30, hw: 100, hd: 50, damage: 10, defense: 10, stun: 20, push: 4 }\n',
+        'p.yaml',
+      ),
+    ).toThrow(/only recoverableThrown items have a blast/);
+  });
+
+  test('bad scenery is rejected', () => {
+    const arena = (scenery: string) =>
+      `arenas:\n  - id: t\n    name: T\n    area: mill\n    width: 2880\n    scenery:\n${scenery}    waves:\n      - enemies:\n          - { kit: recruit, x: 1500, z: 800 }\n`;
+    expect(() =>
+      loadArenas(
+        arena('      items:\n        - { weapon: dragon-sword, x: 700, z: 760 }\n'),
+        KITS,
+        'a.yaml',
+        WEAPON_IDS,
+      ),
+    ).toThrow(/unknown weapon "dragon-sword"/);
+    expect(() =>
+      loadArenas(
+        arena(
+          '      stations:\n        - { x: 800, z: 700, kind: cover, approach: 90, frames: 600, cooldown: 240 }\n',
+        ),
+        KITS,
+        'a.yaml',
+        WEAPON_IDS,
+      ),
+    ).toThrow(/cover/);
+    expect(() =>
+      loadArenas(
+        arena(
+          '      breakables:\n        - { x: 1100, z: 700, hw: 50, hd: 30, h: 90, thresholds: [80, 40, 120] }\n',
+        ),
+        KITS,
+        'a.yaml',
+        WEAPON_IDS,
+      ),
+    ).toThrow(/thresholds|rising/);
+  });
+
+  test('a corridor naming an unknown mount is rejected', () => {
+    const src = readFileSync(new URL('../mounted/mounted.yaml', import.meta.url), 'utf8');
+    expect(() =>
+      loadMounted(src.replace('mount: mountain-horse', 'mount: dragon'), [
+        'mountain',
+        'river',
+        'wind',
+        'fire',
+      ]),
+    ).toThrow(/unknown mount "dragon"/);
   });
 });

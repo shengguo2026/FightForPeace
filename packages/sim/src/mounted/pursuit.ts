@@ -15,6 +15,7 @@ import { METER } from '../combat/meter';
 import { Cheat, heroCheat, incomingDamage, outgoingDamage } from '../cheats/cheats';
 import { ActionBit } from '../input/bits';
 import { type Fighter, type FrameInput, MoveState, type World } from '../world/types';
+import type { BikeDef } from '../combat/types';
 
 /**
  * M17 mounted system (Stage 2 spec §8): one civil-protection bike per active hero on a
@@ -29,6 +30,15 @@ import { type Fighter, type FrameInput, MoveState, type World } from '../world/t
 export const MOUNTED: MountedDef = MOUNTED_DATA!;
 export const CORRIDORS: readonly CorridorDef[] = MOUNTED.corridors;
 
+/** M24: the mount a corridor is ridden on (the bike unless it names another). */
+export function mountOf(c: CorridorDef): BikeDef {
+  return MOUNTED.mounts[c.mount] ?? MOUNTED.bike;
+}
+
+function bikeOf(p: Pursuit): BikeDef {
+  return mountOf(CORRIDORS[p.corridor]!);
+}
+
 /** Hero rider states. Numbers are encoded; never renumber. */
 export const RiderState = {
   Ride: 0,
@@ -42,6 +52,8 @@ export const RiderState = {
   Out: 4,
   /** Dismounted at the corridor's end. */
   Done: 5,
+  /** M24: a 'dismount' mount reached zero Stability: lost for the run, finishing on foot. */
+  OnFoot: 6,
 } as const;
 
 /** Road Rider states. Numbers are encoded; never renumber. */
@@ -303,8 +315,14 @@ function clampRoad(c: CorridorDef, x: number, z: number): number {
 const toward = (v: number, target: number, step: number) =>
   v < target ? Math.min(target, v + step) : Math.max(target, v - step);
 
-function newRider(slot: number, id: number, x: number, z: number, frame: number): HeroRider {
-  const B = MOUNTED.bike;
+function newRider(
+  B: BikeDef,
+  slot: number,
+  id: number,
+  x: number,
+  z: number,
+  frame: number,
+): HeroRider {
   return {
     slot,
     id,
@@ -382,7 +400,7 @@ function mount(world: World, f: Fighter): HeroRider {
   const partner = p.riders.find((r) => r.slot !== f.slot && riding(r));
   const x = partner ? partner.x - fx(100) : c.start - fx(f.slot * 120);
   const z = laneZ(c, x, f.slot === 0 ? 1 : 2);
-  const r = newRider(f.slot, f.id, x, z, world.frame);
+  const r = newRider(bikeOf(p), f.slot, f.id, x, z, world.frame);
   if (partner) r.speed = partner.speed;
   p.riders.push(r);
   p.riders.sort((a, b) => a.slot - b.slot);
@@ -392,6 +410,11 @@ function mount(world: World, f: Fighter): HeroRider {
 
 function riding(r: HeroRider): boolean {
   return r.state === RiderState.Ride || r.state === RiderState.Action;
+}
+
+/** Still travelling the corridor: riding, or (M24) on foot after losing a mount. */
+function travelling(r: HeroRider): boolean {
+  return riding(r) || r.state === RiderState.OnFoot;
 }
 
 /** On the road and drawn (not out, not dismounted). */
@@ -494,8 +517,8 @@ const idle: FrameInput = { moveX: 0, moveZ: 0, pressed: 0, held: 0, dirPressed: 
  * assisted; at `hard` the leader cannot open the gap any further. No teleporting.
  */
 function tether(p: Pursuit): Map<number, { cap: number; bonus: number }> {
-  const T = MOUNTED.bike.tether;
-  const B = MOUNTED.bike;
+  const B = bikeOf(p);
+  const T = B.tether;
   const out = new Map<number, { cap: number; bonus: number }>();
   const on = p.riders.filter(
     (r) =>
@@ -526,10 +549,21 @@ function stepRider(
   input: FrameInput,
   link: { cap: number; bonus: number } | undefined,
 ): void {
-  const B = MOUNTED.bike;
+  const B = bikeOf(p);
   const c = CORRIDORS[p.corridor]!;
   const frame = world.frame;
   if (!onRoad(r)) return;
+  if (r.state === RiderState.OnFoot) {
+    // M24 on-foot fallback: no attacks or hops, out of the pursuers' reach, at the
+    // fallback pace (stopping at the finish), regrouping at the corridor's end.
+    const goal = p.phase === PursuitPhase.Finish ? 0 : B.fallback;
+    r.speed = toward(r.speed, goal, B.brake);
+    r.action = -1;
+    r.y = 0;
+    r.x = Math.min(c.length - fx(40), r.x + r.speed);
+    r.z = clampRoad(c, r.x, toward(r.z, nearestLane(c, r.x, r.z), B.laneDrift));
+    return;
+  }
   if (r.state === RiderState.Crash || r.state === RiderState.Downed) {
     // A controlled skid toward the nearer road edge, rolling on at the slowest pace.
     r.speed = toward(r.speed, B.min, B.brake);
@@ -612,7 +646,7 @@ function startAction(world: World, p: Pursuit, r: HeroRider, f: Fighter, input: 
   if (slot < 0) return;
   const a = kit[slot]!;
   const frame = world.frame;
-  const B = MOUNTED.bike;
+  const B = bikeOf(p);
   const c = CORRIDORS[p.corridor]!;
   r.state = RiderState.Action;
   r.action = slot;
@@ -686,7 +720,7 @@ function endAction(r: HeroRider, a: MountedActionDef, frame: number): void {
 
 /** Co-op rescue: the partner rides alongside the downed rider and presses Team Attack. */
 function rescues(world: World, p: Pursuit, inputs: readonly FrameInput[]): void {
-  const B = MOUNTED.bike;
+  const B = bikeOf(p);
   const frame = world.frame;
   for (const d of p.riders) {
     if (d.state !== RiderState.Downed) continue;
@@ -857,7 +891,7 @@ function hitHero(
 ): void {
   const frame = world.frame;
   const diff = mountedDifficulty(p);
-  const B = MOUNTED.bike;
+  const B = bikeOf(p);
   if (f) {
     // Mounted failure is Stability's job: a mounted hit never takes the last Health point.
     const h = incomingDamage(world, f, Math.trunc((damage * diff.damage) / 100));
@@ -901,11 +935,13 @@ function committedCount(p: Pursuit): number {
 function leader(p: Pursuit): HeroRider | undefined {
   let best: HeroRider | undefined;
   for (const r of p.riders) if (riding(r) && (!best || r.x > best.x)) best = r;
+  // M24: with every mount lost, the team on foot still leads the corridor.
+  if (!best) for (const r of p.riders) if (travelling(r) && (!best || r.x > best.x)) best = r;
   return best;
 }
 
 function teamSpeed(p: Pursuit): number {
-  return leader(p)?.speed ?? MOUNTED.bike.base;
+  return leader(p)?.speed ?? bikeOf(p).base;
 }
 
 /** Riders a pursuer may go for: riding, not protected, not in an obstacle animation. */
@@ -929,7 +965,7 @@ function pickTarget(p: Pursuit, e: RoadRider): number {
 
 function stepEnemy(world: World, p: Pursuit, e: RoadRider, heroes: Map<number, Fighter>): void {
   const R = MOUNTED.rider;
-  const B = MOUNTED.bike;
+  const B = bikeOf(p);
   const c = CORRIDORS[p.corridor]!;
   const diff = mountedDifficulty(p);
   const frame = world.frame;
@@ -1165,7 +1201,7 @@ function strike(
     const lean = mountedKit(f.hero)[target.action]!;
     if (lean.slot === MountedSlot.Lean && !target.hit) {
       target.hit = true;
-      target.stability = Math.min(MOUNTED.bike.stability, target.stability + lean.restore);
+      target.stability = Math.min(bikeOf(p).stability, target.stability + lean.restore);
       if (target.stability > 0) target.critical = false;
       p.record.mastery += 1;
     }
@@ -1180,7 +1216,7 @@ function strike(
 function obstacles(world: World, p: Pursuit, r: HeroRider, f: Fighter | undefined): void {
   if (!riding(r) || p.phase !== PursuitPhase.Ride) return;
   const c = CORRIDORS[p.corridor]!;
-  const B = MOUNTED.bike;
+  const B = bikeOf(p);
   const frame = world.frame;
   c.obstacles.forEach((o, i) => {
     if (r.passed.includes(i)) return;
@@ -1212,7 +1248,7 @@ function obstacles(world: World, p: Pursuit, r: HeroRider, f: Fighter | undefine
 /** Clean riding: after a short damage-free interval Stability returns a little at a time. */
 function recover(world: World, p: Pursuit): void {
   const frame = world.frame;
-  const B = MOUNTED.bike;
+  const B = bikeOf(p);
   for (const r of p.riders) {
     if (!riding(r) || r.stability >= B.stability) continue;
     const quiet = frame - r.lastHurt - B.recover.delay;
@@ -1232,10 +1268,18 @@ function recover(world: World, p: Pursuit): void {
 
 /** A finished skid becomes a rescue chance (co-op) or a micro-checkpoint rewind. */
 function crashes(world: World, p: Pursuit): void {
-  const B = MOUNTED.bike;
+  const B = bikeOf(p);
   const frame = world.frame;
   for (const r of p.riders) {
     if (r.state !== RiderState.Crash || frame - r.since < B.crash) continue;
+    if (B.atZero === 'dismount') {
+      // M24: a safe dismount; the mount leaves and is lost for the run.
+      r.state = RiderState.OnFoot;
+      r.since = frame;
+      r.stability = 0;
+      heroEvent(r, RideEvent.Dismount, frame);
+      continue;
+    }
     const partner = p.riders.find((q) => q !== r && riding(q));
     if (partner) {
       r.state = RiderState.Downed;
@@ -1257,7 +1301,7 @@ function crashes(world: World, p: Pursuit): void {
  */
 export function rewind(world: World, p: Pursuit): void {
   const c = CORRIDORS[p.corridor]!;
-  const B = MOUNTED.bike;
+  const B = bikeOf(p);
   const frame = world.frame;
   const x0 = p.checkpoint >= 0 ? c.checkpoints[p.checkpoint]! : c.start;
   for (const r of p.riders) {
@@ -1336,7 +1380,7 @@ function progress(world: World, p: Pursuit): void {
     heroEvent(lead, RideEvent.Checkpoint, frame);
     rejoin(p, lead, frame);
   }
-  const ridingNow = p.riders.filter(riding);
+  const ridingNow = p.riders.filter(travelling);
   // Breaking Marek ends the intercept at once; reaching the finish forces his dismount.
   const broken = p.marek === Intercept.Broken;
   if (broken || (ridingNow.length > 0 && ridingNow.every((r) => r.x >= c.finish))) {
@@ -1357,7 +1401,7 @@ function progress(world: World, p: Pursuit): void {
 
 function rejoin(p: Pursuit, lead: HeroRider, frame: number): void {
   const c = CORRIDORS[p.corridor]!;
-  const B = MOUNTED.bike;
+  const B = bikeOf(p);
   for (const r of p.riders) {
     if (r.state !== RiderState.Out) continue;
     r.state = RiderState.Ride;
@@ -1407,7 +1451,7 @@ export function addRoadRider(
     wave,
     x,
     z,
-    speed: MOUNTED.bike.base,
+    speed: bikeOf(p).base,
     health: R.health,
     maxHealth: R.health,
     stability,
@@ -1469,7 +1513,7 @@ export function gradeOf(score: number): RecordLine['grade'] {
 
 /** Frames a team riding just above the baseline pace needs from start to finish. */
 export function parFrames(c: CorridorDef): number {
-  return Math.trunc((c.finish - c.start) / (MOUNTED.bike.base + fx(1)));
+  return Math.trunc((c.finish - c.start) / (mountOf(c).base + fx(1)));
 }
 
 /**

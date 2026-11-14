@@ -9,7 +9,7 @@
  * The generated module is committed; a test fails when it is out of date. This file has
  * no relative imports so Node can run it directly with type stripping.
  */
-import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { type Static, Type as T } from '@sinclair/typebox';
@@ -312,6 +312,19 @@ const AiAttack = T.Object(
     minRange: T.Optional(T.Integer({ minimum: 1, maximum: 4000 })),
     /** M19: only while holding a weapon (armed) or only with empty hands (unarmed). */
     when: T.Optional(T.Union([T.Literal('armed'), T.Literal('unarmed')])),
+    /**
+     * M24 feint: every second use stops at this action frame (after its tell has shown);
+     * the same attack follows `feintDelay` frames later. Must stop before the first active frame.
+     */
+    feint: T.Optional(
+      T.Object(
+        {
+          at: T.Integer({ minimum: 4, maximum: 120 }),
+          delay: T.Integer({ minimum: 1, maximum: 600 }),
+        },
+        { additionalProperties: false },
+      ),
+    ),
   },
   { additionalProperties: false },
 );
@@ -380,6 +393,11 @@ const BossPhase = T.Object(
     untilDisarmed: T.Optional(T.Boolean()),
     /** M19: a command action that brings the supports once (instead of at the start). */
     summon: T.Optional(T.String({ pattern: '^[a-z][a-z0-9-]*$' })),
+    /**
+     * M24: the phase also needs this before it ends: 'gear' (its Health threshold holds until
+     * every gear piece is broken) or 'dismount' (it ends when the boss is dismounted).
+     */
+    require: T.Optional(T.Union([T.Literal('gear'), T.Literal('dismount')])),
     /** M19: Scorched Claim, a bounded low-Health objective behaviour (no phase, no refill). */
     scorch: T.Optional(
       T.Object(
@@ -473,7 +491,67 @@ const Profile = T.Object(
     /** M19: Signalman calls. */
     commands: T.Optional(T.Array(Command, { maxItems: 3 })),
     /** M19: 'dismount' arrives knocked down with protected recovery (Road Rider on foot). */
-    entry: T.Optional(T.Union([T.Literal('walk'), T.Literal('dismount')])),
+    entry: T.Optional(T.Union([T.Literal('walk'), T.Literal('dismount'), T.Literal('disguised')])),
+    /** M24 disguised entry: reveals after these frames or when a hero comes this close (px). */
+    reveal: T.Optional(
+      T.Object(
+        {
+          after: T.Integer({ minimum: 1, maximum: 3600 }),
+          range: T.Integer({ minimum: 1, maximum: 2000 }),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    /** M24 finite gear: pieces with their own non-regenerating Guard and one benefit each. */
+    gear: T.Optional(
+      T.Array(
+        T.Object(
+          {
+            id: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
+            name: T.String({ minLength: 1 }),
+            guard: T.Integer({ minimum: 1, maximum: 10000 }),
+            benefit: T.Union([
+              T.Literal('front'),
+              T.Literal('counter'),
+              T.Literal('antiAir'),
+              T.Literal('lowResist'),
+            ]),
+            stagger: T.Integer({ minimum: 1, maximum: 240 }),
+          },
+          { additionalProperties: false },
+        ),
+        { minItems: 1, maxItems: 4 },
+      ),
+    ),
+    /** M24: rides a mount in on-foot arenas (warned lane passes, Stability, safe dismount). */
+    mount: T.Optional(
+      T.Object(
+        {
+          kind: T.Union([T.Literal('horse'), T.Literal('bike')]),
+          stability: T.Integer({ minimum: 1, maximum: 1000 }),
+          share: T.Integer({ minimum: 1, maximum: 200 }),
+          speed: T.Number({ exclusiveMinimum: 0, maximum: 60 }),
+          warn: T.Integer({ minimum: 20, maximum: 600 }),
+          rest: T.Integer({ minimum: 0, maximum: 1200 }),
+          damage: T.Integer({ minimum: 0, maximum: 1000 }),
+          push: T.Number({ minimum: 0, maximum: 60 }),
+          lane: T.Integer({ minimum: 10, maximum: 200 }),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    /** M24 Resolve-limited rival: Health never falls below `floor` %; it withdraws `withdraw` frames later. */
+    rival: T.Optional(
+      T.Object(
+        {
+          floor: T.Integer({ minimum: 1, maximum: 99 }),
+          withdraw: T.Integer({ minimum: 0, maximum: 3600 }),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    /** M24: never a target and never fights (custody targets, bystanders). */
+    noncombatant: T.Optional(T.Boolean()),
     weapons: T.Union([T.Literal('never'), T.Literal('opportunistic'), T.Literal('preferred')]),
     group: T.Optional(
       T.Object(
@@ -534,6 +612,8 @@ export const HeroSchema = T.Object(
     showcases: T.Optional(T.Array(Showcase, { maxItems: 8 })),
     /** Enemy kits (M7): role, AI, defense capability profile, morale and boss phases. */
     profile: T.Optional(Profile),
+    /** M24: draw with another enemy kit's sheets (placeholder art for Lab test kits). */
+    art: T.Optional(T.String({ pattern: '^[a-z][a-z0-9-]*$' })),
     /**
      * M19 enemy variants: generated kits with the same actions and art and a changed
      * profile (Hard elite, Ultimate master). A wave picks the strongest one its
@@ -591,6 +671,8 @@ export const WeaponSchema = T.Object(
       T.Literal('improvisedDebris'),
       T.Literal('firearm'),
       T.Literal('guardModifier'),
+      /** M24: a carried provision (eaten with Interact, thrown with a direction). */
+      T.Literal('provision'),
     ]),
     hands: T.Union([T.Literal(1), T.Literal(2)]),
     /** improvisedDebris: light (throw only, consumed), long (a shared strike and a throw), heavy. */
@@ -641,6 +723,62 @@ export const WeaponSchema = T.Object(
     ),
     actions: T.Array(Action, { minItems: 1, maxItems: 24 }),
     affinity: T.Optional(T.Record(T.String({ pattern: '^[a-z][a-z0-9-]*$' }), T.Array(Action))),
+    // --- M24 shared systems -------------------------------------------------------------
+    /** Scenery tags its strikes open at once (pry bar, tire iron). */
+    opens: T.Optional(T.Array(T.String({ pattern: '^[a-z][a-z0-9-]*$' }), { maxItems: 8 })),
+    /** Moving-hazard tags its strikes may redirect during their warning (hook pole). */
+    redirects: T.Optional(T.Array(T.String({ pattern: '^[a-z][a-z0-9-]*$' }), { maxItems: 8 })),
+    /** Heavy weapon: what the holder cannot do and its walk speed (percent). */
+    restrict: T.Optional(
+      T.Object(
+        {
+          jump: T.Optional(T.Boolean()),
+          grab: T.Optional(T.Boolean()),
+          mount: T.Optional(T.Boolean()),
+          carry: T.Optional(T.Boolean()),
+          speed: T.Optional(T.Integer({ minimum: 10, maximum: 100 })),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    /** Heat-limited bursts: heat per shot, lock threshold, cooling per frame. */
+    heat: T.Optional(
+      T.Object(
+        {
+          per: T.Integer({ minimum: 1, maximum: 1000 }),
+          max: T.Integer({ minimum: 1, maximum: 10000 }),
+          cool: T.Integer({ minimum: 1, maximum: 100 }),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    /** Blast throwable (fictional concussion device): fuse, area, Health, Defense, stun, push. */
+    blast: T.Optional(
+      T.Object(
+        {
+          fuse: T.Integer({ minimum: 10, maximum: 600 }),
+          hw: T.Integer({ minimum: 10, maximum: 800 }),
+          hd: T.Integer({ minimum: 10, maximum: 400 }),
+          damage: T.Integer({ minimum: 0, maximum: 1000 }),
+          defense: T.Integer({ minimum: 0, maximum: 100 }),
+          stun: T.Integer({ minimum: 1, maximum: 120 }),
+          push: T.Number({ minimum: 0, maximum: 60 }),
+        },
+        { additionalProperties: false },
+      ),
+    ),
+    /** Provision: what eating it restores and how many frames eating takes. */
+    provision: T.Optional(
+      T.Object(
+        {
+          health: T.Integer({ minimum: 0, maximum: 1000 }),
+          defense: T.Integer({ minimum: 0, maximum: 100 }),
+          meter: T.Integer({ minimum: 0, maximum: 100 }),
+          eat: T.Integer({ minimum: 1, maximum: 120 }),
+        },
+        { additionalProperties: false },
+      ),
+    ),
   },
   { additionalProperties: false },
 );
@@ -761,6 +899,15 @@ export function loadHero(
   if (kind === 'hero' && hero.profile) problems.push('only enemy kits have an AI profile');
   if (hero.variants && !hero.profile) problems.push('variants need a base profile');
   if (hero.profile) problems.push(...profileProblems(hero.profile, ids));
+  // M24: a feint stops during the startup, before anything can hit.
+  for (const at of [
+    ...(hero.profile?.attacks ?? []),
+    ...(hero.profile?.boss?.phases ?? []).flatMap((ph) => ph.attacks),
+  ]) {
+    const act = hero.actions.find((a) => a.id === at.action);
+    if (at.feint && act && at.feint.at > act.frames.startup)
+      problems.push(`"${at.action}": a feint must stop by frame ${act.frames.startup}`);
+  }
   if (kind === 'hero' && !slots.has('neutral/neutral'))
     problems.push('no neutral starter (context neutral, dir neutral)');
   if (kind === 'hero') {
@@ -883,7 +1030,21 @@ function profileProblems(p: ProfileYaml, ids: ReadonlySet<string>): string[] {
       if (p.boss.phases[i]!.from >= p.boss.phases[i - 1]!.from)
         out.push('boss phase thresholds must fall');
   }
-  if (p.attacks.length === 0 && !p.boss) out.push('an enemy profile needs at least one attack');
+  if (p.attacks.length === 0 && !p.boss && !p.noncombatant)
+    out.push('an enemy profile needs at least one attack');
+  if (p.noncombatant && p.attacks.length > 0) out.push('a noncombatant has no attacks');
+  // M24 shared systems.
+  if ((p.entry === 'disguised') !== Boolean(p.reveal))
+    out.push('a disguised entry (and only one) needs `reveal`');
+  if (p.noncombatant && (p.gear || p.mount || p.rival || p.boss))
+    out.push('a noncombatant has no gear, mount, rival floor or boss phases');
+  if (p.mount && p.entry === 'dismount') out.push('a mounted enemy cannot also arrive dismounted');
+  for (const ph of p.boss?.phases ?? []) {
+    if (ph.require === 'gear' && !p.gear) out.push(`phase "${ph.name}" requires gear it has not`);
+    if (ph.require === 'dismount' && !p.mount)
+      out.push(`phase "${ph.name}" requires a dismount but has no mount`);
+  }
+  if (p.rival && p.boss) out.push('a boss uses phases, not a rival floor');
   return out;
 }
 
@@ -896,6 +1057,8 @@ function compileAttack(a: Static<typeof AiAttack>): unknown {
     range: fx(a.range ?? 0),
     minRange: fx(a.minRange ?? 0),
     when: a.when === 'armed' ? 1 : a.when === 'unarmed' ? 2 : 0,
+    feint: a.feint?.at ?? 0,
+    feintDelay: a.feint?.delay ?? 0,
   };
 }
 
@@ -922,6 +1085,8 @@ function variantProfile(p: ProfileYaml, v: NonNullable<HeroYaml['variants']>[num
     commands: v.commands ?? p.commands,
   };
 }
+
+const GEAR_BENEFIT = { front: 0, counter: 1, antiAir: 2, lowResist: 3 } as const;
 
 /** Converts an enemy profile into the simulation's EnemyProfile shape. */
 export function compileProfile(p: ProfileYaml): unknown {
@@ -959,6 +1124,30 @@ export function compileProfile(p: ProfileYaml): unknown {
     escort: p.escort ? { threat: p.escort.threat, range: fx(p.escort.range) } : null,
     commands: (p.commands ?? []).map(compileCommand),
     entry: p.entry ?? 'walk',
+    reveal: p.reveal?.after ?? 0,
+    revealRange: fx(p.reveal?.range ?? 0),
+    gear: (p.gear ?? []).map((g) => ({
+      id: g.id,
+      name: g.name,
+      guard: g.guard,
+      benefit: GEAR_BENEFIT[g.benefit],
+      stagger: g.stagger,
+    })),
+    mount: p.mount
+      ? {
+          kind: p.mount.kind === 'horse' ? 0 : 1,
+          stability: p.mount.stability,
+          share: p.mount.share,
+          speed: fx(p.mount.speed),
+          warn: p.mount.warn,
+          rest: p.mount.rest,
+          damage: p.mount.damage,
+          push: fx(p.mount.push),
+          lane: fx(p.mount.lane),
+        }
+      : null,
+    rival: p.rival ?? null,
+    noncombatant: p.noncombatant ?? false,
     boss: p.boss
       ? {
           flinchCap: p.boss.flinchCap,
@@ -990,6 +1179,7 @@ export function compileProfile(p: ProfileYaml): unknown {
             untilDisarmed: ph.untilDisarmed ?? false,
             summon: ph.summon ?? '',
             scorch: ph.scorch ?? null,
+            require: ph.require ?? 'none',
           })),
         }
       : null,
@@ -1096,6 +1286,191 @@ const Substitutions = T.Array(
     { additionalProperties: false },
   ),
 );
+const PxI = T.Integer({ minimum: 0, maximum: 7680 });
+const SceneSize = T.Integer({ minimum: 1, maximum: 2000 });
+const SceneTags = T.Array(T.String({ pattern: '^[a-z][a-z0-9-]*$' }), { maxItems: 8 });
+/** M24: an arena's own scenery (pixels), the shape of a stage layout plus the M24 kinds. */
+const Scenery = T.Object(
+  {
+    items: T.Optional(
+      T.Array(
+        T.Object(
+          { weapon: T.String({ pattern: '^[a-z][a-z0-9-]*$' }), x: PxI, z: PxI },
+          { additionalProperties: false },
+        ),
+        { maxItems: 16 },
+      ),
+    ),
+    surfaces: T.Optional(
+      T.Array(
+        T.Object(
+          { x: PxI, z: PxI, hw: SceneSize, hd: SceneSize, h: SceneSize },
+          { additionalProperties: false },
+        ),
+        { maxItems: 8 },
+      ),
+    ),
+    breakables: T.Optional(
+      T.Array(
+        T.Object(
+          {
+            x: PxI,
+            z: PxI,
+            hw: SceneSize,
+            hd: SceneSize,
+            h: SceneSize,
+            thresholds: T.Tuple([SceneSize, SceneSize, SceneSize]),
+            fragment: T.Optional(T.String({ pattern: '^[a-z][a-z0-9-]*$' })),
+            tags: T.Optional(SceneTags),
+            property: T.Optional(
+              T.Union([
+                T.Literal('expendable'),
+                T.Literal('protected'),
+                T.Literal('objective'),
+                T.Literal('required'),
+              ]),
+            ),
+            cluster: T.Optional(T.Integer({ minimum: 0, maximum: 1000 })),
+          },
+          { additionalProperties: false },
+        ),
+        { maxItems: 12 },
+      ),
+    ),
+    hazards: T.Optional(
+      T.Array(
+        T.Object(
+          {
+            x: PxI,
+            z: PxI,
+            hw: SceneSize,
+            hd: SceneSize,
+            h: SceneSize,
+            rest: Frame1,
+            warn: Frame1,
+            active: Frame1,
+            damage: T.Integer({ minimum: 0, maximum: 1000 }),
+          },
+          { additionalProperties: false },
+        ),
+        { maxItems: 8 },
+      ),
+    ),
+    movers: T.Optional(
+      T.Array(
+        T.Object(
+          {
+            from: T.Tuple([PxI, PxI]),
+            to: T.Tuple([PxI, PxI]),
+            size: T.Tuple([SceneSize, SceneSize, SceneSize]),
+            start: T.Optional(T.Integer({ minimum: 0, maximum: 3600 })),
+            rest: T.Integer({ minimum: 0, maximum: 3600 }),
+            warn: T.Integer({ minimum: 20, maximum: 600 }),
+            active: Frame1,
+            damage: T.Integer({ minimum: 0, maximum: 1000 }),
+            /** 'any' = any strike redirects it in its warning; a tag = only tools that list it. */
+            redirect: T.Optional(T.String({ pattern: '^[a-z][a-z0-9-]*$' })),
+            cycles: T.Optional(T.Integer({ minimum: 0, maximum: 100 })),
+            tags: T.Optional(SceneTags),
+          },
+          { additionalProperties: false },
+        ),
+        { maxItems: 8 },
+      ),
+    ),
+    platforms: T.Optional(
+      T.Array(
+        T.Object(
+          {
+            x0: PxI,
+            x1: PxI,
+            z: PxI,
+            hw: SceneSize,
+            hd: SceneSize,
+            speed: T.Number({ exclusiveMinimum: 0, maximum: 20 }),
+            wait: T.Integer({ minimum: 0, maximum: 3600 }),
+          },
+          { additionalProperties: false },
+        ),
+        { maxItems: 4 },
+      ),
+    ),
+    stations: T.Optional(
+      T.Array(
+        T.Object(
+          {
+            x: PxI,
+            z: PxI,
+            kind: T.Union([T.Literal('cover'), T.Literal('delay'), T.Literal('interfere')]),
+            approach: T.Integer({ minimum: 1, maximum: 600 }),
+            frames: T.Integer({ minimum: 1, maximum: 3600 }),
+            cooldown: T.Integer({ minimum: 1, maximum: 3600 }),
+            cover: T.Optional(
+              T.Object(
+                { x: PxI, z: PxI, hw: SceneSize, hd: SceneSize, h: SceneSize },
+                { additionalProperties: false },
+              ),
+            ),
+          },
+          { additionalProperties: false },
+        ),
+        { maxItems: 6 },
+      ),
+    ),
+  },
+  { additionalProperties: false },
+);
+const PROPERTY_CODE = { expendable: 0, protected: 1, objective: 2, required: 3 } as const;
+const INTERVENTION_CODE = { cover: 0, delay: 1, interfere: 2 } as const;
+
+/** Converts validated scenery into the simulation's StageLayout shape (pixels). */
+function convertScenery(sc: Static<typeof Scenery>): unknown {
+  return {
+    items: sc.items ?? [],
+    surfaces: sc.surfaces ?? [],
+    breakables: (sc.breakables ?? []).map((b) => ({
+      x: b.x,
+      z: b.z,
+      hw: b.hw,
+      hd: b.hd,
+      h: b.h,
+      thresholds: [...b.thresholds],
+      fragment: b.fragment ?? '',
+      tags: b.tags ?? [],
+      property: PROPERTY_CODE[b.property ?? 'expendable'],
+      cluster: b.cluster ?? 0,
+    })),
+    hazards: sc.hazards ?? [],
+    movers: (sc.movers ?? []).map((m) => ({
+      x0: m.from[0],
+      z0: m.from[1],
+      x1: m.to[0],
+      z1: m.to[1],
+      hw: m.size[0],
+      hd: m.size[1],
+      h: m.size[2],
+      start: m.start ?? 0,
+      rest: m.rest,
+      warn: m.warn,
+      active: m.active,
+      damage: m.damage,
+      redirect: m.redirect ?? '',
+      cycles: m.cycles ?? 0,
+      tags: m.tags ?? [],
+    })),
+    platforms: sc.platforms ?? [],
+    stations: (sc.stations ?? []).map((st) => ({
+      x: st.x,
+      z: st.z,
+      kind: INTERVENTION_CODE[st.kind],
+      approach: st.approach,
+      frames: st.frames,
+      cooldown: st.cooldown,
+      cover: st.cover ?? null,
+    })),
+  };
+}
+
 export const ArenaSchema = T.Object(
   {
     arenas: T.Array(
@@ -1117,6 +1492,8 @@ export const ArenaSchema = T.Object(
           substitutions: T.Optional(Substitutions),
           /** M19: finite reserve for Replace the Line (kit ids). */
           reserve: T.Optional(T.Array(KitId, { maxItems: 4 })),
+          /** M24: the arena's own scenery (Lab test scenes and later stages). */
+          scenery: T.Optional(Scenery),
         },
         { additionalProperties: false },
       ),
@@ -1384,9 +1761,10 @@ export function loadArenas(
   source: string,
   kits: readonly string[],
   file = 'arenas.yaml',
+  weapons: readonly string[] = [],
 ): unknown[] {
   const d = validate(ArenaSchema, source, file) as Static<typeof ArenaSchema>;
-  return convertArenas(d.arenas, kits, file, false);
+  return convertArenas(d.arenas, kits, file, false, weapons);
 }
 
 type ArenaYaml = Static<typeof ArenaSchema>['arenas'][number];
@@ -1397,6 +1775,7 @@ function convertArenas(
   kits: readonly string[],
   file: string,
   stage: boolean,
+  weapons: readonly string[] = [],
 ): unknown[] {
   const d = { arenas };
   const problems: string[] = [];
@@ -1404,6 +1783,27 @@ function convertArenas(
   for (const a of d.arenas) {
     if (seen.has(a.id)) problems.push(`duplicate arena "${a.id}"`);
     seen.add(a.id);
+    if (a.scenery && a.layout) problems.push(`${a.id}: an arena has a layout or scenery, not both`);
+    const sc = a.scenery;
+    if (sc && weapons.length > 0) {
+      for (const i of sc.items ?? [])
+        if (!weapons.includes(i.weapon)) problems.push(`${a.id}: unknown weapon "${i.weapon}"`);
+      for (const b of sc.breakables ?? [])
+        if (b.fragment && !weapons.includes(b.fragment))
+          problems.push(`${a.id}: unknown fragment "${b.fragment}"`);
+    }
+    for (const b of sc?.breakables ?? [])
+      if (!(b.thresholds[0] < b.thresholds[1] && b.thresholds[1] < b.thresholds[2]))
+        problems.push(`${a.id}: breakable thresholds must rise`);
+    for (const pl of sc?.platforms ?? [])
+      if (pl.x0 >= pl.x1 || pl.x1 > a.width)
+        problems.push(`${a.id}: a platform travels from x0 to a larger x1 inside the arena`);
+    for (const m of sc?.movers ?? [])
+      if (m.from[0] > a.width || m.to[0] > a.width)
+        problems.push(`${a.id}: a mover leaves the arena`);
+    for (const st of sc?.stations ?? [])
+      if ((st.kind === 'cover') !== Boolean(st.cover))
+        problems.push(`${a.id}: a cover station (and only one) has a cover`);
     for (const w of a.waves)
       for (const e of w.enemies) {
         if (!kits.includes(e.kit)) problems.push(`${a.id}: unknown enemy kit "${e.kit}"`);
@@ -1447,6 +1847,7 @@ function convertArenas(
     })),
     reserve: a.reserve ?? [],
     stage,
+    scenery: a.scenery ? convertScenery(a.scenery) : null,
   }));
 }
 
@@ -1817,6 +2218,11 @@ export function loadWeapon(
   } else if (!melee && w.actions.length !== 1)
     problems.push('only melee weapons have a Weapon Core');
   if (w.fire && w.class !== 'firearm') problems.push('only firearms have a fire cost');
+  if ((w.class === 'provision') !== Boolean(w.provision))
+    problems.push('a provision (and only a provision) has a provision block');
+  if (w.heat && w.class !== 'firearm') problems.push('only firearms have heat');
+  if (w.blast && w.class !== 'recoverableThrown')
+    problems.push('only recoverableThrown items have a blast');
   if (w.integrity.critical > w.integrity.worn || w.integrity.worn > w.integrity.max)
     problems.push('integrity thresholds must satisfy critical <= worn <= max');
   if (w.guard && w.class !== 'guardModifier')
@@ -1881,6 +2287,28 @@ export function compileWeapon(w: WeaponYaml): unknown {
       consumed: w.throw.consumed ?? false,
       ...Object.fromEntries(RESPONSES.map((r) => [r, w.throw.responses.includes(r)])),
     },
+    opens: w.opens ?? [],
+    redirects: w.redirects ?? [],
+    restrict: {
+      jump: w.restrict?.jump ?? false,
+      grab: w.restrict?.grab ?? false,
+      mount: w.restrict?.mount ?? false,
+      carry: w.restrict?.carry ?? false,
+      speed: w.restrict?.speed ?? 100,
+    },
+    heat: w.heat ?? null,
+    blast: w.blast
+      ? {
+          fuse: w.blast.fuse,
+          hw: fx(w.blast.hw),
+          hd: fx(w.blast.hd),
+          damage: w.blast.damage,
+          defense: w.blast.defense,
+          stun: w.blast.stun,
+          push: fx(w.blast.push),
+        }
+      : null,
+    provision: w.provision ?? null,
     actions: w.actions.map((a) => compileAction(a, index, w.actions, pose(a))),
     affinity: Object.entries(w.affinity ?? {})
       .sort(([a], [b]) => a.localeCompare(b))
@@ -2685,51 +3113,58 @@ const MountedDifficulty = T.Object(
   { additionalProperties: false },
 );
 const RoadPoint = T.Object({ at: Dist, top: MPx, bottom: MPx }, { additionalProperties: false });
-export const MountedSchema = T.Object(
+const Bike = T.Object(
   {
-    bike: T.Object(
+    id: T.String(),
+    name: T.String(),
+    plates: T.Array(T.String({ minLength: 1 }), { minItems: 2, maxItems: 2 }),
+    // M24 mount catalogue: what it is (presentation), what happens at zero Stability
+    // ('recover': Stage 2's safe crash and rescue; 'dismount': the mount is lost for the
+    // run and the hero finishes the corridor on foot at `fallback` px/frame), defaults
+    // bike / recover / 3.
+    kind: T.Optional(T.Union([T.Literal('bike'), T.Literal('horse')])),
+    atZero: T.Optional(T.Union([T.Literal('recover'), T.Literal('dismount')])),
+    fallback: T.Optional(Speed),
+    speed: T.Object(
+      { base: Speed, min: Speed, max: Speed, accel: Speed, brake: Speed },
+      { additionalProperties: false },
+    ),
+    steer: Speed,
+    laneDrift: Speed,
+    assistDrift: Speed,
+    stability: Amount,
+    recover: Recover,
+    wobble: MFrames,
+    impact: T.Object({ barrier: Amount, gate: Amount, push: MPx }, { additionalProperties: false }),
+    crash: MFrames,
+    protect: MFrames,
+    rescue: T.Object(
+      { window: MFrames, x: MPx, z: MPx, restore: Amount },
+      { additionalProperties: false },
+    ),
+    tether: T.Object(
+      { soft: MPx, hard: MPx, slow: Speed, assist: Speed },
+      { additionalProperties: false },
+    ),
+    hop: T.Object(
       {
-        id: T.String(),
-        name: T.String(),
-        plates: T.Array(T.String({ minLength: 1 }), { minItems: 2, maxItems: 2 }),
-        speed: T.Object(
-          { base: Speed, min: Speed, max: Speed, accel: Speed, brake: Speed },
-          { additionalProperties: false },
-        ),
-        steer: Speed,
-        laneDrift: Speed,
-        assistDrift: Speed,
-        stability: Amount,
-        recover: Recover,
-        wobble: MFrames,
-        impact: T.Object(
-          { barrier: Amount, gate: Amount, push: MPx },
-          { additionalProperties: false },
-        ),
-        crash: MFrames,
-        protect: MFrames,
-        rescue: T.Object(
-          { window: MFrames, x: MPx, z: MPx, restore: Amount },
-          { additionalProperties: false },
-        ),
-        tether: T.Object(
-          { soft: MPx, hard: MPx, slow: Speed, assist: Speed },
-          { additionalProperties: false },
-        ),
-        hop: T.Object(
-          {
-            frames: MFrames,
-            height: MPx,
-            rampFrames: MFrames,
-            rampHeight: MPx,
-            shift: MPx,
-            shiftFrames: MFrames,
-          },
-          { additionalProperties: false },
-        ),
+        frames: MFrames,
+        height: MPx,
+        rampFrames: MFrames,
+        rampHeight: MPx,
+        shift: MPx,
+        shiftFrames: MFrames,
       },
       { additionalProperties: false },
     ),
+  },
+  { additionalProperties: false },
+);
+export const MountedSchema = T.Object(
+  {
+    bike: Bike,
+    // M24: further mounts a corridor can name (`mount`); the bike is always mount 0.
+    mounts: T.Optional(T.Array(Bike, { maxItems: 8 })),
     roadRider: T.Object(
       {
         id: T.String(),
@@ -2765,6 +3200,8 @@ export const MountedSchema = T.Object(
           id: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
           name: T.String({ minLength: 1 }),
           goal: T.String({ minLength: 1 }),
+          // M24: the mount this corridor is ridden on (an id from `mounts`; default the bike).
+          mount: T.Optional(T.String()),
           start: Dist,
           finish: Dist,
           length: Dist,
@@ -2883,7 +3320,11 @@ export function loadMounted(
   for (const k of Object.keys(RIDER_KIND))
     if (!m.roadRider.actions.some((a) => a.kind === k))
       problems.push(`${file}: the Road Rider needs a "${k}" action`);
+  const mountIds = [m.bike.id, ...(m.mounts ?? []).map((x) => x.id)];
+  if (new Set(mountIds).size !== mountIds.length) problems.push(`${file}: mount ids repeat`);
   for (const c of m.corridors) {
+    if (c.mount !== undefined && !mountIds.includes(c.mount))
+      problems.push(`${file}: ${c.id} names unknown mount "${c.mount}"`);
     for (let i = 1; i < c.road.length; i += 1)
       if (c.road[i]!.at <= c.road[i - 1]!.at)
         problems.push(`${file}: ${c.id} road points must run forward`);
@@ -2902,48 +3343,53 @@ export function loadMounted(
         problems.push(`${file}: ${c.id} checkpoints must run forward`);
   }
   if (problems.length > 0) throw new HeroDataError(problems.join('\n'));
-  const b = m.bike;
   const recover = (r: Static<typeof Recover>) => ({ ...r });
-  return {
-    bike: {
-      id: b.id,
-      name: b.name,
-      plates: [...b.plates],
-      base: fxs(b.speed.base),
-      min: fxs(b.speed.min),
-      max: fxs(b.speed.max),
-      accel: fxs(b.speed.accel),
-      brake: fxs(b.speed.brake),
-      steer: fxs(b.steer),
-      laneDrift: fxs(b.laneDrift),
-      assistDrift: fxs(b.assistDrift),
-      stability: b.stability,
-      recover: recover(b.recover),
-      wobble: b.wobble,
-      impact: { barrier: b.impact.barrier, gate: b.impact.gate, push: fx(b.impact.push) },
-      crash: b.crash,
-      protect: b.protect,
-      rescue: {
-        window: b.rescue.window,
-        x: fx(b.rescue.x),
-        z: fx(b.rescue.z),
-        restore: b.rescue.restore,
-      },
-      tether: {
-        soft: fx(b.tether.soft),
-        hard: fx(b.tether.hard),
-        slow: fxs(b.tether.slow),
-        assist: fxs(b.tether.assist),
-      },
-      hop: {
-        frames: b.hop.frames,
-        height: fx(b.hop.height),
-        rampFrames: b.hop.rampFrames,
-        rampHeight: fx(b.hop.rampHeight),
-        shift: fx(b.hop.shift),
-        shiftFrames: b.hop.shiftFrames,
-      },
+  const bike = (b: Static<typeof Bike>) => ({
+    id: b.id,
+    name: b.name,
+    plates: [...b.plates],
+    kind: b.kind === 'horse' ? 0 : 1,
+    atZero: b.atZero ?? 'recover',
+    fallback: fxs(b.fallback ?? 3),
+    base: fxs(b.speed.base),
+    min: fxs(b.speed.min),
+    max: fxs(b.speed.max),
+    accel: fxs(b.speed.accel),
+    brake: fxs(b.speed.brake),
+    steer: fxs(b.steer),
+    laneDrift: fxs(b.laneDrift),
+    assistDrift: fxs(b.assistDrift),
+    stability: b.stability,
+    recover: recover(b.recover),
+    wobble: b.wobble,
+    impact: { barrier: b.impact.barrier, gate: b.impact.gate, push: fx(b.impact.push) },
+    crash: b.crash,
+    protect: b.protect,
+    rescue: {
+      window: b.rescue.window,
+      x: fx(b.rescue.x),
+      z: fx(b.rescue.z),
+      restore: b.rescue.restore,
     },
+    tether: {
+      soft: fx(b.tether.soft),
+      hard: fx(b.tether.hard),
+      slow: fxs(b.tether.slow),
+      assist: fxs(b.tether.assist),
+    },
+    hop: {
+      frames: b.hop.frames,
+      height: fx(b.hop.height),
+      rampFrames: b.hop.rampFrames,
+      rampHeight: fx(b.hop.rampHeight),
+      shift: fx(b.hop.shift),
+      shiftFrames: b.hop.shiftFrames,
+    },
+  });
+  const mounts = [m.bike, ...(m.mounts ?? [])];
+  return {
+    bike: bike(m.bike),
+    mounts: mounts.map(bike),
     rider: {
       id: m.roadRider.id,
       name: m.roadRider.name,
@@ -3003,6 +3449,7 @@ export function loadMounted(
       id: c.id,
       name: c.name,
       goal: c.goal,
+      mount: c.mount === undefined ? 0 : mounts.findIndex((x) => x.id === c.mount),
       start: fx(c.start),
       finish: fx(c.finish),
       length: fx(c.length),
@@ -3590,15 +4037,54 @@ export function stageFileList(dir = STAGES_DIR): string[] {
 
 const WEAPONS_DIR = fileURLToPath(new URL('../weapons/', import.meta.url));
 
-/** Weapon files in registry order: the Stage 1 pair first, then by file name. */
+/**
+ * M24 (Constitution audit, lesson G1): registry indices are part of the encoded world state,
+ * so they must never move when content is added. The order of every file that existed up
+ * to M23 is frozen here; files added later follow by file name. Never reorder or remove an
+ * entry, and never delete a listed file (retire its content instead).
+ */
+export const FROZEN_WEAPONS = [
+  'workstaff.yaml',
+  'handwheel.yaml',
+  'timber-board.yaml',
+  'breaching-grenade.yaml',
+  'service-lance.yaml',
+  'six-round-sidearm.yaml',
+  'support-gun.yaml',
+  'support-rail.yaml',
+] as const;
+export const FROZEN_ENEMIES = [
+  'trainer.yaml',
+  'claimhand.yaml',
+  'commander.yaml',
+  'enforcer.yaml',
+  'enforcer2.yaml',
+  'glassrunner.yaml',
+  'lookout.yaml',
+  'marauder.yaml',
+  'marek.yaml',
+  'overseer.yaml',
+  'reaver.yaml',
+  'recruit.yaml',
+  'rider.yaml',
+  'runner.yaml',
+  'saboteur.yaml',
+  'shield.yaml',
+  'signalman.yaml',
+] as const;
+
+/** Files of a registry directory: the frozen ones in their order, then new ones by name. */
+export function registryOrder(files: readonly string[], frozen: readonly string[]): string[] {
+  const rank = (f: string) => (frozen.includes(f) ? frozen.indexOf(f) : frozen.length);
+  return [...files].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
+}
+
+/** Weapon files in registry order (FROZEN_WEAPONS first, then new files by name). */
 export function weaponFiles(dir = WEAPONS_DIR): string[] {
-  // Stage 1 weapons keep their registry indices; later files follow by name.
-  const first = ['workstaff.yaml', 'handwheel.yaml', 'timber-board.yaml'];
-  const rank = (f: string) => (first.includes(f) ? first.indexOf(f) : first.length);
-  return readdirSync(dir)
-    .filter((f) => f.endsWith('.yaml'))
-    .sort((a, b) => rank(a) - rank(b) || a.localeCompare(b))
-    .map((f) => join(dir, f));
+  return registryOrder(
+    readdirSync(dir).filter((f) => f.endsWith('.yaml')),
+    FROZEN_WEAPONS,
+  ).map((f) => join(dir, f));
 }
 
 const HEROES_DIR = fileURLToPath(new URL('../heroes/', import.meta.url));
@@ -3615,19 +4101,18 @@ export function heroFiles(dir = HEROES_DIR): string[] {
     .map((f) => join(dir, f));
 }
 
-/** Enemy kit files: the training enemy first (kit 0, the Lab dummies), then by file name. */
+/** Enemy kit files: the training enemy first (kit 0, the Lab dummies), FROZEN_ENEMIES, then new files by name. */
 export function enemyFiles(dir = ENEMIES_DIR): string[] {
-  const rank = (f: string) => (f === 'trainer.yaml' ? 0 : 1);
-  return readdirSync(dir)
-    .filter((f) => f.endsWith('.yaml'))
-    .sort((a, b) => rank(a) - rank(b) || a.localeCompare(b))
-    .map((f) => join(dir, f));
+  return registryOrder(
+    readdirSync(dir).filter((f) => f.endsWith('.yaml')),
+    FROZEN_ENEMIES,
+  ).map((f) => join(dir, f));
 }
 
 /** The art key of an enemy kit (a variant draws with its base kit's sheets). */
 const VARIANT_BASE = new Map<string, string>();
 function artOf(k: HeroYaml): string {
-  return VARIANT_BASE.get(k.id) ?? k.id;
+  return VARIANT_BASE.get(k.id) ?? k.art ?? k.id;
 }
 
 /** Each base kit followed by its generated variants (ids must be unique overall). */
@@ -3739,7 +4224,12 @@ export function generate(
     ? loadDifficulties(readFileSync(join(encounters, 'difficulty.yaml'), 'utf8'))
     : [];
   const arenas = encounters
-    ? loadArenas(readFileSync(join(encounters, 'arenas.yaml'), 'utf8'), kitIds)
+    ? loadArenas(
+        readFileSync(join(encounters, 'arenas.yaml'), 'utf8'),
+        kitIds,
+        'arenas.yaml',
+        weaponYaml.map((w) => w.id),
+      )
     : [];
   const stages: unknown[] = [];
   for (const f of stageFiles) {
@@ -3779,6 +4269,18 @@ export function generate(
     greenhouse = out.greenhouse;
     arenas.push(...out.arenas);
   }
+  // M24 Lab test scenes come after every stage and greenhouse arena: arena indices are encoded, so new
+  // arenas are only ever appended (lesson G1).
+  const labFile = encounters ? join(encounters, 'lab-m24.yaml') : null;
+  if (labFile && existsSync(labFile))
+    arenas.push(
+      ...loadArenas(
+        readFileSync(labFile, 'utf8'),
+        kitIds,
+        'lab-m24.yaml',
+        weaponYaml.map((w) => w.id),
+      ),
+    );
   // M20: corridor and room beats name a known corridor and room; a room beat is as wide
   // as its room (the exit is at the room's right edge).
   const stageProblems: string[] = [];

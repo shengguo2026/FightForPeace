@@ -101,6 +101,8 @@ If Node.js 24 is not installed, the first start downloads a pinned Node.js 24 in
 
 **Release manifest (M23):** the zip carries `manifest.json` (a copy of `docs/release-manifest.json`): the game, rules, protocol, state-format and cheat-registry versions, the rules and content hashes Wi-Fi peers compare, every golden replay hash and the source of each approved art, clip and music file. `pnpm test` fails when the rules, content or version change without it; `RECORD=1 pnpm vitest run tests/release/manifest.test.ts` records it (after an art import or a version bump). Stage 2 acceptance: `docs/review/09-stage2-acceptance.md`.
 
+**Shared engine systems (M24):** the Combat Constitution audit (`docs/review/10-combat-constitution-audit.md`) gives every mechanic of Stages 3 to 8 and the Curated Missions a verdict (data, engine, M25 module or later mode). The engine changes are generic and data-driven: moving hazards, tagged tools and property incidents, moving platforms, finite gear, mounted fighters in on-foot arenas, Resolve floors, noncombatants, feints, disguised entry, heavy weapons, blast throwables, carried provisions, a mount catalogue, solo hand-over and the co-op support role, and the support robot. Each has a Lab test scene (`M24 Lab: …` in the arena list, placeholder art). Stage 1 and Stage 2 play exactly as before (every golden replay keeps its hash).
+
 ## Developer commands
 
 | Command | What it does |

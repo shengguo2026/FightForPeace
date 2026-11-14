@@ -1,0 +1,39 @@
+# M24 placeholder (Combat Constitution audit E3): a long tool with a tagged use. A strike
+# during a moving hazard's warning redirects a hazard tagged `cargo` (wagon hook pole,
+# mooring hook); redirected, it strikes enemies only. Lab test scene only. Lab candidates.
+id: m24-hook-pole
+name: Hook Pole (test)
+class: temporaryMelee
+hands: 1
+integrity: { max: 80, worn: 50, critical: 20, hit: 5, guard: 3, clash: 8, throw: 20, deflect: 4 }
+gripResistance: 30
+pickup: 8
+throw:
+  speed: 13
+  lift: 2
+  responses: [blockable, exactDeflectable, strikeDeflectable]
+redirects: [cargo]
+actions:
+  - id: hook-swing
+    name: Hook Pole Swing
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 8, active: 3, recovery: 14 }
+    hitbox: { x: 20, w: 190, y: 160, h: 90, depth: 34 }
+    damage: 40
+    reaction: { kind: stagger, hitstun: 18, push: 3 }
+    costs: { stun: 10, scale: 10, starter: 15 }
+    meter: 3
+    clash: light
+    breakPower: 20
+
+  - id: hook-throw
+    name: Hook Pole Throw
+    category: weaponThrow
+    input: { context: weaponThrow, dir: neutral }
+    frames: { startup: 10, active: 1, recovery: 14, blockstun: 10 }
+    hitbox: { x: 0, w: 80, y: 100, h: 40, depth: 30 }
+    damage: 35
+    reaction: { kind: stagger, hitstun: 20, push: 4 }
+    costs: { stun: 10, scale: 10 }
+    meter: 2

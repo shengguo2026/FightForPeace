@@ -10,10 +10,11 @@ import { M19_DE_ALL } from './strings.m19';
 import { M20_DE } from './strings.m20';
 import { M21_DE } from './strings.m21';
 import { M22_DE } from './strings.m22';
+import { M24_DE } from './strings.m24';
 import { LABELS_DE } from './strings.labels';
 
 /** M10 catalogue (de). Keys mirror strings.en.ts and the generated data names. */
-export const DE: Catalog = {
+const DE_BASE: Catalog = {
   'hero.mountain.name': 'Mountain Guardian',
   'hero.mountain.action.masons-touch': 'Maurergriff',
   'hero.mountain.action.brace-elbow': 'Stützellbogen',
@@ -638,3 +639,5 @@ export const DE: Catalog = {
   ...M22_DE,
   ...LABELS_DE,
 };
+
+export const DE: Catalog = { ...DE_BASE, ...M24_DE(DE_BASE) };

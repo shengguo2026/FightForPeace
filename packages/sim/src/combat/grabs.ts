@@ -1,3 +1,5 @@
+import { untargetable } from '../shared/fighters';
+import { mounted } from '../shared/riders';
 import { fx } from '../math/fixed';
 import { nonCombatant } from './damage';
 import { bossResists } from '../enemies/boss';
@@ -80,6 +82,8 @@ export function grabEligible(world: World, g: Fighter, t: Fighter): boolean {
     t.grabId === 0 &&
     !UNGRABBABLE.has(t.state) &&
     !nonCombatant(t) &&
+    // M24: noncombatants, disguised figures and mounted riders cannot be grabbed.
+    !(t.ext && (untargetable(t) || mounted(t))) &&
     // Submission states need the boss's Resolve broken first.
     !bossResists(world, t)
   );

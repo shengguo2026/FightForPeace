@@ -1,9 +1,9 @@
 {
-  "game": "0.23.0",
-  "rulesVersion": "m23",
+  "game": "0.24.0",
+  "rulesVersion": "m24",
   "stateFormat": 18,
   "netProtocol": 2,
-  "rulesHash": 3020029942,
+  "rulesHash": 206746454,
   "contentHash": 3399863413,
   "cheatRegistryHash": 1593653293,
   "goldenReplays": {

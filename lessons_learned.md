@@ -218,6 +218,31 @@ The M23 harnesses (complete paths, progression sweep, balance, browser sweep in 
 - **Fix:** scrolling panels are focusable named regions (`Panel scrollLabel`); D-pad navigation measures the gap between boxes (`apps/game/src/shell/nav.ts`).
 - **Rule:** every new menu gets a gamepad-only e2e path through its main action and an axe check.
 
+## G · Found while building the shared engine features (M24)
+
+M24 checked every mechanic of the later specifications against the engine and built the 17 missing ones. Record: `docs/review/10-combat-constitution-audit.md`.
+
+### G1 · Registry and arena order is saved state
+
+- **What happened:** the new Lab arenas were first loaded before the greenhouse arenas. Arena, weapon and enemy indices are part of the saved world, so three Stage 2 golden replays (greenhouse and Marek) changed their hash although no rule had changed.
+- **Caught:** the golden replay test.
+- **Fix:** weapon and enemy order is frozen in `generate.ts` (`FROZEN_WEAPONS`, `FROZEN_ENEMIES`), new files are appended, and new arena files load after every stage and greenhouse arena.
+- **Rule:** new content is always appended to a registry; a changed golden replay hash is a bug until proven to be an intended rule change.
+
+### G2 · Test the effect, not the field
+
+- **What happened:** the heavy gun's slow walk set the speed, and its unit test checked that speed, but the controller moved the fighter by another variable, so the hero walked at full speed.
+- **Caught:** a scene test that measured the distance walked.
+- **Fix:** the controller moves by the fighter's own velocity (`packages/sim/src/movement/controller.ts`).
+- **Rule:** a mechanic's test checks what the player sees (distance, damage, state on screen), not the field that is supposed to cause it.
+
+### G3 · Food rules differed between specs
+
+- **What happened:** Stage 1 and 2 food is eaten on touch, but the Stage 3 spec (section 10.2) and two missions ask for food picked up with `J`, carried and eaten later. No milestone had planned it.
+- **Caught:** the M24 audit, row 4.5.
+- **Fix:** carried provisions (E13) as a weapon class; food on touch stays for Stages 1 and 2.
+- **Rule:** before a stage's content starts, every mechanic its spec uses has an audit verdict (pre-flight item 20).
+
 ---
 
 ## Pre-flight checklist: before writing any new stage's prompt files
@@ -257,3 +282,4 @@ Run this for Stage 4 onwards, each Curated Mission and every other mode. Stage 4
 **Before the stage's acceptance**
 
 19. The balance harness runs every beat on every difficulty and each difficulty has its own roster lever (F2); the complete-path, progression (with stall detector) and German/Chinese browser sweeps pass with no fallback text (F1, F3); every new menu has a gamepad-only path and an axe check (F4).
+20. Every mechanic the stage spec uses has a verdict in the Combat Constitution audit (`docs/review/10-combat-constitution-audit.md`); rows marked Engine or Module are built and tested in the Lab before the stage's content work starts (G3).

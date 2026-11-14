@@ -10,6 +10,7 @@ import { M19_EN } from './strings.m19';
 import { M20_EN } from './strings.m20';
 import { M21_EN } from './strings.m21';
 import { M22_EN } from './strings.m22';
+import { M24_EN } from './strings.m24';
 import { LABELS_EN } from './strings.labels';
 
 /**
@@ -324,6 +325,7 @@ export const EN = {
   ...M20_EN,
   ...M21_EN,
   ...M22_EN,
+  ...M24_EN,
   ...LABELS_EN,
   ...prefixed('prompt.', TEXT),
   ...prefixed('run.', STAGE_TEXT),

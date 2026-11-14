@@ -1,0 +1,39 @@
+# M24 placeholder (Combat Constitution audit E3): a tool with a tagged use. Its strikes
+# open a breakable tagged `crate` at once (pry bar, tire iron); everything else it hits
+# like an ordinary light melee weapon. Lab test scene only. Lab candidates.
+id: m24-pry-bar
+name: Pry Bar (test)
+class: temporaryMelee
+hands: 1
+integrity: { max: 80, worn: 50, critical: 20, hit: 5, guard: 3, clash: 8, throw: 20, deflect: 4 }
+gripResistance: 30
+pickup: 8
+throw:
+  speed: 13
+  lift: 2
+  responses: [blockable, exactDeflectable, strikeDeflectable]
+opens: [crate]
+actions:
+  - id: pry-swing
+    name: Pry Bar Swing
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 8, active: 3, recovery: 14 }
+    hitbox: { x: 20, w: 120, y: 140, h: 90, depth: 34 }
+    damage: 40
+    reaction: { kind: stagger, hitstun: 18, push: 3 }
+    costs: { stun: 10, scale: 10, starter: 15 }
+    meter: 3
+    clash: light
+    breakPower: 20
+
+  - id: pry-throw
+    name: Pry Bar Throw
+    category: weaponThrow
+    input: { context: weaponThrow, dir: neutral }
+    frames: { startup: 10, active: 1, recovery: 14, blockstun: 10 }
+    hitbox: { x: 0, w: 80, y: 100, h: 40, depth: 30 }
+    damage: 35
+    reaction: { kind: stagger, hitstun: 20, push: 4 }
+    costs: { stun: 10, scale: 10 }
+    meter: 2

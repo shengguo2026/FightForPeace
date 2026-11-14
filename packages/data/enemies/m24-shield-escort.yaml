@@ -1,0 +1,50 @@
+# M24 placeholder (Combat Constitution audit E5): finite gear. A Shield Escort carries a
+# frontal shield with its own non-regenerating Guard and a counter brace; each piece breaks
+# once (one stagger) and takes only its benefit with it. Lab test kit (Pressed Recruit
+# moves and art); stage milestones author the real Shield Escort, Retrieval Shield, etc.
+id: m24-shield-escort
+name: Shield Escort (test)
+art: recruit
+bodyWidth: 76
+actions:
+  - id: club-swing
+    name: Club Swing
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 18, active: 4, recovery: 22, blockstun: 14 }
+    hitbox: { x: 20, w: 115, y: 130, h: 140, depth: 34 }
+    damage: 50
+    reaction: { kind: stagger, hitstun: 18, push: 3 }
+    costs: { stun: 12, scale: 10, starter: 10, guard: 12 }
+    meter: 0
+    tags: [counterable]
+    note: 'pose enemy.recruit.sheet.attack cells 0/1/2'
+
+  - id: wild-rush
+    name: Wild Rush
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 16, active: [3, 6, 3], recovery: 26, blockstun: 14 }
+    hitbox: { x: 20, w: 115, y: 140, h: 120, depth: 34 }
+    damage: 70
+    reaction: { kind: stagger, hitstun: 20, push: 3 }
+    costs: { stun: 12, scale: 10, starter: 10, guard: 12 }
+    meter: 0
+    tags: [counterable, deflectBreak]
+    moves:
+      - { from: 8, to: 28, forward: 3 }
+
+profile:
+  role: pressure
+  health: 360
+  walk: { x: 2.5, z: 2 }
+  perception: 6
+  ring: 300
+  defense: { tier: basic, guard: { every: 4, of: 1 }, guardHold: 24 }
+  weapons: never
+  firearms: false
+  gear:
+    - { id: front-shield, name: Front Shield, guard: 160, benefit: front, stagger: 50 }
+    - { id: brace, name: Counter Brace, guard: 80, benefit: counter, stagger: 30 }
+  attacks:
+    - { action: club-swing, threat: 12, cooldown: 80 }
