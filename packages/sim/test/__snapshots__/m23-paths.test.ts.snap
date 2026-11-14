@@ -4,8 +4,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > easy, fire 1`] 
 {
   "continues": 5,
   "habit": 0,
-  "minutes": 9,
+  "lastRunMinutes": 9,
   "restarts": 0,
+  "totalMinutes": 9,
 }
 `;
 
@@ -13,8 +14,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > easy, mountain 
 {
   "continues": 2,
   "habit": 0,
-  "minutes": 6,
+  "lastRunMinutes": 6,
   "restarts": 0,
+  "totalMinutes": 6,
 }
 `;
 
@@ -22,8 +24,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > easy, mountain 
 {
   "continues": 4,
   "habit": 0,
-  "minutes": 6,
+  "lastRunMinutes": 6,
   "restarts": 0,
+  "totalMinutes": 6,
 }
 `;
 
@@ -31,8 +34,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > easy, river + f
 {
   "continues": 2,
   "habit": 0,
-  "minutes": 5,
+  "lastRunMinutes": 5,
   "restarts": 0,
+  "totalMinutes": 5,
 }
 `;
 
@@ -40,8 +44,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > easy, river 1`]
 {
   "continues": 4,
   "habit": 1,
-  "minutes": 7,
+  "lastRunMinutes": 7,
   "restarts": 0,
+  "totalMinutes": 7,
 }
 `;
 
@@ -49,8 +54,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > easy, wind + fi
 {
   "continues": 2,
   "habit": 0,
-  "minutes": 5,
+  "lastRunMinutes": 5,
   "restarts": 0,
+  "totalMinutes": 5,
 }
 `;
 
@@ -58,8 +64,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > easy, wind 1`] 
 {
   "continues": 5,
   "habit": 1,
-  "minutes": 8,
+  "lastRunMinutes": 8,
   "restarts": 2,
+  "totalMinutes": 19,
 }
 `;
 
@@ -67,8 +74,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > hard, mountain 
 {
   "continues": 2,
   "habit": 1,
-  "minutes": 6,
+  "lastRunMinutes": 6,
   "restarts": 2,
+  "totalMinutes": 13,
 }
 `;
 
@@ -76,8 +84,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > hard, river + f
 {
   "continues": 2,
   "habit": 0,
-  "minutes": 6,
+  "lastRunMinutes": 6,
   "restarts": 3,
+  "totalMinutes": 18,
 }
 `;
 
@@ -85,8 +94,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > hard, wind + fi
 {
   "continues": 2,
   "habit": 0,
-  "minutes": 6,
+  "lastRunMinutes": 6,
   "restarts": 16,
+  "totalMinutes": 82,
 }
 `;
 
@@ -94,8 +104,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > medium, fire 1`
 {
   "continues": 3,
   "habit": 0,
-  "minutes": 6,
+  "lastRunMinutes": 6,
   "restarts": 3,
+  "totalMinutes": 19,
 }
 `;
 
@@ -103,8 +114,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > medium, mountai
 {
   "continues": 1,
   "habit": 0,
-  "minutes": 5,
+  "lastRunMinutes": 5,
   "restarts": 0,
+  "totalMinutes": 5,
 }
 `;
 
@@ -112,8 +124,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > medium, mountai
 {
   "continues": 3,
   "habit": 0,
-  "minutes": 6,
+  "lastRunMinutes": 6,
   "restarts": 0,
+  "totalMinutes": 6,
 }
 `;
 
@@ -121,8 +134,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > medium, mountai
 {
   "continues": 3,
   "habit": 0,
-  "minutes": 7,
+  "lastRunMinutes": 7,
   "restarts": 0,
+  "totalMinutes": 7,
 }
 `;
 
@@ -130,8 +144,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > medium, mountai
 {
   "continues": 3,
   "habit": 0,
-  "minutes": 6,
+  "lastRunMinutes": 6,
   "restarts": 3,
+  "totalMinutes": 20,
 }
 `;
 
@@ -139,8 +154,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > medium, river +
 {
   "continues": 1,
   "habit": 0,
-  "minutes": 5,
+  "lastRunMinutes": 5,
   "restarts": 0,
+  "totalMinutes": 5,
 }
 `;
 
@@ -148,8 +164,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > medium, river +
 {
   "continues": 2,
   "habit": 0,
-  "minutes": 5,
+  "lastRunMinutes": 5,
   "restarts": 0,
+  "totalMinutes": 5,
 }
 `;
 
@@ -157,8 +174,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > medium, river 1
 {
   "continues": 3,
   "habit": 0,
-  "minutes": 6,
+  "lastRunMinutes": 6,
   "restarts": 7,
+  "totalMinutes": 40,
 }
 `;
 
@@ -166,8 +184,9 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > medium, wind + 
 {
   "continues": 2,
   "habit": 0,
-  "minutes": 5,
+  "lastRunMinutes": 5,
   "restarts": 1,
+  "totalMinutes": 12,
 }
 `;
 
@@ -175,7 +194,8 @@ exports[`Stage 2 from the pursuit to the crate, without cheats > medium, wind 1`
 {
   "continues": 3,
   "habit": 0,
-  "minutes": 6,
+  "lastRunMinutes": 6,
   "restarts": 16,
+  "totalMinutes": 83,
 }
 `;
