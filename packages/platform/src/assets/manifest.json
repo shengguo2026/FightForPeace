@@ -14256,6 +14256,54 @@
         ]
       }
     },
+    "hero.wind.sheet.back-throw": {
+      "url": "art/wind-back-throw.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 363,
+        "cells": [
+          {
+            "x0": 77,
+            "y0": 37,
+            "x1": 306,
+            "foot": 363
+          },
+          {
+            "x0": 70,
+            "y0": 39,
+            "x1": 304,
+            "foot": 363
+          },
+          {
+            "x0": 71,
+            "y0": 33,
+            "x1": 320,
+            "foot": 363
+          },
+          {
+            "x0": 57,
+            "y0": 36,
+            "x1": 326,
+            "foot": 362
+          },
+          {
+            "x0": 66,
+            "y0": 37,
+            "x1": 323,
+            "foot": 362
+          },
+          {
+            "x0": 79,
+            "y0": 36,
+            "x1": 308,
+            "foot": 362
+          }
+        ],
+        "scale": 0.96
+      }
+    },
     "hero.wind.sheet.breaker-pickup": {
       "url": "art/wind-breaker-pickup.webp",
       "sheet": {
