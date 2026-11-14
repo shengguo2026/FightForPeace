@@ -231,6 +231,35 @@ test('M22: Stage 2 enemies flee on a six-pose run; the rider, disarmed Marauder 
     expect(reg.sheet(id)?.sheet.cols, id).toBe(3);
 });
 
+test('an enemy walks on its own walk sheet once delivered, else on its idle-walk poses', () => {
+  // Guo, 14 Nov: the Stage 2 IDLE-WALK walk poses never swap the legs; EW01-EW08 add walk
+  // sheets for the approach. Stage 1 kits keep their idle-walk poses, which do alternate.
+  const enemy = (id: string) => {
+    const f = heroOf(createWorld(1, { heroes: ['mountain'] }), 0)!;
+    f.team = 'enemy';
+    f.hero = ENEMIES.findIndex((e) => e.id === id);
+    f.wkit = -1;
+    f.state = MoveState.Walk;
+    return f;
+  };
+  for (const [id, art] of [
+    ['claimhand', 'claimhand'],
+    ['reaver', 'reaver'],
+    ['saboteur', 'saboteur'],
+    ['signalman', 'signalman'],
+    ['recruit', 'trainer'],
+  ] as const) {
+    const own = reg.sheet(`enemy.${art}.sheet.walk`) ? 'walk' : 'idle-walk';
+    const cells = new Set<number>();
+    for (let fr = 0; fr < 60; fr++) {
+      const got = pick.fighter(enemy(id), fr)!;
+      expect(got.sheet, art).toBe(`enemy.${art}.sheet.${own}`);
+      cells.add(got.cell);
+    }
+    expect(cells.size, art).toBeGreaterThanOrEqual(4);
+  }
+});
+
 test('weapon sheets are drawn at the same figure size as the idle sheet', () => {
   // The founders' staff sheets were drawn about 12 % smaller than their idle sheets.
   const size = (id: string) => reg.sheet(id)!.sheet.scale ?? 1;

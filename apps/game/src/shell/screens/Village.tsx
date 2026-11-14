@@ -4,25 +4,14 @@ import { locale, difficultyName, stageName, t } from '../../text/i18n';
 import type { Shell } from '../shell';
 import { useNav } from '../hooks';
 import { ART, MenuIcon, Panel, Screen, hoverFocus } from '../ui';
-import {
-  AssetRegistry,
-  STAGE1_TITLE_LOOP,
-  STAGE2_TITLE_LOOP,
-  STORE,
-  museumNew,
-  stageOpen,
-} from '@ffp/platform';
+import { AssetRegistry, STORE, museumNew, titleScreenFor } from '@ffp/platform';
 
 /**
- * M13: the seamless Flow title loop behind the village menu (muted, decorative). M22: once
- * Stage 2 is open the village shows its Stage 2 dawn loop and the Stage 2 menu picture
- * (the same view three years later).
+ * M13: the seamless Flow title loop behind the village menu (muted, decorative). The loop
+ * and the menu picture are those of the latest stage this profile completed at least once
+ * (`titleScreen` in progression.yaml), so Stage 2's dawn loop shows after a Stage 2 clear.
  */
 const registry = new AssetRegistry();
-const titleLoops = {
-  stage1: registry.video(STAGE1_TITLE_LOOP.clip),
-  stage2: registry.video(STAGE2_TITLE_LOOP.clip),
-};
 import { itemName } from './Store';
 
 type Item = 'continue' | 'play' | 'academy' | 'store' | 'records' | 'museum' | 'guide' | 'settings';
@@ -84,9 +73,9 @@ export function VillageScreen({ shell }: { shell: Shell }) {
       : shell.storage.value === 'indexeddb'
         ? t('menu.storageBrowser')
         : t('menu.storageMemory');
-  const later = !!p && stageOpen(p, 'stage2');
-  const titleLoop = later ? (titleLoops.stage2 ?? titleLoops.stage1) : titleLoops.stage1;
-  const menuBg = later ? 'menu-bg-s2' : 'menu-bg';
+  const screen = titleScreenFor(p ?? null);
+  const titleLoop = registry.video(screen.clip);
+  const menuBg = screen.menuBg;
   return (
     <Screen bg={ART(menuBg)} dim align="start" testId="village">
       {titleLoop &&
@@ -96,7 +85,7 @@ export function VillageScreen({ shell }: { shell: Shell }) {
         <video
           key={titleLoop.url}
           data-testid="title-loop"
-          data-stage={later ? 'stage2' : 'stage1'}
+          data-clip={screen.clip}
           aria-hidden="true"
           autoplay
           muted

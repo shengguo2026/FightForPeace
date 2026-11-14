@@ -969,6 +969,12 @@ export interface CampaignStageDef {
   opens: string | null;
   /** What's New briefing cards shown before the first run (text keys). */
   whatsNew: readonly string[];
+  /**
+   * The title screen this stage brings once it has been completed at least once (any
+   * difficulty, Cheat-Assisted included): the village loop clip, its still and the menu
+   * picture. The village shows the one of the latest completed stage, else the first stage's.
+   */
+  titleScreen: { clip: string; still: string; menuBg: string };
 }
 
 export interface MuseumEntryDef {

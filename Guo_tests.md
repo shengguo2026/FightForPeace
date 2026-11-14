@@ -1295,3 +1295,9 @@ Pull the branch again (`git pull`), then `pnpm install` and `pnpm dev` as above.
 3. **Extra walks:** the Road Rider on foot, the Revolver Marauder after losing its revolver and Marek in Scorched Claim step through a walk instead of sliding.
 4. **Villagers:** free the worker in the Aeration Annex and the botanist in the Prep Room: each walks out on a walk cycle.
 5. **Stage 1 runs (S1W01–S1W03):** in Stage 1, beat a Pressed Recruit until it flees: it runs away on a six-pose run instead of the old two poses. Free the workers: both kinds run home on a six-pose run, facing the way they go.
+
+### Fixes after the M22 test on main (14 Nov)
+
+1. **Title screen follows the latest beaten stage:** with a profile that has Stage 2 open but not yet completed, the village shows the Stage 1 title loop and the Stage 1 menu picture. Complete Stage 2 once (any difficulty; Cheat-Assisted counts) and go back to the village: it now shows the Stage 2 dawn loop over the Stage 2 menu picture. A new profile shows Stage 1.
+2. **Stage 2 enemy walk (art pending):** the approach walk of the Stage 2 enemies needs new sheets (EW01–EW08 in `codex_prompts_stage2_armed_walks.md`). Until they are imported the enemies keep their current walk; after the import each one walks toward the hero with the legs swapping on every step.
+

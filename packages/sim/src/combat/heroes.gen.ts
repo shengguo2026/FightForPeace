@@ -33770,7 +33770,12 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "id": "stage1",
       "content": "story.stage1.broken-water-pact",
       "opens": null,
-      "whatsNew": []
+      "whatsNew": [],
+      "titleScreen": {
+        "clip": "cine.stage1.title-loop",
+        "still": "story.stage1.title-loop",
+        "menuBg": "menu-bg"
+      }
     },
     {
       "id": "stage2",
@@ -33783,7 +33788,12 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "weapons",
         "containers",
         "enemies"
-      ]
+      ],
+      "titleScreen": {
+        "clip": "cine.stage2.title-loop",
+        "still": "story.stage2.title-loop",
+        "menuBg": "menu-bg-s2"
+      }
     }
   ],
   "museum": [

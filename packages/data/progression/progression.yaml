@@ -478,12 +478,18 @@ academy:
 # once on the profile (any full run, Cheat-Assisted included: story progress is narrative).
 # `whatsNew` names the briefing shown once before the stage's first run. Later Story Mode
 # and Stage Challenge read this same list.
+# titleScreen: the village title loop, its still and the menu picture that the stage brings
+# once it has been completed at least once (any difficulty, Cheat-Assisted included). The
+# village shows the title screen of the latest completed stage in this order, else stage1's.
 campaign:
-  - { id: stage1, content: story.stage1.broken-water-pact }
+  - id: stage1
+    content: story.stage1.broken-water-pact
+    titleScreen: { clip: cine.stage1.title-loop, still: story.stage1.title-loop, menuBg: menu-bg }
   - id: stage2
     content: story.stage2.prosperity-under-siege
     opens: { complete: stage1 }
     whatsNew: [twins, mounted, ledger, weapons, containers, enemies]
+    titleScreen: { clip: cine.stage2.title-loop, still: story.stage2.title-loop, menuBg: menu-bg-s2 }
 
 # --- M21 Village Museum and Archive (Stage 2 spec §14.2, F&D §9.1) ------------------------
 # Every entry has a stable ID, a section, the stage whose pages it belongs to (pages of a
