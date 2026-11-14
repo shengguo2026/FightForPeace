@@ -188,13 +188,14 @@ const HERO_POSES: Record<string, Record<string, Posed>> = {
   },
   mountain: {
     // Back throw: pose 4 of the grab sheet (pivot, arms over the shoulder), not the
-    // forward heave the shared throw pose shows.
-    'turning-weir': { sheet: 'sheet.grab-throw', cells: [1, [3], 5] },
+    // forward heave the shared throw pose shows. Held from mid-startup to late recovery:
+    // the active phase alone (3 frames) is too short to see.
+    'turning-weir': { sheet: 'sheet.grab-throw', cells: [[1, 3], [3], [3, 3, 5]] },
     'confluence-strike': { sheet: 'sheet.team-attack', cells: [0, [1, 2, 3], 4] },
   },
   river: {
     // Back throw: pose 4 of the grab sheet (rolling backward, feet over the head).
-    'eddy-swing': { sheet: 'sheet.grab-throw', cells: [1, [3], 5] },
+    'eddy-swing': { sheet: 'sheet.grab-throw', cells: [[1, 3], [3], [3, 3, 5]] },
     'confluence-strike': { sheet: 'sheet.team-attack', cells: [0, [1, 2, 3], 4] },
   },
 };

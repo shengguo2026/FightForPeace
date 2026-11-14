@@ -143,6 +143,12 @@ test('a back throw is drawn as a turn toward the back, not the forward throw', (
     // The release (active) frame of the back throw never repeats a forward-throw pose.
     const release = backward[a(kit, back).startup]!;
     expect(forward.has(release), `${id} ${release}`).toBe(false);
+    // A single back-throw pose stays on screen long enough to see (at least a fifth of a
+    // second); Wind's own sheet moves through several poses instead (checked below).
+    if (id !== 'wind') {
+      const shown = backward.filter((c) => c === release).length;
+      expect(shown, `${id} back-throw pose frames`).toBeGreaterThanOrEqual(12);
+    }
   }
   // Wind plays the whole BT01 back-throw sheet: pivot, load, release, follow-through, recovery.
   const w = hero('wind');
