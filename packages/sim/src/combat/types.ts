@@ -971,10 +971,16 @@ export interface CampaignStageDef {
   whatsNew: readonly string[];
   /**
    * The title screen this stage brings once it has been completed at least once (any
-   * difficulty, Cheat-Assisted included): the village loop clip, its still and the menu
-   * picture. The village shows the one of the latest completed stage, else the first stage's.
+   * difficulty, Cheat-Assisted included): the village loop clip, its still, the menu
+   * picture and the village music. The village shows the one of the latest completed stage, else the first stage's.
    */
-  titleScreen: { clip: string; still: string; menuBg: string };
+  titleScreen: {
+    clip: string;
+    still: string;
+    menuBg: string;
+    /** The village music (cue and state of the stage's score). */
+    music: { cue: string; state: string };
+  };
 }
 
 export interface MuseumEntryDef {

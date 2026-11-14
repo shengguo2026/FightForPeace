@@ -196,6 +196,10 @@ test('the title screen follows the latest completed stage; Profile data shows it
   );
   await expect(page.getByTestId('profile-title-screen')).toHaveAttribute('data-stage', 'stage2');
   await backToVillage();
+  // The village music follows the title screen too (Guo's pick: What We Protected).
+  await expect
+    .poll(async () => (await media(page)).music?.cue ?? null)
+    .toBe('mus.stage2.what-we-protected');
   const loop = page.getByTestId('title-loop');
   if ((await loop.count()) > 0)
     await expect(loop).toHaveAttribute('data-clip', 'cine.stage2.title-loop');

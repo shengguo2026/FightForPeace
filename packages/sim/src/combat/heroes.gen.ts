@@ -33774,7 +33774,11 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "titleScreen": {
         "clip": "cine.stage1.title-loop",
         "still": "story.stage1.title-loop",
-        "menuBg": "menu-bg"
+        "menuBg": "menu-bg",
+        "music": {
+          "cue": "mus.stage1.river-before-silence",
+          "state": "title"
+        }
       }
     },
     {
@@ -33792,7 +33796,11 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "titleScreen": {
         "clip": "cine.stage2.title-loop",
         "still": "story.stage2.title-loop",
-        "menuBg": "menu-bg-s2"
+        "menuBg": "menu-bg-s2",
+        "music": {
+          "cue": "mus.stage2.what-we-protected",
+          "state": "ending"
+        }
       }
     }
   ],

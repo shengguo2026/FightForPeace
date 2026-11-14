@@ -2348,6 +2348,10 @@ const ProgressionYaml = T.Object(
               clip: T.String({ minLength: 1 }),
               still: T.String({ minLength: 1 }),
               menuBg: T.String({ minLength: 1 }),
+              music: T.Object(
+                { cue: T.String({ minLength: 1 }), state: T.String({ minLength: 1 }) },
+                { additionalProperties: false },
+              ),
             },
             { additionalProperties: false },
           ),
@@ -2571,7 +2575,7 @@ export function loadProgression(
       content: c.content,
       opens: c.opens?.complete ?? null,
       whatsNew: c.whatsNew ?? [],
-      titleScreen: { ...c.titleScreen },
+      titleScreen: { ...c.titleScreen, music: { ...c.titleScreen.music } },
     })),
     museum: d.museum.map((m) => ({
       id: m.id,

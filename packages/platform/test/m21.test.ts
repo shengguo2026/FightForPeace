@@ -139,6 +139,7 @@ describe('the campaign layer', () => {
       clip: 'cine.stage2.title-loop',
       still: 'story.stage2.title-loop',
       menuBg: 'menu-bg-s2',
+      music: { cue: 'mus.stage2.what-we-protected', state: 'ending' },
     });
   });
 

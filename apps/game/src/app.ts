@@ -2,7 +2,7 @@ import { tickMusic } from './media/director';
 import { audio } from './media/audio';
 import * as Phaser from 'phaser';
 import { render, h } from 'preact';
-import { DEFAULT_KEYBOARD_P1, QualityGovernor, rebind } from '@ffp/platform';
+import { DEFAULT_KEYBOARD_P1, QualityGovernor, rebind, titleScreenFor } from '@ffp/platform';
 import { CORRIDORS, Cheat, ROOMS, HEROES, STAGES, equip, heroOf, stageResults } from '@ffp/sim';
 import { GameSession, MAX_STEPS_PER_FRAME } from './game';
 import { capabilities, perf } from './system/probe';
@@ -373,6 +373,7 @@ export function startGame(): void {
           results: lab.results.value !== null,
           ending: shell.ending.value !== null,
           paused: menuPaused(lab),
+          title: titleScreenFor(shell.active.value).music,
         },
         now,
       );
