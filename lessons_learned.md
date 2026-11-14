@@ -18,7 +18,7 @@ Status on 2026-11-14: Stage 1 and Stage 2 art is delivered except the armed-walk
 
 ## A · Missing sprite sheets (movement coverage)
 
-The biggest and most repeated gap. Three times a whole class of sheets was found missing only when Guo played the build.
+The biggest and most repeated gap. Several times a whole class of sheets was found missing or broken only when Guo played the build.
 
 ### A1 · Hero walk cycles repeated half a cycle
 
@@ -49,6 +49,13 @@ The biggest and most repeated gap. Three times a whole class of sheets was found
 - **Caught:** Guo's M21 tests, 2026-11-13 (enemies). The villager version was found right after the M21 merge and needed a second PR (#44).
 - **Fix:** all eight Stage 2 enemy types and the rescued workers now face the way they run, with a unit test for each.
 - **Rule:** the facing rule ("faces right in every pose, **including flee, exit and run-home poses**; the game mirrors it") is in every character prompt. The review notes the facing of every pose, and a sheet that faces left is either redone or recorded with a flip flag at import. The game has one test that walks every actor type left and right and checks its facing.
+
+### A5 · Stage 2 enemies glided instead of walking
+
+- **What happened:** on every Stage 2 enemy `IDLE-WALK` sheet, the four walk poses (cells 3 to 6) all have the same leg in front with almost the same stride, so enemies glide or limp when they come toward the hero. The Stage 1 enemy sheets alternate the legs correctly. When the flee runs were checked on 2026-11-13 (A3), these walks were judged fine because the cells existed and differed; the importer and tests only checked that, not that the legs swap. Combining idle and walk poses on one sheet also left only four walk cells.
+- **Caught:** Guo's M22 tests, 2026-11-14, after the M22 art import.
+- **Fix:** separate approach-walk sheets EW01–EW08 at the end of `codex_prompts_stage2_armed_walks.md` in the Pictures repo. The game uses the walk sheet once it is delivered and the idle-walk poses until then.
+- **Rule:** the A1 check (cell 1 against cell 4, a different leg in front) applies to **every** sheet that holds walk or run poses, including enemy and NPC `IDLE-WALK` sheets, not only hero walks. New characters get a separate six-pose walk sheet instead of idle and walk combined.
 
 ---
 
@@ -201,7 +208,7 @@ Run this for Stage 4 onwards, each Curated Mission and every other mode. Stage 4
 
 **Prompt text**
 
-10. Locomotion prompts name the leading leg and arm in every cell, forbid repeating the first half, and end with the self-check (A1).
+10. Locomotion prompts name the leading leg and arm in every cell, forbid repeating the first half, and end with the self-check (A1). Every delivered sheet with walk or run poses, including enemy and NPC `IDLE-WALK` sheets, is checked by comparing cell 1 with cell 4 before approval (A5).
 11. Every character prompt says it faces right in every pose, including flee and exit poses (A4).
 12. Every gameplay sheet attaches the model sheet and the IDLE sheet and says "exactly as tall as the idle sheet"; armed sheets also attach the weapon sheet (B1).
 13. Every prop states its size relative to hero height (B2).
