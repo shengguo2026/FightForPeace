@@ -1,4 +1,5 @@
 import { fx } from '../math/fixed';
+import { bandFor } from '../objectives/grade';
 import { ByteWriter } from '../state/encode';
 import { GREENHOUSE_DATA } from '../combat/heroes.gen';
 import type { GreenhouseDef, GreenhouseRoomDef, ActionDef } from '../combat/types';
@@ -486,7 +487,7 @@ export function ledgerGrade(gh: Greenhouse): LedgerGrade {
     if (a.state !== AssetState.Lost) got += k.weight * a.condition;
   }
   const score = total > 0 ? Math.trunc((got * 100) / total) : 100;
-  const band = GREENHOUSE!.grades.find((g) => score >= g.min) ?? GREENHOUSE!.grades.at(-1)!;
+  const band = bandFor(score, GREENHOUSE!.grades);
   return { score, grade: band.id, name: band.name };
 }
 

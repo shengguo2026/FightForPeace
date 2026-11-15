@@ -1,4 +1,5 @@
 import { heldSpeed, jumpRestricted } from '../shared/weapons';
+import { objectiveChanneling, objectiveInteract, stepObjectiveHold } from '../objectives/units';
 import { fxMul } from '../math/fixed';
 import { ActionBit, DirBit, OFFENSIVE_MASK } from '../input/bits';
 import { type Axis, type Fighter, type FrameInput, MoveState, type World } from '../world/types';
@@ -134,7 +135,8 @@ export function stepHero(world: World, f: Fighter, input: FrameInput, p: Movemen
   // M9 hold to interact (free a worker, revive a partner, inspect a clue or the evidence).
   if (f.state === MoveState.Channel) {
     // M18: a greenhouse hold (repair, redirect, rack) or a stage interaction.
-    if (greenhouseChanneling(world, f)) stepGreenhouseChannel(world, f, input);
+    if (objectiveChanneling(world, f)) stepObjectiveHold(world, f, input);
+    else if (greenhouseChanneling(world, f)) stepGreenhouseChannel(world, f, input);
     else stepChannel(world, f, input);
     tickDefense(world, f);
     return;
@@ -688,6 +690,8 @@ function startAttack(
     f.targetId = 0;
     const neutral = input.moveX === 0 && input.moveZ === 0;
     if (neutral && startChannel(world, f)) return;
+    // M25: free a captive, collect, seal or recover an evidence case.
+    if (neutral && objectiveInteract(world, f)) return;
     if (f.item !== 0) {
       // M18 contextual fitting: the Service Lance's coupling hook on a rack or the shutter.
       if (neutral && fitWithLance(world, f)) return;

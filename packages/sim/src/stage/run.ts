@@ -10,6 +10,7 @@ import { claim, spawnItem } from '../combat/held';
 import { weaponIndex, WEAPONS } from '../combat/armory';
 import { REACTION } from '../combat/reactions';
 import { LAB_LAYOUT, type StageLayout } from '../world/stage';
+import { bandFor, grade100, type GradeInput, rankFor, ratio } from '../objectives/grade';
 import { ActionBit } from '../input/bits';
 import { DIFFICULTIES, profileOf } from '../enemies/data';
 import { Result, newEncounter, setupDevices, updateView } from '../enemies/encounter';
@@ -18,6 +19,7 @@ import {
   CORRIDORS,
   PursuitPhase,
   corridorIndex,
+  RECORD_RANKS,
   responseRecord,
   setupPursuit,
 } from '../mounted/pursuit';
@@ -956,20 +958,10 @@ export interface ResponseResult {
   mastery: boolean;
 }
 
-const LETTERS = ['C', 'B', 'A', 'S'];
-
 /** Clock text m:ss for a frame count at 60 Hz. */
 export function clock(frames: number): string {
   const s = Math.trunc(frames / 60);
   return `${Math.trunc(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-}
-
-/** The letter for a percentage on a grade's rank thresholds (S, A, B, else C). */
-export function rankFor(percent: number, ranks: readonly number[]): string {
-  if (percent >= ranks[0]!) return 'S';
-  if (percent >= ranks[1]!) return 'A';
-  if (percent >= ranks[2]!) return 'B';
-  return 'C';
 }
 
 /** Share (0–100 percent) of a category earned by a run. */
@@ -979,8 +971,6 @@ function measure(
   def: StageDef,
 ): { pct: number; value: string } {
   const s = run.stats;
-  const ratio = (n: number, of: number) =>
-    of === 0 ? 100 : Math.trunc((Math.min(n, of) * 100) / of);
   switch (c.measure) {
     case 'workers':
       return {
@@ -1037,7 +1027,7 @@ function bandOf(percent: number): string {
 export function stagePreservation(run: StageRun): PreservationResult | null {
   if (run.ledger.length === 0 || !GREENHOUSE) return null;
   const percent = conditionPercent(run.ledger);
-  const band = GREENHOUSE.grades.find((g) => percent >= g.min) ?? GREENHOUSE.grades.at(-1)!;
+  const band = bandFor(percent, GREENHOUSE.grades);
   const categories = LEDGER_CATEGORIES.flatMap((id, code) => {
     const list = run.ledger.filter((a) => GREENHOUSE!.ledger[a.kind]!.category === code);
     if (list.length === 0) return [];
@@ -1054,7 +1044,7 @@ export function stageResponse(run: StageRun): ResponseResult | null {
   const percent = Math.trunc(scores.reduce((n, x) => n + x, 0) / scores.length);
   return {
     percent,
-    grade: rankFor(percent, [90, 75, 55]),
+    grade: rankFor(percent, RECORD_RANKS),
     rewinds: run.response.reduce((n, r) => n + r.rewinds, 0),
     mastery: run.response.every((r) => r.mastery),
   };
@@ -1114,27 +1104,15 @@ export function stageResults(world: World): StageResults | null {
   if (!run) return null;
   const def = STAGES[run.stage]!;
   const g = def.grade;
-  const grades: Grade[] = g.categories.map((c) => {
+  const inputs: GradeInput[] = g.categories.map((c) => {
     const m = measure(c, run, def);
-    return {
-      id: c.id,
-      value: m.value,
-      grade: rankFor(m.pct, g.ranks),
-      points: Math.trunc((c.weight * m.pct) / 100),
-      weight: c.weight,
-    };
+    return { id: c.id, weight: c.weight, share: m.pct, value: m.value };
   });
-  const points = grades.reduce((n, x) => n + x.points, 0);
-  let overall = rankFor(points, g.ranks);
-  let capped: string | null = null;
-  for (const cap of g.caps) {
-    const x = grades.find((e) => e.id === cap.category);
-    if (!x || x.points * 100 >= cap.below * x.weight) continue;
-    if (LETTERS.indexOf(cap.rank) < LETTERS.indexOf(overall)) {
-      overall = cap.rank;
-      capped = cap.category;
-    }
-  }
+  // M25: the shared 100-point grade module (caps; Stage 3 adds condition caps and no grade
+  // for Cheat-Assisted runs, which Stages 1 and 2 do not use).
+  const result = grade100(g, inputs, [], g.cheat === 'none' && world.cheats.marked);
+  const grades: Grade[] = result.lines;
+  const { points, overall, capped } = result;
   const standard = world.playerHero.every((h, slot) => {
     const lo = world.playerLoadout[slot];
     const base = defaultLoadout(kitOf({ team: 'hero', hero: h }));

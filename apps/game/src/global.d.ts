@@ -233,6 +233,10 @@ export interface FfpDebugHook {
   setHealth(slot: number, health: number): void;
   /** M7: the encounter's state (null in the Lab). */
   encounter(): DebugEncounter | null;
+  /** M25: the objective state and the room's live grade (null without objectives). */
+  objectives(): DebugObjectives | null;
+  /** M25 Lab: take or restore the test room's checkpoint copy. */
+  m25Action(kind: 'checkpoint' | 'restore'): void;
   /** M8: co-op state (invitation, last event, telemetry). */
   coop(): DebugCoop;
   /** M8: holds the first enemy in Hitstun with its combo open (a Stagger target). */
@@ -253,6 +257,13 @@ export interface DebugCoop {
   rescues: number;
   bundles: number;
   reciprocal: number;
+}
+
+export interface DebugObjectives {
+  units: { phase: number; count: number; locked: boolean; condition: number }[];
+  cases: { state: number; outcome: string }[];
+  channels: { phase: number; progress: number; stops: number; paused: boolean }[];
+  grade: { points: number; overall: string; capped: string | null } | null;
 }
 
 export interface DebugEncounter {

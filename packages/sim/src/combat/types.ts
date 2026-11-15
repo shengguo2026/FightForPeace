@@ -659,6 +659,83 @@ export interface ArenaDef {
   stage: boolean;
   /** M24: the arena's own scenery (items, surfaces, breakables, hazards, movers, …) or null. */
   scenery: StageLayout | null;
+  /** M25: protected units, evidence cases and hostile channels, or null. */
+  objectives: ArenaObjectivesDef | null;
+  /** M25: the arena's own 100-point grade, or null. */
+  grade: ArenaGradeDef | null;
+}
+
+// --- M25 objective and grade framework ---------------------------------------------------
+
+/** A condition ladder: states from best to worst, each reached at a hostile-action count. */
+export interface LadderDef {
+  id: string;
+  states: readonly { id: string; at: number; share: number }[];
+}
+
+/** Grade shares (0–100) of an evidence case's final outcome. */
+export interface OutcomeDef {
+  id: string;
+  documented: number;
+  recovered: number;
+  disturbed: number;
+  missing: number;
+}
+
+export interface ObjectivesDef {
+  ladders: readonly LadderDef[];
+  outcomes: readonly OutcomeDef[];
+}
+
+/** A protected unit (pixels): its ladder id, zone half sizes, hold to free, route to shelter. */
+export interface UnitDef {
+  id: string;
+  ladder: string;
+  x: number;
+  z: number;
+  hw: number;
+  hd: number;
+  free: number;
+  cheer: number;
+  speed: number;
+  route: readonly { x: number; z: number; wait: boolean }[];
+}
+
+export interface CaseDef {
+  id: string;
+  outcome: string;
+  x: number;
+  z: number;
+  collect: number;
+  seal: number;
+  recover: number;
+}
+
+/** A hostile channel against a unit (`unit`) or a case, by index in the arena's list. */
+export interface ChannelDef {
+  unit: boolean;
+  target: number;
+  kind: string;
+  x: number;
+  z: number;
+  tell: number;
+  start: number;
+  cooldown: number;
+  kits: readonly string[];
+}
+
+export interface ArenaObjectivesDef {
+  units: readonly UnitDef[];
+  cases: readonly CaseDef[];
+  channels: readonly ChannelDef[];
+}
+
+export interface ArenaGradeDef {
+  categories: readonly { id: string; measure: 'units' | 'cases'; weight: number }[];
+  ranks: readonly number[];
+  caps: readonly { category: string; below: number; rank: string }[];
+  conditionCaps: readonly { ladder: string; state: string; rank: string }[];
+  cheat: 'grade' | 'none';
 }
 
 // --- M9 stage journey --------------------------------------------------------------------
@@ -792,6 +869,8 @@ export interface StageGradeDef {
   ranks: readonly number[];
   /** A category below `below` percent of its weight caps the rank at `rank`. */
   caps: readonly { category: string; below: number; rank: string }[];
+  /** M25: 'none' gives a Cheat-Assisted run no grade (Stage 3 §22.2). */
+  cheat: 'grade' | 'none';
 }
 
 export interface StageScoreDef {

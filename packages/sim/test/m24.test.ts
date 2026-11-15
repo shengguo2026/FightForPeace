@@ -56,9 +56,11 @@ describe('M24 registry order and data (rule 2)', () => {
     const first = ENEMIES.findIndex((k) => k.id.startsWith('m24-'));
     expect(ENEMIES.slice(first).every((k) => k.id.startsWith('m24-'))).toBe(true);
     // The Lab scenes are the last arenas (after every stage and greenhouse arena).
+    // (M25 appends its test room after them.)
     const lab = ARENAS.findIndex((a) => a.id.startsWith('lab-m24-'));
-    expect(ARENAS.slice(lab).every((a) => a.id.startsWith('lab-m24-'))).toBe(true);
-    expect(ARENAS.slice(lab).length).toBe(9);
+    const after = ARENAS.slice(lab).filter((a) => !a.id.startsWith('lab-m25-'));
+    expect(after.every((a) => a.id.startsWith('lab-m24-'))).toBe(true);
+    expect(after.length).toBe(9);
   });
 
   test('the mount catalogue keeps the bike first and the Stage 2 corridors on it', () => {

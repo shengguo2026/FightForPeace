@@ -1426,3 +1426,52 @@ Every scene opens from the Lab: `http://localhost:5173/?lab`, press **F1**, pick
 11. **Mount Catalogue (pursuit):** in the Arena panel pick **M24 Lab: Mount Catalogue** on **Easy**. You ride a horse placeholder. Let it crash until Stability is 0: you dismount safely and finish on foot instead of losing.
 12. **Stage 1 and 2 still the same:** play the Stage 1 courtyard and the Stage 2 Loading Yard on Medium (`?stage=2&beat=2`). Nothing should feel different from 0.23.0.
 13. **Languages:** switch to Deutsch and 简体中文 and open two of the scenes above: the labels (Warning, Gear, Heat, Stability, robot states) and the "(test)" names are translated.
+
+## M25 · Objective and grade framework (0.25.0)
+
+What's new: M25 builds the three shared modules every later stage uses for its objectives (campaign review G13): **protected units** (a person or group with a condition ladder that only changes when an enemy completes a visible, interruptible hostile action, and that locks when they reach safety), **evidence cases** (collected, sealed, disturbed, recovered, never lost) and **one 100-point grade** with caps. The Stage 1 and Stage 2 results screens now use the same grade module and give exactly the same numbers as before.
+
+Everything new is in **one Lab test room with placeholder art**: the captive and the evidence case are labelled boxes; every state is written out in text.
+
+### Get and start the build
+
+To test the branch before it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-rub661
+git checkout claude/project-thread-rub661
+git pull origin claude/project-thread-rub661
+pnpm install
+pnpm dev
+```
+
+After it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+If Vite prints another port than 5173, use that one. Stop the server with `Ctrl+C`.
+
+### Test steps
+
+Open the Lab: `http://localhost:5173/?lab`, press **F1**, pick **M25 Lab: Captive and Evidence** in the Arena panel and start it on **Medium**. Press **F1** again to hide the Lab panels. Keys: move **W A S D**, attack **T**, guard **G**, interact **J** (hold it to free, collect, seal or recover). The grade panel is at the top left.
+
+1. **Version:** the corner of the village shows 0.25.0.
+2. **Start state:** walk left. The **Lab captive** is bound inside a dashed **Protected zone** and shows "Secure" with a diamond icon and "Hostile actions: 0". The grade panel shows Rescue condition 70/70, Research record 0/30 (the case is not collected yet), total 70/100, rank B.
+3. **Enemies act, condition worsens:** do nothing. An enemy walks to a marked **Hostile action spot** and works it: a red bar fills under the spot with the action written out ("Pulling the rope line taut", "Kicking over the lantern"). When the bar is full: "Hostile action completed", the captive shows **Strained** and "Hostile actions: 1", and Rescue condition drops to 35/70. After the second action: **Critical**, "Hostile actions: 2", Rescue condition 0/70. Nothing changes from waiting alone; only completed actions count.
+4. **Interrupt an action:** restart the room. When an enemy starts working a spot, hit it once. The bar empties, "Hostile action stopped" shows and the count does not go up. After a pause another enemy (or the same one) tries again.
+5. **Robot pauses an action:** restart. When an enemy is working a spot, stand on the **Robot: interference** circle at the bottom. After it becomes "active", the working bar turns blue and shows "Paused by the robot" until the robot is consumed.
+6. **Free the captive, the count locks:** restart. Walk to the captive and hold **J** ("Hold Interact: free" shows above you). It shows "Freed", then walks to the **Hand-off point**. If an enemy is inside its zone there, it shows "Waiting for a safe hand-off" until the enemy leaves or is beaten. At the **Shelter** it shows "Safe" and the count is marked "locked"; the hostile action spots by the captive show "Closed" and the count never changes again.
+7. **Evidence case:** walk to the **Evidence case** in the middle and hold **J**: "Collected" (Research record 30/30, Documented). Hold **J** again: "Sealed"; the crate spot next to it closes.
+8. **Disturbed and recovered:** restart. Collect the case but do not seal it, and let an enemy finish "Dragging a crate against the case": the case shows **Disturbed** with scattered papers and Research record 9/30 (one third). Hold **J** on it: "Recovered (seal it)", then **J** again: sealed, Research record 19/30 (two thirds).
+9. **Checkpoint:** restart. Press **F1**, then **Take checkpoint**. Free the captive and let it reach safety; let the case be disturbed. Press **Restore checkpoint**: the captive stays **Safe** with its locked count, the case goes back to "Not collected". Then restart, take a checkpoint, let one hostile action complete (Strained) and restore: the captive is **Secure** again.
+10. **Cheat-Assisted:** this room gives a Cheat-Assisted run no grade (as Stage 3 will): with any cheat active the panel shows "No grade (Cheat-Assisted)" instead of the rank. (The Stage 1 and 2 results still grade Cheat-Assisted runs as before.)
+11. **Stage 1 and 2 results unchanged:** play Stage 1 from the menu on Easy to its results screen (and Stage 2 if you have time): the results screen shows the same categories, points and rank rules as in 0.24.0. (An automatic test also compares both stages' grades with the 0.24.0 formulas on hundreds of runs.)
+12. **Languages:** switch to Deutsch and 简体中文 and open the room: the condition names (Sicher / Angespannt / Kritisch, 安稳 / 吃力 / 危急), the case states and the grade panel are translated.

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "rulesVersion": "m24",
+  "rulesVersion": "m25",
   "seed": 95,
   "options": {
     "greenhouse": "greenhouse-test-room",

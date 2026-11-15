@@ -1,4 +1,5 @@
 import { fx } from '../math/fixed';
+import { stepHostileChannel } from '../objectives/channels';
 import { directed } from '../movement/controller';
 import { ON_FOOT } from '../movement/profile';
 import {
@@ -268,6 +269,8 @@ export function stepEnemy(world: World, f: Fighter): void {
     return;
   }
   const target = updateTarget(world, f);
+  // M25: an enemy offered a hostile channel walks to it and works it until interrupted.
+  if (world.objectives && stepHostileChannel(world, f, prof)) return;
   if (grenadeTurn(world, f)) return;
   if (planDefense(world, f, prof)) return;
   if (!target) return;

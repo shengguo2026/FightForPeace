@@ -8,7 +8,7 @@ export const REPLAY_FORMAT = 2;
  * Version of the gameplay rules. Bump whenever a change alters simulation results, and
  * re-record the golden replays in the same commit.
  */
-export const RULES_VERSION = 'm24';
+export const RULES_VERSION = 'm25';
 
 export interface ReplayLog {
   version: 2;

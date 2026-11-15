@@ -1,4 +1,4 @@
-# Lessons learned (Stages 1–3, M0–M23)
+# Lessons learned (Stages 1–3, M0–M25)
 
 This file records every step we missed or had to correct compared with the original plan, so the prompt files and specs for Stages 4–8, the Curated Missions and the other modes don't repeat them. Read it, then run the **pre-flight checklist** at the end before writing any new stage's prompt files.
 
@@ -243,6 +243,32 @@ M24 checked every mechanic of the later specifications against the engine and bu
 - **Fix:** carried provisions (E13) as a weapon class; food on touch stays for Stages 1 and 2.
 - **Rule:** before a stage's content starts, every mechanic its spec uses has an audit verdict (pre-flight item 20).
 
+
+## H · Found while building the objective and grade framework (M25)
+
+M25 moved the Stage 1 and 2 grades onto one shared module and built protected units, hostile channels and evidence cases (plan `docs/superpowers/plans/2026-11-15-m25-objective-and-grade-framework.md`).
+
+### H1 · Moving a formula needs the old formula as its test
+
+- **What happened:** the Stage 1 and 2 grades, the Response Record letters and the Preservation bands were each written in their own file; moving them onto one module could change a rank on a boundary (a cap compared on points instead of share, a truncation in another place) without any existing test noticing, because the tests only checked a few typical runs.
+- **Caught:** while planning M25's rule 1 ("no behaviour change").
+- **Fix:** `packages/sim/test/m25-grade.test.ts` keeps a copy of the M24 formulas and compares them with the module on hundreds of synthetic run records and on bot runs of both stages; the letters are compared on every score from 0 to 100.
+- **Rule:** when shared code replaces per-stage code, the old code stays in a test as the reference until the next stage ships, and the comparison covers the boundaries (every value of a 0–100 scale), not only typical runs.
+
+### H2 · A test bot must ignore enemies that no longer fight
+
+- **What happened:** the first scripted run of the test room never sealed the evidence: the script fought "any enemy within reach", and a surrendered recruit stood next to the case for good, so the hero kept swinging at it.
+- **Caught:** `packages/sim/test/m25-scene.test.ts`.
+- **Fix:** the script treats only combatants (`nonCombatant` false) as a reason to fight.
+- **Rule:** every bot and script that decides "an enemy is near" uses the same combatant test as the game (surrendered, fleeing, defeated, noncombatant and disguised figures do not count).
+
+### H3 · Condition ladders are data, never a timer
+
+- **What happened:** Stage 3, 4, 7, 8 and five Curated Missions each described their own condition ladder in prose (campaign review G13); the risk was that each stage would code its own, and that some would drift into elapsed-time rules, which Stage 3 review S3-1 forbids.
+- **Caught:** campaign review G13; built in M25.
+- **Fix:** ladders and evidence outcomes live in `packages/data/objectives/objectives.yaml`; a unit's condition is a pure function of its completed hostile actions; a test runs 3,000 frames with no enemy and checks the condition never moves.
+- **Rule:** a later stage adds a ladder or outcome table to `objectives.yaml` and names it; it never adds its own condition code. Every ladder change shows in a visible event (pre-flight item 21).
+
 ---
 
 ## Pre-flight checklist: before writing any new stage's prompt files
@@ -283,3 +309,4 @@ Run this for Stage 4 onwards, each Curated Mission and every other mode. Stage 4
 
 19. The balance harness runs every beat on every difficulty and each difficulty has its own roster lever (F2); the complete-path, progression (with stall detector) and German/Chinese browser sweeps pass with no fallback text (F1, F3); every new menu has a gamepad-only path and an axe check (F4).
 20. Every mechanic the stage spec uses has a verdict in the Combat Constitution audit (`docs/review/10-combat-constitution-audit.md`); rows marked Engine or Module are built and tested in the Lab before the stage's content work starts (G3).
+21. Every condition ladder, evidence outcome and stage grade of the stage is data on the M25 modules (`objectives.yaml`, the stage's `grade`), with a test that the condition never changes without a visible hostile action (H3).

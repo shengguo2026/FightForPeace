@@ -1471,6 +1471,287 @@ function convertScenery(sc: Static<typeof Scenery>): unknown {
   };
 }
 
+// --- M25 objective and grade framework -------------------------------------------------
+
+const ObjId = T.String({ pattern: '^[a-z][a-z0-9-]*$' });
+const Share = T.Integer({ minimum: 0, maximum: 100 });
+const HoldFrames = T.Integer({ minimum: 1, maximum: 600 });
+
+/** M25: objectives.yaml: condition ladders and evidence outcome tables, shared by stages. */
+export const ObjectivesSchema = T.Object(
+  {
+    ladders: T.Array(
+      T.Object(
+        {
+          id: ObjId,
+          /** States from best to worst; `at` = completed hostile actions that reach it. */
+          states: T.Array(
+            T.Object(
+              { id: ObjId, at: T.Integer({ minimum: 0, maximum: 20 }), share: Share },
+              {
+                additionalProperties: false,
+              },
+            ),
+            { minItems: 2, maxItems: 6 },
+          ),
+        },
+        { additionalProperties: false },
+      ),
+      { maxItems: 32 },
+    ),
+    outcomes: T.Array(
+      T.Object(
+        { id: ObjId, documented: Share, recovered: Share, disturbed: Share, missing: Share },
+        { additionalProperties: false },
+      ),
+      { maxItems: 32 },
+    ),
+  },
+  { additionalProperties: false },
+);
+
+/** Validates objectives.yaml: ladders start at 0 and rise; outcomes fall from documented. */
+export function loadObjectives(source: string, file = 'objectives.yaml'): unknown {
+  const d = validate(ObjectivesSchema, source, file) as Static<typeof ObjectivesSchema>;
+  const problems: string[] = [];
+  const ids = new Set<string>();
+  for (const l of d.ladders) {
+    if (ids.has(l.id)) problems.push(`duplicate ladder "${l.id}"`);
+    ids.add(l.id);
+    if (l.states[0]!.at !== 0) problems.push(`${l.id}: the first state is reached at 0`);
+    for (let i = 1; i < l.states.length; i += 1) {
+      if (l.states[i]!.at <= l.states[i - 1]!.at)
+        problems.push(`${l.id}: states are reached at rising counts`);
+      if (l.states[i]!.share > l.states[i - 1]!.share)
+        problems.push(`${l.id}: a worse state never has a larger share`);
+    }
+    if (new Set(l.states.map((x) => x.id)).size !== l.states.length)
+      problems.push(`${l.id}: state ids repeat`);
+  }
+  const outs = new Set<string>();
+  for (const o of d.outcomes) {
+    if (outs.has(o.id)) problems.push(`duplicate outcome "${o.id}"`);
+    outs.add(o.id);
+    if (!(o.documented >= o.recovered && o.recovered >= o.disturbed && o.disturbed >= o.missing))
+      problems.push(`${o.id}: shares fall from documented to recovered, disturbed, missing`);
+  }
+  if (problems.length > 0) throw new HeroDataError(problems.map((p) => `${file}: ${p}`).join('\n'));
+  return {
+    ladders: d.ladders.map((l) => ({ id: l.id, states: l.states.map((x) => ({ ...x })) })),
+    outcomes: d.outcomes.map((o) => ({ ...o })),
+  };
+}
+
+/** M25: an arena's protected units, evidence cases and hostile channels (pixels, frames). */
+const ArenaObjectives = T.Object(
+  {
+    units: T.Optional(
+      T.Array(
+        T.Object(
+          {
+            id: ObjId,
+            ladder: ObjId,
+            x: PxI,
+            z: PxI,
+            /** Half width and half depth of the protected zone around the unit. */
+            zone: T.Tuple([SceneSize, SceneSize]),
+            free: HoldFrames,
+            cheer: T.Optional(T.Integer({ minimum: 0, maximum: 600 })),
+            speed: T.Number({ exclusiveMinimum: 0, maximum: 20 }),
+            /** Waypoints to the shelter (the last one); `wait`: a safe hand-off point. */
+            route: T.Array(
+              T.Object(
+                { x: PxI, z: PxI, wait: T.Optional(T.Boolean()) },
+                { additionalProperties: false },
+              ),
+              { minItems: 1, maxItems: 8 },
+            ),
+          },
+          { additionalProperties: false },
+        ),
+        { maxItems: 8 },
+      ),
+    ),
+    cases: T.Optional(
+      T.Array(
+        T.Object(
+          {
+            id: ObjId,
+            outcome: ObjId,
+            x: PxI,
+            z: PxI,
+            collect: HoldFrames,
+            seal: HoldFrames,
+            recover: HoldFrames,
+          },
+          { additionalProperties: false },
+        ),
+        { maxItems: 8 },
+      ),
+    ),
+    channels: T.Optional(
+      T.Array(
+        T.Object(
+          {
+            /** A unit or case id of this arena. */
+            target: ObjId,
+            /** Label of the visible action (rope, lantern, crate, case…). */
+            kind: ObjId,
+            x: PxI,
+            z: PxI,
+            /** Frames of the visible tell; the action completes at its end. */
+            tell: T.Integer({ minimum: 30, maximum: 1200 }),
+            /** Frames before the channel is first offered to an enemy. */
+            start: T.Optional(T.Integer({ minimum: 0, maximum: 7200 })),
+            /** Frames after an interruption before it is offered again. */
+            cooldown: T.Integer({ minimum: 0, maximum: 3600 }),
+            /** Enemy kits that may work it (empty: any enemy). */
+            kits: T.Optional(T.Array(KitId, { maxItems: 8 })),
+          },
+          { additionalProperties: false },
+        ),
+        { maxItems: 12 },
+      ),
+    ),
+  },
+  { additionalProperties: false },
+);
+
+/** M25: an arena's own 100-point grade (Lab rooms and later missions). */
+const ArenaGrade = T.Object(
+  {
+    categories: T.Array(
+      T.Object(
+        {
+          id: ObjId,
+          measure: T.Union([T.Literal('units'), T.Literal('cases')]),
+          weight: T.Integer({ minimum: 1, maximum: 100 }),
+        },
+        { additionalProperties: false },
+      ),
+      { minItems: 1, maxItems: 8 },
+    ),
+    ranks: T.Object(
+      {
+        S: T.Integer({ minimum: 1, maximum: 100 }),
+        A: T.Integer({ minimum: 1, maximum: 100 }),
+        B: T.Integer({ minimum: 1, maximum: 100 }),
+      },
+      { additionalProperties: false },
+    ),
+    caps: T.Optional(
+      T.Array(
+        T.Object(
+          {
+            category: ObjId,
+            below: T.Integer({ minimum: 1, maximum: 100 }),
+            rank: T.Union([T.Literal('A'), T.Literal('B'), T.Literal('C')]),
+          },
+          { additionalProperties: false },
+        ),
+      ),
+    ),
+    /** Any unit on `ladder` in `state` (or worse) caps the rank. */
+    conditionCaps: T.Optional(
+      T.Array(
+        T.Object(
+          {
+            ladder: ObjId,
+            state: ObjId,
+            rank: T.Union([T.Literal('A'), T.Literal('B'), T.Literal('C')]),
+          },
+          { additionalProperties: false },
+        ),
+      ),
+    ),
+    cheat: T.Optional(T.Union([T.Literal('grade'), T.Literal('none')])),
+  },
+  { additionalProperties: false },
+);
+
+/** M25: checks an arena's objectives and grade among themselves (ladders: generate()). */
+function objectiveProblems(
+  id: string,
+  width: number,
+  o: Static<typeof ArenaObjectives> | undefined,
+  g: Static<typeof ArenaGrade> | undefined,
+): string[] {
+  const out: string[] = [];
+  const units = o?.units ?? [];
+  const cases = o?.cases ?? [];
+  const ids = [...units.map((u) => u.id), ...cases.map((c) => c.id)];
+  if (new Set(ids).size !== ids.length) out.push(`${id}: unit and case ids repeat`);
+  for (const u of units)
+    if (u.x > width || u.route.some((p) => p.x > width))
+      out.push(`${id}: unit "${u.id}" leaves the arena`);
+  for (const c of o?.channels ?? []) {
+    if (!ids.includes(c.target)) out.push(`${id}: a channel targets unknown "${c.target}"`);
+    if (c.x > width) out.push(`${id}: a channel lies outside the arena`);
+  }
+  if (g) {
+    const w = g.categories.reduce((n, c) => n + c.weight, 0);
+    if (w !== 100) out.push(`${id}: grade weights add up to ${w}, not 100`);
+    const cats = g.categories.map((c) => c.id);
+    if (new Set(cats).size !== cats.length) out.push(`${id}: grade category ids repeat`);
+    for (const cap of g.caps ?? [])
+      if (!cats.includes(cap.category))
+        out.push(`${id}: grade cap names unknown category "${cap.category}"`);
+    if (!(g.ranks.S > g.ranks.A && g.ranks.A > g.ranks.B))
+      out.push(`${id}: grade ranks must fall from S to A to B`);
+    for (const c of g.categories) {
+      if (c.measure === 'units' && units.length === 0)
+        out.push(`${id}: grade measures units, none`);
+      if (c.measure === 'cases' && cases.length === 0)
+        out.push(`${id}: grade measures cases, none`);
+    }
+  }
+  return out;
+}
+
+function convertObjectives(o: Static<typeof ArenaObjectives>, kits: readonly string[]): unknown {
+  const units = o.units ?? [];
+  const cases = o.cases ?? [];
+  return {
+    units: units.map((u) => ({
+      id: u.id,
+      ladder: u.ladder,
+      x: u.x,
+      z: u.z,
+      hw: u.zone[0],
+      hd: u.zone[1],
+      free: u.free,
+      cheer: u.cheer ?? 40,
+      speed: u.speed,
+      route: u.route.map((p) => ({ x: p.x, z: p.z, wait: p.wait ?? false })),
+    })),
+    cases: cases.map((c) => ({ ...c })),
+    channels: (o.channels ?? []).map((c) => {
+      const unit = units.findIndex((u) => u.id === c.target);
+      return {
+        unit: unit >= 0,
+        target: unit >= 0 ? unit : cases.findIndex((x) => x.id === c.target),
+        kind: c.kind,
+        x: c.x,
+        z: c.z,
+        tell: c.tell,
+        start: c.start ?? 0,
+        cooldown: c.cooldown,
+        kits: (c.kits ?? []).filter((k) => kits.includes(k)),
+      };
+    }),
+  };
+}
+
+function convertArenaGrade(g: Static<typeof ArenaGrade>): unknown {
+  return {
+    categories: g.categories.map((c) => ({ ...c })),
+    ranks: [g.ranks.S, g.ranks.A, g.ranks.B],
+    caps: (g.caps ?? []).map((c) => ({ ...c })),
+    conditionCaps: (g.conditionCaps ?? []).map((c) => ({ ...c })),
+    cheat: g.cheat ?? 'grade',
+  };
+}
+
 export const ArenaSchema = T.Object(
   {
     arenas: T.Array(
@@ -1494,6 +1775,10 @@ export const ArenaSchema = T.Object(
           reserve: T.Optional(T.Array(KitId, { maxItems: 4 })),
           /** M24: the arena's own scenery (Lab test scenes and later stages). */
           scenery: T.Optional(Scenery),
+          /** M25: protected units, evidence cases and hostile channels. */
+          objectives: T.Optional(ArenaObjectives),
+          /** M25: the arena's own 100-point grade. */
+          grade: T.Optional(ArenaGrade),
         },
         { additionalProperties: false },
       ),
@@ -1602,6 +1887,8 @@ export const StageSchema = T.Object(
             ),
           ),
         ),
+        /** M25: 'none' gives a Cheat-Assisted run no grade (Stage 3 §22.2); default 'grade'. */
+        cheat: T.Optional(T.Union([T.Literal('grade'), T.Literal('none')])),
       },
       { additionalProperties: false },
     ),
@@ -1804,6 +2091,10 @@ function convertArenas(
     for (const st of sc?.stations ?? [])
       if ((st.kind === 'cover') !== Boolean(st.cover))
         problems.push(`${a.id}: a cover station (and only one) has a cover`);
+    problems.push(...objectiveProblems(a.id, a.width, a.objectives, a.grade));
+    for (const c of a.objectives?.channels ?? [])
+      for (const k of c.kits ?? [])
+        if (!kits.includes(k)) problems.push(`${a.id}: a channel names unknown kit "${k}"`);
     for (const w of a.waves)
       for (const e of w.enemies) {
         if (!kits.includes(e.kit)) problems.push(`${a.id}: unknown enemy kit "${e.kit}"`);
@@ -1848,6 +2139,8 @@ function convertArenas(
     reserve: a.reserve ?? [],
     stage,
     scenery: a.scenery ? convertScenery(a.scenery) : null,
+    objectives: a.objectives ? convertObjectives(a.objectives, kits) : null,
+    grade: a.grade ? convertArenaGrade(a.grade) : null,
   }));
 }
 
@@ -2013,6 +2306,7 @@ export function loadStage(
         })),
         ranks: [d.grade.ranks.S, d.grade.ranks.A, d.grade.ranks.B],
         caps: (d.grade.caps ?? []).map((c) => ({ ...c })),
+        cheat: d.grade.cheat ?? 'grade',
       },
       score: {
         ...d.score,
@@ -4025,6 +4319,7 @@ const GREENHOUSE_FILE = fileURLToPath(new URL('../greenhouse/greenhouse.yaml', i
 const PROGRESSION_FILE = fileURLToPath(new URL('../progression/progression.yaml', import.meta.url));
 
 const COOP_FILE = fileURLToPath(new URL('../coop/coop.yaml', import.meta.url));
+const OBJECTIVES_FILE = fileURLToPath(new URL('../objectives/objectives.yaml', import.meta.url));
 const STAGES_DIR = fileURLToPath(new URL('../stages/', import.meta.url));
 
 /** Stage files (M9), in file-name order (stage1.yaml first). */
@@ -4161,6 +4456,7 @@ export function generate(
   progressionFile: string | null = encounters === ENCOUNTERS_DIR ? PROGRESSION_FILE : null,
   mountedFile: string | null = encounters === ENCOUNTERS_DIR ? MOUNTED_FILE : null,
   greenhouseFile: string | null = encounters === ENCOUNTERS_DIR ? GREENHOUSE_FILE : null,
+  objectivesFile: string | null = encounters === ENCOUNTERS_DIR ? OBJECTIVES_FILE : null,
 ): string {
   const load = (f: string, kind: 'hero' | 'enemy') =>
     loadHero(readFileSync(f, 'utf8'), basename(f), kind);
@@ -4281,6 +4577,45 @@ export function generate(
         weaponYaml.map((w) => w.id),
       ),
     );
+  // M25 Lab test rooms come after the M24 scenes (append only, lesson G1).
+  const lab25 = encounters ? join(encounters, 'lab-m25.yaml') : null;
+  if (lab25 && existsSync(lab25))
+    arenas.push(
+      ...loadArenas(
+        readFileSync(lab25, 'utf8'),
+        kitIds,
+        'lab-m25.yaml',
+        weaponYaml.map((w) => w.id),
+      ),
+    );
+  // M25: ladders and evidence outcomes shared by stages; arenas name known ones.
+  const objectives = (
+    objectivesFile
+      ? loadObjectives(readFileSync(objectivesFile, 'utf8'), basename(objectivesFile))
+      : { ladders: [], outcomes: [] }
+  ) as { ladders: { id: string; states: { id: string }[] }[]; outcomes: { id: string }[] };
+  const objectiveProblemsAll: string[] = [];
+  type ArenaObj = {
+    id: string;
+    objectives: { units: { id: string; ladder: string }[]; cases: { outcome: string }[] } | null;
+    grade: { conditionCaps: { ladder: string; state: string }[] } | null;
+  };
+  for (const a of arenas as ArenaObj[]) {
+    for (const u of a.objectives?.units ?? [])
+      if (!objectives.ladders.some((l) => l.id === u.ladder))
+        objectiveProblemsAll.push(`${a.id}: unit "${u.id}" names unknown ladder "${u.ladder}"`);
+    for (const c of a.objectives?.cases ?? [])
+      if (!objectives.outcomes.some((o) => o.id === c.outcome))
+        objectiveProblemsAll.push(`${a.id}: a case names unknown outcome "${c.outcome}"`);
+    for (const cap of a.grade?.conditionCaps ?? []) {
+      const l = objectives.ladders.find((x) => x.id === cap.ladder);
+      if (!l || !l.states.some((x) => x.id === cap.state))
+        objectiveProblemsAll.push(
+          `${a.id}: condition cap names unknown "${cap.ladder}.${cap.state}"`,
+        );
+    }
+  }
+  if (objectiveProblemsAll.length > 0) throw new HeroDataError(objectiveProblemsAll.join('\n'));
   // M20: corridor and room beats name a known corridor and room; a room beat is as wide
   // as its room (the exit is at the room's right edge).
   const stageProblems: string[] = [];
@@ -4353,8 +4688,8 @@ export function generate(
   return `// GENERATED by packages/data/src/generate.ts from packages/data/heroes/*.yaml,
 // packages/data/enemies/*.yaml, packages/data/weapons/*.yaml,
 // packages/data/encounters/*.yaml, packages/data/stages/*.yaml, packages/data/coop/coop.yaml,
-// packages/data/progression/progression.yaml, packages/data/mounted/mounted.yaml and
-// packages/data/greenhouse/greenhouse.yaml.
+// packages/data/progression/progression.yaml, packages/data/mounted/mounted.yaml,
+// packages/data/greenhouse/greenhouse.yaml and packages/data/objectives/objectives.yaml.
 // Do not edit by hand:
 // change the YAML and run \`pnpm gen:heroes\`.
 import type {
@@ -4365,6 +4700,7 @@ import type {
   GreenhouseDef,
   HeroDef,
   MountedDef,
+  ObjectivesDef,
   ProgressionDef,
   StageDef,
   WeaponDef,
@@ -4396,6 +4732,8 @@ export const PROGRESSION_DATA: ProgressionDef = ${JSON.stringify(progression, nu
 export const MOUNTED_DATA: MountedDef | null = ${JSON.stringify(mounted, null, 2)};
 
 export const GREENHOUSE_DATA: GreenhouseDef | null = ${JSON.stringify(greenhouse, null, 2)};
+
+export const OBJECTIVES_DATA: ObjectivesDef = ${JSON.stringify(objectives, null, 2)};
 `;
 }
 

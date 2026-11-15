@@ -1,6 +1,16 @@
 import {
   type FacingMode,
   type SharedState,
+  type ArenaObjectivesDef,
+  type ObjectiveCheckpoint,
+  type ObjectiveGrade,
+  type ObjectiveState,
+  objectiveCheckpoint,
+  objectiveDefs,
+  objectiveGrade,
+  objectiveHint,
+  restoreObjectives,
+  unitCondition,
   becomeSupporter,
   claimCache,
   handOver,
@@ -106,6 +116,18 @@ export interface RenderSnapshot {
   infiniteMeter: boolean;
   /** M24 shared systems (movers, platforms, stations, incidents), or null. */
   shared: SharedState | null;
+  /** M25 objectives (units, cases, channels), the room's live grade and each hero's hold hint. */
+  objectives: ObjectivesSnapshot | null;
+}
+
+export interface ObjectivesSnapshot {
+  state: ObjectiveState;
+  defs: ArenaObjectivesDef;
+  grade: ObjectiveGrade | null;
+  conditions: number[];
+  hints: readonly { x: number; z: number; hint: number }[];
+  /** A Lab checkpoint copy is held (the Restore button works). */
+  checkpoint: boolean;
 }
 
 /**
@@ -445,7 +467,35 @@ export class GameSession {
       cheatAssisted: this.world.cheats.marked,
       infiniteMeter: this.world.infiniteMeter,
       shared: this.world.shared ?? null,
+      objectives: this.objectivesSnapshot(),
     };
+  }
+
+  /** M25 Lab: the checkpoint copy of the test room's objectives (null: none taken). */
+  private objectiveCp: { world: object; cp: ObjectiveCheckpoint } | null = null;
+
+  private objectivesSnapshot(): ObjectivesSnapshot | null {
+    const w = this.world;
+    const defs = objectiveDefs(w);
+    if (!w.objectives || !defs) return null;
+    return {
+      state: w.objectives,
+      defs,
+      grade: objectiveGrade(w),
+      conditions: w.objectives.units.map((_, i) => unitCondition(w, i)),
+      hints: w.bodies
+        .filter((f) => f.team === 'hero' && !f.ko)
+        .map((f) => ({ x: f.x, z: f.z, hint: objectiveHint(w, f) })),
+      checkpoint: this.objectiveCp?.world === w,
+    };
+  }
+
+  /** M25 Lab: 'checkpoint' keeps a copy of the objectives; 'restore' returns to it. */
+  m25Action(kind: 'checkpoint' | 'restore'): void {
+    const cp = objectiveCheckpoint(this.world);
+    if (kind === 'checkpoint') this.objectiveCp = cp ? { world: this.world, cp } : null;
+    else if (this.objectiveCp?.world === this.world)
+      restoreObjectives(this.world, this.objectiveCp.cp);
   }
 
   /**

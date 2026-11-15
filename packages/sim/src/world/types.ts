@@ -1,4 +1,5 @@
 import type { FighterExt, SharedState } from '../shared/state';
+import type { ObjectiveState } from '../objectives/state';
 import type { Pursuit } from '../mounted/pursuit';
 import type { Greenhouse } from '../preservation/greenhouse';
 import type { CheatState } from '../cheats/cheats';
@@ -1049,6 +1050,8 @@ export interface World {
   greenhouse: Greenhouse | null;
   /** M24 shared systems (movers, platforms, incidents, robot stations, caches), when used. */
   shared?: SharedState;
+  /** M25 objective state (protected units, evidence cases, hostile channels), when used. */
+  objectives?: ObjectiveState;
 }
 
 // --- M9 stage journey --------------------------------------------------------------------

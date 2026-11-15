@@ -62,3 +62,8 @@ export * from './shared/riders';
 export * from './shared/robot';
 export * from './shared/weapons';
 export * from './shared/handover';
+export * from './objectives/grade';
+export * from './objectives/state';
+export * from './objectives/channels';
+export * from './objectives/units';
+export * from './objectives/results';
