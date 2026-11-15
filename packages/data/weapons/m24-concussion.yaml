@@ -1,0 +1,26 @@
+# M24 placeholder (Combat Constitution audit E9): a fictional concussion device. Thrown, it
+# lands, shows its area for the fuse, then knocks back, stuns briefly and costs Defense.
+# No friendly fire; it never touches noncombatants, protected states or riders' Health.
+id: m24-concussion
+name: Concussion Device (test)
+class: recoverableThrown
+hands: 1
+integrity: { max: 10, worn: 8, critical: 4, hit: 0, guard: 0, clash: 0, throw: 0 }
+gripResistance: 10
+pickup: 6
+throw:
+  speed: 9
+  lift: 6
+  responses: [blockable, strikeDeflectable]
+blast: { fuse: 45, hw: 160, hd: 90, damage: 30, defense: 25, stun: 40, push: 6 }
+actions:
+  - id: concussion-throw
+    name: Concussion Throw
+    category: weaponThrow
+    input: { context: weaponThrow, dir: neutral }
+    frames: { startup: 8, active: 1, recovery: 14, blockstun: 8 }
+    hitbox: { x: 0, w: 40, y: 90, h: 40, depth: 28 }
+    damage: 5
+    reaction: { kind: stagger, hitstun: 12, push: 2 }
+    costs: { stun: 5, scale: 5 }
+    meter: 1

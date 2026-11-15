@@ -57,6 +57,8 @@ export interface LabActions {
   dummyToPillar(): void;
   /** M7: starts (or restarts) the picked arena; null goes back to the Lab. */
   startArena(arena: string | null): void;
+  /** M24 Lab: hand-over scene buttons. */
+  m24Action(kind: 'handover' | 'claim' | 'support'): void;
   pickArena(pick: Partial<{ arena: string; difficulty: string; beat: number }>): void;
   /** M17: pursuit options (steering assistance, STEADYRIDE) for the next start. */
   pickPursuit(pick: Partial<{ assist: boolean; steady: boolean }>): void;
@@ -476,6 +478,14 @@ function ArenaPanel({ state, actions }: { state: LabState; actions: LabActions }
         )}
         {view.running ? button('Back to Lab', 'arena-leave', () => actions.startArena(null)) : null}
       </div>
+      {view.running && pick.arena === 'lab-m24-handover' ? (
+        <div style={{ margin: '4px 0' }} data-testid="m24-actions">
+          <div>{tx('m24.lab.title')}</div>
+          {button(tx('m24.lab.handover'), 'm24-handover', () => actions.m24Action('handover'))}
+          {button(tx('m24.lab.claim'), 'm24-claim', () => actions.m24Action('claim'))}
+          {button(tx('m24.lab.support'), 'm24-support', () => actions.m24Action('support'))}
+        </div>
+      ) : null}
       <div data-testid="arena-diagnostics">
         {view.lines.map((l) => (
           <div>{l}</div>

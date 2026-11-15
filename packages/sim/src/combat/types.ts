@@ -246,10 +246,18 @@ export interface ShowcaseDef {
 }
 
 /** Clash strength tiers. Numbers are part of the data; never renumber. */
+import type { StageLayout } from '../world/stage';
+
 export const Clash = { None: 0, Light: 1, Heavy: 2, Crushing: 3 } as const;
 
 export type WeaponClass =
-  'temporaryMelee' | 'recoverableThrown' | 'improvisedDebris' | 'firearm' | 'guardModifier';
+  | 'temporaryMelee'
+  | 'recoverableThrown'
+  | 'improvisedDebris'
+  | 'firearm'
+  | 'guardModifier'
+  /** M24: a carried provision (picked up, carried, eaten or thrown, handed over by a drop). */
+  | 'provision';
 
 /**
  * A weapon (spec §11.1, F&D §7.1): Authored Weapon-Lifecycle Profile plus its Weapon Core.
@@ -300,6 +308,27 @@ export interface WeaponDef {
     hero: string;
     actions: readonly { replaces: number; action: ActionDef }[];
   }[];
+  // --- M24 shared systems (Constitution audit) ---------------------------------------------
+  /** Scenery tags its strikes open at once (pry bar, tire iron). */
+  opens: readonly string[];
+  /** Moving-hazard tags its strikes may redirect during the warning (hook pole). */
+  redirects: readonly string[];
+  /** Heavy weapon: what the holder cannot do, and its walk speed in percent (100 = normal). */
+  restrict: { jump: boolean; grab: boolean; mount: boolean; carry: boolean; speed: number };
+  /** Heat-limited bursts: heat per shot, the lock threshold, cooling per frame. */
+  heat: { per: number; max: number; cool: number } | null;
+  /** Blast throwable: fuse from the throw, area (px half sizes), Health, Defense, stun. */
+  blast: {
+    fuse: number;
+    hw: number;
+    hd: number;
+    damage: number;
+    defense: number;
+    stun: number;
+    push: number;
+  } | null;
+  /** Provision: what eating it restores (Health, Defense %, Attack meter) and its frames. */
+  provision: { health: number; defense: number; meter: number; eat: number } | null;
 }
 
 /** Category-tuned cancel timing (frames): early buffer before contact, window after it. */
@@ -343,6 +372,10 @@ export const Reject = {
   NeedsPunish: 19,
   /** M18: not enough Defense for a firearm's shot. */
   NoDefense: 20,
+  /** M24: the held heavy weapon refuses this (jump, grab). */
+  Restricted: 21,
+  /** M24: the heavy weapon is locked until it has cooled. */
+  Overheated: 22,
 } as const;
 export type Reject = (typeof Reject)[keyof typeof Reject];
 
@@ -387,6 +420,12 @@ export interface AiAttackDef {
   minRange: number;
   /** M19: 0 always, 1 only while holding a weapon, 2 only with empty hands. */
   when: number;
+  /**
+   * M24 feint: every second use stops at this action frame (after the tell has shown) and
+   * the same attack follows `feintDelay` frames later (0 = never feints).
+   */
+  feint: number;
+  feintDelay: number;
 }
 
 /** M19 Jackal Signalman calls. Numbers are encoded; never renumber. */
@@ -454,6 +493,11 @@ export interface BossPhaseDef {
   summon: string;
   /** Low-Health objective behaviour (Scorched Claim), or null. */
   scorch: { below: number; action: string; look: number; cooldown: number } | null;
+  /**
+   * M24: what else the phase needs before it ends. 'gear': its Health threshold holds until
+   * every gear piece is broken; 'dismount': it ends when the boss is dismounted.
+   */
+  require: 'none' | 'gear' | 'dismount';
 }
 
 export interface BossDef {
@@ -511,8 +555,55 @@ export interface EnemyProfile {
   escort: { threat: number; range: number } | null;
   /** Jackal Signalman calls. */
   commands: readonly CommandDef[];
-  /** 'dismount': arrives knocked down with protected recovery (a Road Rider on foot). */
-  entry: 'walk' | 'dismount';
+  /**
+   * 'dismount': arrives knocked down with protected recovery (a Road Rider on foot).
+   * M24 'disguised': arrives as a non-hostile, untargetable figure and reveals after
+   * `reveal` frames or when a hero comes within `revealRange`.
+   */
+  entry: 'walk' | 'dismount' | 'disguised';
+  // --- M24 shared systems (Constitution audit) ---------------------------------------------
+  reveal: number;
+  revealRange: number;
+  /** Finite gear pieces with their own non-regenerating Guard. */
+  gear: readonly GearDef[];
+  /** Rides a mount in on-foot arenas (warned lane passes, Stability, safe dismount). */
+  mount: MountProfileDef | null;
+  /** Resolve-limited rival: Health never falls below `floor` percent; then it withdraws. */
+  rival: { floor: number; withdraw: number } | null;
+  /** Never a target and never fights (custody targets, bystanders). */
+  noncombatant: boolean;
+}
+
+/** M24 gear benefits. Numbers are data codes; never renumber. */
+export const GearBenefit = { Front: 0, Counter: 1, AntiAir: 2, LowResist: 3 } as const;
+
+/** M24 finite gear piece (shield, case guard, wearable piece). */
+export interface GearDef {
+  id: string;
+  name: string;
+  /** Non-regenerating Guard; a blocked hit costs its damage. */
+  guard: number;
+  benefit: number;
+  /** Frames of the one stagger when it breaks. */
+  stagger: number;
+}
+
+/** M24 mount kinds. Numbers are data codes; never renumber. */
+export const MountKind = { Horse: 0, Bike: 1 } as const;
+
+/** M24 a mounted fighter in an on-foot arena. Distances and speeds fixed point. */
+export interface MountProfileDef {
+  kind: number;
+  stability: number;
+  /** Percent of a hit's damage taken as Stability (Health is untouched while mounted). */
+  share: number;
+  speed: number;
+  warn: number;
+  rest: number;
+  damage: number;
+  push: number;
+  /** Half depth of the pass lane. */
+  lane: number;
 }
 
 /** Difficulty profile (spec Appendix D.2, D.5). Pairs are [solo, co-op]. */
@@ -566,6 +657,8 @@ export interface ArenaDef {
   reserve: readonly string[];
   /** M9: a stage beat's arena (a camera lock or the quiet time between locks), not a Lab arena. */
   stage: boolean;
+  /** M24: the arena's own scenery (items, surfaces, breakables, hazards, movers, …) or null. */
+  scenery: StageLayout | null;
 }
 
 // --- M9 stage journey --------------------------------------------------------------------
@@ -1052,6 +1145,10 @@ export interface BikeDef {
   id: string;
   name: string;
   plates: string[];
+  /** M24 mount catalogue: kind (MountKind), what zero Stability does, on-foot speed. */
+  kind: number;
+  atZero: 'recover' | 'dismount';
+  fallback: number;
   base: number;
   min: number;
   max: number;
@@ -1130,6 +1227,8 @@ export interface CorridorDef {
   id: string;
   name: string;
   goal: string;
+  /** M24: index into `MountedDef.mounts`. */
+  mount: number;
   start: number;
   finish: number;
   length: number;
@@ -1151,6 +1250,8 @@ export interface CorridorDef {
 
 export interface MountedDef {
   bike: BikeDef;
+  /** M24: every mount a corridor can name; mounts[0] is the bike. */
+  mounts: BikeDef[];
   rider: RoadRiderDef;
   /** Easy … Ultimate. */
   difficulty: MountedDifficultyDef[];

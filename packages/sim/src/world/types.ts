@@ -1,3 +1,4 @@
+import type { FighterExt, SharedState } from '../shared/state';
 import type { Pursuit } from '../mounted/pursuit';
 import type { Greenhouse } from '../preservation/greenhouse';
 import type { CheatState } from '../cheats/cheats';
@@ -355,6 +356,10 @@ export interface Fighter extends Body {
   assist: number;
   /** Frame a hero's grab finisher released this target (a same-frame assist still lands). */
   releasedAt: number;
+
+  // --- M24 shared systems --------------------------------------------------------------
+  /** Gear, mount, rival, disguise, feint, heat and supporter state (only when used). */
+  ext?: FighterExt;
 }
 
 /** Enemy AI modes. Numbers are encoded; never renumber. */
@@ -640,6 +645,8 @@ export interface Item {
   /** Stage-authored recovery anchor in the same combat region. */
   anchorX: number;
   anchorZ: number;
+  /** M24 blast throwable: the frame it goes off (set by its throw). */
+  fuseAt?: number;
 }
 
 /** An impact surface (the mill pillar). Solid. */
@@ -670,9 +677,13 @@ export interface Breakable {
   power: number;
   thresholds: readonly [number, number, number];
   state: number;
-  /** Weapon index of its one interactive fragment, and whether it was spawned. */
+  /** Weapon index of its one interactive fragment (-1 = none), and whether it was spawned. */
   fragment: number;
   spawned: boolean;
+  /** M24 static data: tags, property class (PropertyClass) and damage cluster. */
+  tags?: string[];
+  property?: number;
+  cluster?: number;
 }
 
 /** Hazard phases. Numbers are encoded; never renumber. */
@@ -1036,6 +1047,8 @@ export interface World {
   pursuit: Pursuit | null;
   /** M18 greenhouse room: Preservation Ledger, containers, pantry, fixtures (or null). */
   greenhouse: Greenhouse | null;
+  /** M24 shared systems (movers, platforms, incidents, robot stations, caches), when used. */
+  shared?: SharedState;
 }
 
 // --- M9 stage journey --------------------------------------------------------------------

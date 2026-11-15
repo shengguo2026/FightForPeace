@@ -1,4 +1,5 @@
 import { fx } from '../math/fixed';
+import { sharedIntercept, untargetable } from '../shared/fighters';
 import { carryFull, dealDamage, nonCombatant } from './damage';
 import { Cheat, heroCheat, outgoingDamage } from '../cheats/cheats';
 import { bossBudgets, bossHit, bossResists, staggered } from '../enemies/boss';
@@ -129,6 +130,7 @@ function overlaps(a: Box, b: Box): boolean {
 export function canHit(att: Fighter, a: ActionDef, t: Fighter): boolean {
   if (t.team === att.team || t.protectedRecovery || t.cinematic) return false;
   if (nonCombatant(t) || nonCombatant(att)) return false;
+  if (untargetable(t) || untargetable(att)) return false;
   if (t.state === MoveState.GetUp || t.state === MoveState.Recover) return false;
   // Restrained heroes are out of the fight. Held targets belong to their grabber's route,
   // except for the one tagged partner assist on an enemy a hero holds (F&D §6.7).
@@ -276,6 +278,13 @@ export function resolveHits(world: World): void {
       if (runningAction(att) !== a) break;
       if (att.hitIds.includes(t.id) || !canHit(att, a, t)) continue;
       if (!overlaps(box, hurtbox(t))) continue;
+      if (t.ext && sharedIntercept(world, att, a, t)) {
+        // M24: a mounted rider's Stability or a gear piece took the strike.
+        att.hitIds.push(t.id);
+        if (att.contactAt < 0) att.contactAt = att.stateFrame + 1;
+        payContact(world, att, true);
+        continue;
+      }
       const snap = snaps.get(t.id);
       if (snap && defend(world, att, a, seg, t, snap)) {
         att.hitIds.push(t.id);

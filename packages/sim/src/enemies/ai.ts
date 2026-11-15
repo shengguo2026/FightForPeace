@@ -13,7 +13,9 @@ import {
   Verdict,
   type World,
 } from '../world/types';
-import type { ActionDef, AiAttackDef, EnemyProfile } from '../combat/types';
+import { type ActionDef, type AiAttackDef, type EnemyProfile, GearBenefit } from '../combat/types';
+import { armFeint, feintNow, gearBenefit } from '../shared/fighters';
+import { stepRider } from '../shared/riders';
 import { applyActionMovement, startAction } from '../combat/actions';
 import { kitOf, totalFrames } from '../combat/roster';
 import { stepEnemyHold } from '../combat/grabs';
@@ -148,6 +150,8 @@ export function attackList(world: World, f: Fighter): readonly AiAttackDef[] {
     range: fx(900),
     minRange: 0,
     when: 0,
+    feint: 0,
+    feintDelay: 0,
   };
   if (!w.melee) return [...base, throwAttack];
   const core = w.actions
@@ -160,6 +164,8 @@ export function attackList(world: World, f: Fighter): readonly AiAttackDef[] {
       range: 0,
       minRange: 0,
       when: 0,
+      feint: 0,
+      feintDelay: 0,
     }));
   return [...core, throwAttack];
 }
@@ -194,6 +200,15 @@ export function stepEnemy(world: World, f: Fighter): void {
   // (Exit Route, Signal Break) can start; the room's locks clear when it leaves.
   if (f.special !== Special.None && (f.state === MoveState.Idle || f.state === MoveState.Walk))
     specialInterrupted(world, f);
+  // M24: riders make lane passes instead of walking; disguised and noncombatant figures wait.
+  if (f.ext) {
+    if (stepRider(world, f)) return;
+    if (f.ext.disguised || prof.noncombatant) {
+      f.vx = 0;
+      f.vz = 0;
+      return;
+    }
+  }
   if (f.readyAt.length < AI.slots)
     f.readyAt = [...f.readyAt, ...new Array<number>(AI.slots - f.readyAt.length).fill(0)];
   switch (f.state) {
@@ -362,7 +377,8 @@ function capable(world: World, f: Fighter, kind: 'exact' | 'counter' | 'breaker'
   const prof = profileOf(f);
   if (!prof || world.frame < f.advUntil) return false;
   const phase = bossPhase(world, f);
-  if (kind === 'counter') return prof.defense.counter || (phase?.counter ?? false);
+  if (kind === 'counter')
+    return prof.defense.counter || (phase?.counter ?? false) || gearBenefit(f, GearBenefit.Counter);
   if (kind === 'breaker') return prof.defense.breaker || (phase?.breaker ?? false);
   return prof.defense.exact;
 }
@@ -567,10 +583,21 @@ function stepAiAction(world: World, f: Fighter): void {
       return;
     }
   }
-  if (!a || n > totalFrames(a)) {
-    if (a && f.special !== Special.None) completeSpecial(world, f, a);
-    else if (a?.tags.includes('command')) completeSpecial(world, f, a);
-    else if (a?.tags.includes('objective')) completeObjective(world, f);
+  // M24 feint: the visible start stops at its feint frame; the same attack follows after
+  // the authored delay (the tell is never removed, only shown once more).
+  const feinted = f.ext !== undefined && feintNow(world, f, n);
+  if (feinted) {
+    const at = attackList(world, f)[f.aiAttack];
+    f.aiStep = Math.max(0, f.aiStep - 1);
+    f.readyAt[f.aiAttack] = world.frame + (at?.feintDelay ?? 0);
+  }
+  if (!a || n > totalFrames(a) || feinted) {
+    // A feint completes nothing: the attack was only shown.
+    if (!feinted) {
+      if (a && f.special !== Special.None) completeSpecial(world, f, a);
+      else if (a?.tags.includes('command')) completeSpecial(world, f, a);
+      else if (a?.tags.includes('objective')) completeObjective(world, f);
+    }
     f.state = MoveState.Idle;
     f.stateFrame = 0;
     f.action = -1;
@@ -606,6 +633,7 @@ function commit(
   applyActionMovement(f, a, 1, aiInput(world, f, a), ON_FOOT);
   f.aiAttack = slot;
   f.aiStep += 1;
+  if (at.feint > 0) armFeint(world, f, at.feint);
   f.readyAt[slot] = world.frame + paced(world, at.cooldown);
   f.aiMode = AiMode.Approach;
   logDecision(world, f, index, Verdict.Ok);

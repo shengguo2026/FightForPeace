@@ -1,3 +1,4 @@
+import { heavyGate } from '../shared/weapons';
 import { fx } from '../math/fixed';
 import { Cheat, heroCheat } from '../cheats/cheats';
 import { profileOf } from '../enemies/data';
@@ -165,6 +166,11 @@ export function weaponGate(world: World, f: Fighter, index: number): number {
   const item = heldItem(world, f);
   if (!a || !item) return Reject.None;
   const def = WEAPONS[item.def]!;
+  // M24 heavy weapons: restricted grabs and heat-limited bursts.
+  if (def.heat || def.restrict.grab) {
+    const r = heavyGate(world, f, def, a.category, isWeaponAction(f, index) ? a.ammo : 0);
+    if (r !== Reject.None) return r;
+  }
   if (!isWeaponAction(f, index)) {
     const loadout = a.category === 'special' || a.category === 'ultimate';
     if (a.armed === 'unavailable') return Reject.HandsFull;

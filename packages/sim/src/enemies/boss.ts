@@ -1,3 +1,5 @@
+import { initShared, phaseHeld } from '../shared/fighters';
+import { phaseFloor } from '../combat/damage';
 import { type BossState, type Fighter, ItemState, MoveState, type World } from '../world/types';
 import type { ActionDef } from '../combat/types';
 import { emptyContext } from '../combat/context';
@@ -216,6 +218,14 @@ export function stepBoss(world: World): void {
     return;
   }
   checkDisarmed(world, f);
+  // M24: a held phase (gear or dismount) releases its queued transition once it is met.
+  if (!b.pending && f.ext && !phaseHeld(world, f)) {
+    const floor = phaseFloor(world, f);
+    if (floor > 0 && f.health <= floor) {
+      b.pending = true;
+      b.pendingSince = world.frame;
+    }
+  }
   if (!b.pending) return;
   const safe =
     f.state === MoveState.Idle || f.state === MoveState.Walk || f.state === MoveState.Guard;
@@ -340,6 +350,7 @@ export function spawnEnemy(world: World, kit: number, x: number, z: number): Fig
   world.bodies.push(f);
   world.bodies.sort((p, q) => p.id - q.id);
   enc.waveIds.push(id);
+  initShared(world, f);
   return f;
 }
 

@@ -1,3 +1,4 @@
+import { armBlast, detonate, eatProvision } from '../shared/weapons';
 import { fx } from '../math/fixed';
 import { Cheat, heroCheat } from '../cheats/cheats';
 import {
@@ -62,6 +63,7 @@ const requests = new WeakMap<World, PickupRequest[]>();
 /** Can `f` take this resting item now (neutral, or reserved for `f`)? */
 export function pickupEligible(world: World, f: Fighter, item: Item): boolean {
   if (item.state !== ItemState.Ground) return false;
+  if (item.fuseAt !== undefined) return false;
   return item.reserveFor === 0 || item.reserveFor === f.id || world.frame >= item.reserveUntil;
 }
 
@@ -166,6 +168,8 @@ export function weaponInteract(world: World, f: Fighter, input: FrameInput): voi
     logWeapon(world, f, WeaponEvent.Discard, item.id);
     return;
   }
+  // M24: Up eats a carried provision.
+  if (input.moveZ < 0 && input.moveX === 0 && eatProvision(world, f)) return;
   if (input.moveX !== 0) f.facing = input.moveX;
   const index = selectAction(f, 'weaponThrow', Dir.Neutral);
   if (index >= 0) startAction(f, index);
@@ -264,6 +268,8 @@ function land(world: World, item: Item): void {
   item.vy = 0;
   if (item.breakOnImpact) return breakItem(world, item, 1);
   if (def.throw.consumed && item.flight !== Flight.Drop) return breakItem(world, item, 1);
+  // M24: a thrown blast item rests where it lands and its fuse starts.
+  if (def.blast && item.flight !== Flight.Drop) armBlast(world, item, def);
   const zone = hazardAt(world, { x: item.x, z: item.z, hw: ITEM.halfW, hd: ITEM.halfD });
   if (zone && zone.phase === HazardPhase.Active && def.hazardDestructible)
     return breakItem(world, item, 2);
@@ -368,6 +374,10 @@ export function stepItems(world: World): void {
         }
         break;
       case ItemState.Ground:
+        if (item.fuseAt !== undefined && world.frame >= item.fuseAt) {
+          detonate(world, item);
+          break;
+        }
         if (item.reserveFor !== 0) {
           const owner = byId(world, item.reserveFor);
           // The reservation ends at once if the former holder is gone or defeated.

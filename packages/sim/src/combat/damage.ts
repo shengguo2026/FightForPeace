@@ -1,3 +1,4 @@
+import { phaseHeld, rivalDamage, untargetable } from '../shared/fighters';
 import { finalBlow } from '../enemies/stage2';
 import { type Fighter, MoveState, type World } from '../world/types';
 import { profileOf } from '../enemies/data';
@@ -12,7 +13,9 @@ export function nonCombatant(f: Fighter): boolean {
     f.state === MoveState.Flee ||
     f.state === MoveState.Surrender ||
     f.state === MoveState.Defeated ||
-    f.state === MoveState.PhaseShift
+    f.state === MoveState.PhaseShift ||
+    // M24: noncombatants, disguised figures and supporters (only fighters with M24 state).
+    (f.ext !== undefined && untargetable(f))
   );
 }
 
@@ -35,6 +38,8 @@ export function phaseFloor(world: World, f: Fighter): number {
 export function dealDamage(world: World, t: Fighter, dmg: number): number {
   // M11 cheats: SAFEHEART / SOFTERBLOWS change only a hero's Health loss.
   dmg = incomingDamage(world, t, dmg);
+  // M24: a rival's Health never falls below its floor.
+  if (t.ext) dmg = rivalDamage(world, t, dmg);
   if (dmg <= 0) return 0;
   const b = world.encounter?.boss;
   if (b && b.id === t.id) {
@@ -44,6 +49,12 @@ export function dealDamage(world: World, t: Fighter, dmg: number): number {
       return 0;
     }
     const floor = phaseFloor(world, t);
+    // M24: a phase that must end on broken gear or a dismount holds at its floor until then.
+    if (floor > 0 && t.health - dmg <= floor && phaseHeld(world, t)) {
+      const taken = t.health - floor;
+      t.health = floor;
+      return taken;
+    }
     if (floor > 0 && t.health - dmg <= floor) {
       const taken = t.health - floor;
       b.carry = Math.min(cap, dmg - taken);

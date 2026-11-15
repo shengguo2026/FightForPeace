@@ -23019,6 +23019,1595 @@ export const ENEMY_DATA: readonly HeroDef[] = [
     ],
     "recipes": [],
     "art": "signalman"
+  },
+  {
+    "id": "m24-bystander",
+    "name": "Noncombatant (test)",
+    "bodyWidth": 70,
+    "tags": [],
+    "actions": [
+      {
+        "id": "club-swing",
+        "name": "Club Swing",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 18,
+        "active": [
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 33280,
+          "h": 35840,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 50,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 25,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.m24-bystander.pose.standing.club-swing"
+      },
+      {
+        "id": "wild-rush",
+        "name": "Wild Rush",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 16,
+        "active": [
+          3,
+          6,
+          3
+        ],
+        "recovery": 26,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 35840,
+          "h": 30720,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 70,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 35,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 8,
+            "to": 28,
+            "forward": 768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "deflectBreak"
+        ],
+        "links": [],
+        "pose": "enemy.m24-bystander.pose.standing.wild-rush"
+      }
+    ],
+    "recipes": [],
+    "art": "recruit"
+  },
+  {
+    "id": "m24-false-merchant",
+    "name": "False Merchant (test)",
+    "bodyWidth": 70,
+    "tags": [],
+    "actions": [
+      {
+        "id": "club-swing",
+        "name": "Club Swing",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 18,
+        "active": [
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 33280,
+          "h": 35840,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 50,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 25,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.m24-false-merchant.pose.standing.club-swing"
+      },
+      {
+        "id": "wild-rush",
+        "name": "Wild Rush",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 16,
+        "active": [
+          3,
+          6,
+          3
+        ],
+        "recovery": 26,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 35840,
+          "h": 30720,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 70,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 35,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 8,
+            "to": 28,
+            "forward": 768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "deflectBreak"
+        ],
+        "links": [],
+        "pose": "enemy.m24-false-merchant.pose.standing.wild-rush"
+      }
+    ],
+    "recipes": [],
+    "art": "recruit"
+  },
+  {
+    "id": "m24-feinter",
+    "name": "Feinter (test)",
+    "bodyWidth": 70,
+    "tags": [],
+    "actions": [
+      {
+        "id": "club-swing",
+        "name": "Club Swing",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 18,
+        "active": [
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 33280,
+          "h": 35840,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 50,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 25,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.m24-feinter.pose.standing.club-swing"
+      },
+      {
+        "id": "wild-rush",
+        "name": "Wild Rush",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 16,
+        "active": [
+          3,
+          6,
+          3
+        ],
+        "recovery": 26,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 35840,
+          "h": 30720,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 70,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 35,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 8,
+            "to": 28,
+            "forward": 768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "deflectBreak"
+        ],
+        "links": [],
+        "pose": "enemy.m24-feinter.pose.standing.wild-rush"
+      }
+    ],
+    "recipes": [],
+    "art": "recruit"
+  },
+  {
+    "id": "m24-marshal",
+    "name": "Marshal (test)",
+    "bodyWidth": 80,
+    "tags": [],
+    "actions": [
+      {
+        "id": "palm-strike",
+        "name": "Palm Strike",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 14,
+        "active": [
+          3
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 38400,
+          "h": 28160,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 55,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 1024,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 27,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.m24-marshal.pose.standing.palm-strike"
+      },
+      {
+        "id": "roundhouse",
+        "name": "High Roundhouse",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 18,
+        "active": [
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 5120,
+          "w": 35840,
+          "y": 43520,
+          "h": 28160,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 75,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 22,
+          "push": 2048,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 18,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 37,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.m24-marshal.pose.standing.roundhouse"
+      },
+      {
+        "id": "spin-back-kick",
+        "name": "Spinning Back Kick",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 22,
+        "active": [
+          4
+        ],
+        "recovery": 24,
+        "landing": false,
+        "blockstun": 18,
+        "hitbox": {
+          "x": 5120,
+          "w": 35840,
+          "y": 30720,
+          "h": 35840,
+          "depth": 9728
+        },
+        "hurtbox": "standing",
+        "damage": 85,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": 1792,
+          "lift": 1280,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 16,
+        "damageScaleCost": 14,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 25,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 42,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.m24-marshal.pose.standing.spin-back-kick"
+      },
+      {
+        "id": "flying-knee",
+        "name": "Flying Knee",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 34,
+        "active": [
+          6
+        ],
+        "recovery": 26,
+        "landing": false,
+        "blockstun": 20,
+        "hitbox": {
+          "x": 2560,
+          "w": 33280,
+          "y": 23040,
+          "h": 43520,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 110,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 2048,
+          "lift": 1536,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 20,
+        "damageScaleCost": 16,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 35,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 55,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 26,
+            "to": 40,
+            "forward": 2048,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "guardPressure",
+          "leap",
+          "uncounterable"
+        ],
+        "links": [],
+        "pose": "enemy.m24-marshal.pose.standing.flying-knee"
+      },
+      {
+        "id": "double-palm",
+        "name": "Double Palm",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 12,
+        "active": [
+          3,
+          4,
+          3
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 38400,
+          "h": 28160,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 80,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 1024,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 40,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "deflectBreak"
+        ],
+        "links": [],
+        "pose": "enemy.m24-marshal.pose.standing.double-palm"
+      },
+      {
+        "id": "rising-knee",
+        "name": "Rising Knee",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 16,
+        "active": [
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 3840,
+          "w": 26880,
+          "y": 20480,
+          "h": 46080,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 70,
+        "reaction": {
+          "kind": "launch",
+          "hitstun": 26,
+          "push": 768,
+          "lift": 2304,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 18,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 35,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.m24-marshal.pose.standing.rising-knee"
+      },
+      {
+        "id": "axe-kick",
+        "name": "Jumping Axe Kick",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 28,
+        "active": [
+          4
+        ],
+        "recovery": 26,
+        "landing": false,
+        "blockstun": 20,
+        "hitbox": {
+          "x": 2560,
+          "w": 33280,
+          "y": 15360,
+          "h": 56320,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 100,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 28,
+          "push": 1536,
+          "lift": 1280,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 18,
+        "damageScaleCost": 15,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 35,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 50,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 8,
+            "to": 30,
+            "forward": 1024,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "guardPressure",
+          "leap",
+          "uncounterable"
+        ],
+        "links": [],
+        "pose": "enemy.m24-marshal.pose.standing.axe-kick"
+      },
+      {
+        "id": "sluice-parry",
+        "name": "Sluice Parry",
+        "category": "counter",
+        "context": "counter",
+        "dir": 0,
+        "startup": 4,
+        "active": [
+          4
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 22,
+        "hitbox": {
+          "x": 3840,
+          "w": 28160,
+          "y": 20480,
+          "h": 46080,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 70,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": 2048,
+          "lift": 1280,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 35,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "terminalKnockdown"
+        ],
+        "links": [],
+        "pose": "enemy.m24-marshal.pose.counter.sluice-parry"
+      },
+      {
+        "id": "winch-crank",
+        "name": "Crank the Winch",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 12,
+        "active": [
+          48
+        ],
+        "recovery": 10,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 0,
+          "w": 256,
+          "y": 0,
+          "h": 256,
+          "depth": 256
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 1,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "objective"
+        ],
+        "links": [],
+        "pose": "enemy.m24-marshal.pose.standing.winch-crank"
+      }
+    ],
+    "recipes": [],
+    "art": "commander"
+  },
+  {
+    "id": "m24-mounted-raider",
+    "name": "Mounted Raider (test)",
+    "bodyWidth": 68,
+    "tags": [],
+    "actions": [
+      {
+        "id": "claim-jab",
+        "name": "Claim Jab",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 10,
+        "active": [
+          3
+        ],
+        "recovery": 14,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 5120,
+          "w": 26880,
+          "y": 38400,
+          "h": 25600,
+          "depth": 8192
+        },
+        "hurtbox": "standing",
+        "damage": 30,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 512,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 8,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 15,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": {
+          "to": 1,
+          "large": -1,
+          "unarmed": false
+        },
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.m24-mounted-raider.pose.standing.claim-jab"
+      },
+      {
+        "id": "bootline-kick",
+        "name": "Bootline Kick",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 12,
+        "active": [
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 33280,
+          "y": 35840,
+          "h": 28160,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 50,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 22,
+          "push": 2304,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 25,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.m24-mounted-raider.pose.standing.bootline-kick"
+      },
+      {
+        "id": "taxing-low-kick",
+        "name": "Taxing Low Kick",
+        "category": "low",
+        "context": "script",
+        "dir": 0,
+        "startup": 12,
+        "active": [
+          3
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 3840,
+          "w": 29440,
+          "y": 0,
+          "h": 17920,
+          "depth": 7680
+        },
+        "hurtbox": "low",
+        "damage": 28,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 16,
+          "push": 512,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 8,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 14,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.m24-mounted-raider.pose.low.taxing-low-kick"
+      }
+    ],
+    "recipes": [],
+    "art": "rider"
+  },
+  {
+    "id": "m24-rival",
+    "name": "Resolve Rival (test)",
+    "bodyWidth": 72,
+    "tags": [],
+    "actions": [
+      {
+        "id": "club-swing",
+        "name": "Club Swing",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 18,
+        "active": [
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 33280,
+          "h": 35840,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 50,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 25,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.m24-rival.pose.standing.club-swing"
+      },
+      {
+        "id": "wild-rush",
+        "name": "Wild Rush",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 16,
+        "active": [
+          3,
+          6,
+          3
+        ],
+        "recovery": 26,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 35840,
+          "h": 30720,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 70,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 35,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 8,
+            "to": 28,
+            "forward": 768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "deflectBreak"
+        ],
+        "links": [],
+        "pose": "enemy.m24-rival.pose.standing.wild-rush"
+      }
+    ],
+    "recipes": [],
+    "art": "recruit"
+  },
+  {
+    "id": "m24-shield-escort",
+    "name": "Shield Escort (test)",
+    "bodyWidth": 76,
+    "tags": [],
+    "actions": [
+      {
+        "id": "club-swing",
+        "name": "Club Swing",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 18,
+        "active": [
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 33280,
+          "h": 35840,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 50,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 25,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.m24-shield-escort.pose.standing.club-swing"
+      },
+      {
+        "id": "wild-rush",
+        "name": "Wild Rush",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 16,
+        "active": [
+          3,
+          6,
+          3
+        ],
+        "recovery": 26,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 35840,
+          "h": 30720,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 70,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 35,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 8,
+            "to": 28,
+            "forward": 768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "deflectBreak"
+        ],
+        "links": [],
+        "pose": "enemy.m24-shield-escort.pose.standing.wild-rush"
+      }
+    ],
+    "recipes": [],
+    "art": "recruit"
   }
 ];
 
@@ -23058,7 +24647,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "cut-in-hook",
@@ -23067,7 +24658,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "taxing-low-kick",
@@ -23076,7 +24669,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "overreach-elbow",
@@ -23085,7 +24680,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -23095,6 +24692,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -23130,7 +24733,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "cut-in-hook",
@@ -23139,7 +24744,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "taxing-low-kick",
@@ -23148,7 +24755,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "overreach-elbow",
@@ -23157,7 +24766,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -23167,6 +24778,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -23202,7 +24819,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "cut-in-hook",
@@ -23211,7 +24830,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "taxing-low-kick",
@@ -23220,7 +24841,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "overreach-elbow",
@@ -23229,7 +24852,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -23239,6 +24864,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -23274,6 +24905,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": {
       "flinchCap": 3,
       "budgets": {
@@ -23320,7 +24957,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 0,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             },
             {
               "action": "roundhouse",
@@ -23329,7 +24968,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 0,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             },
             {
               "action": "spin-back-kick",
@@ -23338,7 +24979,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 0,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             },
             {
               "action": "flying-knee",
@@ -23347,13 +24990,16 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 0,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             }
           ],
           "armed": "",
           "untilDisarmed": false,
           "summon": "",
-          "scorch": null
+          "scorch": null,
+          "require": "none"
         },
         {
           "name": "Iron Gate Handwheel",
@@ -23381,7 +25027,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 0,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             },
             {
               "action": "rising-knee",
@@ -23390,7 +25038,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 0,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             },
             {
               "action": "axe-kick",
@@ -23399,7 +25049,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 0,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             },
             {
               "action": "wheel-throw",
@@ -23408,13 +25060,16 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 230400,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             }
           ],
           "armed": "",
           "untilDisarmed": false,
           "summon": "",
-          "scorch": null
+          "scorch": null,
+          "require": "none"
         },
         {
           "name": "Open the Sluice",
@@ -23441,7 +25096,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 0,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             },
             {
               "action": "rising-knee",
@@ -23450,7 +25107,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 0,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             },
             {
               "action": "axe-kick",
@@ -23459,7 +25118,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 0,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             },
             {
               "action": "wheel-throw",
@@ -23468,13 +25129,16 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 230400,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             }
           ],
           "armed": "",
           "untilDisarmed": false,
           "summon": "",
-          "scorch": null
+          "scorch": null,
+          "require": "none"
         }
       ]
     }
@@ -23517,7 +25181,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "backhand-sweep",
@@ -23526,7 +25192,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "iron-hug",
@@ -23535,7 +25203,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "anvil-slam",
@@ -23544,7 +25214,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": true,
@@ -23554,6 +25226,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -23589,7 +25267,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "anvil-sweep",
@@ -23598,7 +25278,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "blackline-advance",
@@ -23607,7 +25289,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -23620,6 +25304,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     },
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -23655,7 +25345,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "cross-aisle-kick",
@@ -23664,7 +25356,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "underbench-slide",
@@ -23673,7 +25367,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "rail-vault",
@@ -23682,7 +25378,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -23692,6 +25390,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -23727,7 +25431,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "cross-aisle-kick",
@@ -23736,7 +25442,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "underbench-slide",
@@ -23745,7 +25453,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "rail-vault",
@@ -23754,7 +25464,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -23764,6 +25476,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -23799,7 +25517,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "cross-aisle-kick",
@@ -23808,7 +25528,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "underbench-slide",
@@ -23817,7 +25539,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "rail-vault",
@@ -23826,7 +25550,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -23836,6 +25562,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -23871,7 +25603,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 230400,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "elbow-shove",
@@ -23880,7 +25614,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": true,
@@ -23890,6 +25626,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -23925,7 +25667,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 204800,
         "minRange": 66560,
-        "when": 1
+        "when": 1,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "close-check",
@@ -23934,7 +25678,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "retreating-shot",
@@ -23943,7 +25689,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 179200,
         "minRange": 51200,
-        "when": 1
+        "when": 1,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "sidearm-throw",
@@ -23952,7 +25700,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 153600,
         "minRange": 0,
-        "when": 1
+        "when": 1,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "claim-jab",
@@ -23961,7 +25711,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 2
+        "when": 2,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "bootline-kick",
@@ -23970,7 +25722,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 2
+        "when": 2,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -23989,6 +25743,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -24024,7 +25784,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 204800,
         "minRange": 66560,
-        "when": 1
+        "when": 1,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "close-check",
@@ -24033,7 +25795,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "retreating-shot",
@@ -24042,7 +25806,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 179200,
         "minRange": 51200,
-        "when": 1
+        "when": 1,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "sidearm-throw",
@@ -24051,7 +25817,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 153600,
         "minRange": 0,
-        "when": 1
+        "when": 1,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "claim-jab",
@@ -24060,7 +25828,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 2
+        "when": 2,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "bootline-kick",
@@ -24069,7 +25839,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 2
+        "when": 2,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -24088,6 +25860,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -24123,7 +25901,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 204800,
         "minRange": 66560,
-        "when": 1
+        "when": 1,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "close-check",
@@ -24132,7 +25912,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "retreating-shot",
@@ -24141,7 +25923,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 179200,
         "minRange": 51200,
-        "when": 1
+        "when": 1,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "sidearm-throw",
@@ -24150,7 +25934,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 153600,
         "minRange": 0,
-        "when": 1
+        "when": 1,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "claim-jab",
@@ -24159,7 +25945,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 2
+        "when": 2,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "bootline-kick",
@@ -24168,7 +25956,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 2
+        "when": 2,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -24187,6 +25977,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -24222,6 +26018,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": {
       "flinchCap": 3,
       "budgets": {
@@ -24272,7 +26074,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 174080,
               "minRange": 56320,
-              "when": 1
+              "when": 1,
+              "feint": 0,
+              "feintDelay": 0
             },
             {
               "action": "stock-check",
@@ -24281,7 +26085,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 0,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             },
             {
               "action": "command-pressure",
@@ -24290,7 +26096,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 460800,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             },
             {
               "action": "sweeping-claim",
@@ -24299,7 +26107,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 1,
               "range": 153600,
               "minRange": 61440,
-              "when": 1
+              "when": 1,
+              "feint": 0,
+              "feintDelay": 0
             },
             {
               "action": "cover-shift",
@@ -24308,13 +26118,16 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 179200,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             }
           ],
           "armed": "support-gun",
           "untilDisarmed": true,
           "summon": "command-pressure",
-          "scorch": null
+          "scorch": null,
+          "require": "none"
         },
         {
           "name": "Predator Unbound",
@@ -24336,7 +26149,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 0,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             },
             {
               "action": "claimants-advance",
@@ -24345,7 +26160,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 0,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             },
             {
               "action": "road-cutter-sweep",
@@ -24354,7 +26171,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 0,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             },
             {
               "action": "spoilsmans-grip",
@@ -24363,7 +26182,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 0,
               "range": 0,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             },
             {
               "action": "carrion-descent",
@@ -24372,7 +26193,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
               "minDifficulty": 1,
               "range": 0,
               "minRange": 0,
-              "when": 0
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
             }
           ],
           "armed": "",
@@ -24383,7 +26206,8 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
             "action": "scorched-claim",
             "look": 3,
             "cooldown": 420
-          }
+          },
+          "require": "none"
         }
       ]
     }
@@ -24421,7 +26245,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "rope-snare",
@@ -24430,7 +26256,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "drag-fling",
@@ -24439,7 +26267,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "pole-slam",
@@ -24448,7 +26278,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": true,
@@ -24458,6 +26290,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -24493,7 +26331,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "brace-shove",
@@ -24502,7 +26342,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "dock-clamp",
@@ -24511,7 +26353,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "load-bearing-sweep",
@@ -24520,7 +26364,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "aisle-turn",
@@ -24529,7 +26375,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "pallet-drop",
@@ -24538,7 +26386,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -24548,6 +26398,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -24583,7 +26439,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "brace-shove",
@@ -24592,7 +26450,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "dock-clamp",
@@ -24601,7 +26461,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "load-bearing-sweep",
@@ -24610,7 +26472,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "aisle-turn",
@@ -24619,7 +26483,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "pallet-drop",
@@ -24628,7 +26494,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -24638,6 +26506,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -24673,7 +26547,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "brace-shove",
@@ -24682,7 +26558,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "dock-clamp",
@@ -24691,7 +26569,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "load-bearing-sweep",
@@ -24700,7 +26580,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "aisle-turn",
@@ -24709,7 +26591,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "pallet-drop",
@@ -24718,7 +26602,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -24728,6 +26614,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -24763,7 +26655,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "wild-rush",
@@ -24772,7 +26666,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": true,
@@ -24782,6 +26678,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -24817,7 +26719,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "taxing-low-kick",
@@ -24826,7 +26730,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -24836,6 +26742,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "dismount",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -24871,7 +26783,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "slide-kick",
@@ -24880,7 +26794,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "flying-kick",
@@ -24889,7 +26805,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": true,
@@ -24899,6 +26817,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -24934,7 +26858,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "panel-kick",
@@ -24943,7 +26869,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "covering-shove",
@@ -24952,7 +26880,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -24965,6 +26895,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -25000,7 +26936,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "panel-kick",
@@ -25009,7 +26947,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "covering-shove",
@@ -25018,7 +26958,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -25031,6 +26973,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -25066,7 +27014,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "panel-kick",
@@ -25075,7 +27025,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "covering-shove",
@@ -25084,7 +27036,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -25097,6 +27051,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -25132,7 +27092,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "shield-charge",
@@ -25141,7 +27103,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 1,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": true,
@@ -25151,6 +27115,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "escort": null,
     "commands": [],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -25186,7 +27156,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "command-kick",
@@ -25195,7 +27167,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "low-marker",
@@ -25204,7 +27178,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -25231,6 +27207,12 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
       }
     ],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   },
   {
@@ -25266,7 +27248,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "command-kick",
@@ -25275,7 +27259,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       },
       {
         "action": "low-marker",
@@ -25284,7 +27270,9 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
         "minDifficulty": 0,
         "range": 0,
         "minRange": 0,
-        "when": 0
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
       }
     ],
     "firearms": false,
@@ -25319,6 +27307,574 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
       }
     ],
     "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "pressure",
+    "health": 100,
+    "walkX": 512,
+    "walkZ": 384,
+    "perception": 6,
+    "ring": 76800,
+    "defense": {
+      "tier": "basic",
+      "guardEvery": 9,
+      "guardOf": 1,
+      "exact": false,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 1,
+      "guardCost": 100,
+      "cooldown": 150,
+      "evadeEvery": 1,
+      "evadeOf": 0,
+      "evade": ""
+    },
+    "breakAt": 0,
+    "weapons": 0,
+    "group": null,
+    "attacks": [],
+    "firearms": false,
+    "shaken": 0,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": true,
+    "boss": null
+  },
+  {
+    "role": "pressure",
+    "health": 300,
+    "walkX": 768,
+    "walkZ": 512,
+    "perception": 6,
+    "ring": 76800,
+    "defense": {
+      "tier": "basic",
+      "guardEvery": 3,
+      "guardOf": 1,
+      "exact": false,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 24,
+      "guardCost": 100,
+      "cooldown": 150,
+      "evadeEvery": 1,
+      "evadeOf": 0,
+      "evade": ""
+    },
+    "breakAt": 0,
+    "weapons": 0,
+    "group": null,
+    "attacks": [
+      {
+        "action": "club-swing",
+        "threat": 12,
+        "cooldown": 70,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "wild-rush",
+        "threat": 20,
+        "cooldown": 120,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 0,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "disguised",
+    "reveal": 240,
+    "revealRange": 66560,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "pressure",
+    "health": 300,
+    "walkX": 896,
+    "walkZ": 640,
+    "perception": 6,
+    "ring": 76800,
+    "defense": {
+      "tier": "basic",
+      "guardEvery": 3,
+      "guardOf": 1,
+      "exact": false,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 24,
+      "guardCost": 100,
+      "cooldown": 150,
+      "evadeEvery": 1,
+      "evadeOf": 0,
+      "evade": ""
+    },
+    "breakAt": 0,
+    "weapons": 0,
+    "group": null,
+    "attacks": [
+      {
+        "action": "wild-rush",
+        "threat": 20,
+        "cooldown": 90,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 10,
+        "feintDelay": 30
+      }
+    ],
+    "firearms": false,
+    "shaken": 0,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "boss",
+    "health": 1800,
+    "walkX": 768,
+    "walkZ": 512,
+    "perception": 0,
+    "ring": 76800,
+    "defense": {
+      "tier": "boss",
+      "guardEvery": 3,
+      "guardOf": 1,
+      "exact": true,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 24,
+      "guardCost": 100,
+      "cooldown": 160,
+      "evadeEvery": 1,
+      "evadeOf": 0,
+      "evade": ""
+    },
+    "breakAt": 0,
+    "weapons": 0,
+    "group": null,
+    "attacks": [],
+    "firearms": false,
+    "shaken": 0,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [
+      {
+        "id": "marshal-shield",
+        "name": "Marshal's Shield",
+        "guard": 240,
+        "benefit": 0,
+        "stagger": 60
+      }
+    ],
+    "mount": {
+      "kind": 0,
+      "stability": 200,
+      "share": 60,
+      "speed": 3584,
+      "warn": 80,
+      "rest": 100,
+      "damage": 60,
+      "push": 3072,
+      "lane": 17920
+    },
+    "rival": null,
+    "noncombatant": false,
+    "boss": {
+      "flinchCap": 3,
+      "budgets": {
+        "stun": 70,
+        "juggle": 70
+      },
+      "stagger": {
+        "telegraph": 30,
+        "duration": 300,
+        "reentry": 40
+      },
+      "transition": {
+        "grace": 180,
+        "carryCap": 120,
+        "shift": 90
+      },
+      "share": 40,
+      "surrender": 0,
+      "capture": false,
+      "phases": [
+        {
+          "name": "Mounted",
+          "from": 100,
+          "resolve": 240,
+          "look": 1,
+          "weapon": "",
+          "counter": false,
+          "breaker": false,
+          "supports": [],
+          "eliteSupports": [],
+          "coopSupports": null,
+          "device": "",
+          "attacks": [
+            {
+              "action": "palm-strike",
+              "threat": 12,
+              "cooldown": 60,
+              "minDifficulty": 0,
+              "range": 0,
+              "minRange": 0,
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
+            }
+          ],
+          "armed": "",
+          "untilDisarmed": false,
+          "summon": "",
+          "scorch": null,
+          "require": "dismount"
+        },
+        {
+          "name": "Shield Wall",
+          "from": 70,
+          "resolve": 300,
+          "look": 1,
+          "weapon": "",
+          "counter": false,
+          "breaker": false,
+          "supports": [],
+          "eliteSupports": [],
+          "coopSupports": null,
+          "device": "",
+          "attacks": [
+            {
+              "action": "palm-strike",
+              "threat": 12,
+              "cooldown": 60,
+              "minDifficulty": 0,
+              "range": 0,
+              "minRange": 0,
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
+            },
+            {
+              "action": "roundhouse",
+              "threat": 20,
+              "cooldown": 100,
+              "minDifficulty": 0,
+              "range": 0,
+              "minRange": 0,
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
+            }
+          ],
+          "armed": "",
+          "untilDisarmed": false,
+          "summon": "",
+          "scorch": null,
+          "require": "gear"
+        },
+        {
+          "name": "Open Ground",
+          "from": 35,
+          "resolve": 300,
+          "look": 2,
+          "weapon": "",
+          "counter": false,
+          "breaker": false,
+          "supports": [],
+          "eliteSupports": [],
+          "coopSupports": null,
+          "device": "",
+          "attacks": [
+            {
+              "action": "double-palm",
+              "threat": 20,
+              "cooldown": 70,
+              "minDifficulty": 0,
+              "range": 0,
+              "minRange": 0,
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
+            },
+            {
+              "action": "axe-kick",
+              "threat": 40,
+              "cooldown": 220,
+              "minDifficulty": 0,
+              "range": 0,
+              "minRange": 0,
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
+            }
+          ],
+          "armed": "",
+          "untilDisarmed": false,
+          "summon": "",
+          "scorch": null,
+          "require": "none"
+        }
+      ]
+    }
+  },
+  {
+    "role": "pressure",
+    "health": 220,
+    "walkX": 768,
+    "walkZ": 512,
+    "perception": 8,
+    "ring": 81920,
+    "defense": {
+      "tier": "basic",
+      "guardEvery": 4,
+      "guardOf": 1,
+      "exact": false,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 20,
+      "guardCost": 100,
+      "cooldown": 150,
+      "evadeEvery": 1,
+      "evadeOf": 0,
+      "evade": ""
+    },
+    "breakAt": 0,
+    "weapons": 0,
+    "group": null,
+    "attacks": [
+      {
+        "action": "claim-jab",
+        "threat": 14,
+        "cooldown": 90,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "taxing-low-kick",
+        "threat": 12,
+        "cooldown": 120,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 0,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": {
+      "kind": 0,
+      "stability": 120,
+      "share": 60,
+      "speed": 3584,
+      "warn": 70,
+      "rest": 90,
+      "damage": 45,
+      "push": 2560,
+      "lane": 15360
+    },
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "pressure",
+    "health": 400,
+    "walkX": 768,
+    "walkZ": 512,
+    "perception": 6,
+    "ring": 76800,
+    "defense": {
+      "tier": "basic",
+      "guardEvery": 3,
+      "guardOf": 1,
+      "exact": false,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 24,
+      "guardCost": 100,
+      "cooldown": 150,
+      "evadeEvery": 1,
+      "evadeOf": 0,
+      "evade": ""
+    },
+    "breakAt": 0,
+    "weapons": 0,
+    "group": null,
+    "attacks": [
+      {
+        "action": "club-swing",
+        "threat": 12,
+        "cooldown": 70,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "wild-rush",
+        "threat": 20,
+        "cooldown": 120,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 0,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": {
+      "floor": 30,
+      "withdraw": 60
+    },
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "pressure",
+    "health": 360,
+    "walkX": 640,
+    "walkZ": 512,
+    "perception": 6,
+    "ring": 76800,
+    "defense": {
+      "tier": "basic",
+      "guardEvery": 4,
+      "guardOf": 1,
+      "exact": false,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 24,
+      "guardCost": 100,
+      "cooldown": 150,
+      "evadeEvery": 1,
+      "evadeOf": 0,
+      "evade": ""
+    },
+    "breakAt": 0,
+    "weapons": 0,
+    "group": null,
+    "attacks": [
+      {
+        "action": "club-swing",
+        "threat": 12,
+        "cooldown": 80,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 0,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [
+      {
+        "id": "front-shield",
+        "name": "Front Shield",
+        "guard": 160,
+        "benefit": 0,
+        "stagger": 50
+      },
+      {
+        "id": "brace",
+        "name": "Counter Brace",
+        "guard": 80,
+        "benefit": 1,
+        "stagger": 30
+      }
+    ],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
     "boss": null
   }
 ];
@@ -25392,7 +27948,14 @@ export const ENEMY_VARIANTS: Readonly<Record<string, readonly (readonly [string,
       "signalman-master",
       4
     ]
-  ]
+  ],
+  "m24-bystander": [],
+  "m24-false-merchant": [],
+  "m24-feinter": [],
+  "m24-marshal": [],
+  "m24-mounted-raider": [],
+  "m24-rival": [],
+  "m24-shield-escort": []
 };
 
 export const WEAPON_DATA: readonly WeaponDef[] = [
@@ -25431,6 +27994,18 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
       "strikeDeflectable": true,
       "catchable": false
     },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": null,
     "actions": [
       {
         "id": "staff-thrust",
@@ -26412,6 +28987,18 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
       "strikeDeflectable": true,
       "catchable": false
     },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": null,
     "actions": [
       {
         "id": "wheel-throw",
@@ -26516,6 +29103,18 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
       "strikeDeflectable": true,
       "catchable": false
     },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": null,
     "actions": [
       {
         "id": "board-swing",
@@ -26686,6 +29285,18 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
       "strikeDeflectable": true,
       "catchable": false
     },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": null,
     "actions": [
       {
         "id": "grenade-return",
@@ -26788,6 +29399,18 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
       "strikeDeflectable": true,
       "catchable": false
     },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": null,
     "actions": [
       {
         "id": "lance-jab",
@@ -27599,6 +30222,18 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
       "strikeDeflectable": true,
       "catchable": false
     },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": null,
     "actions": [
       {
         "id": "sidearm-shot",
@@ -27832,6 +30467,18 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
       "strikeDeflectable": true,
       "catchable": false
     },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": null,
     "actions": [
       {
         "id": "support-burst",
@@ -28081,6 +30728,18 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
       "strikeDeflectable": true,
       "catchable": false
     },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": null,
     "actions": [
       {
         "id": "rail-swing",
@@ -28212,6 +30871,859 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
         ],
         "links": [],
         "pose": "weapon.support-rail.pose.weaponThrow.rail-throw"
+      }
+    ],
+    "affinity": []
+  },
+  {
+    "id": "m24-concussion",
+    "name": "Concussion Device (test)",
+    "class": "recoverableThrown",
+    "hands": 1,
+    "debris": "none",
+    "melee": false,
+    "integrity": {
+      "deflect": 0,
+      "max": 10,
+      "worn": 8,
+      "critical": 4,
+      "hit": 0,
+      "guard": 0,
+      "clash": 0,
+      "throw": 0
+    },
+    "gripResistance": 10,
+    "ammo": 0,
+    "fire": {
+      "defenseCost": 0
+    },
+    "pickup": 6,
+    "hazardDestructible": false,
+    "guardCostPercent": 100,
+    "throw": {
+      "speed": 2304,
+      "lift": 1536,
+      "consumed": false,
+      "blockable": true,
+      "exactDeflectable": false,
+      "counterReturnable": false,
+      "strikeDeflectable": true,
+      "catchable": false
+    },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": {
+      "fuse": 45,
+      "hw": 40960,
+      "hd": 23040,
+      "damage": 30,
+      "defense": 25,
+      "stun": 40,
+      "push": 1536
+    },
+    "provision": null,
+    "actions": [
+      {
+        "id": "concussion-throw",
+        "name": "Concussion Throw",
+        "category": "weaponThrow",
+        "context": "weaponThrow",
+        "dir": 0,
+        "startup": 8,
+        "active": [
+          1
+        ],
+        "recovery": 14,
+        "landing": false,
+        "blockstun": 8,
+        "hitbox": {
+          "x": 0,
+          "w": 10240,
+          "y": 23040,
+          "h": 10240,
+          "depth": 7168
+        },
+        "hurtbox": "standing",
+        "damage": 5,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 12,
+          "push": 512,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 5,
+        "damageScaleCost": 5,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 1,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 2,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.m24-concussion.pose.weaponThrow.concussion-throw"
+      }
+    ],
+    "affinity": []
+  },
+  {
+    "id": "m24-heavy-gun",
+    "name": "Restricted Heavy Gun (test)",
+    "class": "firearm",
+    "hands": 2,
+    "debris": "none",
+    "melee": false,
+    "integrity": {
+      "deflect": 4,
+      "max": 120,
+      "worn": 80,
+      "critical": 40,
+      "hit": 2,
+      "guard": 2,
+      "clash": 6,
+      "throw": 30
+    },
+    "gripResistance": 70,
+    "ammo": 60,
+    "fire": {
+      "defenseCost": 0
+    },
+    "pickup": 16,
+    "hazardDestructible": false,
+    "guardCostPercent": 100,
+    "throw": {
+      "speed": 1536,
+      "lift": 768,
+      "consumed": false,
+      "blockable": true,
+      "exactDeflectable": false,
+      "counterReturnable": false,
+      "strikeDeflectable": true,
+      "catchable": false
+    },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": true,
+      "grab": true,
+      "mount": true,
+      "carry": true,
+      "speed": 60
+    },
+    "heat": {
+      "per": 400,
+      "max": 1000,
+      "cool": 3
+    },
+    "blast": null,
+    "provision": null,
+    "actions": [
+      {
+        "id": "heavy-burst",
+        "name": "Heavy Burst",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 0,
+        "startup": 20,
+        "active": [
+          2,
+          4,
+          2,
+          4,
+          2
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 10240,
+          "w": 204800,
+          "y": 33280,
+          "h": 10240,
+          "depth": 6656
+        },
+        "hurtbox": "standing",
+        "damage": 80,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 1024,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 18,
+        "damageScaleCost": 18,
+        "starterProration": 25,
+        "juggleCost": 0,
+        "guardCost": 18,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 40,
+        "pull": 0,
+        "ammo": 3,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "committed",
+          "warnedLine"
+        ],
+        "links": [],
+        "pose": "weapon.m24-heavy-gun.pose.standing.heavy-burst"
+      },
+      {
+        "id": "heavy-stock",
+        "name": "Heavy Stock Strike",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 0,
+        "startup": 12,
+        "active": [
+          4
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 20,
+        "hitbox": {
+          "x": 5120,
+          "w": 28160,
+          "y": 28160,
+          "h": 28160,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 50,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 24,
+          "push": 2048,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 2,
+        "disarmPower": 0,
+        "breakPower": 25,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "impact",
+          "whenEmpty"
+        ],
+        "links": [],
+        "pose": "weapon.m24-heavy-gun.pose.standing.heavy-stock"
+      },
+      {
+        "id": "heavy-throw",
+        "name": "Heavy Gun Toss",
+        "category": "weaponThrow",
+        "context": "weaponThrow",
+        "dir": 0,
+        "startup": 14,
+        "active": [
+          1
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 0,
+          "w": 23040,
+          "y": 25600,
+          "h": 15360,
+          "depth": 8192
+        },
+        "hurtbox": "standing",
+        "damage": 40,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 1280,
+          "lift": 1280,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 20,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.m24-heavy-gun.pose.weaponThrow.heavy-throw"
+      }
+    ],
+    "affinity": []
+  },
+  {
+    "id": "m24-hook-pole",
+    "name": "Hook Pole (test)",
+    "class": "temporaryMelee",
+    "hands": 1,
+    "debris": "none",
+    "melee": true,
+    "integrity": {
+      "deflect": 4,
+      "max": 80,
+      "worn": 50,
+      "critical": 20,
+      "hit": 5,
+      "guard": 3,
+      "clash": 8,
+      "throw": 20
+    },
+    "gripResistance": 30,
+    "ammo": 0,
+    "fire": {
+      "defenseCost": 0
+    },
+    "pickup": 8,
+    "hazardDestructible": false,
+    "guardCostPercent": 100,
+    "throw": {
+      "speed": 3328,
+      "lift": 512,
+      "consumed": false,
+      "blockable": true,
+      "exactDeflectable": true,
+      "counterReturnable": false,
+      "strikeDeflectable": true,
+      "catchable": false
+    },
+    "opens": [],
+    "redirects": [
+      "cargo"
+    ],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": null,
+    "actions": [
+      {
+        "id": "hook-swing",
+        "name": "Hook Pole Swing",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 0,
+        "startup": 8,
+        "active": [
+          3
+        ],
+        "recovery": 14,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 48640,
+          "y": 40960,
+          "h": 23040,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 40,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 1,
+        "disarmPower": 0,
+        "breakPower": 20,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.m24-hook-pole.pose.standing.hook-swing"
+      },
+      {
+        "id": "hook-throw",
+        "name": "Hook Pole Throw",
+        "category": "weaponThrow",
+        "context": "weaponThrow",
+        "dir": 0,
+        "startup": 10,
+        "active": [
+          1
+        ],
+        "recovery": 14,
+        "landing": false,
+        "blockstun": 10,
+        "hitbox": {
+          "x": 0,
+          "w": 20480,
+          "y": 25600,
+          "h": 10240,
+          "depth": 7680
+        },
+        "hurtbox": "standing",
+        "damage": 35,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 1024,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 2,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 17,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.m24-hook-pole.pose.weaponThrow.hook-throw"
+      }
+    ],
+    "affinity": []
+  },
+  {
+    "id": "m24-pry-bar",
+    "name": "Pry Bar (test)",
+    "class": "temporaryMelee",
+    "hands": 1,
+    "debris": "none",
+    "melee": true,
+    "integrity": {
+      "deflect": 4,
+      "max": 80,
+      "worn": 50,
+      "critical": 20,
+      "hit": 5,
+      "guard": 3,
+      "clash": 8,
+      "throw": 20
+    },
+    "gripResistance": 30,
+    "ammo": 0,
+    "fire": {
+      "defenseCost": 0
+    },
+    "pickup": 8,
+    "hazardDestructible": false,
+    "guardCostPercent": 100,
+    "throw": {
+      "speed": 3328,
+      "lift": 512,
+      "consumed": false,
+      "blockable": true,
+      "exactDeflectable": true,
+      "counterReturnable": false,
+      "strikeDeflectable": true,
+      "catchable": false
+    },
+    "opens": [
+      "crate"
+    ],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": null,
+    "actions": [
+      {
+        "id": "pry-swing",
+        "name": "Pry Bar Swing",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 0,
+        "startup": 8,
+        "active": [
+          3
+        ],
+        "recovery": 14,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 30720,
+          "y": 35840,
+          "h": 23040,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 40,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 1,
+        "disarmPower": 0,
+        "breakPower": 20,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.m24-pry-bar.pose.standing.pry-swing"
+      },
+      {
+        "id": "pry-throw",
+        "name": "Pry Bar Throw",
+        "category": "weaponThrow",
+        "context": "weaponThrow",
+        "dir": 0,
+        "startup": 10,
+        "active": [
+          1
+        ],
+        "recovery": 14,
+        "landing": false,
+        "blockstun": 10,
+        "hitbox": {
+          "x": 0,
+          "w": 20480,
+          "y": 25600,
+          "h": 10240,
+          "depth": 7680
+        },
+        "hurtbox": "standing",
+        "damage": 35,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 1024,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 2,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 17,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.m24-pry-bar.pose.weaponThrow.pry-throw"
+      }
+    ],
+    "affinity": []
+  },
+  {
+    "id": "m24-ration",
+    "name": "Field Ration (test)",
+    "class": "provision",
+    "hands": 1,
+    "debris": "none",
+    "melee": false,
+    "integrity": {
+      "deflect": 0,
+      "max": 10,
+      "worn": 8,
+      "critical": 4,
+      "hit": 0,
+      "guard": 0,
+      "clash": 0,
+      "throw": 0
+    },
+    "gripResistance": 10,
+    "ammo": 0,
+    "fire": {
+      "defenseCost": 0
+    },
+    "pickup": 6,
+    "hazardDestructible": false,
+    "guardCostPercent": 100,
+    "throw": {
+      "speed": 2048,
+      "lift": 1280,
+      "consumed": false,
+      "blockable": true,
+      "exactDeflectable": false,
+      "counterReturnable": false,
+      "strikeDeflectable": false,
+      "catchable": false
+    },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": {
+      "health": 120,
+      "defense": 30,
+      "meter": 10,
+      "eat": 40
+    },
+    "actions": [
+      {
+        "id": "ration-toss",
+        "name": "Ration Toss",
+        "category": "weaponThrow",
+        "context": "weaponThrow",
+        "dir": 0,
+        "startup": 8,
+        "active": [
+          1
+        ],
+        "recovery": 12,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 0,
+          "w": 7680,
+          "y": 23040,
+          "h": 7680,
+          "depth": 6656
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 1,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.m24-ration.pose.weaponThrow.ration-toss"
       }
     ],
     "affinity": []
@@ -28416,7 +31928,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": false
+    "stage": false,
+    "scenery": null
   },
   {
     "id": "trial-shield",
@@ -28460,7 +31973,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": false
+    "stage": false,
+    "scenery": null
   },
   {
     "id": "trial-runner",
@@ -28504,7 +32018,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": false
+    "stage": false,
+    "scenery": null
   },
   {
     "id": "trial-overseer",
@@ -28548,7 +32063,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": false
+    "stage": false,
+    "scenery": null
   },
   {
     "id": "trial-lookout",
@@ -28599,7 +32115,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": false
+    "stage": false,
+    "scenery": null
   },
   {
     "id": "trial-enforcer",
@@ -28643,7 +32160,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": false
+    "stage": false,
+    "scenery": null
   },
   {
     "id": "beat-bridge",
@@ -28706,7 +32224,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": false
+    "stage": false,
+    "scenery": null
   },
   {
     "id": "beat-mill",
@@ -28757,7 +32276,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": false
+    "stage": false,
+    "scenery": null
   },
   {
     "id": "beat-canal",
@@ -28820,7 +32340,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": false
+    "stage": false,
+    "scenery": null
   },
   {
     "id": "beat-courtyard",
@@ -28892,7 +32413,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
       }
     ],
     "reserve": [],
-    "stage": false
+    "stage": false,
+    "scenery": null
   },
   {
     "id": "boss-commander",
@@ -28938,7 +32460,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": false
+    "stage": false,
+    "scenery": null
   },
   {
     "id": "stage1.fields",
@@ -28955,7 +32478,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage1.fields.1",
@@ -29027,7 +32551,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage1.fields.2",
@@ -29092,7 +32617,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage1.bridge",
@@ -29109,7 +32635,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage1.bridge.1",
@@ -29200,7 +32727,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage1.rescue",
@@ -29217,7 +32745,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage1.rescue.1",
@@ -29296,7 +32825,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage1.mill",
@@ -29313,7 +32843,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage1.mill.1",
@@ -29392,7 +32923,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage1.investigation",
@@ -29409,7 +32941,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage1.canal",
@@ -29426,7 +32959,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage1.canal.1",
@@ -29524,7 +33058,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage1.courtyard",
@@ -29541,7 +33076,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage1.courtyard.1",
@@ -29653,7 +33189,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
       }
     ],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage1.sluice",
@@ -29670,7 +33207,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage1.sluice.1",
@@ -29716,7 +33254,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage2.perimeter",
@@ -29733,7 +33272,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage2.loading-yard",
@@ -29750,7 +33290,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage2.aquaculture",
@@ -29767,7 +33308,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage2.aeration-annex",
@@ -29784,7 +33326,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage2.vestibule",
@@ -29801,7 +33344,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage2.crop-channels",
@@ -29818,7 +33362,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage2.seed-bay",
@@ -29835,7 +33380,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage2.medicinal-wing",
@@ -29852,7 +33398,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage2.prep-room",
@@ -29869,7 +33416,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage2.filtration",
@@ -29886,7 +33434,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage2.production-hall",
@@ -29903,7 +33452,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage2.recovery-bay",
@@ -29920,7 +33470,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage2.intercept",
@@ -29937,7 +33488,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "stage2.dispatch-yard",
@@ -29954,7 +33506,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "waves": [],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "greenhouse-test-room-waves",
@@ -30017,7 +33570,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "trial-claimhand-waves",
@@ -30087,7 +33641,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "trial-glassrunner-waves",
@@ -30138,7 +33693,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "trial-reaver-waves",
@@ -30189,7 +33745,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "trial-marauder-waves",
@@ -30240,7 +33797,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "trial-saboteur-waves",
@@ -30291,7 +33849,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "trial-rider-waves",
@@ -30342,7 +33901,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "trial-enforcer2-waves",
@@ -30393,7 +33953,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "trial-signalman-waves",
@@ -30461,7 +34022,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
       "claimhand",
       "glassrunner"
     ],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "beat-loading-yard-waves",
@@ -30554,7 +34116,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "reserve": [
       "claimhand"
     ],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "beat-filtration-waves",
@@ -30645,7 +34208,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "boss-marek-waves",
@@ -30675,7 +34239,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "s2-aquaculture-hall-waves",
@@ -30775,7 +34340,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     "reserve": [
       "glassrunner"
     ],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "s2-aeration-annex-waves",
@@ -30826,7 +34392,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "s2-crop-channels-waves",
@@ -30917,7 +34484,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "s2-seed-reserve-bay-waves",
@@ -30975,7 +34543,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "s2-medicinal-wing-waves",
@@ -31073,7 +34642,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
       }
     ],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "s2-medicinal-prep-room-waves",
@@ -31124,7 +34694,8 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     ],
     "substitutions": [],
     "reserve": [],
-    "stage": true
+    "stage": true,
+    "scenery": null
   },
   {
     "id": "s2-production-hall-waves",
@@ -31225,7 +34796,601 @@ export const ARENA_DATA: readonly ArenaDef[] = [
       "claimhand",
       "reaver"
     ],
-    "stage": true
+    "stage": true,
+    "scenery": null
+  },
+  {
+    "id": "lab-m24-hazards",
+    "name": "M24 Lab: Moving Hazards and Tools",
+    "area": "mill",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "recruit",
+            "x": 1700,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "recruit",
+            "x": 1900,
+            "z": 880,
+            "minDifficulty": 0,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "m24-pry-bar",
+          "x": 700,
+          "z": 760
+        },
+        {
+          "weapon": "m24-hook-pole",
+          "x": 760,
+          "z": 900
+        }
+      ],
+      "surfaces": [],
+      "breakables": [
+        {
+          "x": 1100,
+          "z": 700,
+          "hw": 50,
+          "hd": 30,
+          "h": 160,
+          "thresholds": [
+            40,
+            80,
+            120
+          ],
+          "fragment": "",
+          "tags": [
+            "crate"
+          ],
+          "property": 0,
+          "cluster": 0
+        },
+        {
+          "x": 1500,
+          "z": 960,
+          "hw": 70,
+          "hd": 30,
+          "h": 170,
+          "thresholds": [
+            60,
+            120,
+            180
+          ],
+          "fragment": "",
+          "tags": [],
+          "property": 1,
+          "cluster": 1
+        },
+        {
+          "x": 1660,
+          "z": 960,
+          "hw": 50,
+          "hd": 30,
+          "h": 170,
+          "thresholds": [
+            60,
+            120,
+            180
+          ],
+          "fragment": "",
+          "tags": [],
+          "property": 1,
+          "cluster": 1
+        }
+      ],
+      "hazards": [],
+      "movers": [
+        {
+          "x0": 300,
+          "z0": 780,
+          "x1": 2600,
+          "z1": 780,
+          "hw": 60,
+          "hd": 40,
+          "h": 90,
+          "start": 120,
+          "rest": 240,
+          "warn": 70,
+          "active": 90,
+          "damage": 60,
+          "redirect": "any",
+          "cycles": 0,
+          "tags": [
+            "cart"
+          ]
+        },
+        {
+          "x0": 1900,
+          "z0": 640,
+          "x1": 1900,
+          "z1": 940,
+          "hw": 70,
+          "hd": 50,
+          "h": 160,
+          "start": 200,
+          "rest": 300,
+          "warn": 80,
+          "active": 50,
+          "damage": 80,
+          "redirect": "cargo",
+          "cycles": 0,
+          "tags": [
+            "cargo"
+          ]
+        }
+      ],
+      "platforms": [],
+      "stations": []
+    }
+  },
+  {
+    "id": "lab-m24-platform",
+    "name": "M24 Lab: Moving Platform",
+    "area": "fields",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "recruit",
+            "x": 1800,
+            "z": 800,
+            "minDifficulty": 0,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [],
+      "surfaces": [],
+      "breakables": [],
+      "hazards": [],
+      "movers": [],
+      "platforms": [
+        {
+          "x0": 600,
+          "x1": 2200,
+          "z": 800,
+          "hw": 220,
+          "hd": 90,
+          "speed": 2.5,
+          "wait": 120
+        }
+      ],
+      "stations": []
+    }
+  },
+  {
+    "id": "lab-m24-gear",
+    "name": "M24 Lab: Finite Gear",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "m24-shield-escort",
+            "x": 1500,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "m24-shield-escort",
+            "x": 1750,
+            "z": 720,
+            "minDifficulty": 1,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": null
+  },
+  {
+    "id": "lab-m24-marshal",
+    "name": "M24 Lab: Mounted Shield Boss",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "m24-marshal",
+            "x": 1800,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": null
+  },
+  {
+    "id": "lab-m24-riders",
+    "name": "M24 Lab: Mounted Raiders",
+    "area": "fields",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "m24-mounted-raider",
+            "x": 2400,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "m24-mounted-raider",
+            "x": 300,
+            "z": 720,
+            "minDifficulty": 1,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": null
+  },
+  {
+    "id": "lab-m24-rivals",
+    "name": "M24 Lab: Rivals, Feints and Disguises",
+    "area": "canal",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "m24-bystander",
+            "x": 1200,
+            "z": 940,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "m24-rival",
+            "x": 1500,
+            "z": 800,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "m24-feinter",
+            "x": 1750,
+            "z": 720,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "m24-false-merchant",
+            "x": 2300,
+            "z": 880,
+            "minDifficulty": 0,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": null
+  },
+  {
+    "id": "lab-m24-weapons",
+    "name": "M24 Lab: Heavy Weapons and Provisions",
+    "area": "mill",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "recruit",
+            "x": 1700,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "recruit",
+            "x": 1800,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "recruit",
+            "x": 1950,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "m24-heavy-gun",
+          "x": 700,
+          "z": 760
+        },
+        {
+          "weapon": "m24-concussion",
+          "x": 800,
+          "z": 900
+        },
+        {
+          "weapon": "m24-concussion",
+          "x": 880,
+          "z": 700
+        },
+        {
+          "weapon": "m24-ration",
+          "x": 600,
+          "z": 900
+        },
+        {
+          "weapon": "m24-ration",
+          "x": 640,
+          "z": 680
+        }
+      ],
+      "surfaces": [],
+      "breakables": [],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    }
+  },
+  {
+    "id": "lab-m24-handover",
+    "name": "M24 Lab: Hand-over and Support",
+    "area": "bridge",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "recruit",
+            "x": 1700,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "recruit",
+            "x": 1850,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          }
+        ]
+      },
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "recruit",
+            "x": 2200,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "workstaff",
+          "x": 700,
+          "z": 760
+        },
+        {
+          "weapon": "m24-ration",
+          "x": 700,
+          "z": 900
+        }
+      ],
+      "surfaces": [],
+      "breakables": [],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    }
+  },
+  {
+    "id": "lab-m24-robot",
+    "name": "M24 Lab: Support Robot",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "lookout",
+            "x": 2400,
+            "z": 800,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "recruit",
+            "x": 1800,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          }
+        ]
+      },
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "recruit",
+            "x": 2200,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "recruit",
+            "x": 2300,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [],
+      "surfaces": [],
+      "breakables": [],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": [
+        {
+          "x": 800,
+          "z": 700,
+          "kind": 0,
+          "approach": 90,
+          "frames": 600,
+          "cooldown": 240,
+          "cover": {
+            "x": 1000,
+            "z": 760,
+            "hw": 30,
+            "hd": 80,
+            "h": 120
+          }
+        },
+        {
+          "x": 800,
+          "z": 940,
+          "kind": 1,
+          "approach": 60,
+          "frames": 480,
+          "cooldown": 240,
+          "cover": null
+        }
+      ]
+    }
   }
 ];
 
@@ -34508,6 +38673,9 @@ export const MOUNTED_DATA: MountedDef | null = {
       "CP-07",
       "CP-12"
     ],
+    "kind": 1,
+    "atZero": "recover",
+    "fallback": 768,
     "base": 2048,
     "min": 1280,
     "max": 2816,
@@ -34551,6 +38719,167 @@ export const MOUNTED_DATA: MountedDef | null = {
       "shiftFrames": 14
     }
   },
+  "mounts": [
+    {
+      "id": "civil-bike",
+      "name": "Civil-Protection Bike",
+      "plates": [
+        "CP-07",
+        "CP-12"
+      ],
+      "kind": 1,
+      "atZero": "recover",
+      "fallback": 768,
+      "base": 2048,
+      "min": 1280,
+      "max": 2816,
+      "accel": 51,
+      "brake": 90,
+      "steer": 1536,
+      "laneDrift": 256,
+      "assistDrift": 768,
+      "stability": 100,
+      "recover": {
+        "delay": 150,
+        "every": 6,
+        "amount": 1
+      },
+      "wobble": 18,
+      "impact": {
+        "barrier": 20,
+        "gate": 25,
+        "push": 15360
+      },
+      "crash": 60,
+      "protect": 120,
+      "rescue": {
+        "window": 180,
+        "x": 56320,
+        "z": 35840,
+        "restore": 40
+      },
+      "tether": {
+        "soft": 153600,
+        "hard": 256000,
+        "slow": 768,
+        "assist": 512
+      },
+      "hop": {
+        "frames": 28,
+        "height": 17920,
+        "rampFrames": 44,
+        "rampHeight": 30720,
+        "shift": 28160,
+        "shiftFrames": 14
+      }
+    },
+    {
+      "id": "mountain-horse",
+      "name": "Mountain Horse (test)",
+      "plates": [
+        "CP-07",
+        "CP-12"
+      ],
+      "kind": 0,
+      "atZero": "dismount",
+      "fallback": 768,
+      "base": 1792,
+      "min": 1024,
+      "max": 2560,
+      "accel": 64,
+      "brake": 102,
+      "steer": 1536,
+      "laneDrift": 256,
+      "assistDrift": 768,
+      "stability": 90,
+      "recover": {
+        "delay": 150,
+        "every": 6,
+        "amount": 1
+      },
+      "wobble": 18,
+      "impact": {
+        "barrier": 20,
+        "gate": 25,
+        "push": 15360
+      },
+      "crash": 60,
+      "protect": 120,
+      "rescue": {
+        "window": 180,
+        "x": 56320,
+        "z": 35840,
+        "restore": 40
+      },
+      "tether": {
+        "soft": 153600,
+        "hard": 256000,
+        "slow": 768,
+        "assist": 512
+      },
+      "hop": {
+        "frames": 28,
+        "height": 17920,
+        "rampFrames": 44,
+        "rampHeight": 30720,
+        "shift": 28160,
+        "shiftFrames": 14
+      }
+    },
+    {
+      "id": "utility-bike",
+      "name": "Utility Bike (test)",
+      "plates": [
+        "CP-07",
+        "CP-12"
+      ],
+      "kind": 1,
+      "atZero": "recover",
+      "fallback": 768,
+      "base": 1792,
+      "min": 1024,
+      "max": 2560,
+      "accel": 46,
+      "brake": 77,
+      "steer": 1536,
+      "laneDrift": 256,
+      "assistDrift": 768,
+      "stability": 120,
+      "recover": {
+        "delay": 150,
+        "every": 6,
+        "amount": 1
+      },
+      "wobble": 18,
+      "impact": {
+        "barrier": 20,
+        "gate": 25,
+        "push": 15360
+      },
+      "crash": 60,
+      "protect": 120,
+      "rescue": {
+        "window": 180,
+        "x": 56320,
+        "z": 35840,
+        "restore": 40
+      },
+      "tether": {
+        "soft": 153600,
+        "hard": 256000,
+        "slow": 768,
+        "assist": 512
+      },
+      "hop": {
+        "frames": 28,
+        "height": 17920,
+        "rampFrames": 44,
+        "rampHeight": 30720,
+        "shift": 28160,
+        "shiftFrames": 14
+      }
+    }
+  ],
   "rider": {
     "id": "road-rider",
     "name": "Road Rider",
@@ -35247,6 +39576,7 @@ export const MOUNTED_DATA: MountedDef | null = {
       "id": "perimeter-pursuit",
       "name": "Perimeter Pursuit",
       "goal": "Reach and secure the greenhouse perimeter gate",
+      "mount": 0,
       "start": 76800,
       "finish": 7475200,
       "length": 7782400,
@@ -35562,6 +39892,7 @@ export const MOUNTED_DATA: MountedDef | null = {
       "id": "marek-intercept",
       "name": "River Road Intercept",
       "goal": "Stop Marek before he reaches the greenhouse",
+      "mount": 0,
       "start": 76800,
       "finish": 3430400,
       "length": 3686400,
@@ -35653,6 +39984,87 @@ export const MOUNTED_DATA: MountedDef | null = {
         {
           "at": 2304000,
           "min": 2,
+          "target": -1,
+          "riders": [
+            {
+              "from": 1,
+              "lane": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pursuit-m24-mounts",
+      "name": "M24 Lab: Mount Catalogue",
+      "goal": "Ride the trail; lose the horse safely if Stability runs out",
+      "mount": 1,
+      "start": 76800,
+      "finish": 1894400,
+      "length": 2150400,
+      "road": [
+        {
+          "at": 0,
+          "top": 163840,
+          "bottom": 250880
+        },
+        {
+          "at": 2150400,
+          "top": 163840,
+          "bottom": 250880
+        }
+      ],
+      "obstacles": [
+        {
+          "at": 460800,
+          "z": 207360,
+          "kind": 0,
+          "hw": 7680,
+          "hd": 10240
+        },
+        {
+          "at": 665600,
+          "z": 179200,
+          "kind": 0,
+          "hw": 7680,
+          "hd": 10240
+        },
+        {
+          "at": 665600,
+          "z": 235520,
+          "kind": 0,
+          "hw": 7680,
+          "hd": 10240
+        },
+        {
+          "at": 1075200,
+          "z": 194560,
+          "kind": 1,
+          "hw": 10240,
+          "hd": 10240
+        }
+      ],
+      "equipment": [],
+      "checkpoints": [
+        614400,
+        1280000
+      ],
+      "boss": null,
+      "waves": [
+        {
+          "at": 307200,
+          "min": 0,
+          "target": -1,
+          "riders": [
+            {
+              "from": 0,
+              "lane": 2
+            }
+          ]
+        },
+        {
+          "at": 921600,
+          "min": 0,
           "target": -1,
           "riders": [
             {

@@ -1,3 +1,4 @@
+import { stepSupporter } from '../shared/handover';
 import { fx } from '../math/fixed';
 import { createRngState } from '../math/rng';
 import { ByteWriter } from '../state/encode';
@@ -24,6 +25,9 @@ import {
 import { LAB_LAYOUT, type StageLayout } from './stage';
 import { arenaIndex, difficultyIndex, MEDIUM, profileOf } from '../enemies/data';
 import { arenaLayout, newEncounter, setupArena, stepEncounter } from '../enemies/encounter';
+import { encodeShared } from '../shared/state';
+import { setupSharedScenery } from '../shared/scenery';
+import { sharedHits, stepShared } from '../shared/step';
 import { installEnemyFactory, stepBoss } from '../enemies/boss';
 import { enemyBreaker, stepEnemy } from '../enemies/ai';
 import { NO_FRAME } from '../combat/reactions';
@@ -432,6 +436,7 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
     if (mill) {
       world.environment = createEnvironment(mill);
       placeItems(world, mill);
+      setupSharedScenery(world, mill);
     }
     setupArena(world);
     return world;
@@ -593,6 +598,8 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
   for (const f of [...world.bodies].sort((a, b) => a.id - b.id)) {
     if (f.team === 'hero') {
       applyHeroChoice(world, f);
+      // M24: a co-op supporter stays put and uses its one-shot actions.
+      if (f.ext && stepSupporter(world, f, normalize(inputs[f.slot]))) continue;
       stepHero(world, f, normalize(inputs[f.slot]), ON_FOOT);
       if (world.infiniteMeter) f.meter = 100;
       if (heroCheat(world, f, Cheat.BRIGHTSPIRIT)) f.meter = METER.max;
@@ -609,6 +616,7 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
   }
   stepItems(world);
   stepHazards(world);
+  if (world.shared) stepShared(world);
   stepProjectiles(world);
   resolveClashes(world);
   resolveGrabs(world);
@@ -619,6 +627,7 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
   sceneryCollide(world);
   holdPositions(world);
   hazardHits(world);
+  if (world.shared) sharedHits(world);
   stepGreenhouse(world);
   stepHandoffs(world);
   for (const f of world.bodies) closeContextIfActionable(world, f);
@@ -907,6 +916,8 @@ export function encodeWorld(world: World): Uint8Array {
   w.u32(c.used);
   encodePursuit(w, world.pursuit);
   encodeGreenhouse(w, world.greenhouse);
+  // M24: shared-system state, only when present (older worlds encode exactly as before).
+  encodeShared(w, world);
   return w.bytes();
 }
 

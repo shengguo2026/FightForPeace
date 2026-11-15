@@ -1,3 +1,4 @@
+import { heldSpeed, jumpRestricted } from '../shared/weapons';
 import { fxMul } from '../math/fixed';
 import { ActionBit, DirBit, OFFENSIVE_MASK } from '../input/bits';
 import { type Axis, type Fighter, type FrameInput, MoveState, type World } from '../world/types';
@@ -253,6 +254,11 @@ function stepHeroFrame(world: World, f: Fighter, frameInput: FrameInput, p: Move
       f.verdictTo = VerdictTo.Jump;
       f.verdictReject = Reject.Unlinked;
       f.verdictFrame = frame;
+    } else if (action === ActionBit.Jump && f.item !== 0 && jumpRestricted(world, f)) {
+      // M24: a heavy weapon keeps the hero on the ground.
+      f.verdictTo = VerdictTo.Jump;
+      f.verdictReject = Reject.Restricted;
+      f.verdictFrame = frame;
     } else if (action === ActionBit.Jump) {
       startJump(f, input, p);
     } else if (action !== 0) {
@@ -274,16 +280,18 @@ function stepHeroFrame(world: World, f: Fighter, frameInput: FrameInput, p: Move
     case MoveState.Idle:
     case MoveState.Walk: {
       const [vx, vz] = directed(input.moveX, input.moveZ, p.walkX, p.walkZ, p.diagonal);
-      f.vx = vx;
-      f.vz = vz;
+      // M24: a heavy weapon slows walking (percent of the profile speed).
+      const pct = f.item !== 0 ? heldSpeed(world, f) : 100;
+      f.vx = pct === 100 ? vx : Math.trunc((vx * pct) / 100);
+      f.vz = pct === 100 ? vz : Math.trunc((vz * pct) / 100);
       f.state = vx !== 0 || vz !== 0 ? MoveState.Walk : MoveState.Idle;
       if (input.moveX !== 0 && input.moveX !== f.facing) {
         f.turnFrom = f.facing;
         f.turnFrame = frame;
         f.facing = input.moveX;
       }
-      f.x += vx;
-      f.z += vz;
+      f.x += f.vx;
+      f.z += f.vz;
       break;
     }
     case MoveState.Dash:

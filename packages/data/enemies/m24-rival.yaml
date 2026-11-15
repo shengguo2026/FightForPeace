@@ -1,0 +1,49 @@
+# M24 placeholder (Combat Constitution audit E7): a Resolve-limited rival. Its Health never
+# falls below 30 %; a second after reaching it, it withdraws (a voluntary, protected exit
+# the encounter lets go). Soren, Chen Yue and withdrawing Forum security use this. Lab
+# test kit (Pressed Recruit moves and art).
+id: m24-rival
+name: Resolve Rival (test)
+art: recruit
+bodyWidth: 72
+actions:
+  - id: club-swing
+    name: Club Swing
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 18, active: 4, recovery: 22, blockstun: 14 }
+    hitbox: { x: 20, w: 115, y: 130, h: 140, depth: 34 }
+    damage: 50
+    reaction: { kind: stagger, hitstun: 18, push: 3 }
+    costs: { stun: 12, scale: 10, starter: 10, guard: 12 }
+    meter: 0
+    tags: [counterable]
+    note: 'pose enemy.recruit.sheet.attack cells 0/1/2'
+
+  - id: wild-rush
+    name: Wild Rush
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 16, active: [3, 6, 3], recovery: 26, blockstun: 14 }
+    hitbox: { x: 20, w: 115, y: 140, h: 120, depth: 34 }
+    damage: 70
+    reaction: { kind: stagger, hitstun: 20, push: 3 }
+    costs: { stun: 12, scale: 10, starter: 10, guard: 12 }
+    meter: 0
+    tags: [counterable, deflectBreak]
+    moves:
+      - { from: 8, to: 28, forward: 3 }
+
+profile:
+  role: pressure
+  health: 400
+  walk: { x: 3, z: 2 }
+  perception: 6
+  ring: 300
+  defense: { tier: basic, guard: { every: 3, of: 1 }, guardHold: 24 }
+  weapons: never
+  firearms: false
+  rival: { floor: 30, withdraw: 60 }
+  attacks:
+    - { action: club-swing, threat: 12, cooldown: 70 }
+    - { action: wild-rush, threat: 20, cooldown: 120 }

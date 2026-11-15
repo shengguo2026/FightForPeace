@@ -28,7 +28,7 @@ export const TARGETING = {
 
 /** Is this hero a valid target (in the fight and inside the arena)? */
 export function validTarget(world: World, h: Fighter): boolean {
-  return h.team === 'hero' && !h.ko && h.state !== MoveState.Defeated;
+  return h.team === 'hero' && !h.ko && h.state !== MoveState.Defeated && !h.ext?.support;
 }
 
 /** Integer score (lower is better) of hero `h` for enemy `e`. */

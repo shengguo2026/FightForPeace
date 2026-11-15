@@ -1,0 +1,183 @@
+# M24 Combat Constitution audit: one Lab test scene per new shared engine feature (plan
+# docs/superpowers/plans/2026-11-14-m24-combat-constitution-audit.md). Placeholder art:
+# enemy kits reuse delivered sheets (`art`), scenery draws as labelled boxes. These arenas
+# are appended after every stage arena (arena indices are encoded; never insert before).
+# Same shape as arenas.yaml, plus `scenery`. Pixels and frames at 60 Hz; Lab candidates.
+arenas:
+  # E2 moving hazards, E3 tagged scenery, tool permissions and property incidents.
+  - id: lab-m24-hazards
+    name: 'M24 Lab: Moving Hazards and Tools'
+    area: mill
+    width: 2880
+    scenery:
+      items:
+        - { weapon: m24-pry-bar, x: 700, z: 760 }
+        - { weapon: m24-hook-pole, x: 760, z: 900 }
+      breakables:
+        # A tagged supply crate: the pry bar opens it at once (expendable).
+        - { x: 1100, z: 700, hw: 50, hd: 30, h: 160, thresholds: [40, 80, 120], tags: [crate] }
+        # A protected stall: damaging it logs one avoidable-property incident (cluster 1).
+        - {
+            x: 1500,
+            z: 960,
+            hw: 70,
+            hd: 30,
+            h: 170,
+            thresholds: [60, 120, 180],
+            property: protected,
+            cluster: 1,
+          }
+        - {
+            x: 1660,
+            z: 960,
+            hw: 50,
+            hd: 30,
+            h: 170,
+            thresholds: [60, 120, 180],
+            property: protected,
+            cluster: 1,
+          }
+      movers:
+        # A mine cart: warned rail, then a sweep across the room (any strike in the warning redirects it).
+        - {
+            from: [300, 780],
+            to: [2600, 780],
+            size: [60, 40, 90],
+            start: 120,
+            rest: 240,
+            warn: 70,
+            active: 90,
+            damage: 60,
+            redirect: any,
+            tags: [cart],
+          }
+        # Suspended cargo: only a hook tool redirects it.
+        - {
+            from: [1900, 640],
+            to: [1900, 940],
+            size: [70, 50, 160],
+            start: 200,
+            rest: 300,
+            warn: 80,
+            active: 50,
+            damage: 80,
+            redirect: cargo,
+            tags: [cargo],
+          }
+    waves:
+      - enemies:
+          - { kit: recruit, x: 1700, z: 760 }
+          - { kit: recruit, x: 1900, z: 880 }
+
+  # E4 moving platform.
+  - id: lab-m24-platform
+    name: 'M24 Lab: Moving Platform'
+    area: fields
+    width: 2880
+    scenery:
+      platforms:
+        - { x0: 600, x1: 2200, z: 800, hw: 220, hd: 90, speed: 2.5, wait: 120 }
+    waves:
+      - enemies:
+          - { kit: recruit, x: 1800, z: 800 }
+
+  # E5 finite gear and boss phase exit conditions (gear, dismount).
+  - id: lab-m24-gear
+    name: 'M24 Lab: Finite Gear'
+    area: courtyard
+    width: 2880
+    waves:
+      - enemies:
+          - { kit: m24-shield-escort, x: 1500, z: 820 }
+          - { kit: m24-shield-escort, x: 1750, z: 720, minDifficulty: medium }
+
+  - id: lab-m24-marshal
+    name: 'M24 Lab: Mounted Shield Boss'
+    area: courtyard
+    width: 2880
+    waves:
+      - enemies:
+          - { kit: m24-marshal, x: 1800, z: 820 }
+
+  # E6 mounted fighters in on-foot arenas.
+  - id: lab-m24-riders
+    name: 'M24 Lab: Mounted Raiders'
+    area: fields
+    width: 2880
+    waves:
+      - enemies:
+          - { kit: m24-mounted-raider, x: 2400, z: 820 }
+          - { kit: m24-mounted-raider, x: 300, z: 720, minDifficulty: medium }
+
+  # E7 rival floor, withdrawal and noncombatants; E8 feints and disguised entry.
+  - id: lab-m24-rivals
+    name: 'M24 Lab: Rivals, Feints and Disguises'
+    area: canal
+    width: 2880
+    waves:
+      - enemies:
+          - { kit: m24-bystander, x: 1200, z: 940 }
+          - { kit: m24-rival, x: 1500, z: 800 }
+          - { kit: m24-feinter, x: 1750, z: 720 }
+          - { kit: m24-false-merchant, x: 2300, z: 880 }
+
+  # E9 heavy weapons and blast throwables; E13 carried provisions.
+  - id: lab-m24-weapons
+    name: 'M24 Lab: Heavy Weapons and Provisions'
+    area: mill
+    width: 2880
+    scenery:
+      items:
+        - { weapon: m24-heavy-gun, x: 700, z: 760 }
+        - { weapon: m24-concussion, x: 800, z: 900 }
+        - { weapon: m24-concussion, x: 880, z: 700 }
+        - { weapon: m24-ration, x: 600, z: 900 }
+        - { weapon: m24-ration, x: 640, z: 680 }
+    waves:
+      - enemies:
+          - { kit: recruit, x: 1700, z: 760 }
+          - { kit: recruit, x: 1800, z: 900 }
+          - { kit: recruit, x: 1950, z: 820 }
+
+  # E11 solo hand-over and co-op support role (Lab buttons drive the swap).
+  - id: lab-m24-handover
+    name: 'M24 Lab: Hand-over and Support'
+    area: bridge
+    width: 2880
+    scenery:
+      items:
+        - { weapon: workstaff, x: 700, z: 760 }
+        - { weapon: m24-ration, x: 700, z: 900 }
+    waves:
+      - enemies:
+          - { kit: recruit, x: 1700, z: 760 }
+          - { kit: recruit, x: 1850, z: 900 }
+        next: 0
+      - enemies:
+          - { kit: recruit, x: 2200, z: 820 }
+
+  # E12 support robot: mobile cover and reserve delay stations.
+  - id: lab-m24-robot
+    name: 'M24 Lab: Support Robot'
+    area: courtyard
+    width: 2880
+    scenery:
+      stations:
+        - {
+            x: 800,
+            z: 700,
+            kind: cover,
+            approach: 90,
+            frames: 600,
+            cooldown: 240,
+            cover: { x: 1000, z: 760, hw: 30, hd: 80, h: 120 },
+          }
+        - { x: 800, z: 940, kind: delay, approach: 60, frames: 480, cooldown: 240 }
+    waves:
+      - enemies:
+          - { kit: lookout, x: 2400, z: 800 }
+          - { kit: recruit, x: 1800, z: 900 }
+        next: 0
+      - enemies:
+          - { kit: recruit, x: 2200, z: 760 }
+          - { kit: recruit, x: 2300, z: 900 }

@@ -1376,3 +1376,53 @@ Open `http://localhost:5173/` (the shell), with your profile that has Stage 2 op
 7. **Medium, Hard and Ultimate look:** play the Loading Yard, Filtration Control and the Dispatch Yard on each (`http://localhost:5173/?stage=2&beat=2&difficulty=hard`, `beat=10`, `beat=14`; change `difficulty=` to `medium` or `ultimate`). Ultimate should feel harder than Hard; attacks stay readable. Watch the enemies walk in: the legs swap on every step (EW01–EW08).
 8. **German keyboard and languages:** switch to Deutsch with the QWERTZ layout: the riding move list in the pursuit names the right keys (Y and Z swapped). In Deutsch and 简体中文, the room name in the top bar of the Aquaculture Hall is translated, and the Museum Investigation panel can be scrolled after pressing Tab.
 9. **Low-end laptop:** start the zip on the oldest laptop you have and play Filtration Control on Ultimate in co-op (`?stage=2&beat=10&difficulty=ultimate`, join Player 2 with Numpad 4). The game stays at normal speed (Auto Quality may lower the picture); **Settings → System check** shows the measured frame time.
+
+## M24 · Combat Constitution audit and shared engine features (0.24.0)
+
+What's new: M24 checked every mechanic in the Stage 3 to Stage 8 specs, the four Curated Missions and the expanded modes against the engine (`docs/review/10-combat-constitution-audit.md`) and built the 17 that were missing, as general features that later stages fill with their own data. It also contains the Stage 3 builder review (`docs/review/11-stage3-builder-review.md`). Stages 1 and 2 play exactly as before (all saved test replays give the same result).
+
+Everything new is in **test scenes with placeholder art** (existing enemies and props, names marked "(test)"). Final Stage 3 art comes with the Stage 3 content milestones.
+
+### Get and start the build
+
+To test the branch before it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-wjh5dy
+git checkout claude/project-thread-wjh5dy
+git pull origin claude/project-thread-wjh5dy
+pnpm install
+pnpm dev
+```
+
+After it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+If Vite prints another port than 5173, use that one. Stop the server with `Ctrl+C`.
+
+### Test steps
+
+Every scene opens from the Lab: `http://localhost:5173/?lab`, press **F1**, pick the scene in the Arena panel (all start with "M24 Lab:") and start it. Keys: move **W A S D**, attack **T**, jump **Y** (Z on QWERTZ), guard **G**, pick up / use **J**.
+
+1. **Version:** the corner of the village shows 0.24.0.
+2. **Moving Hazards and Tools:** a mine cart rolls along its rail with a "Warning" label before each run; holding **G** in its path blocks it, and you are never knocked off the floor. Hit the cart during its warning: it shows "Redirected" and turns back. The hanging cargo on the right can only be redirected with the **Hook Pole (test)** (pick it up with **J**). Pick up the **Pry Bar (test)** and hit the crate: it opens at once. Hit the two stalls at the front: the property counter goes up by one only (they are one cluster).
+3. **Moving Platform:** step onto the moving wagon bed: it carries you along; you can fight and jump off it.
+4. **Finite Gear:** the **Shield Escort (test)** blocks hits from the front and its Gear bar goes down. When it breaks, the escort staggers once and the shield does not come back.
+5. **Mounted Shield Boss:** the **Marshal (test)** starts mounted. Its first phase does not end on Health alone: it ends when it is dismounted. The second phase ends only when its gear breaks. Then it fights on foot.
+6. **Mounted Raiders:** a rider shows "Lane pass" and a warning, then crosses the arena. Dodge or guard. Hit it to lower its Stability: at zero it dismounts safely, lies down briefly, then fights on foot.
+7. **Rivals, Feints and Disguises:** the **Rival (test)** cannot be defeated: when its Resolve runs low it shows "Withdraws" and leaves. The **Feinter (test)** sometimes starts an attack and stops it (the tell is still shown). The **False Merchant (test)** cannot be hit until you walk close; then it reveals itself and fights. The **Noncombatant (test)** never fights and cannot be hit.
+8. **Heavy Weapons and Provisions:** pick up the **Restricted Heavy Gun (test)**: you walk slower and cannot jump. Fire it until it shows "Overheated", then wait for it to cool. Throw a **Concussion Device (test)** at enemies: its area is shown, then they are pushed back and stunned; your partner is not hurt. Pick up a **Field Ration (test)** with **J**, take some damage, then press **W + J** to eat it.
+9. **Hand-over and Support:** pick up the workstaff, take some damage, then press **Hand over to the other hero** in the Lab panel (F1). Control switches to another hero with the same (not higher) Health share and empty hands. Press **Claim the cache**: the workstaff comes back, once only. With Player 2 joined (**Num 4**), press **Player 2 becomes supporter**: P2 stands still, and each **Num 4** uses one of four actions (heal, guard, delay the next wave, stagger nearby enemies).
+10. **Support Robot:** step onto a marked station: it shows "approaching", then "active" (cover appears, or the next wave is delayed), then "consumed". If an enemy stands on the station during the approach, it shows "disrupted", cools down and can be used one more time.
+11. **Mount Catalogue (pursuit):** in the Arena panel pick **M24 Lab: Mount Catalogue** on **Easy**. You ride a horse placeholder. Let it crash until Stability is 0: you dismount safely and finish on foot instead of losing.
+12. **Stage 1 and 2 still the same:** play the Stage 1 courtyard and the Stage 2 Loading Yard on Medium (`?stage=2&beat=2`). Nothing should feel different from 0.23.0.
+13. **Languages:** switch to Deutsch and 简体中文 and open two of the scenes above: the labels (Warning, Gear, Heat, Stability, robot states) and the "(test)" names are translated.

@@ -1,0 +1,56 @@
+# M24 placeholder (Combat Constitution audit E9): a restricted heavy machine gun of the kind
+# Stage 6 authors. Held, it refuses jumps and grabs, slows walking and fires heat-limited
+# bursts: each burst adds heat; at the limit it locks until cooled. Lab test scene only;
+# the stage content milestone authors the real weapon. Numbers are Lab candidates.
+id: m24-heavy-gun
+name: Restricted Heavy Gun (test)
+class: firearm
+hands: 2
+ammo: 60
+fire: { defenseCost: 0 }
+integrity: { max: 120, worn: 80, critical: 40, hit: 2, guard: 2, clash: 6, throw: 30, deflect: 4 }
+gripResistance: 70
+pickup: 16
+throw:
+  speed: 6
+  lift: 3
+  responses: [blockable, strikeDeflectable]
+restrict: { jump: true, grab: true, mount: true, carry: true, speed: 60 }
+heat: { per: 400, max: 1000, cool: 3 }
+actions:
+  - id: heavy-burst
+    name: Heavy Burst
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 20, active: [2, 4, 2, 4, 2], recovery: 30, blockstun: 12 }
+    hitbox: { x: 40, w: 800, y: 130, h: 40, depth: 26 }
+    damage: 80
+    reaction: { kind: stagger, hitstun: 20, push: 4 }
+    costs: { stun: 18, scale: 18, starter: 25, guard: 18 }
+    meter: 3
+    ammo: 3
+    tags: [warnedLine, committed]
+
+  - id: heavy-stock
+    name: Heavy Stock Strike
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 12, active: 4, recovery: 20 }
+    hitbox: { x: 20, w: 110, y: 110, h: 110, depth: 34 }
+    damage: 50
+    reaction: { kind: knockback, hitstun: 24, push: 8 }
+    costs: { stun: 14, scale: 12 }
+    meter: 4
+    clash: heavy
+    tags: [whenEmpty, impact]
+
+  - id: heavy-throw
+    name: Heavy Gun Toss
+    category: weaponThrow
+    input: { context: weaponThrow, dir: neutral }
+    frames: { startup: 14, active: 1, recovery: 18, blockstun: 14 }
+    hitbox: { x: 0, w: 90, y: 100, h: 60, depth: 32 }
+    damage: 40
+    reaction: { kind: knockdown, hitstun: 30, push: 5, lift: 5 }
+    costs: { stun: 15, scale: 12 }
+    meter: 4
