@@ -12,6 +12,7 @@ import {
   loadHero,
   loadGreenhouse,
   loadMounted,
+  loadObjectives,
   loadArenas,
   loadStage,
   loadWeapon,
@@ -747,5 +748,53 @@ describe('M24 shared systems data', () => {
         'fire',
       ]),
     ).toThrow(/unknown mount "dragon"/);
+  });
+});
+
+describe('M25 objectives and arena grades', () => {
+  const lab = readFileSync(new URL('../encounters/lab-m25.yaml', import.meta.url), 'utf8');
+  const objectives = readFileSync(
+    new URL('../objectives/objectives.yaml', import.meta.url),
+    'utf8',
+  );
+
+  test('the committed objectives and test room validate', () => {
+    expect(() => loadObjectives(objectives)).not.toThrow();
+    const [room] = loadArenas(lab, ['recruit', 'lookout'], 'lab-m25.yaml') as {
+      objectives: { channels: { unit: boolean; target: number }[] };
+      grade: { ranks: number[]; cheat: string };
+    }[];
+    expect(room!.objectives.channels.map((c) => [c.unit, c.target])).toEqual([
+      [true, 0],
+      [true, 0],
+      [false, 0],
+    ]);
+    expect(room!.grade.ranks).toEqual([90, 75, 55]);
+    expect(room!.grade.cheat).toBe('none');
+  });
+
+  test('a ladder starts at 0 and never gives a worse state a larger share', () => {
+    const bad = objectives.replace(
+      '{ id: secure, at: 0, share: 100 }',
+      '{ id: secure, at: 1, share: 10 }',
+    );
+    expect(() => loadObjectives(bad)).toThrow(/first state is reached at 0/);
+    expect(() => loadObjectives(bad)).toThrow(/worse state never has a larger share/);
+  });
+
+  test('outcome shares fall from documented to missing', () => {
+    const bad = objectives.replace('recovered: 66', 'recovered: 120');
+    expect(() => loadObjectives(bad)).toThrow(HeroDataError);
+  });
+
+  test('a channel names a unit or case of its arena; grade weights add up to 100', () => {
+    const kits = ['recruit', 'lookout'];
+    expect(() =>
+      loadArenas(lab.replace('target: case, kind: crate', 'target: vault, kind: crate'), kits),
+    ).toThrow(/a channel targets unknown "vault"/);
+    expect(() =>
+      loadArenas(lab.replace('measure: cases, weight: 30', 'measure: cases, weight: 20'), kits),
+    ).toThrow(/grade weights add up to 90, not 100/);
+    expect(() => loadArenas(lab.replace('category: rescue', 'category: x'), kits)).not.toThrow();
   });
 });

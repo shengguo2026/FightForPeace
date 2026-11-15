@@ -1,0 +1,60 @@
+# M25 objective and grade framework: the Lab test room (plan
+# docs/superpowers/plans/2026-11-15-m25-objective-and-grade-framework.md). A captive on the
+# Stage 3 rescue ladder with two hostile channels in its zone, an evidence case with one,
+# an interference station of the support robot, and the room's own 100-point grade.
+# Appended after the M24 scenes (arena indices are encoded; never insert before).
+# Pixels and frames at 60 Hz; Lab candidates.
+arenas:
+  - id: lab-m25-objectives
+    name: 'M25 Lab: Captive and Evidence'
+    area: courtyard
+    width: 2880
+    heroX: 900
+    scenery:
+      stations:
+        # Calling the robot here pauses the working channel nearest to it.
+        - { x: 900, z: 960, kind: interfere, approach: 60, frames: 360, cooldown: 300 }
+    objectives:
+      units:
+        - id: captive
+          ladder: rescue
+          x: 420
+          z: 760
+          zone: [260, 150]
+          free: 60
+          cheer: 40
+          speed: 4
+          # Out of the zone, a safe hand-off at the gate (waits while an enemy is near),
+          # then the shelter at the far left.
+          route:
+            - { x: 300, z: 900, wait: true }
+            - { x: 120, z: 900 }
+      cases:
+        - { id: case, outcome: record, x: 1500, z: 820, collect: 60, seal: 90, recover: 60 }
+      channels:
+        # A rope line pulled taut and a lantern kicked over inside the captive's zone.
+        - { target: captive, kind: rope, x: 600, z: 700, tell: 180, start: 240, cooldown: 300 }
+        - { target: captive, kind: lantern, x: 330, z: 840, tell: 180, start: 600, cooldown: 300 }
+        # A crate dragged against the evidence case.
+        - { target: case, kind: crate, x: 1640, z: 760, tell: 240, start: 360, cooldown: 300 }
+    grade:
+      categories:
+        - { id: rescue, measure: units, weight: 70 }
+        - { id: record, measure: cases, weight: 30 }
+      ranks: { S: 90, A: 75, B: 55 }
+      # Stage 3 §22.2: any group in Critical condition caps the grade at A.
+      conditionCaps:
+        - { ladder: rescue, state: critical, rank: A }
+      cheat: none
+    waves:
+      - enemies:
+          - { kit: recruit, x: 2200, z: 760 }
+          - { kit: recruit, x: 2400, z: 900 }
+        next: 0
+      - enemies:
+          - { kit: recruit, x: 2300, z: 820 }
+          - { kit: lookout, x: 2500, z: 720, minDifficulty: medium }
+        next: 0
+      - enemies:
+          - { kit: recruit, x: 2400, z: 760 }
+          - { kit: recruit, x: 2500, z: 900 }

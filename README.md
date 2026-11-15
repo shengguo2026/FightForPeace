@@ -103,6 +103,8 @@ If Node.js 24 is not installed, the first start downloads a pinned Node.js 24 in
 
 **Shared engine systems (M24):** the Combat Constitution audit (`docs/review/10-combat-constitution-audit.md`) gives every mechanic of Stages 3 to 8 and the Curated Missions a verdict (data, engine, M25 module or later mode). The engine changes are generic and data-driven: moving hazards, tagged tools and property incidents, moving platforms, finite gear, mounted fighters in on-foot arenas, Resolve floors, noncombatants, feints, disguised entry, heavy weapons, blast throwables, carried provisions, a mount catalogue, solo hand-over and the co-op support role, and the support robot. Each has a Lab test scene (`M24 Lab: …` in the arena list, placeholder art). Stage 1 and Stage 2 play exactly as before (every golden replay keeps its hash).
 
+**Objective and grade framework (M25):** one shared module for protected people (a condition ladder that only changes when an enemy completes a visible, interruptible hostile action, locked once they are safe), one for evidence (collected, sealed, disturbed, recovered, never lost) and one 100-point grade with caps that every stage uses. Ladders and outcome tables live in `packages/data/objectives/objectives.yaml`; an arena or stage names them. The Lab room *M25 Lab: Captive and Evidence* shows the condition and the live grade change as enemies act. Stage 1 and Stage 2 results now use the same grade module and give the same numbers as before.
+
 ## Developer commands
 
 | Command | What it does |

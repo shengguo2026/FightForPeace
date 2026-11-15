@@ -1,0 +1,21 @@
+# M25 objective and grade framework (campaign review G13): condition ladders and evidence
+# outcome tables every stage and mission shares. A stage names a ladder or outcome by id;
+# the names live in the game's text tables (objective.ladder.<id>.<state>,
+# objective.case.<state>) in English, Chinese and German.
+#
+# A ladder lists its states from best to worst; `at` is the number of completed hostile
+# actions that reaches the state (the first is always 0), `share` its grade share (0-100).
+ladders:
+  # Stage 3 §7.2 rescue groups: Secure / Strained / Critical; §22.2 full, half, none.
+  - id: rescue
+    states:
+      - { id: secure, at: 0, share: 100 }
+      - { id: strained, at: 1, share: 50 }
+      - { id: critical, at: 2, share: 0 }
+
+# Evidence outcomes: a sealed case nothing disturbed is Documented; one disturbed and then
+# recovered is Recovered; one still disturbed at the end is Disturbed; never collected is
+# Missing. Evidence is never lost (Stage 3 §6).
+outcomes:
+  # Stage 3 §22.2 research record: Documented full, Recovered two thirds, Disturbed one third.
+  - { id: record, documented: 100, recovered: 66, disturbed: 33, missing: 0 }

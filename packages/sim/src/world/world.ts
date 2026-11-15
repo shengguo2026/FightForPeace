@@ -26,6 +26,8 @@ import { LAB_LAYOUT, type StageLayout } from './stage';
 import { arenaIndex, difficultyIndex, MEDIUM, profileOf } from '../enemies/data';
 import { arenaLayout, newEncounter, setupArena, stepEncounter } from '../enemies/encounter';
 import { encodeShared } from '../shared/state';
+import { encodeObjectives, setupObjectives } from '../objectives/state';
+import { stepObjectives } from '../objectives/results';
 import { setupSharedScenery } from '../shared/scenery';
 import { sharedHits, stepShared } from '../shared/step';
 import { installEnemyFactory, stepBoss } from '../enemies/boss';
@@ -439,6 +441,8 @@ export function createWorld(seed: number, options: WorldOptions = {}): World {
       setupSharedScenery(world, mill);
     }
     setupArena(world);
+    // M25: the arena's protected units, evidence cases and hostile channels.
+    setupObjectives(world, arena);
     return world;
   }
   if (options.cheats) setCheats(world, options.cheats.hero, options.cheats.session);
@@ -628,6 +632,7 @@ export function step(world: World, inputs: readonly (FrameInput | undefined)[]):
   holdPositions(world);
   hazardHits(world);
   if (world.shared) sharedHits(world);
+  if (world.objectives) stepObjectives(world);
   stepGreenhouse(world);
   stepHandoffs(world);
   for (const f of world.bodies) closeContextIfActionable(world, f);
@@ -918,6 +923,8 @@ export function encodeWorld(world: World): Uint8Array {
   encodeGreenhouse(w, world.greenhouse);
   // M24: shared-system state, only when present (older worlds encode exactly as before).
   encodeShared(w, world);
+  // M25: objective state, only when present.
+  encodeObjectives(w, world);
   return w.bytes();
 }
 

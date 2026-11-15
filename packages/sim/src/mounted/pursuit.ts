@@ -1,4 +1,5 @@
 import { fx } from '../math/fixed';
+import { rankFor } from '../objectives/grade';
 import { ByteWriter } from '../state/encode';
 import { MOUNTED_DATA } from '../combat/heroes.gen';
 import {
@@ -1507,8 +1508,11 @@ export interface ResponseRecord {
   mastery: boolean;
 }
 
+/** Response Record letters (M25: on the shared grade module's thresholds). */
+export const RECORD_RANKS = [90, 75, 55] as const;
+
 export function gradeOf(score: number): RecordLine['grade'] {
-  return score >= 90 ? 'S' : score >= 75 ? 'A' : score >= 55 ? 'B' : 'C';
+  return rankFor(score, RECORD_RANKS) as RecordLine['grade'];
 }
 
 /** Frames a team riding just above the baseline pace needs from start to finish. */

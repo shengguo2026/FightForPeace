@@ -199,3 +199,29 @@ achievements). The rows marked Module · M25 above are its scope.
    clear). Confirm with Guo that this reads well for the Mounted Raider before Stage 3 tuning.
 5. **Property incidents** count hero damage only, once per cluster. M25 decides how throws
    and redirected hazards are attributed (today: the thrower and the redirecting hero).
+
+## M25 status (2026-11-15)
+
+M25 built the shared objective and grade framework (plan
+`docs/superpowers/plans/2026-11-15-m25-objective-and-grade-framework.md`, code in
+`packages/sim/src/objectives/`, data in `packages/data/objectives/objectives.yaml` and an
+arena's `objectives` and `grade`, Lab room `lab-m25-objectives`).
+
+| Row | Status after M25 |
+|---|---|
+| 6.1 Rescue groups, Secure / Strained / Critical | **Built**: protected units with a data ladder (`rescue`), counted hostile actions, lock on safe |
+| 6.2 Visible, interruptible hostile actions counted once | **Built**: hostile channels (tell, interruption by any reaction or defeat, cooldown, counted once) |
+| 6.3 Short captive routes to shelter, safe hand-off | **Built**: authored waypoints, `wait` hand-off points, Safe at the last one |
+| 6.4 Research record Documented / Disturbed / Recovered | **Built**: evidence lifecycle and the `record` outcome table |
+| 6.5 Evidence carriers, clue chains, Sponsor Dossier | **Built** for the case lifecycle; clue chains stay stage data (M9/M20) |
+| 3.10 Private case and testimony after capture | **Built** as an evidence case (the capture beat authors it in M28) |
+| 6.7 100-point stage grade with caps | **Built**: `grade100` with category caps, condition caps and no grade for Cheat-Assisted runs; Stage 1 and 2 results moved onto it |
+| 8.4 Robot pauses one hostile channel | **Built**: an active `interfere` station pauses the working channel nearest to it |
+| 5.9 Object persistence through checkpoints | **Built** for objectives: a checkpoint copy restores everything except units that reached safety and sealed cases; other object classes stay with their stage |
+| 1.4 Replacement mount after a rescue | **Stage 3 (M27/M28)**: a rescue's unit record is the trigger; the allocation counter is stage data |
+| 5.7 / 6.8 Property and Collateral Care ledgers | **First user (S6 or a mission)**: a grade category over `world.shared.incidents` |
+| 6.6 Escape-Network Ledger | **Reedwater**: a grade category over its own records |
+| 6.9 Custody pipeline | **Stage 8**: protected units with custody phases on M24 noncombatants |
+
+Open question 5 above (attribution of throws and redirected hazards) moves with the property
+ledgers to their first user.

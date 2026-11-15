@@ -25,6 +25,9 @@ import {
   responseRecord,
   GREENHOUSE,
   ROOMS,
+  caseOutcome,
+  objectiveGrade,
+  unitCondition,
   ledgerGrade,
   damageAsset,
   lockCount,
@@ -426,6 +429,29 @@ export function installDebugHook(
         h.stun = 1;
       }
     },
+    objectives: () => {
+      const w = session.world;
+      const o = w.objectives;
+      if (!o) return null;
+      const g = objectiveGrade(w);
+      return {
+        units: o.units.map((u, i) => ({
+          phase: u.phase,
+          count: u.count,
+          locked: u.locked,
+          condition: unitCondition(w, i),
+        })),
+        cases: o.cases.map((c) => ({ state: c.state, outcome: caseOutcome(c) })),
+        channels: o.channels.map((c) => ({
+          phase: c.phase,
+          progress: c.progress,
+          stops: c.stops,
+          paused: c.paused,
+        })),
+        grade: g ? { points: g.points, overall: g.overall, capped: g.capped } : null,
+      };
+    },
+    m25Action: (kind) => session.m25Action(kind),
     encounter: () => {
       const w = session.world;
       const enc = w.encounter;

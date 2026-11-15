@@ -11,6 +11,7 @@ import { M20_DE } from './strings.m20';
 import { M21_DE } from './strings.m21';
 import { M22_DE } from './strings.m22';
 import { M24_DE } from './strings.m24';
+import { M25_DE } from './strings.m25';
 import { LABELS_DE } from './strings.labels';
 
 /** M10 catalogue (de). Keys mirror strings.en.ts and the generated data names. */
@@ -640,4 +641,4 @@ const DE_BASE: Catalog = {
   ...LABELS_DE,
 };
 
-export const DE: Catalog = { ...DE_BASE, ...M24_DE(DE_BASE) };
+export const DE: Catalog = { ...DE_BASE, ...M24_DE(DE_BASE), ...M25_DE };

@@ -128,6 +128,7 @@ export function startGame(): void {
     resetArmory: () => session.resetArmory(),
     resetEnvironment: () => session.resetEnvironment(),
     m24Action: (kind) => session.m24Action(kind),
+    m25Action: (kind) => session.m25Action(kind),
     dummyToPillar: () => session.dummyToPillar(),
     startArena: (arena) => {
       const ride = lab.pursuitPick.value;

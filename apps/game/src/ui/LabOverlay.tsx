@@ -59,6 +59,8 @@ export interface LabActions {
   startArena(arena: string | null): void;
   /** M24 Lab: hand-over scene buttons. */
   m24Action(kind: 'handover' | 'claim' | 'support'): void;
+  /** M25: keep a checkpoint copy of the test room's objectives, or return to it. */
+  m25Action(kind: 'checkpoint' | 'restore'): void;
   pickArena(pick: Partial<{ arena: string; difficulty: string; beat: number }>): void;
   /** M17: pursuit options (steering assistance, STEADYRIDE) for the next start. */
   pickPursuit(pick: Partial<{ assist: boolean; steady: boolean }>): void;
@@ -484,6 +486,15 @@ function ArenaPanel({ state, actions }: { state: LabState; actions: LabActions }
           {button(tx('m24.lab.handover'), 'm24-handover', () => actions.m24Action('handover'))}
           {button(tx('m24.lab.claim'), 'm24-claim', () => actions.m24Action('claim'))}
           {button(tx('m24.lab.support'), 'm24-support', () => actions.m24Action('support'))}
+        </div>
+      ) : null}
+      {view.running && pick.arena === 'lab-m25-objectives' ? (
+        <div style={{ margin: '4px 0' }} data-testid="m25-actions">
+          <div>{tx('m25.lab.title')}</div>
+          {button(tx('m25.lab.checkpoint'), 'm25-checkpoint', () =>
+            actions.m25Action('checkpoint'),
+          )}
+          {button(tx('m25.lab.restore'), 'm25-restore', () => actions.m25Action('restore'))}
         </div>
       ) : null}
       <div data-testid="arena-diagnostics">
