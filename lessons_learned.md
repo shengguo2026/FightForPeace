@@ -132,7 +132,7 @@ The biggest and most repeated gap. Several times a whole class of sheets was fou
 
 - **What happened:** no stage has prompt lists for ambience, sound effects or narration, so M22 shipped synthesized placeholders and subtitles only. Stage 1 music is still placeholder loops except the victory stinger. Stage 2 effect sheets and the Museum collection pictures existed only as placeholders until they were noticed.
 - **Caught:** the "Verify Stage 2 art" check and the M22 build, 2026-11-13; the Museum collection in the M22 tests.
-- **Rule:** a stage's media pack lists every asset category the spec mentions (pictures, clips or still sequences, music, stingers, ambience, effects, UI icons, Museum entries, narration text), and for each one says either "prompted in file X" or "placeholder until milestone Y".
+- **Rule:** a stage's media pack lists every asset category the spec mentions (pictures, clips or still sequences, music, stingers, ambience, effects, UI icons, Museum entries, narration text), and for each one says either "prompted in file X" or "placeholder until milestone Y". Since 2026-11-16 sound effects are the exception: they are coded, not prompted (J1).
 
 ---
 
@@ -296,6 +296,15 @@ M26 put every Mission Mode entry on one data catalogue and gave the Run Archive 
 - **Fix:** the play-flow screens compute the prompt context themselves when no frame has published it yet.
 - **Rule:** shell screens never assume the simulation has run; anything they read from the frame loop has a fallback.
 
+## J · Sound effects are made in code (2026-11-16)
+
+### J1 · Sound effects stayed one-tone placeholders, and Stage 3 had no sound list
+
+- **What happened:** Stages 1 and 2 shipped with M13/M22 placeholder sounds: one beep or noise burst per family, so the ten run events all sounded alike, the six grenade drill steps were nearly identical, and the shared fight sounds (hits, guard, Exact Block, Counter, Combo Breaker) were plain tones that every later stage inherits. Stage 3 had prompt files for pictures, Flow clips and music, but no sound effect list at all.
+- **Caught:** by Guo on 2026-11-16, when asking for the Stage 3 sound effects before M27.
+- **Fix:** every sound effect is a coded recipe (`packages/platform/src/media/sfxKit.ts`, `stage12sfx.ts`, `stage3sfx.ts`, listed in `codedSfx.ts`): 56 shared and Stage 1/2 sounds and 89 Stage 3 sounds under their existing logical ids. The Lab panel **Sound effects** plays each group, and `node tools/audio/render_sfx.mjs` writes them all as WAV files for listening outside the game.
+- **Rule:** **sound effects are always coded by Claude**; Guo makes the pictures, music cues and title loops. A new stage's sound effects are derived from its spec (weapons, enemies, boss, environment, pickups, warnings) and written as recipes before the stage's systems milestone, with stable `sfx.<family>.<variant>` ids, a mixer category (warnings and tells `critical`, confirmations `confirm`) and a Lab group, and Guo listens in the Lab before the PR merges. No sound effect prompts are written for an outside generator (pre-flight item 23).
+
 ## Pre-flight checklist: before writing any new stage's prompt files
 
 Run this for Stage 4 onwards, each Curated Mission and every other mode. Stage 4 starts only after its spec readiness review.
@@ -312,7 +321,7 @@ Run this for Stage 4 onwards, each Curated Mission and every other mode. Stage 4
 5. Every character has every on-screen movement as a cycle of 4–6 cells: walk, run, flee or withdraw, walk away after rescue, and each state variant (dismounted, disarmed, phase change, injured). Characters that never move are listed as "stands only" (A3).
 6. Every story scene is a still sequence with a start and end picture, localized subtitles and a transition; the stage plans one Flow clip (the title loop) and none with people (C3).
 7. The music list is the smallest that works: existing cues reused where they fit, new cues only for what is new, boss states and stingers cut from longer cues (C4).
-8. Music, stingers, ambience, effects, UI icons, Museum entries and narration text each say "prompted in file X" or "placeholder until milestone Y" (C5).
+8. Music, stingers, ambience, UI icons, Museum entries and narration text each say "prompted in file X" or "placeholder until milestone Y" (C5). Sound effects are not prompted: they are coded (item 23).
 9. Every asset names the milestone that brings it into the game (D6).
 
 **Prompt text**
@@ -336,3 +345,4 @@ Run this for Stage 4 onwards, each Curated Mission and every other mode. Stage 4
 20. Every mechanic the stage spec uses has a verdict in the Combat Constitution audit (`docs/review/10-combat-constitution-audit.md`); rows marked Engine or Module are built and tested in the Lab before the stage's content work starts (G3).
 21. Every condition ladder, evidence outcome and stage grade of the stage is data on the M25 modules (`objectives.yaml`, the stage's `grade`), with a test that the condition never changes without a visible hostile action (H3).
 22. Every new mission, Chronicle, Remix or operation is a package in `packages/data/missions/missions.yaml` with its stable kebab-case ID, version, canon label, story gate and hero rule; the spec names that ID (I1).
+23. The stage's sound effects are coded recipes in `packages/platform/src/media/` (one per sound the stage plays, its own Lab group), Guo has listened to them in the Lab, and the prompt files list no sound effects for an outside generator (J1).
