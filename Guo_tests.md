@@ -1527,3 +1527,41 @@ Lab profiles: `http://localhost:5173/?hublab=stage2` (Stages 1–2 completed), `
 13. **Personal Paths:** open `?hublab=all`, go back to the village (**Esc**) and open **Records**: **Personal Paths** shows "Fight for Peace · Kael's reunion with his mother: **Reply and Meet Later**" and "Personal choices never change the campaign." On your own profile it says "No personal choices recorded yet."
 14. **Your own runs are archived:** with your own profile play Stage 1 on Easy to its results, then open Records → **Run Archive**: the run is the newest entry, mode Story, Canonical, with its points and rank. A Cheat-Assisted run is labelled Cheat-Assisted. (Older archive entries from before 0.26.0 are kept as clean Story runs.)
 15. **Languages:** in Settings switch to Deutsch and 简体中文 and open the Hub, a card, the Run Archive and the board: everything is translated (Missionszentrale / 任务中心).
+
+## Stage 3 sound effects made in code (before M27)
+
+What's new: all **89 Stage 3 sound effects** are made in code (`packages/platform/src/media/stage3sfx.ts`), in seven groups: **horse** (mount, trot, gallop on trail and on quarry stone, whinny, snort, mounted strike, stumble, low-Stability warning, safe disengage, replacement horse), **weapons** (Hiking Staff, Wood Axe, Quarry Hammer, five-round revolver: aim warning, shot with mountain echo, empty click, ricochet; pick up and drop), **enemies** (Trail Ambusher, Quarry Bruiser, Rope Trapper, Mounted Raider, Ridge Stalker, Pack Captain), **garran** (Hookstaff sweep, thrust, hooked pull, clash, disarm, break; clinch, shoulder throw, trip, roar, Resolve break, restraint, radio), **environment** (scaffold creak, crack, collapse, hit; winch warning, crank, release, redirect; cargo, cart, loose stone, timber, wall), **rescue** (hostage warning, interrupt, freed, condition drop; research documented, disturbed, recovered; Qinglan Rescue Bell; Signal Hut static and restored; invoice; objective alert and done) and **food** (pickup, trail rice parcel, warm broth, seed cake, camp meal). Each sound has a stable id (`sfx.horse.gallop` …); a delivered sound file with the same id would replace it later. The game does not trigger them yet (that comes with the Stage 3 systems in M27); until then the Lab plays them.
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-o9zr9m
+git checkout claude/project-thread-o9zr9m
+git pull origin claude/project-thread-o9zr9m
+pnpm install
+pnpm dev
+```
+
+To write every sound as a WAV file you can open in any player (in a second PowerShell window, same folder):
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+node tools/audio/render_stage3_sfx.mjs
+explorer out\stage3-sfx
+```
+
+### Test steps
+
+1. **Lab panel:** open `http://localhost:5173/?lab` (if Vite prints another port, use that one). The Lab shows a panel **Stage 3 sounds (89)** with a **group** list (horse is selected).
+2. **Horse:** press each button. Listen for: hooves (trot two-beat, gallop three-beat; *gallop-stone* clackier with a short echo), a whinny, a snort, the low-Stability warning (two falling tones then a snort), and *disengage* (whinny, then hooves running away).
+3. **Weapons:** choose **weapons**. The three swings get heavier from staff to axe to hammer; hits sound like wood (staff), a blunt axe with a short ring, and a heavy hammer. *revolver.aim* is two cock clicks plus a short two-note warning; *revolver.shot* is a bang with a mountain echo; *revolver.empty* a dry click.
+4. **Enemies:** choose **enemies**. The ambusher's flank whistle, the bruiser's grunt before the slam, the trapper's three lasso twirls, the raider's shout and charge, and the Pack Captain's two-note order whistle should each be easy to tell apart.
+5. **Garran:** choose **garran**. *hookstaff.disarm* is the staff clattering away plus two rising chime notes; *garran.roar* is a deep voice with echo; *garran.cast* a grunt, a swing and a body fall.
+6. **Environment:** choose **environment**. *scaffold.creak* creaks slowly, *scaffold.collapse* is timber falling with an echo, *winch.warn* ratchet clicks speeding up then two bell strikes, *cart.roll* rolls with rail clacks.
+7. **Rescue and food:** choose **rescue**, then **food**. Warnings (*hostage.warn*, *objective.alert*) are short high beeps; confirmations are soft chimes in the village-motif scale; *bell.rescue* is a long bronze bell. Each food sounds different (paper and chewing, broth bubbles, crunch, bowl clink).
+8. **Hover:** hover a button: the tooltip says where the game will use the sound and its mix category.
+9. **WAV files (optional):** run the `render_stage3_sfx.mjs` command above. `out\stage3-sfx` has one folder per group with the 89 WAV files and `index.csv` (id, group, category, length, use).
+10. **Nothing else changed:** Stage 1 and 2 sound as before (their sounds are untouched).
+
+Write down any sound that is wrong, too loud, too quiet or unclear, with its name (for example `horse.whinny: too robotic`); each one is a small recipe that is quick to retune.

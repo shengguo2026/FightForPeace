@@ -16,7 +16,16 @@ import {
   MountedSlot,
   mountedKit,
 } from '@ffp/sim';
-import type { KeyboardP2Preset, LayoutName, QualitySetting } from '@ffp/platform';
+import {
+  SFX3_GROUPS,
+  STAGE3_SFX,
+  type KeyboardP2Preset,
+  type LayoutName,
+  type QualitySetting,
+  type Sfx3Group,
+} from '@ffp/platform';
+import { signal } from '@preact/signals';
+import { audio } from '../media/audio';
 import { LINK_TEXT, moveInputText, profileText } from '../text/en';
 import { dt, t as tx } from '../text/i18n';
 import { InputPrompt, PLAYER_COLORS, PromptText } from './InputPrompt';
@@ -378,6 +387,46 @@ function HubLabPanel() {
           </a>
         </div>
       ))}
+    </div>
+  );
+}
+
+const sfx3Group = signal<Sfx3Group>('horse');
+
+/**
+ * Stage 3 sounds (made in code, platform media/stage3sfx.ts): play every sound of a group
+ * through the game mix before the Stage 3 systems (M27) trigger them. Hover a button for
+ * where the game uses it.
+ */
+function Stage3SoundsPanel() {
+  const group = sfx3Group.value;
+  return (
+    <div style={{ ...panel, maxWidth: '460px', pointerEvents: 'auto' }} data-testid="lab-sfx3">
+      <div>Stage 3 sounds ({STAGE3_SFX.length})</div>
+      <Select
+        label="group"
+        value={group}
+        options={SFX3_GROUPS}
+        onChange={(g) => (sfx3Group.value = g)}
+        testId="sfx3-group"
+      />
+      <div>
+        {STAGE3_SFX.filter((d) => d.group === group).map((d) => (
+          <button
+            data-testid={`sfx3-${d.id}`}
+            title={`${d.use} · ${d.category}`}
+            style={{ marginRight: '4px', marginTop: '4px' }}
+            onClick={(e) => {
+              (e.target as HTMLElement).blur();
+              audio.unlock();
+              // The first press may still be starting the audio context.
+              if (!audio.sfx(d.id, d.category)) setTimeout(() => audio.sfx(d.id, d.category), 150);
+            }}
+          >
+            {d.id.slice(4)}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -989,6 +1038,7 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
           <TargetPanel t={state.target.value} />
           <ArenaPanel state={state} actions={actions} />
           <HubLabPanel />
+          <Stage3SoundsPanel />
           <CoopPanel state={state} actions={actions} />
           {state.settingsOpen.value ? <Settings state={state} actions={actions} /> : null}
           {state.moveListOpen.value ? <MoveList players={players} /> : null}
