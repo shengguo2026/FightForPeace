@@ -160,7 +160,7 @@ describe('the campaign layer', () => {
 
 describe('save version 3', () => {
   test('a slice profile that cleared Stage 1 migrates with Stage 2 open', () => {
-    expect(SAVE_VERSION).toBe(3);
+    expect(SAVE_VERSION).toBeGreaterThanOrEqual(3);
     const v2 = createProfile('Old', 'en') as unknown as Record<string, unknown>;
     delete v2.campaign;
     v2.museum = {};

@@ -24,6 +24,9 @@ const FORBIDDEN = [
   /(Leertaste|Eingabetaste|Pfeiltaste|Umschalttaste)/, // German key names
 ];
 
+/** Story titles that contain a key name as an ordinary word (M26 Curated Mission). */
+const TITLES = ['No Escape at Reedwater'];
+
 const DIRS = ['Forward', 'Backward', 'Up', 'Down', 'Left', 'Right'];
 
 /** The string literals of a text file (single, double and template quotes). */
@@ -35,7 +38,8 @@ function strings(source: string): string[] {
 
 function check(s: string): string[] {
   const problems: string[] = [];
-  const withoutTokens = s.replace(/\{[^}]*\}/g, '');
+  let withoutTokens = s.replace(/\{[^}]*\}/g, '');
+  for (const t of TITLES) withoutTokens = withoutTokens.replaceAll(t, '');
   for (const re of FORBIDDEN) if (re.test(withoutTokens)) problems.push(`${re} in "${s}"`);
   for (const m of s.matchAll(/\{(action|dir):(\w+)\}/g)) {
     const ok = m[1] === 'action' ? m[2]! in ActionBit : DIRS.includes(m[2]!);

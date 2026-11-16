@@ -16,6 +16,7 @@ export * from './save/backends';
 export * from './save/store';
 export * from './progress/economy';
 export * from './progress/campaign';
+export * from './progress/missions';
 export * from './save/migrate3';
 export * from './net/protocol';
 export * from './net/transport';

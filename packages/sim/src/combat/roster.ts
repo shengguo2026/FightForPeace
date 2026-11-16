@@ -124,3 +124,6 @@ export function phaseOf(a: ActionDef, n: number): { phase: Phase; at: number; of
 
 /** M11 progression data: store, payout, Hero Mastery, achievements, the Academy route. */
 export { PROGRESSION_DATA as PROGRESSION } from './heroes.gen';
+
+/** M26 Mission Hub catalogue: content packages, the story timeline, story choices. */
+export { MISSIONS_DATA as MISSIONS } from './heroes.gen';

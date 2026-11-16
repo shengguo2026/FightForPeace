@@ -12,6 +12,7 @@ import {
   loadHero,
   loadGreenhouse,
   loadMounted,
+  loadMissions,
   loadObjectives,
   loadArenas,
   loadStage,
@@ -796,5 +797,48 @@ describe('M25 objectives and arena grades', () => {
       loadArenas(lab.replace('measure: cases, weight: 30', 'measure: cases, weight: 20'), kits),
     ).toThrow(/grade weights add up to 90, not 100/);
     expect(() => loadArenas(lab.replace('category: rescue', 'category: x'), kits)).not.toThrow();
+  });
+});
+
+describe('M26 missions.yaml', () => {
+  const source = readFileSync(join(__dirname, '../missions/missions.yaml'), 'utf8');
+  const heroes = ['mountain', 'river', 'wind', 'fire'];
+  const arenas = ['lab-m25-objectives'];
+  const ok = () => loadMissions(source, ['stage1', 'stage2'], heroes, arenas);
+
+  test('the catalogue validates against the campaign, roster and arenas', () => {
+    expect(ok).not.toThrow();
+  });
+
+  test('the timeline starts with the campaign stages in order', () => {
+    expect(() => loadMissions(source, ['stage2', 'stage1'], heroes, arenas)).toThrow(
+      /timeline must start with the campaign stages/,
+    );
+  });
+
+  test('an available package launches a known arena with playable heroes', () => {
+    expect(() => loadMissions(source, ['stage1', 'stage2'], heroes, [])).toThrow(
+      /launches unknown arena "lab-m25-objectives"/,
+    );
+    expect(() => loadMissions(source, ['stage1', 'stage2'], ['mountain'], arenas)).toThrow(
+      /unknown hero "river"/,
+    );
+  });
+
+  test('ids carry their family, gates name known stages and Chronicles', () => {
+    const swap = (from: string, to: string) =>
+      loadMissions(source.replace(from, to), ['stage1', 'stage2'], heroes, arenas);
+    expect(() =>
+      swap('- id: curated.storm-over-qinglan', '- id: remix.storm-over-qinglan'),
+    ).toThrow(/id prefix must be its family/);
+    expect(() => swap('gate: { stage: stage6 }', 'gate: { stage: stage12 }')).toThrow(
+      /gate names unknown stage "stage12"/,
+    );
+    expect(() =>
+      swap('gate: { chronicle: chronicle.road-between }', 'gate: { chronicle: chronicle.nowhere }'),
+    ).toThrow(/unknown Chronicle "chronicle.nowhere"/);
+    expect(() =>
+      swap('canon: side-story\n    after: stage3', 'canon: remix\n    after: stage3'),
+    ).toThrow(/is labelled "side-story"/);
   });
 });

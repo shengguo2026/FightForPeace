@@ -1,4 +1,4 @@
-import { SAVE_VERSION, normalizeProfile, type Profile } from './schema';
+import { SAVE_VERSION, normalizeProfile, normalizeRun, type Profile } from './schema';
 import { emptyProgress } from './progress';
 import { migrateToCampaign } from './migrate3';
 
@@ -85,6 +85,18 @@ export const MIGRATIONS: Record<
   // Stage 2 records kept under the provisional M20 key move to the stable content ID;
   // stages already completed are recorded and their Museum entries unlocked.
   2: (d) => migrateToCampaign(d),
+  // 3 → 4 (M26): Run Archive entries get their id, mode, canon label, package version,
+  // outcome, labels and pin (every old entry was a clean story clear); Chronicle
+  // authentication starts empty.
+  3: (d) => ({
+    ...d,
+    runArchive: Array.isArray(d.runArchive)
+      ? d.runArchive
+          .filter((e): e is Record<string, unknown> => typeof e === 'object' && e !== null)
+          .map((e, i) => normalizeRun({ ...e, mode: 'story', canon: 'canonical' }, i))
+      : [],
+    chronicles: {},
+  }),
 };
 
 export function migrate(data: unknown, from: number): unknown {

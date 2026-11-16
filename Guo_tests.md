@@ -1475,3 +1475,55 @@ Open the Lab: `http://localhost:5173/?lab`, press **F1**, pick **M25 Lab: Captiv
 10. **Cheat-Assisted:** this room gives a Cheat-Assisted run no grade (as Stage 3 will): with any cheat active the panel shows "No grade (Cheat-Assisted)" instead of the rank. (The Stage 1 and 2 results still grade Cheat-Assisted runs as before.)
 11. **Stage 1 and 2 results unchanged:** play Stage 1 from the menu on Easy to its results screen (and Stage 2 if you have time): the results screen shows the same categories, points and rank rules as in 0.24.0. (An automatic test also compares both stages' grades with the 0.24.0 formulas on hundreds of runs.)
 12. **Languages:** switch to Deutsch and 简体中文 and open the room: the condition names (Sicher / Angespannt / Kritisch, 安稳 / 吃力 / 危急), the case states and the grade panel are translated.
+
+## M26 · Mission Hub, packaging and Run Archive (0.26.0)
+
+What's new: the village has a **Mission Hub** with the four Mission Mode destinations: **Character Chronicles**, **Mission Remix**, **Curated Missions** and **Random Operations**, each with its own frame. Every entry is a content package with a stable ID and a version (`packages/data/missions/missions.yaml`). An entry stays **locked** (sealed title plus a spoiler-safe clue) until its story stage is completed; then it is **open**, or **Not installed** when its content is not built yet (the real Curated Missions come from M30, the Chronicles with Stages 5 and 6, the operation generator with M41). **Collection and Records** now has the full **Run Archive** (every finished run with its labels, pin, and **Replay** with the same difficulty and heroes) and **Personal Paths** (the story choice record).
+
+Because no real mission content exists yet, the **M26 Lab profiles** open the Hub on a temporary profile (nothing is saved, your own profiles are not touched) with story progress already set and four **Lab test packages** that replay the M25 test room.
+
+### Get and start the build
+
+To test the branch before it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-b4zqy4
+git checkout claude/project-thread-b4zqy4
+git pull origin claude/project-thread-b4zqy4
+pnpm install
+pnpm dev
+```
+
+After it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+If Vite prints another port than 5173, use that one. Stop the server with `Ctrl+C`.
+
+### Test steps
+
+Lab profiles: `http://localhost:5173/?hublab=stage2` (Stages 1–2 completed), `?hublab=fresh`, `?hublab=stage3`, `?hublab=stage6`, `?hublab=all`. The same links are in the Lab: `http://localhost:5173/?lab`, press **F1**, panel **M26 Mission Hub Lab**. Menu keys: arrows or **W A S D** move, **Enter** or **T** confirms, **Esc** goes back.
+
+1. **Version and village entry:** open `http://localhost:5173/` with your own profile. The corner shows 0.26.0 and the village menu has **Mission Hub** under Play. Open it: Chronicles and Curated entries are locked with clues (your profile has no Stage 3 yet); Random Operations shows Defeat and Safeguard as **Not installed** if you have completed Stage 1, else locked. Back with **Esc**.
+2. **Four destinations:** open `?hublab=stage2`. The Hub opens with "M26 Lab profile: nothing is saved". Move through the four destination buttons on the left: each has its own frame (gold Archive record, dashed violet reconstruction, double teal case file, orange board) and the list on the right changes.
+3. **Locked entries with clues:** in Character Chronicles, *The Bell Before Dawn* and *The Road Between* show "Sealed Archive record", 🔒 Locked and a clue ("… Complete Stage 5." / "Complete Stage 6."). Open one: the card shows only the sealed title, its canon label, "After …" and the clue; Play solo is disabled and says why.
+4. **Open and Legacy entries:** in Curated Missions, *Lab Case: Captive Drill* shows ▶ Open and **Legacy record** (the sample archive has a run on its older version 1); *Storm over Qinglan* and *No Escape at Reedwater* are locked with their clues. Open the Lab case: canon label "Canon-compatible Side Story", era, objective "Rescue and Evacuation", players Solo · Co-op, heroes, difficulties Easy/Medium/Hard, record "Not played yet".
+5. **Story gate beyond the built stages:** open `?hublab=stage3`. Storm over Qinglan and No Escape at Reedwater are now ○ **Not installed** (their content comes with M30/M33); *Lab Case: Sealed Case* is open; The Medicine Road and The Vanishing Survey stay locked. Open `?hublab=stage6`: The Medicine Road and The Vanishing Survey and *The Bell Before Dawn* are Not installed too. Open `?hublab=fresh`: everything is locked, including the operations board.
+6. **Play a Chronicle, Record Authenticated:** back on `?hublab=stage2`, Mission Remix shows *Lab Remix: Founders' Record* locked ("Authenticate the Lab Chronicle first"). In Chronicles open *Lab Chronicle: Founders' Record* → **Play solo** → ready up in the lobby (**T**) → the set-up shows the mission and its difficulty → **Next** → the hero screen offers only **Mountain Guardian** (left/right does not change it: fixed participant) → confirm (**T**) → **Start**. The M25 test room starts; beat the three waves (W A S D, T). About a second and a half after the last enemy falls, **Mission results** show Cleared, the points and rank, **✓ Record Authenticated** and "Now open: Lab Remix: Founders' Record".
+7. **Remix opens, separate records:** press **Mission Hub**. Mission Remix now shows the Lab Remix ▶ Open; Chronicles shows the Lab Chronicle with "Clears 1 · best rank …". Play the Remix solo: the hero screen now lets you pick any of the four heroes. After the results its own record shows; the Chronicle's record is unchanged.
+8. **Failed run:** play the Lab case and let the heroes be beaten (or leave through the pause menu, which records nothing). A beaten run shows "Not cleared", "No grade", and appears in the Run Archive as Not cleared.
+9. **Run Archive:** in the Hub press **Run Archive** (also in Collection and Records). Every run shows its content, mode chip (Story, Chronicle, Remix, Curated), canon label, date, difficulty, heroes, points and rank, time, and labels: the sample Stage 1 Hard run says **Cheat-Assisted**, the Stage 2 co-op run says **Continued** and **📌 Pinned**, the Lab case run says "Legacy: played on package version 1". The **Show** choice filters by mode.
+10. **Pin:** press **Pin** on a run: it shows 📌 Pinned; **Unpin** removes it (the archive keeps the newest 100 runs and every pinned one).
+11. **Replay a stage from the Archive:** on the Cheat-Assisted *The Broken Water Pact* run (Hard, River Scout) press **Replay**: the lobby opens; ready up and the stage screen shows *The Broken Water Pact* on **Hard**; **Next** puts **River Scout** on the hero screen. You can play it (a new run under the current version) or press **Esc** to leave. Replay on the Legacy Lab case run opens that mission on the current version.
+12. **Random Operations board:** in Random Operations open Defeat: the board shows Defeat and Safeguard, the content pool (cleared stages, combat spaces, enemy families without Story bosses, heroes) and the flow; **Generate operation** is disabled ("arrives in a later update").
+13. **Personal Paths:** open `?hublab=all`, go back to the village (**Esc**) and open **Records**: **Personal Paths** shows "Fight for Peace · Kael's reunion with his mother: **Reply and Meet Later**" and "Personal choices never change the campaign." On your own profile it says "No personal choices recorded yet."
+14. **Your own runs are archived:** with your own profile play Stage 1 on Easy to its results, then open Records → **Run Archive**: the run is the newest entry, mode Story, Canonical, with its points and rank. A Cheat-Assisted run is labelled Cheat-Assisted. (Older archive entries from before 0.26.0 are kept as clean Story runs.)
+15. **Languages:** in Settings switch to Deutsch and 简体中文 and open the Hub, a card, the Run Archive and the board: everything is translated (Missionszentrale / 任务中心).

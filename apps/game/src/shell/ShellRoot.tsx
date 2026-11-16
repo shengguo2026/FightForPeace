@@ -30,6 +30,13 @@ import { VillageScreen } from './screens/Village';
 import { MuseumScreen } from './screens/Museum';
 import { MoveListScreen, PreviewHud, WhatsNewScreen } from './screens/Preview';
 import { NetLobbyScreen, NetOverlay, WifiScreen } from './screens/Wifi';
+import {
+  ArchiveScreen,
+  MissionHubScreen,
+  MissionResultsScreen,
+  MissionScreen,
+  OperationsScreen,
+} from './screens/MissionHub';
 
 /** Whether the pause the player asked for is showing (not a focus or controller pause). */
 export function menuPaused(state: LabState): boolean {
@@ -117,6 +124,16 @@ export function ShellRoot({ shell, state }: { shell: Shell; state: LabState }) {
         return <WhatsNewScreen shell={shell} />;
       case 'movelist':
         return <MoveListScreen shell={shell} />;
+      case 'missions':
+        return <MissionHubScreen shell={shell} />;
+      case 'mission':
+        return <MissionScreen shell={shell} />;
+      case 'operations':
+        return <OperationsScreen shell={shell} />;
+      case 'archive':
+        return <ArchiveScreen shell={shell} />;
+      case 'missionResults':
+        return <MissionResultsScreen shell={shell} />;
     }
   })();
   return (

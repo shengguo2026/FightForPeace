@@ -7,6 +7,13 @@ import {
   WriterLock,
   completeStage,
   runCompletesStage,
+  archiveRun,
+  missionHeroes,
+  missionPackage,
+  recordMissionRun,
+  replayTarget,
+  type RunArchiveEntry,
+  type RunLabel,
   noteStageStart,
   whatsNewDue,
   markWhatsNewSeen,
@@ -36,6 +43,8 @@ import {
   setCheats,
   type StageResults,
   type WorldOptions,
+  Result,
+  objectiveGrade,
 } from '@ffp/sim';
 import {
   DOSSIER,
@@ -57,6 +66,7 @@ import { Academy } from '../academy/runner';
 import { NetPlay } from '../net/netplay';
 import { setFacingMode } from '@ffp/sim';
 import type { StartInfo, StoryState } from '@ffp/platform';
+import { applyHubLab, type HubLabPreset } from './hubLab';
 
 /**
  * M10 game shell: which screen is open, the profiles and their saves, and the play flow
@@ -92,7 +102,13 @@ export type Screen =
   | 'museum'
   | 'whatsNew'
   | 'movelist'
-  | 'preview';
+  | 'preview'
+  // M26 Mission Hub, a mission's card, the operations board, the Run Archive, results.
+  | 'missions'
+  | 'mission'
+  | 'operations'
+  | 'archive'
+  | 'missionResults';
 
 /** Screens during which the simulation runs. */
 const LIVE: ReadonlySet<Screen> = new Set(['game', 'lab', 'lesson', 'practice', 'preview']);
@@ -121,6 +137,30 @@ export type PauseConfirm = { kind: 'restart' | 'village'; agreed: boolean[] } | 
 /** Every playable hero in roster order (M16: the founders, then the twins). */
 export const HERO_ROSTER: readonly string[] = HEROES.map((h) => h.id);
 export const DIFFICULTY_ORDER = DIFFICULTIES.map((d) => d.id);
+
+/** M26: the Mission Mode package picked for the next run, and its difficulty. */
+export interface MissionPick {
+  id: string;
+  difficulty: string;
+}
+
+/** M26: what the mission results screen shows. */
+export interface MissionResultView {
+  id: string;
+  outcome: 'cleared' | 'failed';
+  grade: string | null;
+  points: number | null;
+  capped: string | null;
+  cheatAssisted: boolean;
+  timeFrames: number;
+  difficulty: string;
+  heroes: string[];
+  authenticated: boolean;
+  opened: string[];
+}
+
+/** Frames between a mission's end and its results screen. */
+export const MISSION_RESULTS_DELAY = 90;
 
 export class Shell {
   readonly screen = signal<Screen>('boot');
@@ -188,6 +228,23 @@ export class Shell {
     trial: [],
     cheats: [],
   });
+  // --- M26 ---
+  /** The Hub runs on a temporary M26 Lab profile (`?hublab=`): Lab packages show. */
+  readonly hubLab = signal(false);
+  /** The Hub destination in focus (chronicle, remix, curated, operation). */
+  readonly hubFamily = signal<string>('chronicle');
+  /** The package whose card is open. */
+  readonly missionFocus = signal<string>('');
+  /** The package the play flow is starting (null: Story Mode). */
+  readonly missionPick = signal<MissionPick | null>(null);
+  /** Heroes an Archive replay preselects (null: the last heroes). */
+  readonly replayHeroes = signal<string[] | null>(null);
+  /** The last finished mission run's results. */
+  readonly missionResult = signal<MissionResultView | null>(null);
+  /** The mission run in progress, and the frame it ended (-1: running). */
+  private missionRun: { id: string; endedAt: number } | null = null;
+  /** Where the Run Archive returns to. */
+  readonly archiveFrom = signal<Screen>('records');
   store: ProfileStore | null = null;
   /** Sets the presentation quality (wired to the quality governor by main). */
   onQuality: (setting: QualitySetting) => void = () => {};
@@ -235,6 +292,29 @@ export class Shell {
     }
     await this.useProfile(last.id);
     this.go('village');
+  }
+
+  /**
+   * M26 Lab profiles (`?hublab=<preset>`): boots on memory storage with one temporary
+   * profile whose progress shows every Hub state, and opens the Mission Hub.
+   */
+  async bootHubLab(preset: HubLabPreset): Promise<void> {
+    this.hubLab.value = true;
+    const b = new MemoryBackend();
+    this.storage.value = b.kind;
+    this.store = new ProfileStore(b, this.gameVersion);
+    const base = await this.store.device();
+    const locale = pickLocale(navigator.languages ?? []);
+    const p = createProfile('M26 Hub Lab', locale);
+    applyHubLab(p, preset, this.gameVersion);
+    const device: DeviceRecord = { ...base, setupDone: true, lastProfile: p.id, locale };
+    await this.store.save(p);
+    await this.store.saveDevice(device);
+    this.device.value = device;
+    setLocale(locale);
+    this.profiles.value = await this.store.loadAll();
+    await this.useProfile(p.id);
+    this.openHub();
   }
 
   /** First launch: creates the profile with the choices made and opens the village. */
@@ -386,6 +466,8 @@ export class Shell {
   // --- play flow --------------------------------------------------------------------------
 
   startPlay(): void {
+    this.missionPick.value = null;
+    this.replayHeroes.value = null;
     this.mode.value = 'solo';
     this.fromShell.value = true;
     this.go('mode');
@@ -453,10 +535,18 @@ export class Shell {
     const players = this.lobby.value.length;
     const last = this.active.value?.lastHeroes ?? [];
     const picks: HeroPick[] = [];
+    const rule = this.missionHeroRule();
+    const replay = this.replayHeroes.value;
     for (let i = 0; i < players; i += 1) {
-      const want = (i === 1 ? this.partner.value?.lastHeroes[0] : last[0]) ?? HERO_ROSTER[i];
+      const want =
+        rule?.fixed?.[i] ??
+        replay?.[i] ??
+        (i === 1 ? this.partner.value?.lastHeroes[0] : last[0]) ??
+        HERO_ROSTER[i];
       let cursor = Math.max(0, HERO_ROSTER.indexOf(want ?? 'mountain'));
-      if (i === 1 && cursor === picks[0]?.cursor) cursor = (cursor + 1) % HERO_ROSTER.length;
+      if (rule && !rule.eligible.includes(HERO_ROSTER[cursor]!))
+        cursor = Math.max(0, HERO_ROSTER.indexOf(rule.eligible[0] ?? 'mountain'));
+      if (i === 1 && cursor === picks[0]?.cursor) cursor = this.nextHero(cursor, 1);
       picks.push({ cursor, confirmed: false });
     }
     this.heroPicks.value = picks;
@@ -472,15 +562,40 @@ export class Shell {
     const picks = this.heroPicks.value;
     const p = picks[slot];
     if (!p || p.confirmed) return;
-    const n = HERO_ROSTER.length;
-    const cursor = (p.cursor + step + n) % n;
+    // M26: a mission with fixed participants offers no choice.
+    if (this.missionHeroRule()?.fixed) return;
+    const cursor = this.nextHero(p.cursor, step);
     this.heroPicks.value = picks.map((x, i) => (i === slot ? { ...x, cursor } : x));
+  }
+
+  /** The next roster index in `step`'s direction a mission allows (every hero in Story). */
+  private nextHero(from: number, step: number): number {
+    const n = HERO_ROSTER.length;
+    const rule = this.missionHeroRule();
+    let cursor = from;
+    for (let k = 0; k < n; k += 1) {
+      cursor = (cursor + step + n) % n;
+      if (!rule || rule.eligible.includes(HERO_ROSTER[cursor]!)) return cursor;
+    }
+    return from;
+  }
+
+  /** M26: the picked mission's hero rule for the lobby's player count (null: Story Mode). */
+  missionHeroRule(): { fixed: string[] | null; eligible: string[] } | null {
+    const m = this.missionPick.value ? missionPackage(this.missionPick.value.id) : undefined;
+    return m ? missionHeroes(m, Math.max(1, this.lobby.value.length)) : null;
   }
 
   confirmHero(slot: number): boolean {
     const picks = this.heroPicks.value;
     const p = picks[slot];
     if (!p || p.confirmed) return false;
+    const rule = this.missionHeroRule();
+    if (rule) {
+      const hero = HERO_ROSTER[p.cursor]!;
+      if (!rule.eligible.includes(hero)) return false;
+      if (rule.fixed && rule.fixed[slot] !== hero) return false;
+    }
     const owner = this.heroOwner(p.cursor);
     if (owner >= 0 && owner !== slot) return false;
     this.heroPicks.value = picks.map((x, i) => (i === slot ? { ...x, confirmed: true } : x));
@@ -502,6 +617,11 @@ export class Shell {
     );
     if (this.partner.value) this.update((p) => (p.lastHeroes = [heroes[1]!]), 1);
     this.ready.value = heroes.map(() => false);
+    // M26: a mission goes straight to readiness (its card was its briefing).
+    if (this.missionPick.value) {
+      this.go('ready');
+      return;
+    }
     const stage = this.stagePick.value.stage;
     // M21: the Stage 1 intro stays Stage 1's; a later stage shows What's New once per
     // profile before its first run, then its own briefing.
@@ -625,6 +745,11 @@ export class Shell {
 
   /** Starts the picked stage (from beat 0, or the checkpoint for Continue). */
   startStage(from?: CheckpointRecord): void {
+    if (!from && this.missionPick.value) {
+      this.startMission();
+      return;
+    }
+    this.missionRun = null;
     const pick = this.stagePick.value;
     const heroes = from ? from.heroes : this.chosenHeroes();
     this.continued.value = from ?? null;
@@ -697,10 +822,186 @@ export class Shell {
     };
   }
 
+  // --- M26 Mission Hub ---------------------------------------------------------------------
+
+  openHub(): void {
+    this.missionPick.value = null;
+    this.replayHeroes.value = null;
+    this.fromShell.value = true;
+    this.go('missions');
+  }
+
+  openMission(id: string): void {
+    this.missionFocus.value = id;
+    this.go('mission');
+  }
+
+  /** A mission's card: play it solo or in same-device co-op (lobby, difficulty, heroes). */
+  playMission(id: string, mode: 'solo' | 'coop', difficulty?: string, heroes?: string[]): void {
+    const m = missionPackage(id);
+    if (!m) return;
+    const d =
+      difficulty && m.difficulties.includes(difficulty)
+        ? difficulty
+        : m.difficulties.includes('medium')
+          ? 'medium'
+          : m.difficulties[0]!;
+    this.missionPick.value = { id, difficulty: d };
+    this.replayHeroes.value = heroes ?? null;
+    this.fromShell.value = true;
+    this.chooseMode(mode);
+  }
+
+  /** Replay from the Run Archive: the same content, difficulty, players and heroes. */
+  replayRun(e: RunArchiveEntry): boolean {
+    const p = this.active.value;
+    if (!p) return false;
+    const target = replayTarget(p, e, this.hubLab.value);
+    if (target.kind === 'blocked') return false;
+    const mode = target.players > 1 ? 'coop' : 'solo';
+    if (target.kind === 'mission') {
+      this.playMission(target.id, mode, target.difficulty, target.heroes);
+      return true;
+    }
+    this.missionPick.value = null;
+    this.replayHeroes.value = target.heroes;
+    this.stagePick.value = { stage: target.stage, difficulty: target.difficulty };
+    this.fromShell.value = true;
+    this.chooseMode(mode);
+    return true;
+  }
+
+  /** Starts the picked mission's arena with the chosen heroes, loadouts and cheats. */
+  startMission(): void {
+    const pick = this.missionPick.value;
+    const m = pick ? missionPackage(pick.id) : undefined;
+    if (!pick || !m || !m.arena) return;
+    const heroes = this.chosenHeroes();
+    this.continued.value = null;
+    this.fromCheckpoint = false;
+    this.resultsRecorded = false;
+    this.ending.value = null;
+    this.chapters.value = null;
+    this.settlement.value = [];
+    this.completion.value = null;
+    this.missionResult.value = null;
+    this.lab.visible.value = false;
+    this.applyOutfits(heroes);
+    this.session.startStage(m.arena, pick.difficulty, 0, heroes, {
+      loadouts: this.loadoutsFor(heroes),
+      cheats: this.draftCheats(),
+    });
+    this.missionRun = { id: m.id, endedAt: -1 };
+    this.go('game');
+  }
+
+  /** Is a mission run on (the game screen shows an arena of a Mission Mode package)? */
+  get missionActive(): boolean {
+    return this.missionRun !== null;
+  }
+
+  /**
+   * Called every render frame of a mission run: when its encounter ends (cleared, or every
+   * hero down) the run is archived and recorded at once, and the results open shortly
+   * after.
+   */
+  watchMission(): void {
+    const run = this.missionRun;
+    const w = this.session.world;
+    const enc = w.encounter;
+    const p = this.active.value;
+    if (!run || !enc || !p) return;
+    if (run.endedAt < 0) {
+      if (enc.result !== Result.Cleared && enc.result !== Result.Defeated) return;
+      run.endedAt = w.frame;
+      this.recordMission(enc.result === Result.Cleared ? 'cleared' : 'failed');
+      return;
+    }
+    if (w.frame - run.endedAt >= MISSION_RESULTS_DELAY && this.screen.value === 'game')
+      this.go('missionResults');
+  }
+
+  private recordMission(outcome: 'cleared' | 'failed'): void {
+    const run = this.missionRun;
+    const m = run ? missionPackage(run.id) : undefined;
+    if (!run || !m) return;
+    const w = this.session.world;
+    const g = objectiveGrade(w);
+    const cheat = w.cheats.marked;
+    const heroes = w.playerHero
+      .slice(0, this.playerCount() || 1)
+      .map((h) => HERO_ROSTER[h] ?? 'mountain');
+    const difficulty = this.missionPick.value?.difficulty ?? 'medium';
+    const report = {
+      outcome,
+      grade: outcome === 'cleared' ? (g?.overall ?? null) : null,
+      points: outcome === 'cleared' ? (g?.points ?? null) : null,
+      difficulty,
+      heroes,
+      players: heroes.length,
+      timeFrames: w.frame,
+      labels: this.runLabels(cheat, false, false, heroes),
+      gameVersion: this.gameVersion,
+    };
+    let authenticated = false;
+    let opened: string[] = [];
+    this.update((x) => {
+      const o = recordMissionRun(x, m, report, DIFFICULTY_ORDER);
+      authenticated = o.authenticated;
+      opened = o.opened;
+    });
+    if (this.partner.value && !this.partner.value.guest)
+      this.update((x) => void recordMissionRun(x, m, report, DIFFICULTY_ORDER), 1);
+    this.missionResult.value = {
+      id: m.id,
+      outcome,
+      grade: report.grade,
+      points: report.points,
+      capped: g?.capped ?? null,
+      cheatAssisted: cheat,
+      timeFrames: w.frame,
+      difficulty,
+      heroes,
+      authenticated,
+      opened,
+    };
+  }
+
+  /** Result labels of a finished run (spec §3.4: result labels, never canon labels). */
+  private runLabels(
+    cheat: boolean,
+    continued: boolean,
+    practice: boolean,
+    heroes: readonly string[],
+  ): RunLabel[] {
+    const out: RunLabel[] = [];
+    if (cheat) out.push('cheat-assisted');
+    if (continued) out.push('continued');
+    if (practice) out.push('practice');
+    const open = heroes.some((h, slot) => equippedTechniques(this.profileOf(slot), h).length > 0);
+    if (open) out.push('open-loadout');
+    return out;
+  }
+
+  /** Mission results: play the same mission again (same players, heroes and difficulty). */
+  missionAgain(): void {
+    this.missionRun = null;
+    this.startMission();
+  }
+
+  /** Mission results: back to the Hub. */
+  leaveMission(): void {
+    this.returnToVillage();
+    this.missionPick.value = null;
+    this.go('missions');
+  }
+
   /** Continue from the village: the saved checkpoint, solo with Player 1's device. */
   continueRun(): void {
     const cp = this.active.value?.checkpoint;
     if (!cp) return;
+    this.missionPick.value = null;
+    this.missionRun = null;
     this.fromShell.value = true;
     this.mode.value = cp.players > 1 ? 'coop' : 'solo';
     this.partner.value = null;
@@ -734,6 +1035,7 @@ export class Shell {
     this.partner.value = null;
     this.continued.value = null;
     this.fromCheckpoint = false;
+    this.missionRun = null;
     this.session.pilot = null;
     this.session.afterStep.length = 0;
     // Session-scoped cheats are chosen again for every run.
@@ -833,7 +1135,32 @@ export class Shell {
       const heroes = this.session.world.playerHero
         .slice(0, this.playerCount() || 1)
         .map((h) => HERO_ROSTER[h] ?? 'mountain');
+      // M26: every finished story run enters the Run Archive, labelled (a practice run from
+      // a later beat, a Cheat-Assisted, Continued or Open Loadout run never masquerades as
+      // a competitive score).
+      const practice = !runCompletesStage(results.startBeat, this.fromCheckpoint);
+      const archived = {
+        contentId: contentIdOf(stage.id),
+        packageVersion: 1,
+        mode: 'story' as const,
+        canon: 'canonical' as const,
+        outcome: 'cleared' as const,
+        grade: results.overall,
+        points: results.points,
+        difficulty: DIFFICULTIES[results.difficulty]?.id ?? 'medium',
+        heroes,
+        players: heroes.length,
+        timeFrames: results.stats.frames,
+        labels: this.runLabels(
+          results.cheatAssisted,
+          !!this.continued.value || (results.startBeat > 0 && !practice),
+          practice,
+          heroes,
+        ),
+        gameVersion: this.gameVersion,
+      };
       const record = (x: Profile) => {
+        archiveRun(x, archived);
         // A practice run from a later beat or a Cheat-Assisted run is not a clear record.
         if (results.startBeat > 0 || results.cheatAssisted) {
           x.checkpoint = null;

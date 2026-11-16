@@ -105,6 +105,8 @@ If Node.js 24 is not installed, the first start downloads a pinned Node.js 24 in
 
 **Objective and grade framework (M25):** one shared module for protected people (a condition ladder that only changes when an enemy completes a visible, interruptible hostile action, locked once they are safe), one for evidence (collected, sealed, disturbed, recovered, never lost) and one 100-point grade with caps that every stage uses. Ladders and outcome tables live in `packages/data/objectives/objectives.yaml`; an arena or stage names them. The Lab room *M25 Lab: Captive and Evidence* shows the condition and the live grade change as enemies act. Stage 1 and Stage 2 results now use the same grade module and give the same numbers as before.
 
+**Mission Hub, packaging and Run Archive (M26):** the village has a **Mission Hub** with the four Mission Mode destinations (Character Chronicles, Mission Remix, Curated Missions, Random Operations). Every entry is a content package with a stable ID and version in `packages/data/missions/missions.yaml`; locked entries show a spoiler-safe clue, released stages open them, and packages whose content is not built yet show *Not installed*. Collection and Records has the full **Run Archive** (every finished run with its labels, pin, and replay with the same difficulty and heroes) and **Personal Paths** (the story choice record). `?hublab=stage2` (or the Lab's F1 links) opens the Hub on a temporary Lab profile with test packages that replay the M25 room.
+
 ## Developer commands
 
 | Command | What it does |

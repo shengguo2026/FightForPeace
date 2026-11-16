@@ -12,6 +12,7 @@ import { difficultyName, dt, heroName, locale, stageName, t, type TextId } from 
 import type { Shell } from '../shell';
 import { useNav } from '../hooks';
 import { ART, Button, Panel, Screen } from '../ui';
+import { PersonalPaths, contentName } from './MissionHub';
 
 /** Collection and Records: the mission record per content ID and the recent runs. */
 export function RecordsScreen({ shell }: { shell: Shell }) {
@@ -112,17 +113,29 @@ export function RecordsScreen({ shell }: { shell: Shell }) {
             )}
           </>
         ) : null}
+        {p ? <PersonalPaths p={p} /> : null}
         <h2>{t('records.archive')}</h2>
         {(p?.runArchive ?? []).length === 0 ? (
           <p class="ffp-hint">{t('records.archiveEmpty')}</p>
         ) : (
           (p?.runArchive ?? []).slice(0, 8).map((r) => (
             <div class="ffp-hint" data-testid="record-run">
-              {new Date(r.endedAt).toLocaleString(locale.value)} · {difficultyName(r.difficulty)} ·{' '}
+              {new Date(r.endedAt).toLocaleString(locale.value)} · {contentName(r.contentId)} ·{' '}
+              {t(`m26.mode.${r.mode}` as TextId)} · {difficultyName(r.difficulty)} ·{' '}
               {r.grade ?? '—'} · {r.heroes.map(heroName).join(' + ')}
+              {r.labels.map((l) => ` · ${t(`m26.label.${l}` as TextId)}`).join('')}
             </div>
           ))
         )}
+        <Button
+          label={t('m26.archive')}
+          detail={t('m26.archive.detail')}
+          onPress={() => {
+            shell.archiveFrom.value = 'records';
+            shell.go('archive');
+          }}
+          testId="records-archive"
+        />
         <p class="ffp-hint">{t('records.collection')}</p>
         <Button
           label={t('profile.view')}

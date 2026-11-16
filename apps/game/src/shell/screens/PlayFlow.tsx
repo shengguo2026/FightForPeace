@@ -20,11 +20,19 @@ import {
   campaignList,
 } from '@ffp/platform';
 import { Cinematic } from '../../media/Cinematic';
+import { MissionSetupScreen, missionName } from './MissionHub';
+import { promptContext } from '../../ui/views';
 import type { VoiceSettings } from '../../media/narration';
 
 /** Player 1's prompt context (bindings, labels, pad family) from the Lab's player views. */
 function ctxOf(shell: Shell, slot: number) {
-  return shell.lab.players.value[slot]?.ctx ?? shell.lab.players.value[0]!.ctx;
+  // M26: a screen can open before the first frame has published the player views (the
+  // Mission Hub's Lab profiles open straight on the Hub while the art still loads).
+  return (
+    shell.lab.players.value[slot]?.ctx ??
+    shell.lab.players.value[0]?.ctx ??
+    promptContext(shell.session, shell.lab, slot)
+  );
 }
 
 function deviceName(id: DeviceId): string {
@@ -108,31 +116,30 @@ export function LobbyScreen({ shell }: { shell: Shell }) {
     const i = Math.max(0, ids.indexOf(lobby[1]?.profile ?? 'guest'));
     void shell.setPartnerProfile(ids[(i + d + ids.length) % ids.length]!);
   };
-  useNav(
-    () => shell.go('mode'),
-    (e) => {
-      const slot = slotFor(shell, e);
-      if (slot < 0) {
-        if (e.confirm) shell.joinLobby(e.source);
-        return true;
-      }
-      if (shell.mode.value === 'solo' && lobby[0] && lobby[0].device !== e.source)
-        shell.lobby.value = [{ ...lobby[0], device: e.source }];
-      if (e.back) {
-        if (slot === 1) shell.leaveLobby(1);
-        else if (lobby[0]?.ready) shell.setLobbyReady(0, false);
-        else shell.go('mode');
-        return true;
-      }
-      if (e.confirm) shell.setLobbyReady(slot, !lobby[slot]!.ready);
-      if (e.dir === 'left' || e.dir === 'right') {
-        const d = e.dir === 'left' ? -1 : 1;
-        if (slot === 0) cycleP1(d);
-        else cycleP2(d);
-      }
+  // M26: a mission's lobby goes back to its card.
+  const back = () => (shell.missionPick.value ? shell.go('mission') : shell.go('mode'));
+  useNav(back, (e) => {
+    const slot = slotFor(shell, e);
+    if (slot < 0) {
+      if (e.confirm) shell.joinLobby(e.source);
       return true;
-    },
-  );
+    }
+    if (shell.mode.value === 'solo' && lobby[0] && lobby[0].device !== e.source)
+      shell.lobby.value = [{ ...lobby[0], device: e.source }];
+    if (e.back) {
+      if (slot === 1) shell.leaveLobby(1);
+      else if (lobby[0]?.ready) shell.setLobbyReady(0, false);
+      else back();
+      return true;
+    }
+    if (e.confirm) shell.setLobbyReady(slot, !lobby[slot]!.ready);
+    if (e.dir === 'left' || e.dir === 'right') {
+      const d = e.dir === 'left' ? -1 : 1;
+      if (slot === 0) cycleP1(d);
+      else cycleP2(d);
+    }
+    return true;
+  });
   const card = (slot: number) => {
     const p = lobby[slot];
     const color = PLAYER_COLORS[slot];
@@ -209,6 +216,12 @@ export function LobbyScreen({ shell }: { shell: Shell }) {
 }
 
 export function StageScreen({ shell }: { shell: Shell }) {
+  // M26: a Mission Mode run picks only its difficulty here.
+  if (shell.missionPick.value) return <MissionSetupScreen shell={shell} />;
+  return <StoryStageScreen shell={shell} />;
+}
+
+function StoryStageScreen({ shell }: { shell: Shell }) {
   void locale.value;
   const pick = shell.stagePick.value;
   useNav(() => shell.go('lobby'));
@@ -642,23 +655,23 @@ export function ReadyScreen({ shell }: { shell: Shell }) {
     r[slot] = true;
     shell.ready.value = r;
   };
-  useNav(
-    () => shell.go('briefing'),
-    (e) => {
-      const slot = Math.max(0, slotFor(shell, e));
-      if (e.confirm) mark(slot);
-      else if (e.back) shell.go('briefing');
-      return true;
-    },
-  );
+  // M26: a mission has no briefing screen (its card was the briefing).
+  const back = () => shell.go(shell.missionPick.value ? 'heroes' : 'briefing');
+  useNav(back, (e) => {
+    const slot = Math.max(0, slotFor(shell, e));
+    if (e.confirm) mark(slot);
+    else if (e.back) back();
+    return true;
+  });
   const waiting = ready.findIndex((r) => !r);
   return (
     <Screen bg={ART('s1-intro-06')} dim testId="ready">
       <Panel style={{ width: '620px', textAlign: 'center' }}>
         <h1 class="ffp-title">{t('play.readyTitle')}</h1>
-        <p>
-          {stageName(shell.stagePick.value.stage)} ·{' '}
-          {difficultyName(shell.stagePick.value.difficulty)}
+        <p data-testid="ready-content">
+          {shell.missionPick.value
+            ? `${missionName(shell.missionPick.value.id)} · ${difficultyName(shell.missionPick.value.difficulty)}`
+            : `${stageName(shell.stagePick.value.stage)} · ${difficultyName(shell.stagePick.value.difficulty)}`}
         </p>
         {shell.chosenHeroes().map((h, slot) => (
           <p style={{ color: PLAYER_COLORS[slot] }} data-testid={`ready-p${slot + 1}`}>

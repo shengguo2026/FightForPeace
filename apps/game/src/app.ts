@@ -12,6 +12,7 @@ import { LabOverlay, type LabActions } from './ui/LabOverlay';
 import { PauseOverlay } from './ui/PauseOverlay';
 import { ResultsOverlay, StageHud, VersionTag } from './ui/StageOverlay';
 import { createLabState } from './ui/labState';
+import { hubLabPreset } from './shell/hubLab';
 import {
   heldKeys,
   refreshDefense,
@@ -159,6 +160,7 @@ export function startGame(): void {
   const stageParam = params.get('stage');
   const useShell =
     params.has('shell') ||
+    params.has('hublab') ||
     !(
       (devBuild && navigator.webdriver) ||
       params.has('lab') ||
@@ -314,7 +316,9 @@ export function startGame(): void {
   if (useShell) {
     const d = new URLSearchParams(location.search);
     if (d.has('lang')) setLocale(d.get('lang') as 'en');
-    void shell.boot().then(() => applyUiScale(shell.device.value?.uiScale ?? 100));
+    // M26: `?hublab=<preset>` opens the Mission Hub on a temporary Lab profile.
+    const booted = d.has('hublab') ? shell.bootHubLab(hubLabPreset(d.get('hublab'))) : shell.boot();
+    void booted.then(() => applyUiScale(shell.device.value?.uiScale ?? 100));
     window.addEventListener('beforeunload', () => void shell.flushSave());
   }
 
@@ -382,6 +386,7 @@ export function startGame(): void {
     if (useShell && shell.screen.value === 'game') {
       refreshHud(session);
       shell.watchRun(lab.results.value ? stageResults(session.world) : null);
+      if (shell.missionActive) shell.watchMission();
     }
     const held = heldKeys(session);
     if (held.join(' ') !== lab.heldKeys.value.join(' ')) lab.heldKeys.value = held;

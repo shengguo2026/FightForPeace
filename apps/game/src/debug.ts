@@ -31,6 +31,7 @@ import {
   ledgerGrade,
   damageAsset,
   lockCount,
+  Result,
 } from '@ffp/sim';
 import { completeStage, type QualityGovernor } from '@ffp/platform';
 import type { GameSession } from './game';
@@ -172,6 +173,10 @@ export function installDebugHook(
         return v
           ? { mode: v.mode, landed: [...v.landed], current: v.current, plays: v.plays }
           : null;
+      },
+      endEncounter: (cleared) => {
+        const e = session.world.encounter;
+        if (e) e.result = cleared ? Result.Cleared : Result.Defeated;
       },
       stageId: () => {
         const r = session.world.run;

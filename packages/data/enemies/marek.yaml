@@ -250,7 +250,14 @@ profile:
         eliteSupports: [claimhand, marauder]
         coopSupports: { minDifficulty: extreme, kits: [glassrunner] }
         attacks:
-          - { action: jackal-burst, threat: 30, cooldown: 200, range: 680, minRange: 220, when: armed }
+          - {
+              action: jackal-burst,
+              threat: 30,
+              cooldown: 200,
+              range: 680,
+              minRange: 220,
+              when: armed,
+            }
           - { action: stock-check, threat: 18, cooldown: 90 }
           - { action: command-pressure, threat: 16, cooldown: 1200, range: 1800 }
           - {
