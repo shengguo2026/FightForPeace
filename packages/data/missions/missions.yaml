@@ -1,0 +1,232 @@
+# M26 Mission Hub catalogue (expanded game modes spec §5, roadmap M26).
+#
+# Every Mission Mode entry is a content package with a stable ID and a package version.
+# IDs never change once released; a new version of a package keeps its ID and bumps
+# `version` (older records become Legacy records, never deleted).
+#
+#   family      chronicle | remix | curated | operation (the Hub's four destinations)
+#   canon       canonical | side-story | remix | generated (spec §3.4, shown before launch)
+#   after       the story stage the entry follows on the timeline; `place` orders entries
+#               after the same stage
+#   gate        what opens it: { stage: stageN } (that story stage completed, Cheat-Assisted
+#               included) or { chronicle: <id> } (that Chronicle authenticated). Never a
+#               score, rank, difficulty, Credits or another optional package (spec §5.4.3).
+#   objective   objective family (rescue, escort, recover, apprehension, record, defeat,
+#               safeguard)
+#   players     supported player counts
+#   heroes      any (unique unlocked heroes), { pool: [...] } or { fixed: [...] } (solo takes
+#               the first, co-op the first two); planned packages may name characters that
+#               are not playable yet (cast keys, shown by name only)
+#   difficulties  the difficulties offered
+#   status      available (its content is in this build) or planned (shown as Not installed
+#               once its gate is met); `milestone` is the roadmap milestone that delivers it
+#   launch      { arena: <id> } for available packages
+#   lab         true: a test package shown only in the M26 Lab profiles (?hublab=…)
+#
+# Text: `mission.<id>.name`, `.desc`, `.clue` (spoiler-safe, shown while locked) and `.era`.
+
+# The story stages in campaign order. Gates name these; the first ones are the campaign
+# stages of progression.yaml, in the same order.
+timeline: [stage1, stage2, stage3, stage4, stage5, stage6, stage7, stage8]
+
+packages:
+  # --- Character Chronicles (Village Museum and Archive records) -------------------------
+  - id: chronicle.bell-before-dawn
+    version: 1
+    family: chronicle
+    canon: canonical
+    after: stage5
+    place: 1
+    gate: { stage: stage5 }
+    objective: record
+    players: [1, 2]
+    heroes: { fixed: [young-sheng-guo, liang-zhen] }
+    difficulties: [easy, medium, hard, extreme, ultimate]
+    status: planned
+    milestone: M32
+  - id: chronicle.road-between
+    version: 1
+    family: chronicle
+    canon: canonical
+    after: stage6
+    place: 1
+    gate: { stage: stage6 }
+    objective: escort
+    players: [1, 2]
+    heroes: { fixed: [kael, soren, chen-yue] }
+    difficulties: [easy, medium, hard, extreme, ultimate]
+    status: planned
+    milestone: M38
+
+  # --- Mission Remix (non-canonical, opens when its Chronicle is authenticated) ----------
+  - id: remix.bell-before-dawn
+    version: 1
+    family: remix
+    canon: remix
+    after: stage5
+    place: 2
+    gate: { chronicle: chronicle.bell-before-dawn }
+    objective: record
+    players: [1, 2]
+    heroes: any
+    difficulties: [easy, medium, hard, extreme, ultimate]
+    status: planned
+    milestone: M32
+  - id: remix.road-between
+    version: 1
+    family: remix
+    canon: remix
+    after: stage6
+    place: 2
+    gate: { chronicle: chronicle.road-between }
+    objective: escort
+    players: [1, 2]
+    heroes: any
+    difficulties: [easy, medium, hard, extreme, ultimate]
+    status: planned
+    milestone: M38
+
+  # --- Curated Missions (canon-compatible side stories, spec §5.4.3 gates) ---------------
+  - id: curated.storm-over-qinglan
+    version: 1
+    family: curated
+    canon: side-story
+    after: stage3
+    place: 1
+    gate: { stage: stage3 }
+    objective: rescue
+    players: [1, 2]
+    heroes: { pool: [mountain, river, wind, fire] }
+    difficulties: [easy, medium, hard, extreme, ultimate]
+    status: planned
+    milestone: M30
+  - id: curated.no-escape-at-reedwater
+    version: 1
+    family: curated
+    canon: side-story
+    after: stage3
+    place: 2
+    gate: { stage: stage3 }
+    objective: apprehension
+    players: [1, 2]
+    heroes: { pool: [mountain, river, wind, fire] }
+    difficulties: [easy, medium, hard, extreme, ultimate]
+    status: planned
+    milestone: M33
+  - id: curated.medicine-road
+    version: 1
+    family: curated
+    canon: side-story
+    after: stage5
+    place: 3
+    gate: { stage: stage5 }
+    objective: escort
+    players: [1, 2]
+    heroes: { pool: [mountain, river, wind, fire] }
+    difficulties: [easy, medium, hard, extreme, ultimate]
+    status: planned
+    milestone: M34
+  - id: curated.vanishing-survey
+    version: 1
+    family: curated
+    canon: side-story
+    after: stage6
+    place: 3
+    gate: { stage: stage6 }
+    objective: recover
+    players: [1, 2]
+    heroes: { pool: [mountain, river, wind, fire] }
+    difficulties: [easy, medium, hard, extreme, ultimate]
+    status: planned
+    milestone: M37
+
+  # --- Random Operations (civil-protection operations board; generator in M41) ----------
+  - id: operation.defeat
+    version: 1
+    family: operation
+    canon: generated
+    after: stage1
+    place: 1
+    gate: { stage: stage1 }
+    objective: defeat
+    players: [1, 2]
+    heroes: any
+    difficulties: [easy, medium, hard, extreme, ultimate]
+    status: planned
+    milestone: M41
+  - id: operation.safeguard
+    version: 1
+    family: operation
+    canon: generated
+    after: stage1
+    place: 2
+    gate: { stage: stage1 }
+    objective: safeguard
+    players: [1, 2]
+    heroes: any
+    difficulties: [easy, medium, hard, extreme, ultimate]
+    status: planned
+    milestone: M41
+
+  # --- M26 Lab test packages (only in the Lab profiles; they replay the M25 test room) ---
+  - id: chronicle.lab-founders-record
+    version: 1
+    family: chronicle
+    canon: canonical
+    after: stage1
+    place: 9
+    gate: { stage: stage1 }
+    objective: record
+    players: [1, 2]
+    heroes: { fixed: [mountain, river] }
+    difficulties: [easy, medium, hard]
+    status: available
+    launch: { arena: lab-m25-objectives }
+    lab: true
+  - id: remix.lab-founders-record
+    version: 1
+    family: remix
+    canon: remix
+    after: stage1
+    place: 10
+    gate: { chronicle: chronicle.lab-founders-record }
+    objective: record
+    players: [1, 2]
+    heroes: any
+    difficulties: [easy, medium, hard]
+    status: available
+    launch: { arena: lab-m25-objectives }
+    lab: true
+  - id: curated.lab-captive-drill
+    version: 2
+    family: curated
+    canon: side-story
+    after: stage2
+    place: 9
+    gate: { stage: stage2 }
+    objective: rescue
+    players: [1, 2]
+    heroes: { pool: [mountain, river, wind, fire] }
+    difficulties: [easy, medium, hard]
+    status: available
+    launch: { arena: lab-m25-objectives }
+    lab: true
+  - id: curated.lab-sealed-case
+    version: 1
+    family: curated
+    canon: side-story
+    after: stage3
+    place: 9
+    gate: { stage: stage3 }
+    objective: recover
+    players: [1]
+    heroes: any
+    difficulties: [medium]
+    status: available
+    launch: { arena: lab-m25-objectives }
+    lab: true
+
+# Personal story choices (campaign review G6): stable IDs and their options. They never
+# change the canonical campaign; the Records screen lists them under Personal Paths.
+storyChoices:
+  - { id: story.stage8.kael-reunion, stage: stage8, options: [meet_now, meet_later, not_yet] }

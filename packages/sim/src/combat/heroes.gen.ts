@@ -2,8 +2,8 @@
 // packages/data/enemies/*.yaml, packages/data/weapons/*.yaml,
 // packages/data/encounters/*.yaml, packages/data/stages/*.yaml, packages/data/coop/coop.yaml,
 // packages/data/progression/progression.yaml, packages/data/mounted/mounted.yaml,
-// packages/data/greenhouse/greenhouse.yaml and packages/data/objectives/objectives.yaml.
-// Do not edit by hand:
+// packages/data/greenhouse/greenhouse.yaml, packages/data/objectives/objectives.yaml and
+// packages/data/missions/missions.yaml. Do not edit by hand:
 // change the YAML and run `pnpm gen:heroes`.
 import type {
   ArenaDef,
@@ -12,6 +12,7 @@ import type {
   EnemyProfile,
   GreenhouseDef,
   HeroDef,
+  MissionsDef,
   MountedDef,
   ObjectivesDef,
   ProgressionDef,
@@ -42246,6 +42247,504 @@ export const OBJECTIVES_DATA: ObjectivesDef = {
       "recovered": 66,
       "disturbed": 33,
       "missing": 0
+    }
+  ]
+};
+
+export const MISSIONS_DATA: MissionsDef = {
+  "timeline": [
+    "stage1",
+    "stage2",
+    "stage3",
+    "stage4",
+    "stage5",
+    "stage6",
+    "stage7",
+    "stage8"
+  ],
+  "packages": [
+    {
+      "id": "chronicle.bell-before-dawn",
+      "version": 1,
+      "family": "chronicle",
+      "canon": "canonical",
+      "after": "stage5",
+      "place": 1,
+      "gate": {
+        "stage": "stage5",
+        "chronicle": null
+      },
+      "objective": "record",
+      "players": [
+        1,
+        2
+      ],
+      "heroes": {
+        "rule": "fixed",
+        "list": [
+          "young-sheng-guo",
+          "liang-zhen"
+        ]
+      },
+      "difficulties": [
+        "easy",
+        "medium",
+        "hard",
+        "extreme",
+        "ultimate"
+      ],
+      "status": "planned",
+      "milestone": "M32",
+      "arena": null,
+      "lab": false
+    },
+    {
+      "id": "chronicle.road-between",
+      "version": 1,
+      "family": "chronicle",
+      "canon": "canonical",
+      "after": "stage6",
+      "place": 1,
+      "gate": {
+        "stage": "stage6",
+        "chronicle": null
+      },
+      "objective": "escort",
+      "players": [
+        1,
+        2
+      ],
+      "heroes": {
+        "rule": "fixed",
+        "list": [
+          "kael",
+          "soren",
+          "chen-yue"
+        ]
+      },
+      "difficulties": [
+        "easy",
+        "medium",
+        "hard",
+        "extreme",
+        "ultimate"
+      ],
+      "status": "planned",
+      "milestone": "M38",
+      "arena": null,
+      "lab": false
+    },
+    {
+      "id": "remix.bell-before-dawn",
+      "version": 1,
+      "family": "remix",
+      "canon": "remix",
+      "after": "stage5",
+      "place": 2,
+      "gate": {
+        "stage": null,
+        "chronicle": "chronicle.bell-before-dawn"
+      },
+      "objective": "record",
+      "players": [
+        1,
+        2
+      ],
+      "heroes": {
+        "rule": "any",
+        "list": []
+      },
+      "difficulties": [
+        "easy",
+        "medium",
+        "hard",
+        "extreme",
+        "ultimate"
+      ],
+      "status": "planned",
+      "milestone": "M32",
+      "arena": null,
+      "lab": false
+    },
+    {
+      "id": "remix.road-between",
+      "version": 1,
+      "family": "remix",
+      "canon": "remix",
+      "after": "stage6",
+      "place": 2,
+      "gate": {
+        "stage": null,
+        "chronicle": "chronicle.road-between"
+      },
+      "objective": "escort",
+      "players": [
+        1,
+        2
+      ],
+      "heroes": {
+        "rule": "any",
+        "list": []
+      },
+      "difficulties": [
+        "easy",
+        "medium",
+        "hard",
+        "extreme",
+        "ultimate"
+      ],
+      "status": "planned",
+      "milestone": "M38",
+      "arena": null,
+      "lab": false
+    },
+    {
+      "id": "curated.storm-over-qinglan",
+      "version": 1,
+      "family": "curated",
+      "canon": "side-story",
+      "after": "stage3",
+      "place": 1,
+      "gate": {
+        "stage": "stage3",
+        "chronicle": null
+      },
+      "objective": "rescue",
+      "players": [
+        1,
+        2
+      ],
+      "heroes": {
+        "rule": "pool",
+        "list": [
+          "mountain",
+          "river",
+          "wind",
+          "fire"
+        ]
+      },
+      "difficulties": [
+        "easy",
+        "medium",
+        "hard",
+        "extreme",
+        "ultimate"
+      ],
+      "status": "planned",
+      "milestone": "M30",
+      "arena": null,
+      "lab": false
+    },
+    {
+      "id": "curated.no-escape-at-reedwater",
+      "version": 1,
+      "family": "curated",
+      "canon": "side-story",
+      "after": "stage3",
+      "place": 2,
+      "gate": {
+        "stage": "stage3",
+        "chronicle": null
+      },
+      "objective": "apprehension",
+      "players": [
+        1,
+        2
+      ],
+      "heroes": {
+        "rule": "pool",
+        "list": [
+          "mountain",
+          "river",
+          "wind",
+          "fire"
+        ]
+      },
+      "difficulties": [
+        "easy",
+        "medium",
+        "hard",
+        "extreme",
+        "ultimate"
+      ],
+      "status": "planned",
+      "milestone": "M33",
+      "arena": null,
+      "lab": false
+    },
+    {
+      "id": "curated.medicine-road",
+      "version": 1,
+      "family": "curated",
+      "canon": "side-story",
+      "after": "stage5",
+      "place": 3,
+      "gate": {
+        "stage": "stage5",
+        "chronicle": null
+      },
+      "objective": "escort",
+      "players": [
+        1,
+        2
+      ],
+      "heroes": {
+        "rule": "pool",
+        "list": [
+          "mountain",
+          "river",
+          "wind",
+          "fire"
+        ]
+      },
+      "difficulties": [
+        "easy",
+        "medium",
+        "hard",
+        "extreme",
+        "ultimate"
+      ],
+      "status": "planned",
+      "milestone": "M34",
+      "arena": null,
+      "lab": false
+    },
+    {
+      "id": "curated.vanishing-survey",
+      "version": 1,
+      "family": "curated",
+      "canon": "side-story",
+      "after": "stage6",
+      "place": 3,
+      "gate": {
+        "stage": "stage6",
+        "chronicle": null
+      },
+      "objective": "recover",
+      "players": [
+        1,
+        2
+      ],
+      "heroes": {
+        "rule": "pool",
+        "list": [
+          "mountain",
+          "river",
+          "wind",
+          "fire"
+        ]
+      },
+      "difficulties": [
+        "easy",
+        "medium",
+        "hard",
+        "extreme",
+        "ultimate"
+      ],
+      "status": "planned",
+      "milestone": "M37",
+      "arena": null,
+      "lab": false
+    },
+    {
+      "id": "operation.defeat",
+      "version": 1,
+      "family": "operation",
+      "canon": "generated",
+      "after": "stage1",
+      "place": 1,
+      "gate": {
+        "stage": "stage1",
+        "chronicle": null
+      },
+      "objective": "defeat",
+      "players": [
+        1,
+        2
+      ],
+      "heroes": {
+        "rule": "any",
+        "list": []
+      },
+      "difficulties": [
+        "easy",
+        "medium",
+        "hard",
+        "extreme",
+        "ultimate"
+      ],
+      "status": "planned",
+      "milestone": "M41",
+      "arena": null,
+      "lab": false
+    },
+    {
+      "id": "operation.safeguard",
+      "version": 1,
+      "family": "operation",
+      "canon": "generated",
+      "after": "stage1",
+      "place": 2,
+      "gate": {
+        "stage": "stage1",
+        "chronicle": null
+      },
+      "objective": "safeguard",
+      "players": [
+        1,
+        2
+      ],
+      "heroes": {
+        "rule": "any",
+        "list": []
+      },
+      "difficulties": [
+        "easy",
+        "medium",
+        "hard",
+        "extreme",
+        "ultimate"
+      ],
+      "status": "planned",
+      "milestone": "M41",
+      "arena": null,
+      "lab": false
+    },
+    {
+      "id": "chronicle.lab-founders-record",
+      "version": 1,
+      "family": "chronicle",
+      "canon": "canonical",
+      "after": "stage1",
+      "place": 9,
+      "gate": {
+        "stage": "stage1",
+        "chronicle": null
+      },
+      "objective": "record",
+      "players": [
+        1,
+        2
+      ],
+      "heroes": {
+        "rule": "fixed",
+        "list": [
+          "mountain",
+          "river"
+        ]
+      },
+      "difficulties": [
+        "easy",
+        "medium",
+        "hard"
+      ],
+      "status": "available",
+      "milestone": null,
+      "arena": "lab-m25-objectives",
+      "lab": true
+    },
+    {
+      "id": "remix.lab-founders-record",
+      "version": 1,
+      "family": "remix",
+      "canon": "remix",
+      "after": "stage1",
+      "place": 10,
+      "gate": {
+        "stage": null,
+        "chronicle": "chronicle.lab-founders-record"
+      },
+      "objective": "record",
+      "players": [
+        1,
+        2
+      ],
+      "heroes": {
+        "rule": "any",
+        "list": []
+      },
+      "difficulties": [
+        "easy",
+        "medium",
+        "hard"
+      ],
+      "status": "available",
+      "milestone": null,
+      "arena": "lab-m25-objectives",
+      "lab": true
+    },
+    {
+      "id": "curated.lab-captive-drill",
+      "version": 2,
+      "family": "curated",
+      "canon": "side-story",
+      "after": "stage2",
+      "place": 9,
+      "gate": {
+        "stage": "stage2",
+        "chronicle": null
+      },
+      "objective": "rescue",
+      "players": [
+        1,
+        2
+      ],
+      "heroes": {
+        "rule": "pool",
+        "list": [
+          "mountain",
+          "river",
+          "wind",
+          "fire"
+        ]
+      },
+      "difficulties": [
+        "easy",
+        "medium",
+        "hard"
+      ],
+      "status": "available",
+      "milestone": null,
+      "arena": "lab-m25-objectives",
+      "lab": true
+    },
+    {
+      "id": "curated.lab-sealed-case",
+      "version": 1,
+      "family": "curated",
+      "canon": "side-story",
+      "after": "stage3",
+      "place": 9,
+      "gate": {
+        "stage": "stage3",
+        "chronicle": null
+      },
+      "objective": "recover",
+      "players": [
+        1
+      ],
+      "heroes": {
+        "rule": "any",
+        "list": []
+      },
+      "difficulties": [
+        "medium"
+      ],
+      "status": "available",
+      "milestone": null,
+      "arena": "lab-m25-objectives",
+      "lab": true
+    }
+  ],
+  "storyChoices": [
+    {
+      "id": "story.stage8.kael-reunion",
+      "stage": "stage8",
+      "options": [
+        "meet_now",
+        "meet_later",
+        "not_yet"
+      ]
     }
   ]
 };

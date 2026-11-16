@@ -7,7 +7,9 @@ import { emptyProgress, normalizeProgress, type ProgressRecord } from './progres
 /**
  * Profile schema (spec §15.1). Version 1 (M10); version 2 (M11) adds `progress` and the
  * cheat preference fields; version 3 (M21) adds `campaign` and gives the reserved Museum,
- * Sponsor Dossier and research slots their records. Every change to this shape bumps
+ * Sponsor Dossier and research slots their records; version 4 (M26) gives the Run Archive
+ * its full entries (mode, canon label, package version, labels, pin) and adds Chronicle
+ * authentication. Every change to this shape bumps
  * SAVE_VERSION and adds a migration in migrate.ts; old saves are migrated on load and the
  * original is kept until the migrated copy is written.
  *
@@ -16,7 +18,7 @@ import { emptyProgress, normalizeProgress, type ProgressRecord } from './progres
  * `curated.<name>`, `chronicle.<name>`), a Run Archive slot, and reserved Museum, Sponsor
  * Dossier and research-milestone records.
  */
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
 
 export type PromptStyle = 'auto' | 'xbox' | 'playstation' | 'nintendo' | 'generic';
 export type FacingPreference = 'manual' | 'assisted';
@@ -111,12 +113,50 @@ export interface MissionRecord {
   lastPlayedAt: number;
 }
 
+/** M26: the kind of activity a Run Archive entry records. */
+export type RunMode = 'story' | 'chronicle' | 'remix' | 'curated' | 'operation';
+export const RUN_MODES: readonly RunMode[] = [
+  'story',
+  'chronicle',
+  'remix',
+  'curated',
+  'operation',
+];
+export type RunCanon = 'canonical' | 'side-story' | 'remix' | 'generated';
+export const RUN_CANONS: readonly RunCanon[] = ['canonical', 'side-story', 'remix', 'generated'];
+/**
+ * Result labels (spec §3.4: result or ruleset labels, never canon labels): Cheat-Assisted,
+ * Continued (resumed from a checkpoint), Practice (Lab practice from a later beat), Open
+ * Loadout (bought techniques equipped).
+ */
+export const RUN_LABELS = ['cheat-assisted', 'continued', 'practice', 'open-loadout'] as const;
+export type RunLabel = (typeof RUN_LABELS)[number];
+
+/**
+ * M26 Run Archive entry (spec §7): compact metadata of every finished run, competitive or
+ * not; labels keep noncompetitive runs from masquerading as scores. Never rewritten.
+ */
 export interface RunArchiveEntry {
+  /** Unique within the profile. */
+  id: string;
   contentId: string;
+  /** The content package version the run was played on (story stages: 1). */
+  packageVersion: number;
+  mode: RunMode;
+  canon: RunCanon;
   endedAt: number;
+  outcome: 'cleared' | 'failed';
   grade: string | null;
+  /** 100-point grade total, or null (no grade). */
+  points: number | null;
   difficulty: string;
   heroes: string[];
+  players: number;
+  timeFrames: number | null;
+  labels: RunLabel[];
+  gameVersion: string;
+  /** Pinned entries are never compacted away. */
+  pinned: boolean;
 }
 
 /** M21 campaign progress: stages completed and started, What's New briefings seen. */
@@ -164,6 +204,8 @@ export interface Profile {
   /** Story decisions by stable ID, e.g. `story.stage3.kael-reunion` → `meet_now`. */
   storyChoices: Record<string, string>;
   runArchive: RunArchiveEntry[];
+  /** M26: Chronicles authenticated by a first completion (when): opens their Remix. */
+  chronicles: Record<string, number>;
   /** M21: campaign progress, Museum, Sponsor Dossier and formula research. */
   campaign: CampaignRecord;
   museum: MuseumRecord;
@@ -221,6 +263,7 @@ export function createProfile(name: string, locale: Locale, now = Date.now()): P
     missions: {},
     storyChoices: {},
     runArchive: [],
+    chronicles: {},
     campaign: emptyCampaign(),
     museum: { unlocked: {}, viewed: [] },
     sponsorDossier: { unlocked: {} },
@@ -387,16 +430,9 @@ export function normalizeProfile(raw: unknown): Profile {
     ),
     storyChoices: record(raw.storyChoices, (v) => (typeof v === 'string' ? v : undefined)),
     runArchive: Array.isArray(raw.runArchive)
-      ? raw.runArchive.filter(isObj).map((e) => ({
-          contentId: str(e.contentId, ''),
-          endedAt: num(e.endedAt, 0),
-          grade: typeof e.grade === 'string' ? e.grade : null,
-          difficulty: str(e.difficulty, 'medium'),
-          heroes: Array.isArray(e.heroes)
-            ? e.heroes.filter((h): h is string => typeof h === 'string')
-            : [],
-        }))
+      ? raw.runArchive.filter(isObj).map((e, i) => normalizeRun(e, i))
       : [],
+    chronicles: stamps(raw.chronicles),
     campaign: normalizeCampaign(raw.campaign),
     museum: {
       unlocked: stamps(isObj(raw.museum) ? raw.museum.unlocked : null),
@@ -421,6 +457,49 @@ export function normalizeProfile(raw: unknown): Profile {
       ),
     },
     progress: normalizeProgress(raw.progress),
+  };
+}
+
+/** A Run Archive entry from a save; fields an older entry lacks get their defaults. */
+export function normalizeRun(e: Record<string, unknown>, index = 0): RunArchiveEntry {
+  const contentId = str(e.contentId, '');
+  const endedAt = num(e.endedAt, 0);
+  const heroes = Array.isArray(e.heroes)
+    ? e.heroes.filter((h): h is string => typeof h === 'string').slice(0, 4)
+    : [];
+  const prefix = contentId.split('.')[0] ?? '';
+  const mode = pick(
+    e.mode,
+    RUN_MODES,
+    (RUN_MODES as readonly string[]).includes(prefix) ? (prefix as RunMode) : 'story',
+  );
+  const canonOf: Record<RunMode, RunCanon> = {
+    story: 'canonical',
+    chronicle: 'canonical',
+    remix: 'remix',
+    curated: 'side-story',
+    operation: 'generated',
+  };
+  return {
+    id: typeof e.id === 'string' && e.id ? e.id.slice(0, 40) : `r${endedAt.toString(36)}-${index}`,
+    contentId,
+    packageVersion: Math.max(1, Math.round(num(e.packageVersion, 1))),
+    mode,
+    canon: pick(e.canon, RUN_CANONS, canonOf[mode]),
+    endedAt,
+    outcome: e.outcome === 'failed' ? 'failed' : 'cleared',
+    grade: typeof e.grade === 'string' ? e.grade : null,
+    points: typeof e.points === 'number' && Number.isFinite(e.points) ? e.points : null,
+    difficulty: str(e.difficulty, 'medium'),
+    heroes,
+    players: clamp(Math.round(num(e.players, Math.max(1, heroes.length))), 1, 2),
+    timeFrames:
+      typeof e.timeFrames === 'number' && Number.isFinite(e.timeFrames) ? e.timeFrames : null,
+    labels: Array.isArray(e.labels)
+      ? e.labels.filter((l): l is RunLabel => (RUN_LABELS as readonly unknown[]).includes(l))
+      : [],
+    gameVersion: str(e.gameVersion, ''),
+    pinned: bool(e.pinned, false),
   };
 }
 
@@ -452,7 +531,10 @@ export function normalizeDevice(raw: unknown): DeviceRecord {
   };
 }
 
-/** Records a stage result in the profile's mission record (grade order S > A > B > C). */
+/**
+ * Records a clear in the profile's mission record per content ID (grade order S > A > B >
+ * C). The Run Archive entry is separate (`archiveRun`, M26).
+ */
 export function recordClear(
   p: Profile,
   contentId: string,
@@ -479,8 +561,5 @@ export function recordClear(
     m.highestDifficulty = r.difficulty;
   m.lastPlayedAt = now;
   p.missions[contentId] = m;
-  p.runArchive = [
-    { contentId, endedAt: now, grade: r.grade, difficulty: r.difficulty, heroes: r.heroes },
-    ...p.runArchive,
-  ].slice(0, 20);
+  // M26: the Run Archive entry is written separately for every finished run (archiveRun).
 }

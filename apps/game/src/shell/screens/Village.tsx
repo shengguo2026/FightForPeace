@@ -14,7 +14,16 @@ import { AssetRegistry, STORE, museumNew, titleScreenFor } from '@ffp/platform';
 const registry = new AssetRegistry();
 import { itemName } from './Store';
 
-type Item = 'continue' | 'play' | 'academy' | 'store' | 'records' | 'museum' | 'guide' | 'settings';
+type Item =
+  | 'continue'
+  | 'play'
+  | 'missions'
+  | 'academy'
+  | 'store'
+  | 'records'
+  | 'museum'
+  | 'guide'
+  | 'settings';
 
 /**
  * The Hybrid Village Command Menu (Module 16): the illustrated village with a short focus
@@ -35,6 +44,7 @@ export function VillageScreen({ shell }: { shell: Shell }) {
         })
       : '',
     play: t('play.modeTitle'),
+    missions: t('menu.missionsDetail'),
     academy: t('menu.academyDetail'),
     store: t('menu.storeDetail'),
     records: t('records.collection'),
@@ -124,6 +134,7 @@ export function VillageScreen({ shell }: { shell: Shell }) {
             ? item('continue', t('menu.continue'), 2, () => shell.continueRun(), 'icons-hud')
             : null}
           {item('play', t('menu.play'), 0, () => shell.startPlay())}
+          {item('missions', t('menu.missions'), 3, () => shell.openHub())}
           {item('academy', t('menu.academy'), 1, () => shell.go('academy'))}
           {item('store', t('menu.store'), 2, () => shell.go('store'))}
           {item('records', t('menu.records'), 3, () => shell.go('records'))}

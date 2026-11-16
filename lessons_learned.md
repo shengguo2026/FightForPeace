@@ -1,4 +1,4 @@
-# Lessons learned (Stages 1–3, M0–M25)
+# Lessons learned (Stages 1–3, M0–M26)
 
 This file records every step we missed or had to correct compared with the original plan, so the prompt files and specs for Stages 4–8, the Curated Missions and the other modes don't repeat them. Read it, then run the **pre-flight checklist** at the end before writing any new stage's prompt files.
 
@@ -271,6 +271,31 @@ M25 moved the Stage 1 and 2 grades onto one shared module and built protected un
 
 ---
 
+## I · Found while building the Mission Hub and Run Archive (M26)
+
+M26 put every Mission Mode entry on one data catalogue and gave the Run Archive its full entries (plan `docs/superpowers/plans/2026-11-16-m26-mission-hub-packaging-run-archive.md`).
+
+### I1 · Stable IDs were written two ways
+
+- **What happened:** the code used kebab-case content IDs (`story.stage2.prosperity-under-siege`) while several specs wrote underscores (`story.stage3.herb_mountain`, `curated.vanishing_survey`). A save keys records by these IDs, so a second spelling would split one mission's records in two.
+- **Caught:** while writing `missions.yaml`.
+- **Fix:** kebab-case everywhere; the generator refuses an ID whose prefix is not its family.
+- **Rule:** an ID is written once in data and validated; specs refer to the data file, never invent a spelling (pre-flight item 22).
+
+### I2 · The Run Archive only kept clean clears
+
+- **What happened:** the M10 archive slot was filled by `recordClear`, which only ran for clean full clears, so Cheat-Assisted, practice and failed runs vanished, although spec §7 wants every run with labels.
+- **Caught:** while planning the Archive replay.
+- **Fix:** `archiveRun` writes one labelled entry for every finished run; `recordClear` only updates the mission record.
+- **Rule:** a record of "everything" is written at the one place every run passes (results), not inside a rule that filters runs.
+
+### I3 · A shell screen opened before the first frame
+
+- **What happened:** the Lab profiles open the Hub at once; pressing Replay fast reached the lobby before the art finished loading, and the lobby read the player prompt views the first frame publishes: a blank screen.
+- **Caught:** by the M26 browser test.
+- **Fix:** the play-flow screens compute the prompt context themselves when no frame has published it yet.
+- **Rule:** shell screens never assume the simulation has run; anything they read from the frame loop has a fallback.
+
 ## Pre-flight checklist: before writing any new stage's prompt files
 
 Run this for Stage 4 onwards, each Curated Mission and every other mode. Stage 4 starts only after its spec readiness review.
@@ -310,3 +335,4 @@ Run this for Stage 4 onwards, each Curated Mission and every other mode. Stage 4
 19. The balance harness runs every beat on every difficulty and each difficulty has its own roster lever (F2); the complete-path, progression (with stall detector) and German/Chinese browser sweeps pass with no fallback text (F1, F3); every new menu has a gamepad-only path and an axe check (F4).
 20. Every mechanic the stage spec uses has a verdict in the Combat Constitution audit (`docs/review/10-combat-constitution-audit.md`); rows marked Engine or Module are built and tested in the Lab before the stage's content work starts (G3).
 21. Every condition ladder, evidence outcome and stage grade of the stage is data on the M25 modules (`objectives.yaml`, the stage's `grade`), with a test that the condition never changes without a visible hostile action (H3).
+22. Every new mission, Chronicle, Remix or operation is a package in `packages/data/missions/missions.yaml` with its stable kebab-case ID, version, canon label, story gate and hero rule; the spec names that ID (I1).

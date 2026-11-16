@@ -1542,6 +1542,182 @@ export function loadObjectives(source: string, file = 'objectives.yaml'): unknow
   };
 }
 
+// --- M26 Mission Hub catalogue -----------------------------------------------------------
+
+const MissionStage = T.String({ pattern: '^stage[0-9]+$' });
+const MissionId = T.String({ pattern: '^(chronicle|remix|curated|operation)\\.[a-z0-9-]+$' });
+const CastId = T.String({ pattern: '^[a-z][a-z0-9-]*$' });
+const MissionDifficulty = T.Union(
+  ['easy', 'medium', 'hard', 'extreme', 'ultimate'].map((x) => T.Literal(x)),
+);
+
+/** M26: missions.yaml, the Mission Hub's content packages and the story choice record. */
+export const MissionsSchema = T.Object(
+  {
+    timeline: T.Array(MissionStage, { minItems: 1, maxItems: 20 }),
+    packages: T.Array(
+      T.Object(
+        {
+          id: MissionId,
+          version: T.Integer({ minimum: 1, maximum: 1000 }),
+          family: T.Union(['chronicle', 'remix', 'curated', 'operation'].map((x) => T.Literal(x))),
+          canon: T.Union(
+            ['canonical', 'side-story', 'remix', 'generated'].map((x) => T.Literal(x)),
+          ),
+          after: MissionStage,
+          place: T.Integer({ minimum: 1, maximum: 99 }),
+          gate: T.Union([
+            T.Object({ stage: MissionStage }, { additionalProperties: false }),
+            T.Object({ chronicle: MissionId }, { additionalProperties: false }),
+          ]),
+          objective: T.Union(
+            ['rescue', 'escort', 'recover', 'apprehension', 'record', 'defeat', 'safeguard'].map(
+              (x) => T.Literal(x),
+            ),
+          ),
+          players: T.Array(T.Union([T.Literal(1), T.Literal(2)]), { minItems: 1, maxItems: 2 }),
+          heroes: T.Union([
+            T.Literal('any'),
+            T.Object(
+              { pool: T.Array(CastId, { minItems: 1, maxItems: 16 }) },
+              { additionalProperties: false },
+            ),
+            T.Object(
+              { fixed: T.Array(CastId, { minItems: 1, maxItems: 4 }) },
+              { additionalProperties: false },
+            ),
+          ]),
+          difficulties: T.Array(MissionDifficulty, { minItems: 1, maxItems: 5 }),
+          status: T.Union([T.Literal('available'), T.Literal('planned')]),
+          milestone: T.Optional(T.String({ pattern: '^M[0-9]+$' })),
+          launch: T.Optional(T.Object({ arena: KitId }, { additionalProperties: false })),
+          lab: T.Optional(T.Boolean()),
+        },
+        { additionalProperties: false },
+      ),
+      { maxItems: 200 },
+    ),
+    storyChoices: T.Array(
+      T.Object(
+        {
+          id: T.String({ pattern: '^story\\.stage[0-9]+\\.[a-z0-9-]+$' }),
+          stage: MissionStage,
+          options: T.Array(T.String({ pattern: '^[a-z][a-z_]*$' }), { minItems: 2, maxItems: 6 }),
+        },
+        { additionalProperties: false },
+      ),
+      { maxItems: 100 },
+    ),
+  },
+  { additionalProperties: false },
+);
+
+/**
+ * M26: validates missions.yaml against the campaign stages (the timeline starts with them,
+ * in order), the hero roster and the arenas: IDs are unique, gates name a timeline stage
+ * or a Chronicle of the catalogue, an available package names playable heroes and an arena
+ * to launch, a planned one names no arena.
+ */
+export function loadMissions(
+  source: string,
+  campaign: readonly string[],
+  heroIds: readonly string[],
+  arenaIds: readonly string[],
+  file = 'missions.yaml',
+): unknown {
+  const d = validate(MissionsSchema, source, file) as Static<typeof MissionsSchema>;
+  const problems: string[] = [];
+  const timeline = d.timeline;
+  if (new Set(timeline).size !== timeline.length) problems.push('timeline stages repeat');
+  campaign.forEach((c, i) => {
+    if (timeline[i] !== c)
+      problems.push(`timeline must start with the campaign stages in order ("${c}" at ${i + 1})`);
+  });
+  const ids = new Set<string>();
+  for (const m of d.packages) {
+    if (ids.has(m.id)) problems.push(`id "${m.id}" repeats`);
+    ids.add(m.id);
+  }
+  for (const m of d.packages) {
+    const at = (what: string) => problems.push(`${m.id}: ${what}`);
+    if (m.id.split('.')[0] !== m.family) at(`the id prefix must be its family "${m.family}"`);
+    if (!timeline.includes(m.after)) at(`follows unknown stage "${m.after}"`);
+    if ('stage' in m.gate && !timeline.includes(m.gate.stage))
+      at(`gate names unknown stage "${m.gate.stage}"`);
+    if ('chronicle' in m.gate) {
+      const c = d.packages.find((x) => x.id === (m.gate as { chronicle: string }).chronicle);
+      if (!c || c.family !== 'chronicle') at(`gate names unknown Chronicle "${m.gate.chronicle}"`);
+      else if (!!c.lab !== !!m.lab) at('a Lab package and its Chronicle are both Lab packages');
+    }
+    const canon: Record<string, string> = {
+      chronicle: 'canonical',
+      remix: 'remix',
+      curated: 'side-story',
+      operation: 'generated',
+    };
+    if (m.canon !== canon[m.family]) at(`a ${m.family} entry is labelled "${canon[m.family]}"`);
+    if (m.family === 'remix' && !('chronicle' in m.gate))
+      at('a Remix opens when its Chronicle is authenticated');
+    if (new Set(m.players).size !== m.players.length) at('player counts repeat');
+    if (new Set(m.difficulties).size !== m.difficulties.length) at('difficulties repeat');
+    if (m.status === 'available') {
+      if (!m.launch) at('an available package names the arena it launches');
+      else if (!arenaIds.includes(m.launch.arena)) at(`launches unknown arena "${m.launch.arena}"`);
+      if (typeof m.heroes === 'object') {
+        const list = 'pool' in m.heroes ? m.heroes.pool : m.heroes.fixed;
+        for (const h of list) if (!heroIds.includes(h)) at(`unknown hero "${h}"`);
+        if ('fixed' in m.heroes && m.heroes.fixed.length < Math.max(...m.players))
+          at('fixed heroes cover every player');
+      }
+    } else {
+      if (m.launch) at('a planned package launches nothing yet');
+      if (!m.milestone) at('a planned package names its milestone');
+    }
+  }
+  const choices = new Set<string>();
+  for (const c of d.storyChoices) {
+    if (choices.has(c.id)) problems.push(`story choice "${c.id}" repeats`);
+    choices.add(c.id);
+    if (!timeline.includes(c.stage)) problems.push(`${c.id}: unknown stage "${c.stage}"`);
+    if (!c.id.startsWith(`story.${c.stage}.`)) problems.push(`${c.id}: the id names its stage`);
+    if (new Set(c.options).size !== c.options.length) problems.push(`${c.id}: options repeat`);
+  }
+  if (problems.length > 0) throw new HeroDataError(problems.map((p) => `${file}: ${p}`).join('\n'));
+  return {
+    timeline: [...timeline],
+    packages: d.packages.map((m) => ({
+      id: m.id,
+      version: m.version,
+      family: m.family,
+      canon: m.canon,
+      after: m.after,
+      place: m.place,
+      gate:
+        'stage' in m.gate
+          ? { stage: m.gate.stage, chronicle: null }
+          : { stage: null, chronicle: m.gate.chronicle },
+      objective: m.objective,
+      players: [...m.players],
+      heroes:
+        m.heroes === 'any'
+          ? { rule: 'any', list: [] }
+          : 'pool' in m.heroes
+            ? { rule: 'pool', list: [...m.heroes.pool] }
+            : { rule: 'fixed', list: [...m.heroes.fixed] },
+      difficulties: [...m.difficulties],
+      status: m.status,
+      milestone: m.milestone ?? null,
+      arena: m.launch?.arena ?? null,
+      lab: m.lab ?? false,
+    })),
+    storyChoices: d.storyChoices.map((c) => ({
+      id: c.id,
+      stage: c.stage,
+      options: [...c.options],
+    })),
+  };
+}
+
 /** M25: an arena's protected units, evidence cases and hostile channels (pixels, frames). */
 const ArenaObjectives = T.Object(
   {
@@ -4320,6 +4496,7 @@ const PROGRESSION_FILE = fileURLToPath(new URL('../progression/progression.yaml'
 
 const COOP_FILE = fileURLToPath(new URL('../coop/coop.yaml', import.meta.url));
 const OBJECTIVES_FILE = fileURLToPath(new URL('../objectives/objectives.yaml', import.meta.url));
+const MISSIONS_FILE = fileURLToPath(new URL('../missions/missions.yaml', import.meta.url));
 const STAGES_DIR = fileURLToPath(new URL('../stages/', import.meta.url));
 
 /** Stage files (M9), in file-name order (stage1.yaml first). */
@@ -4457,6 +4634,7 @@ export function generate(
   mountedFile: string | null = encounters === ENCOUNTERS_DIR ? MOUNTED_FILE : null,
   greenhouseFile: string | null = encounters === ENCOUNTERS_DIR ? GREENHOUSE_FILE : null,
   objectivesFile: string | null = encounters === ENCOUNTERS_DIR ? OBJECTIVES_FILE : null,
+  missionsFile: string | null = encounters === ENCOUNTERS_DIR ? MISSIONS_FILE : null,
 ): string {
   const load = (f: string, kind: 'hero' | 'enemy') =>
     loadHero(readFileSync(f, 'utf8'), basename(f), kind);
@@ -4685,12 +4863,22 @@ export function generate(
     if (!(stages as { id: string }[]).some((s) => s.id === c.id))
       stageProblems.push(`progression.yaml: campaign stage "${c.id}" has no stage file`);
   if (stageProblems.length > 0) throw new HeroDataError(stageProblems.join('\n'));
+  // M26: the Mission Hub catalogue names campaign stages, heroes and arenas.
+  const missions = missionsFile
+    ? loadMissions(
+        readFileSync(missionsFile, 'utf8'),
+        ((progression as { campaign?: { id: string }[] }).campaign ?? []).map((c) => c.id),
+        heroIds,
+        (arenas as { id: string }[]).map((a) => a.id),
+        basename(missionsFile),
+      )
+    : { timeline: [], packages: [], storyChoices: [] };
   return `// GENERATED by packages/data/src/generate.ts from packages/data/heroes/*.yaml,
 // packages/data/enemies/*.yaml, packages/data/weapons/*.yaml,
 // packages/data/encounters/*.yaml, packages/data/stages/*.yaml, packages/data/coop/coop.yaml,
 // packages/data/progression/progression.yaml, packages/data/mounted/mounted.yaml,
-// packages/data/greenhouse/greenhouse.yaml and packages/data/objectives/objectives.yaml.
-// Do not edit by hand:
+// packages/data/greenhouse/greenhouse.yaml, packages/data/objectives/objectives.yaml and
+// packages/data/missions/missions.yaml. Do not edit by hand:
 // change the YAML and run \`pnpm gen:heroes\`.
 import type {
   ArenaDef,
@@ -4699,6 +4887,7 @@ import type {
   EnemyProfile,
   GreenhouseDef,
   HeroDef,
+  MissionsDef,
   MountedDef,
   ObjectivesDef,
   ProgressionDef,
@@ -4734,6 +4923,8 @@ export const MOUNTED_DATA: MountedDef | null = ${JSON.stringify(mounted, null, 2
 export const GREENHOUSE_DATA: GreenhouseDef | null = ${JSON.stringify(greenhouse, null, 2)};
 
 export const OBJECTIVES_DATA: ObjectivesDef = ${JSON.stringify(objectives, null, 2)};
+
+export const MISSIONS_DATA: MissionsDef = ${JSON.stringify(missions, null, 2)};
 `;
 }
 

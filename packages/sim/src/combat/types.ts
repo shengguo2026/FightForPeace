@@ -1499,3 +1499,47 @@ export interface GreenhouseDef {
   };
   rooms: readonly GreenhouseRoomDef[];
 }
+
+// --- M26 Mission Hub catalogue -----------------------------------------------------------
+
+export type MissionFamily = 'chronicle' | 'remix' | 'curated' | 'operation';
+export type CanonLabel = 'canonical' | 'side-story' | 'remix' | 'generated';
+
+/** M26: one Mission Hub content package (missions.yaml). */
+export interface MissionPackageDef {
+  /** Stable content ID (`curated.storm-over-qinglan`); never changes once released. */
+  id: string;
+  /** Package version: records of an older version are Legacy records. */
+  version: number;
+  family: MissionFamily | string;
+  canon: CanonLabel | string;
+  /** The story stage it follows on the timeline, and its order after that stage. */
+  after: string;
+  place: number;
+  /** Opens when this story stage is completed, or this Chronicle is authenticated. */
+  gate: { stage: string | null; chronicle: string | null };
+  objective: string;
+  players: readonly number[];
+  /** any (unique heroes), pool (these heroes), fixed (solo the first, co-op the first two). */
+  heroes: { rule: 'any' | 'pool' | 'fixed' | string; list: readonly string[] };
+  difficulties: readonly string[];
+  status: 'available' | 'planned' | string;
+  milestone: string | null;
+  /** The arena an available package launches. */
+  arena: string | null;
+  /** A test package shown only in the M26 Lab profiles. */
+  lab: boolean;
+}
+
+export interface StoryChoiceDef {
+  id: string;
+  stage: string;
+  options: readonly string[];
+}
+
+export interface MissionsDef {
+  /** Story stages in campaign order (gates name these). */
+  timeline: readonly string[];
+  packages: readonly MissionPackageDef[];
+  storyChoices: readonly StoryChoiceDef[];
+}

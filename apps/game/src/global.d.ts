@@ -181,6 +181,8 @@ export interface FfpDebugHook {
     preview(): { mode: string; landed: boolean[]; current: number; plays: number } | null;
     /** M21: the running stage's id, or null. */
     stageId(): string | null;
+    /** M26: ends the running encounter as cleared or failed (Mission Mode tests). */
+    endEncounter(cleared: boolean): void;
   };
   runReplay(log: ReplayLog): number;
   /** Replaces real gamepads with these virtual ones from now on. */

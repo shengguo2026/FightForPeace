@@ -18,6 +18,7 @@ const SAME_EVERYWHERE = [
   /^speaker\.(wind|fire|tomas)$/, // M22: the same names as speakers
   /^museum\.picture\.portrait-tomas\.name$/,
   /^m22\.voice\.(en|zh-CN|de)$/, // M22: each voice language is named in its own language
+  /^m26\.cast\./, // M26: the Chronicles' people's names (Liang Zhen, Chen Yue)
 ];
 
 /** Words that may stand alone in Chinese or German text (names of formats and products). */

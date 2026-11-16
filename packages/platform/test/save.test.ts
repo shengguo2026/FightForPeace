@@ -231,7 +231,8 @@ test('mission records keep the best grade, time and difficulty', () => {
     bestTimeFrames: 50000,
     highestDifficulty: 'hard',
   });
-  expect(p.runArchive.length).toBe(2);
+  // M26: the Run Archive entry is written separately for every finished run (archiveRun).
+  expect(p.runArchive.length).toBe(0);
 });
 
 test('the writer lock lets one holder write; a second gets read-only', async () => {

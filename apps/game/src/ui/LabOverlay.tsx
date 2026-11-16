@@ -361,6 +361,27 @@ function Button(props: { label: string; onClick: () => void; testId: string }) {
 }
 
 /** F10: weapons (what each hero holds, the items on stage) and the environmental slice. */
+/**
+ * M26: the Mission Hub is a shell screen; these links reopen the game on a temporary Lab
+ * profile with the chosen story progress (your own profiles are not touched).
+ */
+function HubLabPanel() {
+  const presets = ['fresh', 'stage2', 'stage3', 'stage6', 'all'] as const;
+  return (
+    <div style={{ ...panel, pointerEvents: 'auto' }} data-testid="lab-m26">
+      <div>{tx('m26.lab.title')}</div>
+      <div style={{ opacity: 0.8 }}>{tx('m26.lab.hint')}</div>
+      {presets.map((p) => (
+        <div>
+          <a href={`?hublab=${p}`} data-testid={`m26-hublab-${p}`} style={{ color: '#9fd2ff' }}>
+            {tx(`m26.lab.${p}`)}
+          </a>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /** M7 arena mode: pick an arena and a difficulty, start, restart, and the director's numbers. */
 function ArenaPanel({ state, actions }: { state: LabState; actions: LabActions }) {
   const pick = state.arenaPick.value;
@@ -967,6 +988,7 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
           ))}
           <TargetPanel t={state.target.value} />
           <ArenaPanel state={state} actions={actions} />
+          <HubLabPanel />
           <CoopPanel state={state} actions={actions} />
           {state.settingsOpen.value ? <Settings state={state} actions={actions} /> : null}
           {state.moveListOpen.value ? <MoveList players={players} /> : null}

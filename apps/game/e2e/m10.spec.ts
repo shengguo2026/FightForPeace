@@ -49,6 +49,7 @@ test('the menus work with the keyboard alone: arrows move, Enter confirms, Esc g
 }) => {
   await open(page);
   await firstLaunch(page);
+  await page.keyboard.press('ArrowDown'); // Mission Hub (M26)
   await page.keyboard.press('ArrowDown'); // Academy
   await page.keyboard.press('ArrowDown'); // Store
   await page.keyboard.press('ArrowDown'); // Records
