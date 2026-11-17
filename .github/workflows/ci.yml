@@ -11,7 +11,7 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
-    timeout-minutes: 75
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -24,9 +24,7 @@ jobs:
       - run: pnpm lint
       - run: pnpm test
       - name: Install Playwright browsers
-        run: pnpm --filter @ffp/game exec playwright install --with-deps chromium firefox webkit
-      - name: End-to-end tests (Chromium, Firefox, WebKit)
-        run: pnpm e2e
+        run: pnpm --filter @ffp/game exec playwright install --with-deps chromium
       - run: pnpm build
       - name: Portable zip
         run: node tools/release.mjs
@@ -40,21 +38,49 @@ jobs:
           name: FightForPeace-portable
           path: release/FightForPeace-*.zip
           if-no-files-found: error
+      - name: Upload system check
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: system-check
+          path: release/system-check-*
+          if-no-files-found: warn
+
+  # The browser tests run one job per browser, side by side: in one job the three browsers
+  # took over an hour and hit the job's time limit (M27).
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install Playwright browser
+        run: pnpm --filter @ffp/game exec playwright install --with-deps ${{ matrix.browser }}
+      - name: End-to-end tests (${{ matrix.browser }})
+        run: pnpm --filter @ffp/game exec playwright test --project=${{ matrix.browser }}
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: screenshots
+          name: screenshots-${{ matrix.browser }}
           path: |
             apps/game/test-results/**/*.png
             apps/game/test-results/*.json
-            release/system-check-*
           if-no-files-found: warn
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.browser }}
           path: apps/game/playwright-report
           if-no-files-found: ignore
 
