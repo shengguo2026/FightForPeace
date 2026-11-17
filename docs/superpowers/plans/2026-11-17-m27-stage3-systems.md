@@ -118,7 +118,8 @@ environment, outfit and shell art stays for M28.
 The Stage 3 journey (areas, branches, checkpoints, rescues, Tomas, case and invoice), story
 frames and Flow clips, the *Mist and Resolve* score and Garran's music layers, Museum,
 Dossier, achievements, Store outfits and the default-evolution hero sheets, Stage 3
-environments.
+environments. Store outfits arrive as "Coming soon" DLC previews with the outfit unlock
+and its one-time title-loop announcement (roadmap campaign decision 6, 2026-11-17).
 
 ## Tasks
 

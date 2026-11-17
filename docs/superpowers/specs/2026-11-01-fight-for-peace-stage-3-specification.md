@@ -355,6 +355,8 @@ Every available hero receives:
 
 Purchased costumes are visual-only, meaningful redesigns rather than palette swaps, independent of combat style, usable in Standard Loadouts, and permanently available after reveal. The free default evolution ensures modernization is visible without a Store purchase. Stage 3 adds no robot gear or advanced combat wearable.
 
+**Delivery (decided 2026-11-17, game specification §15.3.1):** the default evolution is the Stage 3 outfit in play, with full sheets. Before Release 1, the outfit gap sheets (`FightForPeace/codex_prompts_outfit_matrix.md`, 115 sheets) and the five gallop sheets give all four heroes every Stage 1–3 movement, weapon and mount sheet in both the base and the Stage 3 outfit. The Mountain Rescue Outfit and the Highland Gathering Festival Attire ship in Release 1 as **Coming soon** previews without a price and are unlocked later as DLC outfits.
+
 ### 14.5 Technique Library
 
 Stage 3 inherits the shared Technique Library and saved pre-stage loadout rules. It does not require a new move purchase or replace any hero's fixed neutral `H`. Purchased Specials and directional Ultimates remain sidegrades, not mandatory power.
