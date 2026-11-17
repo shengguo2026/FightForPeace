@@ -1,0 +1,216 @@
+# Garran Voss, the Ridge Wolf (Stage 3 spec §12): Mountain Bandit Chief and former quarry
+# transport foreman, Ridge Hook Wrestling with a blunt Quarry Hookstaff.
+#
+# Hookstaff Control: he starts holding the Quarry Hookstaff, a real item with durability,
+# clash and disarm (its own actions: Long Sweep -> Guarded Thrust, Hooked Pull, Low Line,
+# Short Descent). The phase ends when he no longer holds a working staff (a hero's disarm,
+# the Stagger Break drop, or the staff breaks) or at the Health floor, when he casts it
+# aside. The staff is never replaced; loose, any hero may take it.
+#
+# Clinch and Cast: Collar Tie, Shoulder Cast and Ridge Trip are grabs with the universal
+# Grab Escape window and the partner interrupt (never unbreakable); Body Hooks, Two-Palm
+# Shove, Shoulder Rush and a Knee Drop low line; Exact Block, Ridge Parry (counter) and a
+# defense-consuming Combo Breaker.
+#
+# Winch Pressure (low Health): he works the terrace winch (Crank the Winch, a visible and
+# interruptible action); every completed crank releases the next cargo load or cover panel
+# along its warned path. A hero's strike during the warning redirects it against the
+# bandits, and a redirected load that strikes him costs Resolve.
+#
+# Capture: a Resolve break at or below `surrender` % Health, or the final blow inside a
+# Stagger window, is the clean surrender; Health 0 while Resolve remains is the forced
+# capture. Both end in live custody (restraint, medical check). M27 candidates.
+id: garran
+name: Garran Voss
+tags: [large]
+bodyWidth: 84
+actions:
+  # --- Clinch and Cast ---
+  - id: collar-tie
+    name: Collar Tie
+    category: grab
+    input: { context: script, dir: neutral }
+    frames: { startup: 20, active: 3, recovery: 32 }
+    hitbox: { x: 20, w: 110, y: 100, h: 170, depth: 40 }
+    damage: 55
+    reaction: { kind: knockdown, hitstun: 26, push: 6, lift: 4 }
+    costs: { stun: 14, scale: 12, starter: 10 }
+    meter: 0
+    tags: [rescueInterruptible]
+    grab: { hold: 42, escapeFrom: 14, escapeWindow: 12 }
+    moves:
+      - { from: 1, to: 18, forward: 1 }
+
+  - id: shoulder-cast
+    name: Shoulder Cast
+    category: grab
+    input: { context: script, dir: neutral }
+    frames: { startup: 22, active: 3, recovery: 34 }
+    hitbox: { x: 20, w: 110, y: 100, h: 170, depth: 40 }
+    damage: 70
+    reaction: { kind: knockdown, hitstun: 30, push: 10, lift: 6 }
+    costs: { stun: 16, scale: 14, starter: 10 }
+    meter: 0
+    tags: [rescueInterruptible, pivot, terminalKnockdown]
+    grab: { hold: 44, escapeFrom: 14, escapeWindow: 12 }
+    moves:
+      - { from: 1, to: 20, forward: 1 }
+
+  - id: ridge-trip
+    name: Ridge Trip
+    category: grab
+    input: { context: script, dir: neutral }
+    frames: { startup: 18, active: 3, recovery: 30 }
+    hitbox: { x: 20, w: 110, y: 0, h: 150, depth: 40 }
+    damage: 50
+    reaction: { kind: knockdown, hitstun: 28, push: 4, lift: 4 }
+    costs: { stun: 14, scale: 12, starter: 10 }
+    meter: 0
+    tags: [rescueInterruptible]
+    grab: { hold: 36, escapeFrom: 12, escapeWindow: 12 }
+
+  - id: body-hook
+    name: Body Hooks
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: [3, 6, 3], recovery: 20, blockstun: 14 }
+    hitbox: { x: 20, w: 105, y: 110, h: 120, depth: 34 }
+    damage: 50
+    reaction: { kind: stagger, hitstun: 20, push: 4 }
+    costs: { stun: 12, scale: 10, starter: 10, guard: 12 }
+    meter: 0
+    tags: [counterable]
+
+  - id: palm-shove
+    name: Two-Palm Shove
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 14, active: 4, recovery: 20, blockstun: 14 }
+    hitbox: { x: 20, w: 110, y: 100, h: 160, depth: 36 }
+    damage: 42
+    reaction: { kind: knockback, hitstun: 22, push: 12 }
+    costs: { stun: 12, scale: 10, guard: 14 }
+    meter: 0
+    tags: [counterable, wallBounce]
+
+  - id: shoulder-rush
+    name: Shoulder Rush
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 20, active: [3, 8, 3], recovery: 30, blockstun: 16 }
+    hitbox: { x: 20, w: 120, y: 80, h: 200, depth: 40 }
+    damage: 62
+    reaction: { kind: knockback, hitstun: 24, push: 13 }
+    costs: { stun: 14, scale: 12, guard: 16 }
+    meter: 0
+    tags: [counterable, impact]
+    moves:
+      - { from: 12, to: 32, forward: 6 }
+
+  - id: knee-drop
+    name: Knee Drop
+    category: low
+    input: { context: script, dir: neutral }
+    frames: { startup: 16, active: 4, recovery: 28, blockstun: 14 }
+    hitbox: { x: 20, w: 120, y: 0, h: 90, depth: 38 }
+    damage: 48
+    reaction: { kind: knockdown, hitstun: 26, push: 3, lift: 3 }
+    costs: { stun: 14, scale: 12, guard: 12 }
+    meter: 0
+    tags: [counterable]
+    note: 'The bounded ground follow-up: a low line, never on a hero in protected recovery.'
+
+  - id: ridge-parry
+    name: Ridge Parry
+    category: counter
+    input: { context: counter, dir: neutral }
+    frames: { startup: 4, active: 4, recovery: 18 }
+    hitbox: { x: 15, w: 115, y: 80, h: 180, depth: 36 }
+    damage: 60
+    reaction: { kind: knockdown, hitstun: 26, push: 8, lift: 5 }
+    costs: { stun: 14, scale: 12, starter: 10 }
+    meter: 0
+    tags: [terminalKnockdown]
+
+  # --- Winch Pressure ---
+  - id: winch-crank
+    name: Crank the Winch
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 14, active: 46, recovery: 12 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    tags: [objective]
+
+profile:
+  role: boss
+  health: 2800
+  walk: { x: 2.5, z: 2 }
+  perception: 0
+  ring: 300
+  defense:
+    tier: boss
+    guard: { every: 3, of: 1 }
+    exact: true
+    guardHold: 24
+    cooldown: 180
+  weapons: never
+  firearms: false
+  attacks: []
+  boss:
+    flinchCap: 3
+    budgets: { stun: 70, juggle: 70 }
+    stagger: { telegraph: 30, duration: 300, reentry: 40 }
+    transition: { grace: 180, carryCap: 120, shift: 100 }
+    share: 40
+    surrender: 30
+    capture: true
+    phases:
+      - name: Hookstaff Control
+        from: 100
+        resolve: 280
+        look: 1
+        armed: quarry-hookstaff
+        untilDisarmed: true
+        counter: true
+        attacks:
+          - { action: hookstaff-sweep, threat: 22, cooldown: 120, when: armed }
+          - { action: hookstaff-pull, threat: 24, cooldown: 220, range: 380, when: armed }
+          - { action: hookstaff-low, threat: 22, cooldown: 180, when: armed }
+          - {
+              action: hookstaff-descent,
+              threat: 28,
+              cooldown: 260,
+              when: armed,
+              minDifficulty: medium,
+            }
+          - { action: body-hook, threat: 18, cooldown: 100, when: unarmed }
+      - name: Clinch and Cast
+        from: 65
+        resolve: 320
+        look: 2
+        counter: true
+        breaker: true
+        attacks:
+          - { action: body-hook, threat: 18, cooldown: 90 }
+          - { action: palm-shove, threat: 16, cooldown: 120 }
+          - { action: collar-tie, threat: 28, cooldown: 240 }
+          - { action: ridge-trip, threat: 26, cooldown: 260 }
+          - { action: shoulder-cast, threat: 30, cooldown: 300, minDifficulty: medium }
+          - { action: shoulder-rush, threat: 26, cooldown: 280, minDifficulty: medium }
+          - { action: knee-drop, threat: 22, cooldown: 300, minDifficulty: hard }
+      - name: Winch Pressure
+        from: 30
+        resolve: 260
+        look: 3
+        device: winch
+        counter: true
+        breaker: true
+        attacks:
+          - { action: body-hook, threat: 18, cooldown: 100 }
+          - { action: palm-shove, threat: 16, cooldown: 140 }
+          - { action: collar-tie, threat: 28, cooldown: 280 }
+          - { action: shoulder-cast, threat: 30, cooldown: 340, minDifficulty: medium }

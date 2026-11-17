@@ -1,0 +1,68 @@
+# Mounted Raider (Stage 3 spec §11.1): horse pressure with the readability, Stability and
+# safe-disengagement rules of the player mounts (M24 E6). It waits at an edge, marks a lane
+# (warning), then rides a pass along it. Hits cost Stability, never Health; at zero the
+# horse stumbles, the rider slides off safely (protected recovery) and the horse trots away
+# unharmed; the raider fights on foot with a baton. Sheets: RIDE, ATTACK, DISENGAGE (2x2
+# mounted), FOOT (0 idle, 1 baton strike, 2 hit, 3 down, 4 get-up, 5 surrender), FOOT-WALK,
+# FOOT-FLEE. M27 candidates.
+id: raider
+name: Mounted Raider
+art: rider3
+bodyWidth: 68
+actions:
+  - id: baton-strike
+    name: Baton Strike
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 12, active: 3, recovery: 18, blockstun: 12 }
+    hitbox: { x: 20, w: 115, y: 130, h: 120, depth: 32 }
+    damage: 36
+    reaction: { kind: stagger, hitstun: 18, push: 3 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 8 }
+    meter: 0
+    tags: [counterable]
+
+  - id: baton-sweep
+    name: Low Baton
+    category: low
+    input: { context: script, dir: neutral }
+    frames: { startup: 14, active: 3, recovery: 20, blockstun: 12 }
+    hitbox: { x: 15, w: 120, y: 0, h: 80, depth: 30 }
+    damage: 30
+    reaction: { kind: stagger, hitstun: 16, push: 2 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 8 }
+    meter: 0
+    tags: [counterable]
+
+profile:
+  role: pressure
+  health: 240
+  walk: { x: 3, z: 2 }
+  perception: 6
+  ring: 320
+  defense: { tier: basic, guard: { every: 4, of: 1 }, guardHold: 20 }
+  morale: { breakAt: 25, shaken: 45 }
+  weapons: never
+  firearms: false
+  mount:
+    {
+      kind: horse,
+      stability: 130,
+      share: 60,
+      speed: 13,
+      warn: 80,
+      rest: 110,
+      damage: 45,
+      push: 10,
+      lane: 60,
+    }
+  attacks:
+    - { action: baton-strike, threat: 14, cooldown: 90 }
+    - { action: baton-sweep, threat: 12, cooldown: 120 }
+
+variants:
+  - id: raider-elite
+    name: Mounted Raider Outrider
+    minDifficulty: hard
+    health: 260
+    defense: { tier: basic, guard: { every: 3, of: 1 }, guardHold: 22 }

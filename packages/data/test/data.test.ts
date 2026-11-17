@@ -532,6 +532,8 @@ describe('mounted system (M17)', () => {
       'perimeter-pursuit',
       'marek-intercept',
       'pursuit-m24-mounts',
+      // M27: appended (corridor indices are encoded).
+      'horse-test-track',
     ]);
   });
 

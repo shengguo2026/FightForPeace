@@ -1,0 +1,158 @@
+# Quarry Hammer (Stage 3 spec §10.1): two in the quarry, slow impact and strong
+# environmental eligibility. The heaviest Stage 3 weapon: long startups, wall bounce and
+# impact surfaces, the most break power (scaffolds and loose stone), and a slower walk
+# while carried. Sheet cells (HERO-*-HAMMER): 0 lift, 1 carry low, 2 overhead raised,
+# 3 head on the ground, 4 shaft shove, 5 throw. M27 Combat Lab candidates.
+id: quarry-hammer
+name: Quarry Hammer
+class: temporaryMelee
+hands: 2
+integrity: { max: 140, worn: 90, critical: 35, hit: 5, guard: 4, clash: 6, throw: 25, deflect: 6 }
+gripResistance: 55
+pickup: 12
+throw:
+  speed: 10
+  lift: 3
+  responses: [blockable, exactDeflectable]
+restrict: { speed: 80 }
+actions:
+  - id: hammer-shove
+    name: Shaft Shove
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 9, active: 3, recovery: 16 }
+    hitbox: { x: 20, w: 110, y: 120, h: 120, depth: 36 }
+    damage: 36
+    reaction: { kind: knockback, hitstun: 20, push: 8 }
+    costs: { stun: 10, scale: 10, starter: 15 }
+    meter: 3
+    clash: light
+    links:
+      - { to: hammer-drop, category: chain, on: [hit, guard] }
+
+  - id: hammer-drop
+    name: Quarry Drop
+    category: standing
+    input: { context: chain, dir: neutral }
+    frames: { startup: 18, active: 5, recovery: 26 }
+    hitbox: { x: 20, w: 150, y: 0, h: 260, depth: 40 }
+    damage: 90
+    reaction: { kind: knockdown, hitstun: 32, push: 6, lift: 6 }
+    costs: { stun: 20, scale: 16 }
+    meter: 6
+    clash: crushing
+    disarmPower: 60
+    breakPower: 120
+    tags: [impact, opensGroundWindow]
+
+  - id: hammer-swing
+    name: Overhead Swing
+    category: standing
+    input: { context: neutral, dir: forward }
+    frames: { startup: 20, active: 5, recovery: 28 }
+    hitbox: { x: 20, w: 170, y: 80, h: 220, depth: 40 }
+    damage: 100
+    reaction: { kind: knockback, hitstun: 28, push: 16 }
+    costs: { stun: 20, scale: 16 }
+    meter: 7
+    clash: crushing
+    disarmPower: 70
+    breakPower: 140
+    armor: { from: 8, to: 18 }
+    tags: [wallBounce, impact, guardPressure]
+    moves:
+      - { from: 1, to: 18, forward: 2 }
+
+  - id: hammer-hook
+    name: Handle Hook
+    category: standing
+    input: { context: neutral, dir: backward }
+    frames: { startup: 12, active: 4, recovery: 18 }
+    hitbox: { x: 30, w: 130, y: 80, h: 120, depth: 34 }
+    damage: 34
+    reaction: { kind: stagger, hitstun: 24 }
+    costs: { stun: 12, scale: 10 }
+    meter: 4
+    clash: light
+    disarmPower: 40
+    pull: 5
+
+  - id: hammer-rise
+    name: Rock Lift
+    category: standing
+    input: { context: neutral, dir: up }
+    frames: { startup: 14, active: 5, recovery: 24 }
+    hitbox: { x: 15, w: 130, y: 100, h: 220, depth: 40 }
+    damage: 58
+    reaction: { kind: launch, hitstun: 32, push: 1.5, lift: 16 }
+    costs: { stun: 16, scale: 12, juggle: 32 }
+    meter: 5
+    clash: heavy
+    links:
+      - { to: jump, input: neutral, category: jumpChase, on: [hit] }
+
+  - id: hammer-low
+    name: Ground Strike
+    category: low
+    input: { context: neutral, dir: down }
+    frames: { startup: 16, active: 5, recovery: 26 }
+    hitbox: { x: 20, w: 170, y: 0, h: 80, depth: 44 }
+    damage: 62
+    reaction: { kind: knockdown, hitstun: 32, push: 3, lift: 6 }
+    costs: { stun: 20, scale: 14 }
+    meter: 5
+    breakPower: 120
+    tags: [opensGroundWindow, impact]
+
+  - id: hammer-air
+    name: Falling Hammer
+    category: aerial
+    input: { context: air, dir: neutral }
+    frames: { startup: 10, active: 5, recovery: 14, landing: true }
+    hitbox: { x: 10, w: 140, y: -20, h: 170, depth: 36 }
+    damage: 55
+    reaction: { kind: knockdown, hitstun: 26, push: 4, lift: 4 }
+    costs: { stun: 14, scale: 12, juggle: 14 }
+    meter: 4
+    clash: heavy
+
+  - id: hammer-ground
+    name: Stonemason's Tap
+    category: ground
+    input: { context: groundFocus, dir: neutral }
+    frames: { startup: 13, active: 3, recovery: 20 }
+    hitbox: { x: 10, w: 160, y: 0, h: 70, depth: 36 }
+    damage: 55
+    reaction: { kind: knockdown, hitstun: 28 }
+    costs: { stun: 15, scale: 12 }
+    meter: 4
+    tags: [terminalKnockdown, groundFinisher]
+
+  - id: hammer-dash
+    name: Momentum Swing
+    category: dash
+    input: { context: dash, dir: neutral }
+    frames: { startup: 12, active: 5, recovery: 24 }
+    hitbox: { x: 15, w: 170, y: 100, h: 140, depth: 38 }
+    damage: 66
+    reaction: { kind: knockback, hitstun: 26, push: 13 }
+    costs: { stun: 16, scale: 12 }
+    meter: 5
+    clash: heavy
+    breakPower: 90
+    tags: [wallBounce, impact]
+    moves:
+      - { from: 1, to: 10, forward: 5 }
+
+  - id: hammer-throw
+    name: Quarry Hammer Throw
+    category: weaponThrow
+    input: { context: weaponThrow, dir: neutral }
+    frames: { startup: 14, active: 1, recovery: 18 }
+    hitbox: { x: 0, w: 90, y: 90, h: 70, depth: 32 }
+    damage: 70
+    reaction: { kind: knockdown, hitstun: 32, push: 7, lift: 5 }
+    costs: { stun: 16, scale: 12 }
+    meter: 4
+    breakPower: 100
+    tags: [impact]

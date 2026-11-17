@@ -11,6 +11,7 @@ import { hazardStrike } from '../combat/environment';
 import { nonCombatant } from '../combat/damage';
 import { type Mover, MoverPhase, SharedEvent, ensureShared, sharedLog } from './state';
 import { mounted, riderImpact } from './riders';
+import { redirectedStrike } from '../enemies/boss';
 
 /** Scenery ids of M24 movers, platforms and stations start here (props use 301+). */
 export const MOVER_ID_BASE = 371;
@@ -52,6 +53,7 @@ export function setupSharedScenery(world: World, layout: StageLayout | null): vo
     done: 0,
     tags: [...m.tags],
     hitIds: [],
+    ...(m.trigger ? { trigger: m.trigger, released: 0 } : {}),
   }));
   s.platforms = platforms.map((p, i) => ({
     id: PLATFORM_ID_BASE + i,
@@ -111,6 +113,22 @@ export function stepMovers(world: World): void {
   if (!s) return;
   for (const m of s.movers) {
     if (m.phase === MoverPhase.Done) continue;
+    // M27: a triggered mover rests until its device releases it, then warns at once.
+    if (m.trigger && m.phase === MoverPhase.Rest) {
+      if (!m.released) {
+        m.phaseFrame = 0;
+        placeMover(m);
+        continue;
+      }
+      m.released -= 1;
+      m.phaseFrame = 0;
+      m.phase = MoverPhase.Warn;
+      m.redirectedBy = 0;
+      m.hitIds = [];
+      sharedLog(world, SharedEvent.MoverWarn, m.id);
+      placeMover(m);
+      continue;
+    }
     m.phaseFrame += 1;
     const len =
       m.phase === MoverPhase.Rest
@@ -136,6 +154,27 @@ export function stepMovers(world: World): void {
     }
     placeMover(m);
   }
+}
+
+/**
+ * M27: a boss completed a device (the terrace winch): the next resting mover it triggers
+ * is released (round robin), so each completed crank sends exactly one warned load.
+ * Returns true when one was released.
+ */
+export function releaseTriggered(world: World, kind: string): boolean {
+  const s = world.shared;
+  if (!s) return false;
+  const list = s.movers.filter((m) => m.trigger === kind);
+  if (list.length === 0) return false;
+  const turn =
+    list.reduce((n, m) => n + m.done, 0) + list.reduce((n, m) => n + (m.released ?? 0), 0);
+  for (let k = 0; k < list.length; k += 1) {
+    const m = list[(turn + k) % list.length]!;
+    if (m.phase !== MoverPhase.Rest || m.released) continue;
+    m.released = 1;
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -184,6 +223,8 @@ export function moverHits(world: World): void {
       if (hazardStrike(world, t, m.x, m.z, m.damage, m.id)) {
         m.hitIds.push(t.id);
         sharedLog(world, SharedEvent.MoverHit, m.id, t.id);
+        // M27: a redirected load that strikes the boss also costs Resolve.
+        if (m.redirectedBy !== 0) redirectedStrike(world, t);
       }
     }
   }

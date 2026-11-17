@@ -1,0 +1,27 @@
+# Mountain Camp Meal (Stage 3 spec §10.2, the balanced rare of the Herbalist Shelter):
+# a moderate share of all three bars. A carried provision (M24 E13): picked up with Interact,
+# carried, eaten with Interact + Up, or thrown and handed over. Recovery is a gameplay
+# abstraction, never a medical claim. M27 candidates; the difficulty recovery percent applies.
+id: camp-meal
+name: Mountain Camp Meal
+class: provision
+hands: 1
+integrity: { max: 10, worn: 8, critical: 4, hit: 0, guard: 0, clash: 0, throw: 0 }
+gripResistance: 10
+pickup: 6
+throw:
+  speed: 8
+  lift: 5
+  responses: [blockable]
+provision: { health: 150, defense: 25, meter: 20, eat: 50 }
+actions:
+  - id: camp-meal-toss
+    name: Mountain Camp Meal Toss
+    category: weaponThrow
+    input: { context: weaponThrow, dir: neutral }
+    frames: { startup: 8, active: 1, recovery: 12 }
+    hitbox: { x: 0, w: 30, y: 90, h: 30, depth: 26 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1, push: 0 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0

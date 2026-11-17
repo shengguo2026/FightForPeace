@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import {
   CORRIDORS,
+  mountOf,
   DIFFICULTIES,
   EnemyState,
   type Fighter,
@@ -31,6 +32,23 @@ const MAREK_COLOR = 0x4a2a4f;
 const MAREK_MARK = 0xc9a24a;
 const CALLOUT_FRAMES = 50;
 const px = fxToPixels;
+
+/**
+ * M27: the mountain horse's sounds of the same events (Stage 3 recipes): a stumble, the
+ * safe disengage at zero Stability (never a crash), hooves striking, the jump's whinny.
+ */
+const HORSE_SOUND: Partial<Record<number, { id: string; category: SfxCategory }>> = {
+  [RideEvent.Crash]: { id: 'sfx.horse.disengage', category: 'critical' },
+  [RideEvent.Impact]: { id: 'sfx.horse.stumble', category: 'contact' },
+  [RideEvent.Hit]: { id: 'sfx.horse.strike', category: 'contact' },
+  [RideEvent.Ramp]: { id: 'sfx.horse.whinny', category: 'confirm' },
+  [RideEvent.Brace]: { id: 'sfx.horse.snort', category: 'debris' },
+  [RideEvent.Breakaway]: { id: 'sfx.horse.gallop', category: 'crowd' },
+  [RideEvent.Critical]: { id: 'sfx.horse.stability-low', category: 'critical' },
+  [RideEvent.Dismount]: { id: 'sfx.horse.dismount', category: 'debris' },
+  [RideEvent.Rejoin]: { id: 'sfx.horse.mount', category: 'contact' },
+  [RideEvent.Rescue]: { id: 'sfx.horse.return', category: 'confirm' },
+};
 
 /** M22: placeholder ride sounds of pursuit events (synthesized until files arrive). */
 const EVENT_SOUND: Partial<Record<number, { id: string; category: SfxCategory }>> = {
@@ -165,6 +183,15 @@ export class PursuitView {
     art = false,
   ): void {
     this.art = art;
+    this.horse = mountOf(CORRIDORS[p.corridor]!).id === 'mountain-horse';
+    // M27: the horse is mounted at the start of the ride.
+    if (this.horse && frame - p.phaseFrame <= 2 && p.phase === PursuitPhase.Ride) {
+      const key = `mount/${p.phaseFrame}`;
+      if (!this.sounded.has(key)) {
+        this.sounded.add(key);
+        audio.sfx('sfx.horse.mount', 'contact');
+      }
+    }
     for (const g of [this.ground, this.back, this.front, this.hud]) g.clear();
     this.words.begin();
     this.hudWords.begin();
@@ -494,8 +521,11 @@ export class PursuitView {
   /** M22: pursuit events already sounded (kind/frame/position). */
   private sounded = new Set<string>();
 
+  /** M27: the corridor is ridden on the mountain horse. */
+  private horse = false;
+
   private callout(kind: number, at: number, frame: number, x: number, y: number): void {
-    const snd = EVENT_SOUND[kind];
+    const snd = (this.horse ? HORSE_SOUND : EVENT_SOUND)[kind];
     if (snd && frame - at <= 2 && frame >= at) {
       const key = `${kind}/${at}`;
       if (!this.sounded.has(key)) {

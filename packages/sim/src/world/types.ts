@@ -468,6 +468,8 @@ export interface BossState {
   scorchStops: number;
   /** The mounted intercept's outcome: 0 none, 1 crashed (broken), 2 forced dismount. */
   intercept: number;
+  /** M27: redirected loads that struck the boss (absent until the first one). */
+  redirects?: number;
 }
 
 /** M19: how Marek lost the support gun. Numbers are encoded; never renumber. */

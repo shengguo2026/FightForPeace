@@ -1,0 +1,26 @@
+# Spiced Seed Cake (Stage 3 spec §10.2, Momentum: Attack Bar only): a carried provision (M24 E13). Picked up with Interact,
+# carried, eaten with Interact + Up, or thrown and handed over. Recovery is a gameplay
+# abstraction, never a medical claim. M27 candidates; the difficulty recovery percent applies.
+id: seed-cake
+name: Spiced Seed Cake
+class: provision
+hands: 1
+integrity: { max: 10, worn: 8, critical: 4, hit: 0, guard: 0, clash: 0, throw: 0 }
+gripResistance: 10
+pickup: 6
+throw:
+  speed: 8
+  lift: 5
+  responses: [blockable]
+provision: { health: 0, defense: 0, meter: 40, eat: 30 }
+actions:
+  - id: seed-cake-toss
+    name: Spiced Seed Cake Toss
+    category: weaponThrow
+    input: { context: weaponThrow, dir: neutral }
+    frames: { startup: 8, active: 1, recovery: 12 }
+    hitbox: { x: 0, w: 30, y: 90, h: 30, depth: 26 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1, push: 0 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0

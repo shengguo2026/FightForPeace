@@ -1,0 +1,159 @@
+# Wood Axe (Stage 3 spec §10.1): one on the main route, a committed authored profile. The
+# heroes strike only with the flat back of the head and the haft, never the edge. Slower
+# than the staff, heavy clash, strong disarm and the best tool against timber barriers.
+# Sheet cells (HERO-*-AXE): 0 pick-up, 1 ready, 2 flat-back strike, 3 haft upstroke, 4 haft
+# block, 5 throw. M27 Combat Lab candidates.
+id: wood-axe
+name: Wood Axe
+class: temporaryMelee
+hands: 2
+integrity: { max: 120, worn: 75, critical: 30, hit: 6, guard: 4, clash: 8, throw: 20, deflect: 5 }
+gripResistance: 45
+pickup: 9
+throw:
+  speed: 13
+  lift: 2
+  responses: [blockable, exactDeflectable, strikeDeflectable]
+opens: [timber]
+actions:
+  - id: axe-flat
+    name: Flat-Back Chop
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 11, active: 4, recovery: 18 }
+    hitbox: { x: 20, w: 140, y: 120, h: 120, depth: 36 }
+    damage: 58
+    reaction: { kind: stagger, hitstun: 22, push: 5 }
+    costs: { stun: 14, scale: 12, starter: 15 }
+    meter: 4
+    clash: heavy
+    disarmPower: 55
+    breakPower: 60
+    links:
+      - { to: axe-haft, category: chain, on: [hit, guard] }
+
+  - id: axe-haft
+    name: Haft Upstroke
+    category: standing
+    input: { context: chain, dir: neutral }
+    frames: { startup: 10, active: 4, recovery: 20 }
+    hitbox: { x: 15, w: 120, y: 120, h: 190, depth: 38 }
+    damage: 52
+    reaction: { kind: launch, hitstun: 30, push: 2, lift: 14 }
+    costs: { stun: 15, scale: 12, juggle: 30 }
+    meter: 5
+    clash: heavy
+    links:
+      - { to: jump, input: neutral, category: jumpChase, on: [hit] }
+
+  - id: axe-cleave
+    name: Woodcutter's Drive
+    category: standing
+    input: { context: neutral, dir: forward }
+    frames: { startup: 15, active: 5, recovery: 24 }
+    hitbox: { x: 20, w: 165, y: 100, h: 180, depth: 38 }
+    damage: 80
+    reaction: { kind: knockback, hitstun: 26, push: 13 }
+    costs: { stun: 18, scale: 15 }
+    meter: 6
+    clash: heavy
+    disarmPower: 70
+    breakPower: 90
+    tags: [wallBounce, impact]
+    moves:
+      - { from: 1, to: 14, forward: 3 }
+
+  - id: axe-hook
+    name: Bearded Hook
+    category: standing
+    input: { context: neutral, dir: backward }
+    frames: { startup: 12, active: 4, recovery: 18 }
+    hitbox: { x: 30, w: 140, y: 80, h: 120, depth: 34 }
+    damage: 40
+    reaction: { kind: stagger, hitstun: 24 }
+    costs: { stun: 12, scale: 10 }
+    meter: 4
+    clash: light
+    disarmPower: 65
+    pull: 5
+    note: The beard of the axe head catches a weapon or a sleeve and draws it in.
+
+  - id: axe-rise
+    name: Splitting Rise
+    category: standing
+    input: { context: neutral, dir: up }
+    frames: { startup: 12, active: 5, recovery: 22 }
+    hitbox: { x: 15, w: 130, y: 120, h: 210, depth: 40 }
+    damage: 52
+    reaction: { kind: launch, hitstun: 30, push: 1.5, lift: 15 }
+    costs: { stun: 15, scale: 12, juggle: 30 }
+    meter: 5
+    clash: heavy
+    links:
+      - { to: jump, input: neutral, category: jumpChase, on: [hit] }
+
+  - id: axe-low
+    name: Stump Sweep
+    category: low
+    input: { context: neutral, dir: down }
+    frames: { startup: 12, active: 4, recovery: 22 }
+    hitbox: { x: 15, w: 150, y: 0, h: 80, depth: 40 }
+    damage: 50
+    reaction: { kind: knockdown, hitstun: 30, push: 4, lift: 5 }
+    costs: { stun: 20, scale: 12 }
+    meter: 5
+    breakPower: 50
+    tags: [opensGroundWindow]
+
+  - id: axe-air
+    name: Felling Arc
+    category: aerial
+    input: { context: air, dir: neutral }
+    frames: { startup: 8, active: 4, recovery: 11, landing: true }
+    hitbox: { x: 10, w: 150, y: -10, h: 160, depth: 36 }
+    damage: 46
+    reaction: { kind: stagger, hitstun: 18, push: 4, airPop: 6 }
+    costs: { stun: 12, scale: 10, juggle: 12 }
+    meter: 3
+    clash: heavy
+
+  - id: axe-ground
+    name: Haft Pin
+    category: ground
+    input: { context: groundFocus, dir: neutral }
+    frames: { startup: 11, active: 3, recovery: 18 }
+    hitbox: { x: 10, w: 160, y: 0, h: 70, depth: 36 }
+    damage: 48
+    reaction: { kind: knockdown, hitstun: 28 }
+    costs: { stun: 15, scale: 12 }
+    meter: 4
+    tags: [terminalKnockdown, groundFinisher]
+
+  - id: axe-dash
+    name: Running Chop
+    category: dash
+    input: { context: dash, dir: neutral }
+    frames: { startup: 10, active: 4, recovery: 20 }
+    hitbox: { x: 15, w: 165, y: 110, h: 120, depth: 36 }
+    damage: 56
+    reaction: { kind: knockback, hitstun: 24, push: 10 }
+    costs: { stun: 15, scale: 12 }
+    meter: 5
+    clash: heavy
+    breakPower: 60
+    tags: [impact]
+    moves:
+      - { from: 1, to: 9, forward: 6 }
+
+  - id: axe-throw
+    name: Wood Axe Throw
+    category: weaponThrow
+    input: { context: weaponThrow, dir: neutral }
+    frames: { startup: 12, active: 1, recovery: 16 }
+    hitbox: { x: 0, w: 90, y: 110, h: 60, depth: 30 }
+    damage: 60
+    reaction: { kind: knockdown, hitstun: 30, push: 6, lift: 5 }
+    costs: { stun: 15, scale: 12 }
+    meter: 4
+    breakPower: 60
+    tags: [impact]

@@ -122,6 +122,22 @@ export function firearmOf(world: World, f: Fighter): Item | undefined {
   return item && isFirearm(item) ? item : undefined;
 }
 
+/**
+ * M27: the weapon the boss's current phase is armed with, while he holds it (a firearm or
+ * a melee weapon such as Garran's Quarry Hookstaff).
+ */
+export function phaseWeapon(world: World, f: Fighter): Item | undefined {
+  const ph = bossPhase(world, f);
+  if (!ph?.armed) return undefined;
+  const item = heldItem(world, f);
+  return item && WEAPONS[item.def]?.id === ph.armed ? item : undefined;
+}
+
+/** M27: does an armed-phase weapon still work (rounds left; a melee weapon unbroken)? */
+function works(item: Item): boolean {
+  return isFirearm(item) ? item.ammo > 0 : item.integrity > 0;
+}
+
 /** May this enemy take this item (Stage 2 roles never take firearms or the grenade)? */
 export function mayTake(f: Fighter, prof: EnemyProfile, item: Item): boolean {
   if (!isFirearm(item)) return true;
@@ -147,8 +163,10 @@ export function armOnSpawn(world: World, f: Fighter): void {
  */
 export function attackSkipped(world: World, f: Fighter, at: AiAttackDef, a: ActionDef): boolean {
   const gun = firearmOf(world, f);
-  if (at.when === 1 && !gun) return true;
-  if (at.when === 2 && gun) return true;
+  // M27: a boss phase armed with a melee weapon (Garran's Hookstaff) counts as armed too.
+  const armed = gun ?? phaseWeapon(world, f);
+  if (at.when === 1 && !armed) return true;
+  if (at.when === 2 && armed) return true;
   if (a.ammo > 0 && !(gun && gun.ammo >= a.ammo)) return true;
   if (a.category === 'weaponThrow' && gun && gun.ammo > 0 && profileOf(f)?.armed) return true;
   const ph = bossPhase(world, f);
@@ -777,7 +795,7 @@ function gunOf(world: World): Item | undefined {
 /** A Stagger Break in the armed phase drops the gun at his feet for the heroes. */
 export function staggerDrop(world: World, f: Fighter): void {
   const ph = bossPhase(world, f);
-  if (!ph?.armed || !firearmOf(world, f)) return;
+  if (!ph?.armed || !(firearmOf(world, f) ?? phaseWeapon(world, f))) return;
   dropHeld(world, f);
   event(world, EncEvent.Disarmed, f.id, 0);
 }
@@ -787,7 +805,7 @@ export function staggerReclaim(world: World, f: Fighter): void {
   const ph = bossPhase(world, f);
   const gun = gunOf(world);
   if (!ph?.armed || !gun || f.item !== 0) return;
-  if (gun.state !== ItemState.Ground || gun.ammo <= 0) return;
+  if (gun.state !== ItemState.Ground || !works(gun)) return;
   if (Math.abs(gun.x - f.x) > S2.reclaim || Math.abs(gun.z - f.z) > fx(80)) return;
   claim(world, f, gun);
 }
@@ -802,24 +820,28 @@ export function checkDisarmed(world: World, f: Fighter): void {
   const b = enc?.boss;
   const ph = bossPhase(world, f);
   if (!b || !ph?.untilDisarmed || b.pending || b.stagger > 0 || b.shift > 0 || f.ko) return;
-  const held = firearmOf(world, f);
-  if (held && held.ammo > 0) return;
+  const held = firearmOf(world, f) ?? phaseWeapon(world, f);
+  if (held && works(held)) return;
   const gun = gunOf(world);
-  if (held && held.ammo <= 0) {
+  if (held && isFirearm(held)) {
     // Emptied: he tosses it aside (the Empty Cast).
     dropHeld(world, f, fx(90));
     b.gunLost = GunLost.Emptied;
   } else if (!gun || gun.state === ItemState.Gone || gun.integrity <= 0) b.gunLost = GunLost.Broken;
-  else b.gunLost = gun.ammo <= 0 ? GunLost.Emptied : GunLost.Disarmed;
+  else b.gunLost = isFirearm(gun) && gun.ammo <= 0 ? GunLost.Emptied : GunLost.Disarmed;
   b.gunAmmo = gun && gun.state !== ItemState.Gone ? gun.ammo : 0;
   b.pending = true;
   b.pendingSince = world.frame;
   event(world, EncEvent.Disarmed, f.id, b.gunLost);
 }
 
-/** Leaving the armed phase: a gun still in his hands is tossed aside. */
-export function disarmForPhase(world: World, f: Fighter): void {
-  const gun = firearmOf(world, f);
+/**
+ * Leaving the armed phase: a gun still in his hands is tossed aside (M27: so is the melee
+ * weapon the previous phase was armed with, `weapon`).
+ */
+export function disarmForPhase(world: World, f: Fighter, weapon = ''): void {
+  const held = heldItem(world, f);
+  const gun = firearmOf(world, f) ?? (held && WEAPONS[held.def]?.id === weapon ? held : undefined);
   if (!gun) return;
   dropHeld(world, f, fx(90));
 }
@@ -898,7 +920,7 @@ export function capture(world: World, f: Fighter, kind: number): void {
   if (!b || b.capture !== 0) return;
   b.capture = kind;
   b.captureAt = world.frame;
-  if (firearmOf(world, f)) dropHeld(world, f);
+  if (firearmOf(world, f) ?? phaseWeapon(world, f)) dropHeld(world, f);
   event(world, EncEvent.Capture, f.id, kind);
 }
 

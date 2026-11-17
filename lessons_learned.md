@@ -305,6 +305,24 @@ M26 put every Mission Mode entry on one data catalogue and gave the Run Archive 
 - **Fix:** every sound effect is a coded recipe (`packages/platform/src/media/sfxKit.ts`, `stage12sfx.ts`, `stage3sfx.ts`, listed in `codedSfx.ts`): 56 shared and Stage 1/2 sounds and 89 Stage 3 sounds under their existing logical ids. The Lab panel **Sound effects** plays each group, and `node tools/audio/render_sfx.mjs` writes them all as WAV files for listening outside the game.
 - **Rule:** **sound effects are always coded by Claude**; Guo makes the pictures, music cues and title loops. A new stage's sound effects are derived from its spec (weapons, enemies, boss, environment, pickups, warnings) and written as recipes before the stage's systems milestone, with stable `sfx.<family>.<variant>` ids, a mixer category (warnings and tells `critical`, confirmations `confirm`) and a Lab group, and Guo listens in the Lab before the PR merges. No sound effect prompts are written for an outside generator (pre-flight item 23).
 
+## K · Found while building the Stage 3 systems (M27)
+
+M27 put every Stage 3 weapon, bandit role, Garran Voss, the quarry scenery and the mountain horse on the engine as data (plan `docs/superpowers/plans/2026-11-17-m27-stage3-systems.md`).
+
+### K1 · New data files sorted before the frozen ones
+
+- **What happened:** the registries are built from the data folders in file-name order, and the Stage 3 files (`ambusher`, `bruiser`, `hiking-staff`, ...) sort before `m24-*`, so they would have shifted every M24 weapon and enemy index that saves, replays and snapshots encode.
+- **Caught:** while adding the first Stage 3 weapon (the M24 registry test).
+- **Fix:** the M24 files joined the generator's frozen lists; Stage 3 files are appended after them. Tests for "these come last" now check the earlier block keeps its order and later milestones only append.
+- **Rule:** every milestone's data files are added to the frozen lists in the same PR (lesson G1), so the next milestone's names can never sort in front of them.
+
+### K2 · A boss's story lines played for another boss
+
+- **What happened:** Tomas's subtitles were shown whenever "a boss is in the room", so Garran's Lab fight opened with Tomas talking about Marek.
+- **Caught:** on the M27 screenshots.
+- **Fix:** the lines are keyed to Marek's kit.
+- **Rule:** story lines, captions and portraits are keyed to the character's kit id, never to a role ("the boss", "the rider").
+
 ## Pre-flight checklist: before writing any new stage's prompt files
 
 Run this for Stage 4 onwards, each Curated Mission and every other mode. Stage 4 starts only after its spec readiness review.

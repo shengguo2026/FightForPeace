@@ -1607,6 +1607,786 @@
         "edits": "end crossfaded into the start (seamless loop); audio track removed; 960 px H.264 CRF 30"
       }
     },
+    "enemy.ambusher.sheet.attack": {
+      "url": "art/ambusher-attack.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 355,
+        "cells": [
+          {
+            "x0": 56,
+            "y0": 52,
+            "x1": 329,
+            "foot": 361
+          },
+          {
+            "x0": 11,
+            "y0": 49,
+            "x1": 371,
+            "foot": 360
+          },
+          {
+            "x0": 6,
+            "y0": 104,
+            "x1": 378,
+            "foot": 354
+          },
+          {
+            "x0": 42,
+            "y0": 102,
+            "x1": 338,
+            "foot": 348
+          },
+          {
+            "x0": 71,
+            "y0": 8,
+            "x1": 289,
+            "foot": 354
+          },
+          {
+            "x0": 40,
+            "y0": 53,
+            "x1": 347,
+            "foot": 355
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "enemies/ambusher/ENM-AMBUSHER-ATTACK.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.ambusher.sheet.flee": {
+      "url": "art/ambusher-flee.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 365,
+        "cells": [
+          {
+            "x0": 43,
+            "y0": 50,
+            "x1": 346,
+            "foot": 372
+          },
+          {
+            "x0": 65,
+            "y0": 32,
+            "x1": 324,
+            "foot": 374
+          },
+          {
+            "x0": 38,
+            "y0": 20,
+            "x1": 349,
+            "foot": 322
+          },
+          {
+            "x0": 51,
+            "y0": 46,
+            "x1": 348,
+            "foot": 365
+          },
+          {
+            "x0": 56,
+            "y0": 27,
+            "x1": 319,
+            "foot": 364
+          },
+          {
+            "x0": 39,
+            "y0": 15,
+            "x1": 345,
+            "foot": 299
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "enemies/ambusher/ENM-AMBUSHER-FLEE.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.ambusher.sheet.hit": {
+      "url": "art/ambusher-hit.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 350,
+        "cells": [
+          {
+            "x0": 105,
+            "y0": 30,
+            "x1": 297,
+            "foot": 376
+          },
+          {
+            "x0": 43,
+            "y0": 42,
+            "x1": 347,
+            "foot": 376
+          },
+          {
+            "x0": 54,
+            "y0": 30,
+            "x1": 285,
+            "foot": 336
+          },
+          {
+            "x0": 6,
+            "y0": 221,
+            "x1": 378,
+            "foot": 335
+          },
+          {
+            "x0": 62,
+            "y0": 97,
+            "x1": 347,
+            "foot": 335
+          },
+          {
+            "x0": 51,
+            "y0": 30,
+            "x1": 340,
+            "foot": 350
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "enemies/ambusher/ENM-AMBUSHER-HIT.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.ambusher.sheet.idle-run": {
+      "url": "art/ambusher-idle-run.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 376,
+        "cells": [
+          {
+            "x0": 95,
+            "y0": 91,
+            "x1": 311,
+            "foot": 376
+          },
+          {
+            "x0": 106,
+            "y0": 18,
+            "x1": 260,
+            "foot": 377
+          },
+          {
+            "x0": 65,
+            "y0": 45,
+            "x1": 311,
+            "foot": 376
+          },
+          {
+            "x0": 56,
+            "y0": 32,
+            "x1": 325,
+            "foot": 366
+          },
+          {
+            "x0": 35,
+            "y0": 65,
+            "x1": 347,
+            "foot": 364
+          },
+          {
+            "x0": 65,
+            "y0": 17,
+            "x1": 323,
+            "foot": 312
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "enemies/ambusher/ENM-AMBUSHER-IDLE-RUN.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.ambusher.sheet.run": {
+      "url": "art/ambusher-run.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 361,
+        "cells": [
+          {
+            "x0": 37,
+            "y0": 80,
+            "x1": 316,
+            "foot": 369
+          },
+          {
+            "x0": 70,
+            "y0": 69,
+            "x1": 304,
+            "foot": 372
+          },
+          {
+            "x0": 57,
+            "y0": 51,
+            "x1": 341,
+            "foot": 341
+          },
+          {
+            "x0": 42,
+            "y0": 61,
+            "x1": 330,
+            "foot": 361
+          },
+          {
+            "x0": 70,
+            "y0": 51,
+            "x1": 300,
+            "foot": 361
+          },
+          {
+            "x0": 59,
+            "y0": 32,
+            "x1": 339,
+            "foot": 316
+          }
+        ],
+        "scale": 0.9
+      },
+      "provenance": {
+        "source": "enemies/ambusher/ENM-AMBUSHER-RUN.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.bruiser.sheet.attack": {
+      "url": "art/bruiser-attack.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 372,
+        "cells": [
+          {
+            "x0": 102,
+            "y0": 7,
+            "x1": 314,
+            "foot": 373
+          },
+          {
+            "x0": 70,
+            "y0": 106,
+            "x1": 310,
+            "foot": 372
+          },
+          {
+            "x0": 32,
+            "y0": 91,
+            "x1": 333,
+            "foot": 373
+          },
+          {
+            "x0": 44,
+            "y0": 52,
+            "x1": 349,
+            "foot": 367
+          },
+          {
+            "x0": 6,
+            "y0": 45,
+            "x1": 378,
+            "foot": 368
+          },
+          {
+            "x0": 74,
+            "y0": 84,
+            "x1": 287,
+            "foot": 367
+          }
+        ],
+        "scale": 0.9
+      },
+      "provenance": {
+        "source": "enemies/bruiser/ENM-BRUISER-ATTACK.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.bruiser.sheet.flee": {
+      "url": "art/bruiser-flee.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 372,
+        "cells": [
+          {
+            "x0": 37,
+            "y0": 32,
+            "x1": 346,
+            "foot": 372
+          },
+          {
+            "x0": 61,
+            "y0": 31,
+            "x1": 317,
+            "foot": 372
+          },
+          {
+            "x0": 40,
+            "y0": 19,
+            "x1": 338,
+            "foot": 352
+          },
+          {
+            "x0": 33,
+            "y0": 33,
+            "x1": 334,
+            "foot": 372
+          },
+          {
+            "x0": 67,
+            "y0": 28,
+            "x1": 319,
+            "foot": 372
+          },
+          {
+            "x0": 33,
+            "y0": 19,
+            "x1": 366,
+            "foot": 337
+          }
+        ],
+        "scale": 0.9
+      },
+      "provenance": {
+        "source": "enemies/bruiser/ENM-BRUISER-FLEE.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.bruiser.sheet.hit": {
+      "url": "art/bruiser-hit.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 371,
+        "cells": [
+          {
+            "x0": 102,
+            "y0": 19,
+            "x1": 305,
+            "foot": 372
+          },
+          {
+            "x0": 36,
+            "y0": 22,
+            "x1": 333,
+            "foot": 371
+          },
+          {
+            "x0": 23,
+            "y0": 41,
+            "x1": 340,
+            "foot": 372
+          },
+          {
+            "x0": 29,
+            "y0": 249,
+            "x1": 381,
+            "foot": 366
+          },
+          {
+            "x0": 48,
+            "y0": 95,
+            "x1": 339,
+            "foot": 357
+          },
+          {
+            "x0": 73,
+            "y0": 6,
+            "x1": 287,
+            "foot": 366
+          }
+        ],
+        "scale": 0.9
+      },
+      "provenance": {
+        "source": "enemies/bruiser/ENM-BRUISER-HIT.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.bruiser.sheet.idle-walk": {
+      "url": "art/bruiser-idle-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 371,
+        "cells": [
+          {
+            "x0": 108,
+            "y0": 7,
+            "x1": 296,
+            "foot": 370
+          },
+          {
+            "x0": 103,
+            "y0": 12,
+            "x1": 283,
+            "foot": 369
+          },
+          {
+            "x0": 62,
+            "y0": 13,
+            "x1": 287,
+            "foot": 370
+          },
+          {
+            "x0": 84,
+            "y0": 12,
+            "x1": 327,
+            "foot": 371
+          },
+          {
+            "x0": 61,
+            "y0": 6,
+            "x1": 298,
+            "foot": 373
+          },
+          {
+            "x0": 67,
+            "y0": 2,
+            "x1": 303,
+            "foot": 373
+          }
+        ],
+        "scale": 0.9
+      },
+      "provenance": {
+        "source": "enemies/bruiser/ENM-BRUISER-IDLE-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.bruiser.sheet.walk": {
+      "url": "art/bruiser-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 375,
+        "cells": [
+          {
+            "x0": 89,
+            "y0": 14,
+            "x1": 328,
+            "foot": 375
+          },
+          {
+            "x0": 91,
+            "y0": 37,
+            "x1": 290,
+            "foot": 375
+          },
+          {
+            "x0": 98,
+            "y0": 7,
+            "x1": 296,
+            "foot": 375
+          },
+          {
+            "x0": 73,
+            "y0": 14,
+            "x1": 336,
+            "foot": 372
+          },
+          {
+            "x0": 98,
+            "y0": 23,
+            "x1": 295,
+            "foot": 372
+          },
+          {
+            "x0": 89,
+            "y0": 5,
+            "x1": 281,
+            "foot": 372
+          }
+        ],
+        "scale": 0.9
+      },
+      "provenance": {
+        "source": "enemies/bruiser/ENM-BRUISER-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.captain.sheet.attack": {
+      "url": "art/captain-attack.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 373,
+        "cells": [
+          {
+            "x0": 48,
+            "y0": 15,
+            "x1": 373,
+            "foot": 366
+          },
+          {
+            "x0": 50,
+            "y0": 8,
+            "x1": 314,
+            "foot": 365
+          },
+          {
+            "x0": 21,
+            "y0": 39,
+            "x1": 348,
+            "foot": 366
+          },
+          {
+            "x0": 81,
+            "y0": 5,
+            "x1": 314,
+            "foot": 378
+          },
+          {
+            "x0": 51,
+            "y0": 29,
+            "x1": 297,
+            "foot": 373
+          },
+          {
+            "x0": 63,
+            "y0": 35,
+            "x1": 307,
+            "foot": 373
+          }
+        ],
+        "scale": 0.87
+      },
+      "provenance": {
+        "source": "enemies/captain/ENM-CAPTAIN-ATTACK.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.captain.sheet.flee": {
+      "url": "art/captain-flee.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 361,
+        "cells": [
+          {
+            "x0": 47,
+            "y0": 25,
+            "x1": 329,
+            "foot": 361
+          },
+          {
+            "x0": 31,
+            "y0": 23,
+            "x1": 299,
+            "foot": 361
+          },
+          {
+            "x0": 30,
+            "y0": 18,
+            "x1": 361,
+            "foot": 330
+          },
+          {
+            "x0": 40,
+            "y0": 23,
+            "x1": 339,
+            "foot": 365
+          },
+          {
+            "x0": 23,
+            "y0": 21,
+            "x1": 290,
+            "foot": 365
+          },
+          {
+            "x0": 18,
+            "y0": 15,
+            "x1": 373,
+            "foot": 317
+          }
+        ],
+        "scale": 0.84
+      },
+      "provenance": {
+        "source": "enemies/captain/ENM-CAPTAIN-FLEE.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.captain.sheet.hit": {
+      "url": "art/captain-hit.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 361,
+        "cells": [
+          {
+            "x0": 93,
+            "y0": 20,
+            "x1": 309,
+            "foot": 366
+          },
+          {
+            "x0": 53,
+            "y0": 25,
+            "x1": 307,
+            "foot": 366
+          },
+          {
+            "x0": 16,
+            "y0": 25,
+            "x1": 349,
+            "foot": 302
+          },
+          {
+            "x0": 23,
+            "y0": 213,
+            "x1": 374,
+            "foot": 361
+          },
+          {
+            "x0": 31,
+            "y0": 126,
+            "x1": 333,
+            "foot": 359
+          },
+          {
+            "x0": 53,
+            "y0": 11,
+            "x1": 360,
+            "foot": 359
+          }
+        ],
+        "scale": 0.87
+      },
+      "provenance": {
+        "source": "enemies/captain/ENM-CAPTAIN-HIT.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.captain.sheet.idle-walk": {
+      "url": "art/captain-idle-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 367,
+        "cells": [
+          {
+            "x0": 110,
+            "y0": 20,
+            "x1": 280,
+            "foot": 367
+          },
+          {
+            "x0": 62,
+            "y0": 17,
+            "x1": 285,
+            "foot": 368
+          },
+          {
+            "x0": 77,
+            "y0": 26,
+            "x1": 279,
+            "foot": 368
+          },
+          {
+            "x0": 94,
+            "y0": 17,
+            "x1": 302,
+            "foot": 365
+          },
+          {
+            "x0": 11,
+            "y0": 16,
+            "x1": 293,
+            "foot": 364
+          },
+          {
+            "x0": 63,
+            "y0": 16,
+            "x1": 366,
+            "foot": 363
+          }
+        ],
+        "scale": 0.87
+      },
+      "provenance": {
+        "source": "enemies/captain/ENM-CAPTAIN-IDLE-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.captain.sheet.walk": {
+      "url": "art/captain-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 371,
+        "cells": [
+          {
+            "x0": 88,
+            "y0": 14,
+            "x1": 297,
+            "foot": 373
+          },
+          {
+            "x0": 57,
+            "y0": 14,
+            "x1": 291,
+            "foot": 370
+          },
+          {
+            "x0": 89,
+            "y0": 8,
+            "x1": 297,
+            "foot": 368
+          },
+          {
+            "x0": 82,
+            "y0": 14,
+            "x1": 310,
+            "foot": 372
+          },
+          {
+            "x0": 68,
+            "y0": 14,
+            "x1": 296,
+            "foot": 371
+          },
+          {
+            "x0": 71,
+            "y0": 7,
+            "x1": 301,
+            "foot": 370
+          }
+        ],
+        "scale": 0.84
+      },
+      "provenance": {
+        "source": "enemies/captain/ENM-CAPTAIN-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
     "enemy.claimhand.sheet.attack-a": {
       "url": "art/claimhand-attack-a.webp",
       "sheet": {
@@ -3133,6 +3913,520 @@
         "source": "enemies/enforcer2/ENM-ENFORCER2-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
+      }
+    },
+    "enemy.garran.sheet.capture": {
+      "url": "art/garran-capture.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 379,
+        "cells": [
+          {
+            "x0": 87,
+            "y0": 8,
+            "x1": 334,
+            "foot": 380
+          },
+          {
+            "x0": 63,
+            "y0": 138,
+            "x1": 290,
+            "foot": 381
+          },
+          {
+            "x0": 58,
+            "y0": 8,
+            "x1": 280,
+            "foot": 379
+          },
+          {
+            "x0": 134,
+            "y0": 7,
+            "x1": 282,
+            "foot": 378
+          },
+          {
+            "x0": 87,
+            "y0": 69,
+            "x1": 298,
+            "foot": 378
+          },
+          {
+            "x0": 86,
+            "y0": 54,
+            "x1": 294,
+            "foot": 378
+          }
+        ],
+        "scale": 0.9
+      },
+      "provenance": {
+        "source": "enemies/garran/ENM-GARRAN-CAPTURE.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.garran.sheet.clinch": {
+      "url": "art/garran-clinch.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 371,
+        "cells": [
+          {
+            "x0": 61,
+            "y0": 6,
+            "x1": 354,
+            "foot": 371
+          },
+          {
+            "x0": 62,
+            "y0": 44,
+            "x1": 316,
+            "foot": 371
+          },
+          {
+            "x0": 83,
+            "y0": 17,
+            "x1": 297,
+            "foot": 371
+          },
+          {
+            "x0": 26,
+            "y0": 19,
+            "x1": 369,
+            "foot": 370
+          },
+          {
+            "x0": 7,
+            "y0": 14,
+            "x1": 364,
+            "foot": 369
+          },
+          {
+            "x0": 27,
+            "y0": 6,
+            "x1": 353,
+            "foot": 370
+          }
+        ],
+        "scale": 0.94
+      },
+      "provenance": {
+        "source": "enemies/garran/ENM-GARRAN-CLINCH.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.garran.sheet.defense": {
+      "url": "art/garran-defense.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 375,
+        "cells": [
+          {
+            "x0": 100,
+            "y0": 7,
+            "x1": 290,
+            "foot": 376
+          },
+          {
+            "x0": 25,
+            "y0": 36,
+            "x1": 323,
+            "foot": 375
+          },
+          {
+            "x0": 17,
+            "y0": 54,
+            "x1": 369,
+            "foot": 376
+          },
+          {
+            "x0": 58,
+            "y0": 7,
+            "x1": 366,
+            "foot": 374
+          },
+          {
+            "x0": 57,
+            "y0": 26,
+            "x1": 311,
+            "foot": 374
+          },
+          {
+            "x0": 50,
+            "y0": 32,
+            "x1": 321,
+            "foot": 374
+          }
+        ]
+      },
+      "provenance": {
+        "source": "enemies/garran/ENM-GARRAN-DEFENSE.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.garran.sheet.ground": {
+      "url": "art/garran-ground.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 379,
+        "cells": [
+          {
+            "x0": 78,
+            "y0": 11,
+            "x1": 319,
+            "foot": 379
+          },
+          {
+            "x0": 53,
+            "y0": 13,
+            "x1": 309,
+            "foot": 379
+          },
+          {
+            "x0": 34,
+            "y0": 11,
+            "x1": 346,
+            "foot": 379
+          },
+          {
+            "x0": 61,
+            "y0": 86,
+            "x1": 326,
+            "foot": 364
+          },
+          {
+            "x0": 49,
+            "y0": 29,
+            "x1": 296,
+            "foot": 361
+          },
+          {
+            "x0": 13,
+            "y0": 19,
+            "x1": 352,
+            "foot": 363
+          }
+        ],
+        "scale": 0.92
+      },
+      "provenance": {
+        "source": "enemies/garran/ENM-GARRAN-GROUND.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.garran.sheet.hit": {
+      "url": "art/garran-hit.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 364,
+        "cells": [
+          {
+            "x0": 100,
+            "y0": 16,
+            "x1": 326,
+            "foot": 376
+          },
+          {
+            "x0": 56,
+            "y0": 35,
+            "x1": 336,
+            "foot": 376
+          },
+          {
+            "x0": 50,
+            "y0": 12,
+            "x1": 314,
+            "foot": 356
+          },
+          {
+            "x0": 6,
+            "y0": 275,
+            "x1": 378,
+            "foot": 364
+          },
+          {
+            "x0": 96,
+            "y0": 111,
+            "x1": 351,
+            "foot": 361
+          },
+          {
+            "x0": 103,
+            "y0": 39,
+            "x1": 333,
+            "foot": 358
+          }
+        ]
+      },
+      "provenance": {
+        "source": "enemies/garran/ENM-GARRAN-HIT.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.garran.sheet.hook-a": {
+      "url": "art/garran-hook-a.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 361,
+        "cells": [
+          {
+            "x0": 9,
+            "y0": 36,
+            "x1": 331,
+            "foot": 360
+          },
+          {
+            "x0": 24,
+            "y0": 36,
+            "x1": 376,
+            "foot": 360
+          },
+          {
+            "x0": 27,
+            "y0": 29,
+            "x1": 366,
+            "foot": 360
+          },
+          {
+            "x0": 52,
+            "y0": 24,
+            "x1": 329,
+            "foot": 361
+          },
+          {
+            "x0": 40,
+            "y0": 8,
+            "x1": 326,
+            "foot": 361
+          },
+          {
+            "x0": 47,
+            "y0": 56,
+            "x1": 337,
+            "foot": 361
+          }
+        ]
+      },
+      "provenance": {
+        "source": "enemies/garran/ENM-GARRAN-HOOK-A.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.garran.sheet.hook-b": {
+      "url": "art/garran-hook-b.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 368,
+        "cells": [
+          {
+            "x0": 6,
+            "y0": 47,
+            "x1": 378,
+            "foot": 356
+          },
+          {
+            "x0": 31,
+            "y0": 41,
+            "x1": 348,
+            "foot": 355
+          },
+          {
+            "x0": 6,
+            "y0": 78,
+            "x1": 378,
+            "foot": 355
+          },
+          {
+            "x0": 24,
+            "y0": 28,
+            "x1": 360,
+            "foot": 371
+          },
+          {
+            "x0": 11,
+            "y0": 7,
+            "x1": 260,
+            "foot": 377
+          },
+          {
+            "x0": 6,
+            "y0": 42,
+            "x1": 378,
+            "foot": 368
+          }
+        ]
+      },
+      "provenance": {
+        "source": "enemies/garran/ENM-GARRAN-HOOK-B.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.garran.sheet.idle-walk": {
+      "url": "art/garran-idle-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 367,
+        "cells": [
+          {
+            "x0": 119,
+            "y0": 3,
+            "x1": 271,
+            "foot": 365
+          },
+          {
+            "x0": 59,
+            "y0": 13,
+            "x1": 277,
+            "foot": 365
+          },
+          {
+            "x0": 22,
+            "y0": 27,
+            "x1": 300,
+            "foot": 364
+          },
+          {
+            "x0": 33,
+            "y0": 24,
+            "x1": 330,
+            "foot": 367
+          },
+          {
+            "x0": 99,
+            "y0": 2,
+            "x1": 318,
+            "foot": 368
+          },
+          {
+            "x0": 101,
+            "y0": 2,
+            "x1": 268,
+            "foot": 368
+          }
+        ]
+      },
+      "provenance": {
+        "source": "enemies/garran/ENM-GARRAN-IDLE-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.garran.sheet.walk": {
+      "url": "art/garran-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 374,
+        "cells": [
+          {
+            "x0": 39,
+            "y0": 12,
+            "x1": 316,
+            "foot": 372
+          },
+          {
+            "x0": 30,
+            "y0": 18,
+            "x1": 277,
+            "foot": 372
+          },
+          {
+            "x0": 31,
+            "y0": 5,
+            "x1": 315,
+            "foot": 371
+          },
+          {
+            "x0": 38,
+            "y0": 10,
+            "x1": 324,
+            "foot": 375
+          },
+          {
+            "x0": 30,
+            "y0": 19,
+            "x1": 269,
+            "foot": 374
+          },
+          {
+            "x0": 31,
+            "y0": 3,
+            "x1": 318,
+            "foot": 374
+          }
+        ]
+      },
+      "provenance": {
+        "source": "enemies/garran/ENM-GARRAN-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.garran.sheet.winch": {
+      "url": "art/garran-winch.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 375,
+        "cells": [
+          {
+            "x0": 44,
+            "y0": 34,
+            "x1": 351,
+            "foot": 375
+          },
+          {
+            "x0": 5,
+            "y0": 36,
+            "x1": 354,
+            "foot": 374
+          },
+          {
+            "x0": 35,
+            "y0": 8,
+            "x1": 359,
+            "foot": 375
+          },
+          {
+            "x0": 55,
+            "y0": 4,
+            "x1": 310,
+            "foot": 375
+          },
+          {
+            "x0": 20,
+            "y0": 33,
+            "x1": 343,
+            "foot": 375
+          },
+          {
+            "x0": 94,
+            "y0": 54,
+            "x1": 284,
+            "foot": 375
+          }
+        ],
+        "scale": 0.95
+      },
+      "provenance": {
+        "source": "enemies/garran/ENM-GARRAN-WINCH.png",
+        "tool": "Codex image generation"
       }
     },
     "enemy.glassrunner.sheet.air": {
@@ -5857,6 +7151,285 @@
         "edits": "75 %"
       }
     },
+    "enemy.rider3.sheet.foot": {
+      "url": "art/rider3-foot.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 360,
+        "cells": [
+          {
+            "x0": 102,
+            "y0": 24,
+            "x1": 287,
+            "foot": 362
+          },
+          {
+            "x0": 37,
+            "y0": 13,
+            "x1": 355,
+            "foot": 360
+          },
+          {
+            "x0": 72,
+            "y0": 39,
+            "x1": 294,
+            "foot": 360
+          },
+          {
+            "x0": 21,
+            "y0": 204,
+            "x1": 369,
+            "foot": 334
+          },
+          {
+            "x0": 44,
+            "y0": 112,
+            "x1": 341,
+            "foot": 334
+          },
+          {
+            "x0": 85,
+            "y0": 15,
+            "x1": 311,
+            "foot": 343
+          }
+        ],
+        "scale": 0.88
+      },
+      "provenance": {
+        "source": "enemies/rider3/ENM-RIDER3-FOOT.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.rider3.sheet.foot-flee": {
+      "url": "art/rider3-foot-flee.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 365,
+        "cells": [
+          {
+            "x0": 44,
+            "y0": 47,
+            "x1": 326,
+            "foot": 365
+          },
+          {
+            "x0": 40,
+            "y0": 44,
+            "x1": 324,
+            "foot": 365
+          },
+          {
+            "x0": 41,
+            "y0": 25,
+            "x1": 355,
+            "foot": 327
+          },
+          {
+            "x0": 50,
+            "y0": 37,
+            "x1": 345,
+            "foot": 365
+          },
+          {
+            "x0": 48,
+            "y0": 37,
+            "x1": 338,
+            "foot": 365
+          },
+          {
+            "x0": 37,
+            "y0": 23,
+            "x1": 370,
+            "foot": 320
+          }
+        ],
+        "scale": 0.84
+      },
+      "provenance": {
+        "source": "enemies/rider3/ENM-RIDER3-FOOT-FLEE.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.rider3.sheet.foot-walk": {
+      "url": "art/rider3-foot-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 368,
+        "cells": [
+          {
+            "x0": 61,
+            "y0": 19,
+            "x1": 327,
+            "foot": 367
+          },
+          {
+            "x0": 58,
+            "y0": 23,
+            "x1": 301,
+            "foot": 368
+          },
+          {
+            "x0": 63,
+            "y0": 9,
+            "x1": 296,
+            "foot": 367
+          },
+          {
+            "x0": 62,
+            "y0": 22,
+            "x1": 318,
+            "foot": 368
+          },
+          {
+            "x0": 57,
+            "y0": 28,
+            "x1": 301,
+            "foot": 368
+          },
+          {
+            "x0": 62,
+            "y0": 10,
+            "x1": 296,
+            "foot": 367
+          }
+        ],
+        "scale": 0.84
+      },
+      "provenance": {
+        "source": "enemies/rider3/ENM-RIDER3-FOOT-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.rider3.sheet.mount-attack": {
+      "url": "art/rider3-mount-attack.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 370,
+        "cells": [
+          {
+            "x0": 54,
+            "y0": 7,
+            "x1": 511,
+            "foot": 371
+          },
+          {
+            "x0": 45,
+            "y0": 15,
+            "x1": 511,
+            "foot": 370
+          },
+          {
+            "x0": 40,
+            "y0": 6,
+            "x1": 511,
+            "foot": 363
+          },
+          {
+            "x0": 30,
+            "y0": 6,
+            "x1": 505,
+            "foot": 365
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "enemies/rider3/ENM-RIDER3-ATTACK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "enemy.rider3.sheet.mount-disengage": {
+      "url": "art/rider3-mount-disengage.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 369,
+        "cells": [
+          {
+            "x0": 45,
+            "y0": 12,
+            "x1": 515,
+            "foot": 369
+          },
+          {
+            "x0": 28,
+            "y0": 23,
+            "x1": 530,
+            "foot": 370
+          },
+          {
+            "x0": 51,
+            "y0": 28,
+            "x1": 539,
+            "foot": 358
+          },
+          {
+            "x0": 128,
+            "y0": 24,
+            "x1": 452,
+            "foot": 364
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "enemies/rider3/ENM-RIDER3-DISENGAGE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "enemy.rider3.sheet.mount-ride": {
+      "url": "art/rider3-mount-ride.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 368,
+        "cells": [
+          {
+            "x0": 45,
+            "y0": 4,
+            "x1": 549,
+            "foot": 368
+          },
+          {
+            "x0": 85,
+            "y0": 2,
+            "x1": 425,
+            "foot": 376
+          },
+          {
+            "x0": 100,
+            "y0": 4,
+            "x1": 479,
+            "foot": 361
+          },
+          {
+            "x0": 109,
+            "y0": 3,
+            "x1": 437,
+            "foot": 362
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "enemies/rider3/ENM-RIDER3-RIDE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "enemy.runner.sheet.air": {
       "url": "art/runner-air.webp",
       "sheet": {
@@ -7056,6 +8629,266 @@
         "edits": "75 %"
       }
     },
+    "enemy.stalker.sheet.feint": {
+      "url": "art/stalker-feint.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 367,
+        "cells": [
+          {
+            "x0": 58,
+            "y0": 83,
+            "x1": 300,
+            "foot": 367
+          },
+          {
+            "x0": 40,
+            "y0": 54,
+            "x1": 364,
+            "foot": 367
+          },
+          {
+            "x0": 75,
+            "y0": 9,
+            "x1": 308,
+            "foot": 368
+          },
+          {
+            "x0": 37,
+            "y0": 42,
+            "x1": 364,
+            "foot": 354
+          },
+          {
+            "x0": 11,
+            "y0": 28,
+            "x1": 369,
+            "foot": 357
+          },
+          {
+            "x0": 71,
+            "y0": 151,
+            "x1": 296,
+            "foot": 355
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "enemies/stalker/ENM-STALKER-FEINT.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.stalker.sheet.flee": {
+      "url": "art/stalker-flee.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 370,
+        "cells": [
+          {
+            "x0": 46,
+            "y0": 13,
+            "x1": 337,
+            "foot": 370
+          },
+          {
+            "x0": 33,
+            "y0": 13,
+            "x1": 318,
+            "foot": 370
+          },
+          {
+            "x0": 18,
+            "y0": 4,
+            "x1": 367,
+            "foot": 317
+          },
+          {
+            "x0": 38,
+            "y0": 13,
+            "x1": 335,
+            "foot": 373
+          },
+          {
+            "x0": 36,
+            "y0": 10,
+            "x1": 309,
+            "foot": 370
+          },
+          {
+            "x0": 18,
+            "y0": 1,
+            "x1": 368,
+            "foot": 306
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "enemies/stalker/ENM-STALKER-FLEE.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.stalker.sheet.hit": {
+      "url": "art/stalker-hit.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 329,
+        "cells": [
+          {
+            "x0": 89,
+            "y0": 47,
+            "x1": 324,
+            "foot": 367
+          },
+          {
+            "x0": 47,
+            "y0": 63,
+            "x1": 298,
+            "foot": 368
+          },
+          {
+            "x0": 67,
+            "y0": 31,
+            "x1": 313,
+            "foot": 306
+          },
+          {
+            "x0": 25,
+            "y0": 201,
+            "x1": 361,
+            "foot": 329
+          },
+          {
+            "x0": 43,
+            "y0": 93,
+            "x1": 353,
+            "foot": 328
+          },
+          {
+            "x0": 23,
+            "y0": 39,
+            "x1": 338,
+            "foot": 328
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "enemies/stalker/ENM-STALKER-HIT.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.stalker.sheet.idle-walk": {
+      "url": "art/stalker-idle-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 372,
+        "cells": [
+          {
+            "x0": 147,
+            "y0": 12,
+            "x1": 273,
+            "foot": 373
+          },
+          {
+            "x0": 119,
+            "y0": 11,
+            "x1": 264,
+            "foot": 373
+          },
+          {
+            "x0": 79,
+            "y0": 17,
+            "x1": 294,
+            "foot": 372
+          },
+          {
+            "x0": 95,
+            "y0": 18,
+            "x1": 302,
+            "foot": 363
+          },
+          {
+            "x0": 85,
+            "y0": 31,
+            "x1": 312,
+            "foot": 363
+          },
+          {
+            "x0": 55,
+            "y0": 107,
+            "x1": 278,
+            "foot": 353
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "enemies/stalker/ENM-STALKER-IDLE-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.stalker.sheet.walk": {
+      "url": "art/stalker-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 369,
+        "cells": [
+          {
+            "x0": 62,
+            "y0": 23,
+            "x1": 286,
+            "foot": 361
+          },
+          {
+            "x0": 85,
+            "y0": 31,
+            "x1": 272,
+            "foot": 361
+          },
+          {
+            "x0": 65,
+            "y0": 9,
+            "x1": 263,
+            "foot": 360
+          },
+          {
+            "x0": 65,
+            "y0": 29,
+            "x1": 298,
+            "foot": 369
+          },
+          {
+            "x0": 76,
+            "y0": 43,
+            "x1": 278,
+            "foot": 369
+          },
+          {
+            "x0": 62,
+            "y0": 13,
+            "x1": 274,
+            "foot": 370
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "enemies/stalker/ENM-STALKER-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
     "enemy.trainer.sheet.attack": {
       "url": "art/trainer-attack.webp",
       "sheet": {
@@ -7295,6 +9128,266 @@
             "foot": 354
           }
         ]
+      }
+    },
+    "enemy.trapper.sheet.flee": {
+      "url": "art/trapper-flee.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 369,
+        "cells": [
+          {
+            "x0": 63,
+            "y0": 29,
+            "x1": 303,
+            "foot": 369
+          },
+          {
+            "x0": 90,
+            "y0": 27,
+            "x1": 272,
+            "foot": 369
+          },
+          {
+            "x0": 50,
+            "y0": 16,
+            "x1": 344,
+            "foot": 338
+          },
+          {
+            "x0": 59,
+            "y0": 29,
+            "x1": 320,
+            "foot": 369
+          },
+          {
+            "x0": 88,
+            "y0": 26,
+            "x1": 277,
+            "foot": 369
+          },
+          {
+            "x0": 48,
+            "y0": 16,
+            "x1": 347,
+            "foot": 328
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "enemies/trapper/ENM-TRAPPER-FLEE.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.trapper.sheet.hit": {
+      "url": "art/trapper-hit.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 363,
+        "cells": [
+          {
+            "x0": 101,
+            "y0": 21,
+            "x1": 290,
+            "foot": 376
+          },
+          {
+            "x0": 32,
+            "y0": 34,
+            "x1": 308,
+            "foot": 376
+          },
+          {
+            "x0": 25,
+            "y0": 11,
+            "x1": 314,
+            "foot": 327
+          },
+          {
+            "x0": 6,
+            "y0": 203,
+            "x1": 378,
+            "foot": 363
+          },
+          {
+            "x0": 68,
+            "y0": 81,
+            "x1": 314,
+            "foot": 357
+          },
+          {
+            "x0": 69,
+            "y0": 63,
+            "x1": 353,
+            "foot": 350
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "enemies/trapper/ENM-TRAPPER-HIT.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.trapper.sheet.idle-walk": {
+      "url": "art/trapper-idle-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 374,
+        "cells": [
+          {
+            "x0": 109,
+            "y0": 13,
+            "x1": 275,
+            "foot": 375
+          },
+          {
+            "x0": 93,
+            "y0": 15,
+            "x1": 264,
+            "foot": 374
+          },
+          {
+            "x0": 96,
+            "y0": 18,
+            "x1": 254,
+            "foot": 374
+          },
+          {
+            "x0": 107,
+            "y0": 23,
+            "x1": 291,
+            "foot": 366
+          },
+          {
+            "x0": 50,
+            "y0": 87,
+            "x1": 338,
+            "foot": 364
+          },
+          {
+            "x0": 114,
+            "y0": 10,
+            "x1": 279,
+            "foot": 367
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "enemies/trapper/ENM-TRAPPER-IDLE-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.trapper.sheet.rope": {
+      "url": "art/trapper-rope.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 369,
+        "cells": [
+          {
+            "x0": 83,
+            "y0": 7,
+            "x1": 289,
+            "foot": 370
+          },
+          {
+            "x0": 13,
+            "y0": 43,
+            "x1": 379,
+            "foot": 370
+          },
+          {
+            "x0": 59,
+            "y0": 66,
+            "x1": 339,
+            "foot": 369
+          },
+          {
+            "x0": 55,
+            "y0": 26,
+            "x1": 337,
+            "foot": 363
+          },
+          {
+            "x0": 51,
+            "y0": 33,
+            "x1": 311,
+            "foot": 363
+          },
+          {
+            "x0": 103,
+            "y0": 10,
+            "x1": 266,
+            "foot": 363
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "enemies/trapper/ENM-TRAPPER-ROPE.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "enemy.trapper.sheet.walk": {
+      "url": "art/trapper-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 370,
+        "cells": [
+          {
+            "x0": 118,
+            "y0": 10,
+            "x1": 291,
+            "foot": 369
+          },
+          {
+            "x0": 104,
+            "y0": 12,
+            "x1": 260,
+            "foot": 370
+          },
+          {
+            "x0": 101,
+            "y0": 8,
+            "x1": 283,
+            "foot": 366
+          },
+          {
+            "x0": 107,
+            "y0": 13,
+            "x1": 297,
+            "foot": 370
+          },
+          {
+            "x0": 114,
+            "y0": 22,
+            "x1": 272,
+            "foot": 370
+          },
+          {
+            "x0": 105,
+            "y0": 7,
+            "x1": 276,
+            "foot": 366
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "enemies/trapper/ENM-TRAPPER-WALK.png",
+        "tool": "Codex image generation"
       }
     },
     "hero.fire.pose.aerial.ember-knee": {
@@ -8058,6 +10151,110 @@
         "scale": 0.89
       }
     },
+    "hero.fire.sheet.axe": {
+      "url": "art/fire-axe.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 350,
+        "cells": [
+          {
+            "x0": 84,
+            "y0": 109,
+            "x1": 309,
+            "foot": 350
+          },
+          {
+            "x0": 27,
+            "y0": 28,
+            "x1": 247,
+            "foot": 350
+          },
+          {
+            "x0": 10,
+            "y0": 38,
+            "x1": 333,
+            "foot": 350
+          },
+          {
+            "x0": 67,
+            "y0": 28,
+            "x1": 289,
+            "foot": 350
+          },
+          {
+            "x0": 10,
+            "y0": 35,
+            "x1": 240,
+            "foot": 350
+          },
+          {
+            "x0": 6,
+            "y0": 44,
+            "x1": 378,
+            "foot": 349
+          }
+        ]
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-AXE.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.fire.sheet.axe-walk": {
+      "url": "art/fire-axe-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 372,
+        "cells": [
+          {
+            "x0": 55,
+            "y0": 25,
+            "x1": 317,
+            "foot": 373
+          },
+          {
+            "x0": 88,
+            "y0": 23,
+            "x1": 275,
+            "foot": 372
+          },
+          {
+            "x0": 86,
+            "y0": 12,
+            "x1": 273,
+            "foot": 371
+          },
+          {
+            "x0": 51,
+            "y0": 26,
+            "x1": 319,
+            "foot": 373
+          },
+          {
+            "x0": 86,
+            "y0": 23,
+            "x1": 280,
+            "foot": 372
+          },
+          {
+            "x0": 69,
+            "y0": 12,
+            "x1": 284,
+            "foot": 372
+          }
+        ],
+        "scale": 0.84
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-AXE-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "hero.fire.sheet.breaker-pickup": {
       "url": "art/fire-breaker-pickup.webp",
       "sheet": {
@@ -8288,6 +10485,110 @@
         ]
       }
     },
+    "hero.fire.sheet.hammer": {
+      "url": "art/fire-hammer.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 353,
+        "cells": [
+          {
+            "x0": 77,
+            "y0": 130,
+            "x1": 312,
+            "foot": 354
+          },
+          {
+            "x0": 57,
+            "y0": 71,
+            "x1": 286,
+            "foot": 354
+          },
+          {
+            "x0": 41,
+            "y0": 12,
+            "x1": 274,
+            "foot": 353
+          },
+          {
+            "x0": 64,
+            "y0": 69,
+            "x1": 254,
+            "foot": 348
+          },
+          {
+            "x0": 11,
+            "y0": 60,
+            "x1": 337,
+            "foot": 347
+          },
+          {
+            "x0": 6,
+            "y0": 17,
+            "x1": 378,
+            "foot": 348
+          }
+        ]
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-HAMMER.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.fire.sheet.hammer-walk": {
+      "url": "art/fire-hammer-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 365,
+        "cells": [
+          {
+            "x0": 64,
+            "y0": 22,
+            "x1": 327,
+            "foot": 365
+          },
+          {
+            "x0": 93,
+            "y0": 19,
+            "x1": 314,
+            "foot": 365
+          },
+          {
+            "x0": 84,
+            "y0": 14,
+            "x1": 307,
+            "foot": 365
+          },
+          {
+            "x0": 55,
+            "y0": 23,
+            "x1": 332,
+            "foot": 365
+          },
+          {
+            "x0": 86,
+            "y0": 18,
+            "x1": 317,
+            "foot": 365
+          },
+          {
+            "x0": 73,
+            "y0": 13,
+            "x1": 309,
+            "foot": 366
+          }
+        ],
+        "scale": 0.86
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-HAMMER-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "hero.fire.sheet.handwheel": {
       "url": "art/fire-handwheel.webp",
       "sheet": {
@@ -8480,6 +10781,356 @@
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-HEAVY-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.fire.sheet.hike": {
+      "url": "art/fire-hike.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 340,
+        "cells": [
+          {
+            "x0": 73,
+            "y0": 129,
+            "x1": 316,
+            "foot": 352
+          },
+          {
+            "x0": 36,
+            "y0": 45,
+            "x1": 263,
+            "foot": 341
+          },
+          {
+            "x0": 6,
+            "y0": 63,
+            "x1": 378,
+            "foot": 340
+          },
+          {
+            "x0": 32,
+            "y0": 78,
+            "x1": 346,
+            "foot": 338
+          },
+          {
+            "x0": 23,
+            "y0": 24,
+            "x1": 247,
+            "foot": 339
+          },
+          {
+            "x0": 6,
+            "y0": 16,
+            "x1": 378,
+            "foot": 339
+          }
+        ]
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-STAFF.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.fire.sheet.hike-walk": {
+      "url": "art/fire-hike-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 368,
+        "cells": [
+          {
+            "x0": 69,
+            "y0": 24,
+            "x1": 318,
+            "foot": 366
+          },
+          {
+            "x0": 89,
+            "y0": 23,
+            "x1": 314,
+            "foot": 366
+          },
+          {
+            "x0": 92,
+            "y0": 13,
+            "x1": 307,
+            "foot": 365
+          },
+          {
+            "x0": 64,
+            "y0": 24,
+            "x1": 319,
+            "foot": 368
+          },
+          {
+            "x0": 90,
+            "y0": 27,
+            "x1": 314,
+            "foot": 368
+          },
+          {
+            "x0": 93,
+            "y0": 13,
+            "x1": 309,
+            "foot": 368
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-STAFF-WALK-v2.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.fire.sheet.horse-attack": {
+      "url": "art/fire-horse-attack.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 367,
+        "cells": [
+          {
+            "x0": 65,
+            "y0": 7,
+            "x1": 502,
+            "foot": 367
+          },
+          {
+            "x0": 65,
+            "y0": 19,
+            "x1": 502,
+            "foot": 366
+          },
+          {
+            "x0": 65,
+            "y0": 6,
+            "x1": 502,
+            "foot": 367
+          },
+          {
+            "x0": 65,
+            "y0": 6,
+            "x1": 502,
+            "foot": 365
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-HORSE-ATTACK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.fire.sheet.horse-defense": {
+      "url": "art/fire-horse-defense.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 360,
+        "cells": [
+          {
+            "x0": 109,
+            "y0": 29,
+            "x1": 475,
+            "foot": 351
+          },
+          {
+            "x0": 74,
+            "y0": 9,
+            "x1": 473,
+            "foot": 314
+          },
+          {
+            "x0": 129,
+            "y0": 44,
+            "x1": 469,
+            "foot": 363
+          },
+          {
+            "x0": 90,
+            "y0": 5,
+            "x1": 451,
+            "foot": 360
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-HORSE-DEFENSE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.fire.sheet.horse-ride": {
+      "url": "art/fire-horse-ride.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 368,
+        "cells": [
+          {
+            "x0": 85,
+            "y0": 8,
+            "x1": 491,
+            "foot": 368
+          },
+          {
+            "x0": 66,
+            "y0": 11,
+            "x1": 459,
+            "foot": 367
+          },
+          {
+            "x0": 153,
+            "y0": 6,
+            "x1": 411,
+            "foot": 370
+          },
+          {
+            "x0": 88,
+            "y0": 7,
+            "x1": 460,
+            "foot": 365
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-HORSE-RIDE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.fire.sheet.horse-special": {
+      "url": "art/fire-horse-special.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 365,
+        "cells": [
+          {
+            "x0": 84,
+            "y0": 5,
+            "x1": 478,
+            "foot": 365
+          },
+          {
+            "x0": 62,
+            "y0": 26,
+            "x1": 535,
+            "foot": 359
+          },
+          {
+            "x0": 67,
+            "y0": 12,
+            "x1": 513,
+            "foot": 363
+          },
+          {
+            "x0": 75,
+            "y0": 7,
+            "x1": 478,
+            "foot": 373
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-HORSE-SPECIAL.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.fire.sheet.horse-stability": {
+      "url": "art/fire-horse-stability.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 365,
+        "cells": [
+          {
+            "x0": 85,
+            "y0": 17,
+            "x1": 473,
+            "foot": 365
+          },
+          {
+            "x0": 123,
+            "y0": 10,
+            "x1": 424,
+            "foot": 365
+          },
+          {
+            "x0": 56,
+            "y0": 35,
+            "x1": 493,
+            "foot": 358
+          },
+          {
+            "x0": 107,
+            "y0": 14,
+            "x1": 494,
+            "foot": 358
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-HORSE-STABILITY.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.fire.sheet.horse-ultimate": {
+      "url": "art/fire-horse-ultimate.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 135,
+            "y0": 10,
+            "x1": 440,
+            "foot": 362
+          },
+          {
+            "x0": 32,
+            "y0": 21,
+            "x1": 481,
+            "foot": 347
+          },
+          {
+            "x0": 69,
+            "y0": 10,
+            "x1": 484,
+            "foot": 350
+          },
+          {
+            "x0": 94,
+            "y0": 6,
+            "x1": 454,
+            "foot": 354
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-HORSE-ULTIMATE.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }
@@ -10124,6 +12775,111 @@
         ]
       }
     },
+    "hero.mountain.sheet.axe": {
+      "url": "art/mountain-axe.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 362,
+        "cells": [
+          {
+            "x0": 78,
+            "y0": 107,
+            "x1": 334,
+            "foot": 364
+          },
+          {
+            "x0": 37,
+            "y0": 37,
+            "x1": 263,
+            "foot": 362
+          },
+          {
+            "x0": 11,
+            "y0": 39,
+            "x1": 340,
+            "foot": 363
+          },
+          {
+            "x0": 62,
+            "y0": 33,
+            "x1": 310,
+            "foot": 360
+          },
+          {
+            "x0": 11,
+            "y0": 38,
+            "x1": 267,
+            "foot": 360
+          },
+          {
+            "x0": 5,
+            "y0": 40,
+            "x1": 378,
+            "foot": 360
+          }
+        ],
+        "scale": 0.92
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-AXE.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.mountain.sheet.axe-walk": {
+      "url": "art/mountain-axe-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 377,
+        "cells": [
+          {
+            "x0": 52,
+            "y0": 12,
+            "x1": 345,
+            "foot": 377
+          },
+          {
+            "x0": 92,
+            "y0": 12,
+            "x1": 311,
+            "foot": 377
+          },
+          {
+            "x0": 102,
+            "y0": 12,
+            "x1": 311,
+            "foot": 377
+          },
+          {
+            "x0": 39,
+            "y0": 12,
+            "x1": 346,
+            "foot": 376
+          },
+          {
+            "x0": 81,
+            "y0": 12,
+            "x1": 311,
+            "foot": 377
+          },
+          {
+            "x0": 102,
+            "y0": 12,
+            "x1": 311,
+            "foot": 377
+          }
+        ],
+        "scale": 0.82
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-AXE-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "hero.mountain.sheet.breaker-pickup": {
       "url": "art/mountain-breaker-pickup.webp",
       "sheet": {
@@ -10354,6 +13110,110 @@
         "scale": 0.88
       }
     },
+    "hero.mountain.sheet.hammer": {
+      "url": "art/mountain-hammer.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 364,
+        "cells": [
+          {
+            "x0": 67,
+            "y0": 110,
+            "x1": 312,
+            "foot": 366
+          },
+          {
+            "x0": 49,
+            "y0": 47,
+            "x1": 299,
+            "foot": 364
+          },
+          {
+            "x0": 34,
+            "y0": 11,
+            "x1": 284,
+            "foot": 364
+          },
+          {
+            "x0": 56,
+            "y0": 86,
+            "x1": 288,
+            "foot": 358
+          },
+          {
+            "x0": 10,
+            "y0": 62,
+            "x1": 344,
+            "foot": 357
+          },
+          {
+            "x0": 6,
+            "y0": 62,
+            "x1": 378,
+            "foot": 358
+          }
+        ]
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-HAMMER.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.mountain.sheet.hammer-walk": {
+      "url": "art/mountain-hammer-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 373,
+        "cells": [
+          {
+            "x0": 46,
+            "y0": 19,
+            "x1": 319,
+            "foot": 373
+          },
+          {
+            "x0": 89,
+            "y0": 20,
+            "x1": 320,
+            "foot": 373
+          },
+          {
+            "x0": 103,
+            "y0": 11,
+            "x1": 325,
+            "foot": 372
+          },
+          {
+            "x0": 45,
+            "y0": 18,
+            "x1": 340,
+            "foot": 373
+          },
+          {
+            "x0": 92,
+            "y0": 21,
+            "x1": 340,
+            "foot": 375
+          },
+          {
+            "x0": 109,
+            "y0": 9,
+            "x1": 337,
+            "foot": 374
+          }
+        ],
+        "scale": 0.82
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-HAMMER-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "hero.mountain.sheet.handwheel": {
       "url": "art/mountain-handwheel.webp",
       "sheet": {
@@ -10547,6 +13407,356 @@
       },
       "provenance": {
         "source": "heroes/mountain/HERO-MTN-HEAVY-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.mountain.sheet.hike": {
+      "url": "art/mountain-hike.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 347,
+        "cells": [
+          {
+            "x0": 59,
+            "y0": 95,
+            "x1": 322,
+            "foot": 343
+          },
+          {
+            "x0": 25,
+            "y0": 49,
+            "x1": 278,
+            "foot": 347
+          },
+          {
+            "x0": 3,
+            "y0": 64,
+            "x1": 381,
+            "foot": 346
+          },
+          {
+            "x0": 19,
+            "y0": 73,
+            "x1": 328,
+            "foot": 348
+          },
+          {
+            "x0": 10,
+            "y0": 28,
+            "x1": 273,
+            "foot": 349
+          },
+          {
+            "x0": 5,
+            "y0": 60,
+            "x1": 379,
+            "foot": 347
+          }
+        ]
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-STAFF.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.mountain.sheet.hike-walk": {
+      "url": "art/mountain-hike-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 375,
+        "cells": [
+          {
+            "x0": 49,
+            "y0": 19,
+            "x1": 323,
+            "foot": 376
+          },
+          {
+            "x0": 80,
+            "y0": 15,
+            "x1": 308,
+            "foot": 375
+          },
+          {
+            "x0": 93,
+            "y0": 5,
+            "x1": 308,
+            "foot": 374
+          },
+          {
+            "x0": 49,
+            "y0": 12,
+            "x1": 326,
+            "foot": 374
+          },
+          {
+            "x0": 76,
+            "y0": 15,
+            "x1": 312,
+            "foot": 375
+          },
+          {
+            "x0": 98,
+            "y0": 5,
+            "x1": 311,
+            "foot": 375
+          }
+        ],
+        "scale": 0.83
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-STAFF-WALK-v2.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.mountain.sheet.horse-attack": {
+      "url": "art/mountain-horse-attack.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 371,
+        "cells": [
+          {
+            "x0": 110,
+            "y0": 10,
+            "x1": 470,
+            "foot": 371
+          },
+          {
+            "x0": 76,
+            "y0": 13,
+            "x1": 437,
+            "foot": 371
+          },
+          {
+            "x0": 110,
+            "y0": 9,
+            "x1": 469,
+            "foot": 370
+          },
+          {
+            "x0": 82,
+            "y0": 14,
+            "x1": 450,
+            "foot": 369
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-HORSE-ATTACK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.mountain.sheet.horse-defense": {
+      "url": "art/mountain-horse-defense.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 364,
+        "cells": [
+          {
+            "x0": 98,
+            "y0": 23,
+            "x1": 472,
+            "foot": 362
+          },
+          {
+            "x0": 55,
+            "y0": 12,
+            "x1": 471,
+            "foot": 327
+          },
+          {
+            "x0": 120,
+            "y0": 36,
+            "x1": 464,
+            "foot": 369
+          },
+          {
+            "x0": 82,
+            "y0": 5,
+            "x1": 473,
+            "foot": 364
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-HORSE-DEFENSE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.mountain.sheet.horse-ride": {
+      "url": "art/mountain-horse-ride.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 364,
+        "cells": [
+          {
+            "x0": 105,
+            "y0": 12,
+            "x1": 487,
+            "foot": 364
+          },
+          {
+            "x0": 79,
+            "y0": 14,
+            "x1": 478,
+            "foot": 364
+          },
+          {
+            "x0": 161,
+            "y0": 10,
+            "x1": 434,
+            "foot": 371
+          },
+          {
+            "x0": 109,
+            "y0": 4,
+            "x1": 458,
+            "foot": 364
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-HORSE-RIDE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.mountain.sheet.horse-special": {
+      "url": "art/mountain-horse-special.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 371,
+        "cells": [
+          {
+            "x0": 113,
+            "y0": 10,
+            "x1": 477,
+            "foot": 371
+          },
+          {
+            "x0": 112,
+            "y0": 10,
+            "x1": 449,
+            "foot": 377
+          },
+          {
+            "x0": 111,
+            "y0": 9,
+            "x1": 475,
+            "foot": 369
+          },
+          {
+            "x0": 105,
+            "y0": 8,
+            "x1": 470,
+            "foot": 369
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-HORSE-SPECIAL.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.mountain.sheet.horse-stability": {
+      "url": "art/mountain-horse-stability.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 356,
+        "cells": [
+          {
+            "x0": 95,
+            "y0": 27,
+            "x1": 477,
+            "foot": 357
+          },
+          {
+            "x0": 99,
+            "y0": 28,
+            "x1": 426,
+            "foot": 356
+          },
+          {
+            "x0": 53,
+            "y0": 47,
+            "x1": 484,
+            "foot": 345
+          },
+          {
+            "x0": 84,
+            "y0": 21,
+            "x1": 475,
+            "foot": 343
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-HORSE-STABILITY.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.mountain.sheet.horse-ultimate": {
+      "url": "art/mountain-horse-ultimate.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 364,
+        "cells": [
+          {
+            "x0": 124,
+            "y0": 10,
+            "x1": 440,
+            "foot": 364
+          },
+          {
+            "x0": 56,
+            "y0": 30,
+            "x1": 490,
+            "foot": 364
+          },
+          {
+            "x0": 101,
+            "y0": 5,
+            "x1": 473,
+            "foot": 361
+          },
+          {
+            "x0": 99,
+            "y0": 7,
+            "x1": 472,
+            "foot": 361
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-HORSE-ULTIMATE.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }
@@ -12187,6 +15397,111 @@
         "scale": 0.92
       }
     },
+    "hero.river.sheet.axe": {
+      "url": "art/river-axe.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 362,
+        "cells": [
+          {
+            "x0": 85,
+            "y0": 101,
+            "x1": 314,
+            "foot": 364
+          },
+          {
+            "x0": 61,
+            "y0": 31,
+            "x1": 279,
+            "foot": 362
+          },
+          {
+            "x0": 18,
+            "y0": 45,
+            "x1": 352,
+            "foot": 362
+          },
+          {
+            "x0": 73,
+            "y0": 34,
+            "x1": 295,
+            "foot": 360
+          },
+          {
+            "x0": 40,
+            "y0": 36,
+            "x1": 273,
+            "foot": 360
+          },
+          {
+            "x0": 6,
+            "y0": 42,
+            "x1": 378,
+            "foot": 360
+          }
+        ],
+        "scale": 0.93
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-AXE.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.river.sheet.axe-walk": {
+      "url": "art/river-axe-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 376,
+        "cells": [
+          {
+            "x0": 53,
+            "y0": 20,
+            "x1": 301,
+            "foot": 375
+          },
+          {
+            "x0": 85,
+            "y0": 26,
+            "x1": 294,
+            "foot": 376
+          },
+          {
+            "x0": 82,
+            "y0": 8,
+            "x1": 293,
+            "foot": 376
+          },
+          {
+            "x0": 51,
+            "y0": 18,
+            "x1": 313,
+            "foot": 376
+          },
+          {
+            "x0": 85,
+            "y0": 25,
+            "x1": 302,
+            "foot": 377
+          },
+          {
+            "x0": 67,
+            "y0": 7,
+            "x1": 302,
+            "foot": 376
+          }
+        ],
+        "scale": 0.82
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-AXE-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "hero.river.sheet.breaker-pickup": {
       "url": "art/river-breaker-pickup.webp",
       "sheet": {
@@ -12417,6 +15732,110 @@
         "scale": 0.94
       }
     },
+    "hero.river.sheet.hammer": {
+      "url": "art/river-hammer.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 371,
+        "cells": [
+          {
+            "x0": 92,
+            "y0": 126,
+            "x1": 319,
+            "foot": 375
+          },
+          {
+            "x0": 66,
+            "y0": 77,
+            "x1": 312,
+            "foot": 372
+          },
+          {
+            "x0": 67,
+            "y0": 15,
+            "x1": 297,
+            "foot": 371
+          },
+          {
+            "x0": 59,
+            "y0": 79,
+            "x1": 278,
+            "foot": 364
+          },
+          {
+            "x0": 11,
+            "y0": 67,
+            "x1": 350,
+            "foot": 360
+          },
+          {
+            "x0": 6,
+            "y0": 66,
+            "x1": 378,
+            "foot": 361
+          }
+        ]
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-HAMMER.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.river.sheet.hammer-walk": {
+      "url": "art/river-hammer-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 365,
+        "cells": [
+          {
+            "x0": 66,
+            "y0": 31,
+            "x1": 328,
+            "foot": 364
+          },
+          {
+            "x0": 94,
+            "y0": 24,
+            "x1": 314,
+            "foot": 366
+          },
+          {
+            "x0": 70,
+            "y0": 9,
+            "x1": 309,
+            "foot": 365
+          },
+          {
+            "x0": 62,
+            "y0": 29,
+            "x1": 331,
+            "foot": 364
+          },
+          {
+            "x0": 89,
+            "y0": 23,
+            "x1": 317,
+            "foot": 365
+          },
+          {
+            "x0": 67,
+            "y0": 8,
+            "x1": 318,
+            "foot": 363
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-HAMMER-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "hero.river.sheet.handwheel": {
       "url": "art/river-handwheel.webp",
       "sheet": {
@@ -12610,6 +16029,356 @@
       },
       "provenance": {
         "source": "heroes/river/HERO-RIV-HEAVY-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.river.sheet.hike": {
+      "url": "art/river-hike.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 355,
+        "cells": [
+          {
+            "x0": 87,
+            "y0": 125,
+            "x1": 334,
+            "foot": 365
+          },
+          {
+            "x0": 74,
+            "y0": 33,
+            "x1": 293,
+            "foot": 355
+          },
+          {
+            "x0": 17,
+            "y0": 58,
+            "x1": 363,
+            "foot": 355
+          },
+          {
+            "x0": 64,
+            "y0": 86,
+            "x1": 365,
+            "foot": 353
+          },
+          {
+            "x0": 54,
+            "y0": 43,
+            "x1": 293,
+            "foot": 353
+          },
+          {
+            "x0": 6,
+            "y0": 61,
+            "x1": 378,
+            "foot": 352
+          }
+        ]
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-STAFF.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.river.sheet.hike-walk": {
+      "url": "art/river-hike-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 372,
+        "cells": [
+          {
+            "x0": 79,
+            "y0": 19,
+            "x1": 334,
+            "foot": 373
+          },
+          {
+            "x0": 77,
+            "y0": 27,
+            "x1": 304,
+            "foot": 373
+          },
+          {
+            "x0": 58,
+            "y0": 9,
+            "x1": 294,
+            "foot": 372
+          },
+          {
+            "x0": 79,
+            "y0": 21,
+            "x1": 336,
+            "foot": 371
+          },
+          {
+            "x0": 73,
+            "y0": 31,
+            "x1": 311,
+            "foot": 371
+          },
+          {
+            "x0": 53,
+            "y0": 10,
+            "x1": 297,
+            "foot": 369
+          }
+        ],
+        "scale": 0.84
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-STAFF-WALK-v2.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.river.sheet.horse-attack": {
+      "url": "art/river-horse-attack.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 366,
+        "cells": [
+          {
+            "x0": 71,
+            "y0": 9,
+            "x1": 504,
+            "foot": 366
+          },
+          {
+            "x0": 71,
+            "y0": 16,
+            "x1": 503,
+            "foot": 366
+          },
+          {
+            "x0": 71,
+            "y0": 8,
+            "x1": 503,
+            "foot": 365
+          },
+          {
+            "x0": 70,
+            "y0": 12,
+            "x1": 503,
+            "foot": 365
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-HORSE-ATTACK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.river.sheet.horse-defense": {
+      "url": "art/river-horse-defense.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 358,
+        "cells": [
+          {
+            "x0": 112,
+            "y0": 50,
+            "x1": 469,
+            "foot": 357
+          },
+          {
+            "x0": 57,
+            "y0": 14,
+            "x1": 453,
+            "foot": 313
+          },
+          {
+            "x0": 132,
+            "y0": 41,
+            "x1": 457,
+            "foot": 358
+          },
+          {
+            "x0": 77,
+            "y0": 4,
+            "x1": 444,
+            "foot": 363
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-HORSE-DEFENSE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.river.sheet.horse-ride": {
+      "url": "art/river-horse-ride.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 361,
+        "cells": [
+          {
+            "x0": 100,
+            "y0": 15,
+            "x1": 477,
+            "foot": 357
+          },
+          {
+            "x0": 49,
+            "y0": 12,
+            "x1": 450,
+            "foot": 361
+          },
+          {
+            "x0": 153,
+            "y0": 7,
+            "x1": 424,
+            "foot": 365
+          },
+          {
+            "x0": 91,
+            "y0": 7,
+            "x1": 443,
+            "foot": 356
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-HORSE-RIDE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.river.sheet.horse-special": {
+      "url": "art/river-horse-special.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 372,
+        "cells": [
+          {
+            "x0": 84,
+            "y0": 14,
+            "x1": 490,
+            "foot": 372
+          },
+          {
+            "x0": 13,
+            "y0": 34,
+            "x1": 509,
+            "foot": 366
+          },
+          {
+            "x0": 91,
+            "y0": 11,
+            "x1": 506,
+            "foot": 372
+          },
+          {
+            "x0": 49,
+            "y0": 6,
+            "x1": 487,
+            "foot": 371
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-HORSE-SPECIAL.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.river.sheet.horse-stability": {
+      "url": "art/river-horse-stability.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 360,
+        "cells": [
+          {
+            "x0": 72,
+            "y0": 15,
+            "x1": 464,
+            "foot": 360
+          },
+          {
+            "x0": 87,
+            "y0": 8,
+            "x1": 442,
+            "foot": 364
+          },
+          {
+            "x0": 23,
+            "y0": 32,
+            "x1": 503,
+            "foot": 355
+          },
+          {
+            "x0": 49,
+            "y0": 8,
+            "x1": 486,
+            "foot": 357
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-HORSE-STABILITY.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.river.sheet.horse-ultimate": {
+      "url": "art/river-horse-ultimate.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 367,
+        "cells": [
+          {
+            "x0": 130,
+            "y0": 9,
+            "x1": 457,
+            "foot": 371
+          },
+          {
+            "x0": 35,
+            "y0": 20,
+            "x1": 498,
+            "foot": 356
+          },
+          {
+            "x0": 49,
+            "y0": 8,
+            "x1": 528,
+            "foot": 365
+          },
+          {
+            "x0": 95,
+            "y0": 5,
+            "x1": 468,
+            "foot": 367
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-HORSE-ULTIMATE.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }
@@ -14256,6 +18025,110 @@
         ]
       }
     },
+    "hero.wind.sheet.axe": {
+      "url": "art/wind-axe.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 360,
+        "cells": [
+          {
+            "x0": 84,
+            "y0": 114,
+            "x1": 300,
+            "foot": 362
+          },
+          {
+            "x0": 51,
+            "y0": 35,
+            "x1": 288,
+            "foot": 361
+          },
+          {
+            "x0": 35,
+            "y0": 36,
+            "x1": 332,
+            "foot": 360
+          },
+          {
+            "x0": 63,
+            "y0": 33,
+            "x1": 317,
+            "foot": 358
+          },
+          {
+            "x0": 41,
+            "y0": 35,
+            "x1": 292,
+            "foot": 357
+          },
+          {
+            "x0": 6,
+            "y0": 36,
+            "x1": 378,
+            "foot": 356
+          }
+        ]
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-AXE.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.wind.sheet.axe-walk": {
+      "url": "art/wind-axe-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 371,
+        "cells": [
+          {
+            "x0": 51,
+            "y0": 20,
+            "x1": 313,
+            "foot": 371
+          },
+          {
+            "x0": 91,
+            "y0": 19,
+            "x1": 291,
+            "foot": 371
+          },
+          {
+            "x0": 103,
+            "y0": 15,
+            "x1": 299,
+            "foot": 371
+          },
+          {
+            "x0": 50,
+            "y0": 22,
+            "x1": 305,
+            "foot": 370
+          },
+          {
+            "x0": 80,
+            "y0": 20,
+            "x1": 294,
+            "foot": 372
+          },
+          {
+            "x0": 81,
+            "y0": 13,
+            "x1": 295,
+            "foot": 370
+          }
+        ],
+        "scale": 0.84
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-AXE-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "hero.wind.sheet.back-throw": {
       "url": "art/wind-back-throw.webp",
       "sheet": {
@@ -14535,6 +18408,110 @@
         ]
       }
     },
+    "hero.wind.sheet.hammer": {
+      "url": "art/wind-hammer.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 377,
+        "cells": [
+          {
+            "x0": 79,
+            "y0": 92,
+            "x1": 322,
+            "foot": 377
+          },
+          {
+            "x0": 46,
+            "y0": 43,
+            "x1": 297,
+            "foot": 377
+          },
+          {
+            "x0": 36,
+            "y0": 11,
+            "x1": 302,
+            "foot": 377
+          },
+          {
+            "x0": 53,
+            "y0": 63,
+            "x1": 299,
+            "foot": 361
+          },
+          {
+            "x0": 10,
+            "y0": 37,
+            "x1": 337,
+            "foot": 361
+          },
+          {
+            "x0": 6,
+            "y0": 42,
+            "x1": 378,
+            "foot": 361
+          }
+        ]
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-HAMMER.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.wind.sheet.hammer-walk": {
+      "url": "art/wind-hammer-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 368,
+        "cells": [
+          {
+            "x0": 63,
+            "y0": 25,
+            "x1": 330,
+            "foot": 367
+          },
+          {
+            "x0": 78,
+            "y0": 21,
+            "x1": 309,
+            "foot": 367
+          },
+          {
+            "x0": 60,
+            "y0": 12,
+            "x1": 310,
+            "foot": 366
+          },
+          {
+            "x0": 54,
+            "y0": 27,
+            "x1": 330,
+            "foot": 369
+          },
+          {
+            "x0": 77,
+            "y0": 20,
+            "x1": 310,
+            "foot": 368
+          },
+          {
+            "x0": 48,
+            "y0": 11,
+            "x1": 311,
+            "foot": 368
+          }
+        ],
+        "scale": 0.84
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-HAMMER-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "hero.wind.sheet.handwheel": {
       "url": "art/wind-handwheel.webp",
       "sheet": {
@@ -14727,6 +18704,356 @@
       },
       "provenance": {
         "source": "heroes/wind/HERO-WND-HEAVY-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.wind.sheet.hike": {
+      "url": "art/wind-hike.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 356,
+        "cells": [
+          {
+            "x0": 70,
+            "y0": 103,
+            "x1": 331,
+            "foot": 364
+          },
+          {
+            "x0": 53,
+            "y0": 33,
+            "x1": 342,
+            "foot": 356
+          },
+          {
+            "x0": 10,
+            "y0": 39,
+            "x1": 374,
+            "foot": 358
+          },
+          {
+            "x0": 41,
+            "y0": 80,
+            "x1": 350,
+            "foot": 352
+          },
+          {
+            "x0": 45,
+            "y0": 26,
+            "x1": 302,
+            "foot": 352
+          },
+          {
+            "x0": 6,
+            "y0": 47,
+            "x1": 378,
+            "foot": 354
+          }
+        ]
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-STAFF.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.wind.sheet.hike-walk": {
+      "url": "art/wind-hike-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 370,
+        "cells": [
+          {
+            "x0": 62,
+            "y0": 17,
+            "x1": 331,
+            "foot": 371
+          },
+          {
+            "x0": 76,
+            "y0": 20,
+            "x1": 315,
+            "foot": 371
+          },
+          {
+            "x0": 65,
+            "y0": 11,
+            "x1": 318,
+            "foot": 370
+          },
+          {
+            "x0": 66,
+            "y0": 14,
+            "x1": 330,
+            "foot": 369
+          },
+          {
+            "x0": 77,
+            "y0": 19,
+            "x1": 318,
+            "foot": 368
+          },
+          {
+            "x0": 56,
+            "y0": 10,
+            "x1": 317,
+            "foot": 368
+          }
+        ],
+        "scale": 0.84
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-STAFF-WALK-v2.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.wind.sheet.horse-attack": {
+      "url": "art/wind-horse-attack.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 375,
+        "cells": [
+          {
+            "x0": 97,
+            "y0": 8,
+            "x1": 472,
+            "foot": 375
+          },
+          {
+            "x0": 97,
+            "y0": 11,
+            "x1": 472,
+            "foot": 375
+          },
+          {
+            "x0": 97,
+            "y0": 3,
+            "x1": 472,
+            "foot": 375
+          },
+          {
+            "x0": 97,
+            "y0": 6,
+            "x1": 472,
+            "foot": 375
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-HORSE-ATTACK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.wind.sheet.horse-defense": {
+      "url": "art/wind-horse-defense.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 362,
+        "cells": [
+          {
+            "x0": 114,
+            "y0": 21,
+            "x1": 472,
+            "foot": 362
+          },
+          {
+            "x0": 64,
+            "y0": 3,
+            "x1": 468,
+            "foot": 326
+          },
+          {
+            "x0": 134,
+            "y0": 20,
+            "x1": 451,
+            "foot": 369
+          },
+          {
+            "x0": 88,
+            "y0": 2,
+            "x1": 432,
+            "foot": 360
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-HORSE-DEFENSE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.wind.sheet.horse-ride": {
+      "url": "art/wind-horse-ride.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 368,
+        "cells": [
+          {
+            "x0": 80,
+            "y0": 9,
+            "x1": 484,
+            "foot": 368
+          },
+          {
+            "x0": 52,
+            "y0": 8,
+            "x1": 476,
+            "foot": 367
+          },
+          {
+            "x0": 128,
+            "y0": 9,
+            "x1": 419,
+            "foot": 371
+          },
+          {
+            "x0": 88,
+            "y0": 5,
+            "x1": 462,
+            "foot": 364
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-HORSE-RIDE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.wind.sheet.horse-special": {
+      "url": "art/wind-horse-special.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 368,
+        "cells": [
+          {
+            "x0": 105,
+            "y0": 8,
+            "x1": 474,
+            "foot": 369
+          },
+          {
+            "x0": 94,
+            "y0": 15,
+            "x1": 493,
+            "foot": 368
+          },
+          {
+            "x0": 97,
+            "y0": 9,
+            "x1": 495,
+            "foot": 368
+          },
+          {
+            "x0": 92,
+            "y0": 9,
+            "x1": 474,
+            "foot": 368
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-HORSE-SPECIAL.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.wind.sheet.horse-stability": {
+      "url": "art/wind-horse-stability.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 110,
+            "y0": 20,
+            "x1": 483,
+            "foot": 356
+          },
+          {
+            "x0": 107,
+            "y0": 8,
+            "x1": 420,
+            "foot": 354
+          },
+          {
+            "x0": 69,
+            "y0": 35,
+            "x1": 494,
+            "foot": 349
+          },
+          {
+            "x0": 107,
+            "y0": 6,
+            "x1": 481,
+            "foot": 352
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-HORSE-STABILITY.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.wind.sheet.horse-ultimate": {
+      "url": "art/wind-horse-ultimate.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 360,
+        "cells": [
+          {
+            "x0": 127,
+            "y0": 10,
+            "x1": 448,
+            "foot": 376
+          },
+          {
+            "x0": 21,
+            "y0": 33,
+            "x1": 507,
+            "foot": 336
+          },
+          {
+            "x0": 46,
+            "y0": 11,
+            "x1": 528,
+            "foot": 355
+          },
+          {
+            "x0": 92,
+            "y0": 3,
+            "x1": 445,
+            "foot": 360
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-HORSE-ULTIMATE.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }
@@ -17557,6 +21884,214 @@
       },
       "provenance": {
         "source": "props/PROP-S2-ROAD.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "prop.s3-food": {
+      "url": "art/prop-s3-food.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 337,
+        "cells": [
+          {
+            "x0": 70,
+            "y0": 111,
+            "x1": 342,
+            "foot": 327
+          },
+          {
+            "x0": 69,
+            "y0": 31,
+            "x1": 317,
+            "foot": 347
+          },
+          {
+            "x0": 49,
+            "y0": 116,
+            "x1": 313,
+            "foot": 315
+          },
+          {
+            "x0": 59,
+            "y0": 83,
+            "x1": 363,
+            "foot": 330
+          },
+          {
+            "x0": 57,
+            "y0": 42,
+            "x1": 317,
+            "foot": 337
+          },
+          {
+            "x0": 22,
+            "y0": 41,
+            "x1": 332,
+            "foot": 338
+          }
+        ]
+      },
+      "provenance": {
+        "source": "props/PROP-S3-FOOD.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "prop.s3-quarry": {
+      "url": "art/prop-s3-quarry.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 353,
+        "cells": [
+          {
+            "x0": 41,
+            "y0": 55,
+            "x1": 364,
+            "foot": 355
+          },
+          {
+            "x0": 24,
+            "y0": 90,
+            "x1": 343,
+            "foot": 315
+          },
+          {
+            "x0": 20,
+            "y0": 60,
+            "x1": 338,
+            "foot": 352
+          },
+          {
+            "x0": 38,
+            "y0": 59,
+            "x1": 354,
+            "foot": 344
+          },
+          {
+            "x0": 13,
+            "y0": 79,
+            "x1": 371,
+            "foot": 353
+          },
+          {
+            "x0": 48,
+            "y0": 8,
+            "x1": 319,
+            "foot": 368
+          }
+        ]
+      },
+      "provenance": {
+        "source": "props/PROP-S3-QUARRY.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "prop.s3-scaffold": {
+      "url": "art/prop-s3-scaffold.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 354,
+        "cells": [
+          {
+            "x0": 53,
+            "y0": 50,
+            "x1": 332,
+            "foot": 354
+          },
+          {
+            "x0": 53,
+            "y0": 50,
+            "x1": 332,
+            "foot": 354
+          },
+          {
+            "x0": 36,
+            "y0": 54,
+            "x1": 349,
+            "foot": 358
+          },
+          {
+            "x0": 26,
+            "y0": 72,
+            "x1": 350,
+            "foot": 309
+          },
+          {
+            "x0": 33,
+            "y0": 93,
+            "x1": 347,
+            "foot": 293
+          },
+          {
+            "x0": 28,
+            "y0": 89,
+            "x1": 352,
+            "foot": 295
+          }
+        ]
+      },
+      "provenance": {
+        "source": "props/PROP-S3-SCAFFOLD.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "prop.s3-weapons": {
+      "url": "art/prop-s3-weapons.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 350,
+        "cells": [
+          {
+            "x0": 80,
+            "y0": 46,
+            "x1": 322,
+            "foot": 359
+          },
+          {
+            "x0": 57,
+            "y0": 62,
+            "x1": 322,
+            "foot": 346
+          },
+          {
+            "x0": 53,
+            "y0": 51,
+            "x1": 343,
+            "foot": 350
+          },
+          {
+            "x0": 63,
+            "y0": 103,
+            "x1": 343,
+            "foot": 288
+          },
+          {
+            "x0": 44,
+            "y0": 31,
+            "x1": 339,
+            "foot": 350
+          },
+          {
+            "x0": 35,
+            "y0": 29,
+            "x1": 351,
+            "foot": 345
+          }
+        ]
+      },
+      "provenance": {
+        "source": "props/PROP-S3-WEAPONS.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }

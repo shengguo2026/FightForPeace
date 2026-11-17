@@ -471,7 +471,12 @@ function ArenaPanel({ state, actions }: { state: LabState; actions: LabActions }
       beats: [] as string[],
       allDifficulties: true,
     })),
-    ...arenaNames().map((a) => ({ ...a, beats: [] as string[], allDifficulties: false })),
+    // M27: the Stage 3 rooms run at all five difficulties (the roles' gates need them).
+    ...arenaNames().map((a) => ({
+      ...a,
+      beats: [] as string[],
+      allDifficulties: a.id.startsWith('lab-m27-'),
+    })),
   ];
   const isPursuit = CORRIDORS.some((c) => c.id === pick.arena);
   const diffs = difficultyNames();

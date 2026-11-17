@@ -636,6 +636,8 @@ export interface ArenaEnemyDef {
   z: number;
   minDifficulty: number;
   coop: boolean;
+  /** M27: a boss starts in this phase at that phase's Health (absent: phase 0). */
+  phase?: number;
 }
 
 export interface ArenaDef {
