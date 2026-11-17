@@ -1,24 +1,21 @@
 #!/usr/bin/env node
 /**
- * Writes every Stage 3 sound (made in code, packages/platform/src/media/stage3sfx.ts) to
- * a 16-bit mono WAV file so the sounds can be heard and checked outside the game.
+ * Writes every sound effect made in code (packages/platform/src/media/codedSfx.ts: the
+ * shared fight sounds and Stages 1–3) to a 16-bit mono WAV file so the sounds can be
+ * heard and checked outside the game.
  *
  * Usage (from the repository root, Node 24 or newer):
  *
- *     node tools/audio/render_stage3_sfx.mjs [out-folder]
+ *     node tools/audio/render_sfx.mjs [out-folder]
  *
- * The default folder is `out/stage3-sfx` (not committed). Files are named
- * `<group>/<id>.wav`, plus `index.csv` with id, group, mixer category, length and use.
+ * The default folder is `out/sfx` (not committed). Files are named `<group>/<id>.wav`,
+ * plus `index.csv` with id, group, mixer category, length and use.
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import {
-  SFX3_RATE,
-  STAGE3_SFX,
-  renderStage3Sfx,
-} from '../../packages/platform/src/media/stage3sfx.ts';
+import { CODED_SFX, SFX_RATE, renderCodedSfx } from '../../packages/platform/src/media/codedSfx.ts';
 
-const out = resolve(process.argv[2] ?? 'out/stage3-sfx');
+const out = resolve(process.argv[2] ?? 'out/sfx');
 
 function wav(samples) {
   const data = Buffer.alloc(samples.length * 2);
@@ -34,8 +31,8 @@ function wav(samples) {
   h.writeUInt32LE(16, 16);
   h.writeUInt16LE(1, 20); // PCM
   h.writeUInt16LE(1, 22); // mono
-  h.writeUInt32LE(SFX3_RATE, 24);
-  h.writeUInt32LE(SFX3_RATE * 2, 28);
+  h.writeUInt32LE(SFX_RATE, 24);
+  h.writeUInt32LE(SFX_RATE * 2, 28);
   h.writeUInt16LE(2, 32);
   h.writeUInt16LE(16, 34);
   h.write('data', 36);
@@ -44,11 +41,11 @@ function wav(samples) {
 }
 
 const rows = ['id,group,category,ms,use'];
-for (const d of STAGE3_SFX) {
+for (const d of CODED_SFX) {
   const dir = join(out, d.group);
   mkdirSync(dir, { recursive: true });
-  writeFileSync(join(dir, `${d.id}.wav`), wav(renderStage3Sfx(d.id)));
+  writeFileSync(join(dir, `${d.id}.wav`), wav(renderCodedSfx(d.id)));
   rows.push([d.id, d.group, d.category, d.ms, `"${d.use.replaceAll('"', '""')}"`].join(','));
 }
 writeFileSync(join(out, 'index.csv'), rows.join('\n') + '\n');
-console.log(`${STAGE3_SFX.length} Stage 3 sounds written to ${out}`);
+console.log(`${CODED_SFX.length} sound effects written to ${out}`);

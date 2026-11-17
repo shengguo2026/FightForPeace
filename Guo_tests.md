@@ -1565,3 +1565,38 @@ explorer out\stage3-sfx
 10. **Nothing else changed:** Stage 1 and 2 sound as before (their sounds are untouched).
 
 Write down any sound that is wrong, too loud, too quiet or unclear, with its name (for example `horse.whinny: too robotic`); each one is a small recipe that is quick to retune.
+
+## Stage 1 and 2 sound effects made in code
+
+What's new: the 56 sound effects of Stages 1 and 2 and the fight sounds all stages share are now made in code too, under the same names, so the game plays them wherever it played the old beeps. **Shared fights:** light, medium and heavy hits, guard, armor, Exact Block, Counter, Combo Breaker, Guard Crush, grab, throw, escape or rescue, dash, landing, knockdown, Ultimate, Team Attack, boss phase. **Stage 1:** checkpoint, worker freed, cache, food, clue, evidence, river restored, downed, revived. **Stage 2:** firearm warning, shot and burst; the motorbike chase (engine, crash, impact, hit, ramp, brace, critical warning); the greenhouse (containers, breaking glass cases, repair, fallback, lost asset, toppling rack, purge jet warning, firing and redirect, straps, and the grenade drill: draw, arm, aim, throw, drop, live drop, secured, returned, blast). The Lab panel is now **Sound effects (145)** with every stage, and the WAV tool is `tools/audio/render_sfx.mjs` (it replaces `render_stage3_sfx.mjs`). From now on every sound effect is coded (lessons learned J1).
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-o9zr9m
+git checkout claude/project-thread-o9zr9m
+git pull origin claude/project-thread-o9zr9m
+pnpm install
+pnpm dev
+```
+
+WAV files (second PowerShell window, same folder):
+
+```powershell
+node tools/audio/render_sfx.mjs
+explorer out\sfx
+```
+
+### Test steps
+
+1. **Lab panel:** open `http://localhost:5173/?lab`. The panel **Sound effects (145)** opens on *all stages · combat*. The group list has all stages · combat, Stage 1 · stage1, Stage 2 · stage2, pursuit, greenhouse, and the seven Stage 3 groups.
+2. **Fight sounds:** press each button in *combat*. The three hits get heavier, guard is a short muffled block, Exact Block a bright ring, Counter a swish, thump and two notes, Combo Breaker a burst outward, Ultimate a rising swell with drums, boss phase a drum roll and a gong.
+3. **Stage 1:** choose *Stage 1 · stage1*. Checkpoint, clue, evidence, cache and food each sound different now; *river-restored* is rushing water with bubbles and a rising melody; *downed* falls, *revived* rises.
+4. **Stage 2:** choose *stage2*, *pursuit* and *greenhouse*. The firearm warning is two metal clicks and three short beeps; the bike engine revs; the crash skids and clatters; the grenade drill steps are each distinct; the blast is a deep boom with breaking glass.
+5. **In play, Stage 1:** start Stage 1 on Easy from the menu and fight the first enemies: hits, guard, dash, landing and knockdown use the new sounds; reach a checkpoint and eat food.
+6. **In play, Stage 2:** play the motorbike chase (`?pursuit`) for a minute: engine, hits and impacts use the new sounds. Open a greenhouse room (`?greenhouse`) and break a case, run the grenade drill and fire the purge jet.
+7. **Stage 3 unchanged:** the Stage 3 groups still play the same 89 sounds as in the last PR.
+8. **WAV files (optional):** run the `render_sfx.mjs` command above: `out\sfx` has one folder per group with all 145 WAV files and `index.csv`.
+
+Write down any sound that is wrong, too loud, too quiet or unclear, with its name (for example `hit.heavy: too soft`).

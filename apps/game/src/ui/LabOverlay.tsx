@@ -17,12 +17,12 @@ import {
   mountedKit,
 } from '@ffp/sim';
 import {
-  SFX3_GROUPS,
-  STAGE3_SFX,
+  CODED_SFX,
+  SFX_GROUPS,
   type KeyboardP2Preset,
   type LayoutName,
   type QualitySetting,
-  type Sfx3Group,
+  type SfxGroup,
 } from '@ffp/platform';
 import { signal } from '@preact/signals';
 import { audio } from '../media/audio';
@@ -391,29 +391,40 @@ function HubLabPanel() {
   );
 }
 
-const sfx3Group = signal<Sfx3Group>('horse');
+const sfxGroup = signal<SfxGroup>('combat');
 
 /**
- * Stage 3 sounds (made in code, platform media/stage3sfx.ts): play every sound of a group
- * through the game mix before the Stage 3 systems (M27) trigger them. Hover a button for
- * where the game uses it.
+ * Sound effects made in code (platform media/codedSfx.ts): play every sound of a group
+ * through the game mix. Groups: the shared fight sounds, then Stage 1, 2 and 3. Hover a
+ * button for where the game uses it.
  */
-function Stage3SoundsPanel() {
-  const group = sfx3Group.value;
+function CodedSoundsPanel() {
+  const group = sfxGroup.value;
   return (
-    <div style={{ ...panel, maxWidth: '460px', pointerEvents: 'auto' }} data-testid="lab-sfx3">
-      <div>Stage 3 sounds ({STAGE3_SFX.length})</div>
-      <Select
-        label="group"
-        value={group}
-        options={SFX3_GROUPS}
-        onChange={(g) => (sfx3Group.value = g)}
-        testId="sfx3-group"
-      />
+    <div style={{ ...panel, maxWidth: '460px', pointerEvents: 'auto' }} data-testid="lab-sfx">
+      <div>Sound effects ({CODED_SFX.length})</div>
+      <label style={{ display: 'block', margin: '2px 0' }}>
+        group{' '}
+        <select
+          data-testid="sfx-group"
+          value={group}
+          onChange={(e) => {
+            const el = e.target as HTMLSelectElement;
+            sfxGroup.value = el.value as SfxGroup;
+            el.blur();
+          }}
+        >
+          {SFX_GROUPS.map((g) => (
+            <option value={g.group}>
+              {g.stage === 0 ? 'all stages' : `Stage ${g.stage}`} · {g.group}
+            </option>
+          ))}
+        </select>
+      </label>
       <div>
-        {STAGE3_SFX.filter((d) => d.group === group).map((d) => (
+        {CODED_SFX.filter((d) => d.group === group).map((d) => (
           <button
-            data-testid={`sfx3-${d.id}`}
+            data-testid={`sfx-${d.id}`}
             title={`${d.use} · ${d.category}`}
             style={{ marginRight: '4px', marginTop: '4px' }}
             onClick={(e) => {
@@ -1038,7 +1049,7 @@ export function LabOverlay({ state, actions }: { state: LabState; actions: LabAc
           <TargetPanel t={state.target.value} />
           <ArenaPanel state={state} actions={actions} />
           <HubLabPanel />
-          <Stage3SoundsPanel />
+          <CodedSoundsPanel />
           <CoopPanel state={state} actions={actions} />
           {state.settingsOpen.value ? <Settings state={state} actions={actions} /> : null}
           {state.moveListOpen.value ? <MoveList players={players} /> : null}

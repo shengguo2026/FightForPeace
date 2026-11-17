@@ -3,7 +3,7 @@
  * the same logical id is in the manifest, sounds are short synthesized tones and music
  * states are quiet procedural loops in the cue's tempo. Deterministic for an id.
  */
-import { SFX3_RATE, renderStage3Sfx } from '@ffp/platform';
+import { SFX_RATE, renderCodedSfx } from '@ffp/platform';
 
 const RATE = 22050;
 
@@ -93,11 +93,12 @@ export function synthMusic(
 
 /** Placeholder sound: a short tone or noise burst shaped by the id's family. */
 export function synthSfx(ctx: BaseAudioContext, id: string): AudioBuffer {
-  // Stage 3 sounds are made in code from their own recipes (platform media/stage3sfx.ts).
-  const s3 = renderStage3Sfx(id);
-  if (s3) {
-    const b = ctx.createBuffer(1, s3.length, SFX3_RATE);
-    b.getChannelData(0).set(s3);
+  // Sound effects are made in code from their recipes (platform media/codedSfx.ts); the
+  // one-tone family placeholder below only plays for an id without a recipe.
+  const coded = renderCodedSfx(id);
+  if (coded) {
+    const b = ctx.createBuffer(1, coded.length, SFX_RATE);
+    b.getChannelData(0).set(coded);
     return b;
   }
   const fam = id.split('.')[1] ?? '';
