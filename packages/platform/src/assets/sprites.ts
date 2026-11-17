@@ -5,6 +5,7 @@ import {
   ItemState,
   type Item,
   MoveState,
+  PassPhase,
   WEAPONS,
   type ActionDef,
   conditionOf,
@@ -98,6 +99,51 @@ const WEAPON_POSES: Record<
   'support-stock': { sheet: 'heavy', cells: [0, 2, 2] },
   'support-throw': { sheet: 'heavy', cells: [3, 3, 3] },
   'grenade-return': { sheet: 'heavy', cells: [4, 5, 5] },
+  // M27 Stage 3 weapons. Hiking staff (hike: 0 pick-up, 1 ready, 2 thrust, 3 low sweep,
+  // 4 high block, 5 throw); Garran's Quarry Hookstaff in a hero's hands uses the same sheet.
+  'hike-thrust': { sheet: 'hike', cells: [1, 2, 2] },
+  'hike-sweep': { sheet: 'hike', cells: [1, 3, 3] },
+  'hike-hook': { sheet: 'hike', cells: [2, 3, 1] },
+  'hike-lunge': { sheet: 'hike', cells: [1, 2, 2] },
+  'hike-rise': { sheet: 'hike', cells: [3, 4, 4] },
+  'hike-low': { sheet: 'hike', cells: [1, 3, 3] },
+  'hike-air': { sheet: 'hike', cells: [4, 2, 2] },
+  'hike-ground': { sheet: 'hike', cells: [4, 3, 3] },
+  'hike-dash': { sheet: 'hike', cells: [1, 2, 2] },
+  'hike-throw': { sheet: 'hike', cells: [5, 5, 5] },
+  'hookstaff-sweep': { sheet: 'hike', cells: [1, 3, 3] },
+  'hookstaff-thrust': { sheet: 'hike', cells: [1, 2, 2] },
+  'hookstaff-pull': { sheet: 'hike', cells: [2, 3, 1] },
+  'hookstaff-low': { sheet: 'hike', cells: [1, 3, 3] },
+  'hookstaff-descent': { sheet: 'hike', cells: [4, 2, 2] },
+  'hookstaff-throw': { sheet: 'hike', cells: [5, 5, 5] },
+  // Wood axe (axe: 0 pick-up, 1 ready, 2 flat strike, 3 haft upstroke, 4 block, 5 throw).
+  'axe-flat': { sheet: 'axe', cells: [1, 2, 2] },
+  'axe-haft': { sheet: 'axe', cells: [1, 3, 3] },
+  'axe-cleave': { sheet: 'axe', cells: [3, 2, 2] },
+  'axe-hook': { sheet: 'axe', cells: [1, 3, 1] },
+  'axe-rise': { sheet: 'axe', cells: [1, 3, 3] },
+  'axe-low': { sheet: 'axe', cells: [1, 2, 2] },
+  'axe-air': { sheet: 'axe', cells: [3, 2, 2] },
+  'axe-ground': { sheet: 'axe', cells: [3, 2, 2] },
+  'axe-dash': { sheet: 'axe', cells: [1, 2, 2] },
+  'axe-throw': { sheet: 'axe', cells: [5, 5, 5] },
+  // Quarry hammer (hammer: 0 lift, 1 carry low, 2 overhead, 3 head on the ground, 4 shaft
+  // shove, 5 throw).
+  'hammer-shove': { sheet: 'hammer', cells: [1, 4, 4] },
+  'hammer-drop': { sheet: 'hammer', cells: [2, 3, 3] },
+  'hammer-swing': { sheet: 'hammer', cells: [2, 3, 3] },
+  'hammer-hook': { sheet: 'hammer', cells: [1, 4, 1] },
+  'hammer-rise': { sheet: 'hammer', cells: [3, 2, 2] },
+  'hammer-low': { sheet: 'hammer', cells: [1, 3, 3] },
+  'hammer-air': { sheet: 'hammer', cells: [2, 3, 3] },
+  'hammer-ground': { sheet: 'hammer', cells: [2, 3, 3] },
+  'hammer-dash': { sheet: 'hammer', cells: [1, 4, 4] },
+  'hammer-throw': { sheet: 'hammer', cells: [5, 5, 5] },
+  // Bandit revolver: the Stage 2 revolver sheets (pick-up, aim, recoil, ready, whip, throw).
+  'bandit-shot': { sheet: 'revolver', cells: [1, 2, 3] },
+  'bandit-whip': { sheet: 'revolver', cells: [3, 4, 4] },
+  'bandit-throw': { sheet: 'revolver', cells: [5, 5, 5] },
 };
 
 /** M22: the ready stance a hero holds a Stage 2 weapon in (idle and walking). */
@@ -105,6 +151,12 @@ const WEAPON_STANCE: Record<string, { sheet: string; cell: number; walk: string 
   'service-lance': { sheet: 'lance-a', cell: 1, walk: 'lance-walk' },
   'six-round-sidearm': { sheet: 'revolver', cell: 3, walk: 'revolver-walk' },
   'support-gun': { sheet: 'heavy', cell: 0, walk: 'heavy-walk' },
+  // M27 Stage 3 weapons (the hookstaff is held like the hiking staff).
+  'hiking-staff': { sheet: 'hike', cell: 1, walk: 'hike-walk' },
+  'quarry-hookstaff': { sheet: 'hike', cell: 1, walk: 'hike-walk' },
+  'wood-axe': { sheet: 'axe', cell: 1, walk: 'axe-walk' },
+  'quarry-hammer': { sheet: 'hammer', cell: 1, walk: 'hammer-walk' },
+  'bandit-revolver': { sheet: 'revolver', cell: 3, walk: 'revolver-walk' },
 };
 
 /** M22: how a Stage 2 weapon is carried when no pose art shows it (see heldProp). */
@@ -129,6 +181,28 @@ const S2_HELD: Record<
     angle: 0,
     dx: 40,
     dy: 185,
+    mirror: true,
+  },
+  // M27: the Stage 3 weapon pictures (prop.s3-weapons: 0 staff, 1 axe, 2 hammer, 3 revolver,
+  // 4 hookstaff), for a hero without the weapon's sheet.
+  'hiking-staff': { sheet: 'prop.s3-weapons', cell: 0, scale: 0.8, angle: 0.4, dx: 30, dy: 180 },
+  'quarry-hookstaff': {
+    sheet: 'prop.s3-weapons',
+    cell: 4,
+    scale: 0.8,
+    angle: 0.4,
+    dx: 30,
+    dy: 180,
+  },
+  'wood-axe': { sheet: 'prop.s3-weapons', cell: 1, scale: 0.6, angle: 0.3, dx: 40, dy: 180 },
+  'quarry-hammer': { sheet: 'prop.s3-weapons', cell: 2, scale: 0.7, angle: 0.3, dx: 40, dy: 175 },
+  'bandit-revolver': {
+    sheet: 'prop.s3-weapons',
+    cell: 3,
+    scale: 0.3,
+    angle: 0,
+    dx: 60,
+    dy: 190,
     mirror: true,
   },
 };
@@ -318,6 +392,59 @@ const ENEMY_POSES: Record<string, Record<string, { sheet: string; cells: Phased 
     'jackals-measure': { sheet: 'unbound-b', cells: [0, 1, 5] },
     'scorched-claim': { sheet: 'scorched', cells: [1, 2, 3] },
   },
+  // --- M27 Stage 3 roles (variants use their base kit's art) ---
+  ambusher: {
+    'club-swing': { sheet: 'attack', cells: [0, 1, 1] },
+    'low-lunge': { sheet: 'attack', cells: [0, 2, 2] },
+    'flank-dash': { sheet: 'attack', cells: [3, 3, 1] },
+    'ledge-drop': { sheet: 'attack', cells: [4, 4, 1] },
+    'dodge-back': { sheet: 'attack', cells: [5, 5, 5] },
+  },
+  bruiser: {
+    'hammer-fist': { sheet: 'attack', cells: [0, 1, 1] },
+    'quarry-charge': { sheet: 'attack', cells: [2, 2, 5] },
+    'bruiser-shove': { sheet: 'attack', cells: [3, 3, 3] },
+    'boulder-heave': { sheet: 'attack', cells: [4, 4, 5] },
+  },
+  trapper: {
+    'rope-throw': { sheet: 'rope', cells: [0, 1, 3] },
+    'rope-pull': { sheet: 'rope', cells: [3, 2, 2] },
+    'rope-lash': { sheet: 'rope', cells: [0, 1, 5] },
+    backstep: { sheet: 'idle-walk', cells: [3, 3, 3] },
+  },
+  stalker: {
+    'dip-strike': { sheet: 'feint', cells: [0, 1, 3] },
+    'twin-staves': { sheet: 'feint', cells: [2, 3, 3] },
+    'spin-stave': { sheet: 'feint', cells: [4, 4, 3] },
+    'roll-evade': { sheet: 'feint', cells: [5, 5, 5] },
+  },
+  captain: {
+    'cane-thrust': { sheet: 'attack', cells: [5, 0, 0] },
+    'cane-swing': { sheet: 'attack', cells: [1, 2, 2] },
+    'flank-order': { sheet: 'idle-walk', cells: [1, 4, 5] },
+    'signal-break': { sheet: 'attack', cells: [4, 4, 4] },
+  },
+  rider3: {
+    'baton-strike': { sheet: 'foot', cells: [0, 1, 1] },
+    'baton-sweep': { sheet: 'foot', cells: [0, 1, 1] },
+  },
+  garran: {
+    'hookstaff-sweep': { sheet: 'hook-a', cells: [0, 1, 1] },
+    'hookstaff-thrust': { sheet: 'hook-a', cells: [2, 2, 3] },
+    'hookstaff-pull': { sheet: 'hook-b', cells: [0, 1, 1] },
+    'hookstaff-low': { sheet: 'hook-b', cells: [4, 2, 2] },
+    'hookstaff-descent': { sheet: 'hook-a', cells: [4, 5, 5] },
+    'hookstaff-throw': { sheet: 'hook-b', cells: [5, 5, 5] },
+    'collar-tie': { sheet: 'clinch', cells: [0, 1, 1] },
+    'shoulder-cast': { sheet: 'clinch', cells: [2, 3, 3] },
+    'ridge-trip': { sheet: 'clinch', cells: [0, 4, 4] },
+    'body-hook': { sheet: 'ground', cells: [0, 1, 1] },
+    'palm-shove': { sheet: 'ground', cells: [2, 2, 2] },
+    'shoulder-rush': { sheet: 'ground', cells: [5, 5, 5] },
+    'knee-drop': { sheet: 'ground', cells: [3, 3, 4] },
+    'ridge-parry': { sheet: 'defense', cells: [1, 2, 2] },
+    'winch-crank': { sheet: 'winch', cells: [0, 0, 0] },
+  },
   commander: {
     'palm-strike': { sheet: 'attack-a', cells: [0, 1, 5] },
     roundhouse: { sheet: 'attack-a', cells: [0, 2, 5] },
@@ -350,7 +477,22 @@ const EXIT_CELLS: Record<string, { surrender: number; kneel: number; flee: [numb
 const IDLE_SHEETS: Record<string, { sheet: string; idle: number[]; walk: number[] }> = {
   glassrunner: { sheet: 'idle-run', idle: [0, 1], walk: [2, 3, 4, 5] },
   rider: { sheet: 'on-foot', idle: [0], walk: [0, 1] },
+  // M27 (the Stage 3 sheets have own walk or run cycles; these are the fallbacks).
+  ambusher: { sheet: 'idle-run', idle: [0, 1], walk: [2, 3] },
+  bruiser: { sheet: 'idle-walk', idle: [0, 1], walk: [2, 3] },
+  trapper: { sheet: 'idle-walk', idle: [0], walk: [1, 2] },
+  stalker: { sheet: 'idle-walk', idle: [0, 1], walk: [2, 3] },
+  captain: { sheet: 'idle-walk', idle: [0], walk: [2, 3] },
+  garran: { sheet: 'idle-walk', idle: [0, 1], walk: [2, 3] },
+  rider3: { sheet: 'foot', idle: [0], walk: [0] },
 };
+/**
+ * M27: the Stage 3 roles have a HIT sheet instead of REACT and EXIT (0 light, 1 heavy,
+ * 2 launched, 3 down, 4 get-up, 5 surrender or flee) and a six-pose flee run. The Mounted
+ * Raider on foot has one sheet (0 idle, 1 strike, 2 hit, 3 down, 4 get-up, 5 surrender).
+ */
+const HIT_SURRENDER = new Set(['bruiser', 'trapper', 'captain']);
+const RIDER3_FOOT = { hit: 2, down: 3, getUp: 4, surrender: 5 };
 const EXIT_DEFAULT = { surrender: 0, kneel: 1, flee: [2, 3] as [number, number] };
 /**
  * The Stage 1 exit sheets draw their flee run facing left; the M19 (Stage 2) exit sheets
@@ -399,16 +541,49 @@ function loop(meta: SheetMeta | undefined, frame: number, fps: number, cells?: n
   return list[Math.floor((frame * fps) / 60) % list.length]!;
 }
 
+/** The heroes' outfit: their Stage 1 and 2 clothes, or the Stage 3 outfit. */
+export type HeroOutfit = 'base' | 's3';
+
+/** Stage 3 armed walks, drawn in the Stage 3 outfit (no S3 twin needed). */
+const S3_NATIVE_WALKS = new Set(['hike-walk', 'axe-walk', 'hammer-walk']);
+
 export class SpritePicker {
   constructor(private readonly assets: AssetRegistry) {}
 
+  private outfit: HeroOutfit = 'base';
+
+  /**
+   * The heroes' outfit (M27): 's3' dresses them in the Stage 3 outfit, which the Stage 3
+   * weapon and horse sheets are drawn in. A hero sheet with an S3 redraw
+   * (`hero.<id>.s3.<key>`) is swapped for it; a Stage 1 or 2 armed walk without one counts
+   * as missing, so the hero walks in the S3 walk with the weapon drawn in hand.
+   */
+  setOutfit(outfit: HeroOutfit): void {
+    this.outfit = outfit;
+  }
+
   /** Sheet and cell for a fighter on simulation frame `frame`, or null (no art: greybox). */
   fighter(f: Fighter, frame: number, boss?: BossView): SpriteFrame | null {
-    return f.team === 'hero' ? this.hero(f, frame) : this.enemy(f, frame, boss);
+    if (f.team !== 'hero') return this.enemy(f, frame, boss);
+    const pick = this.hero(f, frame);
+    return pick && this.outfit !== 'base' ? { ...pick, sheet: this.dress(pick.sheet) ?? pick.sheet } : pick;
+  }
+
+  /** The id drawn for `id` in the current outfit, or undefined when it has no art in it. */
+  private dress(id: string): string | undefined {
+    if (this.outfit === 'base' || !id.startsWith('hero.')) return id;
+    const dot = id.indexOf('.', 5);
+    const rest = id.slice(dot + 1);
+    if (rest.startsWith('s3.')) return id;
+    const twin = `${id.slice(0, dot)}.s3.${rest}`;
+    if (this.assets.sheet(twin)) return twin;
+    if (/^sheet\.[a-z-]+-walk$/.test(rest) && !S3_NATIVE_WALKS.has(rest.slice(6))) return undefined;
+    return id;
   }
 
   private has(id: string): SheetMeta | undefined {
-    return this.assets.sheet(id)?.sheet;
+    const dressed = this.dress(id);
+    return dressed === undefined ? undefined : this.assets.sheet(dressed)?.sheet;
   }
 
   private hero(f: Fighter, frame: number): SpriteFrame | null {
@@ -562,7 +737,9 @@ export class SpritePicker {
       this.has(`${base}.${key}`) ? { sheet: `${base}.${key}`, cell, drawnLeft } : null;
     const isBoss = boss !== undefined && boss.id === f.id;
     const p2 = isBoss && boss.phase >= 1;
-    const react = p2 && this.has(`${base}.react-p2`) ? 'react-p2' : 'react';
+    // M27: the Stage 3 HIT sheet stands in for REACT (same cells 0-4).
+    const hitSheet = !this.has(`${base}.react`) && this.has(`${base}.hit`);
+    const react = p2 && this.has(`${base}.react-p2`) ? 'react-p2' : hitSheet ? 'hit' : 'react';
     const exitSheet = p2 && this.has(`${base}.exit-p2`) ? 'exit-p2' : 'exit';
     const exit = EXIT_CELLS[art] ?? EXIT_DEFAULT;
     const look = isBoss ? (boss.look ?? 1) : 1;
@@ -573,7 +750,41 @@ export class SpritePicker {
           ? { sheet: 'unbound-idle-walk', idle: [0, 1], walk: [2, 3, 4, 5] }
           : art === 'marauder' && f.item === 0 && this.has(`${base}.disarm`)
             ? { sheet: 'disarm', idle: [3], walk: [3] }
-            : (IDLE_SHEETS[art] ?? { sheet: 'idle-walk', idle: [0, 1], walk: [2, 3, 4, 5] });
+            : // M27: Garran without the Hookstaff stands in his forearm guard.
+              art === 'garran' && f.item === 0 && this.has(`${base}.defense`)
+              ? { sheet: 'defense', idle: [4], walk: [4, 5] }
+              : (IDLE_SHEETS[art] ?? { sheet: 'idle-walk', idle: [0, 1], walk: [2, 3, 4, 5] });
+    // M27: the Mounted Raider on its bandit horse (2 x 2 mounted sheets: ride = gallop,
+    // steer into depth, hard halt, circling; attack = wind-up, strike, riding past low,
+    // pointing) until its Stability runs out and it dismounts.
+    const rider = f.ext?.rider;
+    if (art === 'rider3' && rider && rider.phase !== PassPhase.Dismounted) {
+      if (f.state === MoveState.Attack) {
+        const a = f.action >= 0 ? kitOf(f)?.actions[f.action] : undefined;
+        return s('mount-attack', a && phase(f, a) === 0 ? 0 : 1);
+      }
+      if (rider.phase === PassPhase.Warn) return s('mount-attack', 3);
+      if (rider.phase === PassPhase.Pass) return s('mount-attack', 2) ?? s('mount-ride', 0);
+      // Riding: the gallop and the gathered stride alternate until a gallop cycle sheet
+      // is delivered (the ride sheet has one pose of each).
+      return s('mount-ride', f.state === MoveState.Walk ? loop(undefined, frame, 6, [0, 2]) : 3);
+    }
+    if (isBoss && boss.shift > 0 && art === 'garran') {
+      // M27: Garran casts the Hookstaff aside, then points up to the winch and braces.
+      const half = boss.shift > boss.shiftFrames / 2;
+      return boss.phase === 0
+        ? s('hook-b', half ? 4 : 5)
+        : (s('winch', half ? 3 : 4) ?? s(idle.sheet, 0));
+    }
+    if (isBoss && (boss.capture ?? 0) > 0 && f.state === MoveState.Surrender && art === 'garran') {
+      // M27 capture (CAPTURE: 0 disarmed, 1 Resolve break on one knee, 2 hands raised,
+      // 3 restrained standing, 4 seated, 5 medical check); the forced capture starts down.
+      const age = boss.captureAge ?? f.stateFrame;
+      if (boss.capture === 1) return s('capture', age < 30 ? 1 : age < 90 ? 2 : age < 180 ? 3 : 4);
+      return age < 40 ? s('hit', 3) : s('capture', age < 120 ? 3 : age < 240 ? 4 : 5);
+    }
+    if (isBoss && boss.stagger > 0 && art === 'garran' && f.state !== MoveState.Launched)
+      if (f.state !== MoveState.Down) return s('hit', 5);
     if (isBoss && boss.shift > 0) {
       // Phase transition: the PHASE sheet plays through once over the shift.
       const meta = this.has(`${base}.phase`);
@@ -619,12 +830,17 @@ export class SpritePicker {
                   ? 'unbound-walk'
                   : idle.sheet === 'on-foot' || idle.sheet === 'idle-walk'
                     ? 'walk'
-                    : null;
+                    : idle.sheet === 'foot'
+                      ? 'foot-walk'
+                      : idle.sheet === 'idle-run' && this.has(`${base}.run`)
+                        ? 'run'
+                        : null;
           const ownMeta = own ? this.has(`${base}.${own}`) : undefined;
           if (own && ownMeta) return s(own, loop(ownMeta, frame, 9));
         }
         return s(idle.sheet, loop(undefined, frame, 8, idle.walk));
       case MoveState.Guard:
+        if (art === 'garran') return s('defense', f.item !== 0 ? 0 : 4);
         return (
           s('guard', 0) ??
           s('armor', 0) ??
@@ -650,33 +866,44 @@ export class SpritePicker {
         return s('attack', (a && RUSH.has(a.id) ? 3 : 0) + p);
       }
       case MoveState.Blockstun:
+        if (art === 'garran') return s('defense', f.item !== 0 ? 1 : 5);
+        if (art === 'rider3') return s('foot', RIDER3_FOOT.hit);
         return s('guard', 1) ?? s('armor', 1) ?? s(react, 0);
       case MoveState.GuardCrush:
+        if (art === 'rider3') return s('foot', RIDER3_FOOT.hit);
         return s('guard', f.stateFrame < f.stun / 2 ? 4 : 5) ?? s(react, 1);
       case MoveState.Hitstun:
       case MoveState.Recoil:
       case MoveState.Grabbed:
       case MoveState.Restrained:
         if (art === 'rider') return s('on-foot', 4);
+        if (art === 'rider3') return s('foot', RIDER3_FOOT.hit);
         return s(react, f.stun > 20 ? 1 : 0);
       case MoveState.Launched:
+        if (art === 'rider3') return s('foot', RIDER3_FOOT.down);
         return s(react, 2) ?? s('on-foot', 5);
       case MoveState.Down:
       case MoveState.Defeated:
         if (art === 'rider') return s('on-foot', 5);
+        if (art === 'rider3') return s('foot', RIDER3_FOOT.down);
         return s(react, 3);
       case MoveState.GetUp:
       case MoveState.Recover:
         if (art === 'rider') return s('on-foot', 0);
+        if (art === 'rider3') return s('foot', RIDER3_FOOT.getUp);
+        // The HIT sheet's last cell is the surrender or flee pose: the get-up is cell 4.
+        if (react === 'hit') return s(react, 4);
         return s(react, f.stateFrame < f.stun / 2 ? 4 : 5);
       case MoveState.Flee: {
         // M22: a six-pose flee run where delivered (drawn facing right like every cell).
-        const run = this.has(`${base}.flee`);
-        if (run) return s('flee', loop(run, frame, 12));
+        const run = this.has(`${base}.flee`) ?? this.has(`${base}.foot-flee`);
+        if (run) return s(this.has(`${base}.flee`) ? 'flee' : 'foot-flee', loop(run, frame, 12));
         const cell = loop(undefined, frame, 8, exit.flee);
         return s(exitSheet, cell, !FLEE_DRAWN_RIGHT.has(art)) ?? s('idle-walk', 2);
       }
       case MoveState.Surrender:
+        if (art === 'rider3') return s('foot', RIDER3_FOOT.surrender);
+        if (react === 'hit') return s('hit', HIT_SURRENDER.has(art) ? 5 : 3);
         return s(exitSheet, f.stateFrame < 40 ? exit.surrender : exit.kneel) ?? s(react, 3);
       case MoveState.PhaseShift:
         return s('phase', 0) ?? s('idle-walk', 0);
@@ -741,6 +968,20 @@ export class SpritePicker {
     };
     const s2 = S2_ITEM[def.id];
     if (s2 && this.has(s2.sheet)) return s2;
+    // M27 Stage 3 weapons (the broken staff and cracked axe share cell 5) and recovery food.
+    const S3_ITEM: Partial<Record<string, SpriteFrame>> = {
+      'hiking-staff': { sheet: 'prop.s3-weapons', cell: cond === 2 && !flying ? 5 : 0 },
+      'wood-axe': { sheet: 'prop.s3-weapons', cell: 1 },
+      'quarry-hammer': { sheet: 'prop.s3-weapons', cell: 2 },
+      'bandit-revolver': { sheet: 'prop.s3-weapons', cell: 3 },
+      'quarry-hookstaff': { sheet: 'prop.s3-weapons', cell: 4 },
+      'trail-rice': { sheet: 'prop.s3-food', cell: 0 },
+      'vegetable-broth': { sheet: 'prop.s3-food', cell: 1 },
+      'seed-cake': { sheet: 'prop.s3-food', cell: 2 },
+      'camp-meal': { sheet: 'prop.s3-food', cell: 3 },
+    };
+    const s3 = S3_ITEM[def.id];
+    if (s3 && this.has(s3.sheet)) return s3;
     return null;
   }
 }

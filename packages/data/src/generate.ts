@@ -1264,6 +1264,8 @@ const Waves = T.Array(
             z: T.Integer({ minimum: 0, maximum: 2000 }),
             minDifficulty: T.Optional(DifficultyId),
             coop: T.Optional(T.Boolean()),
+            /** M27: a boss starts in this phase (0-based) at that phase's Health (Lab rooms). */
+            phase: T.Optional(T.Integer({ minimum: 1, maximum: 5 })),
           },
           { additionalProperties: false },
         ),
@@ -1372,6 +1374,11 @@ const Scenery = T.Object(
             redirect: T.Optional(T.String({ pattern: '^[a-z][a-z0-9-]*$' })),
             cycles: T.Optional(T.Integer({ minimum: 0, maximum: 100 })),
             tags: T.Optional(SceneTags),
+            /**
+             * M27: a triggered mover waits at rest until a boss completes this device (the
+             * arena's `devices` kind, e.g. `winch`), then runs one warned cycle.
+             */
+            trigger: T.Optional(T.String({ pattern: '^[a-z][a-z0-9-]*$' })),
           },
           { additionalProperties: false },
         ),
@@ -1457,6 +1464,7 @@ function convertScenery(sc: Static<typeof Scenery>): unknown {
       redirect: m.redirect ?? '',
       cycles: m.cycles ?? 0,
       tags: m.tags ?? [],
+      ...(m.trigger ? { trigger: m.trigger } : {}),
     })),
     platforms: sc.platforms ?? [],
     stations: (sc.stations ?? []).map((st) => ({
@@ -2304,6 +2312,7 @@ function convertArenas(
         z: e.z,
         minDifficulty: lvl(e.minDifficulty),
         coop: e.coop ?? false,
+        ...(e.phase ? { phase: e.phase } : {}),
       })),
     })),
     substitutions: (a.substitutions ?? []).map((s) => ({
@@ -4524,6 +4533,22 @@ export const FROZEN_WEAPONS = [
   'six-round-sidearm.yaml',
   'support-gun.yaml',
   'support-rail.yaml',
+  // M24 Lab files, frozen by M27 so the Stage 3 weapons append after them.
+  'm24-concussion.yaml',
+  'm24-heavy-gun.yaml',
+  'm24-hook-pole.yaml',
+  'm24-pry-bar.yaml',
+  'm24-ration.yaml',
+  // M27 Stage 3 weapons and food (frozen in their order: later files append after them).
+  'bandit-revolver.yaml',
+  'camp-meal.yaml',
+  'hiking-staff.yaml',
+  'quarry-hammer.yaml',
+  'quarry-hookstaff.yaml',
+  'seed-cake.yaml',
+  'trail-rice.yaml',
+  'vegetable-broth.yaml',
+  'wood-axe.yaml',
 ] as const;
 export const FROZEN_ENEMIES = [
   'trainer.yaml',
@@ -4543,6 +4568,22 @@ export const FROZEN_ENEMIES = [
   'saboteur.yaml',
   'shield.yaml',
   'signalman.yaml',
+  // M24 Lab kits, frozen by M27 so the Stage 3 roles append after them.
+  'm24-bystander.yaml',
+  'm24-false-merchant.yaml',
+  'm24-feinter.yaml',
+  'm24-marshal.yaml',
+  'm24-mounted-raider.yaml',
+  'm24-rival.yaml',
+  'm24-shield-escort.yaml',
+  // M27 Stage 3 roles and Garran Voss.
+  'ambusher.yaml',
+  'bruiser.yaml',
+  'captain.yaml',
+  'garran.yaml',
+  'raider.yaml',
+  'stalker.yaml',
+  'trapper.yaml',
 ] as const;
 
 /** Files of a registry directory: the frozen ones in their order, then new ones by name. */
@@ -4763,6 +4804,17 @@ export function generate(
         readFileSync(lab25, 'utf8'),
         kitIds,
         'lab-m25.yaml',
+        weaponYaml.map((w) => w.id),
+      ),
+    );
+  // M27 Stage 3 systems rooms come after the M25 rooms (append only, lesson G1).
+  const lab27 = encounters ? join(encounters, 'lab-m27.yaml') : null;
+  if (lab27 && existsSync(lab27))
+    arenas.push(
+      ...loadArenas(
+        readFileSync(lab27, 'utf8'),
+        kitIds,
+        'lab-m27.yaml',
         weaponYaml.map((w) => w.id),
       ),
     );

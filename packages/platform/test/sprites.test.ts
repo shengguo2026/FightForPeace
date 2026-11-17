@@ -55,8 +55,9 @@ test('Stage 1 founder, dummy, weapon and prop sheets are in the manifest', () =>
 });
 
 /** M22: Stage 2 mounted hero sheets and the bikes are 2x2 grids (wide 576 px mounted cells). */
+// M27: the Stage 3 horse sheets and the Mounted Raider's bandit horse too.
 const TWO_BY_TWO =
-  /^(hero\.\w+\.sheet\.mount-|prop\.s2-bike-|enemy\.rider\.sheet\.mount-|enemy\.marek\.sheet\.mounted)/;
+  /^(hero\.\w+\.sheet\.(mount|horse)-|prop\.s2-bike-|enemy\.rider3?\.sheet\.mount-|enemy\.marek\.sheet\.mounted)/;
 
 test('every sheet is a 3x2 grid of 384 px cells (M13 effect sheets: 256 px)', () => {
   for (const s of reg.sheets()) {
@@ -80,7 +81,8 @@ test('character sheets share one ground line (aerial sheets are drawn in the air
     expect(s.sheet.ground, s.id).toBeGreaterThan(310);
     // River's walk (v3, v4) stands lower in its cells (375 of 384); the renderer stands every
     // sheet on its own ground line, so only feet touching the cell edge would be wrong.
-    expect(s.sheet.ground, s.id).toBeLessThan(380);
+    // M27: Mountain's S3 Brace Elbow stands on 380 (its feet 6 px above the source cell).
+    expect(s.sheet.ground, s.id).toBeLessThan(381);
   }
 });
 
@@ -325,7 +327,8 @@ test('weapon sheets are drawn at the same figure size as the idle sheet', () => 
   expect(size('hero.mountain.pose.ground.settling-palm')).toBeLessThan(0.8);
   for (const s of reg.sheets()) {
     const k = s.sheet.scale ?? 1;
-    expect(k, s.id).toBeGreaterThan(0.7);
+    // M27: Mountain's S3 Lockgate Press, drawn larger still than its original (0.71), is 0.7.
+    expect(k, s.id).toBeGreaterThanOrEqual(0.7);
     expect(k, s.id).toBeLessThan(1.3);
   }
 });

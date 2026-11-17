@@ -32,15 +32,23 @@ export interface HeroRideView {
   steer: number;
   /** Below cruising speed (braking or slowed). */
   braking: boolean;
+  /** M27: the simulation frame (the horse's stride). */
+  frame?: number;
   /** Frames since the state began. */
   stateAge: number;
 }
 
 const STEER_DEADZONE = 12;
 
-/** The hero's mounted cell (null: dismounted at the corridor's end, drawn on foot). */
-export function heroMountCell(hero: string, r: HeroRideView): MountPick | null {
-  const sheet = (k: string) => `hero.${hero}.sheet.mount-${k}`;
+/**
+ * The hero's mounted cell (null: dismounted at the corridor's end, drawn on foot). M27:
+ * `horse` picks the Stage 3 horse sheets (`horse-*`: ride = walk, uphill trot, turn into
+ * depth, halt; attack = wind-up, strike, kick wind-up, kick; defense = hop gather, jump,
+ * lean, guard; special and ultimate four steps; stability = stumble, shy, standing beside
+ * the horse, rescue reach), the same actions with horse timing.
+ */
+export function heroMountCell(hero: string, r: HeroRideView, horse = false): MountPick | null {
+  const sheet = (k: string) => `hero.${hero}.sheet.${horse ? 'horse' : 'mount'}-${k}`;
   if (r.state === RiderState.Done || r.state === RiderState.Out) return null;
   if (r.state === RiderState.Crash) return { sheet: sheet('stability'), cell: 1 };
   if (r.state === RiderState.Downed) return { sheet: sheet('stability'), cell: 2 };
@@ -49,8 +57,10 @@ export function heroMountCell(hero: string, r: HeroRideView): MountPick | null {
     const step = Math.floor(t * 4);
     switch (r.slot) {
       case MountedSlot.Neutral:
+        if (horse) return { sheet: sheet('attack'), cell: t < 0.35 ? 0 : 1 };
         return { sheet: sheet('attack'), cell: t < 0.35 ? 1 : 0 };
       case MountedSlot.Directional:
+        if (horse) return { sheet: sheet('attack'), cell: t < 0.35 ? 2 : 3 };
         return { sheet: sheet('attack'), cell: t < 0.35 ? 3 : 2 };
       case MountedSlot.Hop:
         return { sheet: sheet('defense'), cell: t < 0.6 ? 0 : 1 };
@@ -63,9 +73,14 @@ export function heroMountCell(hero: string, r: HeroRideView): MountPick | null {
     }
   }
   if (r.critical) return { sheet: sheet('stability'), cell: 0 };
-  if (r.steer < -STEER_DEADZONE) return { sheet: sheet('ride'), cell: 1 };
-  if (r.steer > STEER_DEADZONE) return { sheet: sheet('ride'), cell: 2 };
+  // The horse turns into depth (cell 2) either way and trots uphill (cell 1) when steering
+  // down the screen.
+  if (r.steer < -STEER_DEADZONE) return { sheet: sheet('ride'), cell: horse ? 2 : 1 };
+  if (r.steer > STEER_DEADZONE) return { sheet: sheet('ride'), cell: horse ? 1 : 2 };
   if (r.braking) return { sheet: sheet('ride'), cell: 3 };
+  // M27: the horse steps between its walk and trot poses so its legs move (the horse
+  // sheets have no gallop cycle yet).
+  if (horse && r.frame !== undefined) return { sheet: sheet('ride'), cell: Math.floor(r.frame / 8) % 2 };
   return { sheet: sheet('ride'), cell: 0 };
 }
 
@@ -76,6 +91,40 @@ export interface EnemyRideView {
   critical: boolean;
   /** Rider action index (0 Parallel Check, 1 Passing Boot). */
   attack: number;
+  /** M27: the simulation frame (the horse's stride). */
+  frame?: number;
+}
+
+/**
+ * M27: a Mounted Raider's cell on the bandit horse (RIDER3: ride = gallop, steer into depth,
+ * hard halt, circling; attack = wind-up, strike, riding past low, pointing; disengage =
+ * stumble, sliding off, the horse trotting away, on foot).
+ */
+export function raiderHorseCell(e: EnemyRideView): MountPick {
+  const ride = 'enemy.rider3.sheet.mount-ride';
+  const atk = 'enemy.rider3.sheet.mount-attack';
+  const off = 'enemy.rider3.sheet.mount-disengage';
+  switch (e.state) {
+    case EnemyState.Windup:
+      return { sheet: atk, cell: 0 };
+    case EnemyState.Strike:
+      return { sheet: atk, cell: e.attack === 1 ? 2 : 1 };
+    case EnemyState.Recover:
+      return { sheet: off, cell: 0 };
+    case EnemyState.Cutoff:
+      return { sheet: ride, cell: 1 };
+    case EnemyState.Fade:
+      return { sheet: ride, cell: 2 };
+    case EnemyState.Leave:
+      return { sheet: ride, cell: 3 };
+    case EnemyState.Crash:
+      return { sheet: off, cell: 1 };
+    case EnemyState.Down:
+      return { sheet: off, cell: 3 };
+  }
+  if (e.critical) return { sheet: off, cell: 0 };
+  // The gallop and the gathered stride alternate (the ride sheet has no gallop cycle yet).
+  return { sheet: ride, cell: e.frame !== undefined && Math.floor(e.frame / 6) % 2 === 1 ? 2 : 0 };
 }
 
 /** A Road Rider's or Marek's mounted cell. */

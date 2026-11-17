@@ -1,0 +1,154 @@
+# Hiking Staff (Stage 3 spec §10.1): two per room on Medium, a stage pickup with the shared
+# melee durability, clash, disarm and throw rules. Lighter and quicker than the Canal
+# Workstaff; its hook end draws a target in. Sheet cells (HERO-*-STAFF): 0 pick-up, 1 ready,
+# 2 thrust, 3 low sweep, 4 high block, 5 throw. M27 Combat Lab candidates.
+id: hiking-staff
+name: Hiking Staff
+class: temporaryMelee
+hands: 2
+integrity: { max: 100, worn: 60, critical: 25, hit: 6, guard: 3, clash: 10, throw: 20, deflect: 4 }
+gripResistance: 35
+pickup: 8
+hazardDestructible: true
+throw:
+  speed: 15
+  lift: 1
+  responses: [blockable, exactDeflectable, strikeDeflectable]
+actions:
+  - id: hike-thrust
+    name: Trailhead Thrust
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 7, active: 3, recovery: 12 }
+    hitbox: { x: 20, w: 150, y: 150, h: 80, depth: 34 }
+    damage: 38
+    reaction: { kind: stagger, hitstun: 18, push: 3 }
+    costs: { stun: 10, scale: 10, starter: 15 }
+    meter: 3
+    clash: light
+    breakPower: 20
+    links:
+      - { to: hike-sweep, category: chain, on: [hit, guard] }
+
+  - id: hike-sweep
+    name: Switchback Sweep
+    category: standing
+    input: { context: chain, dir: neutral }
+    frames: { startup: 9, active: 4, recovery: 16 }
+    hitbox: { x: 10, w: 165, y: 0, h: 120, depth: 38 }
+    damage: 48
+    reaction: { kind: knockdown, hitstun: 28, push: 4, lift: 4 }
+    costs: { stun: 14, scale: 12 }
+    meter: 4
+    clash: light
+    breakPower: 30
+    tags: [opensGroundWindow]
+
+  - id: hike-hook
+    name: Crook Pull
+    category: standing
+    input: { context: neutral, dir: backward }
+    frames: { startup: 10, active: 4, recovery: 16 }
+    hitbox: { x: 40, w: 160, y: 60, h: 120, depth: 34 }
+    damage: 32
+    reaction: { kind: stagger, hitstun: 24 }
+    costs: { stun: 12, scale: 10 }
+    meter: 4
+    clash: light
+    disarmPower: 45
+    pull: 7
+    note: The crook end draws the target in and can pull a weapon out of its hands.
+
+  - id: hike-lunge
+    name: Ridge Lunge
+    category: standing
+    input: { context: neutral, dir: forward }
+    frames: { startup: 11, active: 4, recovery: 18 }
+    hitbox: { x: 20, w: 185, y: 140, h: 80, depth: 30 }
+    damage: 52
+    reaction: { kind: knockback, hitstun: 24, push: 9 }
+    costs: { stun: 15, scale: 12 }
+    meter: 5
+    clash: light
+    tags: [impact]
+    moves:
+      - { from: 1, to: 11, forward: 4 }
+
+  - id: hike-rise
+    name: Rising Crook
+    category: standing
+    input: { context: neutral, dir: up }
+    frames: { startup: 10, active: 5, recovery: 20 }
+    hitbox: { x: 15, w: 140, y: 120, h: 200, depth: 40 }
+    damage: 48
+    reaction: { kind: launch, hitstun: 30, push: 1.5, lift: 15 }
+    costs: { stun: 15, scale: 12, juggle: 30 }
+    meter: 5
+    clash: light
+    links:
+      - { to: jump, input: neutral, category: jumpChase, on: [hit] }
+
+  - id: hike-low
+    name: Shin Sweep
+    category: low
+    input: { context: neutral, dir: down }
+    frames: { startup: 9, active: 4, recovery: 18 }
+    hitbox: { x: 15, w: 165, y: 0, h: 80, depth: 40 }
+    damage: 42
+    reaction: { kind: knockdown, hitstun: 30, push: 3, lift: 5 }
+    costs: { stun: 20, scale: 12 }
+    meter: 5
+    breakPower: 25
+    tags: [opensGroundWindow]
+
+  - id: hike-air
+    name: Falling Crook
+    category: aerial
+    input: { context: air, dir: neutral }
+    frames: { startup: 6, active: 4, recovery: 9, landing: true }
+    hitbox: { x: 10, w: 160, y: -10, h: 150, depth: 36 }
+    damage: 38
+    reaction: { kind: stagger, hitstun: 18, push: 3, airPop: 7 }
+    costs: { stun: 10, scale: 10, juggle: 10 }
+    meter: 3
+    clash: light
+
+  - id: hike-ground
+    name: Trail Marker
+    category: ground
+    input: { context: groundFocus, dir: neutral }
+    frames: { startup: 9, active: 3, recovery: 16 }
+    hitbox: { x: 10, w: 170, y: 0, h: 70, depth: 36 }
+    damage: 42
+    reaction: { kind: knockdown, hitstun: 28 }
+    costs: { stun: 15, scale: 12 }
+    meter: 4
+    tags: [terminalKnockdown, groundFinisher]
+
+  - id: hike-dash
+    name: Running Staff
+    category: dash
+    input: { context: dash, dir: neutral }
+    frames: { startup: 8, active: 4, recovery: 16 }
+    hitbox: { x: 15, w: 175, y: 120, h: 100, depth: 36 }
+    damage: 48
+    reaction: { kind: knockback, hitstun: 24, push: 9 }
+    costs: { stun: 15, scale: 12 }
+    meter: 5
+    clash: light
+    tags: [impact]
+    moves:
+      - { from: 1, to: 8, forward: 6 }
+
+  - id: hike-throw
+    name: Hiking Staff Throw
+    category: weaponThrow
+    input: { context: weaponThrow, dir: neutral }
+    frames: { startup: 10, active: 1, recovery: 14 }
+    hitbox: { x: 0, w: 120, y: 120, h: 40, depth: 30 }
+    damage: 55
+    reaction: { kind: knockdown, hitstun: 30, push: 6, lift: 5 }
+    costs: { stun: 15, scale: 12 }
+    meter: 4
+    breakPower: 35
+    tags: [impact]

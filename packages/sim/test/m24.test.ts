@@ -51,14 +51,22 @@ describe('M24 registry order and data (rule 2)', () => {
       'support-gun',
       'support-rail',
     ]);
-    expect(WEAPONS.slice(8).every((w) => w.id.startsWith('m24-'))).toBe(true);
+    // M27 appends the Stage 3 weapons and roles after the M24 files.
+    const m24 = (id: string) => id.startsWith('m24-');
+    const w24 = WEAPONS.slice(8);
+    const wEnd = w24.findIndex((w) => !m24(w.id));
+    expect(w24.slice(0, wEnd).every((w) => m24(w.id))).toBe(true);
+    expect(w24.slice(wEnd).some((w) => m24(w.id))).toBe(false);
     expect(ENEMIES[0]!.id).toBe('trainer');
-    const first = ENEMIES.findIndex((k) => k.id.startsWith('m24-'));
-    expect(ENEMIES.slice(first).every((k) => k.id.startsWith('m24-'))).toBe(true);
+    const first = ENEMIES.findIndex((k) => m24(k.id));
+    const e24 = ENEMIES.slice(first);
+    const eEnd = e24.findIndex((k) => !m24(k.id));
+    expect(e24.slice(0, eEnd).every((k) => m24(k.id))).toBe(true);
+    expect(e24.slice(eEnd).some((k) => m24(k.id))).toBe(false);
     // The Lab scenes are the last arenas (after every stage and greenhouse arena).
-    // (M25 appends its test room after them.)
+    // (M25 appends its test room after them, M27 its Stage 3 rooms.)
     const lab = ARENAS.findIndex((a) => a.id.startsWith('lab-m24-'));
-    const after = ARENAS.slice(lab).filter((a) => !a.id.startsWith('lab-m25-'));
+    const after = ARENAS.slice(lab).filter((a) => !/^lab-m2[57]-/.test(a.id));
     expect(after.every((a) => a.id.startsWith('lab-m24-'))).toBe(true);
     expect(after.length).toBe(9);
   });

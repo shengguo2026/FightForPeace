@@ -107,6 +107,8 @@ If Node.js 24 is not installed, the first start downloads a pinned Node.js 24 in
 
 **Mission Hub, packaging and Run Archive (M26):** the village has a **Mission Hub** with the four Mission Mode destinations (Character Chronicles, Mission Remix, Curated Missions, Random Operations). Every entry is a content package with a stable ID and version in `packages/data/missions/missions.yaml`; locked entries show a spoiler-safe clue, released stages open them, and packages whose content is not built yet show *Not installed*. Collection and Records has the full **Run Archive** (every finished run with its labels, pin, and replay with the same difficulty and heroes) and **Personal Paths** (the story choice record). `?hublab=stage2` (or the Lab's F1 links) opens the Hub on a temporary Lab profile with test packages that replay the M25 room.
 
+**Stage 3 systems (M27):** the Stage 3 combat content runs on the M24 engine as data: the Hiking Staff, Wood Axe, Quarry Hammer, Bandit Revolver and Garran's Quarry Hookstaff, four recovery foods, six bandit roles (Trail Ambusher, Quarry Bruiser, Rope Trapper, Mounted Raider, Ridge Stalker, Pack Captain) and **Garran Voss** with *Hookstaff Control*, *Clinch and Cast* and *Winch Pressure*, quarry scaffolds, carts and the winch, and the mountain horse on the **Horse Test Track**. Each is a Lab room (`lab-m27-*` in `packages/data/encounters/lab-m27.yaml`); the Stage 3 art comes from `tools/art/import_stage3.py` and the Stage 3 sounds play through `packages/platform/src/media/stage3Sounds.ts`. The Stage 3 journey follows in M28.
+
 ## Developer commands
 
 | Command | What it does |

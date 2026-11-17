@@ -1,0 +1,91 @@
+# Quarry Bruiser (Stage 3 spec §11.1): committed heavy pressure, strong environmental
+# eligibility and punishable recovery. Slow wind-ups that are easy to read, armour only on
+# the active frames of the Hammer-Fist, wall bounces into rails and scaffolds, and a long
+# hands-on-knees recovery after the charge. It may pick up a Quarry Hammer.
+# Sheets: IDLE-WALK, ATTACK (0 hammer-fist wind-up, 1 follow-through, 2 shoulder charge,
+# 3 shove, 4 boulder throw, 5 tired recovery), HIT, WALK, FLEE. M27 candidates.
+id: bruiser
+name: Quarry Bruiser
+bodyWidth: 84
+actions:
+  - id: hammer-fist
+    name: Hammer-Fist
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 24, active: 5, recovery: 28, blockstun: 16 }
+    hitbox: { x: 20, w: 120, y: 60, h: 220, depth: 38 }
+    damage: 70
+    reaction: { kind: knockdown, hitstun: 28, push: 6, lift: 4 }
+    costs: { stun: 14, scale: 12, starter: 10, guard: 16 }
+    meter: 0
+    armor: { from: 24, to: 28 }
+    tags: [counterable, impact]
+
+  - id: quarry-charge
+    name: Quarry Charge
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 22, active: [3, 10, 3], recovery: 40, blockstun: 16 }
+    hitbox: { x: 20, w: 120, y: 80, h: 200, depth: 40 }
+    damage: 64
+    reaction: { kind: knockback, hitstun: 24, push: 14 }
+    costs: { stun: 14, scale: 12, guard: 16 }
+    meter: 0
+    tags: [counterable, wallBounce, impact]
+    note: 'The long recovery is the tired hands-on-knees pose: the punish window.'
+    moves:
+      - { from: 14, to: 36, forward: 6 }
+
+  - id: bruiser-shove
+    name: Two-Hand Shove
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 14, active: 4, recovery: 20, blockstun: 14 }
+    hitbox: { x: 20, w: 110, y: 100, h: 160, depth: 36 }
+    damage: 36
+    reaction: { kind: knockback, hitstun: 20, push: 11 }
+    costs: { stun: 10, scale: 10, starter: 10, guard: 12 }
+    meter: 0
+    tags: [counterable, wallBounce]
+
+  - id: boulder-heave
+    name: Boulder Heave
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 34, active: 5, recovery: 30, blockstun: 16 }
+    hitbox: { x: 40, w: 220, y: 60, h: 160, depth: 40 }
+    damage: 60
+    reaction: { kind: knockdown, hitstun: 26, push: 8, lift: 4 }
+    costs: { stun: 14, scale: 12, guard: 14 }
+    meter: 0
+    tags: [counterable, impact]
+    note: 'The boulder is raised over the head for the whole long startup.'
+
+profile:
+  role: pressure
+  health: 460
+  walk: { x: 2, z: 2 }
+  perception: 4
+  ring: 280
+  defense: { tier: basic, guard: { every: 3, of: 1 }, guardHold: 26 }
+  morale: { breakAt: 15, shaken: 30 }
+  weapons: opportunistic
+  firearms: false
+  attacks:
+    - { action: bruiser-shove, threat: 14, cooldown: 100 }
+    - { action: hammer-fist, threat: 24, cooldown: 180 }
+    - { action: quarry-charge, threat: 28, cooldown: 280, minDifficulty: medium }
+    - { action: boulder-heave, threat: 26, cooldown: 360, minDifficulty: hard }
+
+variants:
+  - id: bruiser-elite
+    name: Quarry Bruiser Foreman
+    minDifficulty: hard
+    health: 520
+    defense: { tier: basic, guard: { every: 2, of: 1 }, guardHold: 28 }
+  - id: bruiser-master
+    name: Quarry Bruiser Overseer
+    minDifficulty: ultimate
+    health: 540
+    defense:
+      { tier: specialist, guard: { every: 2, of: 1 }, breaker: true, guardHold: 28, cooldown: 300 }

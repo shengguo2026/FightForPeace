@@ -21,6 +21,8 @@ import {
   HEROES,
   METER,
   MoveState,
+  MoverPhase,
+  type SharedState,
   type Projectile,
   activeHitbox,
   fxToPixels,
@@ -38,7 +40,9 @@ import {
   mountedKit,
   riderActionLength,
   runningAction,
+  ARENAS,
   CORRIDORS,
+  mountOf,
   ROOMS,
   type Encounter,
   type Greenhouse,
@@ -50,6 +54,7 @@ import {
   STAGE2_ROOM_AREA,
   enemyMountCell,
   heroMountCell,
+  raiderHorseCell,
   type MountPick,
   type QualityLevel,
   SpritePicker,
@@ -62,8 +67,9 @@ import { GreenhouseView } from './greenhouseView';
 import { SharedView } from './sharedView';
 import { ObjectivesView } from './objectivesView';
 import { EffectsLayer } from './effects';
-import { PresentationTracker } from '@ffp/platform';
+import { PresentationTracker, Stage3SoundTracker } from '@ffp/platform';
 import { playEventSounds } from '../media/sounds';
+import { audio } from '../media/audio';
 import { callout, dt, heroName, locale, t as tr, type TextId } from '../text/i18n';
 import { presentation } from '../shell/presentation';
 
@@ -118,6 +124,16 @@ const PROP_SCALE: Partial<Record<string, number>> = {
   'support-gun': 0.55,
   'breaching-grenade': 0.22,
   'support-rail': 0.9,
+  // M27: the Stage 3 weapon and food props.
+  'hiking-staff': 0.6,
+  'quarry-hookstaff': 0.7,
+  'wood-axe': 0.5,
+  'quarry-hammer': 0.6,
+  'bandit-revolver': 0.3,
+  'trail-rice': 0.3,
+  'vegetable-broth': 0.3,
+  'seed-cake': 0.28,
+  'camp-meal': 0.32,
 };
 
 export const VIEW_WIDTH = 1920;
@@ -242,6 +258,7 @@ export class StageScene extends Phaser.Scene {
   private readonly objectivesView = new ObjectivesView(this);
   /** M13: presentation events (stable ids) for sound and the effect layers. */
   private readonly tracker = new PresentationTracker();
+  private readonly stage3Sounds = new Stage3SoundTracker();
   private readonly effects = new EffectsLayer(this, this.assets);
   private lastTime = 0;
   private labFloor!: Phaser.GameObjects.Graphics;
@@ -322,6 +339,9 @@ export class StageScene extends Phaser.Scene {
       snap.run,
       stage2AreaOf(snap.greenhouse?.room, snap.pursuit?.corridor),
     );
+    // M27: the Stage 3 rooms and the horse corridors dress the heroes in the Stage 3
+    // outfit, which their Stage 3 weapon and horse sheets are drawn in.
+    this.picker.setOutfit(stage3Outfit(snap.encounter, snap.pursuit?.corridor) ? 's3' : 'base');
     const art = this.arena.hasStage2Backdrop();
     this.labFloor.setVisible(
       snap.encounter === null && snap.pursuit === null && snap.greenhouse === null,
@@ -350,8 +370,9 @@ export class StageScene extends Phaser.Scene {
     this.boss = this.arena.bossView(snap.encounter, current, snap.frame);
     this.inArena = snap.encounter !== null;
     this.drawScenery(snap.environment, snap.frame, collision);
+    this.drawMoverArt(snap.shared);
     // M24 shared systems (placeholder boxes and labels).
-    this.sharedView.draw(snap.shared, current, snap.items, snap.frame);
+    this.sharedView.draw(snap.shared, current, snap.items, snap.frame, snap.environment.breakables);
     // M25 objectives (protected units, evidence cases, hostile channels, live grade).
     this.objectivesView.draw(snap.objectives, snap.frame);
     this.drawItems(snap.items, snap.frame);
@@ -422,6 +443,20 @@ export class StageScene extends Phaser.Scene {
     });
     this.effects.play(events, time, this.opts.quality?.() ?? 'high');
     playEventSounds(events);
+    // M27: the Stage 3 recipes (weapons, bandits, Garran, quarry scenery, food, riders).
+    const boss = snap.encounter?.boss;
+    for (const snd of this.stage3Sounds.update({
+      frame: snap.frame,
+      generation: snap.generation,
+      fighters: current,
+      items: snap.items,
+      shared: snap.shared,
+      breakables: snap.environment.breakables,
+      boss: boss
+        ? { id: boss.id, phase: boss.phase, capture: boss.capture, stagger: boss.stagger }
+        : null,
+    }))
+      audio.sfx(snd.id, snd.category);
     for (const e of events)
       if (e.kind === 'firearm')
         this.arena.soundCaption(tr(`m22.cap.${e.what === 'aim' ? 'aim' : e.what}`), this.time.now);
@@ -452,6 +487,8 @@ export class StageScene extends Phaser.Scene {
     const mountKeep = new Set<number>();
     const art = new Set<string>();
     const scale = 0.62;
+    // M27: corridors ridden on the mountain horse draw the Stage 3 horse sheets.
+    const horse = mountOf(CORRIDORS[p.corridor]!).id === 'mountain-horse';
     for (const f of snap.current) {
       if (f.team !== 'hero') continue;
       const r = p.riders.find((x) => x.slot === f.slot);
@@ -459,16 +496,21 @@ export class StageScene extends Phaser.Scene {
       // M22: the hero on the Stage 2 mounted sheets when the hero has them.
       const kit = mountedKit(f.hero);
       const a = r.action >= 0 ? kit[r.action] : undefined;
-      const pick = heroMountCell(HEROES[f.hero]?.id ?? '', {
-        state: r.state,
-        critical: r.critical,
-        slot: a?.slot ?? -1,
-        actionAge: snap.frame - r.actionAt,
-        actionLength: a ? riderActionLength(r, a) : 0,
-        steer: fxToPixels(r.targetZ - r.z),
-        braking: r.speed < MOUNTED.bike.base * 0.85,
-        stateAge: snap.frame - r.since,
-      });
+      const pick = heroMountCell(
+        HEROES[f.hero]?.id ?? '',
+        {
+          state: r.state,
+          critical: r.critical,
+          slot: a?.slot ?? -1,
+          actionAge: snap.frame - r.actionAt,
+          actionLength: a ? riderActionLength(r, a) : 0,
+          steer: fxToPixels(r.targetZ - r.z),
+          braking: r.speed < MOUNTED.bike.base * 0.85,
+          stateAge: snap.frame - r.since,
+          frame: snap.frame,
+        },
+        horse,
+      );
       if (
         pick &&
         this.mountSprite(
@@ -497,7 +539,7 @@ export class StageScene extends Phaser.Scene {
       }
     }
     for (const e of p.enemies) {
-      const pick = enemyMountCell(e);
+      const pick = horse && !e.boss ? raiderHorseCell({ ...e, frame: snap.frame }) : enemyMountCell(e);
       if (this.mountSprite(-1 - e.id, pick, fxToPixels(e.x), fxToPixels(e.z), scale)) {
         mountKeep.add(-1 - e.id);
         art.add(`e${e.id}`);
@@ -969,6 +1011,36 @@ export class StageScene extends Phaser.Scene {
   }
 
   /** The pillar, the sluice boards (by state) and the cog (telegraph ring by phase). */
+  /**
+   * M27: the quarry movers drawn with the Stage 3 prop art (mine cart, the winch's cargo
+   * net, the sliding cover panel); the warning band and labels stay in the shared view.
+   */
+  private drawMoverArt(shared: SharedState | null): void {
+    for (const m of shared?.movers ?? []) {
+      const art = m.tags.includes('cart')
+        ? (['prop.s3-quarry', 0] as const)
+        : m.tags.includes('cargo')
+          ? (['prop.s3-quarry', 5] as const)
+          : m.tags.includes('cover')
+            ? (['prop.s3-scaffold', 4] as const)
+            : null;
+      if (!art || !this.textures.exists(art[0])) continue;
+      const meta = this.assets.sheet(art[0])?.sheet;
+      const c = meta?.cells[art[1]];
+      if (!meta || !c) continue;
+      const sp = this.sprite(this.propSprites, m.id, art[0]);
+      sp.setVisible(m.phase !== MoverPhase.Done);
+      sp.setTexture(art[0], art[1]);
+      sp.setOrigin(0.5, c.foot / meta.cell);
+      const h = fxToPixels(m.h);
+      sp.setScale(Math.max(0.3, h / Math.max(1, c.foot - c.y0)));
+      const z = fxToPixels(m.z) + fxToPixels(m.hd);
+      sp.setPosition(fxToPixels(m.x), z);
+      sp.setDepth(this.depthAt(z));
+      sp.setTint(m.redirectedBy ? 0xb8ffc8 : 0xffffff);
+    }
+  }
+
   private drawScenery(env: Environment, frame: number, collision: boolean): void {
     const g = this.gfx;
     const place = (id: number, sheet: string, cell: number, x: number, z: number, h: number) => {
@@ -995,7 +1067,18 @@ export class StageScene extends Phaser.Scene {
     for (const b of env.breakables) {
       const [x, z, hw, hd, h] = [b.x, b.z, b.hw, b.hd, b.h].map(fxToPixels) as number[];
       const height = b.state === BreakState.Broken ? h! * 0.45 : h!;
-      if (!place(b.id, 'prop.sluiceboards', b.state, x!, z! + hd!, height) || collision) {
+      // M27 quarry scenery: the scaffold by state (intact, cracked brace, leaning,
+      // collapsed), the timber barrier (splintered once broken) and loose stone.
+      const [sheet, cell] = b.tags?.includes('scaffold')
+        ? ['prop.s3-scaffold', b.state]
+        : b.tags?.includes('timber')
+          ? b.state === BreakState.Broken
+            ? ['prop.s3-scaffold', 5]
+            : ['prop.s3-quarry', 2]
+          : b.tags?.includes('stone')
+            ? ['prop.s3-quarry', 1]
+            : ['prop.sluiceboards', b.state];
+      if (!place(b.id, sheet, cell, x!, z! + hd!, height) || collision) {
         g.fillStyle(0x8b5a2b, collision ? 0.35 : 1);
         g.fillRect(x! - hw!, z! - height, hw! * 2, height);
       }
@@ -1532,4 +1615,13 @@ function stage2AreaOf(room: number | undefined, corridor: number | undefined): s
         ? CORRIDORS[corridor]?.id
         : undefined;
   return id ? (STAGE2_ROOM_AREA[id] ?? null) : null;
+}
+
+/** M27: whether the heroes wear the Stage 3 outfit (the M27 Lab rooms, horse corridors). */
+export function stage3Outfit(encounter: Encounter | null, corridor?: number): boolean {
+  if (corridor !== undefined) {
+    const c = CORRIDORS[corridor];
+    return c !== undefined && mountOf(c).id === 'mountain-horse';
+  }
+  return encounter !== null && (ARENAS[encounter.arena]?.id.startsWith('lab-m27') ?? false);
 }

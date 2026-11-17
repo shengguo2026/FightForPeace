@@ -187,6 +187,22 @@ export function startStagger(world: World, t: Fighter): void {
   t.threat = 0;
 }
 
+/** M27: Resolve a redirected environmental load (Garran's winch cargo) costs the boss. */
+export const REDIRECT_RESOLVE = 90;
+
+/**
+ * M27 (Stage 3 spec §13 "boss Resolve interaction"): a hero-redirected moving load that
+ * strikes the boss costs Resolve outside a Stagger window or a transition; at zero the
+ * Stagger Break (or the surrender) follows as for any Resolve break.
+ */
+export function redirectedStrike(world: World, t: Fighter): void {
+  const b = world.encounter?.boss;
+  if (!b || b.id !== t.id || t.ko || b.stagger > 0 || b.shift > 0) return;
+  b.resolve = Math.max(0, b.resolve - REDIRECT_RESOLVE);
+  b.redirects = (b.redirects ?? 0) + 1;
+  if (b.resolve === 0) startStagger(world, t);
+}
+
 /**
  * One frame of boss bookkeeping (before the boss's own AI step): the Stagger Break window,
  * the combo-scoped flinch count and the queued phase transition.
@@ -332,7 +348,7 @@ export function startPhase(world: World, f: Fighter, n: number): void {
   }
   // M19: the armed phase starts with its gun in hand; leaving it, the gun is tossed aside.
   if (ph.armed) armPhase(world, f, ph.armed);
-  else if (n > 0 && prof.phases[n - 1]!.armed) disarmForPhase(world, f);
+  else if (n > 0 && prof.phases[n - 1]!.armed) disarmForPhase(world, f, prof.phases[n - 1]!.armed);
   // A phase with a summon brings its supports through that call (once), not at its start.
   if (!ph.summon) spawnSupports(world, ph.supports, ph.eliteSupports, ph.coopSupports);
 }

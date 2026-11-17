@@ -71,6 +71,8 @@ export interface MoverLayout {
   /** Cycles before it stays at rest for good (0 = repeats). */
   cycles: number;
   tags: readonly string[];
+  /** M27: waits at rest until a boss completes this device kind (absent: on its schedule). */
+  trigger?: string;
 }
 
 export interface PlatformLayout {

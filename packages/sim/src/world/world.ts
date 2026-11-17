@@ -1095,6 +1095,8 @@ function encodeEncounter(w: ByteWriter, world: World): void {
     w.i32(b.scorchAt);
     w.u32(b.scorchStops);
     w.u8(b.intercept);
+    // M27: only once a redirected load has struck the boss (earlier worlds hash as before).
+    if (b.redirects !== undefined) w.u32(b.redirects);
   }
   w.u32(e.devices.length);
   for (const d of e.devices) {

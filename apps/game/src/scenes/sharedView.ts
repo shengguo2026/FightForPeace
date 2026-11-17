@@ -1,5 +1,7 @@
 import * as Phaser from 'phaser';
 import {
+  type Breakable,
+  ENEMIES,
   type Fighter,
   type Item,
   MoverPhase,
@@ -45,6 +47,7 @@ export class SharedView {
     bodies: readonly Fighter[],
     items: readonly Item[],
     frame: number,
+    breakables: readonly Breakable[] = [],
   ): void {
     const g = this.g;
     g.clear();
@@ -57,6 +60,17 @@ export class SharedView {
         18,
         color,
       );
+    // M27: quarry scenery states are written out beside the prop, never by colour alone.
+    for (const b of breakables) {
+      const key = b.tags?.includes('scaffold')
+        ? `m27.scaffold.${b.state}`
+        : b.tags?.includes('timber') && b.state < 3
+          ? 'm27.timber'
+          : b.tags?.includes('stone') && b.state < 3
+            ? 'm27.stone'
+            : null;
+      if (key) label(px(b.x), px(b.z) - px(b.h) - 30, key, '#f0e0c0');
+    }
     if (shared) {
       for (const m of shared.movers) {
         const [x0, z0, x1, z1, hw, hd, h] = [m.x0, m.z0, m.x1, m.z1, m.hw, m.hd, m.h].map(
@@ -81,11 +95,22 @@ export class SharedView {
         if (m.phase === MoverPhase.Done) continue;
         const [x, z] = [px(m.x), px(m.z)];
         const active = m.phase === MoverPhase.Active;
-        g.fillStyle(active ? (m.redirectedBy ? 0x6fd18a : 0xff3b30) : 0x8a7a66, active ? 0.9 : 0.6);
-        g.fillRect(x - hw!, z - h!, hw! * 2, h!);
-        g.lineStyle(3, 0x000000, 0.8);
+        // M27: the quarry movers have prop art (drawn by the stage); outline them only.
+        const drawn =
+          ['cart', 'cargo', 'cover'].some((k) => m.tags.includes(k)) &&
+          this.scene.textures.exists('prop.s3-quarry');
+        if (!drawn) {
+          g.fillStyle(
+            active ? (m.redirectedBy ? 0x6fd18a : 0xff3b30) : 0x8a7a66,
+            active ? 0.9 : 0.6,
+          );
+          g.fillRect(x - hw!, z - h!, hw! * 2, h!);
+        }
+        g.lineStyle(3, active ? (m.redirectedBy ? 0x6fd18a : 0xff3b30) : 0x000000, 0.8);
         g.strokeRect(x - hw!, z - h!, hw! * 2, h!);
-        label(x, z - h! - 14, 'm24.mover');
+        // M27: the quarry movers are named (mine cart, winch cargo, sliding cover).
+        const tag = ['cart', 'cargo', 'cover'].find((k) => m.tags?.includes(k));
+        label(x, z - h! - 14, tag ? `m27.${tag}` : 'm24.mover');
       }
       for (const p of shared.platforms) {
         const [x, z, hw, hd] = [p.x, p.z, p.hw, p.hd].map(px) as number[];
@@ -145,9 +170,13 @@ export class SharedView {
           g.fillRect(left, px(r.lane - lane), 1920, px(lane * 2));
           label(x, px(r.lane) - px(lane) - 14, 'm24.lane', '#ffd27a');
         }
-        // A horse or bike body under the rider (placeholder box) and the Stability bar.
-        g.fillStyle(0x6b4a2b, 0.9);
-        g.fillRect(x - 90, z - 110, 180, 70);
+        // A horse or bike body under the rider (placeholder box, unless the rider has its
+        // mounted sheets: the M27 Mounted Raider) and the Stability bar.
+        const art = ENEMIES[f.hero]?.art ?? ENEMIES[f.hero]?.id ?? '';
+        if (!this.scene.textures.exists(`enemy.${art}.sheet.mount-ride`)) {
+          g.fillStyle(0x6b4a2b, 0.9);
+          g.fillRect(x - 90, z - 110, 180, 70);
+        }
         const w = 120;
         g.fillStyle(0x000000, 0.7);
         g.fillRect(x - w / 2, z - 340, w, 10);

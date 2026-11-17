@@ -1,0 +1,102 @@
+# Quarry Hookstaff (Stage 3 spec §10.1, §12.2): Garran Voss's blunt hooked staff. He holds
+# it through Hookstaff Control; it uses the normal durability, clash, environmental and
+# disarm rules. It becomes loose only through his disarm (a hero's disarm, a Stagger Break
+# drop, his phase change) and is never replaced. Once loose, any hero may pick it up: long
+# reach, a hooked pull and a cargo-redirecting hook (`redirects: cargo`). M27 candidates.
+id: quarry-hookstaff
+name: Quarry Hookstaff
+class: temporaryMelee
+hands: 2
+integrity: { max: 160, worn: 100, critical: 40, hit: 5, guard: 3, clash: 8, throw: 20, deflect: 4 }
+gripResistance: 45
+pickup: 10
+throw:
+  speed: 13
+  lift: 1
+  responses: [blockable, exactDeflectable, strikeDeflectable]
+redirects: [cargo]
+actions:
+  - id: hookstaff-sweep
+    name: Long Sweep
+    category: standing
+    input: { context: neutral, dir: neutral }
+    frames: { startup: 12, active: 5, recovery: 20, blockstun: 14 }
+    hitbox: { x: 10, w: 210, y: 60, h: 160, depth: 42 }
+    damage: 60
+    reaction: { kind: knockback, hitstun: 24, push: 10 }
+    costs: { stun: 14, scale: 12, starter: 15, guard: 14 }
+    meter: 4
+    clash: heavy
+    breakPower: 50
+    tags: [impact]
+    links:
+      - { to: hookstaff-thrust, category: chain, on: [hit, guard] }
+
+  - id: hookstaff-thrust
+    name: Guarded Thrust
+    category: standing
+    input: { context: chain, dir: neutral }
+    frames: { startup: 9, active: 4, recovery: 18, blockstun: 14 }
+    hitbox: { x: 20, w: 220, y: 140, h: 80, depth: 32 }
+    damage: 50
+    reaction: { kind: stagger, hitstun: 22, push: 6 }
+    costs: { stun: 12, scale: 10, guard: 12 }
+    meter: 4
+    clash: light
+
+  - id: hookstaff-pull
+    name: Hooked Pull
+    category: standing
+    input: { context: neutral, dir: backward }
+    frames: { startup: 14, active: 4, recovery: 20, blockstun: 12 }
+    hitbox: { x: 60, w: 200, y: 60, h: 140, depth: 36 }
+    damage: 35
+    reaction: { kind: stagger, hitstun: 26 }
+    costs: { stun: 12, scale: 10, guard: 10 }
+    meter: 4
+    clash: light
+    disarmPower: 55
+    pull: 10
+    note: The hook catches a leg or a weapon and draws it in.
+
+  - id: hookstaff-low
+    name: Low Line
+    category: low
+    input: { context: neutral, dir: down }
+    frames: { startup: 12, active: 4, recovery: 22, blockstun: 12 }
+    hitbox: { x: 15, w: 200, y: 0, h: 80, depth: 42 }
+    damage: 48
+    reaction: { kind: knockdown, hitstun: 30, push: 3, lift: 5 }
+    costs: { stun: 18, scale: 12, guard: 10 }
+    meter: 5
+    breakPower: 30
+    tags: [opensGroundWindow]
+
+  - id: hookstaff-descent
+    name: Short Descent
+    category: standing
+    input: { context: neutral, dir: forward }
+    frames: { startup: 16, active: 5, recovery: 24, blockstun: 16 }
+    hitbox: { x: 20, w: 170, y: 100, h: 220, depth: 38 }
+    damage: 72
+    reaction: { kind: knockdown, hitstun: 30, push: 6, lift: 5 }
+    costs: { stun: 18, scale: 14, guard: 18 }
+    meter: 6
+    clash: heavy
+    breakPower: 70
+    tags: [impact]
+    moves:
+      - { from: 1, to: 14, forward: 2 }
+
+  - id: hookstaff-throw
+    name: Hookstaff Throw
+    category: weaponThrow
+    input: { context: weaponThrow, dir: neutral }
+    frames: { startup: 12, active: 1, recovery: 16 }
+    hitbox: { x: 0, w: 130, y: 120, h: 40, depth: 30 }
+    damage: 55
+    reaction: { kind: knockdown, hitstun: 30, push: 6, lift: 5 }
+    costs: { stun: 15, scale: 12 }
+    meter: 4
+    breakPower: 40
+    tags: [impact]

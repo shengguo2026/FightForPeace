@@ -38,6 +38,12 @@ export interface Mover {
   tags: string[];
   /** Fighters it already struck this cycle. */
   hitIds: number[];
+  /**
+   * M27 triggered mover: the device kind that releases it, and releases still to run.
+   * Absent on scheduled movers (their encoding is unchanged).
+   */
+  trigger?: string;
+  released?: number;
 }
 
 /** A moving platform (fixed point). */
@@ -263,6 +269,8 @@ export function encodeShared(w: ByteWriter, world: World): void {
     w.u32(m.done);
     w.u32(m.hitIds.length);
     for (const id of m.hitIds) w.u32(id);
+    // M27: only triggered movers carry their pending releases.
+    if (m.trigger) w.u32(m.released ?? 0);
   }
   w.u32(s.platforms.length);
   for (const p of s.platforms) {

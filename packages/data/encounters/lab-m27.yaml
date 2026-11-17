@@ -1,0 +1,314 @@
+# M27 Stage 3 systems: arena scenarios for every Stage 3 role, the quarry environment and
+# every phase of Garran Voss (plan docs/superpowers/plans/2026-11-17-m27-stage3-systems.md).
+# Appended after the M25 rooms (arena indices are encoded; never insert before). The Stage 3
+# environments arrive with M28, so the rooms stand on Stage 1 backdrops; the quarry
+# scenery draws with the Stage 3 prop sheets. Trial rooms ignore the roles' difficulty
+# gates (like the M19 trials); mixed rooms follow them. Pixels and frames at 60 Hz.
+#
+# Scenery tags: `scaffold` (multi-state quarry scaffold), `timber` (barrier; the Wood Axe
+# opens it at once), `stone` (loose stone), `cart` (mine cart on rails: any strike in the
+# warning redirects it), `cargo` and `cover` (Garran's winch loads, released by his crank).
+arenas:
+  # --- One trial room per role ---------------------------------------------------------
+  - id: lab-m27-ambusher
+    name: 'M27 Trial: Trail Ambusher'
+    area: fields
+    width: 2880
+    scenery:
+      items:
+        - { weapon: hiking-staff, x: 700, z: 800 }
+        - { weapon: trail-rice, x: 600, z: 920 }
+    waves:
+      - enemies:
+          - { kit: ambusher, x: 2300, z: 760 }
+          - { kit: ambusher, x: 2500, z: 900 }
+          - { kit: ambusher, x: 200, z: 820, coop: true }
+
+  - id: lab-m27-bruiser
+    name: 'M27 Trial: Quarry Bruiser'
+    area: mill
+    width: 2880
+    scenery:
+      items:
+        - { weapon: quarry-hammer, x: 1500, z: 700 }
+        - { weapon: vegetable-broth, x: 600, z: 920 }
+      surfaces:
+        # A retaining wall: an impact surface for wall bounces (safe, never a drop).
+        - { x: 2700, z: 800, hw: 30, hd: 200, h: 240 }
+      breakables:
+        - { x: 1900, z: 680, hw: 60, hd: 30, h: 260, thresholds: [80, 160, 240], tags: [scaffold] }
+    waves:
+      - enemies:
+          - { kit: bruiser, x: 2100, z: 820 }
+          - { kit: bruiser, x: 2300, z: 920, coop: true }
+
+  - id: lab-m27-trapper
+    name: 'M27 Trial: Rope Trapper'
+    area: canal
+    width: 2880
+    scenery:
+      items:
+        - { weapon: hiking-staff, x: 700, z: 800 }
+    waves:
+      - enemies:
+          - { kit: trapper, x: 2100, z: 780 }
+          - { kit: ambusher, x: 2400, z: 900 }
+          - { kit: trapper, x: 300, z: 860, coop: true }
+
+  - id: lab-m27-raider
+    name: 'M27 Trial: Mounted Raider'
+    area: fields
+    width: 2880
+    scenery:
+      items:
+        - { weapon: hiking-staff, x: 700, z: 800 }
+    waves:
+      - enemies:
+          - { kit: raider, x: 2500, z: 820 }
+          - { kit: raider, x: 300, z: 720, coop: true }
+
+  - id: lab-m27-stalker
+    name: 'M27 Trial: Ridge Stalker'
+    area: bridge
+    width: 2880
+    waves:
+      - enemies:
+          - { kit: stalker, x: 2100, z: 800 }
+          - { kit: stalker, x: 2400, z: 900, coop: true }
+
+  - id: lab-m27-captain
+    name: 'M27 Trial: Pack Captain'
+    area: courtyard
+    width: 2880
+    waves:
+      - enemies:
+          - { kit: captain, x: 2400, z: 820 }
+          - { kit: ambusher, x: 2000, z: 740 }
+          - { kit: ambusher, x: 2100, z: 920 }
+          - { kit: trapper, x: 2300, z: 700, coop: true }
+
+  # --- Quarry rooms (Stage 3 spec §22.4 names, systems only) ---------------------------
+  - id: lab-m27-scaffold
+    name: 'M27 Lab: Loose Scaffold'
+    area: mill
+    width: 3360
+    scenery:
+      items:
+        - { weapon: hiking-staff, x: 700, z: 760 }
+        - { weapon: hiking-staff, x: 800, z: 920 }
+        - { weapon: trail-rice, x: 1200, z: 940 }
+        - { weapon: seed-cake, x: 1300, z: 700 }
+      breakables:
+        # Quarry scaffolds: intact, damaged, critical, broken (Stage 3 spec §13).
+        - { x: 1700, z: 680, hw: 70, hd: 30, h: 280, thresholds: [80, 160, 240], tags: [scaffold] }
+        - { x: 2300, z: 680, hw: 70, hd: 30, h: 280, thresholds: [80, 160, 240], tags: [scaffold] }
+        # Loose stone (expendable, cleared once broken).
+        - { x: 2000, z: 930, hw: 40, hd: 30, h: 70, thresholds: [30, 60, 90], tags: [stone] }
+      surfaces:
+        - { x: 3200, z: 800, hw: 30, hd: 200, h: 240 }
+    waves:
+      - enemies:
+          - { kit: ambusher, x: 2100, z: 760 }
+          - { kit: ambusher, x: 2400, z: 900 }
+          - { kit: bruiser, x: 2600, z: 820 }
+          - { kit: ambusher, x: 300, z: 860, coop: true }
+        next: 0
+      - enemies:
+          - { kit: trapper, x: 2900, z: 760, minDifficulty: medium }
+          - { kit: bruiser, x: 3000, z: 900 }
+
+  - id: lab-m27-hammer-line
+    name: 'M27 Lab: Hammer Line'
+    area: mill
+    width: 3360
+    scenery:
+      items:
+        - { weapon: quarry-hammer, x: 700, z: 760 }
+        - { weapon: quarry-hammer, x: 760, z: 920 }
+        - { weapon: vegetable-broth, x: 1100, z: 940 }
+      breakables:
+        - { x: 1900, z: 680, hw: 70, hd: 30, h: 280, thresholds: [80, 160, 240], tags: [scaffold] }
+        - { x: 2600, z: 940, hw: 40, hd: 30, h: 70, thresholds: [30, 60, 90], tags: [stone] }
+      surfaces:
+        - { x: 3200, z: 800, hw: 30, hd: 200, h: 240 }
+    waves:
+      - enemies:
+          - { kit: bruiser, x: 2100, z: 760 }
+          - { kit: bruiser, x: 2300, z: 920 }
+          - { kit: trapper, x: 2600, z: 820, minDifficulty: medium }
+          - { kit: bruiser, x: 300, z: 860, coop: true }
+
+  - id: lab-m27-cart-rails
+    name: 'M27 Lab: Cart Rails'
+    area: mill
+    width: 3360
+    scenery:
+      items:
+        - { weapon: wood-axe, x: 700, z: 760 }
+        - { weapon: bandit-revolver, x: 800, z: 920 }
+        - { weapon: trail-rice, x: 1200, z: 940 }
+      movers:
+        # Mine carts on rails: a warned rail, then the run (any strike in the warning
+        # turns the cart against the bandits).
+        - {
+            from: [200, 720],
+            to: [3100, 720],
+            size: [60, 40, 90],
+            start: 180,
+            rest: 300,
+            warn: 80,
+            active: 100,
+            damage: 60,
+            redirect: any,
+            tags: [cart],
+          }
+        - {
+            from: [3100, 900],
+            to: [200, 900],
+            size: [60, 40, 90],
+            start: 420,
+            rest: 300,
+            warn: 80,
+            active: 100,
+            damage: 60,
+            redirect: any,
+            tags: [cart],
+          }
+    waves:
+      - enemies:
+          - { kit: raider, x: 2900, z: 820, minDifficulty: medium }
+          - { kit: ambusher, x: 2200, z: 780 }
+          - { kit: ambusher, x: 2400, z: 860 }
+          - { kit: ambusher, x: 300, z: 820, coop: true }
+
+  - id: lab-m27-outer-fence
+    name: 'M27 Lab: Outer Fence'
+    area: courtyard
+    width: 3360
+    scenery:
+      items:
+        - { weapon: hiking-staff, x: 700, z: 760 }
+        - { weapon: wood-axe, x: 760, z: 920 }
+        - { weapon: trail-rice, x: 1100, z: 940 }
+        - { weapon: vegetable-broth, x: 1150, z: 700 }
+        - { weapon: seed-cake, x: 1200, z: 820 }
+        - { weapon: camp-meal, x: 400, z: 820 }
+      breakables:
+        # Timber barriers: the Wood Axe opens them at once.
+        - { x: 1600, z: 700, hw: 50, hd: 30, h: 180, thresholds: [60, 120, 180], tags: [timber] }
+        - { x: 1600, z: 900, hw: 50, hd: 30, h: 180, thresholds: [60, 120, 180], tags: [timber] }
+    waves:
+      - enemies:
+          - { kit: ambusher, x: 2100, z: 760 }
+          - { kit: bruiser, x: 2300, z: 900 }
+          - { kit: trapper, x: 2500, z: 820, minDifficulty: medium }
+          - { kit: stalker, x: 2700, z: 740, minDifficulty: extreme }
+          - { kit: captain, x: 3000, z: 820, minDifficulty: ultimate }
+          - { kit: ambusher, x: 300, z: 860, coop: true }
+        next: 0
+      - enemies:
+          - { kit: raider, x: 3100, z: 820, minDifficulty: medium }
+          - { kit: ambusher, x: 2800, z: 900 }
+          - { kit: stalker, x: 2900, z: 700, minDifficulty: extreme }
+
+  # --- Garran Voss --------------------------------------------------------------------
+  - id: lab-m27-garran-hook
+    name: 'M27 Lab: Garran, Hookstaff Control'
+    area: courtyard
+    width: 2880
+    heroX: 600
+    scenery:
+      items:
+        - { weapon: hiking-staff, x: 800, z: 760 }
+        - { weapon: wood-axe, x: 800, z: 920 }
+        - { weapon: trail-rice, x: 500, z: 900 }
+    waves:
+      - enemies:
+          - { kit: garran, x: 2000, z: 820 }
+
+  - id: lab-m27-garran-clinch
+    name: 'M27 Lab: Garran, Clinch and Cast'
+    area: courtyard
+    width: 2880
+    heroX: 600
+    scenery:
+      items:
+        - { weapon: trail-rice, x: 500, z: 900 }
+    waves:
+      - enemies:
+          - { kit: garran, x: 1800, z: 820, phase: 1 }
+
+  - id: lab-m27-garran-winch
+    name: 'M27 Lab: Garran, Winch Pressure'
+    area: sluice
+    width: 2880
+    heroX: 600
+    devices:
+      - { kind: winch, x: 2500, z: 680, count: 1 }
+    scenery:
+      items:
+        - { weapon: quarry-hookstaff, x: 900, z: 760 }
+        - { weapon: vegetable-broth, x: 500, z: 900 }
+      movers: &winch-loads
+        # The terrace winch's loads: each completed crank releases the next one along its
+        # marked path (warning first). A strike in the warning redirects it; redirected, it
+        # strikes only bandits, and Garran loses Resolve if it strikes him.
+        - {
+            from: [700, 720],
+            to: [2300, 720],
+            size: [70, 50, 160],
+            rest: 0,
+            warn: 80,
+            active: 70,
+            damage: 70,
+            redirect: any,
+            tags: [cargo],
+            trigger: winch,
+          }
+        - {
+            from: [2300, 900],
+            to: [700, 900],
+            size: [40, 70, 180],
+            rest: 0,
+            warn: 80,
+            active: 70,
+            damage: 60,
+            redirect: any,
+            tags: [cover],
+            trigger: winch,
+          }
+        - {
+            from: [1500, 640],
+            to: [1500, 960],
+            size: [70, 50, 160],
+            rest: 0,
+            warn: 80,
+            active: 50,
+            damage: 70,
+            redirect: any,
+            tags: [cargo],
+            trigger: winch,
+          }
+    waves:
+      - enemies:
+          - { kit: garran, x: 1800, z: 820, phase: 2 }
+
+  - id: lab-m27-garran
+    name: 'M27 Lab: Chief of the Broken Ridge'
+    area: sluice
+    width: 2880
+    heroX: 500
+    devices:
+      - { kind: winch, x: 2500, z: 680, count: 1 }
+    scenery:
+      items:
+        - { weapon: hiking-staff, x: 700, z: 760 }
+        - { weapon: wood-axe, x: 760, z: 920 }
+        - { weapon: trail-rice, x: 400, z: 900 }
+        - { weapon: vegetable-broth, x: 450, z: 700 }
+      breakables:
+        - { x: 1300, z: 680, hw: 70, hd: 30, h: 280, thresholds: [80, 160, 240], tags: [scaffold] }
+      movers: *winch-loads
+    waves:
+      - enemies:
+          - { kit: garran, x: 1900, z: 820 }

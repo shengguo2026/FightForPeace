@@ -1600,3 +1600,59 @@ explorer out\sfx
 8. **WAV files (optional):** run the `render_sfx.mjs` command above: `out\sfx` has one folder per group with all 145 WAV files and `index.csv`.
 
 Write down any sound that is wrong, too loud, too quiet or unclear, with its name (for example `hit.heavy: too soft`).
+
+## M27 · Stage 3 systems: horse, weapons, bandits and Garran Voss (0.27.0)
+
+What's new: everything Stage 3 fights with, playable in the Lab (the Stage 3 journey, story and areas come with M28). **Weapons:** Hiking Staff (quick thrusts and sweeps), Wood Axe (slow chops, strong disarm, opens timber barriers at once), Quarry Hammer (slowest, wall bounce, breaks scaffolds fastest, you walk slower while carrying it), Bandit Revolver (exactly 5 rounds, never reloaded, then a pistol whip and a throw) and Garran's Quarry Hookstaff (loose only after he is disarmed). **Food:** Trail Rice Parcel (Health), Warm Vegetable Broth (Defense), Spiced Seed Cake (Attack Bar), Mountain Camp Meal (some of all three): pick up with **J**, eat with **W + J**. **Bandits:** Trail Ambusher, Quarry Bruiser, Rope Trapper, Mounted Raider (on a horse, then on foot), Ridge Stalker (feints) and Pack Captain (Flank Order). **Garran Voss** in three phases: *Hookstaff Control*, *Clinch and Cast* (from 65 %) and *Winch Pressure* (from 30 %), then capture. **Quarry scenery:** scaffolds with four states, mine carts on rails, timber barriers, loose stone, a retaining wall and the winch's swinging cargo. **Horse Test Track:** the mountain horse in a pursuit, solo or co-op; at zero Stability you get off safely and go on foot. The Stage 3 art (enemy, Garran, horse, weapon and prop sheets) and the Stage 3 sounds are now used in play.
+
+### Get and start the build
+
+To test the branch before it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-ki456e
+git checkout claude/project-thread-ki456e
+git pull origin claude/project-thread-ki456e
+pnpm install
+pnpm dev
+```
+
+After it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+If Vite prints another port than 5173, use that one. Stop the server with `Ctrl+C`.
+
+### Test steps
+
+Every room opens from the Lab: `http://localhost:5173/?lab`, press **F1**, pick the room in the **Arena** list (all start with "M27") and press **Restart**. The M27 rooms offer all five difficulties. **F1** hides the panels again. Keys: move **W A S D**, attack **T**, jump **Y** (Z on QWERTZ), guard **G**, pick up / grab / throw **J**, Special **U**. Player 2 joins with **Num 4**.
+
+1. **Trail Ambusher** (*M27 Trial: Trail Ambusher*): they sprint in, dash to your side and lunge low; when hurt they flee on a run cycle with a look back. Their sprint and flank have their own whistle sounds.
+2. **Quarry Bruiser** (*M27 Trial: Quarry Bruiser*): slow, heavy swings with a grunt before each one, a charge that knocks you into the wall on the right, and long tired recoveries. A Quarry Hammer lies in the room: they may pick it up. Pick it up yourself (**J**): you walk slower; hit the scaffold: it creaks, cracks and collapses (labels *Scaffold: damaged / critical / broken*).
+3. **Rope Trapper** (*M27 Trial: Rope Trapper*): a lasso twirl (tell) before the throw. When the rope catches you, press **G** when *ESCAPE* shows to break free, or let Player 2 hit the Trapper to free you; you are never held for long.
+4. **Mounted Raider** (*M27 Trial: Mounted Raider*): a bandit on a black horse warns its lane (amber band, *Lane pass*) and rides through. Hitting it only lowers its **Stability** bar; at zero it slides off safely and fights on foot (ochre coat, baton).
+5. **Ridge Stalker** (*M27 Trial: Ridge Stalker*, try **Extreme**): it sometimes starts a strike and stops (the feint): the tell always shows, the real strike follows.
+6. **Pack Captain** (*M27 Trial: Pack Captain*, try **Ultimate**): it whistles **Flank Order**: two Ambushers take opposite sides of you. Hit the Captain while it whistles: *Whistle Dropped* and the order breaks.
+7. **Weapons and food** (*M27 Lab: Cart Rails* and *M27 Lab: Outer Fence*): pick up the **Bandit Revolver**: five shots with a red warning line, then the attack becomes a pistol whip (empty click); it can still be thrown. Pick up the **Wood Axe** and hit a **Timber barrier**: it opens with one strike. Take some damage, pick up each food and eat it with **W + J**: rice raises Health, broth Defense, the seed cake the Attack Bar, the camp meal a little of each. Each has its own sound.
+8. **Mine carts** (*Cart Rails*): a cart warns its rail before each run (amber band, *Mine cart*). Hit it during the warning: *Redirected*, and it then only hits bandits.
+9. **Loose Scaffold** and **Hammer Line**: mixed rooms with scaffolds, loose stone and the retaining wall on the right (wall bounces); the second wave arrives when the first is down.
+10. **Garran: Hookstaff Control** (*M27 Lab: Garran, Hookstaff Control*): he fights with the long hookstaff (sweep, thrust, hooked pull that drags you in, low line, descending strike). The boss bar names the Quarry Hookstaff. Disarm him (Wood Axe or the Hiking Staff's hook, or a Stagger Break): the staff lies loose (boss bar: *loose, any hero may take it*) and Phase 2 starts; he never gets it back. Pick it up yourself and use it.
+11. **Garran: Clinch and Cast** (starts at 65 %, unarmed): collar tie, shoulder throw, ridge trip, body blows, shove and charge; his grabs always let you escape (**G** when *ESCAPE* shows) and Player 2 can interrupt them. He blocks and counters.
+12. **Garran: Winch Pressure** (starts at 30 %): he cranks the terrace winch on the right (crank sound, progress pips); each completed crank releases one **Winch cargo** or **Sliding cover** along its path with a warning first. Hit it during the warning: it turns against him and costs him Resolve (the Resolve bar drops). Interrupt his cranking by hitting him.
+13. **Chief of the Broken Ridge** (*M27 Lab: Chief of the Broken Ridge*): the whole fight. A Resolve break at or below 30 % Health is the clean surrender (he kneels, raises his hands, is restrained); Health 0 with Resolve left is the forced capture. Try it in co-op too.
+14. **Horse Test Track** (Arena list: *Horse Test Track (mounted pursuit, greybox)*): each hero rides their own horse (Stage 3 riding art: walk, turn, halt, kicks and hops). The bandit riders are on black horses. Let the Stability bar run out: the horse stops, you get off safely and finish on foot (Health is not lost). Try it with Player 2 too.
+15. **Sounds:** in the rooms above you hear the Stage 3 sounds in play: staff, axe and hammer swings and hits, the revolver's cock, shot and empty click, the Ambusher whistle, Bruiser grunt, rope twirl and bind, Raider charge, Stalker feint, Captain whistle, Garran's clinch, throw, roar and winch, the winch warning and release, carts rolling, scaffolds creaking and collapsing, food, and on the horse track hooves, whinny and the safe dismount.
+16. **Languages:** switch to Deutsch and 简体中文: the enemy, weapon, food and room names are translated; Garran's phases read 钩杖制敌 / 缠抱摔投 / 绞盘压迫 and *Hakenstab-Kontrolle / Klammern und Werfen / Seilwinden-Druck*.
+17. **Stage 1 and 2 unchanged:** play the Stage 1 courtyard and the Stage 2 Loading Yard (`?stage=2&beat=2`) on Medium: nothing should feel different from 0.26.0, and Marek's fight still has Tomas's lines.
+18. **Stage 3 outfit (fix after the first test):** in every M27 room and on the Horse Test Track the heroes wear their Stage 3 outfit (dark weatherproof jacket, trail boots). Pick up and drop the axe, the hammer, the hiking staff and the revolver with each hero: the clothes must stay the same. Walking with the revolver shows the Stage 3 walk with the revolver in hand. Stage 1 and 2 rooms keep the old outfit.
+19. **Horse legs (interim):** the black raider horse in *M27 Trial: Mounted Raider* and the hero horses on the Horse Test Track now step between two poses while riding. A proper four-frame gallop comes with the GALLOP sheets (prompts in `codex_prompts_stage3_gallop.md` in the pictures repository).
+
+Write down anything that looks too big or too small (the Stage 3 sheets use the scales recorded at approval), any pose that looks wrong, and any sound that is wrong or too loud.

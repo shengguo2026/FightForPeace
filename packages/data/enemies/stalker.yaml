@@ -1,0 +1,94 @@
+# Ridge Stalker (Stage 3 spec §11.2): the Extreme specialist with visible feints (M24 E8).
+# The shoulder-dip tell always shows; on a feint the strike stops after the tell and the
+# real one follows a set delay later. Feints change timing only: recognition, guard and the
+# punish window after the real strike all stay. Sheets: IDLE-WALK, FEINT (0 feint tell,
+# 1 recovery into the strike, 2 double stave wind-up, 3 follow-through, 4 spinning strike,
+# 5 rolling evade), HIT, WALK, FLEE. M27 candidates.
+id: stalker
+name: Ridge Stalker
+bodyWidth: 66
+actions:
+  - id: dip-strike
+    name: Shoulder-Dip Strike
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 16, active: 4, recovery: 22, blockstun: 14 }
+    hitbox: { x: 20, w: 125, y: 120, h: 140, depth: 34 }
+    damage: 48
+    reaction: { kind: stagger, hitstun: 20, push: 4 }
+    costs: { stun: 12, scale: 10, starter: 10, guard: 12 }
+    meter: 0
+    tags: [counterable]
+
+  - id: twin-staves
+    name: Twin Staves
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 18, active: [3, 6, 3], recovery: 26, blockstun: 14 }
+    hitbox: { x: 20, w: 130, y: 100, h: 160, depth: 36 }
+    damage: 66
+    reaction: { kind: knockback, hitstun: 22, push: 8 }
+    costs: { stun: 14, scale: 12, starter: 10, guard: 14 }
+    meter: 0
+    tags: [counterable, deflectBreak]
+    moves:
+      - { from: 8, to: 24, forward: 3 }
+
+  - id: spin-stave
+    name: Ridge Spin
+    category: low
+    input: { context: script, dir: neutral }
+    frames: { startup: 20, active: 5, recovery: 26, blockstun: 14 }
+    hitbox: { x: 10, w: 150, y: 0, h: 100, depth: 40 }
+    damage: 50
+    reaction: { kind: knockdown, hitstun: 26, push: 4, lift: 4 }
+    costs: { stun: 14, scale: 12, guard: 12 }
+    meter: 0
+    tags: [counterable]
+
+  - id: roll-evade
+    name: Rolling Evade
+    category: standing
+    input: { context: script, dir: neutral }
+    frames: { startup: 2, active: 1, recovery: 22 }
+    hitbox: { x: 0, w: 1, y: 0, h: 1, depth: 1 }
+    damage: 0
+    reaction: { kind: stagger, hitstun: 1 }
+    costs: { stun: 0, scale: 0 }
+    meter: 0
+    tags: []
+    moves:
+      - { from: 1, to: 14, forward: -6 }
+
+profile:
+  role: elite
+  health: 380
+  walk: { x: 3.5, z: 2.5 }
+  perception: 3
+  ring: 320
+  defense:
+    {
+      tier: specialist,
+      guard: { every: 3, of: 1 },
+      exact: true,
+      guardHold: 22,
+      cooldown: 260,
+      evade: { every: 3, of: 1, action: roll-evade },
+    }
+  morale: { breakAt: 15, shaken: 30 }
+  weapons: never
+  firearms: false
+  attacks:
+    - { action: dip-strike, threat: 16, cooldown: 100, feint: { at: 10, delay: 30 } }
+    - { action: twin-staves, threat: 24, cooldown: 200, feint: { at: 12, delay: 36 } }
+    - { action: spin-stave, threat: 22, cooldown: 220 }
+
+variants:
+  - id: stalker-master
+    name: Ridge Stalker Shade
+    minDifficulty: ultimate
+    health: 400
+    attacks:
+      - { action: dip-strike, threat: 16, cooldown: 90, feint: { at: 10, delay: 26 } }
+      - { action: twin-staves, threat: 24, cooldown: 180, feint: { at: 12, delay: 30 } }
+      - { action: spin-stave, threat: 22, cooldown: 200 }

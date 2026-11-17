@@ -168,9 +168,13 @@ function spawnWave(world: World, n: number): void {
     const kit = kitFor(world, e.kit, used);
     const f = spawnEnemy(world, kit, fx(e.x), fx(e.z));
     arrive(world, f);
-    if (profileOf(f)?.boss) {
+    const boss = profileOf(f)?.boss;
+    if (boss) {
       enc.boss = newBossState(f);
-      startPhase(world, f, 0);
+      // M27 Lab rooms may start a boss in a later phase, at that phase's Health.
+      const start = Math.min(e.phase ?? 0, boss.phases.length - 1);
+      if (start > 0) f.health = Math.trunc((f.maxHealth * boss.phases[start]!.from) / 100);
+      startPhase(world, f, start);
       intercepted(world, f);
     }
   }

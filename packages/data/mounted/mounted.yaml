@@ -44,20 +44,25 @@ bike:
 # Stages 6-8 (response and cargo bikes) and the Medicine Road author their own. A 'dismount'
 # mount at zero Stability is lost for the run: the hero finishes the corridor on foot.
 mounts:
+  # M27 Stage 3 mountain horse (Stage 3 spec §9): one per active hero, no military
+  # equipment, Stability instead of mount health. Gentler acceleration and a firmer brake
+  # than the bike for the switchbacks; at zero Stability the horse disengages safely (it
+  # cannot die), is lost for the corridor and the hero finishes on foot. The plates are
+  # the saddle-cloth marks shown beside each horse. Combat Lab candidates.
   - id: mountain-horse
-    name: Mountain Horse (test)
+    name: Mountain Horse
     # Identification variants, one per player slot (one shared art package).
     plates: [CP-07, CP-12]
     kind: horse
     atZero: dismount
     fallback: 3
-    speed: { base: 7, min: 4, max: 10, accel: 0.25, brake: 0.4 }
+    speed: { base: 7, min: 4, max: 10, accel: 0.18, brake: 0.45 }
     # Steering across road depth (pixels per frame) and the soft-lane pull with no vertical
     # input (stronger with optional steering assistance).
     steer: 6
     laneDrift: 1
     assistDrift: 3
-    stability: 90
+    stability: 110
     # A short damage-free interval, then Stability returns a little at a time.
     recover: { delay: 150, every: 6, amount: 1 }
     # Steering wobble after a hit or an impact (steering is halved).
@@ -588,3 +593,48 @@ corridors:
     waves:
       - { at: 1200, min: easy, riders: [{ from: behind, lane: 2 }] }
       - { at: 3600, min: easy, riders: [{ from: ahead, lane: 0 }] }
+
+  # M27 Horse Test Track (Stage 3 spec §9, roadmap M27): a mountain-horse corridor through
+  # muddy switchbacks with timber barriers, a field gate and a ramp of loose stone, ridden
+  # solo or in co-op. Bandit riders press from behind and ahead; at zero Stability a horse
+  # disengages safely and its hero finishes on foot, regrouping at the end. Lab only (the
+  # Stage 3 journey's own corridors come with M28).
+  - id: horse-test-track
+    name: Horse Test Track
+    goal: Ride the switchbacks; keep your horse steady
+    mount: mountain-horse
+    start: 300
+    finish: 13400
+    length: 14400
+    road:
+      - { at: 0, top: 640, bottom: 980 }
+      - { at: 3000, top: 640, bottom: 980 }
+      - { at: 3600, top: 700, bottom: 930 }
+      - { at: 5200, top: 700, bottom: 930 }
+      - { at: 5800, top: 620, bottom: 900 }
+      - { at: 8200, top: 620, bottom: 900 }
+      - { at: 8800, top: 680, bottom: 960 }
+      - { at: 10800, top: 680, bottom: 960 }
+      - { at: 11400, top: 640, bottom: 980 }
+      - { at: 14400, top: 640, bottom: 980 }
+    obstacles:
+      - { at: 1800, z: 810, kind: barrier }
+      - { at: 2900, z: 720, kind: barrier }
+      - { at: 2900, z: 900, kind: barrier }
+      - { at: 4400, z: 815, kind: ramp }
+      - { at: 6400, z: 690, kind: gate }
+      - { at: 6400, z: 860, kind: gate }
+      - { at: 7600, z: 760, kind: barrier }
+      - { at: 9600, z: 900, kind: ramp }
+      - { at: 11800, z: 720, kind: barrier }
+      - { at: 11800, z: 900, kind: barrier }
+    equipment: []
+    checkpoints: [4800, 9200]
+    waves:
+      - { at: 2200, min: easy, riders: [{ from: behind, lane: 2 }] }
+      - { at: 5000, min: easy, riders: [{ from: ahead, lane: 0 }] }
+      - { at: 5000, min: medium, riders: [{ from: behind, lane: 2 }] }
+      - { at: 8400, min: easy, riders: [{ from: behind, lane: 1 }] }
+      - { at: 8400, min: hard, riders: [{ from: ahead, lane: 2 }] }
+      - { at: 10600, min: medium, riders: [{ from: behind, lane: 0 }, { from: ahead, lane: 2 }] }
+      - { at: 10600, min: extreme, riders: [{ from: behind, lane: 2 }] }

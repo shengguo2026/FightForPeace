@@ -24610,6 +24610,4614 @@ export const ENEMY_DATA: readonly HeroDef[] = [
     ],
     "recipes": [],
     "art": "recruit"
+  },
+  {
+    "id": "ambusher",
+    "name": "Trail Ambusher",
+    "bodyWidth": 66,
+    "tags": [],
+    "actions": [
+      {
+        "id": "club-swing",
+        "name": "Trail Club Swing",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 13,
+        "active": [
+          4
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 30720,
+          "h": 35840,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 40,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 1024,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 20,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.ambusher.pose.standing.club-swing"
+      },
+      {
+        "id": "low-lunge",
+        "name": "Low Lunge",
+        "category": "low",
+        "context": "script",
+        "dir": 0,
+        "startup": 14,
+        "active": [
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 3840,
+          "w": 33280,
+          "y": 0,
+          "h": 20480,
+          "depth": 8192
+        },
+        "hurtbox": "low",
+        "damage": 34,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 16,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 8,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 17,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 4,
+            "to": 16,
+            "forward": 1024,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.ambusher.pose.low.low-lunge"
+      },
+      {
+        "id": "flank-dash",
+        "name": "Flank Dash",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 18,
+        "active": [
+          3,
+          8,
+          3
+        ],
+        "recovery": 24,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 30720,
+          "y": 25600,
+          "h": 35840,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 46,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 20,
+          "push": 2048,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 23,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 6,
+            "to": 30,
+            "forward": 1792,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.ambusher.pose.standing.flank-dash"
+      },
+      {
+        "id": "ledge-drop",
+        "name": "Ledge Drop",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 20,
+        "active": [
+          4
+        ],
+        "recovery": 26,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 2560,
+          "w": 28160,
+          "y": 10240,
+          "h": 56320,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 52,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": 1280,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 26,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 8,
+            "to": 22,
+            "forward": 768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.ambusher.pose.standing.ledge-drop"
+      },
+      {
+        "id": "dodge-back",
+        "name": "Dodge Back",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 2,
+        "active": [
+          1
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 0,
+          "w": 256,
+          "y": 0,
+          "h": 256,
+          "depth": 256
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 1,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 14,
+            "forward": -1536,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "enemy.ambusher.pose.standing.dodge-back"
+      }
+    ],
+    "recipes": [],
+    "art": "ambusher"
+  },
+  {
+    "id": "ambusher-elite",
+    "name": "Trail Ambusher Veteran",
+    "bodyWidth": 66,
+    "tags": [],
+    "actions": [
+      {
+        "id": "club-swing",
+        "name": "Trail Club Swing",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 13,
+        "active": [
+          4
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 30720,
+          "h": 35840,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 40,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 1024,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 20,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.ambusher-elite.pose.standing.club-swing"
+      },
+      {
+        "id": "low-lunge",
+        "name": "Low Lunge",
+        "category": "low",
+        "context": "script",
+        "dir": 0,
+        "startup": 14,
+        "active": [
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 3840,
+          "w": 33280,
+          "y": 0,
+          "h": 20480,
+          "depth": 8192
+        },
+        "hurtbox": "low",
+        "damage": 34,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 16,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 8,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 17,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 4,
+            "to": 16,
+            "forward": 1024,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.ambusher-elite.pose.low.low-lunge"
+      },
+      {
+        "id": "flank-dash",
+        "name": "Flank Dash",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 18,
+        "active": [
+          3,
+          8,
+          3
+        ],
+        "recovery": 24,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 30720,
+          "y": 25600,
+          "h": 35840,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 46,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 20,
+          "push": 2048,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 23,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 6,
+            "to": 30,
+            "forward": 1792,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.ambusher-elite.pose.standing.flank-dash"
+      },
+      {
+        "id": "ledge-drop",
+        "name": "Ledge Drop",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 20,
+        "active": [
+          4
+        ],
+        "recovery": 26,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 2560,
+          "w": 28160,
+          "y": 10240,
+          "h": 56320,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 52,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": 1280,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 26,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 8,
+            "to": 22,
+            "forward": 768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.ambusher-elite.pose.standing.ledge-drop"
+      },
+      {
+        "id": "dodge-back",
+        "name": "Dodge Back",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 2,
+        "active": [
+          1
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 0,
+          "w": 256,
+          "y": 0,
+          "h": 256,
+          "depth": 256
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 1,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 14,
+            "forward": -1536,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "enemy.ambusher-elite.pose.standing.dodge-back"
+      }
+    ],
+    "recipes": [],
+    "art": "ambusher"
+  },
+  {
+    "id": "ambusher-master",
+    "name": "Trail Ambusher Pathfinder",
+    "bodyWidth": 66,
+    "tags": [],
+    "actions": [
+      {
+        "id": "club-swing",
+        "name": "Trail Club Swing",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 13,
+        "active": [
+          4
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 30720,
+          "h": 35840,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 40,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 1024,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 20,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.ambusher-master.pose.standing.club-swing"
+      },
+      {
+        "id": "low-lunge",
+        "name": "Low Lunge",
+        "category": "low",
+        "context": "script",
+        "dir": 0,
+        "startup": 14,
+        "active": [
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 3840,
+          "w": 33280,
+          "y": 0,
+          "h": 20480,
+          "depth": 8192
+        },
+        "hurtbox": "low",
+        "damage": 34,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 16,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 8,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 17,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 4,
+            "to": 16,
+            "forward": 1024,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.ambusher-master.pose.low.low-lunge"
+      },
+      {
+        "id": "flank-dash",
+        "name": "Flank Dash",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 18,
+        "active": [
+          3,
+          8,
+          3
+        ],
+        "recovery": 24,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 30720,
+          "y": 25600,
+          "h": 35840,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 46,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 20,
+          "push": 2048,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 23,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 6,
+            "to": 30,
+            "forward": 1792,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.ambusher-master.pose.standing.flank-dash"
+      },
+      {
+        "id": "ledge-drop",
+        "name": "Ledge Drop",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 20,
+        "active": [
+          4
+        ],
+        "recovery": 26,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 2560,
+          "w": 28160,
+          "y": 10240,
+          "h": 56320,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 52,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": 1280,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 26,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 8,
+            "to": 22,
+            "forward": 768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.ambusher-master.pose.standing.ledge-drop"
+      },
+      {
+        "id": "dodge-back",
+        "name": "Dodge Back",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 2,
+        "active": [
+          1
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 0,
+          "w": 256,
+          "y": 0,
+          "h": 256,
+          "depth": 256
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 1,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 14,
+            "forward": -1536,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "enemy.ambusher-master.pose.standing.dodge-back"
+      }
+    ],
+    "recipes": [],
+    "art": "ambusher"
+  },
+  {
+    "id": "bruiser",
+    "name": "Quarry Bruiser",
+    "bodyWidth": 84,
+    "tags": [],
+    "actions": [
+      {
+        "id": "hammer-fist",
+        "name": "Hammer-Fist",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 24,
+        "active": [
+          5
+        ],
+        "recovery": 28,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 5120,
+          "w": 30720,
+          "y": 15360,
+          "h": 56320,
+          "depth": 9728
+        },
+        "hurtbox": "standing",
+        "damage": 70,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 28,
+          "push": 1536,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 16,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          24,
+          28
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 35,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "impact"
+        ],
+        "links": [],
+        "pose": "enemy.bruiser.pose.standing.hammer-fist"
+      },
+      {
+        "id": "quarry-charge",
+        "name": "Quarry Charge",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 22,
+        "active": [
+          3,
+          10,
+          3
+        ],
+        "recovery": 40,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 5120,
+          "w": 30720,
+          "y": 20480,
+          "h": 51200,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 64,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 24,
+          "push": 3584,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 16,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 32,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 14,
+            "to": 36,
+            "forward": 1536,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "impact",
+          "wallBounce"
+        ],
+        "links": [],
+        "pose": "enemy.bruiser.pose.standing.quarry-charge"
+      },
+      {
+        "id": "bruiser-shove",
+        "name": "Two-Hand Shove",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 14,
+        "active": [
+          4
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 28160,
+          "y": 25600,
+          "h": 40960,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 36,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 20,
+          "push": 2816,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 18,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "wallBounce"
+        ],
+        "links": [],
+        "pose": "enemy.bruiser.pose.standing.bruiser-shove"
+      },
+      {
+        "id": "boulder-heave",
+        "name": "Boulder Heave",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 34,
+        "active": [
+          5
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 10240,
+          "w": 56320,
+          "y": 15360,
+          "h": 40960,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 60,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": 2048,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 14,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 30,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "impact"
+        ],
+        "links": [],
+        "pose": "enemy.bruiser.pose.standing.boulder-heave"
+      }
+    ],
+    "recipes": [],
+    "art": "bruiser"
+  },
+  {
+    "id": "bruiser-elite",
+    "name": "Quarry Bruiser Foreman",
+    "bodyWidth": 84,
+    "tags": [],
+    "actions": [
+      {
+        "id": "hammer-fist",
+        "name": "Hammer-Fist",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 24,
+        "active": [
+          5
+        ],
+        "recovery": 28,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 5120,
+          "w": 30720,
+          "y": 15360,
+          "h": 56320,
+          "depth": 9728
+        },
+        "hurtbox": "standing",
+        "damage": 70,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 28,
+          "push": 1536,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 16,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          24,
+          28
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 35,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "impact"
+        ],
+        "links": [],
+        "pose": "enemy.bruiser-elite.pose.standing.hammer-fist"
+      },
+      {
+        "id": "quarry-charge",
+        "name": "Quarry Charge",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 22,
+        "active": [
+          3,
+          10,
+          3
+        ],
+        "recovery": 40,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 5120,
+          "w": 30720,
+          "y": 20480,
+          "h": 51200,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 64,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 24,
+          "push": 3584,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 16,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 32,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 14,
+            "to": 36,
+            "forward": 1536,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "impact",
+          "wallBounce"
+        ],
+        "links": [],
+        "pose": "enemy.bruiser-elite.pose.standing.quarry-charge"
+      },
+      {
+        "id": "bruiser-shove",
+        "name": "Two-Hand Shove",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 14,
+        "active": [
+          4
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 28160,
+          "y": 25600,
+          "h": 40960,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 36,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 20,
+          "push": 2816,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 18,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "wallBounce"
+        ],
+        "links": [],
+        "pose": "enemy.bruiser-elite.pose.standing.bruiser-shove"
+      },
+      {
+        "id": "boulder-heave",
+        "name": "Boulder Heave",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 34,
+        "active": [
+          5
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 10240,
+          "w": 56320,
+          "y": 15360,
+          "h": 40960,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 60,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": 2048,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 14,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 30,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "impact"
+        ],
+        "links": [],
+        "pose": "enemy.bruiser-elite.pose.standing.boulder-heave"
+      }
+    ],
+    "recipes": [],
+    "art": "bruiser"
+  },
+  {
+    "id": "bruiser-master",
+    "name": "Quarry Bruiser Overseer",
+    "bodyWidth": 84,
+    "tags": [],
+    "actions": [
+      {
+        "id": "hammer-fist",
+        "name": "Hammer-Fist",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 24,
+        "active": [
+          5
+        ],
+        "recovery": 28,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 5120,
+          "w": 30720,
+          "y": 15360,
+          "h": 56320,
+          "depth": 9728
+        },
+        "hurtbox": "standing",
+        "damage": 70,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 28,
+          "push": 1536,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 16,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          24,
+          28
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 35,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "impact"
+        ],
+        "links": [],
+        "pose": "enemy.bruiser-master.pose.standing.hammer-fist"
+      },
+      {
+        "id": "quarry-charge",
+        "name": "Quarry Charge",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 22,
+        "active": [
+          3,
+          10,
+          3
+        ],
+        "recovery": 40,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 5120,
+          "w": 30720,
+          "y": 20480,
+          "h": 51200,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 64,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 24,
+          "push": 3584,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 16,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 32,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 14,
+            "to": 36,
+            "forward": 1536,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "impact",
+          "wallBounce"
+        ],
+        "links": [],
+        "pose": "enemy.bruiser-master.pose.standing.quarry-charge"
+      },
+      {
+        "id": "bruiser-shove",
+        "name": "Two-Hand Shove",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 14,
+        "active": [
+          4
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 28160,
+          "y": 25600,
+          "h": 40960,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 36,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 20,
+          "push": 2816,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 18,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "wallBounce"
+        ],
+        "links": [],
+        "pose": "enemy.bruiser-master.pose.standing.bruiser-shove"
+      },
+      {
+        "id": "boulder-heave",
+        "name": "Boulder Heave",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 34,
+        "active": [
+          5
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 10240,
+          "w": 56320,
+          "y": 15360,
+          "h": 40960,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 60,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": 2048,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 14,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 30,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "impact"
+        ],
+        "links": [],
+        "pose": "enemy.bruiser-master.pose.standing.boulder-heave"
+      }
+    ],
+    "recipes": [],
+    "art": "bruiser"
+  },
+  {
+    "id": "captain",
+    "name": "Pack Captain",
+    "bodyWidth": 70,
+    "tags": [],
+    "actions": [
+      {
+        "id": "cane-thrust",
+        "name": "Cane Thrust",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 12,
+        "active": [
+          3
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 5120,
+          "w": 35840,
+          "y": 35840,
+          "h": 20480,
+          "depth": 7680
+        },
+        "hurtbox": "standing",
+        "damage": 34,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 1024,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 8,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 17,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.captain.pose.standing.cane-thrust"
+      },
+      {
+        "id": "cane-swing",
+        "name": "Cane Swing",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 16,
+        "active": [
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 35840,
+          "y": 25600,
+          "h": 40960,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 46,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 22,
+          "push": 2048,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 23,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.captain.pose.standing.cane-swing"
+      },
+      {
+        "id": "flank-order",
+        "name": "Flank Order",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 44,
+        "active": [
+          2
+        ],
+        "recovery": 16,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 0,
+          "w": 256,
+          "y": 0,
+          "h": 256,
+          "depth": 256
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 1,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "command"
+        ],
+        "links": [],
+        "pose": "enemy.captain.pose.standing.flank-order"
+      },
+      {
+        "id": "signal-break",
+        "name": "Whistle Dropped",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 2,
+        "active": [
+          1
+        ],
+        "recovery": 44,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 0,
+          "w": 256,
+          "y": 0,
+          "h": 256,
+          "depth": 256
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 1,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "enemy.captain.pose.standing.signal-break"
+      }
+    ],
+    "recipes": [],
+    "art": "captain"
+  },
+  {
+    "id": "garran",
+    "name": "Garran Voss",
+    "bodyWidth": 84,
+    "tags": [
+      "large"
+    ],
+    "actions": [
+      {
+        "id": "collar-tie",
+        "name": "Collar Tie",
+        "category": "grab",
+        "context": "script",
+        "dir": 0,
+        "startup": 20,
+        "active": [
+          3
+        ],
+        "recovery": 32,
+        "landing": false,
+        "blockstun": 22,
+        "hitbox": {
+          "x": 5120,
+          "w": 28160,
+          "y": 25600,
+          "h": 43520,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 55,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": 1536,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": {
+          "hold": 42,
+          "escapeFrom": 14,
+          "escapeWindow": 12,
+          "restraint": 0
+        },
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 27,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 18,
+            "forward": 256,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "rescueInterruptible"
+        ],
+        "links": [],
+        "pose": "enemy.garran.pose.grab.collar-tie"
+      },
+      {
+        "id": "shoulder-cast",
+        "name": "Shoulder Cast",
+        "category": "grab",
+        "context": "script",
+        "dir": 0,
+        "startup": 22,
+        "active": [
+          3
+        ],
+        "recovery": 34,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 5120,
+          "w": 28160,
+          "y": 25600,
+          "h": 43520,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 70,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 2560,
+          "lift": 1536,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 16,
+        "damageScaleCost": 14,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": {
+          "hold": 44,
+          "escapeFrom": 14,
+          "escapeWindow": 12,
+          "restraint": 0
+        },
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 35,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 20,
+            "forward": 256,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "pivot",
+          "rescueInterruptible",
+          "terminalKnockdown"
+        ],
+        "links": [],
+        "pose": "enemy.garran.pose.grab.shoulder-cast"
+      },
+      {
+        "id": "ridge-trip",
+        "name": "Ridge Trip",
+        "category": "grab",
+        "context": "script",
+        "dir": 0,
+        "startup": 18,
+        "active": [
+          3
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 24,
+        "hitbox": {
+          "x": 5120,
+          "w": 28160,
+          "y": 0,
+          "h": 38400,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 50,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 28,
+          "push": 1024,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": {
+          "hold": 36,
+          "escapeFrom": 12,
+          "escapeWindow": 12,
+          "restraint": 0
+        },
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 25,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "rescueInterruptible"
+        ],
+        "links": [],
+        "pose": "enemy.garran.pose.grab.ridge-trip"
+      },
+      {
+        "id": "body-hook",
+        "name": "Body Hooks",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 12,
+        "active": [
+          3,
+          6,
+          3
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 26880,
+          "y": 28160,
+          "h": 30720,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 50,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 1024,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 25,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.garran.pose.standing.body-hook"
+      },
+      {
+        "id": "palm-shove",
+        "name": "Two-Palm Shove",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 14,
+        "active": [
+          4
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 28160,
+          "y": 25600,
+          "h": 40960,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 42,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 22,
+          "push": 3072,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 14,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 21,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "wallBounce"
+        ],
+        "links": [],
+        "pose": "enemy.garran.pose.standing.palm-shove"
+      },
+      {
+        "id": "shoulder-rush",
+        "name": "Shoulder Rush",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 20,
+        "active": [
+          3,
+          8,
+          3
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 5120,
+          "w": 30720,
+          "y": 20480,
+          "h": 51200,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 62,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 24,
+          "push": 3328,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 16,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 31,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 12,
+            "to": 32,
+            "forward": 1536,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "impact"
+        ],
+        "links": [],
+        "pose": "enemy.garran.pose.standing.shoulder-rush"
+      },
+      {
+        "id": "knee-drop",
+        "name": "Knee Drop",
+        "category": "low",
+        "context": "script",
+        "dir": 0,
+        "startup": 16,
+        "active": [
+          4
+        ],
+        "recovery": 28,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 30720,
+          "y": 0,
+          "h": 23040,
+          "depth": 9728
+        },
+        "hurtbox": "low",
+        "damage": 48,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": 768,
+          "lift": 768,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 24,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.garran.pose.low.knee-drop"
+      },
+      {
+        "id": "ridge-parry",
+        "name": "Ridge Parry",
+        "category": "counter",
+        "context": "counter",
+        "dir": 0,
+        "startup": 4,
+        "active": [
+          4
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 22,
+        "hitbox": {
+          "x": 3840,
+          "w": 29440,
+          "y": 20480,
+          "h": 46080,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 60,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": 2048,
+          "lift": 1280,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 30,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "terminalKnockdown"
+        ],
+        "links": [],
+        "pose": "enemy.garran.pose.counter.ridge-parry"
+      },
+      {
+        "id": "winch-crank",
+        "name": "Crank the Winch",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 14,
+        "active": [
+          46
+        ],
+        "recovery": 12,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 0,
+          "w": 256,
+          "y": 0,
+          "h": 256,
+          "depth": 256
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 1,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "objective"
+        ],
+        "links": [],
+        "pose": "enemy.garran.pose.standing.winch-crank"
+      }
+    ],
+    "recipes": [],
+    "art": "garran"
+  },
+  {
+    "id": "raider",
+    "name": "Mounted Raider",
+    "bodyWidth": 68,
+    "tags": [],
+    "actions": [
+      {
+        "id": "baton-strike",
+        "name": "Baton Strike",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 12,
+        "active": [
+          3
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 33280,
+          "h": 30720,
+          "depth": 8192
+        },
+        "hurtbox": "standing",
+        "damage": 36,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 8,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 18,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.raider.pose.standing.baton-strike"
+      },
+      {
+        "id": "baton-sweep",
+        "name": "Low Baton",
+        "category": "low",
+        "context": "script",
+        "dir": 0,
+        "startup": 14,
+        "active": [
+          3
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 3840,
+          "w": 30720,
+          "y": 0,
+          "h": 20480,
+          "depth": 7680
+        },
+        "hurtbox": "low",
+        "damage": 30,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 16,
+          "push": 512,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 8,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 15,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.raider.pose.low.baton-sweep"
+      }
+    ],
+    "recipes": [],
+    "art": "rider3"
+  },
+  {
+    "id": "raider-elite",
+    "name": "Mounted Raider Outrider",
+    "bodyWidth": 68,
+    "tags": [],
+    "actions": [
+      {
+        "id": "baton-strike",
+        "name": "Baton Strike",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 12,
+        "active": [
+          3
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 5120,
+          "w": 29440,
+          "y": 33280,
+          "h": 30720,
+          "depth": 8192
+        },
+        "hurtbox": "standing",
+        "damage": 36,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 8,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 18,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.raider-elite.pose.standing.baton-strike"
+      },
+      {
+        "id": "baton-sweep",
+        "name": "Low Baton",
+        "category": "low",
+        "context": "script",
+        "dir": 0,
+        "startup": 14,
+        "active": [
+          3
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 3840,
+          "w": 30720,
+          "y": 0,
+          "h": 20480,
+          "depth": 7680
+        },
+        "hurtbox": "low",
+        "damage": 30,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 16,
+          "push": 512,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 8,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 15,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.raider-elite.pose.low.baton-sweep"
+      }
+    ],
+    "recipes": [],
+    "art": "raider"
+  },
+  {
+    "id": "stalker",
+    "name": "Ridge Stalker",
+    "bodyWidth": 66,
+    "tags": [],
+    "actions": [
+      {
+        "id": "dip-strike",
+        "name": "Shoulder-Dip Strike",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 16,
+        "active": [
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 32000,
+          "y": 30720,
+          "h": 35840,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 48,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 1024,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 24,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.stalker.pose.standing.dip-strike"
+      },
+      {
+        "id": "twin-staves",
+        "name": "Twin Staves",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 18,
+        "active": [
+          3,
+          6,
+          3
+        ],
+        "recovery": 26,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 33280,
+          "y": 25600,
+          "h": 40960,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 66,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 22,
+          "push": 2048,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 14,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 33,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 8,
+            "to": 24,
+            "forward": 768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "deflectBreak"
+        ],
+        "links": [],
+        "pose": "enemy.stalker.pose.standing.twin-staves"
+      },
+      {
+        "id": "spin-stave",
+        "name": "Ridge Spin",
+        "category": "low",
+        "context": "script",
+        "dir": 0,
+        "startup": 20,
+        "active": [
+          5
+        ],
+        "recovery": 26,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 2560,
+          "w": 38400,
+          "y": 0,
+          "h": 25600,
+          "depth": 10240
+        },
+        "hurtbox": "low",
+        "damage": 50,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": 1024,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 25,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.stalker.pose.low.spin-stave"
+      },
+      {
+        "id": "roll-evade",
+        "name": "Rolling Evade",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 2,
+        "active": [
+          1
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 0,
+          "w": 256,
+          "y": 0,
+          "h": 256,
+          "depth": 256
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 1,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 14,
+            "forward": -1536,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "enemy.stalker.pose.standing.roll-evade"
+      }
+    ],
+    "recipes": [],
+    "art": "stalker"
+  },
+  {
+    "id": "stalker-master",
+    "name": "Ridge Stalker Shade",
+    "bodyWidth": 66,
+    "tags": [],
+    "actions": [
+      {
+        "id": "dip-strike",
+        "name": "Shoulder-Dip Strike",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 16,
+        "active": [
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 32000,
+          "y": 30720,
+          "h": 35840,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 48,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 1024,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 24,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.stalker-master.pose.standing.dip-strike"
+      },
+      {
+        "id": "twin-staves",
+        "name": "Twin Staves",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 18,
+        "active": [
+          3,
+          6,
+          3
+        ],
+        "recovery": 26,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 33280,
+          "y": 25600,
+          "h": 40960,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 66,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 22,
+          "push": 2048,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 14,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 33,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 8,
+            "to": 24,
+            "forward": 768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "counterable",
+          "deflectBreak"
+        ],
+        "links": [],
+        "pose": "enemy.stalker-master.pose.standing.twin-staves"
+      },
+      {
+        "id": "spin-stave",
+        "name": "Ridge Spin",
+        "category": "low",
+        "context": "script",
+        "dir": 0,
+        "startup": 20,
+        "active": [
+          5
+        ],
+        "recovery": 26,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 2560,
+          "w": 38400,
+          "y": 0,
+          "h": 25600,
+          "depth": 10240
+        },
+        "hurtbox": "low",
+        "damage": 50,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": 1024,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 25,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.stalker-master.pose.low.spin-stave"
+      },
+      {
+        "id": "roll-evade",
+        "name": "Rolling Evade",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 2,
+        "active": [
+          1
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 0,
+          "w": 256,
+          "y": 0,
+          "h": 256,
+          "depth": 256
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 1,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 14,
+            "forward": -1536,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "enemy.stalker-master.pose.standing.roll-evade"
+      }
+    ],
+    "recipes": [],
+    "art": "stalker"
+  },
+  {
+    "id": "trapper",
+    "name": "Rope Trapper",
+    "bodyWidth": 66,
+    "tags": [],
+    "actions": [
+      {
+        "id": "rope-throw",
+        "name": "Weighted Rope",
+        "category": "grab",
+        "context": "script",
+        "dir": 0,
+        "startup": 30,
+        "active": [
+          3
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 10240,
+          "w": 58880,
+          "y": 20480,
+          "h": 46080,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 20,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": {
+          "hold": 46,
+          "escapeFrom": 18,
+          "escapeWindow": 12,
+          "restraint": 140
+        },
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 10,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "rescueInterruptible",
+          "restraint"
+        ],
+        "links": [],
+        "pose": "enemy.trapper.pose.grab.rope-throw"
+      },
+      {
+        "id": "rope-pull",
+        "name": "Rope Pull",
+        "category": "grab",
+        "context": "script",
+        "dir": 0,
+        "startup": 28,
+        "active": [
+          3
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 22,
+        "hitbox": {
+          "x": 10240,
+          "w": 58880,
+          "y": 20480,
+          "h": 46080,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 40,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": -1536,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 12,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": {
+          "hold": 40,
+          "escapeFrom": 16,
+          "escapeWindow": 12,
+          "restraint": 0
+        },
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 20,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "rescueInterruptible"
+        ],
+        "links": [],
+        "pose": "enemy.trapper.pose.grab.rope-pull"
+      },
+      {
+        "id": "rope-lash",
+        "name": "Rope Lash",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 12,
+        "active": [
+          4
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 5120,
+          "w": 40960,
+          "y": 25600,
+          "h": 30720,
+          "depth": 8192
+        },
+        "hurtbox": "standing",
+        "damage": 30,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 16,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 8,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 15,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.trapper.pose.standing.rope-lash"
+      },
+      {
+        "id": "backstep",
+        "name": "Backstep",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 2,
+        "active": [
+          1
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 0,
+          "w": 256,
+          "y": 0,
+          "h": 256,
+          "depth": 256
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 1,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 12,
+            "forward": -1280,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "enemy.trapper.pose.standing.backstep"
+      }
+    ],
+    "recipes": [],
+    "art": "trapper"
+  },
+  {
+    "id": "trapper-elite",
+    "name": "Rope Trapper Veteran",
+    "bodyWidth": 66,
+    "tags": [],
+    "actions": [
+      {
+        "id": "rope-throw",
+        "name": "Weighted Rope",
+        "category": "grab",
+        "context": "script",
+        "dir": 0,
+        "startup": 30,
+        "active": [
+          3
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 10240,
+          "w": 58880,
+          "y": 20480,
+          "h": 46080,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 20,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": {
+          "hold": 46,
+          "escapeFrom": 18,
+          "escapeWindow": 12,
+          "restraint": 140
+        },
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 10,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "rescueInterruptible",
+          "restraint"
+        ],
+        "links": [],
+        "pose": "enemy.trapper-elite.pose.grab.rope-throw"
+      },
+      {
+        "id": "rope-pull",
+        "name": "Rope Pull",
+        "category": "grab",
+        "context": "script",
+        "dir": 0,
+        "startup": 28,
+        "active": [
+          3
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 22,
+        "hitbox": {
+          "x": 10240,
+          "w": 58880,
+          "y": 20480,
+          "h": 46080,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 40,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": -1536,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 12,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": {
+          "hold": 40,
+          "escapeFrom": 16,
+          "escapeWindow": 12,
+          "restraint": 0
+        },
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 20,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "rescueInterruptible"
+        ],
+        "links": [],
+        "pose": "enemy.trapper-elite.pose.grab.rope-pull"
+      },
+      {
+        "id": "rope-lash",
+        "name": "Rope Lash",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 12,
+        "active": [
+          4
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 5120,
+          "w": 40960,
+          "y": 25600,
+          "h": 30720,
+          "depth": 8192
+        },
+        "hurtbox": "standing",
+        "damage": 30,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 16,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 8,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 15,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.trapper-elite.pose.standing.rope-lash"
+      },
+      {
+        "id": "backstep",
+        "name": "Backstep",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 2,
+        "active": [
+          1
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 0,
+          "w": 256,
+          "y": 0,
+          "h": 256,
+          "depth": 256
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 1,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 12,
+            "forward": -1280,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "enemy.trapper-elite.pose.standing.backstep"
+      }
+    ],
+    "recipes": [],
+    "art": "trapper"
+  },
+  {
+    "id": "trapper-master",
+    "name": "Rope Trapper Snare-Mistress",
+    "bodyWidth": 66,
+    "tags": [],
+    "actions": [
+      {
+        "id": "rope-throw",
+        "name": "Weighted Rope",
+        "category": "grab",
+        "context": "script",
+        "dir": 0,
+        "startup": 30,
+        "active": [
+          3
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 10240,
+          "w": 58880,
+          "y": 20480,
+          "h": 46080,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 20,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 20,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": {
+          "hold": 46,
+          "escapeFrom": 18,
+          "escapeWindow": 12,
+          "restraint": 140
+        },
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 10,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "rescueInterruptible",
+          "restraint"
+        ],
+        "links": [],
+        "pose": "enemy.trapper-master.pose.grab.rope-throw"
+      },
+      {
+        "id": "rope-pull",
+        "name": "Rope Pull",
+        "category": "grab",
+        "context": "script",
+        "dir": 0,
+        "startup": 28,
+        "active": [
+          3
+        ],
+        "recovery": 30,
+        "landing": false,
+        "blockstun": 22,
+        "hitbox": {
+          "x": 10240,
+          "w": 58880,
+          "y": 20480,
+          "h": 46080,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 40,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": -1536,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 12,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": {
+          "hold": 40,
+          "escapeFrom": 16,
+          "escapeWindow": 12,
+          "restraint": 0
+        },
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 20,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "rescueInterruptible"
+        ],
+        "links": [],
+        "pose": "enemy.trapper-master.pose.grab.rope-pull"
+      },
+      {
+        "id": "rope-lash",
+        "name": "Rope Lash",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 12,
+        "active": [
+          4
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 5120,
+          "w": 40960,
+          "y": 25600,
+          "h": 30720,
+          "depth": 8192
+        },
+        "hurtbox": "standing",
+        "damage": 30,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 16,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 10,
+        "juggleCost": 0,
+        "guardCost": 8,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 15,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "counterable"
+        ],
+        "links": [],
+        "pose": "enemy.trapper-master.pose.standing.rope-lash"
+      },
+      {
+        "id": "backstep",
+        "name": "Backstep",
+        "category": "standing",
+        "context": "script",
+        "dir": 0,
+        "startup": 2,
+        "active": [
+          1
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 0,
+          "w": 256,
+          "y": 0,
+          "h": 256,
+          "depth": 256
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 1,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 12,
+            "forward": -1280,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "enemy.trapper-master.pose.standing.backstep"
+      }
+    ],
+    "recipes": [],
+    "art": "trapper"
   }
 ];
 
@@ -27878,6 +32486,1416 @@ export const ENEMY_PROFILES: readonly (EnemyProfile | null)[] = [
     "rival": null,
     "noncombatant": false,
     "boss": null
+  },
+  {
+    "role": "flanker",
+    "health": 230,
+    "walkX": 1280,
+    "walkZ": 768,
+    "perception": 3,
+    "ring": 92160,
+    "defense": {
+      "tier": "basic",
+      "guardEvery": 1,
+      "guardOf": 0,
+      "exact": false,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 20,
+      "guardCost": 100,
+      "cooldown": 150,
+      "evadeEvery": 4,
+      "evadeOf": 1,
+      "evade": "dodge-back"
+    },
+    "breakAt": 22,
+    "weapons": 0,
+    "group": null,
+    "attacks": [
+      {
+        "action": "club-swing",
+        "threat": 12,
+        "cooldown": 80,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "low-lunge",
+        "threat": 14,
+        "cooldown": 140,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "flank-dash",
+        "threat": 22,
+        "cooldown": 240,
+        "minDifficulty": 1,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "ledge-drop",
+        "threat": 24,
+        "cooldown": 300,
+        "minDifficulty": 2,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 40,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "flanker",
+    "health": 260,
+    "walkX": 1280,
+    "walkZ": 768,
+    "perception": 3,
+    "ring": 92160,
+    "defense": {
+      "tier": "basic",
+      "guardEvery": 1,
+      "guardOf": 0,
+      "exact": false,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 20,
+      "guardCost": 100,
+      "cooldown": 150,
+      "evadeEvery": 3,
+      "evadeOf": 1,
+      "evade": "dodge-back"
+    },
+    "breakAt": 22,
+    "weapons": 0,
+    "group": null,
+    "attacks": [
+      {
+        "action": "club-swing",
+        "threat": 12,
+        "cooldown": 80,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "low-lunge",
+        "threat": 14,
+        "cooldown": 140,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "flank-dash",
+        "threat": 22,
+        "cooldown": 240,
+        "minDifficulty": 1,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "ledge-drop",
+        "threat": 24,
+        "cooldown": 300,
+        "minDifficulty": 2,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 40,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "flanker",
+    "health": 270,
+    "walkX": 1280,
+    "walkZ": 768,
+    "perception": 3,
+    "ring": 92160,
+    "defense": {
+      "tier": "basic",
+      "guardEvery": 1,
+      "guardOf": 0,
+      "exact": false,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 20,
+      "guardCost": 100,
+      "cooldown": 150,
+      "evadeEvery": 2,
+      "evadeOf": 1,
+      "evade": "dodge-back"
+    },
+    "breakAt": 22,
+    "weapons": 0,
+    "group": null,
+    "attacks": [
+      {
+        "action": "club-swing",
+        "threat": 12,
+        "cooldown": 70,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "low-lunge",
+        "threat": 14,
+        "cooldown": 120,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "flank-dash",
+        "threat": 22,
+        "cooldown": 200,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "ledge-drop",
+        "threat": 24,
+        "cooldown": 260,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 40,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "pressure",
+    "health": 460,
+    "walkX": 512,
+    "walkZ": 512,
+    "perception": 4,
+    "ring": 71680,
+    "defense": {
+      "tier": "basic",
+      "guardEvery": 3,
+      "guardOf": 1,
+      "exact": false,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 26,
+      "guardCost": 100,
+      "cooldown": 150,
+      "evadeEvery": 1,
+      "evadeOf": 0,
+      "evade": ""
+    },
+    "breakAt": 15,
+    "weapons": 1,
+    "group": null,
+    "attacks": [
+      {
+        "action": "bruiser-shove",
+        "threat": 14,
+        "cooldown": 100,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "hammer-fist",
+        "threat": 24,
+        "cooldown": 180,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "quarry-charge",
+        "threat": 28,
+        "cooldown": 280,
+        "minDifficulty": 1,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "boulder-heave",
+        "threat": 26,
+        "cooldown": 360,
+        "minDifficulty": 2,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 30,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "pressure",
+    "health": 520,
+    "walkX": 512,
+    "walkZ": 512,
+    "perception": 4,
+    "ring": 71680,
+    "defense": {
+      "tier": "basic",
+      "guardEvery": 2,
+      "guardOf": 1,
+      "exact": false,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 28,
+      "guardCost": 100,
+      "cooldown": 150,
+      "evadeEvery": 1,
+      "evadeOf": 0,
+      "evade": ""
+    },
+    "breakAt": 15,
+    "weapons": 1,
+    "group": null,
+    "attacks": [
+      {
+        "action": "bruiser-shove",
+        "threat": 14,
+        "cooldown": 100,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "hammer-fist",
+        "threat": 24,
+        "cooldown": 180,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "quarry-charge",
+        "threat": 28,
+        "cooldown": 280,
+        "minDifficulty": 1,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "boulder-heave",
+        "threat": 26,
+        "cooldown": 360,
+        "minDifficulty": 2,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 30,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "pressure",
+    "health": 540,
+    "walkX": 512,
+    "walkZ": 512,
+    "perception": 4,
+    "ring": 71680,
+    "defense": {
+      "tier": "specialist",
+      "guardEvery": 2,
+      "guardOf": 1,
+      "exact": false,
+      "counter": false,
+      "breaker": true,
+      "stance": false,
+      "guardHold": 28,
+      "guardCost": 100,
+      "cooldown": 300,
+      "evadeEvery": 1,
+      "evadeOf": 0,
+      "evade": ""
+    },
+    "breakAt": 15,
+    "weapons": 1,
+    "group": null,
+    "attacks": [
+      {
+        "action": "bruiser-shove",
+        "threat": 14,
+        "cooldown": 100,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "hammer-fist",
+        "threat": 24,
+        "cooldown": 180,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "quarry-charge",
+        "threat": 28,
+        "cooldown": 280,
+        "minDifficulty": 1,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "boulder-heave",
+        "threat": 26,
+        "cooldown": 360,
+        "minDifficulty": 2,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 30,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "commander",
+    "health": 300,
+    "walkX": 768,
+    "walkZ": 512,
+    "perception": 5,
+    "ring": 138240,
+    "defense": {
+      "tier": "basic",
+      "guardEvery": 3,
+      "guardOf": 1,
+      "exact": false,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 22,
+      "guardCost": 100,
+      "cooldown": 150,
+      "evadeEvery": 1,
+      "evadeOf": 0,
+      "evade": ""
+    },
+    "breakAt": 30,
+    "weapons": 0,
+    "group": null,
+    "attacks": [
+      {
+        "action": "cane-thrust",
+        "threat": 12,
+        "cooldown": 90,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "cane-swing",
+        "threat": 16,
+        "cooldown": 150,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 60,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [
+      {
+        "kind": 1,
+        "action": "flank-order",
+        "threat": 18,
+        "cooldown": 600,
+        "minDifficulty": 0,
+        "frames": 300
+      }
+    ],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "boss",
+    "health": 2800,
+    "walkX": 640,
+    "walkZ": 512,
+    "perception": 0,
+    "ring": 76800,
+    "defense": {
+      "tier": "boss",
+      "guardEvery": 3,
+      "guardOf": 1,
+      "exact": true,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 24,
+      "guardCost": 100,
+      "cooldown": 180,
+      "evadeEvery": 1,
+      "evadeOf": 0,
+      "evade": ""
+    },
+    "breakAt": 0,
+    "weapons": 0,
+    "group": null,
+    "attacks": [],
+    "firearms": false,
+    "shaken": 0,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
+    "boss": {
+      "flinchCap": 3,
+      "budgets": {
+        "stun": 70,
+        "juggle": 70
+      },
+      "stagger": {
+        "telegraph": 30,
+        "duration": 300,
+        "reentry": 40
+      },
+      "transition": {
+        "grace": 180,
+        "carryCap": 120,
+        "shift": 100
+      },
+      "share": 40,
+      "surrender": 30,
+      "capture": true,
+      "phases": [
+        {
+          "name": "Hookstaff Control",
+          "from": 100,
+          "resolve": 280,
+          "look": 1,
+          "weapon": "",
+          "counter": true,
+          "breaker": false,
+          "supports": [],
+          "eliteSupports": [],
+          "coopSupports": null,
+          "device": "",
+          "attacks": [
+            {
+              "action": "hookstaff-sweep",
+              "threat": 22,
+              "cooldown": 120,
+              "minDifficulty": 0,
+              "range": 0,
+              "minRange": 0,
+              "when": 1,
+              "feint": 0,
+              "feintDelay": 0
+            },
+            {
+              "action": "hookstaff-pull",
+              "threat": 24,
+              "cooldown": 220,
+              "minDifficulty": 0,
+              "range": 97280,
+              "minRange": 0,
+              "when": 1,
+              "feint": 0,
+              "feintDelay": 0
+            },
+            {
+              "action": "hookstaff-low",
+              "threat": 22,
+              "cooldown": 180,
+              "minDifficulty": 0,
+              "range": 0,
+              "minRange": 0,
+              "when": 1,
+              "feint": 0,
+              "feintDelay": 0
+            },
+            {
+              "action": "hookstaff-descent",
+              "threat": 28,
+              "cooldown": 260,
+              "minDifficulty": 1,
+              "range": 0,
+              "minRange": 0,
+              "when": 1,
+              "feint": 0,
+              "feintDelay": 0
+            },
+            {
+              "action": "body-hook",
+              "threat": 18,
+              "cooldown": 100,
+              "minDifficulty": 0,
+              "range": 0,
+              "minRange": 0,
+              "when": 2,
+              "feint": 0,
+              "feintDelay": 0
+            }
+          ],
+          "armed": "quarry-hookstaff",
+          "untilDisarmed": true,
+          "summon": "",
+          "scorch": null,
+          "require": "none"
+        },
+        {
+          "name": "Clinch and Cast",
+          "from": 65,
+          "resolve": 320,
+          "look": 2,
+          "weapon": "",
+          "counter": true,
+          "breaker": true,
+          "supports": [],
+          "eliteSupports": [],
+          "coopSupports": null,
+          "device": "",
+          "attacks": [
+            {
+              "action": "body-hook",
+              "threat": 18,
+              "cooldown": 90,
+              "minDifficulty": 0,
+              "range": 0,
+              "minRange": 0,
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
+            },
+            {
+              "action": "palm-shove",
+              "threat": 16,
+              "cooldown": 120,
+              "minDifficulty": 0,
+              "range": 0,
+              "minRange": 0,
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
+            },
+            {
+              "action": "collar-tie",
+              "threat": 28,
+              "cooldown": 240,
+              "minDifficulty": 0,
+              "range": 0,
+              "minRange": 0,
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
+            },
+            {
+              "action": "ridge-trip",
+              "threat": 26,
+              "cooldown": 260,
+              "minDifficulty": 0,
+              "range": 0,
+              "minRange": 0,
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
+            },
+            {
+              "action": "shoulder-cast",
+              "threat": 30,
+              "cooldown": 300,
+              "minDifficulty": 1,
+              "range": 0,
+              "minRange": 0,
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
+            },
+            {
+              "action": "shoulder-rush",
+              "threat": 26,
+              "cooldown": 280,
+              "minDifficulty": 1,
+              "range": 0,
+              "minRange": 0,
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
+            },
+            {
+              "action": "knee-drop",
+              "threat": 22,
+              "cooldown": 300,
+              "minDifficulty": 2,
+              "range": 0,
+              "minRange": 0,
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
+            }
+          ],
+          "armed": "",
+          "untilDisarmed": false,
+          "summon": "",
+          "scorch": null,
+          "require": "none"
+        },
+        {
+          "name": "Winch Pressure",
+          "from": 30,
+          "resolve": 260,
+          "look": 3,
+          "weapon": "",
+          "counter": true,
+          "breaker": true,
+          "supports": [],
+          "eliteSupports": [],
+          "coopSupports": null,
+          "device": "winch",
+          "attacks": [
+            {
+              "action": "body-hook",
+              "threat": 18,
+              "cooldown": 100,
+              "minDifficulty": 0,
+              "range": 0,
+              "minRange": 0,
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
+            },
+            {
+              "action": "palm-shove",
+              "threat": 16,
+              "cooldown": 140,
+              "minDifficulty": 0,
+              "range": 0,
+              "minRange": 0,
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
+            },
+            {
+              "action": "collar-tie",
+              "threat": 28,
+              "cooldown": 280,
+              "minDifficulty": 0,
+              "range": 0,
+              "minRange": 0,
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
+            },
+            {
+              "action": "shoulder-cast",
+              "threat": 30,
+              "cooldown": 340,
+              "minDifficulty": 1,
+              "range": 0,
+              "minRange": 0,
+              "when": 0,
+              "feint": 0,
+              "feintDelay": 0
+            }
+          ],
+          "armed": "",
+          "untilDisarmed": false,
+          "summon": "",
+          "scorch": null,
+          "require": "none"
+        }
+      ]
+    }
+  },
+  {
+    "role": "pressure",
+    "health": 240,
+    "walkX": 768,
+    "walkZ": 512,
+    "perception": 6,
+    "ring": 81920,
+    "defense": {
+      "tier": "basic",
+      "guardEvery": 4,
+      "guardOf": 1,
+      "exact": false,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 20,
+      "guardCost": 100,
+      "cooldown": 150,
+      "evadeEvery": 1,
+      "evadeOf": 0,
+      "evade": ""
+    },
+    "breakAt": 25,
+    "weapons": 0,
+    "group": null,
+    "attacks": [
+      {
+        "action": "baton-strike",
+        "threat": 14,
+        "cooldown": 90,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "baton-sweep",
+        "threat": 12,
+        "cooldown": 120,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 45,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": {
+      "kind": 0,
+      "stability": 130,
+      "share": 60,
+      "speed": 3328,
+      "warn": 80,
+      "rest": 110,
+      "damage": 45,
+      "push": 2560,
+      "lane": 15360
+    },
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "pressure",
+    "health": 260,
+    "walkX": 768,
+    "walkZ": 512,
+    "perception": 6,
+    "ring": 81920,
+    "defense": {
+      "tier": "basic",
+      "guardEvery": 3,
+      "guardOf": 1,
+      "exact": false,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 22,
+      "guardCost": 100,
+      "cooldown": 150,
+      "evadeEvery": 1,
+      "evadeOf": 0,
+      "evade": ""
+    },
+    "breakAt": 25,
+    "weapons": 0,
+    "group": null,
+    "attacks": [
+      {
+        "action": "baton-strike",
+        "threat": 14,
+        "cooldown": 90,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "baton-sweep",
+        "threat": 12,
+        "cooldown": 120,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 45,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": {
+      "kind": 0,
+      "stability": 130,
+      "share": 60,
+      "speed": 3328,
+      "warn": 80,
+      "rest": 110,
+      "damage": 45,
+      "push": 2560,
+      "lane": 15360
+    },
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "elite",
+    "health": 380,
+    "walkX": 896,
+    "walkZ": 640,
+    "perception": 3,
+    "ring": 81920,
+    "defense": {
+      "tier": "specialist",
+      "guardEvery": 3,
+      "guardOf": 1,
+      "exact": true,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 22,
+      "guardCost": 100,
+      "cooldown": 260,
+      "evadeEvery": 3,
+      "evadeOf": 1,
+      "evade": "roll-evade"
+    },
+    "breakAt": 15,
+    "weapons": 0,
+    "group": null,
+    "attacks": [
+      {
+        "action": "dip-strike",
+        "threat": 16,
+        "cooldown": 100,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 10,
+        "feintDelay": 30
+      },
+      {
+        "action": "twin-staves",
+        "threat": 24,
+        "cooldown": 200,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 12,
+        "feintDelay": 36
+      },
+      {
+        "action": "spin-stave",
+        "threat": 22,
+        "cooldown": 220,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 30,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "elite",
+    "health": 400,
+    "walkX": 896,
+    "walkZ": 640,
+    "perception": 3,
+    "ring": 81920,
+    "defense": {
+      "tier": "specialist",
+      "guardEvery": 3,
+      "guardOf": 1,
+      "exact": true,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 22,
+      "guardCost": 100,
+      "cooldown": 260,
+      "evadeEvery": 3,
+      "evadeOf": 1,
+      "evade": "roll-evade"
+    },
+    "breakAt": 15,
+    "weapons": 0,
+    "group": null,
+    "attacks": [
+      {
+        "action": "dip-strike",
+        "threat": 16,
+        "cooldown": 90,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 10,
+        "feintDelay": 26
+      },
+      {
+        "action": "twin-staves",
+        "threat": 24,
+        "cooldown": 180,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 12,
+        "feintDelay": 30
+      },
+      {
+        "action": "spin-stave",
+        "threat": 22,
+        "cooldown": 200,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 30,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "grappler",
+    "health": 260,
+    "walkX": 768,
+    "walkZ": 512,
+    "perception": 4,
+    "ring": 97280,
+    "defense": {
+      "tier": "basic",
+      "guardEvery": 1,
+      "guardOf": 0,
+      "exact": false,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 20,
+      "guardCost": 100,
+      "cooldown": 150,
+      "evadeEvery": 4,
+      "evadeOf": 1,
+      "evade": "backstep"
+    },
+    "breakAt": 22,
+    "weapons": 0,
+    "group": null,
+    "attacks": [
+      {
+        "action": "rope-lash",
+        "threat": 12,
+        "cooldown": 90,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "rope-throw",
+        "threat": 30,
+        "cooldown": 300,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "rope-pull",
+        "threat": 26,
+        "cooldown": 280,
+        "minDifficulty": 1,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 40,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "grappler",
+    "health": 290,
+    "walkX": 768,
+    "walkZ": 512,
+    "perception": 4,
+    "ring": 97280,
+    "defense": {
+      "tier": "basic",
+      "guardEvery": 3,
+      "guardOf": 1,
+      "exact": false,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 20,
+      "guardCost": 100,
+      "cooldown": 150,
+      "evadeEvery": 1,
+      "evadeOf": 0,
+      "evade": ""
+    },
+    "breakAt": 22,
+    "weapons": 0,
+    "group": null,
+    "attacks": [
+      {
+        "action": "rope-lash",
+        "threat": 12,
+        "cooldown": 90,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "rope-throw",
+        "threat": 30,
+        "cooldown": 300,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "rope-pull",
+        "threat": 26,
+        "cooldown": 280,
+        "minDifficulty": 1,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 40,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
+  },
+  {
+    "role": "grappler",
+    "health": 300,
+    "walkX": 768,
+    "walkZ": 512,
+    "perception": 4,
+    "ring": 97280,
+    "defense": {
+      "tier": "specialist",
+      "guardEvery": 3,
+      "guardOf": 1,
+      "exact": true,
+      "counter": false,
+      "breaker": false,
+      "stance": false,
+      "guardHold": 22,
+      "guardCost": 100,
+      "cooldown": 280,
+      "evadeEvery": 1,
+      "evadeOf": 0,
+      "evade": ""
+    },
+    "breakAt": 22,
+    "weapons": 0,
+    "group": null,
+    "attacks": [
+      {
+        "action": "rope-lash",
+        "threat": 12,
+        "cooldown": 90,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "rope-throw",
+        "threat": 30,
+        "cooldown": 300,
+        "minDifficulty": 0,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      },
+      {
+        "action": "rope-pull",
+        "threat": 26,
+        "cooldown": 280,
+        "minDifficulty": 1,
+        "range": 0,
+        "minRange": 0,
+        "when": 0,
+        "feint": 0,
+        "feintDelay": 0
+      }
+    ],
+    "firearms": false,
+    "shaken": 40,
+    "armed": null,
+    "objective": null,
+    "escort": null,
+    "commands": [],
+    "entry": "walk",
+    "reveal": 0,
+    "revealRange": 0,
+    "gear": [],
+    "mount": null,
+    "rival": null,
+    "noncombatant": false,
+    "boss": null
   }
 ];
 
@@ -27957,7 +33975,51 @@ export const ENEMY_VARIANTS: Readonly<Record<string, readonly (readonly [string,
   "m24-marshal": [],
   "m24-mounted-raider": [],
   "m24-rival": [],
-  "m24-shield-escort": []
+  "m24-shield-escort": [],
+  "ambusher": [
+    [
+      "ambusher-elite",
+      2
+    ],
+    [
+      "ambusher-master",
+      4
+    ]
+  ],
+  "bruiser": [
+    [
+      "bruiser-elite",
+      2
+    ],
+    [
+      "bruiser-master",
+      4
+    ]
+  ],
+  "captain": [],
+  "garran": [],
+  "raider": [
+    [
+      "raider-elite",
+      2
+    ]
+  ],
+  "stalker": [
+    [
+      "stalker-master",
+      4
+    ]
+  ],
+  "trapper": [
+    [
+      "trapper-elite",
+      2
+    ],
+    [
+      "trapper-master",
+      4
+    ]
+  ]
 };
 
 export const WEAPON_DATA: readonly WeaponDef[] = [
@@ -31726,6 +37788,3413 @@ export const WEAPON_DATA: readonly WeaponDef[] = [
         "tags": [],
         "links": [],
         "pose": "weapon.m24-ration.pose.weaponThrow.ration-toss"
+      }
+    ],
+    "affinity": []
+  },
+  {
+    "id": "bandit-revolver",
+    "name": "Bandit Revolver",
+    "class": "firearm",
+    "hands": 1,
+    "debris": "none",
+    "melee": false,
+    "integrity": {
+      "deflect": 4,
+      "max": 60,
+      "worn": 40,
+      "critical": 20,
+      "hit": 4,
+      "guard": 2,
+      "clash": 6,
+      "throw": 15
+    },
+    "gripResistance": 30,
+    "ammo": 5,
+    "fire": {
+      "defenseCost": 15
+    },
+    "pickup": 8,
+    "hazardDestructible": false,
+    "guardCostPercent": 100,
+    "throw": {
+      "speed": 3328,
+      "lift": 768,
+      "consumed": false,
+      "blockable": true,
+      "exactDeflectable": true,
+      "counterReturnable": true,
+      "strikeDeflectable": true,
+      "catchable": false
+    },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": null,
+    "actions": [
+      {
+        "id": "bandit-shot",
+        "name": "Ridge Shot",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 0,
+        "startup": 22,
+        "active": [
+          2
+        ],
+        "recovery": 28,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 10240,
+          "w": 209920,
+          "y": 35840,
+          "h": 7680,
+          "depth": 5632
+        },
+        "hurtbox": "standing",
+        "damage": 65,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 1024,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 20,
+        "damageScaleCost": 20,
+        "starterProration": 30,
+        "juggleCost": 0,
+        "guardCost": 20,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 32,
+        "pull": 0,
+        "ammo": 1,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "committed",
+          "warnedLine"
+        ],
+        "links": [],
+        "pose": "weapon.bandit-revolver.pose.standing.bandit-shot"
+      },
+      {
+        "id": "bandit-whip",
+        "name": "Revolver Whip",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 0,
+        "startup": 8,
+        "active": [
+          3
+        ],
+        "recovery": 16,
+        "landing": false,
+        "blockstun": 18,
+        "hitbox": {
+          "x": 5120,
+          "w": 23040,
+          "y": 33280,
+          "h": 23040,
+          "depth": 7680
+        },
+        "hurtbox": "standing",
+        "damage": 45,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 22,
+          "push": 1024,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 1,
+        "disarmPower": 30,
+        "breakPower": 22,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "whenEmpty"
+        ],
+        "links": [],
+        "pose": "weapon.bandit-revolver.pose.standing.bandit-whip"
+      },
+      {
+        "id": "bandit-throw",
+        "name": "Revolver Throw",
+        "category": "weaponThrow",
+        "context": "weaponThrow",
+        "dir": 0,
+        "startup": 10,
+        "active": [
+          1
+        ],
+        "recovery": 14,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 0,
+          "w": 15360,
+          "y": 28160,
+          "h": 12800,
+          "depth": 7680
+        },
+        "hurtbox": "standing",
+        "damage": 35,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 22,
+          "push": 1280,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 20,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.bandit-revolver.pose.weaponThrow.bandit-throw"
+      }
+    ],
+    "affinity": []
+  },
+  {
+    "id": "camp-meal",
+    "name": "Mountain Camp Meal",
+    "class": "provision",
+    "hands": 1,
+    "debris": "none",
+    "melee": false,
+    "integrity": {
+      "deflect": 0,
+      "max": 10,
+      "worn": 8,
+      "critical": 4,
+      "hit": 0,
+      "guard": 0,
+      "clash": 0,
+      "throw": 0
+    },
+    "gripResistance": 10,
+    "ammo": 0,
+    "fire": {
+      "defenseCost": 0
+    },
+    "pickup": 6,
+    "hazardDestructible": false,
+    "guardCostPercent": 100,
+    "throw": {
+      "speed": 2048,
+      "lift": 1280,
+      "consumed": false,
+      "blockable": true,
+      "exactDeflectable": false,
+      "counterReturnable": false,
+      "strikeDeflectable": false,
+      "catchable": false
+    },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": {
+      "health": 150,
+      "defense": 25,
+      "meter": 20,
+      "eat": 50
+    },
+    "actions": [
+      {
+        "id": "camp-meal-toss",
+        "name": "Mountain Camp Meal Toss",
+        "category": "weaponThrow",
+        "context": "weaponThrow",
+        "dir": 0,
+        "startup": 8,
+        "active": [
+          1
+        ],
+        "recovery": 12,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 0,
+          "w": 7680,
+          "y": 23040,
+          "h": 7680,
+          "depth": 6656
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 1,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.camp-meal.pose.weaponThrow.camp-meal-toss"
+      }
+    ],
+    "affinity": []
+  },
+  {
+    "id": "hiking-staff",
+    "name": "Hiking Staff",
+    "class": "temporaryMelee",
+    "hands": 2,
+    "debris": "none",
+    "melee": true,
+    "integrity": {
+      "deflect": 4,
+      "max": 100,
+      "worn": 60,
+      "critical": 25,
+      "hit": 6,
+      "guard": 3,
+      "clash": 10,
+      "throw": 20
+    },
+    "gripResistance": 35,
+    "ammo": 0,
+    "fire": {
+      "defenseCost": 0
+    },
+    "pickup": 8,
+    "hazardDestructible": true,
+    "guardCostPercent": 100,
+    "throw": {
+      "speed": 3840,
+      "lift": 256,
+      "consumed": false,
+      "blockable": true,
+      "exactDeflectable": true,
+      "counterReturnable": false,
+      "strikeDeflectable": true,
+      "catchable": false
+    },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": null,
+    "actions": [
+      {
+        "id": "hike-thrust",
+        "name": "Trailhead Thrust",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 0,
+        "startup": 7,
+        "active": [
+          3
+        ],
+        "recovery": 12,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 38400,
+          "y": 38400,
+          "h": 20480,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 38,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 768,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 1,
+        "disarmPower": 0,
+        "breakPower": 20,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [
+          {
+            "kind": "action",
+            "to": 1,
+            "dir": 0,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "weapon.hiking-staff.pose.standing.hike-thrust"
+      },
+      {
+        "id": "hike-sweep",
+        "name": "Switchback Sweep",
+        "category": "standing",
+        "context": "chain",
+        "dir": 0,
+        "startup": 9,
+        "active": [
+          4
+        ],
+        "recovery": 16,
+        "landing": false,
+        "blockstun": 24,
+        "hitbox": {
+          "x": 2560,
+          "w": 42240,
+          "y": 0,
+          "h": 30720,
+          "depth": 9728
+        },
+        "hurtbox": "standing",
+        "damage": 48,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 28,
+          "push": 1024,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 1,
+        "disarmPower": 0,
+        "breakPower": 30,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "opensGroundWindow"
+        ],
+        "links": [],
+        "pose": "weapon.hiking-staff.pose.standing.hike-sweep"
+      },
+      {
+        "id": "hike-hook",
+        "name": "Crook Pull",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 2,
+        "startup": 10,
+        "active": [
+          4
+        ],
+        "recovery": 16,
+        "landing": false,
+        "blockstun": 20,
+        "hitbox": {
+          "x": 10240,
+          "w": 40960,
+          "y": 15360,
+          "h": 30720,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 32,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 24,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 1,
+        "disarmPower": 45,
+        "breakPower": 16,
+        "pull": 1792,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.hiking-staff.pose.standing.hike-hook"
+      },
+      {
+        "id": "hike-lunge",
+        "name": "Ridge Lunge",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 1,
+        "startup": 11,
+        "active": [
+          4
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 20,
+        "hitbox": {
+          "x": 5120,
+          "w": 47360,
+          "y": 35840,
+          "h": 20480,
+          "depth": 7680
+        },
+        "hurtbox": "standing",
+        "damage": 52,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 24,
+          "push": 2304,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 1,
+        "disarmPower": 0,
+        "breakPower": 26,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 11,
+            "forward": 1024,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "impact"
+        ],
+        "links": [],
+        "pose": "weapon.hiking-staff.pose.standing.hike-lunge"
+      },
+      {
+        "id": "hike-rise",
+        "name": "Rising Crook",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 3,
+        "startup": 10,
+        "active": [
+          5
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 3840,
+          "w": 35840,
+          "y": 30720,
+          "h": 51200,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 48,
+        "reaction": {
+          "kind": "launch",
+          "hitstun": 30,
+          "push": 384,
+          "lift": 3840,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 30,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 1,
+        "disarmPower": 0,
+        "breakPower": 24,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [
+          {
+            "kind": "jump",
+            "to": -1,
+            "dir": 0,
+            "category": "jumpChase",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "weapon.hiking-staff.pose.standing.hike-rise"
+      },
+      {
+        "id": "hike-low",
+        "name": "Shin Sweep",
+        "category": "low",
+        "context": "neutral",
+        "dir": 4,
+        "startup": 9,
+        "active": [
+          4
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 3840,
+          "w": 42240,
+          "y": 0,
+          "h": 20480,
+          "depth": 10240
+        },
+        "hurtbox": "low",
+        "damage": 42,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 768,
+          "lift": 1280,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 20,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 25,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "opensGroundWindow"
+        ],
+        "links": [],
+        "pose": "weapon.hiking-staff.pose.low.hike-low"
+      },
+      {
+        "id": "hike-air",
+        "name": "Falling Crook",
+        "category": "aerial",
+        "context": "air",
+        "dir": 0,
+        "startup": 6,
+        "active": [
+          4
+        ],
+        "recovery": 9,
+        "landing": true,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 2560,
+          "w": 40960,
+          "y": -2560,
+          "h": 38400,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 38,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 768,
+          "lift": 0,
+          "airPop": 1792,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 10,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 1,
+        "disarmPower": 0,
+        "breakPower": 19,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.hiking-staff.pose.aerial.hike-air"
+      },
+      {
+        "id": "hike-ground",
+        "name": "Trail Marker",
+        "category": "ground",
+        "context": "groundFocus",
+        "dir": 0,
+        "startup": 9,
+        "active": [
+          3
+        ],
+        "recovery": 16,
+        "landing": false,
+        "blockstun": 24,
+        "hitbox": {
+          "x": 2560,
+          "w": 43520,
+          "y": 0,
+          "h": 17920,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 42,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 28,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 21,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "groundFinisher",
+          "terminalKnockdown"
+        ],
+        "links": [],
+        "pose": "weapon.hiking-staff.pose.ground.hike-ground"
+      },
+      {
+        "id": "hike-dash",
+        "name": "Running Staff",
+        "category": "dash",
+        "context": "dash",
+        "dir": 0,
+        "startup": 8,
+        "active": [
+          4
+        ],
+        "recovery": 16,
+        "landing": false,
+        "blockstun": 20,
+        "hitbox": {
+          "x": 3840,
+          "w": 44800,
+          "y": 30720,
+          "h": 25600,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 48,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 24,
+          "push": 2304,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 1,
+        "disarmPower": 0,
+        "breakPower": 24,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 8,
+            "forward": 1536,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "impact"
+        ],
+        "links": [],
+        "pose": "weapon.hiking-staff.pose.dash.hike-dash"
+      },
+      {
+        "id": "hike-throw",
+        "name": "Hiking Staff Throw",
+        "category": "weaponThrow",
+        "context": "weaponThrow",
+        "dir": 0,
+        "startup": 10,
+        "active": [
+          1
+        ],
+        "recovery": 14,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 0,
+          "w": 30720,
+          "y": 30720,
+          "h": 10240,
+          "depth": 7680
+        },
+        "hurtbox": "standing",
+        "damage": 55,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 1536,
+          "lift": 1280,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 35,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "impact"
+        ],
+        "links": [],
+        "pose": "weapon.hiking-staff.pose.weaponThrow.hike-throw"
+      }
+    ],
+    "affinity": []
+  },
+  {
+    "id": "quarry-hammer",
+    "name": "Quarry Hammer",
+    "class": "temporaryMelee",
+    "hands": 2,
+    "debris": "none",
+    "melee": true,
+    "integrity": {
+      "deflect": 6,
+      "max": 140,
+      "worn": 90,
+      "critical": 35,
+      "hit": 5,
+      "guard": 4,
+      "clash": 6,
+      "throw": 25
+    },
+    "gripResistance": 55,
+    "ammo": 0,
+    "fire": {
+      "defenseCost": 0
+    },
+    "pickup": 12,
+    "hazardDestructible": false,
+    "guardCostPercent": 100,
+    "throw": {
+      "speed": 2560,
+      "lift": 768,
+      "consumed": false,
+      "blockable": true,
+      "exactDeflectable": true,
+      "counterReturnable": false,
+      "strikeDeflectable": false,
+      "catchable": false
+    },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 80
+    },
+    "heat": null,
+    "blast": null,
+    "provision": null,
+    "actions": [
+      {
+        "id": "hammer-shove",
+        "name": "Shaft Shove",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 0,
+        "startup": 9,
+        "active": [
+          3
+        ],
+        "recovery": 16,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 5120,
+          "w": 28160,
+          "y": 30720,
+          "h": 30720,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 36,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 20,
+          "push": 2048,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 10,
+        "damageScaleCost": 10,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 1,
+        "disarmPower": 0,
+        "breakPower": 18,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [
+          {
+            "kind": "action",
+            "to": 1,
+            "dir": 0,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "weapon.quarry-hammer.pose.standing.hammer-shove"
+      },
+      {
+        "id": "hammer-drop",
+        "name": "Quarry Drop",
+        "category": "standing",
+        "context": "chain",
+        "dir": 0,
+        "startup": 18,
+        "active": [
+          5
+        ],
+        "recovery": 26,
+        "landing": false,
+        "blockstun": 28,
+        "hitbox": {
+          "x": 5120,
+          "w": 38400,
+          "y": 0,
+          "h": 66560,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 90,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 32,
+          "push": 1536,
+          "lift": 1536,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 20,
+        "damageScaleCost": 16,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 6,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 3,
+        "disarmPower": 60,
+        "breakPower": 120,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "impact",
+          "opensGroundWindow"
+        ],
+        "links": [],
+        "pose": "weapon.quarry-hammer.pose.standing.hammer-drop"
+      },
+      {
+        "id": "hammer-swing",
+        "name": "Overhead Swing",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 1,
+        "startup": 20,
+        "active": [
+          5
+        ],
+        "recovery": 28,
+        "landing": false,
+        "blockstun": 24,
+        "hitbox": {
+          "x": 5120,
+          "w": 43520,
+          "y": 20480,
+          "h": 56320,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 100,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 28,
+          "push": 4096,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 20,
+        "damageScaleCost": 16,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 7,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          8,
+          18
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 3,
+        "disarmPower": 70,
+        "breakPower": 140,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 18,
+            "forward": 512,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "guardPressure",
+          "impact",
+          "wallBounce"
+        ],
+        "links": [],
+        "pose": "weapon.quarry-hammer.pose.standing.hammer-swing"
+      },
+      {
+        "id": "hammer-hook",
+        "name": "Handle Hook",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 2,
+        "startup": 12,
+        "active": [
+          4
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 20,
+        "hitbox": {
+          "x": 7680,
+          "w": 33280,
+          "y": 20480,
+          "h": 30720,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 34,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 24,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 1,
+        "disarmPower": 40,
+        "breakPower": 17,
+        "pull": 1280,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.quarry-hammer.pose.standing.hammer-hook"
+      },
+      {
+        "id": "hammer-rise",
+        "name": "Rock Lift",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 3,
+        "startup": 14,
+        "active": [
+          5
+        ],
+        "recovery": 24,
+        "landing": false,
+        "blockstun": 28,
+        "hitbox": {
+          "x": 3840,
+          "w": 33280,
+          "y": 25600,
+          "h": 56320,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 58,
+        "reaction": {
+          "kind": "launch",
+          "hitstun": 32,
+          "push": 384,
+          "lift": 4096,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 16,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 32,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 2,
+        "disarmPower": 0,
+        "breakPower": 29,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [
+          {
+            "kind": "jump",
+            "to": -1,
+            "dir": 0,
+            "category": "jumpChase",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "weapon.quarry-hammer.pose.standing.hammer-rise"
+      },
+      {
+        "id": "hammer-low",
+        "name": "Ground Strike",
+        "category": "low",
+        "context": "neutral",
+        "dir": 4,
+        "startup": 16,
+        "active": [
+          5
+        ],
+        "recovery": 26,
+        "landing": false,
+        "blockstun": 28,
+        "hitbox": {
+          "x": 5120,
+          "w": 43520,
+          "y": 0,
+          "h": 20480,
+          "depth": 11264
+        },
+        "hurtbox": "low",
+        "damage": 62,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 32,
+          "push": 768,
+          "lift": 1536,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 20,
+        "damageScaleCost": 14,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 120,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "impact",
+          "opensGroundWindow"
+        ],
+        "links": [],
+        "pose": "weapon.quarry-hammer.pose.low.hammer-low"
+      },
+      {
+        "id": "hammer-air",
+        "name": "Falling Hammer",
+        "category": "aerial",
+        "context": "air",
+        "dir": 0,
+        "startup": 10,
+        "active": [
+          5
+        ],
+        "recovery": 14,
+        "landing": true,
+        "blockstun": 22,
+        "hitbox": {
+          "x": 2560,
+          "w": 35840,
+          "y": -5120,
+          "h": 43520,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 55,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 26,
+          "push": 1024,
+          "lift": 1024,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 14,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 2,
+        "disarmPower": 0,
+        "breakPower": 27,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.quarry-hammer.pose.aerial.hammer-air"
+      },
+      {
+        "id": "hammer-ground",
+        "name": "Stonemason's Tap",
+        "category": "ground",
+        "context": "groundFocus",
+        "dir": 0,
+        "startup": 13,
+        "active": [
+          3
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 24,
+        "hitbox": {
+          "x": 2560,
+          "w": 40960,
+          "y": 0,
+          "h": 17920,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 55,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 28,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 27,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "groundFinisher",
+          "terminalKnockdown"
+        ],
+        "links": [],
+        "pose": "weapon.quarry-hammer.pose.ground.hammer-ground"
+      },
+      {
+        "id": "hammer-dash",
+        "name": "Momentum Swing",
+        "category": "dash",
+        "context": "dash",
+        "dir": 0,
+        "startup": 12,
+        "active": [
+          5
+        ],
+        "recovery": 24,
+        "landing": false,
+        "blockstun": 22,
+        "hitbox": {
+          "x": 3840,
+          "w": 43520,
+          "y": 25600,
+          "h": 35840,
+          "depth": 9728
+        },
+        "hurtbox": "standing",
+        "damage": 66,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 26,
+          "push": 3328,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 16,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 2,
+        "disarmPower": 0,
+        "breakPower": 90,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 10,
+            "forward": 1280,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "impact",
+          "wallBounce"
+        ],
+        "links": [],
+        "pose": "weapon.quarry-hammer.pose.dash.hammer-dash"
+      },
+      {
+        "id": "hammer-throw",
+        "name": "Quarry Hammer Throw",
+        "category": "weaponThrow",
+        "context": "weaponThrow",
+        "dir": 0,
+        "startup": 14,
+        "active": [
+          1
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 28,
+        "hitbox": {
+          "x": 0,
+          "w": 23040,
+          "y": 23040,
+          "h": 17920,
+          "depth": 8192
+        },
+        "hurtbox": "standing",
+        "damage": 70,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 32,
+          "push": 1792,
+          "lift": 1280,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 16,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 100,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "impact"
+        ],
+        "links": [],
+        "pose": "weapon.quarry-hammer.pose.weaponThrow.hammer-throw"
+      }
+    ],
+    "affinity": []
+  },
+  {
+    "id": "quarry-hookstaff",
+    "name": "Quarry Hookstaff",
+    "class": "temporaryMelee",
+    "hands": 2,
+    "debris": "none",
+    "melee": true,
+    "integrity": {
+      "deflect": 4,
+      "max": 160,
+      "worn": 100,
+      "critical": 40,
+      "hit": 5,
+      "guard": 3,
+      "clash": 8,
+      "throw": 20
+    },
+    "gripResistance": 45,
+    "ammo": 0,
+    "fire": {
+      "defenseCost": 0
+    },
+    "pickup": 10,
+    "hazardDestructible": false,
+    "guardCostPercent": 100,
+    "throw": {
+      "speed": 3328,
+      "lift": 256,
+      "consumed": false,
+      "blockable": true,
+      "exactDeflectable": true,
+      "counterReturnable": false,
+      "strikeDeflectable": true,
+      "catchable": false
+    },
+    "opens": [],
+    "redirects": [
+      "cargo"
+    ],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": null,
+    "actions": [
+      {
+        "id": "hookstaff-sweep",
+        "name": "Long Sweep",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 0,
+        "startup": 12,
+        "active": [
+          5
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 2560,
+          "w": 53760,
+          "y": 15360,
+          "h": 40960,
+          "depth": 10752
+        },
+        "hurtbox": "standing",
+        "damage": 60,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 24,
+          "push": 2560,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 14,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 2,
+        "disarmPower": 0,
+        "breakPower": 50,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "impact"
+        ],
+        "links": [
+          {
+            "kind": "action",
+            "to": 1,
+            "dir": 0,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "weapon.quarry-hookstaff.pose.standing.hookstaff-sweep"
+      },
+      {
+        "id": "hookstaff-thrust",
+        "name": "Guarded Thrust",
+        "category": "standing",
+        "context": "chain",
+        "dir": 0,
+        "startup": 9,
+        "active": [
+          4
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 5120,
+          "w": 56320,
+          "y": 35840,
+          "h": 20480,
+          "depth": 8192
+        },
+        "hurtbox": "standing",
+        "damage": 50,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 22,
+          "push": 1536,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 12,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 1,
+        "disarmPower": 0,
+        "breakPower": 25,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.quarry-hookstaff.pose.standing.hookstaff-thrust"
+      },
+      {
+        "id": "hookstaff-pull",
+        "name": "Hooked Pull",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 2,
+        "startup": 14,
+        "active": [
+          4
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 15360,
+          "w": 51200,
+          "y": 15360,
+          "h": 35840,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 35,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 26,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 1,
+        "disarmPower": 55,
+        "breakPower": 17,
+        "pull": 2560,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.quarry-hookstaff.pose.standing.hookstaff-pull"
+      },
+      {
+        "id": "hookstaff-low",
+        "name": "Low Line",
+        "category": "low",
+        "context": "neutral",
+        "dir": 4,
+        "startup": 12,
+        "active": [
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 12,
+        "hitbox": {
+          "x": 3840,
+          "w": 51200,
+          "y": 0,
+          "h": 20480,
+          "depth": 10752
+        },
+        "hurtbox": "low",
+        "damage": 48,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 768,
+          "lift": 1280,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 18,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 30,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "opensGroundWindow"
+        ],
+        "links": [],
+        "pose": "weapon.quarry-hookstaff.pose.low.hookstaff-low"
+      },
+      {
+        "id": "hookstaff-descent",
+        "name": "Short Descent",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 1,
+        "startup": 16,
+        "active": [
+          5
+        ],
+        "recovery": 24,
+        "landing": false,
+        "blockstun": 16,
+        "hitbox": {
+          "x": 5120,
+          "w": 43520,
+          "y": 25600,
+          "h": 56320,
+          "depth": 9728
+        },
+        "hurtbox": "standing",
+        "damage": 72,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 1536,
+          "lift": 1280,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 18,
+        "damageScaleCost": 14,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 18,
+        "meterGain": 6,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 2,
+        "disarmPower": 0,
+        "breakPower": 70,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 14,
+            "forward": 512,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "impact"
+        ],
+        "links": [],
+        "pose": "weapon.quarry-hookstaff.pose.standing.hookstaff-descent"
+      },
+      {
+        "id": "hookstaff-throw",
+        "name": "Hookstaff Throw",
+        "category": "weaponThrow",
+        "context": "weaponThrow",
+        "dir": 0,
+        "startup": 12,
+        "active": [
+          1
+        ],
+        "recovery": 16,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 0,
+          "w": 33280,
+          "y": 30720,
+          "h": 10240,
+          "depth": 7680
+        },
+        "hurtbox": "standing",
+        "damage": 55,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 1536,
+          "lift": 1280,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 40,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "impact"
+        ],
+        "links": [],
+        "pose": "weapon.quarry-hookstaff.pose.weaponThrow.hookstaff-throw"
+      }
+    ],
+    "affinity": []
+  },
+  {
+    "id": "seed-cake",
+    "name": "Spiced Seed Cake",
+    "class": "provision",
+    "hands": 1,
+    "debris": "none",
+    "melee": false,
+    "integrity": {
+      "deflect": 0,
+      "max": 10,
+      "worn": 8,
+      "critical": 4,
+      "hit": 0,
+      "guard": 0,
+      "clash": 0,
+      "throw": 0
+    },
+    "gripResistance": 10,
+    "ammo": 0,
+    "fire": {
+      "defenseCost": 0
+    },
+    "pickup": 6,
+    "hazardDestructible": false,
+    "guardCostPercent": 100,
+    "throw": {
+      "speed": 2048,
+      "lift": 1280,
+      "consumed": false,
+      "blockable": true,
+      "exactDeflectable": false,
+      "counterReturnable": false,
+      "strikeDeflectable": false,
+      "catchable": false
+    },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": {
+      "health": 0,
+      "defense": 0,
+      "meter": 40,
+      "eat": 30
+    },
+    "actions": [
+      {
+        "id": "seed-cake-toss",
+        "name": "Spiced Seed Cake Toss",
+        "category": "weaponThrow",
+        "context": "weaponThrow",
+        "dir": 0,
+        "startup": 8,
+        "active": [
+          1
+        ],
+        "recovery": 12,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 0,
+          "w": 7680,
+          "y": 23040,
+          "h": 7680,
+          "depth": 6656
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 1,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.seed-cake.pose.weaponThrow.seed-cake-toss"
+      }
+    ],
+    "affinity": []
+  },
+  {
+    "id": "trail-rice",
+    "name": "Trail Rice Parcel",
+    "class": "provision",
+    "hands": 1,
+    "debris": "none",
+    "melee": false,
+    "integrity": {
+      "deflect": 0,
+      "max": 10,
+      "worn": 8,
+      "critical": 4,
+      "hit": 0,
+      "guard": 0,
+      "clash": 0,
+      "throw": 0
+    },
+    "gripResistance": 10,
+    "ammo": 0,
+    "fire": {
+      "defenseCost": 0
+    },
+    "pickup": 6,
+    "hazardDestructible": false,
+    "guardCostPercent": 100,
+    "throw": {
+      "speed": 2048,
+      "lift": 1280,
+      "consumed": false,
+      "blockable": true,
+      "exactDeflectable": false,
+      "counterReturnable": false,
+      "strikeDeflectable": false,
+      "catchable": false
+    },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": {
+      "health": 250,
+      "defense": 0,
+      "meter": 0,
+      "eat": 40
+    },
+    "actions": [
+      {
+        "id": "trail-rice-toss",
+        "name": "Trail Rice Parcel Toss",
+        "category": "weaponThrow",
+        "context": "weaponThrow",
+        "dir": 0,
+        "startup": 8,
+        "active": [
+          1
+        ],
+        "recovery": 12,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 0,
+          "w": 7680,
+          "y": 23040,
+          "h": 7680,
+          "depth": 6656
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 1,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.trail-rice.pose.weaponThrow.trail-rice-toss"
+      }
+    ],
+    "affinity": []
+  },
+  {
+    "id": "vegetable-broth",
+    "name": "Warm Vegetable Broth",
+    "class": "provision",
+    "hands": 1,
+    "debris": "none",
+    "melee": false,
+    "integrity": {
+      "deflect": 0,
+      "max": 10,
+      "worn": 8,
+      "critical": 4,
+      "hit": 0,
+      "guard": 0,
+      "clash": 0,
+      "throw": 0
+    },
+    "gripResistance": 10,
+    "ammo": 0,
+    "fire": {
+      "defenseCost": 0
+    },
+    "pickup": 6,
+    "hazardDestructible": false,
+    "guardCostPercent": 100,
+    "throw": {
+      "speed": 2048,
+      "lift": 1280,
+      "consumed": false,
+      "blockable": true,
+      "exactDeflectable": false,
+      "counterReturnable": false,
+      "strikeDeflectable": false,
+      "catchable": false
+    },
+    "opens": [],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": {
+      "health": 0,
+      "defense": 50,
+      "meter": 0,
+      "eat": 40
+    },
+    "actions": [
+      {
+        "id": "vegetable-broth-toss",
+        "name": "Warm Vegetable Broth Toss",
+        "category": "weaponThrow",
+        "context": "weaponThrow",
+        "dir": 0,
+        "startup": 8,
+        "active": [
+          1
+        ],
+        "recovery": 12,
+        "landing": false,
+        "blockstun": 6,
+        "hitbox": {
+          "x": 0,
+          "w": 7680,
+          "y": 23040,
+          "h": 7680,
+          "depth": 6656
+        },
+        "hurtbox": "standing",
+        "damage": 0,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 1,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 0,
+        "damageScaleCost": 0,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 0,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 0,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.vegetable-broth.pose.weaponThrow.vegetable-broth-toss"
+      }
+    ],
+    "affinity": []
+  },
+  {
+    "id": "wood-axe",
+    "name": "Wood Axe",
+    "class": "temporaryMelee",
+    "hands": 2,
+    "debris": "none",
+    "melee": true,
+    "integrity": {
+      "deflect": 5,
+      "max": 120,
+      "worn": 75,
+      "critical": 30,
+      "hit": 6,
+      "guard": 4,
+      "clash": 8,
+      "throw": 20
+    },
+    "gripResistance": 45,
+    "ammo": 0,
+    "fire": {
+      "defenseCost": 0
+    },
+    "pickup": 9,
+    "hazardDestructible": false,
+    "guardCostPercent": 100,
+    "throw": {
+      "speed": 3328,
+      "lift": 512,
+      "consumed": false,
+      "blockable": true,
+      "exactDeflectable": true,
+      "counterReturnable": false,
+      "strikeDeflectable": true,
+      "catchable": false
+    },
+    "opens": [
+      "timber"
+    ],
+    "redirects": [],
+    "restrict": {
+      "jump": false,
+      "grab": false,
+      "mount": false,
+      "carry": false,
+      "speed": 100
+    },
+    "heat": null,
+    "blast": null,
+    "provision": null,
+    "actions": [
+      {
+        "id": "axe-flat",
+        "name": "Flat-Back Chop",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 0,
+        "startup": 11,
+        "active": [
+          4
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 18,
+        "hitbox": {
+          "x": 5120,
+          "w": 35840,
+          "y": 30720,
+          "h": 30720,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 58,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 22,
+          "push": 1280,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 14,
+        "damageScaleCost": 12,
+        "starterProration": 15,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 2,
+        "disarmPower": 55,
+        "breakPower": 60,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [
+          {
+            "kind": "action",
+            "to": 1,
+            "dir": 0,
+            "category": "chain",
+            "onHit": true,
+            "onGuard": true,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "weapon.wood-axe.pose.standing.axe-flat"
+      },
+      {
+        "id": "axe-haft",
+        "name": "Haft Upstroke",
+        "category": "standing",
+        "context": "chain",
+        "dir": 0,
+        "startup": 10,
+        "active": [
+          4
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 3840,
+          "w": 30720,
+          "y": 30720,
+          "h": 48640,
+          "depth": 9728
+        },
+        "hurtbox": "standing",
+        "damage": 52,
+        "reaction": {
+          "kind": "launch",
+          "hitstun": 30,
+          "push": 512,
+          "lift": 3584,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 30,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 2,
+        "disarmPower": 0,
+        "breakPower": 26,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [
+          {
+            "kind": "jump",
+            "to": -1,
+            "dir": 0,
+            "category": "jumpChase",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "weapon.wood-axe.pose.standing.axe-haft"
+      },
+      {
+        "id": "axe-cleave",
+        "name": "Woodcutter's Drive",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 1,
+        "startup": 15,
+        "active": [
+          5
+        ],
+        "recovery": 24,
+        "landing": false,
+        "blockstun": 22,
+        "hitbox": {
+          "x": 5120,
+          "w": 42240,
+          "y": 25600,
+          "h": 46080,
+          "depth": 9728
+        },
+        "hurtbox": "standing",
+        "damage": 80,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 26,
+          "push": 3328,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 18,
+        "damageScaleCost": 15,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 6,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 2,
+        "disarmPower": 70,
+        "breakPower": 90,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 14,
+            "forward": 768,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "impact",
+          "wallBounce"
+        ],
+        "links": [],
+        "pose": "weapon.wood-axe.pose.standing.axe-cleave"
+      },
+      {
+        "id": "axe-hook",
+        "name": "Bearded Hook",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 2,
+        "startup": 12,
+        "active": [
+          4
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 20,
+        "hitbox": {
+          "x": 7680,
+          "w": 35840,
+          "y": 20480,
+          "h": 30720,
+          "depth": 8704
+        },
+        "hurtbox": "standing",
+        "damage": 40,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 24,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 1,
+        "disarmPower": 65,
+        "breakPower": 20,
+        "pull": 1280,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.wood-axe.pose.standing.axe-hook"
+      },
+      {
+        "id": "axe-rise",
+        "name": "Splitting Rise",
+        "category": "standing",
+        "context": "neutral",
+        "dir": 3,
+        "startup": 12,
+        "active": [
+          5
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 3840,
+          "w": 33280,
+          "y": 30720,
+          "h": 53760,
+          "depth": 10240
+        },
+        "hurtbox": "standing",
+        "damage": 52,
+        "reaction": {
+          "kind": "launch",
+          "hitstun": 30,
+          "push": 384,
+          "lift": 3840,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 30,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 2,
+        "disarmPower": 0,
+        "breakPower": 26,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [
+          {
+            "kind": "jump",
+            "to": -1,
+            "dir": 0,
+            "category": "jumpChase",
+            "onHit": true,
+            "onGuard": false,
+            "onWhiff": false,
+            "onPunish": false,
+            "premium": 0
+          }
+        ],
+        "pose": "weapon.wood-axe.pose.standing.axe-rise"
+      },
+      {
+        "id": "axe-low",
+        "name": "Stump Sweep",
+        "category": "low",
+        "context": "neutral",
+        "dir": 4,
+        "startup": 12,
+        "active": [
+          4
+        ],
+        "recovery": 22,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 3840,
+          "w": 38400,
+          "y": 0,
+          "h": 20480,
+          "depth": 10240
+        },
+        "hurtbox": "low",
+        "damage": 50,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 1024,
+          "lift": 1280,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 20,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 50,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "opensGroundWindow"
+        ],
+        "links": [],
+        "pose": "weapon.wood-axe.pose.low.axe-low"
+      },
+      {
+        "id": "axe-air",
+        "name": "Felling Arc",
+        "category": "aerial",
+        "context": "air",
+        "dir": 0,
+        "startup": 8,
+        "active": [
+          4
+        ],
+        "recovery": 11,
+        "landing": true,
+        "blockstun": 14,
+        "hitbox": {
+          "x": 2560,
+          "w": 38400,
+          "y": -2560,
+          "h": 40960,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 46,
+        "reaction": {
+          "kind": "stagger",
+          "hitstun": 18,
+          "push": 1024,
+          "lift": 0,
+          "airPop": 1536,
+          "counterTrip": false
+        },
+        "stunDecayCost": 12,
+        "damageScaleCost": 10,
+        "starterProration": 0,
+        "juggleCost": 12,
+        "guardCost": 10,
+        "meterGain": 3,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 2,
+        "disarmPower": 0,
+        "breakPower": 23,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [],
+        "links": [],
+        "pose": "weapon.wood-axe.pose.aerial.axe-air"
+      },
+      {
+        "id": "axe-ground",
+        "name": "Haft Pin",
+        "category": "ground",
+        "context": "groundFocus",
+        "dir": 0,
+        "startup": 11,
+        "active": [
+          3
+        ],
+        "recovery": 18,
+        "landing": false,
+        "blockstun": 24,
+        "hitbox": {
+          "x": 2560,
+          "w": 40960,
+          "y": 0,
+          "h": 17920,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 48,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 28,
+          "push": 0,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 24,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "groundFinisher",
+          "terminalKnockdown"
+        ],
+        "links": [],
+        "pose": "weapon.wood-axe.pose.ground.axe-ground"
+      },
+      {
+        "id": "axe-dash",
+        "name": "Running Chop",
+        "category": "dash",
+        "context": "dash",
+        "dir": 0,
+        "startup": 10,
+        "active": [
+          4
+        ],
+        "recovery": 20,
+        "landing": false,
+        "blockstun": 20,
+        "hitbox": {
+          "x": 3840,
+          "w": 42240,
+          "y": 28160,
+          "h": 30720,
+          "depth": 9216
+        },
+        "hurtbox": "standing",
+        "damage": 56,
+        "reaction": {
+          "kind": "knockback",
+          "hitstun": 24,
+          "push": 2560,
+          "lift": 0,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 5,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 2,
+        "disarmPower": 0,
+        "breakPower": 60,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [
+          {
+            "from": 1,
+            "to": 9,
+            "forward": 1536,
+            "depth": 0,
+            "depthFromInput": false,
+            "vy": null
+          }
+        ],
+        "convert": null,
+        "tags": [
+          "impact"
+        ],
+        "links": [],
+        "pose": "weapon.wood-axe.pose.dash.axe-dash"
+      },
+      {
+        "id": "axe-throw",
+        "name": "Wood Axe Throw",
+        "category": "weaponThrow",
+        "context": "weaponThrow",
+        "dir": 0,
+        "startup": 12,
+        "active": [
+          1
+        ],
+        "recovery": 16,
+        "landing": false,
+        "blockstun": 26,
+        "hitbox": {
+          "x": 0,
+          "w": 23040,
+          "y": 28160,
+          "h": 15360,
+          "depth": 7680
+        },
+        "hurtbox": "standing",
+        "damage": 60,
+        "reaction": {
+          "kind": "knockdown",
+          "hitstun": 30,
+          "push": 1536,
+          "lift": 1280,
+          "airPop": 0,
+          "counterTrip": false
+        },
+        "stunDecayCost": 15,
+        "damageScaleCost": 12,
+        "starterProration": 0,
+        "juggleCost": 0,
+        "guardCost": 10,
+        "meterGain": 4,
+        "meterDecay": 10,
+        "slots": [],
+        "catalogue": false,
+        "armor": [
+          0,
+          -1
+        ],
+        "invulnerable": [
+          0,
+          -1
+        ],
+        "hurtShift": null,
+        "projectile": null,
+        "grab": null,
+        "bodyDamage": 0,
+        "clash": 0,
+        "disarmPower": 0,
+        "breakPower": 60,
+        "pull": 0,
+        "ammo": 0,
+        "armed": "default",
+        "moves": [],
+        "convert": null,
+        "tags": [
+          "impact"
+        ],
+        "links": [],
+        "pose": "weapon.wood-axe.pose.weaponThrow.axe-throw"
       }
     ],
     "affinity": []
@@ -35726,6 +45195,1317 @@ export const ARENA_DATA: readonly ArenaDef[] = [
       ],
       "cheat": "none"
     }
+  },
+  {
+    "id": "lab-m27-ambusher",
+    "name": "M27 Trial: Trail Ambusher",
+    "area": "fields",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "ambusher",
+            "x": 2300,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2500,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 200,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "hiking-staff",
+          "x": 700,
+          "z": 800
+        },
+        {
+          "weapon": "trail-rice",
+          "x": 600,
+          "z": 920
+        }
+      ],
+      "surfaces": [],
+      "breakables": [],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "lab-m27-bruiser",
+    "name": "M27 Trial: Quarry Bruiser",
+    "area": "mill",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "bruiser",
+            "x": 2100,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "bruiser",
+            "x": 2300,
+            "z": 920,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "quarry-hammer",
+          "x": 1500,
+          "z": 700
+        },
+        {
+          "weapon": "vegetable-broth",
+          "x": 600,
+          "z": 920
+        }
+      ],
+      "surfaces": [
+        {
+          "x": 2700,
+          "z": 800,
+          "hw": 30,
+          "hd": 200,
+          "h": 240
+        }
+      ],
+      "breakables": [
+        {
+          "x": 1900,
+          "z": 680,
+          "hw": 60,
+          "hd": 30,
+          "h": 260,
+          "thresholds": [
+            80,
+            160,
+            240
+          ],
+          "fragment": "",
+          "tags": [
+            "scaffold"
+          ],
+          "property": 0,
+          "cluster": 0
+        }
+      ],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "lab-m27-trapper",
+    "name": "M27 Trial: Rope Trapper",
+    "area": "canal",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "trapper",
+            "x": 2100,
+            "z": 780,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2400,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "trapper",
+            "x": 300,
+            "z": 860,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "hiking-staff",
+          "x": 700,
+          "z": 800
+        }
+      ],
+      "surfaces": [],
+      "breakables": [],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "lab-m27-raider",
+    "name": "M27 Trial: Mounted Raider",
+    "area": "fields",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "raider",
+            "x": 2500,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "raider",
+            "x": 300,
+            "z": 720,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "hiking-staff",
+          "x": 700,
+          "z": 800
+        }
+      ],
+      "surfaces": [],
+      "breakables": [],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "lab-m27-stalker",
+    "name": "M27 Trial: Ridge Stalker",
+    "area": "bridge",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "stalker",
+            "x": 2100,
+            "z": 800,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "stalker",
+            "x": 2400,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "lab-m27-captain",
+    "name": "M27 Trial: Pack Captain",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "captain",
+            "x": 2400,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2000,
+            "z": 740,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2100,
+            "z": 920,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "trapper",
+            "x": 2300,
+            "z": 700,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "lab-m27-scaffold",
+    "name": "M27 Lab: Loose Scaffold",
+    "area": "mill",
+    "backdrop": "layers",
+    "width": 3360,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "ambusher",
+            "x": 2100,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2400,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "bruiser",
+            "x": 2600,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 300,
+            "z": 860,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      },
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "trapper",
+            "x": 2900,
+            "z": 760,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "bruiser",
+            "x": 3000,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "hiking-staff",
+          "x": 700,
+          "z": 760
+        },
+        {
+          "weapon": "hiking-staff",
+          "x": 800,
+          "z": 920
+        },
+        {
+          "weapon": "trail-rice",
+          "x": 1200,
+          "z": 940
+        },
+        {
+          "weapon": "seed-cake",
+          "x": 1300,
+          "z": 700
+        }
+      ],
+      "surfaces": [
+        {
+          "x": 3200,
+          "z": 800,
+          "hw": 30,
+          "hd": 200,
+          "h": 240
+        }
+      ],
+      "breakables": [
+        {
+          "x": 1700,
+          "z": 680,
+          "hw": 70,
+          "hd": 30,
+          "h": 280,
+          "thresholds": [
+            80,
+            160,
+            240
+          ],
+          "fragment": "",
+          "tags": [
+            "scaffold"
+          ],
+          "property": 0,
+          "cluster": 0
+        },
+        {
+          "x": 2300,
+          "z": 680,
+          "hw": 70,
+          "hd": 30,
+          "h": 280,
+          "thresholds": [
+            80,
+            160,
+            240
+          ],
+          "fragment": "",
+          "tags": [
+            "scaffold"
+          ],
+          "property": 0,
+          "cluster": 0
+        },
+        {
+          "x": 2000,
+          "z": 930,
+          "hw": 40,
+          "hd": 30,
+          "h": 70,
+          "thresholds": [
+            30,
+            60,
+            90
+          ],
+          "fragment": "",
+          "tags": [
+            "stone"
+          ],
+          "property": 0,
+          "cluster": 0
+        }
+      ],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "lab-m27-hammer-line",
+    "name": "M27 Lab: Hammer Line",
+    "area": "mill",
+    "backdrop": "layers",
+    "width": 3360,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "bruiser",
+            "x": 2100,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "bruiser",
+            "x": 2300,
+            "z": 920,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "trapper",
+            "x": 2600,
+            "z": 820,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "bruiser",
+            "x": 300,
+            "z": 860,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "quarry-hammer",
+          "x": 700,
+          "z": 760
+        },
+        {
+          "weapon": "quarry-hammer",
+          "x": 760,
+          "z": 920
+        },
+        {
+          "weapon": "vegetable-broth",
+          "x": 1100,
+          "z": 940
+        }
+      ],
+      "surfaces": [
+        {
+          "x": 3200,
+          "z": 800,
+          "hw": 30,
+          "hd": 200,
+          "h": 240
+        }
+      ],
+      "breakables": [
+        {
+          "x": 1900,
+          "z": 680,
+          "hw": 70,
+          "hd": 30,
+          "h": 280,
+          "thresholds": [
+            80,
+            160,
+            240
+          ],
+          "fragment": "",
+          "tags": [
+            "scaffold"
+          ],
+          "property": 0,
+          "cluster": 0
+        },
+        {
+          "x": 2600,
+          "z": 940,
+          "hw": 40,
+          "hd": 30,
+          "h": 70,
+          "thresholds": [
+            30,
+            60,
+            90
+          ],
+          "fragment": "",
+          "tags": [
+            "stone"
+          ],
+          "property": 0,
+          "cluster": 0
+        }
+      ],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "lab-m27-cart-rails",
+    "name": "M27 Lab: Cart Rails",
+    "area": "mill",
+    "backdrop": "layers",
+    "width": 3360,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "raider",
+            "x": 2900,
+            "z": 820,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2200,
+            "z": 780,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2400,
+            "z": 860,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 300,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "wood-axe",
+          "x": 700,
+          "z": 760
+        },
+        {
+          "weapon": "bandit-revolver",
+          "x": 800,
+          "z": 920
+        },
+        {
+          "weapon": "trail-rice",
+          "x": 1200,
+          "z": 940
+        }
+      ],
+      "surfaces": [],
+      "breakables": [],
+      "hazards": [],
+      "movers": [
+        {
+          "x0": 200,
+          "z0": 720,
+          "x1": 3100,
+          "z1": 720,
+          "hw": 60,
+          "hd": 40,
+          "h": 90,
+          "start": 180,
+          "rest": 300,
+          "warn": 80,
+          "active": 100,
+          "damage": 60,
+          "redirect": "any",
+          "cycles": 0,
+          "tags": [
+            "cart"
+          ]
+        },
+        {
+          "x0": 3100,
+          "z0": 900,
+          "x1": 200,
+          "z1": 900,
+          "hw": 60,
+          "hd": 40,
+          "h": 90,
+          "start": 420,
+          "rest": 300,
+          "warn": 80,
+          "active": 100,
+          "damage": 60,
+          "redirect": "any",
+          "cycles": 0,
+          "tags": [
+            "cart"
+          ]
+        }
+      ],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "lab-m27-outer-fence",
+    "name": "M27 Lab: Outer Fence",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 3360,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "ambusher",
+            "x": 2100,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "bruiser",
+            "x": 2300,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "trapper",
+            "x": 2500,
+            "z": 820,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "stalker",
+            "x": 2700,
+            "z": 740,
+            "minDifficulty": 3,
+            "coop": false
+          },
+          {
+            "kit": "captain",
+            "x": 3000,
+            "z": 820,
+            "minDifficulty": 4,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 300,
+            "z": 860,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      },
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "raider",
+            "x": 3100,
+            "z": 820,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2800,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "stalker",
+            "x": 2900,
+            "z": 700,
+            "minDifficulty": 3,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "hiking-staff",
+          "x": 700,
+          "z": 760
+        },
+        {
+          "weapon": "wood-axe",
+          "x": 760,
+          "z": 920
+        },
+        {
+          "weapon": "trail-rice",
+          "x": 1100,
+          "z": 940
+        },
+        {
+          "weapon": "vegetable-broth",
+          "x": 1150,
+          "z": 700
+        },
+        {
+          "weapon": "seed-cake",
+          "x": 1200,
+          "z": 820
+        },
+        {
+          "weapon": "camp-meal",
+          "x": 400,
+          "z": 820
+        }
+      ],
+      "surfaces": [],
+      "breakables": [
+        {
+          "x": 1600,
+          "z": 700,
+          "hw": 50,
+          "hd": 30,
+          "h": 180,
+          "thresholds": [
+            60,
+            120,
+            180
+          ],
+          "fragment": "",
+          "tags": [
+            "timber"
+          ],
+          "property": 0,
+          "cluster": 0
+        },
+        {
+          "x": 1600,
+          "z": 900,
+          "hw": 50,
+          "hd": 30,
+          "h": 180,
+          "thresholds": [
+            60,
+            120,
+            180
+          ],
+          "fragment": "",
+          "tags": [
+            "timber"
+          ],
+          "property": 0,
+          "cluster": 0
+        }
+      ],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "lab-m27-garran-hook",
+    "name": "M27 Lab: Garran, Hookstaff Control",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 600,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "garran",
+            "x": 2000,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "hiking-staff",
+          "x": 800,
+          "z": 760
+        },
+        {
+          "weapon": "wood-axe",
+          "x": 800,
+          "z": 920
+        },
+        {
+          "weapon": "trail-rice",
+          "x": 500,
+          "z": 900
+        }
+      ],
+      "surfaces": [],
+      "breakables": [],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "lab-m27-garran-clinch",
+    "name": "M27 Lab: Garran, Clinch and Cast",
+    "area": "courtyard",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 600,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "garran",
+            "x": 1800,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false,
+            "phase": 1
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "trail-rice",
+          "x": 500,
+          "z": 900
+        }
+      ],
+      "surfaces": [],
+      "breakables": [],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "lab-m27-garran-winch",
+    "name": "M27 Lab: Garran, Winch Pressure",
+    "area": "sluice",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 600,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [
+      {
+        "kind": "winch",
+        "x": 2500,
+        "z": 680,
+        "count": 1
+      }
+    ],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "garran",
+            "x": 1800,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false,
+            "phase": 2
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "quarry-hookstaff",
+          "x": 900,
+          "z": 760
+        },
+        {
+          "weapon": "vegetable-broth",
+          "x": 500,
+          "z": 900
+        }
+      ],
+      "surfaces": [],
+      "breakables": [],
+      "hazards": [],
+      "movers": [
+        {
+          "x0": 700,
+          "z0": 720,
+          "x1": 2300,
+          "z1": 720,
+          "hw": 70,
+          "hd": 50,
+          "h": 160,
+          "start": 0,
+          "rest": 0,
+          "warn": 80,
+          "active": 70,
+          "damage": 70,
+          "redirect": "any",
+          "cycles": 0,
+          "tags": [
+            "cargo"
+          ],
+          "trigger": "winch"
+        },
+        {
+          "x0": 2300,
+          "z0": 900,
+          "x1": 700,
+          "z1": 900,
+          "hw": 40,
+          "hd": 70,
+          "h": 180,
+          "start": 0,
+          "rest": 0,
+          "warn": 80,
+          "active": 70,
+          "damage": 60,
+          "redirect": "any",
+          "cycles": 0,
+          "tags": [
+            "cover"
+          ],
+          "trigger": "winch"
+        },
+        {
+          "x0": 1500,
+          "z0": 640,
+          "x1": 1500,
+          "z1": 960,
+          "hw": 70,
+          "hd": 50,
+          "h": 160,
+          "start": 0,
+          "rest": 0,
+          "warn": 80,
+          "active": 50,
+          "damage": 70,
+          "redirect": "any",
+          "cycles": 0,
+          "tags": [
+            "cargo"
+          ],
+          "trigger": "winch"
+        }
+      ],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "lab-m27-garran",
+    "name": "M27 Lab: Chief of the Broken Ridge",
+    "area": "sluice",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [
+      {
+        "kind": "winch",
+        "x": 2500,
+        "z": 680,
+        "count": 1
+      }
+    ],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "garran",
+            "x": 1900,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "hiking-staff",
+          "x": 700,
+          "z": 760
+        },
+        {
+          "weapon": "wood-axe",
+          "x": 760,
+          "z": 920
+        },
+        {
+          "weapon": "trail-rice",
+          "x": 400,
+          "z": 900
+        },
+        {
+          "weapon": "vegetable-broth",
+          "x": 450,
+          "z": 700
+        }
+      ],
+      "surfaces": [],
+      "breakables": [
+        {
+          "x": 1300,
+          "z": 680,
+          "hw": 70,
+          "hd": 30,
+          "h": 280,
+          "thresholds": [
+            80,
+            160,
+            240
+          ],
+          "fragment": "",
+          "tags": [
+            "scaffold"
+          ],
+          "property": 0,
+          "cluster": 0
+        }
+      ],
+      "hazards": [],
+      "movers": [
+        {
+          "x0": 700,
+          "z0": 720,
+          "x1": 2300,
+          "z1": 720,
+          "hw": 70,
+          "hd": 50,
+          "h": 160,
+          "start": 0,
+          "rest": 0,
+          "warn": 80,
+          "active": 70,
+          "damage": 70,
+          "redirect": "any",
+          "cycles": 0,
+          "tags": [
+            "cargo"
+          ],
+          "trigger": "winch"
+        },
+        {
+          "x0": 2300,
+          "z0": 900,
+          "x1": 700,
+          "z1": 900,
+          "hw": 40,
+          "hd": 70,
+          "h": 180,
+          "start": 0,
+          "rest": 0,
+          "warn": 80,
+          "active": 70,
+          "damage": 60,
+          "redirect": "any",
+          "cycles": 0,
+          "tags": [
+            "cover"
+          ],
+          "trigger": "winch"
+        },
+        {
+          "x0": 1500,
+          "z0": 640,
+          "x1": 1500,
+          "z1": 960,
+          "hw": 70,
+          "hd": 50,
+          "h": 160,
+          "start": 0,
+          "rest": 0,
+          "warn": 80,
+          "active": 50,
+          "damage": 70,
+          "redirect": "any",
+          "cycles": 0,
+          "tags": [
+            "cargo"
+          ],
+          "trigger": "winch"
+        }
+      ],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
   }
 ];
 
@@ -39112,7 +49892,7 @@ export const MOUNTED_DATA: MountedDef | null = {
     },
     {
       "id": "mountain-horse",
-      "name": "Mountain Horse (test)",
+      "name": "Mountain Horse",
       "plates": [
         "CP-07",
         "CP-12"
@@ -39123,12 +49903,12 @@ export const MOUNTED_DATA: MountedDef | null = {
       "base": 1792,
       "min": 1024,
       "max": 2560,
-      "accel": 64,
-      "brake": 102,
+      "accel": 46,
+      "brake": 115,
       "steer": 1536,
       "laneDrift": 256,
       "assistDrift": 768,
-      "stability": 90,
+      "stability": 110,
       "recover": {
         "delay": 150,
         "every": 6,
@@ -40407,6 +51187,228 @@ export const MOUNTED_DATA: MountedDef | null = {
             {
               "from": 1,
               "lane": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "horse-test-track",
+      "name": "Horse Test Track",
+      "goal": "Ride the switchbacks; keep your horse steady",
+      "mount": 1,
+      "start": 76800,
+      "finish": 3430400,
+      "length": 3686400,
+      "road": [
+        {
+          "at": 0,
+          "top": 163840,
+          "bottom": 250880
+        },
+        {
+          "at": 768000,
+          "top": 163840,
+          "bottom": 250880
+        },
+        {
+          "at": 921600,
+          "top": 179200,
+          "bottom": 238080
+        },
+        {
+          "at": 1331200,
+          "top": 179200,
+          "bottom": 238080
+        },
+        {
+          "at": 1484800,
+          "top": 158720,
+          "bottom": 230400
+        },
+        {
+          "at": 2099200,
+          "top": 158720,
+          "bottom": 230400
+        },
+        {
+          "at": 2252800,
+          "top": 174080,
+          "bottom": 245760
+        },
+        {
+          "at": 2764800,
+          "top": 174080,
+          "bottom": 245760
+        },
+        {
+          "at": 2918400,
+          "top": 163840,
+          "bottom": 250880
+        },
+        {
+          "at": 3686400,
+          "top": 163840,
+          "bottom": 250880
+        }
+      ],
+      "obstacles": [
+        {
+          "at": 460800,
+          "z": 207360,
+          "kind": 0,
+          "hw": 7680,
+          "hd": 10240
+        },
+        {
+          "at": 742400,
+          "z": 184320,
+          "kind": 0,
+          "hw": 7680,
+          "hd": 10240
+        },
+        {
+          "at": 742400,
+          "z": 230400,
+          "kind": 0,
+          "hw": 7680,
+          "hd": 10240
+        },
+        {
+          "at": 1126400,
+          "z": 208640,
+          "kind": 2,
+          "hw": 20480,
+          "hd": 14080
+        },
+        {
+          "at": 1638400,
+          "z": 176640,
+          "kind": 1,
+          "hw": 10240,
+          "hd": 10240
+        },
+        {
+          "at": 1638400,
+          "z": 220160,
+          "kind": 1,
+          "hw": 10240,
+          "hd": 10240
+        },
+        {
+          "at": 1945600,
+          "z": 194560,
+          "kind": 0,
+          "hw": 7680,
+          "hd": 10240
+        },
+        {
+          "at": 2457600,
+          "z": 230400,
+          "kind": 2,
+          "hw": 20480,
+          "hd": 14080
+        },
+        {
+          "at": 3020800,
+          "z": 184320,
+          "kind": 0,
+          "hw": 7680,
+          "hd": 10240
+        },
+        {
+          "at": 3020800,
+          "z": 230400,
+          "kind": 0,
+          "hw": 7680,
+          "hd": 10240
+        }
+      ],
+      "equipment": [],
+      "checkpoints": [
+        1228800,
+        2355200
+      ],
+      "boss": null,
+      "waves": [
+        {
+          "at": 563200,
+          "min": 0,
+          "target": -1,
+          "riders": [
+            {
+              "from": 0,
+              "lane": 2
+            }
+          ]
+        },
+        {
+          "at": 1280000,
+          "min": 0,
+          "target": -1,
+          "riders": [
+            {
+              "from": 1,
+              "lane": 0
+            }
+          ]
+        },
+        {
+          "at": 1280000,
+          "min": 1,
+          "target": -1,
+          "riders": [
+            {
+              "from": 0,
+              "lane": 2
+            }
+          ]
+        },
+        {
+          "at": 2150400,
+          "min": 0,
+          "target": -1,
+          "riders": [
+            {
+              "from": 0,
+              "lane": 1
+            }
+          ]
+        },
+        {
+          "at": 2150400,
+          "min": 2,
+          "target": -1,
+          "riders": [
+            {
+              "from": 1,
+              "lane": 2
+            }
+          ]
+        },
+        {
+          "at": 2713600,
+          "min": 1,
+          "target": -1,
+          "riders": [
+            {
+              "from": 0,
+              "lane": 0
+            },
+            {
+              "from": 1,
+              "lane": 2
+            }
+          ]
+        },
+        {
+          "at": 2713600,
+          "min": 3,
+          "target": -1,
+          "riders": [
+            {
+              "from": 0,
+              "lane": 2
             }
           ]
         }

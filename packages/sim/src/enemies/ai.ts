@@ -30,6 +30,7 @@ import { isGrenade } from '../preservation/greenhouse';
 import { pickupEligible, requestPickup, stepPickup } from '../combat/items';
 import { nonCombatant } from '../combat/damage';
 import { actionIndex, attacksOf, bossPhase, difficultyOf, livingHeroes, profileOf } from './data';
+import { releaseTriggered } from '../shared/scenery';
 import {
   SAFE_MARGIN,
   holdsReservation,
@@ -887,6 +888,8 @@ function completeObjective(world: World, f: Fighter): void {
   dev.progress += 1;
   if (dev.progress < dev.count) return;
   dev.progress = 0;
+  // M27: the device releases the next load it triggers (Garran's winch cargo and cover).
+  releaseTriggered(world, dev.kind);
   const h = world.environment.hazards[dev.hazard];
   if (h) {
     h.phase = 1; // HazardPhase.Warn: the surge is telegraphed before it is active.

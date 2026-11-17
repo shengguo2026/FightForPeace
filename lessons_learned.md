@@ -305,6 +305,38 @@ M26 put every Mission Mode entry on one data catalogue and gave the Run Archive 
 - **Fix:** every sound effect is a coded recipe (`packages/platform/src/media/sfxKit.ts`, `stage12sfx.ts`, `stage3sfx.ts`, listed in `codedSfx.ts`): 56 shared and Stage 1/2 sounds and 89 Stage 3 sounds under their existing logical ids. The Lab panel **Sound effects** plays each group, and `node tools/audio/render_sfx.mjs` writes them all as WAV files for listening outside the game.
 - **Rule:** **sound effects are always coded by Claude**; Guo makes the pictures, music cues and title loops. A new stage's sound effects are derived from its spec (weapons, enemies, boss, environment, pickups, warnings) and written as recipes before the stage's systems milestone, with stable `sfx.<family>.<variant>` ids, a mixer category (warnings and tells `critical`, confirmations `confirm`) and a Lab group, and Guo listens in the Lab before the PR merges. No sound effect prompts are written for an outside generator (pre-flight item 23).
 
+## K · Found while building the Stage 3 systems (M27)
+
+M27 put every Stage 3 weapon, bandit role, Garran Voss, the quarry scenery and the mountain horse on the engine as data (plan `docs/superpowers/plans/2026-11-17-m27-stage3-systems.md`).
+
+### K1 · New data files sorted before the frozen ones
+
+- **What happened:** the registries are built from the data folders in file-name order, and the Stage 3 files (`ambusher`, `bruiser`, `hiking-staff`, ...) sort before `m24-*`, so they would have shifted every M24 weapon and enemy index that saves, replays and snapshots encode.
+- **Caught:** while adding the first Stage 3 weapon (the M24 registry test).
+- **Fix:** the M24 files joined the generator's frozen lists; Stage 3 files are appended after them. Tests for "these come last" now check the earlier block keeps its order and later milestones only append.
+- **Rule:** every milestone's data files are added to the frozen lists in the same PR (lesson G1), so the next milestone's names can never sort in front of them.
+
+### K2 · A boss's story lines played for another boss
+
+- **What happened:** Tomas's subtitles were shown whenever "a boss is in the room", so Garran's Lab fight opened with Tomas talking about Marek.
+- **Caught:** on the M27 screenshots.
+- **Fix:** the lines are keyed to Marek's kit.
+- **Rule:** story lines, captions and portraits are keyed to the character's kit id, never to a role ("the boss", "the rider").
+
+### K3 · Weapon sheets drawn in another outfit than the hero wears
+
+- **What happened:** the Stage 3 axe, hammer and staff sheets were drawn in the Stage 3 outfit, but the Lab rooms dressed the heroes in the Stage 1 outfit, so a hero changed clothes on every pickup and drop.
+- **Caught:** by Guo in the first M27 test.
+- **Fix:** the S3 outfit redraws are imported (`tools/art/import_s3_outfit.py`, scales measured against the originals) and `SpritePicker.setOutfit('s3')` dresses the heroes in Stage 3 rooms; an armed walk without an S3 redraw falls back to the S3 walk with the weapon in hand.
+- **Rule:** every armed sheet is drawn in the outfit the hero wears where that weapon appears, and the renderer picks the outfit per room. A mode with free outfit choice needs each weapon sheet per outfit, or the outfit fixed per stage.
+
+### K4 · A riding sheet without a stride cycle
+
+- **What happened:** each horse sheet holds one pose for walk, trot, turn and halt, so a riding horse's legs never moved.
+- **Caught:** by Guo in the first M27 test.
+- **Fix (interim):** the two side-view poses alternate; GALLOP sheets (four-frame loop) were prompted.
+- **Rule:** every animal or vehicle that moves across the screen gets a looping locomotion sheet in its first prompt batch.
+
 ## Pre-flight checklist: before writing any new stage's prompt files
 
 Run this for Stage 4 onwards, each Curated Mission and every other mode. Stage 4 starts only after its spec readiness review.

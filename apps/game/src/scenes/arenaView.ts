@@ -4,6 +4,7 @@ import {
   AiMode,
   DIFFICULTIES,
   ENEMIES,
+  WEAPONS,
   EncEvent,
   type Encounter,
   type Fighter,
@@ -591,13 +592,18 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
             : '';
     const kit = ENEMIES[f.hero]!;
     // M19: the armed phase's gun (rounds left, or how it was lost).
-    const gun = phase.armed
-      ? b.gunLost > 0
-        ? ` · ${t(`m19.gun.${b.gunLost}` as TextId)}`
-        : f.item !== 0
-          ? ` · ${b.gunAmmo} ${t('m19.rounds')}`
-          : ` · ${t('m19.gun.0')}`
-      : '';
+    // M27: a melee armed phase (Garran's Hookstaff) names the weapon, held or lost.
+    const armedDef = phase.armed ? WEAPONS.find((w) => w.id === phase.armed) : undefined;
+    const melee = armedDef && armedDef.class !== 'firearm';
+    const gun = melee
+      ? ` · ${dt(`weapon.${armedDef.id}.name`, armedDef.name)}${f.item !== 0 ? '' : ` (${t('m27.armed.loose')})`}`
+      : phase.armed
+        ? b.gunLost > 0
+          ? ` · ${t(`m19.gun.${b.gunLost}` as TextId)}`
+          : f.item !== 0
+            ? ` · ${b.gunAmmo} ${t('m19.rounds')}`
+            : ` · ${t('m19.gun.0')}`
+        : '';
     this.bossName.setText(
       `${dt(`enemy.${kit.id}.name`, kit.name)} · ${A('phase')} ${b.phase + 1}: ${dt(`enemy.${kit.id}.phase.${b.phase}`, phase.name)} · ${A('resolve')} ${b.resolve}/${b.resolveMax}${state}${gun}`,
     );
@@ -627,7 +633,9 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
     // Tomas's lines (subtitles) on Marek's entrance, the gun's loss, Scorched Claim, capture.
     const b = enc.boss;
     let line = '';
-    if (b && bodies.some((x) => x.id === b.id)) {
+    // M27: only Marek's fight has Tomas's lines (not Garran's).
+    const bossBody = b ? bodies.find((x) => x.id === b.id) : undefined;
+    if (b && bossBody && ENEMIES[bossBody.hero]?.id === 'marek') {
       const tomas = TOMAS_LINE[e.kind];
       if (tomas && age < SUBTITLE_FRAMES) line = tomas;
       else if (enc.wave === 0 && frame - enc.start < SUBTITLE_FRAMES + 30 && b.phase === 0)
