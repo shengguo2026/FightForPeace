@@ -323,6 +323,20 @@ M27 put every Stage 3 weapon, bandit role, Garran Voss, the quarry scenery and t
 - **Fix:** the lines are keyed to Marek's kit.
 - **Rule:** story lines, captions and portraits are keyed to the character's kit id, never to a role ("the boss", "the rider").
 
+### K3 · Weapon sheets drawn in another outfit than the hero wears
+
+- **What happened:** the Stage 3 axe, hammer and staff sheets were drawn in the Stage 3 outfit, but the Lab rooms dressed the heroes in the Stage 1 outfit, so a hero changed clothes on every pickup and drop.
+- **Caught:** by Guo in the first M27 test.
+- **Fix:** the S3 outfit redraws are imported (`tools/art/import_s3_outfit.py`, scales measured against the originals) and `SpritePicker.setOutfit('s3')` dresses the heroes in Stage 3 rooms; an armed walk without an S3 redraw falls back to the S3 walk with the weapon in hand.
+- **Rule:** every armed sheet is drawn in the outfit the hero wears where that weapon appears, and the renderer picks the outfit per room. A mode with free outfit choice needs each weapon sheet per outfit, or the outfit fixed per stage.
+
+### K4 · A riding sheet without a stride cycle
+
+- **What happened:** each horse sheet holds one pose for walk, trot, turn and halt, so a riding horse's legs never moved.
+- **Caught:** by Guo in the first M27 test.
+- **Fix (interim):** the two side-view poses alternate; GALLOP sheets (four-frame loop) were prompted.
+- **Rule:** every animal or vehicle that moves across the screen gets a looping locomotion sheet in its first prompt batch.
+
 ## Pre-flight checklist: before writing any new stage's prompt files
 
 Run this for Stage 4 onwards, each Curated Mission and every other mode. Stage 4 starts only after its spec readiness review.

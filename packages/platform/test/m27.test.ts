@@ -106,6 +106,63 @@ describe('M27 art', () => {
     }
   });
 
+  test('in the Stage 3 outfit, heroes stay in it with and without a Stage 3 weapon', () => {
+    const s3 = new SpritePicker(reg);
+    s3.setOutfit('s3');
+    const dressed = (f: Fighter, frame = 0) => {
+      const s = s3.fighter(f, frame)!;
+      expect(reg.sheet(s.sheet)!.sheet.cells[s.cell], `${s.sheet} ${s.cell}`).toBeTruthy();
+      return s.sheet;
+    };
+    for (const h of HEROES) {
+      if (!reg.sheet(`hero.${h.id}.s3.sheet.idle`)) continue;
+      const w = createWorld(1, { heroes: [h.id, 'river'] });
+      const f = heroOf(w, 0)!;
+      f.state = MoveState.Idle;
+      expect(dressed(f)).toBe(`hero.${h.id}.s3.sheet.idle`);
+      f.state = MoveState.Walk;
+      expect(dressed(f, 10)).toBe(`hero.${h.id}.s3.sheet.walk`);
+      // Every action pose with an S3 redraw uses it.
+      kitOf(f)!.actions.forEach((a, i) => {
+        startAction(f, i);
+        f.stateFrame = 1;
+        const sheet = dressed(f);
+        if (reg.sheet(sheet.replace(`hero.${h.id}.`, `hero.${h.id}.s3.`)))
+          throw new Error(`${a.id} draws ${sheet} though its S3 redraw exists`);
+      });
+      // A Stage 3 weapon: its own sheets (drawn in the S3 outfit).
+      claim(w, f, spawnItem(w, weaponIndex('wood-axe'), f.x, f.z));
+      f.state = MoveState.Walk;
+      expect(dressed(f, 10)).toBe(`hero.${h.id}.sheet.axe-walk`);
+      // The revolver: the S3 revolver poses; its Stage 2 walk is not redrawn, so the S3
+      // walk with the revolver drawn in hand.
+      const g = createWorld(1, { heroes: [h.id, 'river'] });
+      const r = heroOf(g, 0)!;
+      claim(g, r, spawnItem(g, weaponIndex('bandit-revolver'), r.x, r.z));
+      r.state = MoveState.Idle;
+      if (reg.sheet(`hero.${h.id}.s3.sheet.revolver`))
+        expect(dressed(r)).toBe(`hero.${h.id}.s3.sheet.revolver`);
+      r.state = MoveState.Walk;
+      expect(dressed(r, 10)).toBe(`hero.${h.id}.s3.sheet.walk`);
+      expect(s3.heldProp(r)).not.toBeNull();
+    }
+  });
+
+  test('every S3 outfit sheet has a pose wherever its original has one', () => {
+    let n = 0;
+    for (const id of reg.ids()) {
+      const m = /^hero\.([a-z]+)\.s3\.(.+)$/.exec(id);
+      if (!m) continue;
+      n += 1;
+      const orig = reg.sheet(`hero.${m[1]}.${m[2]}`)!.sheet;
+      const twin = reg.sheet(id)!.sheet;
+      orig.cells.forEach((c, i) => {
+        if (c) expect(twin.cells[i], `${id} cell ${i}`).toBeTruthy();
+      });
+    }
+    expect(n).toBeGreaterThan(120);
+  });
+
   test('loose Stage 3 weapons and food draw from the Stage 3 prop sheets', () => {
     const w = createWorld(1, {});
     for (const id of [

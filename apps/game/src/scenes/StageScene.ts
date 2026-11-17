@@ -40,6 +40,7 @@ import {
   mountedKit,
   riderActionLength,
   runningAction,
+  ARENAS,
   CORRIDORS,
   mountOf,
   ROOMS,
@@ -338,6 +339,9 @@ export class StageScene extends Phaser.Scene {
       snap.run,
       stage2AreaOf(snap.greenhouse?.room, snap.pursuit?.corridor),
     );
+    // M27: the Stage 3 rooms and the horse corridors dress the heroes in the Stage 3
+    // outfit, which their Stage 3 weapon and horse sheets are drawn in.
+    this.picker.setOutfit(stage3Outfit(snap.encounter, snap.pursuit?.corridor) ? 's3' : 'base');
     const art = this.arena.hasStage2Backdrop();
     this.labFloor.setVisible(
       snap.encounter === null && snap.pursuit === null && snap.greenhouse === null,
@@ -503,6 +507,7 @@ export class StageScene extends Phaser.Scene {
           steer: fxToPixels(r.targetZ - r.z),
           braking: r.speed < MOUNTED.bike.base * 0.85,
           stateAge: snap.frame - r.since,
+          frame: snap.frame,
         },
         horse,
       );
@@ -534,7 +539,7 @@ export class StageScene extends Phaser.Scene {
       }
     }
     for (const e of p.enemies) {
-      const pick = horse && !e.boss ? raiderHorseCell(e) : enemyMountCell(e);
+      const pick = horse && !e.boss ? raiderHorseCell({ ...e, frame: snap.frame }) : enemyMountCell(e);
       if (this.mountSprite(-1 - e.id, pick, fxToPixels(e.x), fxToPixels(e.z), scale)) {
         mountKeep.add(-1 - e.id);
         art.add(`e${e.id}`);
@@ -1610,4 +1615,13 @@ function stage2AreaOf(room: number | undefined, corridor: number | undefined): s
         ? CORRIDORS[corridor]?.id
         : undefined;
   return id ? (STAGE2_ROOM_AREA[id] ?? null) : null;
+}
+
+/** M27: whether the heroes wear the Stage 3 outfit (the M27 Lab rooms, horse corridors). */
+export function stage3Outfit(encounter: Encounter | null, corridor?: number): boolean {
+  if (corridor !== undefined) {
+    const c = CORRIDORS[corridor];
+    return c !== undefined && mountOf(c).id === 'mountain-horse';
+  }
+  return encounter !== null && (ARENAS[encounter.arena]?.id.startsWith('lab-m27') ?? false);
 }

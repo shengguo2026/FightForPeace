@@ -81,7 +81,8 @@ test('character sheets share one ground line (aerial sheets are drawn in the air
     expect(s.sheet.ground, s.id).toBeGreaterThan(310);
     // River's walk (v3, v4) stands lower in its cells (375 of 384); the renderer stands every
     // sheet on its own ground line, so only feet touching the cell edge would be wrong.
-    expect(s.sheet.ground, s.id).toBeLessThan(380);
+    // M27: Mountain's S3 Brace Elbow stands on 380 (its feet 6 px above the source cell).
+    expect(s.sheet.ground, s.id).toBeLessThan(381);
   }
 });
 
@@ -326,7 +327,8 @@ test('weapon sheets are drawn at the same figure size as the idle sheet', () => 
   expect(size('hero.mountain.pose.ground.settling-palm')).toBeLessThan(0.8);
   for (const s of reg.sheets()) {
     const k = s.sheet.scale ?? 1;
-    expect(k, s.id).toBeGreaterThan(0.7);
+    // M27: Mountain's S3 Lockgate Press, drawn larger still than its original (0.71), is 0.7.
+    expect(k, s.id).toBeGreaterThanOrEqual(0.7);
     expect(k, s.id).toBeLessThan(1.3);
   }
 });

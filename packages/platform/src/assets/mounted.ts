@@ -32,6 +32,8 @@ export interface HeroRideView {
   steer: number;
   /** Below cruising speed (braking or slowed). */
   braking: boolean;
+  /** M27: the simulation frame (the horse's stride). */
+  frame?: number;
   /** Frames since the state began. */
   stateAge: number;
 }
@@ -76,6 +78,9 @@ export function heroMountCell(hero: string, r: HeroRideView, horse = false): Mou
   if (r.steer < -STEER_DEADZONE) return { sheet: sheet('ride'), cell: horse ? 2 : 1 };
   if (r.steer > STEER_DEADZONE) return { sheet: sheet('ride'), cell: horse ? 1 : 2 };
   if (r.braking) return { sheet: sheet('ride'), cell: 3 };
+  // M27: the horse steps between its walk and trot poses so its legs move (the horse
+  // sheets have no gallop cycle yet).
+  if (horse && r.frame !== undefined) return { sheet: sheet('ride'), cell: Math.floor(r.frame / 8) % 2 };
   return { sheet: sheet('ride'), cell: 0 };
 }
 
@@ -86,6 +91,8 @@ export interface EnemyRideView {
   critical: boolean;
   /** Rider action index (0 Parallel Check, 1 Passing Boot). */
   attack: number;
+  /** M27: the simulation frame (the horse's stride). */
+  frame?: number;
 }
 
 /**
@@ -115,7 +122,9 @@ export function raiderHorseCell(e: EnemyRideView): MountPick {
     case EnemyState.Down:
       return { sheet: off, cell: 3 };
   }
-  return e.critical ? { sheet: off, cell: 0 } : { sheet: ride, cell: 0 };
+  if (e.critical) return { sheet: off, cell: 0 };
+  // The gallop and the gathered stride alternate (the ride sheet has no gallop cycle yet).
+  return { sheet: ride, cell: e.frame !== undefined && Math.floor(e.frame / 6) % 2 === 1 ? 2 : 0 };
 }
 
 /** A Road Rider's or Marek's mounted cell. */

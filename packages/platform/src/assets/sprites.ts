@@ -541,16 +541,49 @@ function loop(meta: SheetMeta | undefined, frame: number, fps: number, cells?: n
   return list[Math.floor((frame * fps) / 60) % list.length]!;
 }
 
+/** The heroes' outfit: their Stage 1 and 2 clothes, or the Stage 3 outfit. */
+export type HeroOutfit = 'base' | 's3';
+
+/** Stage 3 armed walks, drawn in the Stage 3 outfit (no S3 twin needed). */
+const S3_NATIVE_WALKS = new Set(['hike-walk', 'axe-walk', 'hammer-walk']);
+
 export class SpritePicker {
   constructor(private readonly assets: AssetRegistry) {}
 
+  private outfit: HeroOutfit = 'base';
+
+  /**
+   * The heroes' outfit (M27): 's3' dresses them in the Stage 3 outfit, which the Stage 3
+   * weapon and horse sheets are drawn in. A hero sheet with an S3 redraw
+   * (`hero.<id>.s3.<key>`) is swapped for it; a Stage 1 or 2 armed walk without one counts
+   * as missing, so the hero walks in the S3 walk with the weapon drawn in hand.
+   */
+  setOutfit(outfit: HeroOutfit): void {
+    this.outfit = outfit;
+  }
+
   /** Sheet and cell for a fighter on simulation frame `frame`, or null (no art: greybox). */
   fighter(f: Fighter, frame: number, boss?: BossView): SpriteFrame | null {
-    return f.team === 'hero' ? this.hero(f, frame) : this.enemy(f, frame, boss);
+    if (f.team !== 'hero') return this.enemy(f, frame, boss);
+    const pick = this.hero(f, frame);
+    return pick && this.outfit !== 'base' ? { ...pick, sheet: this.dress(pick.sheet) ?? pick.sheet } : pick;
+  }
+
+  /** The id drawn for `id` in the current outfit, or undefined when it has no art in it. */
+  private dress(id: string): string | undefined {
+    if (this.outfit === 'base' || !id.startsWith('hero.')) return id;
+    const dot = id.indexOf('.', 5);
+    const rest = id.slice(dot + 1);
+    if (rest.startsWith('s3.')) return id;
+    const twin = `${id.slice(0, dot)}.s3.${rest}`;
+    if (this.assets.sheet(twin)) return twin;
+    if (/^sheet\.[a-z-]+-walk$/.test(rest) && !S3_NATIVE_WALKS.has(rest.slice(6))) return undefined;
+    return id;
   }
 
   private has(id: string): SheetMeta | undefined {
-    return this.assets.sheet(id)?.sheet;
+    const dressed = this.dress(id);
+    return dressed === undefined ? undefined : this.assets.sheet(dressed)?.sheet;
   }
 
   private hero(f: Fighter, frame: number): SpriteFrame | null {
@@ -732,7 +765,9 @@ export class SpritePicker {
       }
       if (rider.phase === PassPhase.Warn) return s('mount-attack', 3);
       if (rider.phase === PassPhase.Pass) return s('mount-attack', 2) ?? s('mount-ride', 0);
-      return s('mount-ride', f.state === MoveState.Walk ? 0 : 3);
+      // Riding: the gallop and the gathered stride alternate until a gallop cycle sheet
+      // is delivered (the ride sheet has one pose of each).
+      return s('mount-ride', f.state === MoveState.Walk ? loop(undefined, frame, 6, [0, 2]) : 3);
     }
     if (isBoss && boss.shift > 0 && art === 'garran') {
       // M27: Garran casts the Hookstaff aside, then points up to the winch and braces.
