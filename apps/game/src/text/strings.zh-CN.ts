@@ -593,6 +593,7 @@ const ZH_BASE: Catalog = {
   'arena.teamAttack': '合击',
   'arena.flee': '逃跑',
   'arena.surrender': '投降',
+  'arena.winch': '水闸绞盘',
   'grade.rescue': '救援（解救的工人）',
   'grade.evidence': '调查（线索和幕后证据）',
   'grade.continues': '使用续关',
