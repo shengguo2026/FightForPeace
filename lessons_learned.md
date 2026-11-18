@@ -95,6 +95,13 @@ The biggest and most repeated gap. Several times a whole class of sheets was fou
 - **Fix:** regenerated or edited anchors before any gameplay sheet used them.
 - **Rule:** make and approve the anchors (model sheets, line-ups, marks, vehicles, style frame) first. Review them as a **cast**, side by side with every existing character: silhouette, palette, hair, face and age must be clearly different from everyone else, and every ID colour or mark unique. Later prompts attach the approved version (`_v2` where one exists).
 
+### B5 · Heroes still grew during fights after the height scales
+
+- **What happened:** after B1 every sheet had a draw scale, but the scale came from the figure's standing height. A crouched guard, a leaning lunge or raised arms change the height, so those sheets got the wrong scale: River's guard, hiking-staff and axe sheets, Fire's guard and Exact Counter, and the Stage 3 heavy and grab sheets drew 6–10 % larger than idle, Fire's side hook and rising knee about 12 % smaller, and Wind's three Stage 3 weapon walks 15 % smaller. The heroes visibly grew when a fight started and shrank and grew between moves.
+- **Caught:** Guo's play test, 2026-11-18 (screenshot of Wind against the Sluice Commander).
+- **Fix:** `tools/art/fit_head_scale.py` measures the head of every hero sheet against idle cell 0 and reports the sheets that are off. Each report was checked by eye beside idle, and the measured scales are in `tools/art/size_fixes.py`, which every importer applies last.
+- **Rule:** after importing hero sheets, run `fit_head_scale.py` and check every reported sheet beside idle (a profile head reads about 10 % small, so walks and runs are checked by standing height instead). Record confirmed scales in `size_fixes.py`, never only in the manifest. A sheet whose cells differ in size from each other (Fire's and Wind's lance-a) cannot be fixed with one scale and goes back for a redraw.
+
 ---
 
 ## C · Story, spec and scope gaps found late

@@ -2,7 +2,7 @@ import { useState } from 'preact/hooks';
 import { HEROES, STAGES, DIFFICULTIES } from '@ffp/sim';
 import { PromptText } from '../../ui/InputPrompt';
 import type { LabState } from '../../ui/labState';
-import { difficultyName, dt, heroName, locale, t, type TextId } from '../../text/i18n';
+import { difficultyName, dt, heroName, locale, moveInput, t, type TextId } from '../../text/i18n';
 import type { Shell } from '../shell';
 import { useNav } from '../hooks';
 import { Button, Panel } from '../ui';
@@ -101,6 +101,13 @@ export function PauseMenu({ shell, state }: { shell: Shell; state: LabState }) {
   );
 
   const hero = run || shell.screen.value === 'lab' ? HEROES[world.playerHero[0] ?? 0] : undefined;
+  // Every joined player's hero, each with the inputs of their own bindings and device.
+  const moveLists = hero
+    ? players
+        .filter((p) => p.joined)
+        .map((p) => ({ p, h: HEROES[world.playerHero[p.slot] ?? 0] }))
+        .filter((x) => x.h !== undefined)
+    : [];
   const detail = () => {
     if (!ctx) return null;
     switch (focused) {
@@ -108,13 +115,46 @@ export function PauseMenu({ shell, state }: { shell: Shell; state: LabState }) {
         return <PromptText text={t('prompt.paused')} ctx={ctx} />;
       case 'moves':
         return hero ? (
-          <div data-testid="pause-detail-moves">
-            <b>{heroName(hero.id)}</b>
-            <ul style={{ margin: '6px 0', paddingLeft: '20px', columns: 2 }}>
-              {hero.actions.slice(0, 24).map((a) => (
-                <li>{dt(`hero.${hero.id}.action.${a.id}`, a.name)}</li>
-              ))}
-            </ul>
+          <div
+            data-testid="pause-detail-moves"
+            style={{ maxHeight: '86vh', overflowY: 'auto', paddingRight: '6px' }}
+          >
+            {(moveLists.length > 0 ? moveLists : [{ p: players[0]!, h: hero }]).map(({ p, h }) => (
+              <div data-testid={`pause-moves-p${p.slot + 1}`} style={{ marginBottom: '10px' }}>
+                <b>
+                  {moveLists.length > 1 ? `P${p.slot + 1} · ` : ''}
+                  {heroName(h!.id)}
+                </b>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
+                    columnGap: '18px',
+                    rowGap: '2px',
+                    fontSize: '0.82em',
+                    lineHeight: 1.2,
+                    marginTop: '6px',
+                  }}
+                >
+                  {h!.actions.map((a) => {
+                    const input = moveInput(a.context, a.dir < 0 ? 0 : a.dir);
+                    return (
+                      <div data-testid="pause-move">
+                        <div>{dt(`hero.${h!.id}.action.${a.id}`, a.name)}</div>
+                        {input ? (
+                          <div
+                            data-testid="pause-move-input"
+                            style={{ fontSize: '0.8em', opacity: 0.85 }}
+                          >
+                            <PromptText text={input} ctx={p.ctx} />
+                          </div>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         ) : null;
       case 'howTo':

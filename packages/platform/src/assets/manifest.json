@@ -9956,7 +9956,8 @@
           },
           null,
           null
-        ]
+        ],
+        "scale": 1.149
       }
     },
     "hero.fire.pose.standing.furnace-heel": {
@@ -10062,7 +10063,8 @@
           },
           null,
           null
-        ]
+        ],
+        "scale": 1.136
       }
     },
     "hero.fire.pose.standing.spark-jab": {
@@ -10094,7 +10096,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.943
       }
     },
     "hero.fire.pose.team.twin-accord": {
@@ -10778,7 +10781,7 @@
           null,
           null
         ],
-        "scale": 0.858
+        "scale": 0.981
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-S3-FORGE-SIDE-HOOK.png",
@@ -10899,7 +10902,7 @@
           null,
           null
         ],
-        "scale": 0.989
+        "scale": 1.13
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-S3-RISING-BRAND.png",
@@ -11191,7 +11194,7 @@
             "foot": 337
           }
         ],
-        "scale": 0.996
+        "scale": 0.914
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-S3-EXACT-COUNTER.png",
@@ -11295,7 +11298,7 @@
             "foot": 332
           }
         ],
-        "scale": 0.991
+        "scale": 0.918
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-S3-GUARD.png",
@@ -11347,7 +11350,7 @@
             "foot": 360
           }
         ],
-        "scale": 0.914
+        "scale": 0.839
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-S3-HEAVY.png",
@@ -11992,7 +11995,8 @@
             "x1": 325,
             "foot": 336
           }
-        ]
+        ],
+        "scale": 0.926
       }
     },
     "hero.fire.sheet.grab-throw": {
@@ -12086,7 +12090,8 @@
             "x1": 302,
             "foot": 331
           }
-        ]
+        ],
+        "scale": 0.926
       }
     },
     "hero.fire.sheet.hammer": {
@@ -12133,7 +12138,8 @@
             "x1": 378,
             "foot": 348
           }
-        ]
+        ],
+        "scale": 1.105
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-HAMMER.png",
@@ -15317,7 +15323,7 @@
           },
           null
         ],
-        "scale": 0.864
+        "scale": 0.807
       },
       "provenance": {
         "source": "heroes/mountain/HERO-MTN-S3-BREAKER-PICKUP.png",
@@ -15468,7 +15474,7 @@
             "foot": 355
           }
         ],
-        "scale": 0.905
+        "scale": 0.854
       },
       "provenance": {
         "source": "heroes/mountain/HERO-MTN-S3-GRAB-THROW.png",
@@ -19795,7 +19801,7 @@
             "foot": 328
           }
         ],
-        "scale": 0.926
+        "scale": 0.857
       },
       "provenance": {
         "source": "heroes/river/HERO-RIV-S3-GUARD.png",
@@ -20300,7 +20306,7 @@
             "foot": 360
           }
         ],
-        "scale": 0.93
+        "scale": 0.845
       },
       "provenance": {
         "source": "heroes/river/HERO-RIV-AXE.png",
@@ -20587,7 +20593,7 @@
             "foot": 327
           }
         ],
-        "scale": 0.94
+        "scale": 0.87
       }
     },
     "hero.river.sheet.hammer": {
@@ -20935,7 +20941,8 @@
             "x1": 378,
             "foot": 352
           }
-        ]
+        ],
+        "scale": 0.909
       },
       "provenance": {
         "source": "heroes/river/HERO-RIV-STAFF.png",
@@ -22344,7 +22351,8 @@
           },
           null,
           null
-        ]
+        ],
+        "scale": 1.124
       }
     },
     "hero.wind.pose.ground.skimming-palm": {
@@ -22879,7 +22887,8 @@
           null,
           null,
           null
-        ]
+        ],
+        "scale": 0.943
       }
     },
     "hero.wind.pose.team.twin-accord": {
@@ -23483,7 +23492,7 @@
           null,
           null
         ],
-        "scale": 0.879
+        "scale": 0.955
       },
       "provenance": {
         "source": "heroes/wind/HERO-WND-S3-CROSSLINE-REVERSE.png",
@@ -23735,7 +23744,7 @@
           null,
           null
         ],
-        "scale": 0.961
+        "scale": 0.907
       },
       "provenance": {
         "source": "heroes/wind/HERO-WND-S3-WINDMARK-JAB.png",
@@ -24650,7 +24659,7 @@
             "foot": 370
           }
         ],
-        "scale": 0.84
+        "scale": 0.988
       },
       "provenance": {
         "source": "heroes/wind/HERO-WND-AXE-WALK.png",
@@ -25033,7 +25042,7 @@
             "foot": 368
           }
         ],
-        "scale": 0.84
+        "scale": 0.988
       },
       "provenance": {
         "source": "heroes/wind/HERO-WND-HAMMER-WALK.png",
@@ -25333,7 +25342,7 @@
             "foot": 368
           }
         ],
-        "scale": 0.84
+        "scale": 0.988
       },
       "provenance": {
         "source": "heroes/wind/HERO-WND-STAFF-WALK-v2.png",

@@ -1745,3 +1745,46 @@ Use the Lab: `http://localhost:5173/?lab`, press **F1**, pick the room in the **
 4. **Gallop:** *Horse Test Track*: each hero's horse canters with four leg poses; steering and halting keep their own poses.
 5. **Bandit horse:** *M27 Trial: Mounted Raider*: the black horse canters with four leg poses while it crosses the arena (after the warning marks the lane).
 6. **Guard pictures:** hold **G** with **W** or **S**: the normal high guard pose, not the crouch. **G** with the direction away from your facing still shows the turned guard.
+
+## Hero sizes in fights, keys in the pause Move List (2026-11-18)
+
+What's new: **hero sizes.** About 25 hero sheets drew 6–15 % larger or smaller than the idle pose, so the heroes grew or shrank between moves (for example River's guard, Fire's guard and Exact Counter, Fire's side hook, Wind's Stage 3 weapon walks). Their draw scales are now measured by head size and corrected. **Move List keys.** The pause menu's Move List now shows every move of the hero (before: only the first 24 names) with how to enter it, drawn from your own key bindings or gamepad buttons.
+
+### Get and start the build
+
+To test the branch before it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-uc3buf
+git checkout claude/project-thread-uc3buf
+git pull origin claude/project-thread-uc3buf
+pnpm install
+pnpm dev
+```
+
+After it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+### Test steps
+
+1. **River's guard:** play Stage 1 as River (or the Lab, `http://localhost:5173/?lab`). Stand still, then hold **G**: River keeps the same size when she raises her guard (before, she grew about 8 %).
+2. **Fire:** as Fire, hold **G**, then use Forge Side Hook and Rising Brand (their keys are in the new Move List, step 6). Fire keeps one size in every move.
+3. **Exact Counter:** with Fire, press **G** just before an enemy hit: the counter pose is the same size as the idle pose.
+4. **Sluice Commander fight:** Stage 1, beat 8, any hero: during the whole fight the hero stays the size of the idle pose; compare with your screenshot.
+5. **Stage 3 weapons (Wind):** in the M27 rooms (Lab, F1, Arena list), pick up the Hiking Staff, Wood Axe or Quarry Hammer and walk with Wind: she is no longer smaller while walking than when she stops.
+6. **Move List, keyboard:** in a stage press **Esc** and move to **Move List**: every move shows its name and, below it, the keys (for example **T**, **D + T**, "in the air: **T**"). Wind and Fire now also show their last specials and ultimate.
+7. **Your own bindings:** in **Controls**, change Attack to another key, go back to the Move List: the list shows the new key.
+8. **Gamepad:** play with a gamepad and open the Move List: the list shows the gamepad buttons instead of keys.
+9. **Co-op:** with two players, the Move List shows both heroes, each with that player's own keys or buttons.
+10. **Languages:** switch to Chinese and German: the hints ("空中：", "in der Luft:") are translated.
+
+Known limit: Fire's and Wind's lance-a sheets draw some cells smaller than others; one scale cannot fix that, so they would need a redraw.

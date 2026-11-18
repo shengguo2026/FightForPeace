@@ -14,6 +14,7 @@ import { M24_ZH } from './strings.m24';
 import { M25_ZH } from './strings.m25';
 import { M26_ZH } from './strings.m26';
 import { M27_ZH } from './strings.m27';
+import { MOVES_ZH } from './strings.moves';
 import { LABELS_ZH } from './strings.labels';
 
 /** M10 catalogue (zh-CN). Keys mirror strings.en.ts and the generated data names. */
@@ -610,4 +611,11 @@ const ZH_BASE: Catalog = {
   ...LABELS_ZH,
 };
 
-export const ZH_CN: Catalog = { ...ZH_BASE, ...M24_ZH(ZH_BASE), ...M25_ZH, ...M26_ZH, ...M27_ZH };
+export const ZH_CN: Catalog = {
+  ...ZH_BASE,
+  ...M24_ZH(ZH_BASE),
+  ...M25_ZH,
+  ...M26_ZH,
+  ...M27_ZH,
+  ...MOVES_ZH,
+};
