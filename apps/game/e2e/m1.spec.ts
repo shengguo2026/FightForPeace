@@ -209,7 +209,7 @@ test('Dash, then T and G together, performs the low attack', async ({ page }) =>
   test.slow(); // counted in simulation steps; a slow CI browser takes long to render
   await ready(page);
   // The chord is sent on the simulation step the dash is seen, so it always lands within
-  // the 14-frame dash, however slowly the browser renders.
+  // the 18-frame dash, however slowly the browser renders.
   const kind = await doubleTapD<number>(
     page,
     `if (h.state === 2 && !this.sent) {

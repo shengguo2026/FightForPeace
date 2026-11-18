@@ -1035,9 +1035,10 @@ This is the living product and game-design decision log for *Fight for Peace*. I
 - **Confirmed:** Each local co-op player can select a facing mode independently.
 - **Proposed:** Facing assistance and simplified move inputs remain separate settings if an additional simplified input style is introduced later.
 - **Confirmed:** Normal ground movement uses a consistent walking speed rather than device-dependent analog walk/run speed.
+- **Confirmed (2026-11-18, Guo):** Double-tap and hold: when the direction of a dash is still held as the dash ends, the hero keeps running in that direction at twice the walking speed until that direction is released (the other axis may steer). The run is digital (no analog speed), works the same on keyboard and gamepad (including the optional `Dash` binding plus a held direction) and per player in co-op. Attacking out of a run uses the dash attack, a jump out of a run keeps the running speed, Guard ends it, and a weapon that slows walking prevents it. Until the run sheets (`codex_prompts_hero_run.md`) are delivered, the run plays the walk cycle faster.
 - **Confirmed:** Double-tapping any direction performs a short dash in that direction, including horizontal, depth, and diagonal directions.
 - **Confirmed:** `Dash` is an abstract input action that players can optionally bind to a dedicated keyboard key or gamepad button instead of using the double-tap gesture.
-- **Confirmed:** Dashing does not provide invulnerability and therefore does not replace defensive actions.
+- **Confirmed (amended 2026-11-18, Guo):** A forward dash does not provide invulnerability. A **backstep** (a dash away from the nearest enemy, which keeps the hero facing that enemy) and a pure depth **sidestep** cannot be hit on dash frames 3–8 of 18. A dash covers about 197 px across or 127 px in depth (fast first, then easing out), and the next dash waits 8 frames after a dash ends. Dashing still does not replace Guard, Exact Block or counters.
 - **Confirmed:** Pressing jump without a direction performs a neutral jump.
 - **Confirmed:** Holding a direction when jumping establishes the initial aerial movement direction.
 - **Confirmed:** Players can make limited directional corrections while airborne but cannot instantly reverse aerial momentum.
@@ -1062,7 +1063,7 @@ This is the living product and game-design decision log for *Fight for Peace*. I
 - **Proposed:** Keyboard and gamepad inputs produce the same abstract gameplay actions and combat opportunities.
 - **Proposed:** Reassigned controls take effect correctly without changing combat behavior.
 - **Proposed:** Eight-direction movement has normalized diagonal speed, preventing diagonal movement from being faster than horizontal or depth movement.
-- **Proposed:** Direction double-taps and optionally bound dash inputs produce the same dash behavior without accidental invulnerability.
+- **Proposed:** Direction double-taps and optionally bound dash inputs produce the same dash behavior; only backsteps and sidesteps evade, and only on their evade frames.
 - **Proposed:** Neutral jumps, directional jumps, and limited aerial corrections behave consistently on keyboard, directional pad, and analog stick.
 - **Proposed:** Manual Facing always honors explicit player direction; Assisted Facing selects predictably and never changes targets during an active combo.
 - **Proposed:** Allied soft collision and enemy solid/sliding collision remain stable without jitter, permanent trapping, or immovable crowds.

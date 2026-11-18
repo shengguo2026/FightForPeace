@@ -232,7 +232,7 @@ function stepHeroFrame(world: World, f: Fighter, frameInput: FrameInput, p: Move
       break;
     case MoveState.Dash:
       f.stateFrame += 1;
-      if (f.stateFrame >= p.dashFrames) toIdle(f);
+      if (f.stateFrame >= p.dashFrames) endDash(f, input, frame);
       break;
     case MoveState.Air:
       if (tryAerial(f, input, p)) return;
@@ -262,14 +262,18 @@ function stepHeroFrame(world: World, f: Fighter, frameInput: FrameInput, p: Move
       f.verdictReject = Reject.Restricted;
       f.verdictFrame = frame;
     } else if (action === ActionBit.Jump) {
-      startJump(f, input, p);
+      startJump(f, input, p, world.frame);
     } else if (action !== 0) {
       startAttack(world, f, input, action, chained, p);
-    } else if (f.state !== MoveState.Dash && (tap !== null || dashPressed)) {
+    } else if (
+      f.state !== MoveState.Dash &&
+      (tap !== null || dashPressed) &&
+      frame >= f.dashReady
+    ) {
       const [hx, hz] = [input.moveX, input.moveZ];
-      if (hx !== 0 || hz !== 0) startDash(f, hx, hz, p);
-      else if (tap !== null) startDash(f, tap.dx, tap.dz, p);
-      else startDash(f, f.facing, 0, p);
+      if (hx !== 0 || hz !== 0) startDash(world, f, hx, hz, p);
+      else if (tap !== null) startDash(world, f, tap.dx, tap.dz, p);
+      else startDash(world, f, f.facing, 0, p);
     }
   }
 
@@ -281,9 +285,15 @@ function stepHeroFrame(world: World, f: Fighter, frameInput: FrameInput, p: Move
   switch (f.state) {
     case MoveState.Idle:
     case MoveState.Walk: {
-      const [vx, vz] = directed(input.moveX, input.moveZ, p.walkX, p.walkZ, p.diagonal);
       // M24: a heavy weapon slows walking (percent of the profile speed).
       const pct = f.item !== 0 ? heldSpeed(world, f) : 100;
+      // Double tap and hold: the run that follows a dash lasts while its direction is held.
+      const run = pct === 100 && keepsRunning(f, input, frame);
+      if (run) f.runFrame = frame;
+      else f.dirX = f.dirZ = 0;
+      const [vx, vz] = run
+        ? directed(input.moveX, input.moveZ, p.runX, p.runZ, p.diagonal)
+        : directed(input.moveX, input.moveZ, p.walkX, p.walkZ, p.diagonal);
       f.vx = pct === 100 ? vx : Math.trunc((vx * pct) / 100);
       f.vz = pct === 100 ? vz : Math.trunc((vz * pct) / 100);
       f.state = vx !== 0 || vz !== 0 ? MoveState.Walk : MoveState.Idle;
@@ -297,6 +307,7 @@ function stepHeroFrame(world: World, f: Fighter, frameInput: FrameInput, p: Move
       break;
     }
     case MoveState.Dash:
+      [f.vx, f.vz] = dashVelocity(f, p);
       f.x += f.vx;
       f.z += f.vz;
       break;
@@ -557,12 +568,12 @@ function stepRunningAction(
     } else if (link.kind === 'jump') {
       f.action = -1;
       f.ghost = false;
-      startJump(f, input, p);
+      startJump(f, input, p, world.frame);
       airStep(f, input, p);
     } else if (link.kind === 'dash') {
       f.action = -1;
       f.ghost = false;
-      startDash(f, f.facing, 0, p);
+      startDash(world, f, f.facing, 0, p);
       f.bridged = true;
       f.x += f.vx;
       f.z += f.vz;
@@ -614,26 +625,79 @@ function toIdle(f: Fighter): void {
   f.airUsed = false;
 }
 
-function startDash(f: Fighter, dx: Axis, dz: Axis, p: MovementProfile): void {
+/**
+ * Dash and run (2026-11-18). A dash away from the nearest enemy (inside the Assisted Facing
+ * box) is a backstep: the hero keeps facing that enemy. Backsteps and pure depth sidesteps
+ * evade on the profile's evade frames; other dashes never do (F&D Module 1, amended). The
+ * next dash waits until this one and its recovery are over.
+ */
+function startDash(world: World, f: Fighter, dx: Axis, dz: Axis, p: MovementProfile): void {
+  const now = world.frame;
+  const foe = dx !== 0 ? nearestEnemy(world, f, p) : null;
+  const back = foe !== null && Math.sign(foe.x - f.x) === -dx;
   f.state = MoveState.Dash;
   f.stateFrame = 0;
   f.dirX = dx;
   f.dirZ = dz;
   [f.vx, f.vz] = directed(dx, dz, p.dashX, p.dashZ, p.diagonal);
-  if (dx !== 0) f.facing = dx;
+  if (back) f.facing = dx === 1 ? -1 : 1;
+  else if (dx !== 0) f.facing = dx;
+  f.dashEvade = back || (dx === 0 && dz !== 0);
+  f.dashReady = now + p.dashFrames + p.dashRecovery;
+  f.runFrame = NO_TAP;
   f.bridged = false;
 }
 
-function startJump(f: Fighter, input: FrameInput, p: MovementProfile): void {
+/** Dash speed on this dash frame: full speed first, then easing out to the end. */
+export function dashVelocity(f: Fighter, p: MovementProfile): [number, number] {
+  const [vx, vz] = directed(f.dirX as Axis, f.dirZ as Axis, p.dashX, p.dashZ, p.diagonal);
+  if (f.stateFrame < p.dashFastFrames) return [vx, vz];
+  const num = p.dashFrames + 3 - f.stateFrame;
+  const den = p.dashFrames + 4 - p.dashFastFrames;
+  return [Math.trunc((vx * num) / den) || 0, Math.trunc((vz * num) / den) || 0];
+}
+
+/** The dash is over; still holding its direction turns it into a run. */
+function endDash(f: Fighter, input: FrameInput, now: number): void {
+  const [dx, dz] = [f.dirX, f.dirZ];
+  toIdle(f);
+  f.dashEvade = false;
+  if (dx !== 0 ? input.moveX === dx : dz !== 0 && input.moveZ === dz) {
+    f.dirX = dx;
+    f.dirZ = dz;
+    f.runFrame = now - 1;
+  }
+}
+
+/** A run continues frame to frame while its main direction is held (the other may steer). */
+function keepsRunning(f: Fighter, input: FrameInput, now: number): boolean {
+  if (f.runFrame !== now - 1 || (f.dirX === 0 && f.dirZ === 0)) return false;
+  return f.dirX !== 0 ? input.moveX === f.dirX : input.moveZ === f.dirZ;
+}
+
+/** The hero ran on the previous frame (a run attack is the dash attack). */
+function running(f: Fighter, now: number): boolean {
+  return (
+    (f.state === MoveState.Walk || f.state === MoveState.Idle) &&
+    f.runFrame === now - 1 &&
+    (f.dirX !== 0 || f.dirZ !== 0)
+  );
+}
+
+function startJump(f: Fighter, input: FrameInput, p: MovementProfile, now: number): void {
   // A jump out of a dash keeps the dash direction; otherwise the held direction decides.
+  // A jump out of a run keeps the running speed.
   const fromDash = f.state === MoveState.Dash;
+  const fromRun = running(f, now);
   const dx = fromDash ? f.dirX : input.moveX;
   const dz = fromDash ? f.dirZ : input.moveZ;
   f.state = MoveState.Air;
   f.stateFrame = 0;
   f.dirX = dx;
   f.dirZ = dz;
-  [f.vx, f.vz] = directed(dx, dz, p.walkX, p.walkZ, p.diagonal);
+  [f.vx, f.vz] = fromRun
+    ? directed(dx, dz, p.runX, p.runZ, p.diagonal)
+    : directed(dx, dz, p.walkX, p.walkZ, p.diagonal);
   f.vy = p.jumpVy;
   if (dx !== 0) f.facing = dx;
 }
@@ -681,7 +745,7 @@ function startAttack(
   chained: boolean,
   p: MovementProfile,
 ): void {
-  const fromDash = f.state === MoveState.Dash;
+  const fromDash = f.state === MoveState.Dash || running(f, world.frame);
   const loadoutPress = action === ActionBit.Special || action === ActionBit.Ultimate;
   f.attackFromDash = fromDash;
   if (action === ActionBit.Interact) {

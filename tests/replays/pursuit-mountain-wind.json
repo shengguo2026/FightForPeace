@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "rulesVersion": "m27",
+  "rulesVersion": "m27-dash",
   "seed": 91,
   "options": {
     "pursuit": "perimeter-pursuit",
@@ -9,7 +9,7 @@
       "wind"
     ]
   },
-  "expectedHash": 1324390487,
+  "expectedHash": 3885581456,
   "frames": [
     [{"moveX":1,"moveZ":0,"pressed":16,"held":16,"dirPressed":0},{"moveX":1,"moveZ":0,"pressed":16,"held":16,"dirPressed":0}],
     [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],

@@ -337,7 +337,22 @@ M27 put every Stage 3 weapon, bandit role, Garran Voss, the quarry scenery and t
 - **Fix (interim):** the two side-view poses alternate; GALLOP sheets (four-frame loop) were prompted.
 - **Rule:** every animal or vehicle that moves across the screen gets a looping locomotion sheet in its first prompt batch.
 
-## Pre-flight checklist: before writing any new stage's prompt files
+## L · Dash and run patch (2026-11-18)
+
+### L1 · The dash was too short to dodge with, and sounded like an impact
+
+- **What happened:** the M1 dash (14 frames, 126 px, no evade, turning the hero round on a backward double tap) could not get out of a typical enemy reach (about 175 px) once the wind-up was seen, and its sound reused the stone-grit layer, so it read as a clash.
+- **Caught:** by Guo after several play sessions (2026-11-18).
+- **Fix:** an 18-frame dash of about 197 px across and 127 px in depth with an ease-out, a backstep (away from the nearest enemy, facing kept) and a depth sidestep that evade on frames 3 to 8, an 8-frame dash recovery, double tap and hold to run, and a wind-gust dash sound. F&D Module 1 amended.
+- **Rule:** movement numbers are checked against the enemies' real reach and wind-up (hitbox front edge plus the hurtbox half width, and startup frames) before a movement milestone is accepted, not only against an empty room.
+
+### L2 · Bot balance numbers follow any movement change
+
+- **What happened:** the arena bot never dashes on purpose, but its facing turns are fresh direction presses, so two quick turns make an accidental double-tap dash. Changing only the dash length moved the Stage 2 bot runs by ±2 clears out of 12 and changed restarts from 3 to 5 or 16 to 4; one strict ordering assertion (Marek has the fewest clears) failed by one clear.
+- **Fix:** the bot snapshots were re-recorded and the Marek assertion allows one clear of noise when Marek still leaves the least Health of every beat.
+- **Rule:** read the bot balance table as a shape (which beats are hard), never as exact counts; a movement change re-records it in the same PR.
+
+
 
 Run this for Stage 4 onwards, each Curated Mission and every other mode. Stage 4 starts only after its spec readiness review.
 

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "rulesVersion": "m27",
+  "rulesVersion": "m27-dash",
   "seed": 7,
-  "expectedHash": 2022173596,
+  "expectedHash": 4290930859,
   "frames": [
     [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":8}],
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],

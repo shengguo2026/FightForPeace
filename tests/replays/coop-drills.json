@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "rulesVersion": "m27",
+  "rulesVersion": "m27-dash",
   "seed": 51,
   "options": {
     "dummies": 1,
     "infiniteMeter": true
   },
-  "expectedHash": 463291410,
+  "expectedHash": 1388646276,
   "frames": [
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":1,"moveZ":-1,"pressed":0,"held":0,"dirPressed":9}],

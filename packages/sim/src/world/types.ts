@@ -125,6 +125,12 @@ export interface Fighter extends Body {
   attackFromDash: boolean;
   /** World frame of the last Guard press, for the Dash + Attack + Guard chord. */
   lastGuardFrame: number;
+  /** Dash and run (2026-11-18): first frame a new dash may start (dash recovery). */
+  dashReady: number;
+  /** This dash is a backstep or a sidestep: it evades on the profile's evade frames. */
+  dashEvade: boolean;
+  /** Last frame this hero ran (double tap and hold); a run continues only frame to frame. */
+  runFrame: number;
   /** Assisted Facing target kept during an attack chain (0 = none). */
   targetId: number;
   /** Consecutive frames this hero tried to move but was held by enemy collision. */

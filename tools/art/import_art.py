@@ -56,12 +56,15 @@ HEROES = {
     "fire": ("heroes/fire", "HERO-FIR"),
 }
 # Sheets a hero may lack without it being reported (the twins have no Stage 1 weapon sheets).
-OPTIONAL_COMMON = {"staff-a", "staff-b", "handwheel", "staff-walk", "handwheel-walk", "back-throw"}
+OPTIONAL_COMMON = {"staff-a", "staff-b", "handwheel", "staff-walk", "handwheel-walk", "back-throw", "run"}
 
 # Movement and reaction sheets every founder has (logical id suffix -> sheet name suffix).
 HERO_COMMON = {
     "idle": "IDLE",
     "walk": "WALK",
+    # Double tap and hold (2026-11-18): the unarmed run cycle (codex_prompts_hero_run.md);
+    # until delivered, a run plays the walk cycle faster.
+    "run": "RUN",
     "jump": "JUMP",
     "dash": "DASH",
     "hurt": "HURT",
