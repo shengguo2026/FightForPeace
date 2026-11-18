@@ -452,6 +452,15 @@ The permanent catalogue contains Wardrobe, Training Hall, Technique Library, and
 
 Standard and Open Loadout records remain separate. Standard uses default style, original neutral/forward/back Specials, empty optional Special and directional Ultimate slots, and the signature neutral Ultimate. Visual cosmetics and stage pickups remain allowed. Open permits any legally owned compatible loadout.
 
+#### 15.3.1 Outfit delivery as DLC (decided 2026-11-17)
+
+- **Playable outfits.** The four current heroes have two playable outfits for the whole game, the base outfit and the Stage 3 outfit, each with every movement, weapon and mount sheet. Every weapon or mount added by a later stage is drawn in both. A hero introduced later has one outfit until all game features are finished.
+- **Later stages' outfits.** The outfits that the stage specifications plan for Stages 4–8 (default evolutions and Store outfits) are made as Store preview pictures and prompt files only, until they are delivered as DLC. Where a stage specification says a hero wears its default evolution in play, the hero wears the Stage 3 outfit (or a new hero's single outfit) until that outfit is delivered.
+- **Coming soon.** The other Wardrobe outfits (stage Service, Festival, Heritage, Rescue and similar families) are listed as DLC previews tagged **Coming soon / 即将推出 / Demnächst**: the preview shows the outfit's model sheet, with no price, and the outfit cannot be bought or equipped.
+- **Unlock.** An outfit is unlocked only after all its gameplay sheets are generated, reviewed and approved. Unlocking is a data change: the entry gets its Credit price and, once bought, can be worn in every mode. The game features (all 8 stages, the 4 Curated Missions and all modes) are finished with the standard outfits before any outfit is unlocked.
+- **Announcement.** When an outfit is unlocked, the title loop shows a localized notice once: "New outfit X for hero Y is now available in the Store." After the player confirms it, it never shows again on that profile (a per-outfit seen flag in the save, carried by backup and export). Several new outfits are announced one after another.
+- **Outfit follows the stage.** Until an outfit is unlocked, Mission and Challenge modes dress each hero in the outfit of the stage being played (base outfit for Stages 1–2, Stage 3 outfit from Stage 3 on). An unlocked, owned outfit may be chosen there freely.
+
 ### 15.4 Records
 
 Per-stage records include score, rank, clear time, highest difficulty, combo damage and hit count, damage taken, hero, mode, co-op status, combat style, move loadout, and content version. Achievement groups cover Story, Stage Mastery, Hero Mastery, Combat Technique, Discovery, Co-op, Academy, and Difficulty.

@@ -50,6 +50,8 @@ Every mode executes the same deterministic combat rules, move data, defense syst
 
 Each hero represents a unique person. Two players cannot select the same hero in any mode, including generated, practice, and remix content. Each persistent participant owns that hero's outfit, combat style, loadout, and eligible progression state.
 
+Outfits in Mission and Challenge modes (decided 2026-11-17): a hero wears the outfit of the stage being played, until a DLC outfit is unlocked and owned; an unlocked outfit may then be worn in any mode (game specification §15.3.1).
+
 ### 3.3 Difficulty
 
 Easy, Medium, Hard, Extreme, and Ultimate retain the campaign's Authored Multidimensional Difficulty Profiles. Difficulty may change enemy eligibility, coordination, decision speed, pressure, resources, bounded statistics, and authored formations. It may not change player controls, hero move properties, Exact Block, Counter, cancel or Combo Breaker timing, essential warnings, or Combat Constitution legality.
