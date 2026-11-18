@@ -247,8 +247,9 @@ test.describe('localization QA', () => {
     // The screen switches before the guide has rendered its prompts (Firefox reads none).
     const keys = page.locator('[data-prompt="key"]');
     await expect(keys.first()).toBeAttached();
-    const labels = await keys
-      .evaluateAll((els) => els.map((e) => e.getAttribute('aria-label') ?? ''));
+    const labels = await keys.evaluateAll((els) =>
+      els.map((e) => e.getAttribute('aria-label') ?? ''),
+    );
     expect(labels.length).toBeGreaterThan(0);
     for (const l of labels) expect(l).toMatch(/^Taste /);
   });
