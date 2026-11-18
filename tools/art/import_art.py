@@ -245,6 +245,12 @@ SHEET_SCALE = {
     "mountain-grab-throw": 0.92,
     "mountain-team-attack": 0.95,
     "mountain-walk": 0.95,
+    # Run cycles (2026-11-18): drawn 10-17 % taller than the walks; scaled to the walk
+    # height less 3 % for the forward lean.
+    "mountain-run": 0.88,
+    "river-run": 0.87,
+    "wind-run": 0.95,
+    "fire-run": 0.88,
     "fire-walk": 0.9,
     "mountain-staff-walk": 0.92,
     "mountain-handwheel-walk": 0.86,

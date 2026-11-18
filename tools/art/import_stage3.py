@@ -78,7 +78,7 @@ ENEMIES: dict[str, tuple[str, str, dict[str, float | None]]] = {
     ),
 }
 # The Mounted Raider on its bandit horse: 2 x 2 mounted grids (no scale, like the bikes).
-RAIDER_MOUNT = ["RIDE", "ATTACK", "DISENGAGE"]
+RAIDER_MOUNT = ["RIDE", "GALLOP", "ATTACK", "DISENGAGE"]
 
 HEROES = {
     "mountain": ("heroes/mountain", "HERO-MTN"),
@@ -97,7 +97,8 @@ WALK_SCALE = {
     "wind-hike-walk": 0.84, "wind-axe-walk": 0.84, "wind-hammer-walk": 0.84,
     "fire-hike-walk": 0.85, "fire-axe-walk": 0.84, "fire-hammer-walk": 0.86,
 }
-HORSE_SHEETS = ["RIDE", "ATTACK", "DEFENSE", "SPECIAL", "ULTIMATE", "STABILITY"]
+# GALLOP (2026-11-18): the four-frame canter loop (codex_prompts_stage3_gallop.md).
+HORSE_SHEETS = ["RIDE", "GALLOP", "ATTACK", "DEFENSE", "SPECIAL", "ULTIMATE", "STABILITY"]
 PROPS = ["WEAPONS", "FOOD", "SCAFFOLD", "QUARRY"]
 
 

@@ -360,3 +360,24 @@ test('a rescued worker running home is drawn running left, the way it moves', ()
   // Standing poses (drawn facing right) are not mirrored while the worker stands still.
   for (const cell of [0, 1, 2, 3, 4]) expect(workerFlip(cell, 0)).toBe(false);
 });
+
+test('2026-11-18: a running hero uses the RUN sheet; guard into depth shows the high guard', () => {
+  for (const h of HEROES) {
+    const f = hero(h.id);
+    f.state = MoveState.Walk;
+    f.dirX = 1;
+    f.dirZ = 0;
+    const s = pick.fighter(f, 7)!;
+    expect(s.sheet, h.id).toBe(`hero.${h.id}.sheet.run`);
+    expectDrawable(f, 7);
+    f.dirX = 0;
+    expect(pick.fighter(f, 7)!.sheet).toBe(`hero.${h.id}.sheet.walk`);
+    f.state = MoveState.Guard;
+    f.guardX = 0;
+    f.guardZ = 1;
+    expect(pick.fighter(f, 0)).toEqual({ sheet: `hero.${h.id}.sheet.guard`, cell: 0 });
+    f.guardX = f.facing === 1 ? -1 : 1;
+    f.guardZ = 0;
+    expect(pick.fighter(f, 0)!.cell).toBe(3);
+  }
+});

@@ -682,7 +682,9 @@ export class SpritePicker {
         return s('jump', 4);
       case MoveState.Guard:
         if (frame - f.defFrame < 10 && f.defEvent === 2 /* Exact */) return s('exact-counter', 0);
-        return s('guard', f.guardZ > 0 ? 2 : f.guardX !== f.facing ? 3 : 0);
+        // Guard into depth (G + W or G + S) shows the high guard: the crouched cell 2 read as
+        // a low block, which the directional guard does not have (Guo, 2026-11-18).
+        return s('guard', f.guardX === -f.facing ? 3 : 0);
       case MoveState.Blockstun:
         return s('guard', 1);
       case MoveState.GuardCrush:
@@ -782,8 +784,10 @@ export class SpritePicker {
       }
       if (rider.phase === PassPhase.Warn) return s('mount-attack', 3);
       if (rider.phase === PassPhase.Pass) return s('mount-attack', 2) ?? s('mount-ride', 0);
-      // Riding: the gallop and the gathered stride alternate until a gallop cycle sheet
-      // is delivered (the ride sheet has one pose of each).
+      // Riding: the four-frame GALLOP loop where delivered; otherwise the gallop and the
+      // gathered stride of the ride sheet alternate.
+      if (f.state === MoveState.Walk && this.has(`${base}.mount-gallop`))
+        return s('mount-gallop', loop(undefined, frame, 10, [0, 1, 2, 3]));
       return s('mount-ride', f.state === MoveState.Walk ? loop(undefined, frame, 6, [0, 2]) : 3);
     }
     if (isBoss && boss.shift > 0 && art === 'garran') {
