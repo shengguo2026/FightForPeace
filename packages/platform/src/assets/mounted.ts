@@ -34,11 +34,15 @@ export interface HeroRideView {
   braking: boolean;
   /** M27: the simulation frame (the horse's stride). */
   frame?: number;
+  /** 2026-11-18: the hero's horse-gallop sheet is loaded (four-frame canter loop). */
+  gallop?: boolean;
   /** Frames since the state began. */
   stateAge: number;
 }
 
 const STEER_DEADZONE = 12;
+/** Simulation frames per gallop cell: a 24-frame stride (0.4 s, the gallop sound's). */
+const GALLOP_FRAMES = 6;
 
 /**
  * The hero's mounted cell (null: dismounted at the corridor's end, drawn on foot). M27:
@@ -78,9 +82,12 @@ export function heroMountCell(hero: string, r: HeroRideView, horse = false): Mou
   if (r.steer < -STEER_DEADZONE) return { sheet: sheet('ride'), cell: horse ? 2 : 1 };
   if (r.steer > STEER_DEADZONE) return { sheet: sheet('ride'), cell: horse ? 1 : 2 };
   if (r.braking) return { sheet: sheet('ride'), cell: 3 };
-  // M27: the horse steps between its walk and trot poses so its legs move (the horse
-  // sheets have no gallop cycle yet).
-  if (horse && r.frame !== undefined) return { sheet: sheet('ride'), cell: Math.floor(r.frame / 8) % 2 };
+  // The four-frame canter loop where the GALLOP sheet is loaded; until then the horse
+  // steps between its walk and trot poses so its legs move.
+  if (horse && r.frame !== undefined && r.gallop)
+    return { sheet: sheet('gallop'), cell: Math.floor(r.frame / GALLOP_FRAMES) % 4 };
+  if (horse && r.frame !== undefined)
+    return { sheet: sheet('ride'), cell: Math.floor(r.frame / 8) % 2 };
   return { sheet: sheet('ride'), cell: 0 };
 }
 
@@ -93,6 +100,8 @@ export interface EnemyRideView {
   attack: number;
   /** M27: the simulation frame (the horse's stride). */
   frame?: number;
+  /** 2026-11-18: the raider horse's mount-gallop sheet is loaded. */
+  gallop?: boolean;
 }
 
 /**
@@ -123,7 +132,12 @@ export function raiderHorseCell(e: EnemyRideView): MountPick {
       return { sheet: off, cell: 3 };
   }
   if (e.critical) return { sheet: off, cell: 0 };
-  // The gallop and the gathered stride alternate (the ride sheet has no gallop cycle yet).
+  if (e.gallop && e.frame !== undefined)
+    return {
+      sheet: 'enemy.rider3.sheet.mount-gallop',
+      cell: Math.floor(e.frame / GALLOP_FRAMES) % 4,
+    };
+  // Without the GALLOP sheet the gallop and the gathered stride alternate.
   return { sheet: ride, cell: e.frame !== undefined && Math.floor(e.frame / 6) % 2 === 1 ? 2 : 0 };
 }
 

@@ -1706,3 +1706,42 @@ Use the Lab: `http://localhost:5173/?lab`, press **F1**, pick a room in the **Ar
 13. **Stage 3 outfit:** in the M27 rooms the run uses the Stage 3 clothes (the walk cycle played faster), never the old outfit.
 
 Write down if the dash still feels too short or now too long, if the evade window feels too small or too generous, and if the run speed feels right.
+
+## Run and gallop art, guard picture (after the dash and run patch)
+
+What's new: the **8 run sheets** (both outfits) are in the game as an interim version: their second half repeats the legs of the first, so the run may look a little like a skip; the `_v2` redo prompts are in `codex_prompts_hero_run.md`. The **5 gallop sheets** replace the two-pose horse stepping with a four-frame canter (hero horses and the bandit horse). **G + W / G + S** now shows the normal guard pose instead of the crouch (the guard blocks by direction; plain **G** already blocks enemy low attacks).
+
+### Get and start the build
+
+To test the branch before it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-je7yle
+git checkout claude/project-thread-je7yle
+git pull origin claude/project-thread-je7yle
+pnpm install
+pnpm dev
+```
+
+After it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+### Test steps
+
+Use the Lab: `http://localhost:5173/?lab`, press **F1**, pick the room in the **Arena** list and press **Restart**.
+
+1. **Run, Stage 1 and 2 outfit:** in an empty Stage 1 or 2 room, double-tap **D** and hold: after the dash the hero runs with the new run cycle (forward lean, both feet off the ground in the air frames). Try all four heroes. Note how much the repeated legs bother you.
+2. **Run, Stage 3 outfit:** in any M27 room, the same run in the Stage 3 clothes. The size should match the walk.
+3. **Run with a weapon:** pick up a light weapon (Hiking Staff) and run: the weapon walk plays faster (no run sheet with weapons).
+4. **Gallop:** *Horse Test Track*: each hero's horse canters with four leg poses; steering and halting keep their own poses.
+5. **Bandit horse:** *M27 Trial: Mounted Raider*: the black horse canters with four leg poses while it crosses the arena (after the warning marks the lane).
+6. **Guard pictures:** hold **G** with **W** or **S**: the normal high guard pose, not the crouch. **G** with the direction away from your facing still shows the turned guard.

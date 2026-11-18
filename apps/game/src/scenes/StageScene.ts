@@ -508,6 +508,8 @@ export class StageScene extends Phaser.Scene {
           braking: r.speed < MOUNTED.bike.base * 0.85,
           stateAge: snap.frame - r.since,
           frame: snap.frame,
+          gallop:
+            this.assets.sheet(`hero.${HEROES[f.hero]?.id ?? ''}.sheet.horse-gallop`) !== undefined,
         },
         horse,
       );
@@ -539,7 +541,9 @@ export class StageScene extends Phaser.Scene {
       }
     }
     for (const e of p.enemies) {
-      const pick = horse && !e.boss ? raiderHorseCell({ ...e, frame: snap.frame }) : enemyMountCell(e);
+      const gallop = this.assets.sheet('enemy.rider3.sheet.mount-gallop') !== undefined;
+      const pick =
+        horse && !e.boss ? raiderHorseCell({ ...e, frame: snap.frame, gallop }) : enemyMountCell(e);
       if (this.mountSprite(-1 - e.id, pick, fxToPixels(e.x), fxToPixels(e.z), scale)) {
         mountKeep.add(-1 - e.id);
         art.add(`e${e.id}`);

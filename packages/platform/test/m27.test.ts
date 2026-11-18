@@ -5,6 +5,7 @@ import {
   HEROES,
   MountedSlot,
   MoveState,
+  PassPhase,
   RiderState,
   WEAPONS,
   claim,
@@ -217,6 +218,44 @@ describe('M27 art', () => {
       expect(reg.sheet(c.sheet)!.sheet.cells[c.cell], `${state}`).toBeTruthy();
     }
   });
+
+  test('2026-11-18: riding plays the four-frame GALLOP loop where it is loaded', () => {
+    const base = {
+      state: RiderState.Ride,
+      critical: false,
+      slot: -1,
+      actionAge: 0,
+      actionLength: 0,
+      steer: 0,
+      braking: false,
+      stateAge: 0,
+    };
+    for (const h of HEROES) {
+      if (!reg.sheet(`hero.${h.id}.sheet.horse-ride`)) continue;
+      const seen = new Set<number>();
+      for (let frame = 0; frame < 24; frame += 1) {
+        const c = heroMountCell(h.id, { ...base, frame, gallop: true }, true)!;
+        expect(c.sheet).toBe(`hero.${h.id}.sheet.horse-gallop`);
+        expect(reg.sheet(c.sheet)!.sheet.cells[c.cell], `${h.id} ${c.cell}`).toBeTruthy();
+        seen.add(c.cell);
+      }
+      expect([...seen].sort()).toEqual([0, 1, 2, 3]);
+      // Steering and braking keep their own ride cells.
+      expect(heroMountCell(h.id, { ...base, frame: 5, gallop: true, steer: 40 }, true)!.sheet).toBe(
+        `hero.${h.id}.sheet.horse-ride`,
+      );
+    }
+    const ride = raiderHorseCell({
+      boss: false,
+      state: EnemyState.Approach,
+      critical: false,
+      attack: 0,
+      frame: 13,
+      gallop: true,
+    });
+    expect(ride.sheet).toBe('enemy.rider3.sheet.mount-gallop');
+    expect(reg.sheet(ride.sheet)!.sheet.cells[ride.cell]).toBeTruthy();
+  });
 });
 
 describe('M27 sounds', () => {
@@ -299,4 +338,19 @@ describe('M27 sounds', () => {
     expect(total).toBeGreaterThan(0);
     void WEAPONS;
   });
+});
+
+test('the Mounted Raider gallops with moving legs while it crosses the arena', () => {
+  const w = createWorld(3, { arena: 'lab-m27-raider', heroes: ['mountain'] });
+  const cells = new Set<string>();
+  for (let i = 0; i < 2400; i += 1) {
+    step(w, [IDLE]);
+    const r = w.bodies.find((b) => b.team === 'enemy' && b.ext?.rider);
+    if (!r || r.ext!.rider!.phase !== PassPhase.Pass) continue;
+    const s = pick.fighter(r, w.frame)!;
+    cells.add(`${s.sheet}#${s.cell}`);
+  }
+  expect([...cells].sort()).toEqual(
+    [0, 1, 2, 3].map((c) => `enemy.rider3.sheet.mount-gallop#${c}`),
+  );
 });

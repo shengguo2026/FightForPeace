@@ -7389,6 +7389,47 @@
         "edits": "75 %"
       }
     },
+    "enemy.rider3.sheet.mount-gallop": {
+      "url": "art/rider3-mount-gallop.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 372,
+        "cells": [
+          {
+            "x0": 62,
+            "y0": 7,
+            "x1": 514,
+            "foot": 370
+          },
+          {
+            "x0": 42,
+            "y0": 6,
+            "x1": 522,
+            "foot": 375
+          },
+          {
+            "x0": 36,
+            "y0": 6,
+            "x1": 543,
+            "foot": 337
+          },
+          {
+            "x0": 44,
+            "y0": 5,
+            "x1": 529,
+            "foot": 372
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "enemies/rider3/ENM-RIDER3-GALLOP.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "enemy.rider3.sheet.mount-ride": {
       "url": "art/rider3-mount-ride.webp",
       "sheet": {
@@ -11563,6 +11604,58 @@
         "tool": "Codex image generation"
       }
     },
+    "hero.fire.s3.sheet.run": {
+      "url": "art/fire-s3-run.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 361,
+        "cells": [
+          {
+            "x0": 68,
+            "y0": 27,
+            "x1": 264,
+            "foot": 364
+          },
+          {
+            "x0": 21,
+            "y0": 27,
+            "x1": 384,
+            "foot": 359
+          },
+          {
+            "x0": 0,
+            "y0": 25,
+            "x1": 313,
+            "foot": 310
+          },
+          {
+            "x0": 60,
+            "y0": 27,
+            "x1": 264,
+            "foot": 365
+          },
+          {
+            "x0": 15,
+            "y0": 26,
+            "x1": 384,
+            "foot": 361
+          },
+          {
+            "x0": 0,
+            "y0": 26,
+            "x1": 318,
+            "foot": 310
+          }
+        ],
+        "scale": 0.88
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-S3-RUN.png",
+        "tool": "Codex image generation"
+      }
+    },
     "hero.fire.s3.sheet.team-attack": {
       "url": "art/fire-s3-team-attack.webp",
       "sheet": {
@@ -12482,6 +12575,47 @@
         "edits": "75 %"
       }
     },
+    "hero.fire.sheet.horse-gallop": {
+      "url": "art/fire-horse-gallop.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 357,
+        "cells": [
+          {
+            "x0": 89,
+            "y0": 6,
+            "x1": 454,
+            "foot": 352
+          },
+          {
+            "x0": 49,
+            "y0": 9,
+            "x1": 472,
+            "foot": 357
+          },
+          {
+            "x0": 50,
+            "y0": 8,
+            "x1": 515,
+            "foot": 335
+          },
+          {
+            "x0": 62,
+            "y0": 8,
+            "x1": 482,
+            "foot": 357
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-HORSE-GALLOP.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "hero.fire.sheet.horse-ride": {
       "url": "art/fire-horse-ride.webp",
       "sheet": {
@@ -13333,6 +13467,58 @@
         "source": "heroes/fire/HERO-FIR-REVOLVER-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
+      }
+    },
+    "hero.fire.sheet.run": {
+      "url": "art/fire-run.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 362,
+        "cells": [
+          {
+            "x0": 71,
+            "y0": 28,
+            "x1": 265,
+            "foot": 363
+          },
+          {
+            "x0": 37,
+            "y0": 28,
+            "x1": 269,
+            "foot": 361
+          },
+          {
+            "x0": 14,
+            "y0": 25,
+            "x1": 330,
+            "foot": 311
+          },
+          {
+            "x0": 64,
+            "y0": 28,
+            "x1": 264,
+            "foot": 363
+          },
+          {
+            "x0": 34,
+            "y0": 27,
+            "x1": 275,
+            "foot": 362
+          },
+          {
+            "x0": 19,
+            "y0": 25,
+            "x1": 339,
+            "foot": 309
+          }
+        ],
+        "scale": 0.88
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-RUN.png",
+        "tool": "Codex image generation"
       }
     },
     "hero.fire.sheet.staff-a": {
@@ -15643,6 +15829,58 @@
         "tool": "Codex image generation"
       }
     },
+    "hero.mountain.s3.sheet.run": {
+      "url": "art/mountain-s3-run.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 362,
+        "cells": [
+          {
+            "x0": 59,
+            "y0": 39,
+            "x1": 279,
+            "foot": 366
+          },
+          {
+            "x0": 43,
+            "y0": 39,
+            "x1": 284,
+            "foot": 361
+          },
+          {
+            "x0": 36,
+            "y0": 40,
+            "x1": 327,
+            "foot": 323
+          },
+          {
+            "x0": 52,
+            "y0": 40,
+            "x1": 283,
+            "foot": 366
+          },
+          {
+            "x0": 44,
+            "y0": 39,
+            "x1": 286,
+            "foot": 362
+          },
+          {
+            "x0": 35,
+            "y0": 39,
+            "x1": 332,
+            "foot": 325
+          }
+        ],
+        "scale": 0.875
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-S3-RUN.png",
+        "tool": "Codex image generation"
+      }
+    },
     "hero.mountain.s3.sheet.team-attack": {
       "url": "art/mountain-s3-team-attack.webp",
       "sheet": {
@@ -16564,6 +16802,47 @@
         "edits": "75 %"
       }
     },
+    "hero.mountain.sheet.horse-gallop": {
+      "url": "art/mountain-horse-gallop.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 364,
+        "cells": [
+          {
+            "x0": 107,
+            "y0": 10,
+            "x1": 476,
+            "foot": 363
+          },
+          {
+            "x0": 74,
+            "y0": 12,
+            "x1": 474,
+            "foot": 363
+          },
+          {
+            "x0": 56,
+            "y0": 9,
+            "x1": 515,
+            "foot": 364
+          },
+          {
+            "x0": 79,
+            "y0": 12,
+            "x1": 495,
+            "foot": 365
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-HORSE-GALLOP.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "hero.mountain.sheet.horse-ride": {
       "url": "art/mountain-horse-ride.webp",
       "sheet": {
@@ -17363,6 +17642,58 @@
         "source": "heroes/mountain/HERO-MTN-REVOLVER-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
+      }
+    },
+    "hero.mountain.sheet.run": {
+      "url": "art/mountain-run.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 362,
+        "cells": [
+          {
+            "x0": 72,
+            "y0": 41,
+            "x1": 298,
+            "foot": 366
+          },
+          {
+            "x0": 57,
+            "y0": 42,
+            "x1": 308,
+            "foot": 361
+          },
+          {
+            "x0": 44,
+            "y0": 41,
+            "x1": 339,
+            "foot": 324
+          },
+          {
+            "x0": 63,
+            "y0": 41,
+            "x1": 302,
+            "foot": 365
+          },
+          {
+            "x0": 54,
+            "y0": 41,
+            "x1": 308,
+            "foot": 362
+          },
+          {
+            "x0": 43,
+            "y0": 41,
+            "x1": 339,
+            "foot": 328
+          }
+        ],
+        "scale": 0.88
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-RUN.png",
+        "tool": "Codex image generation"
       }
     },
     "hero.mountain.sheet.staff-a": {
@@ -19773,6 +20104,58 @@
         "tool": "Codex image generation"
       }
     },
+    "hero.river.s3.sheet.run": {
+      "url": "art/river-s3-run.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 372,
+        "cells": [
+          {
+            "x0": 82,
+            "y0": 15,
+            "x1": 294,
+            "foot": 374
+          },
+          {
+            "x0": 52,
+            "y0": 12,
+            "x1": 297,
+            "foot": 374
+          },
+          {
+            "x0": 19,
+            "y0": 10,
+            "x1": 331,
+            "foot": 327
+          },
+          {
+            "x0": 78,
+            "y0": 16,
+            "x1": 292,
+            "foot": 372
+          },
+          {
+            "x0": 49,
+            "y0": 15,
+            "x1": 295,
+            "foot": 372
+          },
+          {
+            "x0": 18,
+            "y0": 12,
+            "x1": 339,
+            "foot": 325
+          }
+        ],
+        "scale": 0.858
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-S3-RUN.png",
+        "tool": "Codex image generation"
+      }
+    },
     "hero.river.s3.sheet.team-attack": {
       "url": "art/river-s3-team-attack.webp",
       "sheet": {
@@ -20694,6 +21077,47 @@
         "edits": "75 %"
       }
     },
+    "hero.river.sheet.horse-gallop": {
+      "url": "art/river-horse-gallop.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 358,
+        "cells": [
+          {
+            "x0": 102,
+            "y0": 15,
+            "x1": 471,
+            "foot": 349
+          },
+          {
+            "x0": 56,
+            "y0": 15,
+            "x1": 469,
+            "foot": 358
+          },
+          {
+            "x0": 58,
+            "y0": 10,
+            "x1": 516,
+            "foot": 356
+          },
+          {
+            "x0": 63,
+            "y0": 10,
+            "x1": 459,
+            "foot": 358
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-HORSE-GALLOP.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "hero.river.sheet.horse-ride": {
       "url": "art/river-horse-ride.webp",
       "sheet": {
@@ -21493,6 +21917,58 @@
         "source": "heroes/river/HERO-RIV-REVOLVER-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
+      }
+    },
+    "hero.river.sheet.run": {
+      "url": "art/river-run.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 370,
+        "cells": [
+          {
+            "x0": 86,
+            "y0": 18,
+            "x1": 296,
+            "foot": 372
+          },
+          {
+            "x0": 55,
+            "y0": 17,
+            "x1": 298,
+            "foot": 371
+          },
+          {
+            "x0": 11,
+            "y0": 10,
+            "x1": 321,
+            "foot": 325
+          },
+          {
+            "x0": 83,
+            "y0": 19,
+            "x1": 294,
+            "foot": 370
+          },
+          {
+            "x0": 52,
+            "y0": 16,
+            "x1": 297,
+            "foot": 369
+          },
+          {
+            "x0": 11,
+            "y0": 13,
+            "x1": 328,
+            "foot": 319
+          }
+        ],
+        "scale": 0.87
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-RUN.png",
+        "tool": "Codex image generation"
       }
     },
     "hero.river.sheet.staff-a": {
@@ -23927,6 +24403,58 @@
         "tool": "Codex image generation"
       }
     },
+    "hero.wind.s3.sheet.run": {
+      "url": "art/wind-s3-run.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 364,
+        "cells": [
+          {
+            "x0": 70,
+            "y0": 20,
+            "x1": 272,
+            "foot": 365
+          },
+          {
+            "x0": 23,
+            "y0": 18,
+            "x1": 282,
+            "foot": 364
+          },
+          {
+            "x0": 2,
+            "y0": 17,
+            "x1": 334,
+            "foot": 324
+          },
+          {
+            "x0": 71,
+            "y0": 20,
+            "x1": 270,
+            "foot": 366
+          },
+          {
+            "x0": 22,
+            "y0": 19,
+            "x1": 280,
+            "foot": 363
+          },
+          {
+            "x0": 2,
+            "y0": 18,
+            "x1": 337,
+            "foot": 323
+          }
+        ],
+        "scale": 0.947
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-S3-RUN.png",
+        "tool": "Codex image generation"
+      }
+    },
     "hero.wind.s3.sheet.team-attack": {
       "url": "art/wind-s3-team-attack.webp",
       "sheet": {
@@ -24895,6 +25423,47 @@
         "edits": "75 %"
       }
     },
+    "hero.wind.sheet.horse-gallop": {
+      "url": "art/wind-horse-gallop.webp",
+      "sheet": {
+        "cols": 2,
+        "rows": 2,
+        "cell": 384,
+        "ground": 361,
+        "cells": [
+          {
+            "x0": 86,
+            "y0": 8,
+            "x1": 471,
+            "foot": 362
+          },
+          {
+            "x0": 49,
+            "y0": 8,
+            "x1": 475,
+            "foot": 361
+          },
+          {
+            "x0": 45,
+            "y0": 7,
+            "x1": 518,
+            "foot": 331
+          },
+          {
+            "x0": 51,
+            "y0": 7,
+            "x1": 470,
+            "foot": 352
+          }
+        ],
+        "w": 576
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-HORSE-GALLOP.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
     "hero.wind.sheet.horse-ride": {
       "url": "art/wind-horse-ride.webp",
       "sheet": {
@@ -25744,6 +26313,58 @@
         "source": "heroes/wind/HERO-WND-REVOLVER-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
+      }
+    },
+    "hero.wind.sheet.run": {
+      "url": "art/wind-run.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 364,
+        "cells": [
+          {
+            "x0": 83,
+            "y0": 22,
+            "x1": 287,
+            "foot": 366
+          },
+          {
+            "x0": 40,
+            "y0": 23,
+            "x1": 295,
+            "foot": 363
+          },
+          {
+            "x0": 23,
+            "y0": 17,
+            "x1": 347,
+            "foot": 323
+          },
+          {
+            "x0": 82,
+            "y0": 24,
+            "x1": 286,
+            "foot": 365
+          },
+          {
+            "x0": 40,
+            "y0": 23,
+            "x1": 292,
+            "foot": 364
+          },
+          {
+            "x0": 22,
+            "y0": 18,
+            "x1": 347,
+            "foot": 322
+          }
+        ],
+        "scale": 0.95
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-RUN.png",
+        "tool": "Codex image generation"
       }
     },
     "hero.wind.sheet.staff-a": {
