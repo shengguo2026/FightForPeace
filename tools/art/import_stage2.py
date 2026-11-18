@@ -37,6 +37,7 @@ from pathlib import Path
 from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import size_fixes  # noqa: E402
 import import_art  # noqa: E402  (shared sheet and layer conversion)
 import import_media  # noqa: E402  (effect sheets)
 
@@ -379,6 +380,7 @@ def main() -> None:
             artifact_cell(base / rel, cell, out / f"{name}.webp")
             print(f"art/shell/{name}.webp (cell {cell} of {rel})")
     manifest["assets"] = dict(sorted(assets.items()))
+    size_fixes.apply(manifest["assets"])
     MANIFEST.write_text(json.dumps(manifest, indent=1) + "\n", encoding="utf-8")
     subprocess.run(["npx", "prettier", "--write", str(MANIFEST)], cwd=ROOT, check=False, shell=sys.platform == "win32")
 

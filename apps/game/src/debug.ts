@@ -517,6 +517,7 @@ export function installDebugHook(
       d.ctx.open = true;
     },
     quality: () => ({ setting: quality.setting, level: quality.level }),
+    setQuality: (setting) => quality.set(setting),
     focusPaused: () => session.devices.focusPaused,
     pauseOnFocusLoss: (on) => (session.devices.pauseOnFocusLoss = on),
   };

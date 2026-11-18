@@ -27,6 +27,8 @@ from pathlib import Path
 
 from PIL import Image
 
+import size_fixes  # tools/art is on the path: this script's own folder
+
 ROOT = Path(__file__).resolve().parents[2]
 OUT_DIR = ROOT / "apps/game/public/art"
 MANIFEST = ROOT / "packages/platform/src/assets/manifest.json"
@@ -414,6 +416,7 @@ def main() -> None:
             if key.split(".")[0] in MEDIA_PREFIXES and key not in assets:
                 assets[key] = entry
     manifest = {"version": 2, "assets": dict(sorted(assets.items()))}
+    size_fixes.apply(manifest["assets"])
     MANIFEST.write_text(json.dumps(manifest, indent=1) + "\n", encoding="utf-8")
     # Keep the manifest in the repository's Prettier style (best effort).
     subprocess.run(["npx", "prettier", "--write", str(MANIFEST)], cwd=ROOT, check=False, shell=sys.platform == "win32")

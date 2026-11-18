@@ -123,6 +123,26 @@ export function dt(key: string, fallback: string): string {
   return translator.text(key, fallback);
 }
 
+/** Direction prefixes of a move input, by Dir code (0 neutral … 5 up/down). */
+const MOVE_DIR = [
+  '',
+  '{dir:Forward}+',
+  '{dir:Backward}+',
+  '{dir:Up}+',
+  '{dir:Down}+',
+  '{dir:Up}/{dir:Down}+',
+];
+
+/**
+ * How a move is entered (pause-menu Move List), in the interface language, as prompt text
+ * with `{action:…}` / `{dir:…}` tokens that <PromptText> draws from the player's bindings.
+ */
+export function moveInput(context: string, dir: number): string {
+  const key = `moves.in.${context}`;
+  if (!(key in EN)) return '';
+  return t(key as TextId, { d: MOVE_DIR[dir] ?? '' });
+}
+
 /** A call-out word drawn over a fighter (EXACT, CLASH …). */
 export const callout = (word: string) => dt(calloutKey(word), word);
 

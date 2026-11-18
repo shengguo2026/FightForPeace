@@ -29,6 +29,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import size_fixes  # noqa: E402
 import import_art  # noqa: E402  (3 x 2 sheet conversion)
 import import_stage2  # noqa: E402  (2 x 2 mounted grids, provenance)
 
@@ -174,6 +175,7 @@ def main() -> None:
                 import_stage2.grid_sheet(base / rel, key.replace(".", "-"), 3, 2, False), rel, edits="75 %"
             )
     manifest["assets"] = dict(sorted(assets.items()))
+    size_fixes.apply(manifest["assets"])
     MANIFEST.write_text(json.dumps(manifest, indent=1) + "\n", encoding="utf-8")
     subprocess.run(["npx", "prettier", "--write", str(MANIFEST)], cwd=ROOT, check=False, shell=sys.platform == "win32")
     if missing:
