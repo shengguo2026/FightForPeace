@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "rulesVersion": "m27",
+  "rulesVersion": "m27-dash",
   "seed": 5,
   "options": {
     "dummies": 2,
     "counterHit": true
   },
-  "expectedHash": 2482265122,
+  "expectedHash": 2092680865,
   "frames": [
     [{"moveX":1,"moveZ":-1,"pressed":0,"held":0,"dirPressed":9}],
     [{"moveX":1,"moveZ":-1,"pressed":0,"held":0,"dirPressed":0}],
@@ -1180,7 +1180,8 @@
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":-1,"moveZ":-1,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":-1,"moveZ":-1,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":-1,"moveZ":-1,"pressed":0,"held":0,"dirPressed":0}],
-    [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":-1,"pressed":0,"held":0,"dirPressed":0}],
+    [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":-1,"moveZ":-1,"pressed":0,"held":0,"dirPressed":0}],
+    [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":-1,"moveZ":-1,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":-1,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":-1,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":-1,"pressed":0,"held":0,"dirPressed":0}],
@@ -1236,13 +1237,6 @@
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":8},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
-    [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
-    [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
-    [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
-    [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
-    [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
-    [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
-    [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],

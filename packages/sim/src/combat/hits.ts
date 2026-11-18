@@ -1,4 +1,5 @@
 import { fx } from '../math/fixed';
+import { ON_FOOT } from '../movement/profile';
 import { sharedIntercept, untargetable } from '../shared/fighters';
 import { carryFull, dealDamage, nonCombatant } from './damage';
 import { Cheat, heroCheat, outgoingDamage } from '../cheats/cheats';
@@ -138,6 +139,14 @@ export function canHit(att: Fighter, a: ActionDef, t: Fighter): boolean {
   if (t.state === MoveState.Grabbed) return assistAllowed(att, a, t);
   const ta = runningAction(t);
   if (ta && within(ta.invulnerable, t.stateFrame + 1)) return false;
+  // Dash and run (2026-11-18): a backstep or a sidestep evades on its evade frames.
+  if (
+    t.state === MoveState.Dash &&
+    t.dashEvade &&
+    t.stateFrame >= ON_FOOT.evadeFrom &&
+    t.stateFrame <= ON_FOOT.evadeTo
+  )
+    return false;
   // An enemy grab that is not rescue-interruptible is a protected phase.
   if (t.state === MoveState.Grabbing && t.team === 'enemy' && !grabInterruptible(t)) return false;
   const downed = t.state === MoveState.Down;

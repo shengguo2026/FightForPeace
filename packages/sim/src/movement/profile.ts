@@ -13,8 +13,18 @@ export interface MovementProfile {
   /** A second press of the same direction within this many frames dashes. */
   doubleTapFrames: number;
   dashFrames: number;
+  /** Top dash speed, held for `dashFastFrames` frames, then easing down to the end. */
   dashX: number;
   dashZ: number;
+  dashFastFrames: number;
+  /** Frames after a dash ends before the next dash may start. */
+  dashRecovery: number;
+  /** Backsteps and sidesteps cannot be hit on these dash frames (0 = the first frame). */
+  evadeFrom: number;
+  evadeTo: number;
+  /** Double tap and hold: running speed once the dash ends with the direction still held. */
+  runX: number;
+  runZ: number;
   jumpVy: number;
   gravity: number;
   /** Air correction acceleration per frame. */
@@ -48,9 +58,18 @@ export const ON_FOOT: MovementProfile = {
   walkZ: 512,
   diagonal: 181,
   doubleTapFrames: 12,
-  dashFrames: 14,
-  dashX: fx(9),
-  dashZ: fx(6),
+  // Dash and run (2026-11-18): about 197 px across and 127 px in depth (was 126 and 84),
+  // fast at the start and easing out, so a backstep or sidestep clears a typical enemy
+  // reach of about 175 px. Runs at twice the walking speed.
+  dashFrames: 18,
+  dashX: fx(14),
+  dashZ: fx(9),
+  dashFastFrames: 8,
+  dashRecovery: 8,
+  evadeFrom: 2,
+  evadeTo: 7,
+  runX: 1536,
+  runZ: 1024,
   jumpVy: fx(16),
   gravity: fx(1),
   airAccel: 32,

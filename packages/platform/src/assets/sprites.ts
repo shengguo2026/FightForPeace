@@ -535,6 +535,11 @@ function filled(meta: SheetMeta): number[] {
 }
 
 /** A cell of a looping animation (`fps` cells per second at 60 Hz). */
+/** A hero running after a double tap and hold (the run keeps its direction in dirX/dirZ). */
+export function isRunning(f: Fighter): boolean {
+  return f.state === MoveState.Walk && (f.dirX !== 0 || f.dirZ !== 0);
+}
+
 function loop(meta: SheetMeta | undefined, frame: number, fps: number, cells?: number[]): number {
   const list = cells ?? (meta ? filled(meta) : [0]);
   if (list.length === 0) return 0;
@@ -566,7 +571,9 @@ export class SpritePicker {
   fighter(f: Fighter, frame: number, boss?: BossView): SpriteFrame | null {
     if (f.team !== 'hero') return this.enemy(f, frame, boss);
     const pick = this.hero(f, frame);
-    return pick && this.outfit !== 'base' ? { ...pick, sheet: this.dress(pick.sheet) ?? pick.sheet } : pick;
+    return pick && this.outfit !== 'base'
+      ? { ...pick, sheet: this.dress(pick.sheet) ?? pick.sheet }
+      : pick;
   }
 
   /** The id drawn for `id` in the current outfit, or undefined when it has no art in it. */
@@ -578,6 +585,8 @@ export class SpritePicker {
     const twin = `${id.slice(0, dot)}.s3.${rest}`;
     if (this.assets.sheet(twin)) return twin;
     if (/^sheet\.[a-z-]+-walk$/.test(rest) && !S3_NATIVE_WALKS.has(rest.slice(6))) return undefined;
+    // A run cycle in another outfit's clothes is never drawn: the faster walk stands in.
+    if (rest === 'sheet.run') return undefined;
     return id;
   }
 
@@ -643,20 +652,28 @@ export class SpritePicker {
         if (staff && meta('staff-a')) return s('staff-a', 0);
         if (wheel && meta('handwheel')) return s('handwheel', 0);
         return s('idle', loop(meta('idle'), frame, 6));
-      case MoveState.Walk:
+      case MoveState.Walk: {
+        // Double tap and hold (2026-11-18): a running hero (the run's direction is kept in
+        // dirX/dirZ) uses the unarmed RUN sheet where delivered, otherwise every walk cycle
+        // below plays faster.
+        const running = isRunning(f);
+        if (running && !weapon && meta('run')) return s('run', loop(meta('run'), frame, 14));
+        const fps = running ? 17 : 10;
         // Armed walk cycles where delivered; otherwise step between the staff ready stance
         // and its mid-stride cell, and shift the handwheel carry between its two stances.
         // Stage 2 armed walk sheets where delivered; until then the plain walk cycle with
         // the weapon drawn in hand (heldProp), so the legs keep stepping.
-        if (stance && meta(stance.walk)) return s(stance.walk, loop(meta(stance.walk), frame, 10));
-        if (stance && meta(stance.sheet)) return s('walk', loop(meta('walk'), frame, 10));
+        if (stance && meta(stance.walk)) return s(stance.walk, loop(meta(stance.walk), frame, fps));
+        if (stance && meta(stance.sheet)) return s('walk', loop(meta('walk'), frame, fps));
         if (staff && meta('staff-walk'))
-          return s('staff-walk', loop(meta('staff-walk'), frame, 10));
+          return s('staff-walk', loop(meta('staff-walk'), frame, fps));
         if (wheel && meta('handwheel-walk'))
-          return s('handwheel-walk', loop(meta('handwheel-walk'), frame, 10));
-        if (staff && meta('staff-a')) return s('staff-a', loop(undefined, frame, 5, [0, 1]));
-        if (wheel && meta('handwheel')) return s('handwheel', loop(undefined, frame, 5, [0, 3]));
-        return s('walk', loop(meta('walk'), frame, 10));
+          return s('handwheel-walk', loop(meta('handwheel-walk'), frame, fps));
+        if (staff && meta('staff-a')) return s('staff-a', loop(undefined, frame, fps / 2, [0, 1]));
+        if (wheel && meta('handwheel'))
+          return s('handwheel', loop(undefined, frame, fps / 2, [0, 3]));
+        return s('walk', loop(meta('walk'), frame, fps));
+      }
       case MoveState.Dash:
         return s('dash', f.stateFrame < 3 ? 0 : 1 + (Math.floor(f.stateFrame / 5) % 2));
       case MoveState.Air:

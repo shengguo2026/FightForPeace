@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "rulesVersion": "m27",
+  "rulesVersion": "m27-dash",
   "seed": 11,
   "options": {
     "dummies": 1,
     "infiniteMeter": true,
     "counterHit": true
   },
-  "expectedHash": 2320501857,
+  "expectedHash": 4039808337,
   "frames": [
     [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":8}],
     [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],

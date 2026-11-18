@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "rulesVersion": "m27",
+  "rulesVersion": "m27-dash",
   "seed": 3,
   "options": {
     "dummies": 2,
@@ -10,7 +10,7 @@
       "assisted"
     ]
   },
-  "expectedHash": 4001201213,
+  "expectedHash": 3598165740,
   "frames": [
     [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":8}],
     [{"moveX":1,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],

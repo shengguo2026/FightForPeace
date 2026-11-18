@@ -1,7 +1,9 @@
 import { fx, fxMul } from '../src/math/fixed';
 import { ON_FOOT } from '../src/movement/profile';
+import { dashVelocity } from '../src/movement/controller';
+import { canHit } from '../src/combat/hits';
+import { kitOf } from '../src/combat/roster';
 import { MoveState } from '../src/world/types';
-import { encodeWorld } from '../src/world/world';
 import { hero, idle, inp, press, repeat, run, tapDir, world } from './helpers';
 
 const P = ON_FOOT;
@@ -75,14 +77,123 @@ test('double-tap dash and Dash-action dash are the same dash (Review Focus 2)', 
   expect(hero(a).state).toBe(hero(b).state);
 });
 
-test('a dash lasts dashFrames frames and covers dashFrames × dashX', () => {
+test('a dash lasts dashFrames frames: full speed first, then easing out', () => {
   const w = world();
   const x0 = hero(w).x;
   run(w, [press('Dash', { moveX: 1 }), ...repeat(idle, P.dashFrames - 1)]);
   expect(hero(w).state).toBe(MoveState.Dash);
-  expect(hero(w).x - x0).toBe(P.dashFrames * P.dashX);
+  let expected = 0;
+  for (let f = 0; f < P.dashFrames; f += 1)
+    expected += dashVelocity({ ...hero(w), stateFrame: f, dirX: 1, dirZ: 0 }, P)[0];
+  expect(hero(w).x - x0).toBe(expected);
   run(w, [idle]);
   expect(hero(w).state).toBe(MoveState.Idle);
+});
+
+test('dash and run (2026-11-18): about 197 px across and 127 px in depth', () => {
+  const across = world();
+  const x0 = hero(across).x;
+  run(across, [press('Dash', { moveX: 1 }), ...repeat(idle, P.dashFrames)]);
+  expect((hero(across).x - x0) / 256).toBeGreaterThanOrEqual(190);
+  const depth = world();
+  const z0 = hero(depth).z;
+  run(depth, [press('Dash', { moveZ: 1 }), ...repeat(idle, P.dashFrames)]);
+  expect((hero(depth).z - z0) / 256).toBeGreaterThanOrEqual(120);
+});
+
+test('the next dash waits for the dash recovery', () => {
+  const w = world();
+  run(w, [press('Dash', { moveX: 1 }), ...repeat(idle, P.dashFrames)]);
+  expect(hero(w).state).toBe(MoveState.Idle);
+  run(w, [press('Dash', { moveX: 1 })]);
+  expect(hero(w).state).not.toBe(MoveState.Dash);
+  run(w, [...repeat(idle, P.dashRecovery - 2), press('Dash', { moveX: 1 })]);
+  expect(hero(w).state).toBe(MoveState.Dash);
+});
+
+/** A training dummy standing 200 px to the right of the hero, in the same lane. */
+function facingFoe() {
+  const w = world({ dummies: 1 });
+  const foe = w.bodies[1]!;
+  foe.x = hero(w).x + fx(200);
+  foe.z = hero(w).z;
+  return { w, foe };
+}
+
+function evades(w: ReturnType<typeof world>, foe: ReturnType<typeof world>['bodies'][number]) {
+  const a = kitOf(foe)!.actions[0]!;
+  return !canHit(foe, a, hero(w));
+}
+
+test('a dash away from the nearest enemy is a backstep: facing kept, evade frames 3 to 8', () => {
+  const { w, foe } = facingFoe();
+  run(w, doubleTap('left', 4));
+  expect(hero(w).state).toBe(MoveState.Dash);
+  expect(hero(w).facing).toBe(1);
+  expect(hero(w).dashEvade).toBe(true);
+  const seen: boolean[] = [evades(w, foe)];
+  for (let i = 1; i < P.dashFrames; i += 1) {
+    run(w, [idle]);
+    seen.push(evades(w, foe));
+  }
+  const expected = seen.map((_, f) => f >= P.evadeFrom && f <= P.evadeTo);
+  expect(seen).toEqual(expected);
+  expect(seen.filter(Boolean)).toHaveLength(6);
+});
+
+test('a forward dash never evades (F&D Module 1, amended 2026-11-18)', () => {
+  const { w, foe } = facingFoe();
+  run(w, [press('Dash', { moveX: 1 }), idle, idle, idle]);
+  expect(hero(w).state).toBe(MoveState.Dash);
+  expect(hero(w).dashEvade).toBe(false);
+  expect(evades(w, foe)).toBe(false);
+});
+
+test('a depth sidestep evades; a dash away with no enemy near turns the hero', () => {
+  const { w, foe } = facingFoe();
+  run(w, [...doubleTap('up', 4), idle, idle, idle]);
+  expect(hero(w).dashEvade).toBe(true);
+  expect(evades(w, foe)).toBe(true);
+  const alone = world();
+  run(alone, doubleTap('left', 4));
+  expect(hero(alone).facing).toBe(-1);
+  expect(hero(alone).dashEvade).toBe(false);
+});
+
+test('double tap and hold: the dash becomes a run at twice the walking speed', () => {
+  const w = world();
+  const hold = inp({ moveX: 1 });
+  run(w, [...doubleTap('right', 4), ...repeat(hold, P.dashFrames + 2)]);
+  expect(hero(w).state).toBe(MoveState.Walk);
+  const x0 = hero(w).x;
+  run(w, repeat(hold, 10));
+  expect(hero(w).x - x0).toBe(10 * P.runX);
+  expect(P.runX).toBe(2 * P.walkX);
+  // Steering in depth keeps the run; releasing the direction ends it.
+  run(w, repeat(inp({ moveX: 1, moveZ: 1 }), 3));
+  expect(hero(w).vx).toBe(fxMul(P.runX, P.diagonal));
+  run(w, [idle, hold]);
+  expect(hero(w).vx).toBe(P.walkX);
+});
+
+test('a dash released before it ends is no run', () => {
+  const w = world();
+  run(w, [...doubleTap('right', 4, tapDir('right')), ...repeat(idle, P.dashFrames)]);
+  run(w, repeat(inp({ moveX: 1 }), 3));
+  expect(hero(w).vx).toBe(P.walkX);
+});
+
+test('attacking out of a run is the dash attack; jumping keeps the running speed', () => {
+  const hold = inp({ moveX: 1 });
+  const attack = world();
+  run(attack, [...doubleTap('right', 4), ...repeat(hold, P.dashFrames + 4)]);
+  run(attack, [press('Attack', { moveX: 1 })]);
+  expect(hero(attack).attackFromDash).toBe(true);
+  const jump = world();
+  run(jump, [...doubleTap('right', 4), ...repeat(hold, P.dashFrames + 4)]);
+  run(jump, [press('Jump', { moveX: 1 })]);
+  expect(hero(jump).state).toBe(MoveState.Air);
+  expect(hero(jump).vx).toBe(P.runX);
 });
 
 test('no dash while airborne or during an attack', () => {
@@ -92,13 +203,6 @@ test('no dash while airborne or during an attack', () => {
   const attack = world();
   run(attack, [press('Attack'), press('Dash', { moveX: 1 })]);
   expect(hero(attack).state).toBe(MoveState.Attack);
-});
-
-test('dashing grants no invulnerability: the encoded state has no such field', () => {
-  const w = world();
-  run(w, [press('Dash', { moveX: 1 })]);
-  expect(Object.keys(hero(w)).some((k) => /invul|intang/i.test(k))).toBe(false);
-  expect(encodeWorld(w).length).toBe(encodeWorld(world()).length);
 });
 
 test('dash stops at the stage edge', () => {

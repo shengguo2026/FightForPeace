@@ -199,9 +199,20 @@ export const STAGE12_RECIPES: readonly Recipe[] = [
     s.noise({ at: 0.06, dur: 0.05, c0: 2600, q: 0.6, gain: 0.5, decay: 60 });
     s.chime(0.1, A4, 0.2, 6).chime(0.17, D5, 0.2, 6);
   }),
-  R('sfx.dash.step', 'combat', 'contact', 170, 'Dash or quick step', (s) => {
-    s.noise({ dur: 0.12, c0: 2000, c1: 1100, q: 0.7, gain: 0.5, attack: 0.005, decay: 18 });
-    grit(s, 0.01, 0.12, 0.25, 900);
+  // Dash and run (2026-11-18): rushing air with a thin wind whistle, no grit or impact.
+  R('sfx.dash.step', 'combat', 'contact', 340, 'Dash or quick step (a gust of wind)', (s) => {
+    s.whoosh({ dur: 0.3, c0: 450, c1: 1500, gain: 0.5, q: 0.9, skew: 0.45 });
+    s.whoosh({ at: 0.02, dur: 0.26, c0: 1300, c1: 2600, gain: 0.2, q: 2.5, skew: 0.5 });
+    s.noise({
+      at: 0.03,
+      dur: 0.27,
+      c0: 1900,
+      c1: 2500,
+      q: 10,
+      gain: 0.22,
+      attack: 0.05,
+      release: 0.12,
+    });
   }),
   R('sfx.land.step', 'combat', 'debris', 170, 'Landing from a jump', (s) => {
     s.thud({ f0: 150, f1: 70, dur: 0.09, gain: 0.6 });

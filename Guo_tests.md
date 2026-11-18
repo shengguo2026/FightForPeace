@@ -1656,3 +1656,53 @@ Every room opens from the Lab: `http://localhost:5173/?lab`, press **F1**, pick 
 19. **Horse legs (interim):** the black raider horse in *M27 Trial: Mounted Raider* and the hero horses on the Horse Test Track now step between two poses while riding. A proper four-frame gallop comes with the GALLOP sheets (prompts in `codex_prompts_stage3_gallop.md` in the pictures repository).
 
 Write down anything that looks too big or too small (the Stage 3 sheets use the scales recorded at approval), any pose that looks wrong, and any sound that is wrong or too loud.
+
+## Dash and run patch (after M27)
+
+What's new: the **dash sound** is now a gust of wind with a thin whistle (no more grit or clash). The **dash** goes further, about 197 px across or 127 px in depth (was 126 and 84): fast at the start, then easing out. A dash **away from the nearest enemy is a backstep**: the hero keeps facing the enemy. Backsteps and up/down **sidesteps** cannot be hit on dash frames 3 to 8; a forward dash can always be hit. After a dash the next dash waits 8 frames. **Double tap and hold** a direction: the hero dashes, then keeps running at twice the walking speed until you release that direction. Attack while running is the dash attack, a jump keeps the running speed, Guard stops the run. Heavy weapons (that slow your walk) do not run. Until the run sheets arrive (`codex_prompts_hero_run.md` in the pictures repository), the run plays the walk cycle faster.
+
+### Get and start the build
+
+To test the branch before it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-je7yle
+git checkout claude/project-thread-je7yle
+git pull origin claude/project-thread-je7yle
+pnpm install
+pnpm dev
+```
+
+After it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+If Vite prints another port than 5173, use that one. Stop the server with `Ctrl+C`.
+
+### Test steps
+
+Use the Lab: `http://localhost:5173/?lab`, press **F1**, pick a room in the **Arena** list and press **Restart**. Keys: move **W A S D**, attack **T**, jump **Y** (Z on QWERTZ), guard **G**. Player 2 joins with **Num 4**.
+
+1. **Sound:** double-tap **D**. The dash sounds like rushing wind with a soft whistle, not like two things clashing. It should not drown out hits nearby.
+2. **Distance:** in an empty room, double-tap **D** and let go: the hero slides clearly further than before (about one and a half times), quickly at first, then slowing down. Double-tap **W** or **S**: the depth dash is longer too.
+3. **Backstep:** in *M27 Trial: Quarry Bruiser* (or any trial room), stand in front of the enemy facing it and double-tap the direction away from it. The hero slides back **still facing the enemy**. Do it when the enemy starts a swing: the swing misses (the evade window is short, so time it as the swing starts).
+4. **Sidestep:** when an enemy swings, double-tap **W** or **S**: the hero steps out of the lane and is not hit.
+5. **Forward dash is still hittable:** dash into an enemy that is swinging: you get hit.
+6. **No spam:** double-tap repeatedly: there is a short pause after each dash before the next one starts.
+7. **Run:** double-tap **D** and keep holding **D**: the hero dashes, then runs (faster legs, about twice the walking speed) until you let go. While running, hold **W** or **S** too to steer. Let go of **D**: back to walking or standing.
+8. **Run attack and jump:** while running, press **T**: the hero does the dash attack. While running, press **Y**: the jump carries the running speed.
+9. **Run back:** with no enemy near, double-tap **A** and hold: the hero turns and runs left. Near an enemy on the right, the same input backsteps first and then turns and runs left.
+10. **Gamepad:** double-tap the stick or D-pad and hold, or hold a direction and press **LT** (Dash): the same dash, backstep and run.
+11. **Co-op:** Player 2 (Num 4 to join) can dash, backstep and run independently of Player 1.
+12. **Heavy weapon:** pick up the Quarry Hammer (**J**) and double-tap and hold: the hero dashes but walks afterwards (no run).
+13. **Stage 3 outfit:** in the M27 rooms the run uses the Stage 3 clothes (the walk cycle played faster), never the old outfit.
+
+Write down if the dash still feels too short or now too long, if the evade window feels too small or too generous, and if the run speed feels right.

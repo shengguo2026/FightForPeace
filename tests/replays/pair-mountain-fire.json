@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "rulesVersion": "m27",
+  "rulesVersion": "m27-dash",
   "seed": 82,
   "options": {
     "dummies": 1,
@@ -10,7 +10,7 @@
       "fire"
     ]
   },
-  "expectedHash": 259396018,
+  "expectedHash": 4142909974,
   "frames": [
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0}],
     [{"moveX":0,"moveZ":0,"pressed":0,"held":0,"dirPressed":0},{"moveX":1,"moveZ":-1,"pressed":0,"held":0,"dirPressed":9}],

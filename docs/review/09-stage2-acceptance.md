@@ -26,32 +26,32 @@
 
 ## 2. Complete paths (bot, no cheats)
 
-The bot plays the whole stage; when its continues run out it starts the stage again, as a player would. "Habit" is which of the four bot styles finished first. Minutes are game time.
+Re-recorded after the dash and run patch (2026-11-18, lesson L2). The bot plays the whole stage; when its continues run out it starts the stage again, as a player would. "Habit" is which of the four bot styles finished first. Minutes are game time.
 
 | Difficulty | Line-up | Habit | Last run (min) | Total (min) | Continues used | Stage restarts |
 |---|---|---|---|---|---|---|
-| Medium | Mountain | 0 | 6 | 20 | 3 | 3 |
-| Medium | River | 0 | 6 | 40 | 3 | 7 |
-| Medium | Wind | 0 | 6 | 83 | 3 | 16 |
-| Medium | Fire | 0 | 6 | 19 | 3 | 3 |
-| Medium | Mountain + River | 0 | 6 | 6 | 3 | 0 |
+| Medium | Mountain | 0 | 6 | 33 | 3 | 5 |
+| Medium | River | 0 | 6 | 6 | 3 | 0 |
+| Medium | Wind | 2 | 7 | 26 | 3 | 4 |
+| Medium | Fire | 0 | 6 | 27 | 3 | 4 |
+| Medium | Mountain + River | 0 | 5 | 10 | 1 | 1 |
 | Medium | Mountain + Wind | 0 | 7 | 7 | 3 | 0 |
 | Medium | Mountain + Fire | 0 | 5 | 5 | 1 | 0 |
 | Medium | River + Wind | 0 | 5 | 5 | 2 | 0 |
 | Medium | River + Fire | 0 | 5 | 5 | 1 | 0 |
-| Medium | Wind + Fire | 0 | 5 | 12 | 2 | 1 |
+| Medium | Wind + Fire | 0 | 4 | 10 | 1 | 1 |
 | Easy | Mountain | 0 | 6 | 6 | 4 | 0 |
 | Easy | River | 1 | 7 | 7 | 4 | 0 |
-| Easy | Wind | 1 | 8 | 19 | 5 | 2 |
+| Easy | Wind | 0 | 7 | 87 | 5 | 15 |
 | Easy | Fire | 0 | 9 | 9 | 5 | 0 |
-| Easy | Mountain + River | 0 | 6 | 6 | 2 | 0 |
-| Easy | River + Fire | 0 | 5 | 5 | 2 | 0 |
+| Easy | Mountain + River | 0 | 5 | 5 | 2 | 0 |
+| Easy | River + Fire | 0 | 6 | 6 | 2 | 0 |
 | Easy | Wind + Fire | 0 | 5 | 5 | 2 | 0 |
-| Hard | Mountain + River | 1 | 6 | 13 | 2 | 2 |
-| Hard | River + Fire | 0 | 6 | 18 | 2 | 3 |
-| Hard | Wind + Fire | 0 | 6 | 82 | 2 | 16 |
+| Hard | Mountain + River | 0 | 5 | 77 | 2 | 17 |
+| Hard | River + Fire | 0 | 6 | 28 | 2 | 5 |
+| Hard | Wind + Fire | 0 | 7 | 39 | 2 | 7 |
 
-The bot is a weak player (it guards late and never uses the environment on purpose), so restarts measure the bot more than the stage. Solo Wind needs the most: its short reach against Marek. Easy Wind restarted twice; a human run on Easy is Guo_tests step 6.
+The bot is a weak player (it guards late and never uses the environment on purpose), so restarts measure the bot more than the stage. The counts swing with any movement change (lesson L2): before the dash and run patch Solo Wind needed 16 restarts on Medium, after it Easy Wind needs the most (15) while Medium Wind needs 4. A human run on Easy is Guo_tests step 6.
 
 ## 3. Balance (harness snapshot)
 

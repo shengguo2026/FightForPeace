@@ -83,7 +83,7 @@ export const DUMMY_HEALTH = 1000;
 export const HERO_HEALTH = 1000;
 
 /** Version of the byte layout written by encodeWorld. Bump on any layout change. */
-export const STATE_FORMAT = 18;
+export const STATE_FORMAT = 19;
 
 /** Walking speeds (fixed point per frame), kept as exports for existing callers. */
 export const WALK_SPEED_X = ON_FOOT.walkX;
@@ -198,6 +198,9 @@ export function createFighter(
     attackKind: 0,
     attackFromDash: false,
     lastGuardFrame: NO_TAP,
+    dashReady: 0,
+    dashEvade: false,
+    runFrame: NO_TAP,
     targetId: 0,
     pinFrames: 0,
     passEnemies: false,
@@ -775,6 +778,9 @@ export function encodeWorld(world: World): Uint8Array {
     w.u32(b.attackKind);
     w.u8(b.attackFromDash ? 1 : 0);
     w.i32(b.lastGuardFrame);
+    w.i32(b.dashReady);
+    w.u8(b.dashEvade ? 1 : 0);
+    w.i32(b.runFrame);
     w.u32(b.targetId);
     w.u32(b.pinFrames);
     w.u8(b.passEnemies ? 1 : 0);
