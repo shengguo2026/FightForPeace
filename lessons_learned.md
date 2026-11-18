@@ -102,6 +102,12 @@ The biggest and most repeated gap. Several times a whole class of sheets was fou
 - **Fix:** `tools/art/fit_head_scale.py` measures the head of every hero sheet against idle cell 0 and reports the sheets that are off. Each report was checked by eye beside idle, and the measured scales are in `tools/art/size_fixes.py`, which every importer applies last.
 - **Rule:** after importing hero sheets, run `fit_head_scale.py` and check every reported sheet beside idle (a profile head reads about 10 % small, so walks and runs are checked by standing height instead). Record confirmed scales in `size_fixes.py`, never only in the manifest. A sheet whose cells differ in size from each other (Fire's and Wind's lance-a) cannot be fixed with one scale and goes back for a redraw.
 
+### B6 · A held crouch cell looks like the figure shrinking
+
+- **What happened:** the Sluice Commander's Flying Knee showed the crouch cell for the whole 34-frame startup and the landing crouch for the whole recovery; the leaping cell showed for only six frames. Every sheet of his is drawn at one size (the heads match), but a figure a third shorter for over a second reads as the boss getting smaller whenever he jumps.
+- **Caught:** Guo's play test, 2026-11-18.
+- **Fix:** enemy poses accept a list of cells per phase, like hero poses, spread over that phase; the Flying Knee plays all six cells of attack-b (tell, crouch, take-off, knee, landing, back up). Before blaming the scale, check which cell is held and for how long.
+
 ---
 
 ## C · Story, spec and scope gaps found late

@@ -1788,3 +1788,41 @@ pnpm dev
 10. **Languages:** switch to Chinese and German: the hints ("空中：", "in der Luft:") are translated.
 
 Known limit: Fire's and Wind's lance-a sheets draw some cells smaller than others; one scale cannot fix that, so they would need a redraw.
+
+## Sluice Commander's jump and the winch spot (2026-11-18)
+
+What's new: **the jump.** The Stage 1 boss no longer looks smaller when he jumps. His drawings were all one size (his head is the same size in every sheet), but his Flying Knee held a deep crouch for over half a second before the leap and again after landing, and the leap itself showed for only a tenth of a second. The move now plays all six drawings: he points, crouches, takes off, flies with the knee, lands and stands back up. **The winch spot.** In phase 3 the yellow ring on the floor now has a handwheel standing on it and a label "Sluice winch 0/3" above the three crank circles, so it is clear what he is cranking and how far he is.
+
+### Get and start the build
+
+To test the branch before it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-uc3buf
+git checkout claude/project-thread-uc3buf
+git pull origin claude/project-thread-uc3buf
+pnpm install
+pnpm dev
+```
+
+After it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+### Test steps
+
+1. **Flying Knee:** play Stage 1 to beat 8 (the Sluice Commander). Wait for his Flying Knee (he points, crouches and leaps at you): he passes through a standing point, a crouch, the take-off, the knee in the air, the landing and back up, and never looks smaller than when he stands.
+2. **Phase 2:** take him into phase 2 (coat off) and watch the Flying Knee again: the same six steps.
+3. **His other moves:** Palm Strike, Roundhouse, Spin Back Kick and the Rising Knee look as before.
+4. **Walking:** he walks toward and away from the camera without changing size.
+5. **Winch spot:** in phase 3 ("Open the Sluice") the yellow ring at the right has a handwheel on it and the label "Sluice winch 0/3" above the three circles. Each crank he finishes fills a circle and the label counts up (1/3, 2/3); hit him while he cranks to interrupt it.
+6. **Languages:** in German the label reads "Schleusenwinde", in Chinese "水闸绞盘".
+7. **After the surrender:** the ring, the handwheel and the label are all gone.

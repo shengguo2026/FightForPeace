@@ -128,6 +128,9 @@ export class ArenaView {
   /** M20: the two lane signs at a branching exit (in world space, at the exit). */
   private signs: Phaser.GameObjects.Text[] = [];
   private tags = new Map<number, Phaser.GameObjects.Text>();
+  /** The Stage 1 winch: a handwheel on its floor ring and a label over the crank pips. */
+  private winchWheel: Phaser.GameObjects.Sprite | null = null;
+  private winchLabel: Phaser.GameObjects.Text | null = null;
   private beeped = new Set<number>();
   private audio: AudioContext | null = null;
   private camX = 0;
@@ -514,6 +517,7 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
       this.subtitle.setText('');
       for (const t of this.warnTexts) t.setVisible(false);
       for (const t of this.tags.values()) t.setVisible(false);
+      this.hideWinch();
       return;
     }
     const arena = ARENAS[enc.arena]!;
@@ -528,7 +532,8 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
     else this.drawBoss(enc, bodies);
     // The winch ring and its crank pips go with the boss bar once the lock is cleared, so
     // after the surrender the only floor marker is the evidence crate's glow.
-    if (!(arena.stage && enc.result !== 0)) this.drawDevices(enc);
+    if (!(arena.stage && enc.result !== 0)) this.drawDevices(enc, bodies);
+    else this.hideWinch();
     this.drawWarnings(enc, bodies, frame);
     this.drawTags(enc, bodies);
     this.drawM19(enc, bodies, frame);
@@ -644,14 +649,21 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
     this.subtitle.setText(line ? `${t('m19.tomas.name')}: ${t(line as TextId)}` : '');
   }
 
-  /** Device progress pips at the device (the winch), counted cranks, never time. */
-  private drawDevices(enc: Encounter): void {
+  /**
+   * Device progress pips at the device (the winch), counted cranks, never time. The Stage 1
+   * winch has no winch in its plate, so a handwheel stands on the ring and a label names
+   * it and counts the cranks (Guo, 18 Nov: the bare yellow ring read as a leftover).
+   */
+  private drawDevices(enc: Encounter, bodies: readonly Fighter[]): void {
     const w = this.world;
+    const boss = enc.boss ? bodies.find((x) => x.id === enc.boss!.id) : undefined;
+    const ownWinch = boss !== undefined && ENEMIES[boss.hero]?.id === 'commander';
+    let shown = false;
     for (const d of enc.devices) {
       if (!d.active) continue;
       const x = fxToPixels(d.x);
       const z = fxToPixels(d.z);
-      // The winch spot on the floor (the plate draws the winch itself) and its cranks.
+      // The winch spot on the floor and its cranks.
       w.lineStyle(6, 0xffb020, 0.9);
       w.strokeEllipse(x, z, 220, 50);
       for (let i = 0; i < d.count; i += 1) {
@@ -660,7 +672,44 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
         w.fillCircle(x - (d.count - 1) * 22 + i * 44, z - 330, 15);
         w.strokeCircle(x - (d.count - 1) * 22 + i * 44, z - 330, 15);
       }
+      if (!ownWinch || d.kind !== 'winch' || shown) continue;
+      shown = true;
+      this.showWinch(x, z, d.progress, d.count);
     }
+    if (!shown) this.hideWinch();
+  }
+
+  private showWinch(x: number, z: number, progress: number, count: number): void {
+    if (!this.winchWheel && this.scene.textures.exists('prop.handwheel')) {
+      const meta = this.assets.sheet('prop.handwheel')?.sheet;
+      this.winchWheel = this.scene.add.sprite(0, 0, 'prop.handwheel', 1);
+      this.winchWheel.setOrigin(0.5, meta ? meta.ground / meta.cell : 1).setScale(0.55);
+    }
+    // Just behind the boss, who cranks it from its left (fighters draw at 1 + z / 2000).
+    this.winchWheel
+      ?.setVisible(true)
+      .setPosition(x + 20, z)
+      .setDepth(1 + z / 2000 - 0.002);
+    if (!this.winchLabel) {
+      this.winchLabel = this.scene.add.text(0, 0, '', {
+        fontFamily: 'system-ui, sans-serif',
+        fontSize: '26px',
+        fontStyle: 'bold',
+        color: '#ffd166',
+        stroke: '#000000',
+        strokeThickness: 5,
+      });
+      this.winchLabel.setOrigin(0.5, 1).setDepth(21);
+    }
+    this.winchLabel
+      .setVisible(true)
+      .setPosition(x, z - 355)
+      .setText(`${A('winch')} ${progress}/${count}`);
+  }
+
+  private hideWinch(): void {
+    this.winchWheel?.setVisible(false);
+    this.winchLabel?.setVisible(false);
   }
 
   /**

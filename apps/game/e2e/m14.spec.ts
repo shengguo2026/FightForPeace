@@ -244,9 +244,12 @@ test.describe('localization QA', () => {
     await firstLaunch(page, 'de');
     await page.getByTestId('menu-guide').click();
     await page.waitForFunction(() => window.__ffp!.shell.screen() === 'guide');
-    const labels = await page
-      .locator('[data-prompt="key"]')
-      .evaluateAll((els) => els.map((e) => e.getAttribute('aria-label') ?? ''));
+    // The screen switches before the guide has rendered its prompts (Firefox reads none).
+    const keys = page.locator('[data-prompt="key"]');
+    await expect(keys.first()).toBeAttached();
+    const labels = await keys.evaluateAll((els) =>
+      els.map((e) => e.getAttribute('aria-label') ?? ''),
+    );
     expect(labels.length).toBeGreaterThan(0);
     for (const l of labels) expect(l).toMatch(/^Taste /);
   });

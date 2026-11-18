@@ -214,6 +214,7 @@ export const ARENA_TEXT = {
   teamAttack: 'TEAM ATTACK',
   flee: 'flees',
   surrender: 'surrenders',
+  winch: 'Sluice winch',
 } as const;
 
 /** Director verdicts (Verdict numbers) for the Lab's encounter panel. */

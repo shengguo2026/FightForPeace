@@ -626,6 +626,7 @@ const DE_BASE: Catalog = {
   'arena.teamAttack': 'TEAMANGRIFF',
   'arena.flee': 'flieht',
   'arena.surrender': 'gibt auf',
+  'arena.winch': 'Schleusenwinde',
   'grade.rescue': 'Rettung (befreite Arbeiter)',
   'grade.evidence': 'Spurensuche (Hinweis und Beweis des Geldgebers)',
   'grade.continues': 'Genutzte Fortsetzungen',
