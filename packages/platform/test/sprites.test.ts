@@ -381,3 +381,24 @@ test('2026-11-18: a running hero uses the RUN sheet; guard into depth shows the 
     expect(pick.fighter(f, 0)!.cell).toBe(3);
   }
 });
+
+test('the Sluice Commander leaps through his Flying Knee instead of holding a crouch', () => {
+  // Guo, 18 Nov: the Stage 1 boss looked smaller whenever he jumped. The crouch cell held
+  // the whole 34-frame startup and the landing crouch the whole recovery.
+  const f = heroOf(createWorld(1, { heroes: ['mountain'] }), 0)!;
+  f.team = 'enemy';
+  f.hero = ENEMIES.findIndex((e) => e.id === 'commander');
+  f.wkit = -1;
+  const kit = ENEMIES[f.hero]!;
+  f.action = kit.actions.findIndex((a) => a.id === 'flying-knee');
+  const a = kit.actions[f.action]!;
+  f.state = MoveState.Attack;
+  const cells: number[] = [];
+  for (let n = 0; n < a.startup + a.active[0]! + a.recovery; n++) {
+    f.stateFrame = n;
+    const s = pick.fighter(f, n)!;
+    expect(s.sheet).toBe('enemy.commander.sheet.attack-b');
+    if (cells[cells.length - 1] !== s.cell) cells.push(s.cell);
+  }
+  expect(cells).toEqual([0, 1, 2, 3, 4, 5]);
+});

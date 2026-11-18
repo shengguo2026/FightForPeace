@@ -281,7 +281,10 @@ const RUSH = new Set(['two-step', 'barrage', 'wild-rush']);
  * M7 enemy action poses: sheet suffix and the cells for startup, active and recovery, as
  * delivered in the Stage 1 sheets (codex_prompts_stage1.md).
  */
-const ENEMY_POSES: Record<string, Record<string, { sheet: string; cells: Phased }>> = {
+const ENEMY_POSES: Record<
+  string,
+  Record<string, { sheet: string; cells: readonly [Cells, Cells, Cells] }>
+> = {
   shield: {
     'shield-bash': { sheet: 'attack', cells: [0, 1, 2] },
     'shield-charge': { sheet: 'attack', cells: [3, 4, 5] },
@@ -449,7 +452,11 @@ const ENEMY_POSES: Record<string, Record<string, { sheet: string; cells: Phased 
     'palm-strike': { sheet: 'attack-a', cells: [0, 1, 5] },
     roundhouse: { sheet: 'attack-a', cells: [0, 2, 5] },
     'spin-back-kick': { sheet: 'attack-a', cells: [3, 4, 5] },
-    'flying-knee': { sheet: 'attack-b', cells: [1, 3, 4] },
+    // 2026-11-18: the leap plays through the sheet (the tell, the crouch, the take-off, the
+    // knee in the air, the landing, back up). Before, the crouch cell held the whole
+    // startup and the landing crouch the whole recovery, so he looked smaller whenever he
+    // jumped, and the airborne knee showed for only six frames.
+    'flying-knee': { sheet: 'attack-b', cells: [[0, 1, 2], 3, [4, 5]] },
     'double-palm': { sheet: 'attack-c', cells: [0, 0, 5] },
     'rising-knee': { sheet: 'attack-c', cells: [1, 1, 5] },
     'axe-kick': { sheet: 'attack-c', cells: [4, 4, 5] },
@@ -527,6 +534,14 @@ const PHASE_INDEX = { startup: 0, active: 1, recovery: 2 } as const;
 
 function phase(f: Fighter, a: ActionDef): 0 | 1 | 2 {
   return PHASE_INDEX[phaseOf(a, f.stateFrame + 1).phase];
+}
+
+/** A phase's cell; a list of cells is spread evenly over that phase. */
+function cellAt(list: Cells, f: Fighter, a: ActionDef): number {
+  if (typeof list === 'number') return list;
+  if (list.length <= 1) return list[0] ?? 0;
+  const at = phaseOf(a, f.stateFrame + 1);
+  return list[Math.min(list.length - 1, Math.floor(((at.at - 1) * list.length) / at.of))]!;
 }
 
 /** Filled cells of a sheet, in order. */
@@ -623,14 +638,7 @@ export class SpritePicker {
         const posed =
           authored && !this.has(`${base}.${authored.sheet}`) ? authored.fallback : authored;
         if (posed && this.has(`${base}.${posed.sheet}`)) {
-          const list = posed.cells[p];
-          let cell = typeof list === 'number' ? list : list[0]!;
-          if (typeof list !== 'number' && list.length > 1) {
-            const at = phaseOf(a, f.stateFrame + 1);
-            cell =
-              list[Math.min(list.length - 1, Math.floor(((at.at - 1) * list.length) / at.of))]!;
-          }
-          return { sheet: `${base}.${posed.sheet}`, cell };
+          return { sheet: `${base}.${posed.sheet}`, cell: cellAt(posed.cells[p], f, a) };
         }
         const own = this.has(a.pose);
         if (own) {
@@ -880,7 +888,7 @@ export class SpritePicker {
         if (own) {
           // The lookout loads the sling before it aims (the warning pose).
           if (a?.id === 'sling-shot' && p === 0 && f.stateFrame < 12) return s('attack', 0);
-          return s(own.sheet, own.cells[p]) ?? s(idle.sheet, 0);
+          return s(own.sheet, cellAt(own.cells[p], f, a!)) ?? s(idle.sheet, 0);
         }
         // M19 visible counter stances (Iron Measure, Jackal's Measure) before an action runs.
         if (f.state === MoveState.Counter)
