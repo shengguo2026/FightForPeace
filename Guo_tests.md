@@ -1743,5 +1743,5 @@ Use the Lab: `http://localhost:5173/?lab`, press **F1**, pick the room in the **
 2. **Run, Stage 3 outfit:** in any M27 room, the same run in the Stage 3 clothes. The size should match the walk.
 3. **Run with a weapon:** pick up a light weapon (Hiking Staff) and run: the weapon walk plays faster (no run sheet with weapons).
 4. **Gallop:** *Horse Test Track*: each hero's horse canters with four leg poses; steering and halting keep their own poses.
-5. **Bandit horse:** *M27 Trial: Mounted Raider*: the black horse canters with four leg poses too.
+5. **Bandit horse:** *M27 Trial: Mounted Raider*: the black horse canters with four leg poses while it crosses the arena (after the warning marks the lane).
 6. **Guard pictures:** hold **G** with **W** or **S**: the normal high guard pose, not the crouch. **G** with the direction away from your facing still shows the turned guard.

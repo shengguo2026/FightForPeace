@@ -783,11 +783,13 @@ export class SpritePicker {
         return s('mount-attack', a && phase(f, a) === 0 ? 0 : 1);
       }
       if (rider.phase === PassPhase.Warn) return s('mount-attack', 3);
-      if (rider.phase === PassPhase.Pass) return s('mount-attack', 2) ?? s('mount-ride', 0);
-      // Riding: the four-frame GALLOP loop where delivered; otherwise the gallop and the
-      // gathered stride of the ride sheet alternate.
-      if (f.state === MoveState.Walk && this.has(`${base}.mount-gallop`))
+      // Riding (the pass across the arena is the only time it moves): the four-frame GALLOP
+      // loop where delivered (2026-11-18: before, the pass held the single riding-past pose,
+      // so the legs never moved); otherwise the riding-past pose.
+      const moving = rider.phase === PassPhase.Pass || f.state === MoveState.Walk;
+      if (moving && this.has(`${base}.mount-gallop`))
         return s('mount-gallop', loop(undefined, frame, 10, [0, 1, 2, 3]));
+      if (rider.phase === PassPhase.Pass) return s('mount-attack', 2) ?? s('mount-ride', 0);
       return s('mount-ride', f.state === MoveState.Walk ? loop(undefined, frame, 6, [0, 2]) : 3);
     }
     if (isBoss && boss.shift > 0 && art === 'garran') {

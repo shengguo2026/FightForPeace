@@ -5,6 +5,7 @@ import {
   HEROES,
   MountedSlot,
   MoveState,
+  PassPhase,
   RiderState,
   WEAPONS,
   claim,
@@ -337,4 +338,19 @@ describe('M27 sounds', () => {
     expect(total).toBeGreaterThan(0);
     void WEAPONS;
   });
+});
+
+test('the Mounted Raider gallops with moving legs while it crosses the arena', () => {
+  const w = createWorld(3, { arena: 'lab-m27-raider', heroes: ['mountain'] });
+  const cells = new Set<string>();
+  for (let i = 0; i < 2400; i += 1) {
+    step(w, [IDLE]);
+    const r = w.bodies.find((b) => b.team === 'enemy' && b.ext?.rider);
+    if (!r || r.ext!.rider!.phase !== PassPhase.Pass) continue;
+    const s = pick.fighter(r, w.frame)!;
+    cells.add(`${s.sheet}#${s.cell}`);
+  }
+  expect([...cells].sort()).toEqual(
+    [0, 1, 2, 3].map((c) => `enemy.rider3.sheet.mount-gallop#${c}`),
+  );
 });
