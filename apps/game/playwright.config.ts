@@ -10,6 +10,11 @@ export default defineConfig({
   forbidOnly: ci,
   retries: ci ? 1 : 0,
   reporter: ci ? [['list'], ['html', { open: 'never' }]] : 'list',
+  // The game decodes and uploads every approved sprite sheet at start (about 730 images,
+  // 680 megapixels in 2026-11). CI runners draw WebGL in software, so the uploads hold the
+  // page's main thread for several seconds and screens such as the village after the
+  // first-launch setup can appear later than the default 5 s (lessons_learned.md).
+  expect: { timeout: ci ? 20_000 : 5_000 },
   use: {
     baseURL: `http://localhost:${port}`,
     viewport: { width: 1280, height: 720 },
