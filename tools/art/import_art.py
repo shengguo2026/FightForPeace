@@ -48,6 +48,8 @@ APPROVED = {
     "HERO-WND-WALK": "HERO-WND-WALK_v2.png",
     "HERO-FIR-WALK": "HERO-FIR-WALK_v2.png",
     "HERO-RIV-WALK": "HERO-RIV-WALK_v4.png",
+    # Run cycles with the legs and arms swapped in the second half (R9-R16, 2026-11-19).
+    "HERO-MTN-RUN": "HERO-MTN-RUN_v2.png",
 }
 
 HEROES = {

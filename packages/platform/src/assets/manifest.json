@@ -15880,7 +15880,7 @@
             "foot": 325
           }
         ],
-        "scale": 0.875
+        "scale": 0.885
       },
       "provenance": {
         "source": "heroes/mountain/HERO-MTN-S3-RUN.png",
@@ -17656,49 +17656,49 @@
         "cols": 3,
         "rows": 2,
         "cell": 384,
-        "ground": 362,
+        "ground": 363,
         "cells": [
           {
-            "x0": 72,
-            "y0": 41,
-            "x1": 298,
+            "x0": 71,
+            "y0": 38,
+            "x1": 284,
             "foot": 366
           },
           {
-            "x0": 57,
-            "y0": 42,
-            "x1": 308,
-            "foot": 361
-          },
-          {
-            "x0": 44,
-            "y0": 41,
-            "x1": 339,
-            "foot": 324
-          },
-          {
-            "x0": 63,
-            "y0": 41,
-            "x1": 302,
-            "foot": 365
-          },
-          {
-            "x0": 54,
-            "y0": 41,
-            "x1": 308,
+            "x0": 48,
+            "y0": 39,
+            "x1": 293,
             "foot": 362
           },
           {
-            "x0": 43,
-            "y0": 41,
-            "x1": 339,
+            "x0": 38,
+            "y0": 39,
+            "x1": 347,
+            "foot": 324
+          },
+          {
+            "x0": 56,
+            "y0": 38,
+            "x1": 287,
+            "foot": 366
+          },
+          {
+            "x0": 39,
+            "y0": 38,
+            "x1": 295,
+            "foot": 363
+          },
+          {
+            "x0": 31,
+            "y0": 38,
+            "x1": 345,
             "foot": 328
           }
         ],
         "scale": 0.88
       },
       "provenance": {
-        "source": "heroes/mountain/HERO-MTN-RUN.png",
+        "source": "heroes/mountain/HERO-MTN-RUN_v2.png",
         "tool": "Codex image generation"
       }
     },
