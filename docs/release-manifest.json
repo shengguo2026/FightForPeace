@@ -4,7 +4,7 @@
   "stateFormat": 19,
   "netProtocol": 2,
   "rulesHash": 1742751271,
-  "contentHash": 3862816508,
+  "contentHash": 3656148831,
   "cheatRegistryHash": 1593653293,
   "goldenReplays": {
     "academy-recipes": 2092680865,
@@ -316,7 +316,7 @@
     "hero.mountain.sheet.mount-ultimate": "heroes/mountain/HERO-MTN-MOUNT-ULTIMATE.png",
     "hero.mountain.sheet.revolver": "heroes/mountain/HERO-MTN-REVOLVER.png",
     "hero.mountain.sheet.revolver-walk": "heroes/mountain/HERO-MTN-REVOLVER-WALK.png",
-    "hero.mountain.sheet.run": "heroes/mountain/HERO-MTN-RUN.png",
+    "hero.mountain.sheet.run": "heroes/mountain/HERO-MTN-RUN_v2.png",
     "hero.river.s3.pose.aerial.bank-switch-arc": "heroes/river/HERO-RIV-S3-BANK-SWITCH-ARC.png",
     "hero.river.s3.pose.aerial.current-chase": "heroes/river/HERO-RIV-S3-CURRENT-CHASE.png",
     "hero.river.s3.pose.aerial.ebbturn-heel": "heroes/river/HERO-RIV-S3-EBBTURN-HEEL.png",

@@ -1826,3 +1826,36 @@ pnpm dev
 5. **Winch spot:** in phase 3 ("Open the Sluice") the yellow ring at the right has a handwheel on it and the label "Sluice winch 0/3" above the three circles. Each crank he finishes fills a circle and the label counts up (1/3, 2/3); hit him while he cranks to interrupt it.
 6. **Languages:** in German the label reads "Schleusenwinde", in Chinese "水闸绞盘".
 7. **After the surrender:** the ring, the handwheel and the label are all gone.
+
+## Mountain's run with the legs and arms swapping (2026-11-19)
+
+What's new: Mountain's run uses the redrawn sheet `HERO-MTN-RUN_v2.png` (R9). In the second half of the run the other leg and the other arm come forward, so the run alternates instead of looking like a skip. Mountain's Stage 3 run scale moved from 0.875 to 0.885 to match the new base run (it is measured against it). The other seven runs are unchanged until their `_v2` sheets arrive.
+
+### Get and start the build
+
+To test the branch before it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-uc3buf
+git checkout claude/project-thread-uc3buf
+git reset --hard origin/claude/project-thread-uc3buf
+pnpm install
+pnpm dev
+```
+
+After it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+### Test steps
+
+1. **Run:** play Stage 1 as Mountain, double-tap and hold **D** (or **A**) to run. The legs and the arms alternate: left leg and right arm forward, then right leg and left arm.
+2. **Size:** run, then stop: Mountain keeps the same size when switching between run, walk and idle.
+3. **Stage 3 outfit:** in a Stage 3 room (Lab, F1, Arena list), run as Mountain: same size as the Stage 3 walk and idle.
