@@ -1859,3 +1859,50 @@ pnpm dev
 1. **Run:** play Stage 1 as Mountain, double-tap and hold **D** (or **A**) to run. The legs and the arms alternate: left leg and right arm forward, then right leg and left arm.
 2. **Size:** run, then stop: Mountain keeps the same size when switching between run, walk and idle.
 3. **Stage 3 outfit:** in a Stage 3 room (Lab, F1, Arena list), run as Mountain: same size as the Stage 3 walk and idle.
+
+## Redrawn runs for all heroes, and Wind's and Fire's lance (2026-11-19)
+
+What's new: **runs.** Seven more run sheets are in the game (R10–R16): River, Wind and Fire in their Stage 1 and 2 outfits, all four heroes in the Stage 3 outfit. In each, the second half of the run brings the other leg and the other arm forward. Wind's Stage 3 run uses the clean redo (v3), moved slightly so her flight poses stay inside their cells. **Lance.** Wind's and Fire's lance-a sheets (RD01, RD02) are drawn at one figure size in every cell. The widest poses (the thrust and the throw) reached past their cells, so `tools/art/repack_cells.py` fits them back in: Wind's at 92 % (which also brings her to the idle size), Fire's at 96 %.
+
+### Get and start the build
+
+To test the branch before it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-uc3buf
+git checkout claude/project-thread-uc3buf
+git reset --hard origin/claude/project-thread-uc3buf
+pnpm install
+pnpm dev
+```
+
+After it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+### Test steps
+
+1. **Runs, Stage 1 and 2 outfit:** run (double-tap and hold **D**) as River, Wind and Fire. The legs and arms alternate, and the size stays the same as walking and standing.
+2. **Runs, Stage 3 outfit:** in a Stage 3 room (Lab, F1, Arena list), run as all four heroes: the same alternation.
+3. **Wind's lance:** in Stage 2, pick up the Service Lance as Wind and use its moves (pickup, sweep, thrust, block, pull, throw). Wind stays the size of her idle pose in every move, and no stray foot or lance end shows next to her.
+4. **Fire's lance:** the same with Fire.
+
+## River's run without the stray foot, and the lance stance (2026-11-19)
+
+**What changed:** In River's run, River's Stage 3 run and Fire's Stage 3 run, the back foot of the flight poses reached into the next cell, so a small piece of the next pose showed in front of the hero. The poses are now shifted into their cells (`_v2_fit`). The lance stance: Wind and Fire already use the redrawn lance sheets (RD01/RD02) on this branch and stay at idle size. Mountain's and River's lance sheets draw the stance about 20 % smaller than idle; that needs the redraws RD03/RD04 (Pictures `picture_redraw_prompts.md`) and is not fixed yet.
+
+### Test steps
+
+Use the commands of the section above (this branch).
+
+1. **River's run:** run as River (double-tap and hold **D**), in the Stage 1/2 outfit and in a Stage 3 room. No piece of a foot or leg shows in front of or behind her.
+2. **Fire's Stage 3 run:** the same as Fire in a Stage 3 room.
+3. **Wind's and Fire's lance:** Lab, Stage 2 Systems Saboteur, pick up the lance as Wind and as Fire: holding it, they stay the size of their idle pose.
+4. **Mountain and River:** still smaller while holding the lance (known, waits for RD03/RD04).
