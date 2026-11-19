@@ -1859,3 +1859,37 @@ pnpm dev
 1. **Run:** play Stage 1 as Mountain, double-tap and hold **D** (or **A**) to run. The legs and the arms alternate: left leg and right arm forward, then right leg and left arm.
 2. **Size:** run, then stop: Mountain keeps the same size when switching between run, walk and idle.
 3. **Stage 3 outfit:** in a Stage 3 room (Lab, F1, Arena list), run as Mountain: same size as the Stage 3 walk and idle.
+
+## Redrawn runs for all heroes, and Wind's and Fire's lance (2026-11-19)
+
+What's new: **runs.** Six more run sheets are in the game (R10–R14, R16): River, Wind and Fire in their Stage 1 and 2 outfits, Mountain, River and Fire in the Stage 3 outfit. In each, the second half of the run brings the other leg and the other arm forward. Wind's Stage 3 run (R15) stays the old one until its redraw comes back without the smoky background. **Lance.** Wind's and Fire's lance-a sheets (RD01, RD02) are drawn at one figure size in every cell. The widest poses (the thrust and the throw) reached past their cells, so `tools/art/repack_cells.py` fits them back in: Wind's at 92 % (which also brings her to the idle size), Fire's at 96 %.
+
+### Get and start the build
+
+To test the branch before it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-uc3buf
+git checkout claude/project-thread-uc3buf
+git reset --hard origin/claude/project-thread-uc3buf
+pnpm install
+pnpm dev
+```
+
+After it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+### Test steps
+
+1. **Runs, Stage 1 and 2 outfit:** run (double-tap and hold **D**) as River, Wind and Fire. The legs and arms alternate, and the size stays the same as walking and standing.
+2. **Runs, Stage 3 outfit:** in a Stage 3 room (Lab, F1, Arena list), run as Mountain, River and Fire: the same alternation. Wind still uses her old Stage 3 run.
+3. **Wind's lance:** in Stage 2, pick up the Service Lance as Wind and use its moves (pickup, sweep, thrust, block, pull, throw). Wind stays the size of her idle pose in every move, and no stray foot or lance end shows next to her.
+4. **Fire's lance:** the same with Fire.

@@ -50,6 +50,17 @@ APPROVED = {
     "HERO-RIV-WALK": "HERO-RIV-WALK_v4.png",
     # Run cycles with the legs and arms swapped in the second half (R9-R16, 2026-11-19).
     "HERO-MTN-RUN": "HERO-MTN-RUN_v2.png",
+    "HERO-RIV-RUN": "HERO-RIV-RUN_v2.png",
+    "HERO-WND-RUN": "HERO-WND-RUN_v2.png",
+    "HERO-FIR-RUN": "HERO-FIR-RUN_v2.png",
+    "HERO-MTN-S3-RUN": "HERO-MTN-S3-RUN_v2.png",
+    "HERO-RIV-S3-RUN": "HERO-RIV-S3-RUN_v2.png",
+    "HERO-FIR-S3-RUN": "HERO-FIR-S3-RUN_v2.png",
+    # HERO-WND-S3-RUN_v2 (R15) came back with a smoky half-transparent background: not used.
+    # Lance sheets redrawn at one figure size in every cell (RD01, RD02, 2026-11-19), fitted
+    # into their cells by tools/art/repack_cells.py (Wind 0.92, Fire 0.96).
+    "HERO-WND-LANCE-A": "HERO-WND-LANCE-A_v2_fit.png",
+    "HERO-FIR-LANCE-A": "HERO-FIR-LANCE-A_v2_fit.png",
 }
 
 HEROES = {
