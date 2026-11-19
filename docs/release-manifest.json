@@ -4,7 +4,7 @@
   "stateFormat": 19,
   "netProtocol": 2,
   "rulesHash": 1742751271,
-  "contentHash": 1483306595,
+  "contentHash": 3077689539,
   "cheatRegistryHash": 1593653293,
   "goldenReplays": {
     "academy-recipes": 2092680865,
@@ -409,7 +409,7 @@
     "hero.wind.s3.sheet.jump": "heroes/wind/HERO-WND-S3-JUMP.png",
     "hero.wind.s3.sheet.knockdown": "heroes/wind/HERO-WND-S3-KNOCKDOWN.png",
     "hero.wind.s3.sheet.revolver": "heroes/wind/HERO-WND-S3-REVOLVER.png",
-    "hero.wind.s3.sheet.run": "heroes/wind/HERO-WND-S3-RUN.png",
+    "hero.wind.s3.sheet.run": "heroes/wind/HERO-WND-S3-RUN_v3_fit.png",
     "hero.wind.s3.sheet.team-attack": "heroes/wind/HERO-WND-S3-TEAM-ATTACK.png",
     "hero.wind.s3.sheet.walk": "heroes/wind/HERO-WND-S3-WALK.png",
     "hero.wind.sheet.axe": "heroes/wind/HERO-WND-AXE.png",

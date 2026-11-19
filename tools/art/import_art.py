@@ -56,7 +56,9 @@ APPROVED = {
     "HERO-MTN-S3-RUN": "HERO-MTN-S3-RUN_v2.png",
     "HERO-RIV-S3-RUN": "HERO-RIV-S3-RUN_v2.png",
     "HERO-FIR-S3-RUN": "HERO-FIR-S3-RUN_v2.png",
-    # HERO-WND-S3-RUN_v2 (R15) came back with a smoky half-transparent background: not used.
+    # R15: v2 had a smoky half-transparent background; v3 is clean, moved 40 px right in every
+    # cell so the flight poses stay inside their cells (_v3_fit).
+    "HERO-WND-S3-RUN": "HERO-WND-S3-RUN_v3_fit.png",
     # Lance sheets redrawn at one figure size in every cell (RD01, RD02, 2026-11-19), fitted
     # into their cells by tools/art/repack_cells.py (Wind 0.92, Fire 0.96).
     "HERO-WND-LANCE-A": "HERO-WND-LANCE-A_v2_fit.png",

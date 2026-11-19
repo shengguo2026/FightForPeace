@@ -1862,7 +1862,7 @@ pnpm dev
 
 ## Redrawn runs for all heroes, and Wind's and Fire's lance (2026-11-19)
 
-What's new: **runs.** Six more run sheets are in the game (R10–R14, R16): River, Wind and Fire in their Stage 1 and 2 outfits, Mountain, River and Fire in the Stage 3 outfit. In each, the second half of the run brings the other leg and the other arm forward. Wind's Stage 3 run (R15) stays the old one until its redraw comes back without the smoky background. **Lance.** Wind's and Fire's lance-a sheets (RD01, RD02) are drawn at one figure size in every cell. The widest poses (the thrust and the throw) reached past their cells, so `tools/art/repack_cells.py` fits them back in: Wind's at 92 % (which also brings her to the idle size), Fire's at 96 %.
+What's new: **runs.** Seven more run sheets are in the game (R10–R16): River, Wind and Fire in their Stage 1 and 2 outfits, all four heroes in the Stage 3 outfit. In each, the second half of the run brings the other leg and the other arm forward. Wind's Stage 3 run uses the clean redo (v3), moved slightly so her flight poses stay inside their cells. **Lance.** Wind's and Fire's lance-a sheets (RD01, RD02) are drawn at one figure size in every cell. The widest poses (the thrust and the throw) reached past their cells, so `tools/art/repack_cells.py` fits them back in: Wind's at 92 % (which also brings her to the idle size), Fire's at 96 %.
 
 ### Get and start the build
 
@@ -1890,6 +1890,6 @@ pnpm dev
 ### Test steps
 
 1. **Runs, Stage 1 and 2 outfit:** run (double-tap and hold **D**) as River, Wind and Fire. The legs and arms alternate, and the size stays the same as walking and standing.
-2. **Runs, Stage 3 outfit:** in a Stage 3 room (Lab, F1, Arena list), run as Mountain, River and Fire: the same alternation. Wind still uses her old Stage 3 run.
+2. **Runs, Stage 3 outfit:** in a Stage 3 room (Lab, F1, Arena list), run as all four heroes: the same alternation.
 3. **Wind's lance:** in Stage 2, pick up the Service Lance as Wind and use its moves (pickup, sweep, thrust, block, pull, throw). Wind stays the size of her idle pose in every move, and no stray foot or lance end shows next to her.
 4. **Fire's lance:** the same with Fire.
