@@ -10,9 +10,13 @@ in the neighbouring cell and cuts the pose. This script:
     so the poses keep one size, and the sheet can come down to the idle size at the same time;
   * moves a pose sideways only as far as needed to keep MARGIN pixels from the cell border.
 
+With `shift` instead of a factor, nothing is scaled: every pose moves sideways by the same
+amount, the least that keeps all of them inside their cells (run cycles whose flight poses
+reach back past the border; one shift for all cells keeps the motion between frames).
+
 Usage (from the repository root; needs numpy, pillow and opencv-python-headless):
 
-    python3 tools/art/repack_cells.py <in.png> <out.png> <factor>
+    python3 tools/art/repack_cells.py <in.png> <out.png> <factor | shift>
 """
 
 from __future__ import annotations
@@ -29,7 +33,9 @@ MARGIN = 6
 def main() -> None:
     if len(sys.argv) != 4:
         raise SystemExit(__doc__)
-    src, dst, factor = sys.argv[1], sys.argv[2], float(sys.argv[3])
+    src, dst = sys.argv[1], sys.argv[2]
+    shift = sys.argv[3] == "shift"
+    factor = 1.0 if shift else float(sys.argv[3])
     im = np.array(Image.open(src).convert("RGBA"))
     h, w = im.shape[:2]
     cw, ch = w // 3, h // 2
@@ -41,6 +47,18 @@ def main() -> None:
             continue  # specks
         owner[i] = int(cen[i][1] // ch) * 3 + int(cen[i][0] // cw)
     out = np.zeros_like(im)
+    dx = 0
+    if shift:
+        lo, hi = cw, -cw  # least room on the left, most overshoot on the right
+        for c in range(6):
+            ids = np.nonzero(owner == c)[0]
+            if len(ids) == 0:
+                continue
+            xs = np.nonzero(np.isin(lab, ids) & (solid > 0))[1] - (c % 3) * cw
+            lo, hi = min(lo, xs.min() - MARGIN), max(hi, xs.max() + 1 + MARGIN - cw)
+        dx = -lo if lo < 0 else -hi if hi > 0 else 0
+        if lo + dx < 0 or hi + dx > 0:
+            raise SystemExit("no single shift keeps every pose inside its cell")
     for c in range(6):
         ids = np.nonzero(owner == c)[0]
         if len(ids) == 0:
@@ -54,7 +72,7 @@ def main() -> None:
         ax, ay = ox + cw / 2, y1  # foot point: cell centre, lowest pixel
         pw, ph = max(1, round((x1 - x0) * factor)), max(1, round((y1 - y0) * factor))
         piece = cv2.resize(piece, (pw, ph), interpolation=cv2.INTER_AREA)
-        nx = round(ax + (x0 - ax) * factor)
+        nx = round(ax + (x0 - ax) * factor) + dx
         ny = round(ay - ph)
         nx = min(max(nx, ox + MARGIN), ox + cw - MARGIN - pw)
         if pw > cw - 2 * MARGIN:
@@ -64,7 +82,7 @@ def main() -> None:
         region[:] = (piece * a + region * (1 - a)).astype(np.uint8)
         region[:, :, 3] = np.maximum(region[:, :, 3], piece[:, :, 3])
     Image.fromarray(out).save(dst)
-    print(f"{dst}: factor {factor}")
+    print(f"{dst}: " + (f"shift {dx} px" if shift else f"factor {factor}"))
 
 
 if __name__ == "__main__":

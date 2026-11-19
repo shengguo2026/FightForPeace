@@ -50,12 +50,12 @@ APPROVED = {
     "HERO-RIV-WALK": "HERO-RIV-WALK_v4.png",
     # Run cycles with the legs and arms swapped in the second half (R9-R16, 2026-11-19).
     "HERO-MTN-RUN": "HERO-MTN-RUN_v2.png",
-    "HERO-RIV-RUN": "HERO-RIV-RUN_v2.png",
+    "HERO-RIV-RUN": "HERO-RIV-RUN_v2_fit.png",
     "HERO-WND-RUN": "HERO-WND-RUN_v2.png",
     "HERO-FIR-RUN": "HERO-FIR-RUN_v2.png",
     "HERO-MTN-S3-RUN": "HERO-MTN-S3-RUN_v2.png",
-    "HERO-RIV-S3-RUN": "HERO-RIV-S3-RUN_v2.png",
-    "HERO-FIR-S3-RUN": "HERO-FIR-S3-RUN_v2.png",
+    "HERO-RIV-S3-RUN": "HERO-RIV-S3-RUN_v2_fit.png",
+    "HERO-FIR-S3-RUN": "HERO-FIR-S3-RUN_v2_fit.png",
     # R15: v2 had a smoky half-transparent background; v3 is clean, moved 40 px right in every
     # cell so the flight poses stay inside their cells (_v3_fit).
     "HERO-WND-S3-RUN": "HERO-WND-S3-RUN_v3_fit.png",

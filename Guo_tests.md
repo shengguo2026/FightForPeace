@@ -1893,3 +1893,16 @@ pnpm dev
 2. **Runs, Stage 3 outfit:** in a Stage 3 room (Lab, F1, Arena list), run as all four heroes: the same alternation.
 3. **Wind's lance:** in Stage 2, pick up the Service Lance as Wind and use its moves (pickup, sweep, thrust, block, pull, throw). Wind stays the size of her idle pose in every move, and no stray foot or lance end shows next to her.
 4. **Fire's lance:** the same with Fire.
+
+## River's run without the stray foot, and the lance stance (2026-11-19)
+
+**What changed:** In River's run, River's Stage 3 run and Fire's Stage 3 run, the back foot of the flight poses reached into the next cell, so a small piece of the next pose showed in front of the hero. The poses are now shifted into their cells (`_v2_fit`). The lance stance: Wind and Fire already use the redrawn lance sheets (RD01/RD02) on this branch and stay at idle size. Mountain's and River's lance sheets draw the stance about 20 % smaller than idle; that needs the redraws RD03/RD04 (Pictures `picture_redraw_prompts.md`) and is not fixed yet.
+
+### Test steps
+
+Use the commands of the section above (this branch).
+
+1. **River's run:** run as River (double-tap and hold **D**), in the Stage 1/2 outfit and in a Stage 3 room. No piece of a foot or leg shows in front of or behind her.
+2. **Fire's Stage 3 run:** the same as Fire in a Stage 3 room.
+3. **Wind's and Fire's lance:** Lab, Stage 2 Systems Saboteur, pick up the lance as Wind and as Fire: holding it, they stay the size of their idle pose.
+4. **Mountain and River:** still smaller while holding the lance (known, waits for RD03/RD04).
