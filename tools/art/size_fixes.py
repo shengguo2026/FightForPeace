@@ -11,7 +11,7 @@ never compounds them.
 Not listed on purpose: walk and run sheets drawn in profile (the head reads small against
 the three-quarter idle head, but the standing height matches), and sheets whose cells
 differ from each other (one scale cannot fix them; they need a redraw, as Wind's and Fire's
-lance-a got on 2026-11-19).
+lance-a got on 2026-11-19 and Mountain's on 2026-11-22).
 """
 
 from __future__ import annotations
@@ -19,6 +19,8 @@ from __future__ import annotations
 SIZE_FIX: dict[str, float] = {
     # The lance-a redraw (RD02), fitted into its cells at 0.96 (repack_cells.py): was 0.92.
     "hero.fire.sheet.lance-a": 1.0,
+    # The lance redraw (RD03), fitted into its cells at 0.97 (repack_cells.py): was 0.9.
+    "hero.mountain.sheet.lance-a": 1.0,
     "hero.fire.pose.standing.forge-side-hook": 1.149,  # was 1.0, head 0.87 x idle
     "hero.fire.pose.standing.rising-brand": 1.136,  # was 1.0, head 0.88 x idle
     "hero.fire.pose.standing.spark-jab": 0.943,  # was 1.0, head 1.06 x idle

@@ -17198,49 +17198,49 @@
         "cols": 3,
         "rows": 2,
         "cell": 384,
-        "ground": 360,
+        "ground": 365,
         "cells": [
           {
-            "x0": 69,
-            "y0": 128,
-            "x1": 315,
-            "foot": 360
+            "x0": 37,
+            "y0": 67,
+            "x1": 316,
+            "foot": 361
+          },
+          {
+            "x0": 17,
+            "y0": 55,
+            "x1": 355,
+            "foot": 357
+          },
+          {
+            "x0": 5,
+            "y0": 64,
+            "x1": 371,
+            "foot": 357
+          },
+          {
+            "x0": 18,
+            "y0": 48,
+            "x1": 363,
+            "foot": 365
+          },
+          {
+            "x0": 23,
+            "y0": 74,
+            "x1": 367,
+            "foot": 366
           },
           {
             "x0": 27,
-            "y0": 120,
-            "x1": 357,
-            "foot": 360
-          },
-          {
-            "x0": 27,
-            "y0": 149,
-            "x1": 357,
-            "foot": 360
-          },
-          {
-            "x0": 27,
-            "y0": 84,
-            "x1": 357,
-            "foot": 360
-          },
-          {
-            "x0": 27,
-            "y0": 125,
-            "x1": 357,
-            "foot": 360
-          },
-          {
-            "x0": 27,
-            "y0": 36,
-            "x1": 357,
-            "foot": 360
+            "y0": 18,
+            "x1": 337,
+            "foot": 365
           }
         ],
-        "scale": 0.9
+        "scale": 1.0
       },
       "provenance": {
-        "source": "heroes/mountain/HERO-MTN-LANCE.png",
+        "source": "heroes/mountain/HERO-MTN-LANCE_v2_fit.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }

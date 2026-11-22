@@ -4,7 +4,7 @@
   "stateFormat": 19,
   "netProtocol": 2,
   "rulesHash": 1742751271,
-  "contentHash": 2174047722,
+  "contentHash": 3482376198,
   "cheatRegistryHash": 1593653293,
   "goldenReplays": {
     "academy-recipes": 2092680865,
@@ -306,7 +306,7 @@
     "hero.mountain.sheet.horse-special": "heroes/mountain/HERO-MTN-HORSE-SPECIAL.png",
     "hero.mountain.sheet.horse-stability": "heroes/mountain/HERO-MTN-HORSE-STABILITY.png",
     "hero.mountain.sheet.horse-ultimate": "heroes/mountain/HERO-MTN-HORSE-ULTIMATE.png",
-    "hero.mountain.sheet.lance-a": "heroes/mountain/HERO-MTN-LANCE.png",
+    "hero.mountain.sheet.lance-a": "heroes/mountain/HERO-MTN-LANCE_v2_fit.png",
     "hero.mountain.sheet.lance-walk": "heroes/mountain/HERO-MTN-LANCE-WALK.png",
     "hero.mountain.sheet.mount-attack": "heroes/mountain/HERO-MTN-MOUNT-ATTACK.png",
     "hero.mountain.sheet.mount-defense": "heroes/mountain/HERO-MTN-MOUNT-DEFENSE.png",
