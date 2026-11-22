@@ -62,6 +62,7 @@ export const M12_EN = {
   'net.taken': 'Chosen by the other player',
   'net.ready': 'Ready',
   'net.notReady': 'Not ready',
+  'net.loadingArt': 'Loading art…',
   'net.difficultyHost': 'The host chooses the difficulty.',
   'net.startHint': 'The stage starts on both computers when both players are ready.',
   'net.noCheats': "Wi-Fi games are played without Elder's Secrets, and keep no checkpoint.",
@@ -143,6 +144,7 @@ export const M12_ZH: Catalog = {
   'net.taken': '已被另一位玩家选择',
   'net.ready': '已准备',
   'net.notReady': '未准备',
+  'net.loadingArt': '正在加载美术…',
   'net.difficultyHost': '难度由房主选择。',
   'net.startHint': '两位玩家都准备好后，关卡会在两台电脑上同时开始。',
   'net.noCheats': '局域网游戏不使用长老秘诀，也不保存检查点。',
@@ -235,6 +237,7 @@ export const M12_DE: Catalog = {
   'net.taken': 'Vom anderen Spieler gewählt',
   'net.ready': 'Bereit',
   'net.notReady': 'Nicht bereit',
+  'net.loadingArt': 'Grafik wird geladen …',
   'net.difficultyHost': 'Der Gastgeber wählt den Schwierigkeitsgrad.',
   'net.startHint': 'Die Stage startet auf beiden Computern, sobald beide Spieler bereit sind.',
   'net.noCheats':

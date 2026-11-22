@@ -1943,3 +1943,28 @@ pnpm dev
 1. **Lance:** Lab, Stage 2 Systems Saboteur, pick up the lance and throw it (Interact while holding) with each hero: one lance only, leaving the hands.
 2. **Other weapons:** the same with the workstaff (Stage 1) and the axe or hammer (Stage 3).
 3. **Dropping:** press Down with Interact while holding a weapon: it falls at the feet, one weapon only.
+
+## The game loads only the art it needs (2026-11-22)
+
+**What changed:** the game used to load all of its art (about 730 sprite sheets) before anything could start, so every mode waited about 19 s and each new picture made it slower. Now it loads the props, effects and villagers at start, and each hero, outfit and enemy the first time it appears; an arena's enemies load as soon as the arena starts. If someone appears before their art has arrived, the game waits a moment instead of showing a grey box. Measured here: the Perimeter Pursuit starts in about 9 s (was 19 s), a Stage 1 story fight in about 6 s (was 20 s).
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-uc3buf
+git checkout claude/project-thread-uc3buf
+git reset --hard origin/claude/project-thread-uc3buf
+pnpm install
+pnpm dev
+```
+
+### Test steps
+
+1. **Start time:** open the game and start any stage: it is playable noticeably sooner than before.
+2. **No grey boxes:** play Stage 1 to the first fight: every hero and enemy appears with its art, never as a grey box. A short pause the first time a new enemy type walks in is expected.
+3. **Hero switch:** in the Lab, switch through all four heroes and their Stage 3 outfits: each shows its art (a brief pause the first time is fine).
+4. **Later waves and bosses:** play a stage to its boss: later waves and the boss appear with their art.
+5. **Pursuit:** open the Perimeter Pursuit: the bike and rider are drawn and moving after a few seconds.
+6. **Player 2:** press Num 4 to join Player 2: a short pause, then they appear with their art and can move.
+7. **Online (if you can run two games):** on the Wi-Fi screen, Host and Connect show "Loading art…" for several seconds, then become usable. The match then plays in step, with every fighter drawn.

@@ -49,6 +49,14 @@ export function startGame(): void {
   // M8 Fixed Simulation with Independent Adaptive Presentation: only drawing adapts.
   const quality = new QualityGovernor();
 
+  const stage = new StageScene({
+    getSnapshot: () => session.snapshot(),
+    showCollision: () => lab.showCollision.value,
+    showLabels: () => lab.visible.value,
+    quality: () => quality.level,
+    // The simulation starts once the core art has loaded; heroes and enemies load as drawn.
+    onReady: () => requestAnimationFrame(tick),
+  });
   new Phaser.Game({
     // M14: Canvas 2D where the browser has no WebGL (capability gates, spec §2).
     type: capabilities.renderer === 'canvas' ? Phaser.CANVAS : Phaser.AUTO,
@@ -60,14 +68,7 @@ export function startGame(): void {
     // Keyboard and gamepad input are read by @ffp/platform, not by Phaser.
     input: { keyboard: false, gamepad: false },
     banner: false,
-    scene: new StageScene({
-      getSnapshot: () => session.snapshot(),
-      showCollision: () => lab.showCollision.value,
-      showLabels: () => lab.visible.value,
-      quality: () => quality.level,
-      // The simulation starts once the art has loaded, so decoding sheets never stalls play.
-      onReady: () => requestAnimationFrame(tick),
-    }),
+    scene: stage,
   });
 
   const actions: LabActions = {
@@ -338,9 +339,14 @@ export function startGame(): void {
     session.devices.pollPads(pads);
     // Slow motion is render-side only: the simulation still steps 1/60 s at a time.
     const before = performance.now();
-    const report = session.advance(lab.slowMotion.value ? elapsed / 4 : elapsed);
+    // A fighter's sprite sheets are still loading (artLoader.ts): hold the simulation for
+    // those frames so nobody acts as a greybox or before it can be seen. Not online: the
+    // other computer keeps time, so holding one side would only cost resyncs.
+    const artHold = stage.artPending && !shell.net.active;
+    const step = artHold ? 0 : lab.slowMotion.value ? elapsed / 4 : elapsed;
+    const report = session.advance(step);
     // M14 performance probe: only while the simulation runs (not in menus or paused).
-    if (!report.paused && !session.held && !lab.slowMotion.value)
+    if (!report.paused && !session.held && !artHold && !lab.slowMotion.value)
       perf.frame(
         elapsed,
         report.inputs.length,

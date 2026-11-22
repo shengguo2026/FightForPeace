@@ -4,6 +4,7 @@ import { campaignList } from '@ffp/platform';
 import { difficultyName, heroName, locale, stageName, t, type TextId } from '../../text/i18n';
 import { PLAYER_COLORS, PromptText } from '../../ui/InputPrompt';
 import { DEFAULT_ROOM_PORT } from '../../net/netplay';
+import { onlineArt } from '../../scenes/onlineArt';
 import { HERO_ROSTER, type Shell } from '../shell';
 import { useNav } from '../hooks';
 import { ART, Button, Choice, Panel, Screen } from '../ui';
@@ -44,6 +45,11 @@ export function WifiScreen({ shell }: { shell: Shell }) {
   const [address, setAddress] = useState(() => localStorage.getItem('ffp.wifi.address') ?? '');
   const [port, setPort] = useState(String(DEFAULT_ROOM_PORT));
   const [code, setCode] = useState('');
+  // Online play: every sheet loads before this computer hosts or joins (onlineArt.ts).
+  useLayoutEffect(() => {
+    onlineArt.wanted.value = true;
+  }, []);
+  const artIn = onlineArt.ready.value;
   const back = () => {
     if (status !== 'idle') net.leave();
     else if (joining) setJoining(false);
@@ -153,8 +159,14 @@ export function WifiScreen({ shell }: { shell: Shell }) {
             <p class="ffp-hint">{t('wifi.sameNetwork')}</p>
             <ErrorLine shell={shell} />
             <Button
-              label={status === 'joining' ? t('wifi.joining') : t('wifi.connect')}
-              disabled={status === 'joining' || !address.trim() || !code.trim()}
+              label={
+                status === 'joining'
+                  ? t('wifi.joining')
+                  : artIn
+                    ? t('wifi.connect')
+                    : t('net.loadingArt')
+              }
+              disabled={status === 'joining' || !artIn || !address.trim() || !code.trim()}
               onPress={join}
               testId="wifi-connect"
             />
@@ -164,8 +176,9 @@ export function WifiScreen({ shell }: { shell: Shell }) {
           <>
             <ErrorLine shell={shell} />
             <Button
-              label={t('wifi.host')}
+              label={artIn ? t('wifi.host') : t('net.loadingArt')}
               detail={t('wifi.hostDetail')}
+              disabled={!artIn}
               onPress={() => void net.host()}
               autofocus
               testId="wifi-host"
