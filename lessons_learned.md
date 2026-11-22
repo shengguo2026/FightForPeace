@@ -373,6 +373,7 @@ M27 put every Stage 3 weapon, bandit role, Garran Voss, the quarry scenery and t
 - **Cause:** the game loads every approved sprite sheet when it starts (about 730 images, 680 megapixels, 2.7 GB as RGBA). A CPU profile of setup to village showed 3.5 s in `texImage2D` alone: the CI runners draw WebGL in software, so the texture uploads hold the main thread while the shell tries to change screens. At a 4x CPU slowdown the village appeared 25 s after the click. Each art import made it a little worse, which is why the failure crept in.
 - **Fix:** the end-to-end tests wait up to 20 s for an expectation on CI (`expect.timeout` in playwright.config.ts).
 - **Rule:** the art budget is a running cost: loading only the sheets a stage and its picked heroes need (instead of all of them at start) is the real fix and is tracked as a follow-up.
+- **Again (2026-11-22):** after the lance redraws, the pursuit test's wait for the simulation to start (20 s) ran out on main: the simulation starts only once every sheet has loaded, which takes about 19 s locally at full speed. That wait is now 90 s.
 
 
 
