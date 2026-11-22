@@ -45,10 +45,11 @@ export function WifiScreen({ shell }: { shell: Shell }) {
   const [address, setAddress] = useState(() => localStorage.getItem('ffp.wifi.address') ?? '');
   const [port, setPort] = useState(String(DEFAULT_ROOM_PORT));
   const [code, setCode] = useState('');
-  // Online play: every sheet loads while the players meet (onlineArt.ts).
+  // Online play: every sheet loads before this computer hosts or joins (onlineArt.ts).
   useLayoutEffect(() => {
     onlineArt.wanted.value = true;
   }, []);
+  const artIn = onlineArt.ready.value;
   const back = () => {
     if (status !== 'idle') net.leave();
     else if (joining) setJoining(false);
@@ -158,8 +159,14 @@ export function WifiScreen({ shell }: { shell: Shell }) {
             <p class="ffp-hint">{t('wifi.sameNetwork')}</p>
             <ErrorLine shell={shell} />
             <Button
-              label={status === 'joining' ? t('wifi.joining') : t('wifi.connect')}
-              disabled={status === 'joining' || !address.trim() || !code.trim()}
+              label={
+                status === 'joining'
+                  ? t('wifi.joining')
+                  : artIn
+                    ? t('wifi.connect')
+                    : t('net.loadingArt')
+              }
+              disabled={status === 'joining' || !artIn || !address.trim() || !code.trim()}
               onPress={join}
               testId="wifi-connect"
             />
@@ -169,8 +176,9 @@ export function WifiScreen({ shell }: { shell: Shell }) {
           <>
             <ErrorLine shell={shell} />
             <Button
-              label={t('wifi.host')}
+              label={artIn ? t('wifi.host') : t('net.loadingArt')}
               detail={t('wifi.hostDetail')}
+              disabled={!artIn}
               onPress={() => void net.host()}
               autofocus
               testId="wifi-host"
@@ -250,15 +258,7 @@ export function NetLobbyScreen({ shell }: { shell: Shell }) {
             )}
             {mine ? (
               <Button
-                label={
-                  p.ready
-                    ? `✓ ${t('net.ready')}`
-                    : onlineArt.ready.value
-                      ? t('net.notReady')
-                      : t('net.loadingArt')
-                }
-                // Online, every sheet loads in the lobby first (artLoader.ts onlineArt).
-                disabled={!p.ready && !onlineArt.ready.value}
+                label={p.ready ? `✓ ${t('net.ready')}` : t('net.notReady')}
                 onPress={() => net.setReady(!p.ready)}
                 testId="net-ready"
               />
