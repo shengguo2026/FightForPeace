@@ -1935,3 +1935,11 @@ pnpm dev
 1. **Run start:** as Mountain, double-tap and hold **D**: he keeps one size from the dash into the run.
 2. **Stage 3 outfit:** the same in a Stage 3 room.
 3. **Dash alone:** double-tap **D** without holding: the dash is the size of his walk.
+
+### A thrown weapon is no longer drawn twice (2026-11-22)
+
+**What changed:** a weapon throw lets go of the weapon on its first active frame, and from then on the weapon flies as its own picture. The hero's throw pose still drew the weapon in hand until the throw ended, so two weapons showed. Now the throw pose shows only the wind-up; from the release on, the hero's hands are empty. A new test checks this for every hero with the lance, workstaff, sidearm and axe.
+
+1. **Lance:** Lab, Stage 2 Systems Saboteur, pick up the lance and throw it (Interact while holding) with each hero: one lance only, leaving the hands.
+2. **Other weapons:** the same with the workstaff (Stage 1) and the axe or hammer (Stage 3).
+3. **Dropping:** press Down with Interact while holding a weapon: it falls at the feet, one weapon only.
