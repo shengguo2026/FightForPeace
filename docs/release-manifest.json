@@ -4,7 +4,7 @@
   "stateFormat": 19,
   "netProtocol": 2,
   "rulesHash": 1742751271,
-  "contentHash": 3482376198,
+  "contentHash": 1956083896,
   "cheatRegistryHash": 1593653293,
   "goldenReplays": {
     "academy-recipes": 2092680865,
@@ -367,7 +367,7 @@
     "hero.river.sheet.horse-special": "heroes/river/HERO-RIV-HORSE-SPECIAL.png",
     "hero.river.sheet.horse-stability": "heroes/river/HERO-RIV-HORSE-STABILITY.png",
     "hero.river.sheet.horse-ultimate": "heroes/river/HERO-RIV-HORSE-ULTIMATE.png",
-    "hero.river.sheet.lance-a": "heroes/river/HERO-RIV-LANCE.png",
+    "hero.river.sheet.lance-a": "heroes/river/HERO-RIV-LANCE_v2.png",
     "hero.river.sheet.lance-walk": "heroes/river/HERO-RIV-LANCE-WALK.png",
     "hero.river.sheet.mount-attack": "heroes/river/HERO-RIV-MOUNT-ATTACK.png",
     "hero.river.sheet.mount-defense": "heroes/river/HERO-RIV-MOUNT-DEFENSE.png",

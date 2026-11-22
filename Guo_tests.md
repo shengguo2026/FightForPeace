@@ -1907,9 +1907,9 @@ Use the commands of the section above (this branch).
 3. **Wind's and Fire's lance:** Lab, Stage 2 Systems Saboteur, pick up the lance as Wind and as Fire: holding it, they stay the size of their idle pose.
 4. **Mountain and River:** still smaller while holding the lance (known, waits for RD03/RD04).
 
-## Mountain's lance redraw (RD03, 2026-11-22)
+## Mountain's and River's lance redraws (RD03, RD04, 2026-11-22)
 
-**What changed:** Mountain's lance sheet is the redraw RD03: all six poses at one size, as tall as idle (the old sheet drew the stance about 20 % smaller). The thrust's back foot touched the next cell, so the sheet is fitted into its cells at 97 % (`HERO-MTN-LANCE_v2_fit.png`) and drawn at scale 1.0 (was 0.9). River's redraw (RD04) is still to come.
+**What changed:** Mountain's lance sheet is the redraw RD03: all six poses at one size, as tall as idle (the old sheet drew the stance about 20 % smaller). The thrust's back foot touched the next cell, so the sheet is fitted into its cells at 97 % (`HERO-MTN-LANCE_v2_fit.png`) and drawn at scale 1.0 (was 0.9). River's lance sheet is the redraw RD04, used as drawn (every pose inside its cell) at scale 0.96 (was 0.92).
 
 ### Get and start the build
 
@@ -1924,6 +1924,6 @@ pnpm dev
 
 ### Test steps
 
-1. **Holding the lance:** Lab, Stage 2 Systems Saboteur, pick up the lance as Mountain. Standing with it, he is the same size as without it.
-2. **Lance moves:** use the pickup, thrust, sweep, hook and throw. He keeps one size in every move, and no stray foot or lance end shows next to him.
+1. **Holding the lance:** Lab, Stage 2 Systems Saboteur, pick up the lance as Mountain, then as River. Standing with it, each is the same size as without it.
+2. **Lance moves:** use the pickup, thrust, sweep, hook and throw with both. Each keeps one size in every move, and no stray foot or lance end shows next to them.
 3. **Walking with the lance:** walk with it; the size stays the same as standing with it.

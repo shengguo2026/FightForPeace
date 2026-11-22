@@ -21474,49 +21474,49 @@
         "cols": 3,
         "rows": 2,
         "cell": 384,
-        "ground": 360,
+        "ground": 369,
         "cells": [
           {
-            "x0": 82,
-            "y0": 30,
-            "x1": 302,
-            "foot": 360
+            "x0": 65,
+            "y0": 12,
+            "x1": 304,
+            "foot": 372
           },
           {
-            "x0": 27,
-            "y0": 95,
+            "x0": 10,
+            "y0": 74,
             "x1": 357,
-            "foot": 360
+            "foot": 370
           },
           {
-            "x0": 27,
-            "y0": 146,
-            "x1": 357,
-            "foot": 360
+            "x0": 7,
+            "y0": 104,
+            "x1": 356,
+            "foot": 369
           },
           {
-            "x0": 27,
-            "y0": 76,
-            "x1": 357,
-            "foot": 360
+            "x0": 20,
+            "y0": 44,
+            "x1": 350,
+            "foot": 363
           },
           {
-            "x0": 27,
-            "y0": 111,
-            "x1": 357,
-            "foot": 360
+            "x0": 8,
+            "y0": 64,
+            "x1": 361,
+            "foot": 362
           },
           {
-            "x0": 27,
-            "y0": 84,
-            "x1": 357,
-            "foot": 360
+            "x0": 7,
+            "y0": 26,
+            "x1": 361,
+            "foot": 362
           }
         ],
-        "scale": 0.92
+        "scale": 0.96
       },
       "provenance": {
-        "source": "heroes/river/HERO-RIV-LANCE.png",
+        "source": "heroes/river/HERO-RIV-LANCE_v2.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }
