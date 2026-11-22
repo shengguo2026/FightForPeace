@@ -68,6 +68,7 @@ import { SharedView } from './sharedView';
 import { ObjectivesView } from './objectivesView';
 import { EffectsLayer } from './effects';
 import { ArtLoader } from './artLoader';
+import { onlineArt } from './onlineArt';
 import { PresentationTracker, Stage3SoundTracker } from '@ffp/platform';
 import { playEventSounds } from '../media/sounds';
 import { audio } from '../media/audio';
@@ -344,6 +345,10 @@ export class StageScene extends Phaser.Scene {
   override update(time: number): void {
     this.applyRenderScale(this.opts.quality?.() ?? 'high');
     this.art.beginFrame();
+    if (onlineArt.wanted.value && !onlineArt.ready.value) {
+      this.art.requestAll();
+      if (this.art.allReady) onlineArt.ready.value = true;
+    }
     const snap = this.opts.getSnapshot();
     this.requestRoster(snap.encounter?.arena ?? -1);
     const { previous, current, alpha } = snap;

@@ -4,6 +4,7 @@ import { campaignList } from '@ffp/platform';
 import { difficultyName, heroName, locale, stageName, t, type TextId } from '../../text/i18n';
 import { PLAYER_COLORS, PromptText } from '../../ui/InputPrompt';
 import { DEFAULT_ROOM_PORT } from '../../net/netplay';
+import { onlineArt } from '../../scenes/onlineArt';
 import { HERO_ROSTER, type Shell } from '../shell';
 import { useNav } from '../hooks';
 import { ART, Button, Choice, Panel, Screen } from '../ui';
@@ -44,6 +45,10 @@ export function WifiScreen({ shell }: { shell: Shell }) {
   const [address, setAddress] = useState(() => localStorage.getItem('ffp.wifi.address') ?? '');
   const [port, setPort] = useState(String(DEFAULT_ROOM_PORT));
   const [code, setCode] = useState('');
+  // Online play: every sheet loads while the players meet (onlineArt.ts).
+  useLayoutEffect(() => {
+    onlineArt.wanted.value = true;
+  }, []);
   const back = () => {
     if (status !== 'idle') net.leave();
     else if (joining) setJoining(false);
@@ -245,7 +250,15 @@ export function NetLobbyScreen({ shell }: { shell: Shell }) {
             )}
             {mine ? (
               <Button
-                label={p.ready ? `✓ ${t('net.ready')}` : t('net.notReady')}
+                label={
+                  p.ready
+                    ? `✓ ${t('net.ready')}`
+                    : onlineArt.ready.value
+                      ? t('net.notReady')
+                      : t('net.loadingArt')
+                }
+                // Online, every sheet loads in the lobby first (artLoader.ts onlineArt).
+                disabled={!p.ready && !onlineArt.ready.value}
                 onPress={() => net.setReady(!p.ready)}
                 testId="net-ready"
               />

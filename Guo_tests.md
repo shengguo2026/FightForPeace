@@ -1967,4 +1967,4 @@ pnpm dev
 4. **Later waves and bosses:** play a stage to its boss: later waves and the boss appear with their art.
 5. **Pursuit:** open the Perimeter Pursuit: the bike and rider are drawn and moving after a few seconds.
 6. **Player 2:** press Num 4 to join Player 2: a short pause, then they appear with their art and can move.
-7. **Online (if you can run two games):** in a network game the game does not pause for art, so a fighter may show as a grey box for a moment when first seen; play stays in step.
+7. **Online (if you can run two games):** in the Wi-Fi lobby the Ready button shows "Loading art…" for a few seconds, then becomes Ready. The match then plays in step, with every fighter drawn.

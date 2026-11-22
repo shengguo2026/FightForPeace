@@ -61,6 +61,17 @@ export class ArtLoader {
     return this.ready.has(family);
   }
 
+  /** Every family has finished loading. */
+  get allReady(): boolean {
+    for (const f of this.families.keys()) if (!this.ready.has(f)) return false;
+    return true;
+  }
+
+  /** Starts loading every family not loaded yet (online lobbies). */
+  requestAll(): void {
+    this.request(...this.families.keys());
+  }
+
   /**
    * Whether a sheet can be drawn now. A sheet that is not loaded yet asks for its family
    * (once) and marks the frame as waiting.

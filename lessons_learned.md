@@ -376,7 +376,7 @@ M27 put every Stage 3 weapon, bandit role, Garran Voss, the quarry scenery and t
 - **Again (2026-11-22):** after the lance redraws, the pursuit test's wait for the simulation to start (20 s) ran out on main: the simulation starts only once every sheet has loaded, which takes about 19 s locally at full speed. That wait is now 90 s.
 - **Real fix (2026-11-22):** sheets now load per family when first drawn (`apps/game/src/scenes/artLoader.ts`): props, effects and villagers at start; each hero, hero outfit and enemy art when it first appears; an arena's enemy roster as soon as the arena starts. While a fighter on screen still waits for its sheets, the game holds the simulation, so nobody acts as a greybox. The pursuit now starts in about 9 s instead of 19 s, and a story beat in about 6 s instead of 20 s.
 - **Rule now:** draw code asks `this.art.has(sheet)`, never `this.textures.exists(sheet)` directly, for hero and enemy sheets, so a sheet that is not loaded yet starts loading and holds the simulation instead of silently drawing a greybox.
-- **Online games do not hold:** in a network game the other computer keeps time, so holding one side only cost resyncs (the lockstep end-to-end test caught it). Online, a newly seen fighter may show as a greybox for a moment while its sheets load.
+- **Online games load everything first:** holding one computer's simulation cost resyncs, and so did a sheet decoded mid-match on CI (the main thread stalls, the other computer runs on). Online, the lobby loads every sheet and Ready stays disabled ("Loading art…") until they are in (`onlineArt.ts`); matches do not hold for art.
 
 
 
