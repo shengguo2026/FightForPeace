@@ -1927,3 +1927,11 @@ pnpm dev
 1. **Holding the lance:** Lab, Stage 2 Systems Saboteur, pick up the lance as Mountain, then as River. Standing with it, each is the same size as without it.
 2. **Lance moves:** use the pickup, thrust, sweep, hook and throw with both. Each keeps one size in every move, and no stray foot or lance end shows next to them.
 3. **Walking with the lance:** walk with it; the size stays the same as standing with it.
+
+### Mountain's dash before a run (2026-11-22)
+
+**What changed:** a double tap first plays the short dash, then the run. Mountain's dash sheet was drawn about 10 % smaller than his run, so he shrank for a moment before running. The dash is now drawn at his run size (scale 0.91, Stage 3 outfit 0.94).
+
+1. **Run start:** as Mountain, double-tap and hold **D**: he keeps one size from the dash into the run.
+2. **Stage 3 outfit:** the same in a Stage 3 room.
+3. **Dash alone:** double-tap **D** without holding: the dash is the size of his walk.

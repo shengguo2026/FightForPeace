@@ -34,6 +34,9 @@ SIZE_FIX: dict[str, float] = {
     "hero.fire.sheet.exact-counter": 0.926,  # was 1.0, head 1.08 x idle
     "hero.fire.sheet.guard": 0.926,  # was 1.0, head 1.08 x idle
     "hero.fire.sheet.hammer": 1.105,  # was 1.0, head 0.91 x idle
+    # Mountain shrank for the dash before a run (Guo, 2026-11-22): set to the run's head size.
+    "hero.mountain.sheet.dash": 0.91,  # was 0.82, head 0.78 x idle (run 0.85)
+    "hero.mountain.s3.sheet.dash": 0.94,  # was 0.792, head 0.76 x idle (run 0.92)
     "hero.mountain.s3.sheet.breaker-pickup": 0.807,  # was 0.864, head 1.07 x idle
     "hero.mountain.s3.sheet.grab-throw": 0.854,  # was 0.905, head 1.06 x idle
     "hero.river.s3.sheet.guard": 0.857,  # was 0.926, head 1.08 x idle

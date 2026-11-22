@@ -15375,7 +15375,7 @@
             "foot": 356
           }
         ],
-        "scale": 0.792
+        "scale": 0.94
       },
       "provenance": {
         "source": "heroes/mountain/HERO-MTN-S3-DASH.png",
@@ -16179,7 +16179,7 @@
             "foot": 354
           }
         ],
-        "scale": 0.82
+        "scale": 0.91
       }
     },
     "hero.mountain.sheet.exact-counter": {
