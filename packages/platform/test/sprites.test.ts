@@ -402,3 +402,24 @@ test('the Sluice Commander leaps through his Flying Knee instead of holding a cr
   }
   expect(cells).toEqual([0, 1, 2, 3, 4, 5]);
 });
+
+test('a weapon throw never draws the weapon in hand once it has let go (Guo, 2026-11-22)', () => {
+  for (const h of HEROES) {
+    for (const weapon of ['service-lance', 'workstaff', 'six-round-sidearm', 'wood-axe']) {
+      const w = createWorld(1, { heroes: [h.id, 'river'] });
+      const f = heroOf(w, 0)!;
+      claim(w, f, spawnItem(w, weaponIndex(weapon), f.x, f.z));
+      const kit = kitOf(f)!;
+      const i = kit.actions.findIndex((a) => a.category === 'weaponThrow');
+      expect(i, `${h.id} ${weapon} throw`).toBeGreaterThanOrEqual(0);
+      const a = kit.actions[i]!;
+      startAction(f, i);
+      for (let n = 0; n < totalFrames(a); n += 1) {
+        f.stateFrame = n;
+        const s = pick.fighter(f, 0)!;
+        // The weapon leaves the hand on the first active frame (sim items.ts).
+        if (n >= a.startup) expect(s.sheet, `${h.id} ${a.id} frame ${n}`).toMatch(/\.idle$/);
+      }
+    }
+  }
+});

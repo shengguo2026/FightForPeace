@@ -1906,3 +1906,40 @@ Use the commands of the section above (this branch).
 2. **Fire's Stage 3 run:** the same as Fire in a Stage 3 room.
 3. **Wind's and Fire's lance:** Lab, Stage 2 Systems Saboteur, pick up the lance as Wind and as Fire: holding it, they stay the size of their idle pose.
 4. **Mountain and River:** still smaller while holding the lance (known, waits for RD03/RD04).
+
+## Mountain's and River's lance redraws (RD03, RD04, 2026-11-22)
+
+**What changed:** Mountain's lance sheet is the redraw RD03: all six poses at one size, as tall as idle (the old sheet drew the stance about 20 % smaller). The thrust's back foot touched the next cell, so the sheet is fitted into its cells at 97 % (`HERO-MTN-LANCE_v2_fit.png`) and drawn at scale 1.0 (was 0.9). River's lance sheet is the redraw RD04, used as drawn (every pose inside its cell) at scale 0.96 (was 0.92).
+
+### Get and start the build
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-uc3buf
+git checkout claude/project-thread-uc3buf
+git reset --hard origin/claude/project-thread-uc3buf
+pnpm install
+pnpm dev
+```
+
+### Test steps
+
+1. **Holding the lance:** Lab, Stage 2 Systems Saboteur, pick up the lance as Mountain, then as River. Standing with it, each is the same size as without it.
+2. **Lance moves:** use the pickup, thrust, sweep, hook and throw with both. Each keeps one size in every move, and no stray foot or lance end shows next to them.
+3. **Walking with the lance:** walk with it; the size stays the same as standing with it.
+
+### Mountain's dash before a run (2026-11-22)
+
+**What changed:** a double tap first plays the short dash, then the run. Mountain's dash sheet was drawn about 10 % smaller than his run, so he shrank for a moment before running. The dash is now drawn at his run size (scale 0.91, Stage 3 outfit 0.94).
+
+1. **Run start:** as Mountain, double-tap and hold **D**: he keeps one size from the dash into the run.
+2. **Stage 3 outfit:** the same in a Stage 3 room.
+3. **Dash alone:** double-tap **D** without holding: the dash is the size of his walk.
+
+### A thrown weapon is no longer drawn twice (2026-11-22)
+
+**What changed:** a weapon throw lets go of the weapon on its first active frame, and from then on the weapon flies as its own picture. The hero's throw pose still drew the weapon in hand until the throw ended, so two weapons showed. Now the throw pose shows only the wind-up; from the release on, the hero's hands are empty. A new test checks this for every hero with the lance, workstaff, sidearm and axe.
+
+1. **Lance:** Lab, Stage 2 Systems Saboteur, pick up the lance and throw it (Interact while holding) with each hero: one lance only, leaving the hands.
+2. **Other weapons:** the same with the workstaff (Stage 1) and the axe or hammer (Stage 3).
+3. **Dropping:** press Down with Interact while holding a weapon: it falls at the feet, one weapon only.

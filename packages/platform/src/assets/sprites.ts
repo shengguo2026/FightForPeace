@@ -628,6 +628,12 @@ export class SpritePicker {
         const p = phase(f, a);
         const wp = WEAPON_POSES[a.id];
         // A hero without Stage 1 weapon sheets (the twins) swings with its neutral starter.
+        // A weapon throw lets go on its first active frame (sim items.ts release): from then
+        // on the weapon flies as its own item, so the hero's pose must not still draw it in
+        // hand (two weapons on screen, Guo 2026-11-22). The throw pose shows the wind-up;
+        // the release and recovery show the hero with empty hands.
+        if (wp && a.pose.startsWith('weapon.') && p > 0 && a.category === 'weaponThrow')
+          return s('idle', 0);
         if (wp && a.pose.startsWith('weapon.'))
           return (
             s(wp.sheet, wp.cells[p]) ??

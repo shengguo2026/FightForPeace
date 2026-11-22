@@ -11,7 +11,7 @@ never compounds them.
 Not listed on purpose: walk and run sheets drawn in profile (the head reads small against
 the three-quarter idle head, but the standing height matches), and sheets whose cells
 differ from each other (one scale cannot fix them; they need a redraw, as Wind's and Fire's
-lance-a got on 2026-11-19).
+lance-a got on 2026-11-19 and Mountain's and River's on 2026-11-22).
 """
 
 from __future__ import annotations
@@ -19,6 +19,10 @@ from __future__ import annotations
 SIZE_FIX: dict[str, float] = {
     # The lance-a redraw (RD02), fitted into its cells at 0.96 (repack_cells.py): was 0.92.
     "hero.fire.sheet.lance-a": 1.0,
+    # The lance redraw (RD03), fitted into its cells at 0.97 (repack_cells.py): was 0.9.
+    "hero.mountain.sheet.lance-a": 1.0,
+    # The lance redraw (RD04): head 0.92 to 0.94 x idle at 0.92; 0.96 checked by eye.
+    "hero.river.sheet.lance-a": 0.96,
     "hero.fire.pose.standing.forge-side-hook": 1.149,  # was 1.0, head 0.87 x idle
     "hero.fire.pose.standing.rising-brand": 1.136,  # was 1.0, head 0.88 x idle
     "hero.fire.pose.standing.spark-jab": 0.943,  # was 1.0, head 1.06 x idle
@@ -30,6 +34,9 @@ SIZE_FIX: dict[str, float] = {
     "hero.fire.sheet.exact-counter": 0.926,  # was 1.0, head 1.08 x idle
     "hero.fire.sheet.guard": 0.926,  # was 1.0, head 1.08 x idle
     "hero.fire.sheet.hammer": 1.105,  # was 1.0, head 0.91 x idle
+    # Mountain shrank for the dash before a run (Guo, 2026-11-22): set to the run's head size.
+    "hero.mountain.sheet.dash": 0.91,  # was 0.82, head 0.78 x idle (run 0.85)
+    "hero.mountain.s3.sheet.dash": 0.94,  # was 0.792, head 0.76 x idle (run 0.92)
     "hero.mountain.s3.sheet.breaker-pickup": 0.807,  # was 0.864, head 1.07 x idle
     "hero.mountain.s3.sheet.grab-throw": 0.854,  # was 0.905, head 1.06 x idle
     "hero.river.s3.sheet.guard": 0.857,  # was 0.926, head 1.08 x idle

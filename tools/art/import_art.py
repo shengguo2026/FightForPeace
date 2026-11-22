@@ -63,6 +63,8 @@ APPROVED = {
     # into their cells by tools/art/repack_cells.py (Wind 0.92, Fire 0.96).
     "HERO-WND-LANCE-A": "HERO-WND-LANCE-A_v2_fit.png",
     "HERO-FIR-LANCE-A": "HERO-FIR-LANCE-A_v2_fit.png",
+    "HERO-MTN-LANCE": "HERO-MTN-LANCE_v2_fit.png",
+    "HERO-RIV-LANCE": "HERO-RIV-LANCE_v2.png",
 }
 
 HEROES = {
