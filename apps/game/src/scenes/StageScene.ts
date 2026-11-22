@@ -67,6 +67,7 @@ import { GreenhouseView } from './greenhouseView';
 import { SharedView } from './sharedView';
 import { ObjectivesView } from './objectivesView';
 import { EffectsLayer } from './effects';
+import { ArtLoader } from './artLoader';
 import { PresentationTracker, Stage3SoundTracker } from '@ffp/platform';
 import { playEventSounds } from '../media/sounds';
 import { audio } from '../media/audio';
@@ -229,6 +230,10 @@ export class StageScene extends Phaser.Scene {
   private popups: Popup[] = [];
   private readonly assets = new AssetRegistry();
   private readonly picker = new SpritePicker(this.assets);
+  /** Sprite sheets load per hero, outfit and enemy when first drawn (artLoader.ts). */
+  private readonly art = new ArtLoader(this, this.assets);
+  /** The arena whose enemy roster was asked for ahead of its waves. */
+  private rosterArena = -1;
   /** Drawn above every body: hitboxes, projectiles, tethers. */
   private overlay!: Phaser.GameObjects.Graphics;
   private sprites = new Map<number, Phaser.GameObjects.Sprite>();
@@ -269,13 +274,36 @@ export class StageScene extends Phaser.Scene {
     super('stage');
   }
 
+  /** An arena's enemies load as soon as it starts, ahead of its later waves. */
+  private requestRoster(arena: number): void {
+    if (arena === this.rosterArena) return;
+    this.rosterArena = arena;
+    const def = ARENAS[arena];
+    if (!def) return;
+    // Variants share their base kit's art, so the base ids cover every difficulty.
+    const ids = new Set<string>(def.substitutions.map((s) => s.to));
+    for (const w of def.waves) for (const e of w.enemies) ids.add(e.kit);
+    const families = new Set<string>();
+    for (const id of ids) {
+      const kit = ENEMIES.find((k) => k.id === id);
+      const art = id === 'recruit' ? 'trainer' : (kit?.art ?? id);
+      families.add(`enemy.${art}`);
+    }
+    this.art.request(...families);
+  }
+
+  /**
+   * A fighter on screen still waits for its sprite sheets: the game holds the simulation
+   * until they arrive (app.ts), so nobody acts as a greybox.
+   */
+  get artPending(): boolean {
+    return this.art.pending;
+  }
+
   /** Approved sprite sheets from the asset manifest (M6: the first real art). */
   preload(): void {
-    for (const s of this.assets.sheets())
-      this.load.spritesheet(s.id, s.url, {
-        frameWidth: s.sheet.w ?? s.sheet.cell,
-        frameHeight: s.sheet.cell,
-      });
+    // Only props, effects and villagers at start; heroes and enemies load when first drawn.
+    this.art.preloadCore();
     this.arena.preload();
   }
 
@@ -315,7 +343,9 @@ export class StageScene extends Phaser.Scene {
 
   override update(time: number): void {
     this.applyRenderScale(this.opts.quality?.() ?? 'high');
+    this.art.beginFrame();
     const snap = this.opts.getSnapshot();
+    this.requestRoster(snap.encounter?.arena ?? -1);
     const { previous, current, alpha } = snap;
     const byId = new Map(previous.map((b) => [b.id, b]));
     const drawn = current
@@ -561,7 +591,7 @@ export class StageScene extends Phaser.Scene {
   /** Draws one mounted cell at a rider's road position; false when the sheet is missing. */
   private mountSprite(key: number, pick: MountPick, x: number, z: number, scale: number): boolean {
     const meta = this.assets.sheet(pick.sheet)?.sheet;
-    if (!meta || !this.textures.exists(pick.sheet)) return false;
+    if (!meta || !this.art.has(pick.sheet)) return false;
     const sp = this.sprite(this.mountSprites, key, pick.sheet);
     sp.setVisible(true);
     sp.setTexture(pick.sheet, pick.cell);
@@ -708,7 +738,7 @@ export class StageScene extends Phaser.Scene {
   private drawHeldProp(f: Fighter, p: Pos, frame: number): void {
     const hold = this.picker.heldProp(f);
     const body = this.sprites.get(f.id);
-    if (!hold || !body?.visible || !this.textures.exists(hold.sheet)) return;
+    if (!hold || !body?.visible || !this.art.has(hold.sheet)) return;
     const meta = this.assets.sheet(hold.sheet)?.sheet;
     if (!meta) return;
     this.heldKeep.add(f.id);
@@ -733,7 +763,7 @@ export class StageScene extends Phaser.Scene {
   private drawSprite(f: Fighter, p: Pos, frame: number): number | null {
     const pick = this.picker.fighter(f, frame, this.boss);
     const meta = pick ? this.assets.sheet(pick.sheet)?.sheet : undefined;
-    if (!pick || !meta || !this.textures.exists(pick.sheet)) {
+    if (!pick || !meta || !this.art.has(pick.sheet)) {
       this.sprites.get(f.id)?.setVisible(false);
       return null;
     }
@@ -807,7 +837,7 @@ export class StageScene extends Phaser.Scene {
       const g = this.gfx;
       g.fillStyle(0x000000, 0.3);
       g.fillEllipse(x, z, 110, 20);
-      if (!meta || !this.textures.exists(sheet)) {
+      if (!meta || !this.art.has(sheet)) {
         g.fillStyle(0xc9b8a0, 1);
         g.fillRect(x - 30, z - 250, 60, 250);
         return;
@@ -839,7 +869,7 @@ export class StageScene extends Phaser.Scene {
       const meta = this.assets.sheet(sheet)?.sheet;
       const c = meta?.cells[cell];
       keep.add(key);
-      if (!meta || !c || !this.textures.exists(sheet)) {
+      if (!meta || !c || !this.art.has(sheet)) {
         g.fillStyle(0x9a7b4f, 1);
         g.fillRect(x - 40, z - h, 80, h);
         return null;
@@ -894,7 +924,7 @@ export class StageScene extends Phaser.Scene {
       const cycle = s2 ? s2.walk : w.look === 1 ? 'npc.worker-b.run' : 'npc.worker-a.run';
       const walking =
         w.state === WorkerState.Leaving &&
-        this.textures.exists(cycle) &&
+        this.art.has(cycle) &&
         this.assets.sheet(cycle) !== undefined;
       const sheet = walking
         ? cycle
@@ -907,7 +937,7 @@ export class StageScene extends Phaser.Scene {
       keep.add(910 + i);
       g.fillStyle(0x000000, 0.3);
       g.fillEllipse(x, z, 110, 20);
-      if (!meta || !this.textures.exists(sheet)) {
+      if (!meta || !this.art.has(sheet)) {
         g.fillStyle(0xd8cfb8, 1);
         g.fillRect(x - 30, z - 250, 60, 250);
         return;
@@ -993,7 +1023,7 @@ export class StageScene extends Phaser.Scene {
       }
       const pick = this.picker.item(item, frame);
       const meta = pick ? this.assets.sheet(pick.sheet)?.sheet : undefined;
-      if (!pick || !meta || !this.textures.exists(pick.sheet)) {
+      if (!pick || !meta || !this.art.has(pick.sheet)) {
         g.fillStyle(0xc89b5a, 1);
         g.fillRect(x - 40, z - y - 10, 80, 10);
         continue;
@@ -1028,7 +1058,7 @@ export class StageScene extends Phaser.Scene {
           : m.tags.includes('cover')
             ? (['prop.s3-scaffold', 4] as const)
             : null;
-      if (!art || !this.textures.exists(art[0])) continue;
+      if (!art || !this.art.has(art[0])) continue;
       const meta = this.assets.sheet(art[0])?.sheet;
       const c = meta?.cells[art[1]];
       if (!meta || !c) continue;
@@ -1050,7 +1080,7 @@ export class StageScene extends Phaser.Scene {
     const place = (id: number, sheet: string, cell: number, x: number, z: number, h: number) => {
       const meta = this.assets.sheet(sheet)?.sheet;
       const c = meta?.cells[cell];
-      if (!meta || !c || !this.textures.exists(sheet)) return false;
+      if (!meta || !c || !this.art.has(sheet)) return false;
       const sp = this.sprite(this.propSprites, id, sheet);
       sp.setTexture(sheet, cell);
       sp.setOrigin(0.5, c.foot / meta.cell);

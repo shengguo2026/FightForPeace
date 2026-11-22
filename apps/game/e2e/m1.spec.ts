@@ -139,10 +139,10 @@ test('Num 4 joins Player 2 on the split keyboard', async ({ page }, testInfo) =>
   await page.waitForFunction(() => window.__ffp!.hero(1) !== undefined);
   await expect(page.getByTestId('hint-p2')).toContainText('Attack Num 4');
   const x0 = await page.evaluate(() => window.__ffp!.hero(1)!.x);
+  // Player 2's sheets load when they join, and the game waits for them (artLoader.ts).
   await page.keyboard.down('ArrowRight');
-  await page.waitForTimeout(300);
+  await page.waitForFunction((x) => window.__ffp!.hero(1)!.x > x, x0, { timeout: 30_000 });
   await page.keyboard.up('ArrowRight');
-  expect(await page.evaluate(() => window.__ffp!.hero(1)!.x)).toBeGreaterThan(x0);
   await page.keyboard.press('F3');
   await page.screenshot({ path: `test-results/m1-two-heroes-${testInfo.project.name}.png` });
 });
