@@ -87,7 +87,6 @@ describe('M27 art', () => {
         ['hiking-staff', 'hike'],
         ['wood-axe', 'axe'],
         ['quarry-hammer', 'hammer'],
-        ['quarry-hookstaff', 'hike'],
       ] as const) {
         const w = createWorld(1, { heroes: [h.id, 'river'] });
         const f = heroOf(w, 0)!;
@@ -240,9 +239,12 @@ describe('M27 art', () => {
         seen.add(c.cell);
       }
       expect([...seen].sort()).toEqual([0, 1, 2, 3]);
-      // Steering and braking keep their own ride cells.
+      // M28: changing lanes keeps the gallop going (the legs never stop); braking halts.
       expect(heroMountCell(h.id, { ...base, frame: 5, gallop: true, steer: 40 }, true)!.sheet).toBe(
-        `hero.${h.id}.sheet.horse-ride`,
+        `hero.${h.id}.sheet.horse-gallop`,
+      );
+      expect(heroMountCell(h.id, { ...base, frame: 5, gallop: true, braking: true }, true)).toEqual(
+        { sheet: `hero.${h.id}.sheet.horse-ride`, cell: 3 },
       );
     }
     const ride = raiderHorseCell({

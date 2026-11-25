@@ -10,6 +10,8 @@ import {
   runReplay,
   WEAPONS,
   weaponIndex,
+  claim,
+  spawnItem,
   ARENAS,
   DIFFICULTIES,
   budgetOf,
@@ -266,6 +268,11 @@ export function installDebugHook(
       h.x = x * 256;
       h.z = z * 256;
       h.facing = 1;
+    },
+    giveItem: (slot, weapon) => {
+      const h = heroOf(session.world, slot);
+      if (!h || h.item !== 0) return;
+      claim(session.world, h, spawnItem(session.world, weaponIndex(weapon), h.x, h.z));
     },
     armDummy: (weapon) => {
       const index = weapon === null ? -1 : weaponIndex(weapon);

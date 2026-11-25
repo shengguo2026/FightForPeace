@@ -72,21 +72,24 @@ export interface CinematicDef {
   shots: readonly ShotEntry[];
 }
 
-/** M28: the cross-fade of a still sequence lasts a second. */
-export const STILL_FADE_MS = 1000;
+/** M28: the cross-fade of a still sequence (short, so the two pictures are seldom seen together). */
+export const STILL_FADE_MS = 600;
 /** M28: how far a still sequence zooms in over its shot (1.06 = 6 %). */
 export const STILL_ZOOM = 1.06;
 
 /**
  * M28 still sequence at `time` ms into its shot: the zoom of both pictures (1 → STILL_ZOOM
  * over the shot) and the end picture's opacity (0 before the cross-fade, 1 after it; the
- * fade is centred in the shot). A shot without an end picture only zooms.
+ * fade starts with the second line, or is centred in a one-line shot). A shot without an end picture only zooms.
  */
 export function stillMix(shot: ShotDef, time: number): { zoom: number; end: number } {
   const t = Math.max(0, Math.min(shot.ms, time));
   const zoom = 1 + ((STILL_ZOOM - 1) * t) / Math.max(1, shot.ms);
   if (!shot.end) return { zoom, end: 0 };
-  const from = shot.ms / 2 - STILL_FADE_MS / 2;
+  // The fade starts with the shot's second line (the first line, held while it is spoken,
+  // always ends on the start picture alone) or, with one line, in the middle of the shot.
+  const second = shot.cues[1];
+  const from = second ? second.at : shot.ms / 2 - STILL_FADE_MS / 2;
   return { zoom, end: Math.max(0, Math.min(1, (t - from) / STILL_FADE_MS)) };
 }
 
@@ -136,6 +139,25 @@ export interface CinematicFrame {
 export interface ShownCue<L extends string = string> {
   cue: SubtitleCue;
   locale: L;
+}
+
+/** The longest a still picture waits for a line to finish (a stuck system voice). */
+export const NARRATION_WAIT_MS = 12_000;
+
+/**
+ * M28: how far a still sequence's clock may move this frame. A line still being spoken
+ * holds its subtitle and picture at the end of the cue until the voice finishes (at most
+ * NARRATION_WAIT_MS), so the next line or picture never cuts it off.
+ */
+export function narrationStep(
+  dt: number,
+  time: number,
+  cueUntil: number | null,
+  talking: boolean,
+  waited: number,
+): number {
+  if (cueUntil === null || !talking || waited >= NARRATION_WAIT_MS) return dt;
+  return Math.max(0, Math.min(dt, cueUntil - 1 - time));
 }
 
 export class CinematicPlayer<L extends string = string> {

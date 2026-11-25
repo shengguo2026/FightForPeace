@@ -203,6 +203,8 @@ export interface FfpDebugHook {
   scenery(): DebugScenery;
   /** Puts a player's hero at a stage position (pixels), facing right. */
   placeAt(slot: number, x: number, z: number): void;
+  /** Puts a weapon or provision into a hero's hands (nothing when the hands are full). */
+  giveItem(slot: number, weapon: string): void;
   /** Lab: Dummy 1 fights with this weapon (null = unarmed). */
   armDummy(weapon: string | null): void;
   dummyToPillar(): void;

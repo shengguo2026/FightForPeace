@@ -77,6 +77,9 @@ test('Stage 3: Silvermist, the briefing, the switchbacks, the ending and the res
   await page.screenshot({ path: 'test-results/m28-paths.png' });
   await page.getByTestId('ending-skip').click();
   await expect(page.getByTestId('results')).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByTestId('results')).toContainText('Stage 3 complete');
+  await expect(page.getByTestId('results')).not.toContainText('Stage 2');
+  await expect(page.getByTestId('results')).toContainText('Research record');
   expect(errors).toEqual([]);
 });
 
@@ -109,5 +112,49 @@ test('Stage 3 arenas draw their area art, captives and the research record', asy
     await page.waitForFunction((f) => window.__ffp!.frame() > f + 30, start, { timeout: 45_000 });
     await page.screenshot({ path: `test-results/m28-${arena}.png` });
   }
+  expect(errors).toEqual([]);
+});
+
+test('Mist over the Beds: the hold prompt names the key, holding it collects the record', async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('/?stage=3&beat=7&difficulty=easy');
+  await page.waitForFunction(() => window.__ffp?.run()?.beatId === 'mist-beds', null, {
+    timeout: 120_000,
+  });
+  // The simulation starts once the area art is in (it may take a while on a cold server).
+  const start = await page.evaluate(() => window.__ffp!.frame());
+  await page.waitForFunction((f) => window.__ffp!.frame() > f + 30, start, { timeout: 90_000 });
+  await page.evaluate(() => window.__ffp!.clearEnemies());
+  await page.waitForFunction(() => window.__ffp!.run()?.phase === 0, null, { timeout: 30_000 });
+  const prompt = page.getByTestId('stage-prompt-p1');
+  await expect(async () => {
+    await page.evaluate(() => window.__ffp!.placeAt(0, 2160, 820));
+    await expect(prompt).toContainText('Hold', { timeout: 2_000 });
+  }).toPass({ timeout: 30_000 });
+  await expect(prompt).toContainText('collect the record');
+  await expect(prompt.locator('kbd')).toHaveText('J');
+  await page.keyboard.down('KeyJ');
+  await expect(page.getByTestId('stage-progress-p1')).toBeVisible();
+  await page.waitForFunction(
+    () => (window.__ffp!.objectives() as { cases: { state: number }[] }).cases[0]!.state === 1,
+  );
+  await page.keyboard.up('KeyJ');
+  await page.screenshot({ path: 'test-results/m28-mist-collected.png' });
+  // Food is eaten the moment it is picked up (the broth lies at 1000, 920).
+  await page.evaluate(() => window.__ffp!.placeAt(0, 1000, 920));
+  await page.keyboard.press('KeyJ');
+  await page.waitForFunction(
+    () => (window.__ffp!.items().find((i) => i.weapon === 'vegetable-broth')?.state ?? 4) === 4,
+  );
+  expect(await page.evaluate(() => window.__ffp!.hero(0)!.weapon)).toBeNull();
+  // Walking on through the open exit leaves for the next beat.
+  await page.keyboard.down('KeyD');
+  await page.waitForFunction(() => window.__ffp!.run()?.beat === 7, null, {
+    timeout: 30_000,
+  });
+  await page.keyboard.up('KeyD');
   expect(errors).toEqual([]);
 });

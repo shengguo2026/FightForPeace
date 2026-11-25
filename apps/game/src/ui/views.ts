@@ -49,6 +49,7 @@ import {
   beatOf,
   clock,
   interactionFor,
+  objectiveHint,
   isDowned,
   stageResults,
   CORRIDORS,
@@ -786,6 +787,21 @@ export function refreshStage(session: GameSession, lab: LabState): void {
       });
       continue;
     }
+    // M28: a captive or the research record, named with the player's own Interact key.
+    const hold = world.objectives?.hold[slot];
+    if (h.state === MoveState.Channel && hold && hold.kind !== 0) {
+      prompts.push({
+        slot,
+        text: t(`m28.hold.${hold.kind}` as TextId),
+        progress: hold.progress / Math.max(1, hold.need),
+      });
+      continue;
+    }
+    const goal = objectiveHint(world, h);
+    if (goal !== 0) {
+      prompts.push({ slot, text: t(`m28.hold.${goal}` as TextId), progress: -1 });
+      continue;
+    }
     const kind = interactionFor(world, h);
     if (kind !== ChannelKind.None) prompts.push({ slot, text: holdText(kind), progress: -1 });
   }
@@ -824,14 +840,23 @@ export function refreshStage(session: GameSession, lab: LabState): void {
   const st = r.stats;
   const stage2 = r.stage !== 'stage1';
   const view: ResultsView = {
-    title: stage2 ? t('m20.resultsTitle') : t('run.resultsTitle'),
+    title:
+      r.stage === 'stage3'
+        ? t('m28.resultsTitle')
+        : stage2
+          ? t('m20.resultsTitle')
+          : t('run.resultsTitle'),
     difficulty:
       difficultyName(DIFFICULTIES[r.difficulty]?.id ?? '') +
       (r.startBeat > 0 ? ` · ${t('run.practice', { n: r.startBeat + 1 })}` : ''),
     startBeat: r.startBeat,
     grades: r.grades.map((g) => ({
-      label: dt(`grade.${g.id}`, g.id),
-      value: g.value,
+      // M28: Stage 3 grades its own categories (the rescue counts captives, not workers).
+      label: r.stage === 'stage3' ? dt(`m28.grade.${g.id}`, g.id) : dt(`grade.${g.id}`, g.id),
+      value:
+        r.stage === 'stage3' && g.id === 'record'
+          ? dt(`objective.case.${g.value}`, String(g.value))
+          : g.value,
       grade: g.grade,
     })),
     overall: r.overall,
@@ -847,7 +872,11 @@ export function refreshStage(session: GameSession, lab: LabState): void {
       t('results.line3', { damage: st.damageTaken, food: st.food }),
       t('results.line4', { downs: st.downs, revives: st.revives }),
       ...stage2Lines(r),
-      stage2 ? t('m20.sponsorHook') : t('run.sponsorHook'),
+      r.stage === 'stage3'
+        ? t('m28.sponsorHook')
+        : stage2
+          ? t('m20.sponsorHook')
+          : t('run.sponsorHook'),
     ],
     sections: stage2Sections(r),
     epilogue: r.epilogue.map((k) => dt(`epilogue.${r.stage}.${k}`, k)),

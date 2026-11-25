@@ -752,11 +752,14 @@ export class StageScene extends Phaser.Scene {
     sp.setTexture(hold.sheet, hold.cell);
     sp.setOrigin(0.5, 0.5);
     sp.setScale(hold.scale * body.scaleX);
-    sp.setRotation(f.facing * hold.angle);
+    // M28: while walking the hands hang lower, so the prop follows them (its walk grip).
+    const walking = f.state === MoveState.Walk;
+    const grip = walking && hold.walk ? hold.walk : hold;
+    sp.setRotation(f.facing * (grip.angle ?? hold.angle));
     sp.setFlipX((f.facing === -1) !== (hold.mirror ?? false));
     // Small bob while walking so the carried prop moves with the stride.
-    const bob = f.state === MoveState.Walk ? Math.abs(((frame % 20) - 10) / 10) * 6 : 0;
-    sp.setPosition(p.x + f.facing * hold.dx * body.scaleX, p.z - p.y - hold.dy * body.scaleX + bob);
+    const bob = walking ? Math.abs(((frame % 20) - 10) / 10) * 6 : 0;
+    sp.setPosition(p.x + f.facing * grip.dx * body.scaleX, p.z - p.y - grip.dy * body.scaleX + bob);
     sp.setAlpha(body.alpha);
     sp.setDepth(body.depth + 0.0001);
   }

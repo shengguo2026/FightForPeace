@@ -313,9 +313,17 @@ export class AudioEngine {
       src.connect(bus);
       src.start();
       this.line = src;
+      src.onended = () => {
+        if (this.line === src) this.line = null;
+      };
       this.duck(0.55, buf.duration * 1000);
     });
     return true;
+  }
+
+  /** M28: a narration line from a voice file is still playing. */
+  voicePlaying(): boolean {
+    return this.line !== null;
   }
 
   stopVoice(): void {

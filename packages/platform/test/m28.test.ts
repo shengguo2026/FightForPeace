@@ -1,4 +1,12 @@
-import type { StageResults } from '@ffp/sim';
+import {
+  MoveState,
+  claim,
+  createWorld,
+  heroOf,
+  spawnItem,
+  weaponIndex,
+  type StageResults,
+} from '@ffp/sim';
 import {
   ACHIEVEMENTS,
   CAMPAIGN,
@@ -9,12 +17,14 @@ import {
   STAGE3_TITLE_LOOP,
   STORE,
   achievementMet,
+  NARRATION_WAIT_MS,
   buy,
   completeStage,
   contentIdOf,
   createProfile,
   dossierView,
   museumSection,
+  narrationStep,
   openDossierPage,
   resolveCinematic,
   stage3MediaIds,
@@ -27,6 +37,7 @@ import {
   type RunReport,
 } from '../src/index';
 import { AssetRegistry } from '../src/assets/registry';
+import { SpritePicker } from '../src/assets/sprites';
 
 const reg = new AssetRegistry();
 const STAGE3 = 'story.stage3.herb-mountain';
@@ -219,12 +230,20 @@ describe('M28 Store, Museum and media', () => {
     expect(coll.find((x) => x.def.asset === 'qinglan-rescue-bell')?.state).not.toBe('unlocked');
   });
 
-  test('the still sequences cross-fade in the middle of each shot', () => {
-    const shot = STAGE3_CHAPTERS[0]!.shots[0]!;
-    if ('motif' in shot) throw new Error('not a shot');
-    expect(stillMix(shot, 0)).toEqual({ zoom: 1, end: 0 });
-    expect(stillMix(shot, shot.ms / 2).end).toBeCloseTo(0.5);
-    expect(stillMix(shot, shot.ms)).toEqual({ zoom: 1.06, end: 1 });
+  test('the still sequences cross-fade briefly when the second line starts', () => {
+    for (const c of STAGE3_CHAPTERS)
+      for (const shot of c.shots) {
+        if ('motif' in shot || !shot.end) continue;
+        expect(stillMix(shot, 0)).toEqual({ zoom: 1, end: 0 });
+        expect(stillMix(shot, shot.ms)).toEqual({ zoom: 1.06, end: 1 });
+        // While the first line is on screen (and held while it is spoken), only the start
+        // picture shows; the fade begins with the second line.
+        const [a, b] = shot.cues;
+        if (!b) continue;
+        expect(stillMix(shot, a!.until - 1).end, shot.id).toBe(0);
+        expect(stillMix(shot, b.at + 300).end, shot.id).toBeCloseTo(0.5);
+        expect(stillMix(shot, b.until - 1).end, shot.id).toBe(1);
+      }
   });
 
   test('the ending shows the Secure or the Critical reunion insert', () => {
@@ -254,5 +273,54 @@ describe('M28 Store, Museum and media', () => {
         expect(!!reg.url(`bg.stage3.${area}.${layer}`), `${area}.${layer}`).toBe(true);
     for (const id of ['gao-wen', 'tao-min', 'an-bo', 'ren-xia', 'wei-shan'])
       expect(reg.sheet(`npc.s3-${id}.sheet`), id).toBeDefined();
+  });
+});
+
+describe('M28 playtest fixes', () => {
+  test('a still picture waits for its line to be spoken to the end', () => {
+    // Nobody speaking, or no line on screen: the clock runs.
+    expect(narrationStep(16, 3000, 4450, false, 0)).toBe(16);
+    expect(narrationStep(16, 3000, null, true, 0)).toBe(16);
+    // Before the cue ends the clock runs; at its end it holds while the voice speaks.
+    expect(narrationStep(16, 3000, 4450, true, 0)).toBe(16);
+    expect(narrationStep(16, 4440, 4450, true, 0)).toBe(9);
+    expect(narrationStep(16, 4449, 4450, true, 500)).toBe(0);
+    // A stuck system voice never holds the picture for good.
+    expect(narrationStep(16, 4449, 4450, true, NARRATION_WAIT_MS)).toBe(16);
+  });
+
+  test('carried Stage 3 food keeps the plain pose and is drawn in hand, not as the wheel', () => {
+    const pick = new SpritePicker(reg);
+    for (const food of ['trail-rice', 'vegetable-broth', 'seed-cake', 'camp-meal']) {
+      const w = createWorld(1, { heroes: ['fire', 'river'] });
+      const f = heroOf(w, 0)!;
+      const plain = (state: MoveState, frame: number) => {
+        f.state = state;
+        return pick.fighter(f, frame)!.sheet;
+      };
+      const idle = plain(MoveState.Idle, 0);
+      const walk = plain(MoveState.Walk, 10);
+      claim(w, f, spawnItem(w, weaponIndex(food), f.x, f.z));
+      expect(plain(MoveState.Idle, 0), food).toBe(idle);
+      expect(plain(MoveState.Walk, 10), food).toBe(walk);
+      expect(pick.fighter(f, 10)!.sheet, food).not.toMatch(/wheel/);
+      expect(pick.heldProp(f), food).toMatchObject({ sheet: 'prop.s3-food' });
+    }
+  });
+
+  test("Garran's hookstaff in a hero's hands is the hookstaff, not the hiking staff", () => {
+    const pick = new SpritePicker(reg);
+    const w = createWorld(1, { heroes: ['wind', 'river'] });
+    const f = heroOf(w, 0)!;
+    f.state = MoveState.Idle;
+    const idle = pick.fighter(f, 0)!.sheet;
+    f.state = MoveState.Walk;
+    const walk = pick.fighter(f, 10)!.sheet;
+    claim(w, f, spawnItem(w, weaponIndex('quarry-hookstaff'), f.x, f.z));
+    f.state = MoveState.Idle;
+    expect(pick.fighter(f, 0)!.sheet).toBe(idle);
+    f.state = MoveState.Walk;
+    expect(pick.fighter(f, 10)!.sheet).toBe(walk);
+    expect(pick.heldProp(f)).toMatchObject({ sheet: 'prop.s3-weapons', cell: 4 });
   });
 });

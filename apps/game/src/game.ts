@@ -128,6 +128,8 @@ export interface ObjectivesSnapshot {
   hints: readonly { x: number; z: number; hint: number }[];
   /** A Lab checkpoint copy is held (the Restore button works). */
   checkpoint: boolean;
+  /** M28: part of a stage run (the player HUD holds the upper left corner). */
+  inRun: boolean;
 }
 
 /**
@@ -483,10 +485,13 @@ export class GameSession {
       defs,
       grade: objectiveGrade(w),
       conditions: w.objectives.units.map((_, i) => unitCondition(w, i)),
+      // In a stage run the interface prompt names the player's own Interact key (M28);
+      // the floating hint over the hero is for the lab.
       hints: w.bodies
-        .filter((f) => f.team === 'hero' && !f.ko)
+        .filter((f) => f.team === 'hero' && !f.ko && !w.run)
         .map((f) => ({ x: f.x, z: f.z, hint: objectiveHint(w, f) })),
       checkpoint: this.objectiveCp?.world === w,
+      inRun: !!w.run,
     };
   }
 
