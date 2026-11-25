@@ -286,7 +286,7 @@ describe('M28 playtest fixes', () => {
     for (const food of ['trail-rice', 'vegetable-broth', 'seed-cake', 'camp-meal']) {
       const w = createWorld(1, { heroes: ['fire', 'river'] });
       const f = heroOf(w, 0)!;
-      const plain = (state: number, frame: number) => {
+      const plain = (state: MoveState, frame: number) => {
         f.state = state;
         return pick.fighter(f, frame)!.sheet;
       };
