@@ -230,12 +230,20 @@ describe('M28 Store, Museum and media', () => {
     expect(coll.find((x) => x.def.asset === 'qinglan-rescue-bell')?.state).not.toBe('unlocked');
   });
 
-  test('the still sequences cross-fade in the middle of each shot', () => {
-    const shot = STAGE3_CHAPTERS[0]!.shots[0]!;
-    if ('motif' in shot) throw new Error('not a shot');
-    expect(stillMix(shot, 0)).toEqual({ zoom: 1, end: 0 });
-    expect(stillMix(shot, shot.ms / 2).end).toBeCloseTo(0.5);
-    expect(stillMix(shot, shot.ms)).toEqual({ zoom: 1.06, end: 1 });
+  test('the still sequences cross-fade briefly when the second line starts', () => {
+    for (const c of STAGE3_CHAPTERS)
+      for (const shot of c.shots) {
+        if ('motif' in shot || !shot.end) continue;
+        expect(stillMix(shot, 0)).toEqual({ zoom: 1, end: 0 });
+        expect(stillMix(shot, shot.ms)).toEqual({ zoom: 1.06, end: 1 });
+        // While the first line is on screen (and held while it is spoken), only the start
+        // picture shows; the fade begins with the second line.
+        const [a, b] = shot.cues;
+        if (!b) continue;
+        expect(stillMix(shot, a!.until - 1).end, shot.id).toBe(0);
+        expect(stillMix(shot, b.at + 300).end, shot.id).toBeCloseTo(0.5);
+        expect(stillMix(shot, b.until - 1).end, shot.id).toBe(1);
+      }
   });
 
   test('the ending shows the Secure or the Critical reunion insert', () => {
@@ -298,5 +306,21 @@ describe('M28 playtest fixes', () => {
       expect(pick.fighter(f, 10)!.sheet, food).not.toMatch(/wheel/);
       expect(pick.heldProp(f), food).toMatchObject({ sheet: 'prop.s3-food' });
     }
+  });
+
+  test("Garran's hookstaff in a hero's hands is the hookstaff, not the hiking staff", () => {
+    const pick = new SpritePicker(reg);
+    const w = createWorld(1, { heroes: ['wind', 'river'] });
+    const f = heroOf(w, 0)!;
+    f.state = MoveState.Idle;
+    const idle = pick.fighter(f, 0)!.sheet;
+    f.state = MoveState.Walk;
+    const walk = pick.fighter(f, 10)!.sheet;
+    claim(w, f, spawnItem(w, weaponIndex('quarry-hookstaff'), f.x, f.z));
+    f.state = MoveState.Idle;
+    expect(pick.fighter(f, 0)!.sheet).toBe(idle);
+    f.state = MoveState.Walk;
+    expect(pick.fighter(f, 10)!.sheet).toBe(walk);
+    expect(pick.heldProp(f)).toMatchObject({ sheet: 'prop.s3-weapons', cell: 4 });
   });
 });

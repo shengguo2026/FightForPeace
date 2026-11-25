@@ -109,6 +109,25 @@ test('the play flow runs mode, lobby, stage, heroes, intro, briefing and readine
   await expect(page.getByTestId('pause-detail-howto')).toBeVisible();
   await page.screenshot({ path: 'test-results/m10-pause.png' });
   await page.getByTestId('pause-village').click();
+  // DIAG (temporary): what the page shows after asking to return to the village.
+  for (let i = 0; i < 3; i += 1) {
+    console.log(
+      'DIAG',
+      JSON.stringify(
+        await page.evaluate(() => ({
+          screen: window.__ffp!.shell.screen(),
+          paused: window.__ffp!.paused(),
+          ids: [...document.querySelectorAll('[data-testid]')]
+            .map((e) => (e as HTMLElement).dataset.testid)
+            .join(','),
+          active:
+            (document.activeElement as HTMLElement | null)?.dataset?.testid ??
+            document.activeElement?.tagName,
+        })),
+      ),
+    );
+    await page.waitForTimeout(500);
+  }
   await page.getByTestId('pause-confirm-yes').click();
   await expect(page.getByTestId('village')).toBeVisible();
 });

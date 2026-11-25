@@ -2063,3 +2063,12 @@ Open `http://localhost:5173/` (or the port Vite prints). Stop the server with `C
 4. **Research record:** in Mist over the Beds, defeat or make the bandits surrender, walk to the **research record case** and stand still beside it. A prompt at the bottom says **Hold J to collect the record**. Keep **J** pressed (about one second, a progress bar fills): the label above the case changes to *Collected*. Walk right through the exit: the next beat (*Two Voices in the Mist*) starts. A short tap of J does nothing; it has to be held.
 5. **Captives:** in *Two Voices in the Mist* (`?stage=3&beat=8`), the prompt beside Gao Wen and Tao Min says **Hold J to free them**, with a progress bar.
 6. **Languages:** in 简体中文 the prompt reads 长按 J 收集记录, in Deutsch *J halten, um die Aufzeichnung zu sichern*.
+
+### Round 2 (second playtest)
+
+7. **Horse ride:** on the switchback ride (`?stage=3&beat=1`), steer up and down while riding. The horse keeps galloping while it changes lanes; it no longer stands still in the turn picture.
+8. **Narration pictures:** with the system voice on, each scene shows only its start picture while the first line is spoken; the end picture fades in quickly when the second line starts. Two pictures should never stay blended on screen, also in *Paths through the Mist*.
+9. **Food:** carrying a food parcel shows a prompt at the bottom: **W + J** eats it (restores Health), **S + J** puts it down, **J** alone throws it. The parcel sits in the hero's hands, lower while walking. The revolver also stays in the hand while walking.
+10. **Story pictures during the fight:** the small picture at the top right (Tomas on the radio, Tomas in the cabin, Tomas leaving) is intended: it plays over the fight without stopping it.
+11. **Results:** after Garran, the results title reads *Stage 3 complete · Shadows over the Herb Mountain* (第三章完成 · 药山阴影), with the grade names *Rescue (captives freed)*, *Research record*, *Capture (Garran Voss)*, *Combat*, *Side paths*, and the record value translated.
+12. **Garran's hookstaff:** when Garran drops the Quarry Hookstaff and you pick it up, the hero holds the hookstaff (with its hook), not a plain hiking staff, while standing, walking and attacking.

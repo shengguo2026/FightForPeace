@@ -80,6 +80,15 @@ export const M28_EN = {
 
   // In play and results.
   'm28.rescued': 'Rescued: on the way to shelter',
+  'm28.eat': '{dir:Up}+{action:Interact} eat (heals) · {dir:Down}+{action:Interact} put down',
+  'm28.resultsTitle': 'Stage 3 complete · Shadows over the Herb Mountain',
+  'm28.sponsorHook':
+    'The damaged invoice names a paid route over the mountain: whoever paid for it is still out of sight.',
+  'm28.grade.rescue': 'Rescue (captives freed)',
+  'm28.grade.record': 'Research record',
+  'm28.grade.capture': 'Capture (Garran Voss)',
+  'm28.grade.combat': 'Combat',
+  'm28.grade.branches': 'Side paths',
   'm28.hold.1': 'Hold {action:Interact} to free them',
   'm28.hold.2': 'Hold {action:Interact} to collect the record',
   'm28.hold.3': 'Hold {action:Interact} to seal the record',
@@ -284,6 +293,14 @@ export const M28_ZH: Catalog = {
   'm28.brief.objective': '救出四名人质，保护研究记录，活捉加兰·沃斯。',
 
   'm28.rescued': '已救出：正前往避难处',
+  'm28.eat': '{dir:Up}+{action:Interact} 吃掉（恢复生命）·{dir:Down}+{action:Interact} 放下',
+  'm28.resultsTitle': '第三章完成 · 药山阴影',
+  'm28.sponsorHook': '残损的发票指向一条付钱买下的山路：出钱的人仍在暗处。',
+  'm28.grade.rescue': '救援（解救的被困者）',
+  'm28.grade.record': '研究记录',
+  'm28.grade.capture': '擒获（加兰·沃斯）',
+  'm28.grade.combat': '战斗',
+  'm28.grade.branches': '支线',
   'm28.hold.1': '长按 {action:Interact} 解救',
   'm28.hold.2': '长按 {action:Interact} 收集记录',
   'm28.hold.3': '长按 {action:Interact} 封存记录',
@@ -573,6 +590,15 @@ export const M28_DE: Catalog = {
     'Befreit die vier Gefangenen, schützt die Forschungsaufzeichnung und fangt Garran Voss lebend.',
 
   'm28.rescued': 'Befreit: auf dem Weg in Sicherheit',
+  'm28.eat': '{dir:Up}+{action:Interact} essen (heilt) · {dir:Down}+{action:Interact} ablegen',
+  'm28.resultsTitle': 'Kapitel 3 geschafft · Schatten über dem Kräuterberg',
+  'm28.sponsorHook':
+    'Die beschädigte Rechnung nennt eine bezahlte Route über den Berg: Wer sie bezahlt hat, bleibt im Verborgenen.',
+  'm28.grade.rescue': 'Rettung (befreite Gefangene)',
+  'm28.grade.record': 'Forschungsaufzeichnung',
+  'm28.grade.capture': 'Festnahme (Garran Voss)',
+  'm28.grade.combat': 'Kampf',
+  'm28.grade.branches': 'Nebenwege',
   'm28.hold.1': '{action:Interact} halten, um sie zu befreien',
   'm28.hold.2': '{action:Interact} halten, um die Aufzeichnung zu sichern',
   'm28.hold.3': '{action:Interact} halten, um die Aufzeichnung zu versiegeln',

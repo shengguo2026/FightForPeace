@@ -146,6 +146,13 @@ const WEAPON_POSES: Record<
   'bandit-throw': { sheet: 'revolver', cells: [5, 5, 5] },
 };
 
+/**
+ * M28: weapons no hero pose sheet shows. Garran's Quarry Hookstaff used the hiking-staff
+ * sheets, so a hero who took it seemed to hold a plain staff (Guo 2026-11-25); it is drawn
+ * in hand over the plain poses instead.
+ */
+const PROP_ONLY = new Set(['quarry-hookstaff']);
+
 /** M22: the ready stance a hero holds a Stage 2 weapon in (idle and walking). */
 const WEAPON_STANCE: Record<string, { sheet: string; cell: number; walk: string }> = {
   'service-lance': { sheet: 'lance-a', cell: 1, walk: 'lance-walk' },
@@ -160,21 +167,32 @@ const WEAPON_STANCE: Record<string, { sheet: string; cell: number; walk: string 
 };
 
 /** M22: how a Stage 2 weapon is carried when no pose art shows it (see heldProp). */
-/** M28: Stage 3 food carried in hand (prop.s3-food cells), drawn over the plain poses. */
-const S3_FOOD_HELD: Record<
-  string,
-  SpriteFrame & { scale: number; angle: number; dx: number; dy: number }
-> = {
-  'trail-rice': { sheet: 'prop.s3-food', cell: 0, scale: 0.32, angle: 0, dx: 48, dy: 165 },
-  'vegetable-broth': { sheet: 'prop.s3-food', cell: 1, scale: 0.32, angle: 0, dx: 48, dy: 165 },
-  'seed-cake': { sheet: 'prop.s3-food', cell: 2, scale: 0.32, angle: 0, dx: 48, dy: 165 },
-  'camp-meal': { sheet: 'prop.s3-food', cell: 3, scale: 0.32, angle: 0, dx: 48, dy: 165 },
+/**
+ * A prop drawn in hand over a pose that does not show it: offsets in body pixels from the
+ * feet (dx forward, dy up). `walk` replaces them while walking, where the hands hang low
+ * (Guo 2026-11-25: the food and the revolver floated beside the walking hero).
+ */
+export type HeldProp = SpriteFrame & {
+  scale: number;
+  angle: number;
+  dx: number;
+  dy: number;
+  mirror?: boolean;
+  walk?: { dx: number; dy: number; angle?: number };
 };
 
-const S2_HELD: Record<
-  string,
-  SpriteFrame & { scale: number; angle: number; dx: number; dy: number; mirror?: boolean }
-> = {
+/** M28: carried food is held close against the body, at the hands of each pose. */
+const FOOD_GRIP = { scale: 0.26, angle: 0, dx: 34, dy: 170, walk: { dx: 26, dy: 125 } } as const;
+
+/** M28: Stage 3 food carried in hand (prop.s3-food cells), drawn over the plain poses. */
+const S3_FOOD_HELD: Record<string, HeldProp> = {
+  'trail-rice': { sheet: 'prop.s3-food', cell: 0, ...FOOD_GRIP },
+  'vegetable-broth': { sheet: 'prop.s3-food', cell: 1, ...FOOD_GRIP },
+  'seed-cake': { sheet: 'prop.s3-food', cell: 2, ...FOOD_GRIP },
+  'camp-meal': { sheet: 'prop.s3-food', cell: 3, ...FOOD_GRIP },
+};
+
+const S2_HELD: Record<string, HeldProp> = {
   'service-lance': { sheet: 'prop.s2-lance', cell: 2, scale: 0.8, angle: 0.1, dx: 30, dy: 200 },
   'six-round-sidearm': {
     sheet: 'prop.s2-firearms',
@@ -184,6 +202,7 @@ const S2_HELD: Record<
     dx: 60,
     dy: 190,
     mirror: true,
+    walk: { dx: 42, dy: 135 },
   },
   'support-gun': {
     sheet: 'prop.s2-firearms',
@@ -215,6 +234,7 @@ const S2_HELD: Record<
     dx: 60,
     dy: 190,
     mirror: true,
+    walk: { dx: 42, dy: 135 },
   },
 };
 
@@ -629,17 +649,21 @@ export class SpritePicker {
       this.has(`${base}.sheet.${key}`) ? { sheet: `${base}.sheet.${key}`, cell } : null;
     const meta = (key: string) => this.has(`${base}.sheet.${key}`);
     const weapon = f.wkit >= 0 ? WEAPONS[f.wkit] : undefined;
-    const stance = weapon ? WEAPON_STANCE[weapon.id] : undefined;
-    const staff = weapon?.melee === true && weapon.id !== 'service-lance';
+    // M28: a weapon no pose sheet shows keeps the plain poses; heldProp draws it in hand.
+    const propOnly = weapon !== undefined && PROP_ONLY.has(weapon.id);
+    const stance = weapon && !propOnly ? WEAPON_STANCE[weapon.id] : undefined;
+    const staff = weapon?.melee === true && weapon.id !== 'service-lance' && !propOnly;
     // M28: carried food keeps the plain stance and walk (the parcel is drawn in hand by
     // heldProp); only the Stage 1 handwheel and other two-handed loads use the wheel carry.
-    const wheel = weapon !== undefined && !staff && !stance && weapon.class !== 'provision';
+    const wheel =
+      weapon !== undefined && !staff && !stance && !propOnly && weapon.class !== 'provision';
     switch (f.state) {
       case MoveState.Attack: {
         const a = f.action >= 0 ? kitOf(f)?.actions[f.action] : undefined;
         if (!a) return s('idle', 0);
         const p = phase(f, a);
-        const wp = WEAPON_POSES[a.id];
+        const wp = propOnly ? undefined : WEAPON_POSES[a.id];
+        if (propOnly && a.pose.startsWith('weapon.')) return this.starter(hero.actions[0]!, p);
         // A hero without Stage 1 weapon sheets (the twins) swings with its neutral starter.
         // A weapon throw lets go on its first active frame (sim items.ts release): from then
         // on the weapon flies as its own item, so the hero's pose must not still draw it in
@@ -968,11 +992,7 @@ export class SpritePicker {
    * facing side) and the hand point (px forward of and above the ground point). Null when
    * the hero's pose art already shows the weapon, or for any other weapon.
    */
-  heldProp(
-    f: Fighter,
-  ):
-    | (SpriteFrame & { scale: number; angle: number; dx: number; dy: number; mirror?: boolean })
-    | null {
+  heldProp(f: Fighter): HeldProp | null {
     const hero = HEROES[f.hero];
     const weapon = f.wkit >= 0 ? WEAPONS[f.wkit] : undefined;
     if (f.team !== 'hero' || !hero || !weapon) return null;
@@ -984,6 +1004,10 @@ export class SpritePicker {
     // M28: Stage 3 food is held in front of the chest on the plain poses.
     const food = S3_FOOD_HELD[weapon.id];
     if (food && this.has(food.sheet)) return food;
+    if (PROP_ONLY.has(weapon.id)) {
+      const held = S2_HELD[weapon.id];
+      if (held && this.has(held.sheet)) return held;
+    }
     // M22: a Stage 2 weapon while walking (no armed walk sheets yet), or always for a hero
     // without that weapon's stance sheet. The firearm pictures point left (mirror).
     const stance = WEAPON_STANCE[weapon.id];

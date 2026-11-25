@@ -77,10 +77,18 @@ export function heroMountCell(hero: string, r: HeroRideView, horse = false): Mou
     }
   }
   if (r.critical) return { sheet: sheet('stability'), cell: 0 };
+  // M28: the horse keeps galloping while it changes lanes (a single turn picture stood the
+  // horse still while the ride went on, Guo 2026-11-25); without the GALLOP sheet it steps
+  // between its turn picture and its walk.
+  const steering = Math.abs(r.steer) > STEER_DEADZONE;
+  if (horse && steering && r.frame !== undefined && r.gallop)
+    return { sheet: sheet('gallop'), cell: Math.floor(r.frame / GALLOP_FRAMES) % 4 };
   // The horse turns into depth (cell 2) either way and trots uphill (cell 1) when steering
   // down the screen.
-  if (r.steer < -STEER_DEADZONE) return { sheet: sheet('ride'), cell: horse ? 2 : 1 };
-  if (r.steer > STEER_DEADZONE) return { sheet: sheet('ride'), cell: horse ? 1 : 2 };
+  const turn = r.steer < 0 ? (horse ? 2 : 1) : horse ? 1 : 2;
+  if (horse && steering && r.frame !== undefined)
+    return { sheet: sheet('ride'), cell: Math.floor(r.frame / 8) % 2 === 0 ? turn : 0 };
+  if (steering) return { sheet: sheet('ride'), cell: turn };
   if (r.braking) return { sheet: sheet('ride'), cell: 3 };
   // The four-frame canter loop where the GALLOP sheet is loaded; until then the horse
   // steps between its walk and trot poses so its legs move.
