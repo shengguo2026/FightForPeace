@@ -143,9 +143,10 @@ test('Mist over the Beds: the hold prompt names the key, holding it collects the
   );
   await page.keyboard.up('KeyJ');
   await page.screenshot({ path: 'test-results/m28-mist-collected.png' });
-  // Food is eaten the moment it is picked up (the broth lies at 1000, 920).
+  // Food is eaten by walking over it, without J, as in Stages 1 and 2 (the broth lies at
+  // 1000, 920 and restores Defense, so the hero is short of Defense first).
+  await page.evaluate(() => window.__ffp!.setDefense(0, 20));
   await page.evaluate(() => window.__ffp!.placeAt(0, 1000, 920));
-  await page.keyboard.press('KeyJ');
   await page.waitForFunction(
     () => (window.__ffp!.items().find((i) => i.weapon === 'vegetable-broth')?.state ?? 4) === 4,
   );

@@ -1,4 +1,4 @@
-import { armBlast, detonate, eatProvision } from '../shared/weapons';
+import { armBlast, detonate, eatProvision, walkOverFood } from '../shared/weapons';
 import { fx } from '../math/fixed';
 import { Cheat, heroCheat } from '../cheats/cheats';
 import {
@@ -330,6 +330,7 @@ function bounceOff(world: World, item: Item): void {
  */
 export function stepItems(world: World): void {
   resolvePickups(world);
+  if (world.run) world.run.stats.food += walkOverFood(world, ITEM.reachX, ITEM.reachZ);
   for (const f of [...world.bodies].sort((a, b) => a.id - b.id)) {
     const item = heldItem(world, f);
     const a = runningAction(f);
