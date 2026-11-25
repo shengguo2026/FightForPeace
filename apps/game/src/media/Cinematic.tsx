@@ -91,6 +91,9 @@ export function StoryPip({ shot, ms }: { shot: ShotDef; ms: number }) {
 }
 
 /** The cinematic on screen (music and tests read it), or null. */
+/** BISECT (temporary): the narration hold switched off to isolate a Firefox CI failure. */
+const BISECT_HOLD = false as boolean;
+
 export const activeCinematic = signal<{
   id: string;
   player: CinematicPlayer<Locale>;
@@ -174,9 +177,10 @@ export function Cinematic({
         waitKey = key;
         waited = 0;
       }
-      const step = f
-        ? narrationStep(dt, f.time, cue ? cue.cue.until : null, speaking(), waited)
-        : dt;
+      const step =
+        f && BISECT_HOLD
+          ? narrationStep(dt, f.time, cue ? cue.cue.until : null, speaking(), waited)
+          : dt;
       if (step < dt) waited += dt - step;
       player.advance(step);
       if (player.done) {
