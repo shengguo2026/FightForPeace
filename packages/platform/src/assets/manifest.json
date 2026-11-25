@@ -11768,6 +11768,105 @@
         "tool": "Codex image generation"
       }
     },
+    "hero.fire.s3.sheet.handwheel": {
+      "url": "art/fire-s3-handwheel.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 363,
+        "cells": [
+          {
+            "x0": 88,
+            "y0": 38,
+            "x1": 286,
+            "foot": 363
+          },
+          {
+            "x0": 62,
+            "y0": 59,
+            "x1": 308,
+            "foot": 363
+          },
+          {
+            "x0": 30,
+            "y0": 60,
+            "x1": 368,
+            "foot": 363
+          },
+          {
+            "x0": 66,
+            "y0": 46,
+            "x1": 325,
+            "foot": 361
+          },
+          {
+            "x0": 59,
+            "y0": 48,
+            "x1": 305,
+            "foot": 361
+          },
+          null
+        ],
+        "scale": 0.957
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-S3-HANDWHEEL.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.fire.s3.sheet.handwheel-walk": {
+      "url": "art/fire-s3-handwheel-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 364,
+        "cells": [
+          {
+            "x0": 75,
+            "y0": 19,
+            "x1": 316,
+            "foot": 365
+          },
+          {
+            "x0": 91,
+            "y0": 22,
+            "x1": 281,
+            "foot": 364
+          },
+          {
+            "x0": 110,
+            "y0": 7,
+            "x1": 269,
+            "foot": 364
+          },
+          {
+            "x0": 61,
+            "y0": 20,
+            "x1": 307,
+            "foot": 362
+          },
+          {
+            "x0": 77,
+            "y0": 22,
+            "x1": 282,
+            "foot": 362
+          },
+          {
+            "x0": 91,
+            "y0": 8,
+            "x1": 274,
+            "foot": 362
+          }
+        ],
+        "scale": 0.885
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-S3-HANDWHEEL-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
     "hero.fire.s3.sheet.heavy": {
       "url": "art/fire-s3-heavy.webp",
       "sheet": {
@@ -11817,6 +11916,58 @@
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-S3-HEAVY.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.fire.s3.sheet.heavy-walk": {
+      "url": "art/fire-s3-heavy-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 369,
+        "cells": [
+          {
+            "x0": 46,
+            "y0": 17,
+            "x1": 320,
+            "foot": 372
+          },
+          {
+            "x0": 63,
+            "y0": 24,
+            "x1": 325,
+            "foot": 369
+          },
+          {
+            "x0": 96,
+            "y0": 9,
+            "x1": 315,
+            "foot": 368
+          },
+          {
+            "x0": 46,
+            "y0": 19,
+            "x1": 331,
+            "foot": 370
+          },
+          {
+            "x0": 82,
+            "y0": 24,
+            "x1": 331,
+            "foot": 369
+          },
+          {
+            "x0": 87,
+            "y0": 10,
+            "x1": 329,
+            "foot": 365
+          }
+        ],
+        "scale": 0.863
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-S3-HEAVY-WALK.png",
         "tool": "Codex image generation"
       }
     },
@@ -12018,6 +12169,110 @@
         "tool": "Codex image generation"
       }
     },
+    "hero.fire.s3.sheet.lance-b": {
+      "url": "art/fire-s3-lance-b.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 360,
+        "cells": [
+          {
+            "x0": 25,
+            "y0": 138,
+            "x1": 356,
+            "foot": 360
+          },
+          {
+            "x0": 27,
+            "y0": 133,
+            "x1": 357,
+            "foot": 360
+          },
+          {
+            "x0": 31,
+            "y0": 78,
+            "x1": 353,
+            "foot": 361
+          },
+          {
+            "x0": 69,
+            "y0": 26,
+            "x1": 312,
+            "foot": 359
+          },
+          {
+            "x0": 54,
+            "y0": 57,
+            "x1": 329,
+            "foot": 359
+          },
+          {
+            "x0": 73,
+            "y0": 39,
+            "x1": 314,
+            "foot": 360
+          }
+        ],
+        "scale": 0.912
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-S3-LANCE-B.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.fire.s3.sheet.lance-walk": {
+      "url": "art/fire-s3-lance-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 362,
+        "cells": [
+          {
+            "x0": 27,
+            "y0": 49,
+            "x1": 368,
+            "foot": 362
+          },
+          {
+            "x0": 60,
+            "y0": 50,
+            "x1": 366,
+            "foot": 362
+          },
+          {
+            "x0": 68,
+            "y0": 25,
+            "x1": 365,
+            "foot": 361
+          },
+          {
+            "x0": 23,
+            "y0": 50,
+            "x1": 368,
+            "foot": 361
+          },
+          {
+            "x0": 56,
+            "y0": 49,
+            "x1": 367,
+            "foot": 362
+          },
+          {
+            "x0": 65,
+            "y0": 27,
+            "x1": 366,
+            "foot": 361
+          }
+        ],
+        "scale": 0.935
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-S3-LANCE-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
     "hero.fire.s3.sheet.revolver": {
       "url": "art/fire-s3-revolver.webp",
       "sheet": {
@@ -12070,6 +12325,58 @@
         "tool": "Codex image generation"
       }
     },
+    "hero.fire.s3.sheet.revolver-walk": {
+      "url": "art/fire-s3-revolver-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 365,
+        "cells": [
+          {
+            "x0": 73,
+            "y0": 27,
+            "x1": 308,
+            "foot": 367
+          },
+          {
+            "x0": 71,
+            "y0": 29,
+            "x1": 259,
+            "foot": 367
+          },
+          {
+            "x0": 92,
+            "y0": 20,
+            "x1": 245,
+            "foot": 365
+          },
+          {
+            "x0": 66,
+            "y0": 26,
+            "x1": 307,
+            "foot": 363
+          },
+          {
+            "x0": 69,
+            "y0": 31,
+            "x1": 266,
+            "foot": 363
+          },
+          {
+            "x0": 88,
+            "y0": 18,
+            "x1": 251,
+            "foot": 363
+          }
+        ],
+        "scale": 0.88
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-S3-REVOLVER-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
     "hero.fire.s3.sheet.run": {
       "url": "art/fire-s3-run.webp",
       "sheet": {
@@ -12119,6 +12426,162 @@
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-S3-RUN_v2_fit.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.fire.s3.sheet.staff-a": {
+      "url": "art/fire-s3-staff-a.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 379,
+        "cells": [
+          {
+            "x0": 82,
+            "y0": 51,
+            "x1": 313,
+            "foot": 380
+          },
+          {
+            "x0": 68,
+            "y0": 56,
+            "x1": 296,
+            "foot": 379
+          },
+          {
+            "x0": 39,
+            "y0": 80,
+            "x1": 337,
+            "foot": 380
+          },
+          {
+            "x0": 24,
+            "y0": 62,
+            "x1": 371,
+            "foot": 357
+          },
+          {
+            "x0": 21,
+            "y0": 63,
+            "x1": 362,
+            "foot": 357
+          },
+          {
+            "x0": 14,
+            "y0": 63,
+            "x1": 351,
+            "foot": 357
+          }
+        ],
+        "scale": 0.938
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-S3-STAFF-A.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.fire.s3.sheet.staff-b": {
+      "url": "art/fire-s3-staff-b.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 346,
+        "cells": [
+          {
+            "x0": 63,
+            "y0": 11,
+            "x1": 295,
+            "foot": 366
+          },
+          {
+            "x0": 4,
+            "y0": 60,
+            "x1": 364,
+            "foot": 334
+          },
+          {
+            "x0": 36,
+            "y0": 119,
+            "x1": 328,
+            "foot": 370
+          },
+          {
+            "x0": 42,
+            "y0": 51,
+            "x1": 384,
+            "foot": 346
+          },
+          {
+            "x0": 0,
+            "y0": 82,
+            "x1": 373,
+            "foot": 344
+          },
+          {
+            "x0": 60,
+            "y0": 142,
+            "x1": 344,
+            "foot": 343
+          }
+        ],
+        "scale": 0.919
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-S3-STAFF-B.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.fire.s3.sheet.staff-walk": {
+      "url": "art/fire-s3-staff-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 369,
+        "cells": [
+          {
+            "x0": 60,
+            "y0": 17,
+            "x1": 310,
+            "foot": 369
+          },
+          {
+            "x0": 82,
+            "y0": 18,
+            "x1": 299,
+            "foot": 369
+          },
+          {
+            "x0": 62,
+            "y0": 14,
+            "x1": 277,
+            "foot": 367
+          },
+          {
+            "x0": 55,
+            "y0": 19,
+            "x1": 309,
+            "foot": 369
+          },
+          {
+            "x0": 82,
+            "y0": 20,
+            "x1": 299,
+            "foot": 370
+          },
+          {
+            "x0": 63,
+            "y0": 14,
+            "x1": 278,
+            "foot": 369
+          }
+        ],
+        "scale": 0.872
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-S3-STAFF-WALK.png",
         "tool": "Codex image generation"
       }
     },
@@ -12958,6 +13421,110 @@
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-STAFF-WALK-v2.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.fire.sheet.hookstaff": {
+      "url": "art/fire-hookstaff.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 352,
+        "cells": [
+          {
+            "x0": 60,
+            "y0": 47,
+            "x1": 384,
+            "foot": 357
+          },
+          {
+            "x0": 0,
+            "y0": 91,
+            "x1": 345,
+            "foot": 352
+          },
+          {
+            "x0": 0,
+            "y0": 57,
+            "x1": 357,
+            "foot": 355
+          },
+          {
+            "x0": 26,
+            "y0": 58,
+            "x1": 325,
+            "foot": 348
+          },
+          {
+            "x0": 25,
+            "y0": 19,
+            "x1": 384,
+            "foot": 348
+          },
+          {
+            "x0": 0,
+            "y0": 36,
+            "x1": 371,
+            "foot": 347
+          }
+        ]
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-HOOKSTAFF.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.fire.sheet.hookstaff-walk": {
+      "url": "art/fire-hookstaff-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 364,
+        "cells": [
+          {
+            "x0": 64,
+            "y0": 42,
+            "x1": 307,
+            "foot": 365
+          },
+          {
+            "x0": 67,
+            "y0": 50,
+            "x1": 311,
+            "foot": 365
+          },
+          {
+            "x0": 58,
+            "y0": 36,
+            "x1": 303,
+            "foot": 364
+          },
+          {
+            "x0": 60,
+            "y0": 39,
+            "x1": 311,
+            "foot": 363
+          },
+          {
+            "x0": 69,
+            "y0": 48,
+            "x1": 313,
+            "foot": 364
+          },
+          {
+            "x0": 59,
+            "y0": 30,
+            "x1": 305,
+            "foot": 362
+          }
+        ],
+        "scale": 0.912
+      },
+      "provenance": {
+        "source": "heroes/fire/HERO-FIR-HOOKSTAFF-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }
@@ -15996,6 +16563,105 @@
         "tool": "Codex image generation"
       }
     },
+    "hero.mountain.s3.sheet.handwheel": {
+      "url": "art/mountain-s3-handwheel.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 365,
+        "cells": [
+          {
+            "x0": 84,
+            "y0": 42,
+            "x1": 299,
+            "foot": 366
+          },
+          {
+            "x0": 57,
+            "y0": 70,
+            "x1": 309,
+            "foot": 365
+          },
+          {
+            "x0": 13,
+            "y0": 68,
+            "x1": 369,
+            "foot": 366
+          },
+          {
+            "x0": 54,
+            "y0": 52,
+            "x1": 319,
+            "foot": 361
+          },
+          {
+            "x0": 56,
+            "y0": 49,
+            "x1": 316,
+            "foot": 361
+          },
+          null
+        ],
+        "scale": 0.957
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-S3-HANDWHEEL.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.mountain.s3.sheet.handwheel-walk": {
+      "url": "art/mountain-s3-handwheel-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 374,
+        "cells": [
+          {
+            "x0": 62,
+            "y0": 17,
+            "x1": 327,
+            "foot": 374
+          },
+          {
+            "x0": 92,
+            "y0": 23,
+            "x1": 288,
+            "foot": 374
+          },
+          {
+            "x0": 96,
+            "y0": 9,
+            "x1": 286,
+            "foot": 374
+          },
+          {
+            "x0": 59,
+            "y0": 14,
+            "x1": 331,
+            "foot": 370
+          },
+          {
+            "x0": 71,
+            "y0": 25,
+            "x1": 288,
+            "foot": 370
+          },
+          {
+            "x0": 73,
+            "y0": 9,
+            "x1": 288,
+            "foot": 369
+          }
+        ],
+        "scale": 0.824
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-S3-HANDWHEEL-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
     "hero.mountain.s3.sheet.heavy": {
       "url": "art/mountain-s3-heavy.webp",
       "sheet": {
@@ -16045,6 +16711,58 @@
       },
       "provenance": {
         "source": "heroes/mountain/HERO-MTN-S3-HEAVY.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.mountain.s3.sheet.heavy-walk": {
+      "url": "art/mountain-s3-heavy-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 376,
+        "cells": [
+          {
+            "x0": 51,
+            "y0": 16,
+            "x1": 340,
+            "foot": 377
+          },
+          {
+            "x0": 78,
+            "y0": 23,
+            "x1": 341,
+            "foot": 378
+          },
+          {
+            "x0": 100,
+            "y0": 9,
+            "x1": 343,
+            "foot": 375
+          },
+          {
+            "x0": 44,
+            "y0": 16,
+            "x1": 344,
+            "foot": 376
+          },
+          {
+            "x0": 87,
+            "y0": 23,
+            "x1": 343,
+            "foot": 375
+          },
+          {
+            "x0": 99,
+            "y0": 7,
+            "x1": 346,
+            "foot": 375
+          }
+        ],
+        "scale": 0.828
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-S3-HEAVY-WALK.png",
         "tool": "Codex image generation"
       }
     },
@@ -16246,6 +16964,58 @@
         "tool": "Codex image generation"
       }
     },
+    "hero.mountain.s3.sheet.lance-walk": {
+      "url": "art/mountain-s3-lance-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 370,
+        "cells": [
+          {
+            "x0": 41,
+            "y0": 26,
+            "x1": 363,
+            "foot": 371
+          },
+          {
+            "x0": 74,
+            "y0": 31,
+            "x1": 365,
+            "foot": 371
+          },
+          {
+            "x0": 76,
+            "y0": 16,
+            "x1": 362,
+            "foot": 369
+          },
+          {
+            "x0": 51,
+            "y0": 20,
+            "x1": 365,
+            "foot": 370
+          },
+          {
+            "x0": 74,
+            "y0": 30,
+            "x1": 365,
+            "foot": 370
+          },
+          {
+            "x0": 76,
+            "y0": 15,
+            "x1": 363,
+            "foot": 367
+          }
+        ],
+        "scale": 0.867
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-S3-LANCE-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
     "hero.mountain.s3.sheet.revolver": {
       "url": "art/mountain-s3-revolver.webp",
       "sheet": {
@@ -16298,6 +17068,58 @@
         "tool": "Codex image generation"
       }
     },
+    "hero.mountain.s3.sheet.revolver-walk": {
+      "url": "art/mountain-s3-revolver-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 373,
+        "cells": [
+          {
+            "x0": 58,
+            "y0": 18,
+            "x1": 311,
+            "foot": 374
+          },
+          {
+            "x0": 90,
+            "y0": 23,
+            "x1": 295,
+            "foot": 376
+          },
+          {
+            "x0": 109,
+            "y0": 11,
+            "x1": 294,
+            "foot": 372
+          },
+          {
+            "x0": 54,
+            "y0": 20,
+            "x1": 318,
+            "foot": 373
+          },
+          {
+            "x0": 76,
+            "y0": 24,
+            "x1": 298,
+            "foot": 373
+          },
+          {
+            "x0": 83,
+            "y0": 9,
+            "x1": 302,
+            "foot": 370
+          }
+        ],
+        "scale": 0.838
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-S3-REVOLVER-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
     "hero.mountain.s3.sheet.run": {
       "url": "art/mountain-s3-run.webp",
       "sheet": {
@@ -16347,6 +17169,162 @@
       },
       "provenance": {
         "source": "heroes/mountain/HERO-MTN-S3-RUN_v2.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.mountain.s3.sheet.staff-a": {
+      "url": "art/mountain-s3-staff-a.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 357,
+        "cells": [
+          {
+            "x0": 72,
+            "y0": 75,
+            "x1": 307,
+            "foot": 358
+          },
+          {
+            "x0": 76,
+            "y0": 78,
+            "x1": 298,
+            "foot": 358
+          },
+          {
+            "x0": 47,
+            "y0": 97,
+            "x1": 340,
+            "foot": 357
+          },
+          {
+            "x0": 19,
+            "y0": 104,
+            "x1": 364,
+            "foot": 356
+          },
+          {
+            "x0": 26,
+            "y0": 107,
+            "x1": 357,
+            "foot": 356
+          },
+          {
+            "x0": 56,
+            "y0": 53,
+            "x1": 321,
+            "foot": 356
+          }
+        ],
+        "scale": 1.061
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-S3-STAFF-A.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.mountain.s3.sheet.staff-b": {
+      "url": "art/mountain-s3-staff-b.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 353,
+        "cells": [
+          {
+            "x0": 74,
+            "y0": 62,
+            "x1": 308,
+            "foot": 354
+          },
+          {
+            "x0": 15,
+            "y0": 78,
+            "x1": 367,
+            "foot": 339
+          },
+          {
+            "x0": 48,
+            "y0": 132,
+            "x1": 335,
+            "foot": 354
+          },
+          {
+            "x0": 74,
+            "y0": 83,
+            "x1": 309,
+            "foot": 352
+          },
+          {
+            "x0": 42,
+            "y0": 43,
+            "x1": 337,
+            "foot": 352
+          },
+          {
+            "x0": 63,
+            "y0": 159,
+            "x1": 316,
+            "foot": 353
+          }
+        ],
+        "scale": 1.111
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-S3-STAFF-B.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.mountain.s3.sheet.staff-walk": {
+      "url": "art/mountain-s3-staff-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 375,
+        "cells": [
+          {
+            "x0": 64,
+            "y0": 15,
+            "x1": 322,
+            "foot": 375
+          },
+          {
+            "x0": 84,
+            "y0": 20,
+            "x1": 319,
+            "foot": 376
+          },
+          {
+            "x0": 89,
+            "y0": 10,
+            "x1": 317,
+            "foot": 376
+          },
+          {
+            "x0": 60,
+            "y0": 14,
+            "x1": 330,
+            "foot": 374
+          },
+          {
+            "x0": 85,
+            "y0": 20,
+            "x1": 320,
+            "foot": 374
+          },
+          {
+            "x0": 91,
+            "y0": 7,
+            "x1": 318,
+            "foot": 374
+          }
+        ],
+        "scale": 0.822
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-S3-STAFF-WALK.png",
         "tool": "Codex image generation"
       }
     },
@@ -17185,6 +18163,111 @@
       },
       "provenance": {
         "source": "heroes/mountain/HERO-MTN-STAFF-WALK-v2.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.mountain.sheet.hookstaff": {
+      "url": "art/mountain-hookstaff.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 361,
+        "cells": [
+          {
+            "x0": 63,
+            "y0": 42,
+            "x1": 326,
+            "foot": 362
+          },
+          {
+            "x0": 12,
+            "y0": 85,
+            "x1": 361,
+            "foot": 361
+          },
+          {
+            "x0": 9,
+            "y0": 49,
+            "x1": 353,
+            "foot": 362
+          },
+          {
+            "x0": 37,
+            "y0": 55,
+            "x1": 347,
+            "foot": 357
+          },
+          {
+            "x0": 26,
+            "y0": 23,
+            "x1": 384,
+            "foot": 358
+          },
+          {
+            "x0": 0,
+            "y0": 63,
+            "x1": 366,
+            "foot": 358
+          }
+        ],
+        "scale": 0.943
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-HOOKSTAFF.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.mountain.sheet.hookstaff-walk": {
+      "url": "art/mountain-hookstaff-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 371,
+        "cells": [
+          {
+            "x0": 56,
+            "y0": 21,
+            "x1": 340,
+            "foot": 374
+          },
+          {
+            "x0": 81,
+            "y0": 21,
+            "x1": 342,
+            "foot": 373
+          },
+          {
+            "x0": 83,
+            "y0": 11,
+            "x1": 341,
+            "foot": 370
+          },
+          {
+            "x0": 56,
+            "y0": 18,
+            "x1": 343,
+            "foot": 371
+          },
+          {
+            "x0": 83,
+            "y0": 19,
+            "x1": 342,
+            "foot": 370
+          },
+          {
+            "x0": 79,
+            "y0": 12,
+            "x1": 341,
+            "foot": 369
+          }
+        ],
+        "scale": 0.852
+      },
+      "provenance": {
+        "source": "heroes/mountain/HERO-MTN-HOOKSTAFF-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }
@@ -20271,6 +21354,105 @@
         "tool": "Codex image generation"
       }
     },
+    "hero.river.s3.sheet.handwheel": {
+      "url": "art/river-s3-handwheel.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 360,
+        "cells": [
+          {
+            "x0": 76,
+            "y0": 28,
+            "x1": 289,
+            "foot": 361
+          },
+          {
+            "x0": 52,
+            "y0": 30,
+            "x1": 313,
+            "foot": 361
+          },
+          {
+            "x0": 16,
+            "y0": 51,
+            "x1": 361,
+            "foot": 360
+          },
+          {
+            "x0": 54,
+            "y0": 26,
+            "x1": 326,
+            "foot": 348
+          },
+          {
+            "x0": 61,
+            "y0": 47,
+            "x1": 315,
+            "foot": 354
+          },
+          null
+        ],
+        "scale": 0.901
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-S3-HANDWHEEL.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.river.s3.sheet.handwheel-walk": {
+      "url": "art/river-s3-handwheel-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 368,
+        "cells": [
+          {
+            "x0": 73,
+            "y0": 23,
+            "x1": 311,
+            "foot": 366
+          },
+          {
+            "x0": 82,
+            "y0": 26,
+            "x1": 285,
+            "foot": 369
+          },
+          {
+            "x0": 86,
+            "y0": 14,
+            "x1": 282,
+            "foot": 368
+          },
+          {
+            "x0": 68,
+            "y0": 19,
+            "x1": 321,
+            "foot": 366
+          },
+          {
+            "x0": 87,
+            "y0": 25,
+            "x1": 289,
+            "foot": 371
+          },
+          {
+            "x0": 80,
+            "y0": 11,
+            "x1": 284,
+            "foot": 367
+          }
+        ],
+        "scale": 0.853
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-S3-HANDWHEEL-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
     "hero.river.s3.sheet.heavy": {
       "url": "art/river-s3-heavy.webp",
       "sheet": {
@@ -20320,6 +21502,58 @@
       },
       "provenance": {
         "source": "heroes/river/HERO-RIV-S3-HEAVY.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.river.s3.sheet.heavy-walk": {
+      "url": "art/river-s3-heavy-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 375,
+        "cells": [
+          {
+            "x0": 66,
+            "y0": 17,
+            "x1": 318,
+            "foot": 376
+          },
+          {
+            "x0": 84,
+            "y0": 20,
+            "x1": 316,
+            "foot": 375
+          },
+          {
+            "x0": 89,
+            "y0": 10,
+            "x1": 307,
+            "foot": 373
+          },
+          {
+            "x0": 68,
+            "y0": 16,
+            "x1": 322,
+            "foot": 373
+          },
+          {
+            "x0": 88,
+            "y0": 17,
+            "x1": 320,
+            "foot": 375
+          },
+          {
+            "x0": 96,
+            "y0": 7,
+            "x1": 319,
+            "foot": 371
+          }
+        ],
+        "scale": 0.84
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-S3-HEAVY-WALK.png",
         "tool": "Codex image generation"
       }
     },
@@ -20521,6 +21755,110 @@
         "tool": "Codex image generation"
       }
     },
+    "hero.river.s3.sheet.lance-a": {
+      "url": "art/river-s3-lance-a.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 362,
+        "cells": [
+          {
+            "x0": 71,
+            "y0": 21,
+            "x1": 302,
+            "foot": 363
+          },
+          {
+            "x0": 26,
+            "y0": 95,
+            "x1": 373,
+            "foot": 362
+          },
+          {
+            "x0": 24,
+            "y0": 136,
+            "x1": 365,
+            "foot": 363
+          },
+          {
+            "x0": 26,
+            "y0": 68,
+            "x1": 353,
+            "foot": 362
+          },
+          {
+            "x0": 19,
+            "y0": 104,
+            "x1": 348,
+            "foot": 362
+          },
+          {
+            "x0": 22,
+            "y0": 78,
+            "x1": 366,
+            "foot": 361
+          }
+        ],
+        "scale": 1.109
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-S3-LANCE.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.river.s3.sheet.lance-walk": {
+      "url": "art/river-s3-lance-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 368,
+        "cells": [
+          {
+            "x0": 63,
+            "y0": 26,
+            "x1": 365,
+            "foot": 367
+          },
+          {
+            "x0": 82,
+            "y0": 28,
+            "x1": 346,
+            "foot": 367
+          },
+          {
+            "x0": 73,
+            "y0": 12,
+            "x1": 355,
+            "foot": 369
+          },
+          {
+            "x0": 59,
+            "y0": 20,
+            "x1": 362,
+            "foot": 365
+          },
+          {
+            "x0": 73,
+            "y0": 26,
+            "x1": 345,
+            "foot": 368
+          },
+          {
+            "x0": 70,
+            "y0": 10,
+            "x1": 357,
+            "foot": 369
+          }
+        ],
+        "scale": 0.86
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-S3-LANCE-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
     "hero.river.s3.sheet.revolver": {
       "url": "art/river-s3-revolver.webp",
       "sheet": {
@@ -20573,6 +21911,58 @@
         "tool": "Codex image generation"
       }
     },
+    "hero.river.s3.sheet.revolver-walk": {
+      "url": "art/river-s3-revolver-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 374,
+        "cells": [
+          {
+            "x0": 65,
+            "y0": 18,
+            "x1": 320,
+            "foot": 374
+          },
+          {
+            "x0": 97,
+            "y0": 30,
+            "x1": 284,
+            "foot": 374
+          },
+          {
+            "x0": 93,
+            "y0": 12,
+            "x1": 278,
+            "foot": 375
+          },
+          {
+            "x0": 65,
+            "y0": 20,
+            "x1": 318,
+            "foot": 373
+          },
+          {
+            "x0": 97,
+            "y0": 30,
+            "x1": 284,
+            "foot": 374
+          },
+          {
+            "x0": 93,
+            "y0": 13,
+            "x1": 284,
+            "foot": 374
+          }
+        ],
+        "scale": 0.854
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-S3-REVOLVER-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
     "hero.river.s3.sheet.run": {
       "url": "art/river-s3-run.webp",
       "sheet": {
@@ -20622,6 +22012,162 @@
       },
       "provenance": {
         "source": "heroes/river/HERO-RIV-S3-RUN_v2_fit.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.river.s3.sheet.staff-a": {
+      "url": "art/river-s3-staff-a.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 363,
+        "cells": [
+          {
+            "x0": 107,
+            "y0": 29,
+            "x1": 274,
+            "foot": 366
+          },
+          {
+            "x0": 71,
+            "y0": 43,
+            "x1": 299,
+            "foot": 363
+          },
+          {
+            "x0": 48,
+            "y0": 77,
+            "x1": 340,
+            "foot": 364
+          },
+          {
+            "x0": 19,
+            "y0": 90,
+            "x1": 368,
+            "foot": 358
+          },
+          {
+            "x0": 58,
+            "y0": 60,
+            "x1": 322,
+            "foot": 359
+          },
+          {
+            "x0": 51,
+            "y0": 31,
+            "x1": 322,
+            "foot": 360
+          }
+        ],
+        "scale": 0.918
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-S3-STAFF-A.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.river.s3.sheet.staff-b": {
+      "url": "art/river-s3-staff-b.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 350,
+        "cells": [
+          {
+            "x0": 96,
+            "y0": 68,
+            "x1": 290,
+            "foot": 354
+          },
+          {
+            "x0": 78,
+            "y0": 108,
+            "x1": 307,
+            "foot": 350
+          },
+          {
+            "x0": 58,
+            "y0": 134,
+            "x1": 323,
+            "foot": 352
+          },
+          {
+            "x0": 87,
+            "y0": 97,
+            "x1": 293,
+            "foot": 348
+          },
+          {
+            "x0": 22,
+            "y0": 146,
+            "x1": 360,
+            "foot": 348
+          },
+          {
+            "x0": 91,
+            "y0": 105,
+            "x1": 293,
+            "foot": 349
+          }
+        ],
+        "scale": 1.255
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-S3-STAFF-B.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.river.s3.sheet.staff-walk": {
+      "url": "art/river-s3-staff-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 370,
+        "cells": [
+          {
+            "x0": 75,
+            "y0": 20,
+            "x1": 312,
+            "foot": 372
+          },
+          {
+            "x0": 91,
+            "y0": 20,
+            "x1": 303,
+            "foot": 370
+          },
+          {
+            "x0": 83,
+            "y0": 6,
+            "x1": 300,
+            "foot": 368
+          },
+          {
+            "x0": 72,
+            "y0": 21,
+            "x1": 317,
+            "foot": 369
+          },
+          {
+            "x0": 83,
+            "y0": 26,
+            "x1": 303,
+            "foot": 370
+          },
+          {
+            "x0": 84,
+            "y0": 7,
+            "x1": 301,
+            "foot": 370
+          }
+        ],
+        "scale": 0.853
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-S3-STAFF-WALK.png",
         "tool": "Codex image generation"
       }
     },
@@ -21461,6 +23007,111 @@
       },
       "provenance": {
         "source": "heroes/river/HERO-RIV-STAFF-WALK-v2.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.river.sheet.hookstaff": {
+      "url": "art/river-hookstaff.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 360,
+        "cells": [
+          {
+            "x0": 48,
+            "y0": 30,
+            "x1": 319,
+            "foot": 360
+          },
+          {
+            "x0": 1,
+            "y0": 82,
+            "x1": 384,
+            "foot": 360
+          },
+          {
+            "x0": 0,
+            "y0": 46,
+            "x1": 357,
+            "foot": 360
+          },
+          {
+            "x0": 32,
+            "y0": 46,
+            "x1": 352,
+            "foot": 351
+          },
+          {
+            "x0": 20,
+            "y0": 24,
+            "x1": 384,
+            "foot": 351
+          },
+          {
+            "x0": 0,
+            "y0": 46,
+            "x1": 368,
+            "foot": 349
+          }
+        ],
+        "scale": 0.877
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-HOOKSTAFF.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.river.sheet.hookstaff-walk": {
+      "url": "art/river-hookstaff-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 367,
+        "cells": [
+          {
+            "x0": 59,
+            "y0": 23,
+            "x1": 316,
+            "foot": 367
+          },
+          {
+            "x0": 54,
+            "y0": 25,
+            "x1": 304,
+            "foot": 367
+          },
+          {
+            "x0": 51,
+            "y0": 8,
+            "x1": 303,
+            "foot": 367
+          },
+          {
+            "x0": 65,
+            "y0": 13,
+            "x1": 318,
+            "foot": 362
+          },
+          {
+            "x0": 57,
+            "y0": 16,
+            "x1": 306,
+            "foot": 363
+          },
+          {
+            "x0": 55,
+            "y0": 6,
+            "x1": 306,
+            "foot": 361
+          }
+        ],
+        "scale": 0.849
+      },
+      "provenance": {
+        "source": "heroes/river/HERO-RIV-HOOKSTAFF-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }
@@ -24318,6 +25969,58 @@
         "tool": "Codex image generation"
       }
     },
+    "hero.wind.s3.sheet.back-throw": {
+      "url": "art/wind-s3-back-throw.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 373,
+        "cells": [
+          {
+            "x0": 80,
+            "y0": 18,
+            "x1": 322,
+            "foot": 373
+          },
+          {
+            "x0": 57,
+            "y0": 24,
+            "x1": 307,
+            "foot": 373
+          },
+          {
+            "x0": 68,
+            "y0": 26,
+            "x1": 326,
+            "foot": 373
+          },
+          {
+            "x0": 34,
+            "y0": 17,
+            "x1": 337,
+            "foot": 370
+          },
+          {
+            "x0": 54,
+            "y0": 16,
+            "x1": 335,
+            "foot": 370
+          },
+          {
+            "x0": 63,
+            "y0": 14,
+            "x1": 321,
+            "foot": 370
+          }
+        ],
+        "scale": 0.887
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-S3-BACK-THROW.png",
+        "tool": "Codex image generation"
+      }
+    },
     "hero.wind.s3.sheet.breaker-pickup": {
       "url": "art/wind-s3-breaker-pickup.webp",
       "sheet": {
@@ -24573,6 +26276,105 @@
         "tool": "Codex image generation"
       }
     },
+    "hero.wind.s3.sheet.handwheel": {
+      "url": "art/wind-s3-handwheel.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 364,
+        "cells": [
+          {
+            "x0": 68,
+            "y0": 27,
+            "x1": 291,
+            "foot": 364
+          },
+          {
+            "x0": 44,
+            "y0": 40,
+            "x1": 293,
+            "foot": 364
+          },
+          {
+            "x0": 9,
+            "y0": 40,
+            "x1": 359,
+            "foot": 365
+          },
+          {
+            "x0": 46,
+            "y0": 28,
+            "x1": 301,
+            "foot": 359
+          },
+          {
+            "x0": 43,
+            "y0": 28,
+            "x1": 297,
+            "foot": 359
+          },
+          null
+        ],
+        "scale": 1.031
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-S3-HANDWHEEL.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.wind.s3.sheet.handwheel-walk": {
+      "url": "art/wind-s3-handwheel-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 373,
+        "cells": [
+          {
+            "x0": 76,
+            "y0": 14,
+            "x1": 319,
+            "foot": 374
+          },
+          {
+            "x0": 101,
+            "y0": 14,
+            "x1": 288,
+            "foot": 373
+          },
+          {
+            "x0": 102,
+            "y0": 14,
+            "x1": 287,
+            "foot": 373
+          },
+          {
+            "x0": 69,
+            "y0": 14,
+            "x1": 326,
+            "foot": 370
+          },
+          {
+            "x0": 100,
+            "y0": 15,
+            "x1": 288,
+            "foot": 372
+          },
+          {
+            "x0": 102,
+            "y0": 15,
+            "x1": 287,
+            "foot": 372
+          }
+        ],
+        "scale": 0.965
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-S3-HANDWHEEL-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
     "hero.wind.s3.sheet.heavy": {
       "url": "art/wind-s3-heavy.webp",
       "sheet": {
@@ -24622,6 +26424,58 @@
       },
       "provenance": {
         "source": "heroes/wind/HERO-WND-S3-HEAVY.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.wind.s3.sheet.heavy-walk": {
+      "url": "art/wind-s3-heavy-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 373,
+        "cells": [
+          {
+            "x0": 51,
+            "y0": 23,
+            "x1": 322,
+            "foot": 373
+          },
+          {
+            "x0": 79,
+            "y0": 24,
+            "x1": 322,
+            "foot": 373
+          },
+          {
+            "x0": 89,
+            "y0": 20,
+            "x1": 323,
+            "foot": 373
+          },
+          {
+            "x0": 47,
+            "y0": 23,
+            "x1": 323,
+            "foot": 367
+          },
+          {
+            "x0": 76,
+            "y0": 22,
+            "x1": 323,
+            "foot": 368
+          },
+          {
+            "x0": 89,
+            "y0": 16,
+            "x1": 328,
+            "foot": 367
+          }
+        ],
+        "scale": 0.945
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-S3-HEAVY-WALK.png",
         "tool": "Codex image generation"
       }
     },
@@ -24823,6 +26677,110 @@
         "tool": "Codex image generation"
       }
     },
+    "hero.wind.s3.sheet.lance-b": {
+      "url": "art/wind-s3-lance-b.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 362,
+        "cells": [
+          {
+            "x0": 25,
+            "y0": 132,
+            "x1": 376,
+            "foot": 362
+          },
+          {
+            "x0": 81,
+            "y0": 27,
+            "x1": 302,
+            "foot": 362
+          },
+          {
+            "x0": 24,
+            "y0": 54,
+            "x1": 359,
+            "foot": 362
+          },
+          {
+            "x0": 24,
+            "y0": 112,
+            "x1": 359,
+            "foot": 362
+          },
+          {
+            "x0": 49,
+            "y0": 25,
+            "x1": 334,
+            "foot": 360
+          },
+          {
+            "x0": 24,
+            "y0": 140,
+            "x1": 359,
+            "foot": 362
+          }
+        ],
+        "scale": 0.985
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-S3-LANCE-B.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.wind.s3.sheet.lance-walk": {
+      "url": "art/wind-s3-lance-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 368,
+        "cells": [
+          {
+            "x0": 43,
+            "y0": 27,
+            "x1": 355,
+            "foot": 368
+          },
+          {
+            "x0": 64,
+            "y0": 28,
+            "x1": 338,
+            "foot": 368
+          },
+          {
+            "x0": 66,
+            "y0": 21,
+            "x1": 345,
+            "foot": 368
+          },
+          {
+            "x0": 39,
+            "y0": 26,
+            "x1": 358,
+            "foot": 366
+          },
+          {
+            "x0": 63,
+            "y0": 28,
+            "x1": 343,
+            "foot": 366
+          },
+          {
+            "x0": 60,
+            "y0": 21,
+            "x1": 348,
+            "foot": 366
+          }
+        ],
+        "scale": 0.994
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-S3-LANCE-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
     "hero.wind.s3.sheet.revolver": {
       "url": "art/wind-s3-revolver.webp",
       "sheet": {
@@ -24875,6 +26833,58 @@
         "tool": "Codex image generation"
       }
     },
+    "hero.wind.s3.sheet.revolver-walk": {
+      "url": "art/wind-s3-revolver-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 372,
+        "cells": [
+          {
+            "x0": 44,
+            "y0": 19,
+            "x1": 308,
+            "foot": 373
+          },
+          {
+            "x0": 85,
+            "y0": 19,
+            "x1": 275,
+            "foot": 373
+          },
+          {
+            "x0": 99,
+            "y0": 19,
+            "x1": 275,
+            "foot": 372
+          },
+          {
+            "x0": 56,
+            "y0": 19,
+            "x1": 312,
+            "foot": 371
+          },
+          {
+            "x0": 82,
+            "y0": 19,
+            "x1": 275,
+            "foot": 372
+          },
+          {
+            "x0": 77,
+            "y0": 19,
+            "x1": 317,
+            "foot": 370
+          }
+        ],
+        "scale": 0.953
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-S3-REVOLVER-WALK.png",
+        "tool": "Codex image generation"
+      }
+    },
     "hero.wind.s3.sheet.run": {
       "url": "art/wind-s3-run.webp",
       "sheet": {
@@ -24924,6 +26934,162 @@
       },
       "provenance": {
         "source": "heroes/wind/HERO-WND-S3-RUN_v3_fit.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.wind.s3.sheet.staff-a": {
+      "url": "art/wind-s3-staff-a.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 375,
+        "cells": [
+          {
+            "x0": 63,
+            "y0": 41,
+            "x1": 306,
+            "foot": 375
+          },
+          {
+            "x0": 64,
+            "y0": 43,
+            "x1": 290,
+            "foot": 375
+          },
+          {
+            "x0": 38,
+            "y0": 74,
+            "x1": 344,
+            "foot": 375
+          },
+          {
+            "x0": 22,
+            "y0": 71,
+            "x1": 375,
+            "foot": 361
+          },
+          {
+            "x0": 19,
+            "y0": 66,
+            "x1": 355,
+            "foot": 361
+          },
+          {
+            "x0": 38,
+            "y0": 25,
+            "x1": 332,
+            "foot": 361
+          }
+        ],
+        "scale": 1.031
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-S3-STAFF-A.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.wind.s3.sheet.staff-b": {
+      "url": "art/wind-s3-staff-b.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 358,
+        "cells": [
+          {
+            "x0": 55,
+            "y0": 11,
+            "x1": 316,
+            "foot": 374
+          },
+          {
+            "x0": 23,
+            "y0": 67,
+            "x1": 355,
+            "foot": 351
+          },
+          {
+            "x0": 35,
+            "y0": 111,
+            "x1": 334,
+            "foot": 373
+          },
+          {
+            "x0": 47,
+            "y0": 69,
+            "x1": 282,
+            "foot": 357
+          },
+          {
+            "x0": 5,
+            "y0": 106,
+            "x1": 381,
+            "foot": 358
+          },
+          {
+            "x0": 50,
+            "y0": 141,
+            "x1": 339,
+            "foot": 353
+          }
+        ],
+        "scale": 1.039
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-S3-STAFF-B.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.wind.s3.sheet.staff-walk": {
+      "url": "art/wind-s3-staff-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 374,
+        "cells": [
+          {
+            "x0": 76,
+            "y0": 13,
+            "x1": 315,
+            "foot": 374
+          },
+          {
+            "x0": 83,
+            "y0": 19,
+            "x1": 295,
+            "foot": 375
+          },
+          {
+            "x0": 71,
+            "y0": 11,
+            "x1": 282,
+            "foot": 375
+          },
+          {
+            "x0": 67,
+            "y0": 11,
+            "x1": 311,
+            "foot": 372
+          },
+          {
+            "x0": 83,
+            "y0": 18,
+            "x1": 295,
+            "foot": 372
+          },
+          {
+            "x0": 74,
+            "y0": 10,
+            "x1": 284,
+            "foot": 373
+          }
+        ],
+        "scale": 0.965
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-S3-STAFF-WALK.png",
         "tool": "Codex image generation"
       }
     },
@@ -25809,6 +27975,110 @@
       },
       "provenance": {
         "source": "heroes/wind/HERO-WND-STAFF-WALK-v2.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "hero.wind.sheet.hookstaff": {
+      "url": "art/wind-hookstaff.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 363,
+        "cells": [
+          {
+            "x0": 48,
+            "y0": 37,
+            "x1": 384,
+            "foot": 368
+          },
+          {
+            "x0": 0,
+            "y0": 71,
+            "x1": 384,
+            "foot": 363
+          },
+          {
+            "x0": 0,
+            "y0": 45,
+            "x1": 330,
+            "foot": 364
+          },
+          {
+            "x0": 33,
+            "y0": 40,
+            "x1": 355,
+            "foot": 353
+          },
+          {
+            "x0": 5,
+            "y0": 12,
+            "x1": 384,
+            "foot": 353
+          },
+          {
+            "x0": 0,
+            "y0": 35,
+            "x1": 380,
+            "foot": 352
+          }
+        ]
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-HOOKSTAFF.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "hero.wind.sheet.hookstaff-walk": {
+      "url": "art/wind-hookstaff-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 374,
+        "cells": [
+          {
+            "x0": 63,
+            "y0": 19,
+            "x1": 325,
+            "foot": 374
+          },
+          {
+            "x0": 72,
+            "y0": 25,
+            "x1": 320,
+            "foot": 374
+          },
+          {
+            "x0": 80,
+            "y0": 13,
+            "x1": 315,
+            "foot": 373
+          },
+          {
+            "x0": 66,
+            "y0": 23,
+            "x1": 326,
+            "foot": 374
+          },
+          {
+            "x0": 84,
+            "y0": 31,
+            "x1": 320,
+            "foot": 375
+          },
+          {
+            "x0": 80,
+            "y0": 13,
+            "x1": 318,
+            "foot": 374
+          }
+        ],
+        "scale": 0.994
+      },
+      "provenance": {
+        "source": "heroes/wind/HERO-WND-HOOKSTAFF-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }

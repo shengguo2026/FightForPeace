@@ -43,6 +43,8 @@ SIZE_FIX: dict[str, float] = {
     "hero.river.sheet.axe": 0.845,  # was 0.93, head 1.10 x idle
     "hero.river.sheet.guard": 0.87,  # was 0.94, head 1.08 x idle
     "hero.river.sheet.hike": 0.909,  # was 1.0, head 1.10 x idle
+    # The S3 staff-b twin came out drawn small (2026-11-25 import): measured 1.406 by height.
+    "hero.river.s3.sheet.staff-b": 1.255,  # head 1.12 x idle at 1.406
     "hero.wind.pose.dash.windline-entry": 1.124,  # was 1.0, head 0.89 x idle
     "hero.wind.pose.standing.windmark-jab": 0.943,  # was 1.0, head 1.06 x idle
     "hero.wind.s3.pose.standing.crossline-reverse": 0.955,  # was 0.879, head 0.92 x idle

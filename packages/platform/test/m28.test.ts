@@ -1,9 +1,12 @@
 import {
+  HEROES,
   MoveState,
   claim,
   createWorld,
   heroOf,
+  kitOf,
   spawnItem,
+  startAction,
   weaponIndex,
   type StageResults,
 } from '@ffp/sim';
@@ -308,19 +311,30 @@ describe('M28 playtest fixes', () => {
     }
   });
 
-  test("Garran's hookstaff in a hero's hands is the hookstaff, not the hiking staff", () => {
-    const pick = new SpritePicker(reg);
-    const w = createWorld(1, { heroes: ['wind', 'river'] });
-    const f = heroOf(w, 0)!;
-    f.state = MoveState.Idle;
-    const idle = pick.fighter(f, 0)!.sheet;
-    f.state = MoveState.Walk;
-    const walk = pick.fighter(f, 10)!.sheet;
-    claim(w, f, spawnItem(w, weaponIndex('quarry-hookstaff'), f.x, f.z));
-    f.state = MoveState.Idle;
-    expect(pick.fighter(f, 0)!.sheet).toBe(idle);
-    f.state = MoveState.Walk;
-    expect(pick.fighter(f, 10)!.sheet).toBe(walk);
-    expect(pick.heldProp(f)).toMatchObject({ sheet: 'prop.s3-weapons', cell: 4 });
+  test("Garran's hookstaff in a hero's hands is drawn by the hero's hookstaff sheets", () => {
+    for (const outfit of ['base', 's3'] as const) {
+      const pick = new SpritePicker(reg);
+      pick.setOutfit(outfit);
+      for (const h of HEROES) {
+        const w = createWorld(1, { heroes: [h.id, 'river'] });
+        const f = heroOf(w, 0)!;
+        claim(w, f, spawnItem(w, weaponIndex('quarry-hookstaff'), f.x, f.z));
+        f.state = MoveState.Idle;
+        expect(pick.fighter(f, 0)).toEqual({ sheet: `hero.${h.id}.sheet.hookstaff`, cell: 0 });
+        f.state = MoveState.Walk;
+        expect(pick.fighter(f, 10)!.sheet).toBe(`hero.${h.id}.sheet.hookstaff-walk`);
+        expect(pick.heldProp(f)).toBeNull();
+        // Every hookstaff attack uses the hookstaff sheet, never the hiking staff's.
+        let attacks = 0;
+        kitOf(f)!.actions.forEach((a, i) => {
+          if (!a.id.startsWith('hookstaff-') || a.id === 'hookstaff-throw') return;
+          attacks += 1;
+          startAction(f, i);
+          f.stateFrame = 1;
+          expect(pick.fighter(f, 0)!.sheet, a.id).toBe(`hero.${h.id}.sheet.hookstaff`);
+        });
+        expect(attacks).toBeGreaterThan(0);
+      }
+    }
   });
 });

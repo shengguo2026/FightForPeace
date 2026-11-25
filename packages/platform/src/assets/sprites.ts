@@ -100,7 +100,7 @@ const WEAPON_POSES: Record<
   'support-throw': { sheet: 'heavy', cells: [3, 3, 3] },
   'grenade-return': { sheet: 'heavy', cells: [4, 5, 5] },
   // M27 Stage 3 weapons. Hiking staff (hike: 0 pick-up, 1 ready, 2 thrust, 3 low sweep,
-  // 4 high block, 5 throw); Garran's Quarry Hookstaff in a hero's hands uses the same sheet.
+  // 4 high block, 5 throw).
   'hike-thrust': { sheet: 'hike', cells: [1, 2, 2] },
   'hike-sweep': { sheet: 'hike', cells: [1, 3, 3] },
   'hike-hook': { sheet: 'hike', cells: [2, 3, 1] },
@@ -111,12 +111,15 @@ const WEAPON_POSES: Record<
   'hike-ground': { sheet: 'hike', cells: [4, 3, 3] },
   'hike-dash': { sheet: 'hike', cells: [1, 2, 2] },
   'hike-throw': { sheet: 'hike', cells: [5, 5, 5] },
-  'hookstaff-sweep': { sheet: 'hike', cells: [1, 3, 3] },
-  'hookstaff-thrust': { sheet: 'hike', cells: [1, 2, 2] },
-  'hookstaff-pull': { sheet: 'hike', cells: [2, 3, 1] },
-  'hookstaff-low': { sheet: 'hike', cells: [1, 3, 3] },
-  'hookstaff-descent': { sheet: 'hike', cells: [4, 2, 2] },
-  'hookstaff-throw': { sheet: 'hike', cells: [5, 5, 5] },
+  // Garran's Quarry Hookstaff in a hero's hands (hookstaff, 2026-11-25: 0 ready, 1 low
+  // sweep, 2 thrust, 3 hook pull, 4 overhead guard, 5 release). The throw shows only its
+  // wind-up (the staff then flies as its own item), so it raises the staff overhead.
+  'hookstaff-sweep': { sheet: 'hookstaff', cells: [0, 1, 1] },
+  'hookstaff-thrust': { sheet: 'hookstaff', cells: [0, 2, 2] },
+  'hookstaff-pull': { sheet: 'hookstaff', cells: [2, 3, 3] },
+  'hookstaff-low': { sheet: 'hookstaff', cells: [0, 1, 1] },
+  'hookstaff-descent': { sheet: 'hookstaff', cells: [4, 2, 2] },
+  'hookstaff-throw': { sheet: 'hookstaff', cells: [4, 4, 4] },
   // Wood axe (axe: 0 pick-up, 1 ready, 2 flat strike, 3 haft upstroke, 4 block, 5 throw).
   'axe-flat': { sheet: 'axe', cells: [1, 2, 2] },
   'axe-haft': { sheet: 'axe', cells: [1, 3, 3] },
@@ -147,20 +150,19 @@ const WEAPON_POSES: Record<
 };
 
 /**
- * M28: weapons no hero pose sheet shows. Garran's Quarry Hookstaff used the hiking-staff
- * sheets, so a hero who took it seemed to hold a plain staff (Guo 2026-11-25); it is drawn
- * in hand over the plain poses instead.
+ * M28: weapons no hero pose sheet shows: drawn in hand over the plain poses (heldProp).
+ * Garran's Quarry Hookstaff was one until its hero sheets arrived (2026-11-25).
  */
-const PROP_ONLY = new Set(['quarry-hookstaff']);
+const PROP_ONLY = new Set<string>();
 
 /** M22: the ready stance a hero holds a Stage 2 weapon in (idle and walking). */
 const WEAPON_STANCE: Record<string, { sheet: string; cell: number; walk: string }> = {
   'service-lance': { sheet: 'lance-a', cell: 1, walk: 'lance-walk' },
   'six-round-sidearm': { sheet: 'revolver', cell: 3, walk: 'revolver-walk' },
   'support-gun': { sheet: 'heavy', cell: 0, walk: 'heavy-walk' },
-  // M27 Stage 3 weapons (the hookstaff is held like the hiking staff).
+  // M27 Stage 3 weapons.
   'hiking-staff': { sheet: 'hike', cell: 1, walk: 'hike-walk' },
-  'quarry-hookstaff': { sheet: 'hike', cell: 1, walk: 'hike-walk' },
+  'quarry-hookstaff': { sheet: 'hookstaff', cell: 0, walk: 'hookstaff-walk' },
   'wood-axe': { sheet: 'axe', cell: 1, walk: 'axe-walk' },
   'quarry-hammer': { sheet: 'hammer', cell: 1, walk: 'hammer-walk' },
   'bandit-revolver': { sheet: 'revolver', cell: 3, walk: 'revolver-walk' },
@@ -598,7 +600,7 @@ function loop(meta: SheetMeta | undefined, frame: number, fps: number, cells?: n
 export type HeroOutfit = 'base' | 's3';
 
 /** Stage 3 armed walks, drawn in the Stage 3 outfit (no S3 twin needed). */
-const S3_NATIVE_WALKS = new Set(['hike-walk', 'axe-walk', 'hammer-walk']);
+const S3_NATIVE_WALKS = new Set(['hike-walk', 'axe-walk', 'hammer-walk', 'hookstaff-walk']);
 
 export class SpritePicker {
   constructor(private readonly assets: AssetRegistry) {}
