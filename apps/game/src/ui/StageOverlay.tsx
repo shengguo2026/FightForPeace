@@ -1,4 +1,5 @@
-import { ACHIEVEMENTS, STORE, type Settlement } from '@ffp/platform';
+import { ACHIEVEMENTS, S3_PREPARED_ROUTE, STORE, type Settlement } from '@ffp/platform';
+import { StoryPip } from '../media/Cinematic';
 import { HEROES } from '@ffp/sim';
 import { useState } from 'preact/hooks';
 import { dt, heroName, t, type TextId } from '../text/i18n';
@@ -32,6 +33,14 @@ export function StageHud({ state }: { state: LabState }) {
       }}
       data-testid="stage-hud"
     >
+      {hud.pip
+        ? (() => {
+            const shot = S3_PREPARED_ROUTE.shots.find(
+              (x) => !('motif' in x) && x.id === hud.pip!.shot,
+            );
+            return shot && !('motif' in shot) ? <StoryPip shot={shot} ms={hud.pip.ms} /> : null;
+          })()
+        : null}
       {hud.notice ? (
         <div
           data-testid="stage-notice"
@@ -123,7 +132,7 @@ function promptBottom(): number {
 }
 
 /** M22: epilogue cards told by the Stage 2 ending chapters instead. */
-const CHAPTER_CARDS = /^(formula|seal|justice|recovery\.|depot)/;
+const CHAPTER_CARDS = /^(formula|seal|justice|recovery\.|depot|invoice|lowland)/;
 
 /** M9 results screen: the list of grades, the overall grade, the counters and the hook. */
 export function ResultsOverlay({

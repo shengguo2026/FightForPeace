@@ -52,6 +52,7 @@ import {
   type PlaceholderFamily,
   RENDER_SCALE,
   STAGE2_ROOM_AREA,
+  STAGE3_ROOM_AREA,
   enemyMountCell,
   heroMountCell,
   raiderHorseCell,
@@ -261,7 +262,7 @@ export class StageScene extends Phaser.Scene {
   private readonly pursuit = new PursuitView(this);
   private readonly greenhouse = new GreenhouseView(this);
   private readonly sharedView = new SharedView(this);
-  private readonly objectivesView = new ObjectivesView(this);
+  private readonly objectivesView = new ObjectivesView(this, this.assets);
   /** M13: presentation events (stable ids) for sound and the effect layers. */
   private readonly tracker = new PresentationTracker();
   private readonly stage3Sounds = new Stage3SoundTracker();
@@ -372,7 +373,7 @@ export class StageScene extends Phaser.Scene {
       snap.stageWidth,
       this.opts.quality?.() ?? 'high',
       snap.run,
-      stage2AreaOf(snap.greenhouse?.room, snap.pursuit?.corridor),
+      stage2AreaOf(snap.greenhouse?.room, snap.pursuit?.corridor, snap.encounter),
     );
     // M27: the Stage 3 rooms and the horse corridors dress the heroes in the Stage 3
     // outfit, which their Stage 3 weapon and horse sheets are drawn in.
@@ -1645,15 +1646,26 @@ function overProfile(tags: readonly string[]): string {
   return parts.join(' · ');
 }
 
-/** M22: the Stage 2 area (backdrop art) of a greenhouse room or a pursuit corridor. */
-function stage2AreaOf(room: number | undefined, corridor: number | undefined): string | null {
+/**
+ * M22: the Stage 2 area (backdrop art) of a greenhouse room or a pursuit corridor, as
+ * `stage2.<area>`; M28: a Stage 3 arena or horse corridor as `stage3.<area>`.
+ */
+function stage2AreaOf(
+  room: number | undefined,
+  corridor: number | undefined,
+  encounter: Encounter | null = null,
+): string | null {
   const id =
     room !== undefined
       ? ROOMS[room]?.id
       : corridor !== undefined
         ? CORRIDORS[corridor]?.id
-        : undefined;
-  return id ? (STAGE2_ROOM_AREA[id] ?? null) : null;
+        : encounter
+          ? ARENAS[encounter.arena]?.id
+          : undefined;
+  if (!id) return null;
+  if (STAGE2_ROOM_AREA[id]) return `stage2.${STAGE2_ROOM_AREA[id]}`;
+  return STAGE3_ROOM_AREA[id] ? `stage3.${STAGE3_ROOM_AREA[id]}` : null;
 }
 
 /** M27: whether the heroes wear the Stage 3 outfit (the M27 Lab rooms, horse corridors). */
@@ -1662,5 +1674,7 @@ export function stage3Outfit(encounter: Encounter | null, corridor?: number): bo
     const c = CORRIDORS[corridor];
     return c !== undefined && mountOf(c).id === 'mountain-horse';
   }
-  return encounter !== null && (ARENAS[encounter.arena]?.id.startsWith('lab-m27') ?? false);
+  // M28: and every Stage 3 arena (the s3- encounters of the stage).
+  const id = ARENAS[encounter?.arena ?? -1]?.id ?? '';
+  return encounter !== null && (id.startsWith('lab-m27') || id.startsWith('s3-'));
 }

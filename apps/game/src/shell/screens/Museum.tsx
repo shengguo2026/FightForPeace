@@ -9,7 +9,11 @@ import {
   STAGE1_MUSIC,
   STAGE2_CHAPTERS,
   STAGE2_MUSIC,
+  STAGE3_CHAPTERS,
+  STAGE3_MUSIC,
   dossierView,
+  museumState,
+  openDossierPage,
   markViewed,
   museumSection,
   researchView,
@@ -26,7 +30,7 @@ import { ART, Button, Panel, Screen } from '../ui';
 export const museumListen = signal<{ cue: string; state: string } | null>(null);
 
 /** Music entries reuse the score's localized cue titles (the cue's `title`). */
-const SCORE = [...STAGE1_MUSIC, ...STAGE2_MUSIC];
+const SCORE = [...STAGE1_MUSIC, ...STAGE2_MUSIC, ...STAGE3_MUSIC];
 
 /** The localized name of a Museum entry. */
 export function entryName(e: MuseumEntryDef): string {
@@ -41,10 +45,18 @@ const CINEMA: Record<string, typeof STAGE1_INTRO> = {
   'cine.stage1.intro': STAGE1_INTRO,
   'cine.stage1.ending': STAGE1_ENDING,
   ...Object.fromEntries(STAGE2_CHAPTERS.map((c) => [c.id, c])),
+  ...Object.fromEntries(STAGE3_CHAPTERS.map((c) => [c.id, c])),
 };
 
 /** The ending as the best outcome (the Museum shows the whole story). */
-const BEST = { workersFreed: 1, workersTotal: 1, clues: 1, cluesTotal: 1, preservation: 0 };
+const BEST = {
+  workersFreed: 1,
+  workersTotal: 1,
+  clues: 1,
+  cluesTotal: 1,
+  preservation: 0,
+  rescueCritical: 0,
+};
 
 /**
  * M21 Village Museum and Archive (Stage 2 spec §14.2, F&D §9.1): Picture, Cinema, Music,
@@ -169,7 +181,7 @@ export function MuseumScreen({ shell }: { shell: Shell }) {
           {section === 'investigation' ? (
             <Investigation shell={shell} />
           ) : section && sel && sel.section === section ? (
-            <EntryDetail e={sel} play={(c) => setCinema(c)} />
+            <EntryDetail e={sel} play={(c) => setCinema(c)} shell={shell} />
           ) : (
             <p>{t(`m21.sectionIntro.${section ?? last}` as TextId)}</p>
           )}
@@ -179,7 +191,18 @@ export function MuseumScreen({ shell }: { shell: Shell }) {
   );
 }
 
-function EntryDetail({ e, play }: { e: MuseumEntryDef; play: (cine: string) => void }) {
+/** M28: the Silvermist Ecology Folio is upgraded once both Stage 3 branches were completed. */
+const FOLIO_PAGES = ['collection.qinglan-rescue-bell', 'collection.gao-wen-trail-ledger'];
+
+function EntryDetail({
+  e,
+  play,
+  shell,
+}: {
+  e: MuseumEntryDef;
+  play: (cine: string) => void;
+  shell: Shell;
+}) {
   const listening = museumListen.value;
   const [cue, state] = e.asset.split(':');
   const on = !!listening && listening.cue === cue && listening.state === state;
@@ -245,6 +268,17 @@ function EntryDetail({ e, play }: { e: MuseumEntryDef; play: (cine: string) => v
             }}
           />
           <p data-testid="museum-collection-desc">{t(`museum.${e.id}.desc` as TextId)}</p>
+          {e.id === 'collection.silvermist-ecology-folio' ? (
+            <p class="ffp-hint" data-testid="museum-folio-edition">
+              {FOLIO_PAGES.every((id) => {
+                const p = shell.active.value;
+                const def = MUSEUM.find((m) => m.id === id);
+                return !!p && !!def && museumState(p, def) === 'unlocked';
+              })
+                ? t('m28.folioComplete')
+                : t('m28.folioPartial')}
+            </p>
+          ) : null}
         </>
       ) : null}
     </div>
@@ -256,10 +290,44 @@ function Investigation({ shell }: { shell: Shell }) {
   const p = shell.active.value!;
   const d = dossierView(p);
   const r = researchView(p);
+  const [page, setPage] = useState<string | null>(null);
+  const opened = d.pages.find((x) => x.id === page);
+  if (opened)
+    return (
+      <div data-testid="dossier-page">
+        <h2 style={{ marginTop: 0 }}>{t(`dossier.${opened.id}.name` as TextId)}</h2>
+        {opened.asset ? (
+          <img
+            src={ART(opened.asset)}
+            alt={t(`dossier.${opened.id}.name` as TextId)}
+            style={{ width: '100%', borderRadius: '6px' }}
+          />
+        ) : null}
+        <p data-testid="dossier-page-text">{t(`dossier.${opened.id}` as TextId)}</p>
+        <Button label={t('common.back')} testId="dossier-page-back" onPress={() => setPage(null)} />
+      </div>
+    );
   return (
     <div data-testid="museum-investigation">
       <h2 style={{ marginTop: 0 }}>{t('m21.dossierTitle')}</h2>
       {d.facts.length === 0 && !d.theory ? <p>{t('m21.dossierEmpty')}</p> : null}
+      {d.pages.map((x) => (
+        <Button
+          label={t(`dossier.${x.id}.name` as TextId)}
+          detail={t('m28.dossierOpen')}
+          testId={`dossier-open-${x.id.split('.').pop()}`}
+          onPress={() => {
+            setPage(x.id);
+            // M28 Paper Trail: opening the page is remembered (a Guest keeps nothing).
+            if (!p.guest) {
+              let earned: string[] = [];
+              shell.update((y) => (earned = openDossierPage(y, x.id)));
+              for (const id of earned)
+                shell.showToast(t('m28.achievementEarned', { name: t(`${id}.name` as TextId) }));
+            }
+          }}
+        />
+      ))}
       {d.facts.length > 0 ? <h3>{t('m21.factsTitle')}</h3> : null}
       {d.facts.map((f) => (
         <p data-testid="dossier-fact">{t(`dossier.${f.id}` as TextId)}</p>

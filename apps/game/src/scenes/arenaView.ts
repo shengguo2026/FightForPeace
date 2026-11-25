@@ -144,10 +144,14 @@ export class ArenaView {
   preload(): void {
     // M22: Stage 2's twelve areas load when a run first enters them (see rebuild).
     for (const l of this.assets.layers())
-      if (!l.id.startsWith('bg.stage2.')) this.scene.load.image(l.id, l.url);
+      if (!l.id.startsWith('bg.stage2.') && !l.id.startsWith('bg.stage3.'))
+        this.scene.load.image(l.id, l.url);
   }
 
-  /** M22: the Stage 2 area whose layers are drawn now (null: the arena's Stage 1 area). */
+  /**
+   * M22: the Stage 2 area whose layers are drawn now (null: the arena's Stage 1 area). M28:
+   * the stage and area, `stage2.road` or `stage3.basin`.
+   */
   private s2area: string | null = null;
   /** M22: Stage 2 layer textures being loaded. */
   private readonly loading = new Set<string>();
@@ -164,7 +168,7 @@ export class ArenaView {
   private ensureStage2(area: string): void {
     const want = this.assets
       .layers()
-      .filter((l) => l.id.startsWith(`bg.stage2.${area}.`))
+      .filter((l) => l.id.startsWith(`bg.${area}.`))
       .filter((l) => !this.scene.textures.exists(l.id) && !this.loading.has(l.id));
     if (want.length === 0) return;
     for (const l of want) {
@@ -302,13 +306,14 @@ export class ArenaView {
     stageWidth: number,
     quality: QualityLevel = 'high',
     run: StageRun | null = null,
-    /** M22: the Stage 2 area of the room or corridor being played (its own art). */
+    /** M22: the Stage 2 area of the room or corridor being played (its own art); M28: as
+     * `stage2.<area>` or `stage3.<area>`. */
     stage2Area: string | null = null,
   ): void {
     const arena = enc ? ARENAS[enc.arena] : undefined;
     // Keyed by what is drawn, so the camera locks of one stage beat share one backdrop.
     const key = stage2Area
-      ? `s2/${stage2Area}/${stageWidth}`
+      ? `${stage2Area}/${stageWidth}`
       : arena
         ? `${arena.area}/${arena.backdrop}/${arena.width}`
         : 'lab';
@@ -448,8 +453,7 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
     cam.setBounds(0, 0, Math.max(VIEW_W, stageWidth), VIEW_H);
     const s2 = this.s2area;
     if (!arena && !s2) return;
-    const id = (layer: string) =>
-      s2 ? `bg.stage2.${s2}.${layer}` : `bg.stage1.${arena!.area}.${layer}`;
+    const id = (layer: string) => (s2 ? `bg.${s2}.${layer}` : `bg.stage1.${arena!.area}.${layer}`);
     const has = (layer: string) =>
       this.assets.layer(id(layer)) !== undefined && this.scene.textures.exists(id(layer));
     if (!s2 && arena?.backdrop === 'plate' && has('plate')) {

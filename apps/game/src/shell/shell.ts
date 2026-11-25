@@ -625,9 +625,10 @@ export class Shell {
     const stage = this.stagePick.value.stage;
     // M21: the Stage 1 intro stays Stage 1's; a later stage shows What's New once per
     // profile before its first run, then its own briefing.
-    // M22: Stage 2 opens with its four story chapters, then the briefing.
+    // M22: Stage 2 opens with its four story chapters, then the briefing; M28: Stage 3
+    // with Silvermist.
     if (stage === 'stage1') this.go('intro');
-    else this.openWhatsNew(stage, stage === 'stage2' ? 'intro' : 'briefing');
+    else this.openWhatsNew(stage, stage === 'stage2' || stage === 'stage3' ? 'intro' : 'briefing');
   }
 
   /** M21: the What's New briefing of `stage` when it is still due, else straight to `then`. */
@@ -1131,6 +1132,15 @@ export class Shell {
             0,
             (GREENHOUSE?.grades ?? []).findIndex((g) => g.id === results.preservation?.grade),
           ),
+        };
+      // M28: Stage 3's Paths through the Mist follows its epilogue cards (story state: how
+      // many rescue groups ended Critical, for the E03 insert).
+      if (!this.net.active && stage.id === 'stage3')
+        this.chapters.value = {
+          stage: 'stage3',
+          rescueCritical: (results.journey?.rescues ?? []).filter(
+            (r) => !r.branch && r.stateId === 'critical',
+          ).length,
         };
       const heroes = this.session.world.playerHero
         .slice(0, this.playerCount() || 1)

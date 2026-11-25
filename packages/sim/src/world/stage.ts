@@ -6,6 +6,9 @@ export interface LayoutItem {
   weapon: string;
   x: number;
   z: number;
+  /** M28: only from / up to this difficulty index (absent: every difficulty). */
+  min?: number;
+  max?: number;
 }
 
 export interface StageLayout {

@@ -265,6 +265,11 @@ export interface StageHudView {
   story: string;
   /** A short notice such as "Checkpoint saved". */
   notice: string;
+  /**
+   * M28: a story moment shown over the fight (The Prepared Route): its shot id and the
+   * time into it (ms of game time, so pausing holds it).
+   */
+  pip?: { shot: string; ms: number };
 }
 
 /** M9 results screen. */

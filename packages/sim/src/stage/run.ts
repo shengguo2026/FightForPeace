@@ -13,7 +13,18 @@ import { LAB_LAYOUT, type StageLayout } from '../world/stage';
 import { bandFor, grade100, type GradeInput, rankFor, ratio } from '../objectives/grade';
 import { ActionBit } from '../input/bits';
 import { DIFFICULTIES, profileOf } from '../enemies/data';
-import { Result, newEncounter, setupDevices, updateView } from '../enemies/encounter';
+import { Result, arenaLayout, newEncounter, setupDevices, updateView } from '../enemies/encounter';
+import { ARENAS } from '../enemies/data';
+import { setupSharedScenery } from '../shared/scenery';
+import {
+  CaseState,
+  UnitPhase,
+  ladderOf,
+  objectiveDefs,
+  outcomeOf,
+  setupObjectives,
+} from '../objectives/state';
+import { caseOutcome } from '../objectives/results';
 import { VIEW_WIDTH } from '../enemies/director';
 import {
   CORRIDORS,
@@ -36,6 +47,7 @@ import {
   type RunAsset,
   type RunCarry,
   type RunCapture,
+  type RunJourney,
   type RunCheckpoint,
   type ChannelState,
   type Encounter,
@@ -108,9 +120,13 @@ export const isCorridorBeat = (b: BeatDef) => b.corridor !== '';
 /** M20: a greenhouse room beat. */
 export const isRoomBeat = (b: BeatDef) => b.room !== '';
 
+/** M28: an arena beat (its waves, scenery and objectives). */
+export const isArenaBeat = (b: BeatDef) => b.arena >= 0;
+
 /** Encounters a beat holds: its camera locks, or a room's waves (one), or none. */
 export function lockCount(beat: BeatDef): number {
   if (isRoomBeat(beat)) return (ROOMS[roomIndex(beat.room)]?.arena ?? -1) >= 0 ? 1 : 0;
+  if (isArenaBeat(beat)) return (ARENAS[beat.arena]?.waves.length ?? 0) > 0 ? 1 : 0;
   if (isCorridorBeat(beat)) return 0;
   return beat.locks.length;
 }
@@ -154,10 +170,32 @@ export function installHeroFactory(f: HeroFactory): void {
   makeHero = f;
 }
 
+/** M28: an empty journey record. */
+export function newJourney(): RunJourney {
+  return { rescues: [], cases: [], story: [], storyClear: [], breaks: 0, redirects: 0 };
+}
+
+/** M28: a copy of a journey record. */
+function copyJourney(j: RunJourney): RunJourney {
+  return {
+    rescues: j.rescues.map((r) => ({ ...r })),
+    cases: j.cases.map((c) => ({ ...c })),
+    story: [...j.story],
+    storyClear: [...j.storyClear],
+    breaks: j.breaks,
+    redirects: j.redirects,
+  };
+}
+
+/** M28: does a stage keep a journey record (it has arena beats)? */
+export function hasJourney(def: StageDef): boolean {
+  return def.beats.some(isArenaBeat);
+}
+
 /** A fresh run of stage `stage` at `difficulty`, starting at `beat` (Lab practice: later). */
 export function newRun(stage: number, difficulty: number, beat = 0): StageRun {
   const def = STAGES[stage]!;
-  return {
+  const run: StageRun = {
     stage,
     difficulty,
     startBeat: beat,
@@ -191,6 +229,8 @@ export function newRun(stage: number, difficulty: number, beat = 0): StageRun {
     assist: false,
     resume: RunPhase.Walk,
   };
+  if (hasJourney(def)) run.journey = newJourney();
+  return run;
 }
 
 function event(world: World, kind: number, detail = 0): void {
@@ -266,6 +306,11 @@ export function enterBeat(world: World, n: number, record = true): void {
   world.pursuit = null;
   world.greenhouse = null;
   world.encounter = null;
+  if (run.journey) {
+    // M28: the last arena beat's objectives and shared scenery stay behind.
+    delete world.objectives;
+    delete world.shared;
+  }
   const layout: StageLayout | null = beat.layout === 'mill' ? LAB_LAYOUT : null;
   world.environment = layout ? createEnvironment(layout) : emptyEnvironment();
   if (layout)
@@ -292,6 +337,8 @@ export function enterBeat(world: World, n: number, record = true): void {
       enc.opening = run.intercept;
       run.phase = RunPhase.Locked;
     }
+  } else if (isArenaBeat(beat)) {
+    enterArena(world, beat);
   } else {
     world.encounter = newEncounter(beat.base, run.difficulty, world.frame);
     world.encounter.result = Result.Waiting;
@@ -300,6 +347,81 @@ export function enterBeat(world: World, n: number, record = true): void {
   updateView(world);
   event(world, RunEvent.BeatStart, n);
   if (checkpoint) event(world, RunEvent.Checkpoint, n);
+  // M28: the beat's story moment (a flag in the journey record; the game shows it).
+  const j = run.journey;
+  if (j && beat.story && !j.story.includes(n)) j.story.push(n);
+}
+
+/**
+ * M28: an arena beat's encounter: its scenery (weapons, food, breakables, movers), devices,
+ * waves and M25 objectives. People the run already took to safety wait at their shelter
+ * and sealed cases stay sealed (a continue never erases nor repeats a rescue or evidence).
+ */
+function enterArena(world: World, beat: BeatDef): void {
+  const run = world.run!;
+  const enc = newEncounter(beat.arena, run.difficulty, world.frame);
+  world.encounter = enc;
+  const lay = arenaLayout(beat.arena);
+  if (lay) {
+    world.environment = createEnvironment(lay);
+    for (const i of lay.items)
+      if ((i.min ?? 0) <= run.difficulty && run.difficulty <= (i.max ?? 9))
+        spawnItem(world, weaponIndex(i.weapon), fx(i.x), fx(i.z));
+    setupSharedScenery(world, lay);
+  }
+  setupDevices(world);
+  setupObjectives(world, beat.arena);
+  const o = world.objectives;
+  const defs = objectiveDefs(world);
+  const j = run.journey;
+  if (o && defs && j) {
+    for (const r of j.rescues) {
+      if (r.beat !== run.beat) continue;
+      const u = o.units[r.unit];
+      const d = defs.units[r.unit];
+      if (!u || !d) continue;
+      const last = d.route[d.route.length - 1];
+      u.phase = UnitPhase.Safe;
+      u.locked = true;
+      u.count = r.count;
+      u.leg = Math.max(0, d.route.length - 1);
+      if (last) {
+        u.x = fx(last.x);
+        u.z = fx(last.z);
+      }
+    }
+    for (const c of j.cases) {
+      if (c.beat !== run.beat || c.state !== CaseState.Sealed) continue;
+      const k = o.cases[c.case];
+      if (!k) continue;
+      k.state = CaseState.Sealed;
+      k.disturbed = c.disturbed;
+    }
+  }
+  if ((ARENAS[beat.arena]?.waves.length ?? 0) > 0) run.phase = RunPhase.Locked;
+  else enc.result = Result.Waiting;
+}
+
+/**
+ * M28: people who reached shelter and cases sealed this frame go into the journey record
+ * (once each); `leaving` also records the rest as the beat leaves them.
+ */
+function recordObjectives(world: World, leaving: boolean): void {
+  const run = world.run!;
+  const j = run.journey;
+  const o = world.objectives;
+  if (!j || !o || !isArenaBeat(beatOf(world)!)) return;
+  o.units.forEach((u, i) => {
+    if (!u.locked && !(leaving && u.phase !== UnitPhase.Captive)) return;
+    if (j.rescues.some((r) => r.beat === run.beat && r.unit === i)) return;
+    j.rescues.push({ beat: run.beat, unit: i, count: u.count });
+    event(world, RunEvent.Rescued, i);
+  });
+  o.cases.forEach((c, i) => {
+    if (c.state !== CaseState.Sealed && !(leaving && c.state !== CaseState.Present)) return;
+    if (j.cases.some((x) => x.beat === run.beat && x.case === i)) return;
+    j.cases.push({ beat: run.beat, case: i, state: c.state, disturbed: c.disturbed });
+  });
 }
 
 /** Depth band of an on-foot beat (a corridor sets its own road band). */
@@ -340,9 +462,11 @@ function leaveBeat(world: World): number {
         mastery: rec.mastery,
       });
       if (CORRIDORS[p.corridor]?.boss) run.intercept = p.marek === 3 ? 0 : p.marek;
+      if (run.journey) run.journey.breaks += p.record.crashes;
     }
     return -1;
   }
+  recordObjectives(world, true);
   for (const h of heroes(world)) {
     const item = h.item !== 0 ? world.items.find((i) => i.id === h.item) : undefined;
     run.carry[h.slot] =
@@ -380,6 +504,9 @@ export function branchMet(world: World, beat: BeatDef): boolean {
   if (!b) return false;
   if (b.workers && run.workers.some((w) => w.state === WorkerState.Bound)) return false;
   if (b.clue && run.clue !== 2) return false;
+  // M28: every protected person of the arena freed (on the way to, or at, shelter).
+  if (b.units && (world.objectives?.units ?? []).some((u) => u.phase === UnitPhase.Captive))
+    return false;
   const assets = world.greenhouse?.assets ?? [];
   return b.assets.every((name) => {
     const a = assets.find((x) => x.name === name);
@@ -422,6 +549,7 @@ function takeCheckpoint(world: World): void {
     stats: { ...run.stats },
     ...records(run),
   };
+  if (run.journey) run.checkpoint.journey = copyJourney(run.journey);
 }
 
 /** M20: copies of the stage records a checkpoint keeps. */
@@ -458,6 +586,21 @@ function restoreCheckpoint(world: World): void {
   const frames = run.stats.frames;
   run.stats = { ...cp.stats, frames, downs: run.stats.downs, revives: run.stats.revives };
   Object.assign(run, records(cp));
+  // M28: the checkpoint's journey, keeping every rescue and sealed case since (a continue
+  // never erases a rescue, a condition or evidence, nor lets them happen twice).
+  const now = run.journey;
+  if (now) {
+    const back = cp.journey ? copyJourney(cp.journey) : newJourney();
+    for (const r of now.rescues)
+      if (!back.rescues.some((x) => x.beat === r.beat && x.unit === r.unit))
+        back.rescues.push({ ...r });
+    const sealed = now.cases.filter((c) => c.state === CaseState.Sealed);
+    back.cases = back.cases.filter(
+      (c) => !sealed.some((x) => x.beat === c.beat && x.case === c.case),
+    );
+    for (const c of sealed) back.cases.push({ ...c });
+    run.journey = back;
+  }
   run.capture = null;
   rebuildHeroes(world, def.rules.continuePercent, cp.meter);
   enterBeat(world, cp.beat, false);
@@ -588,7 +731,14 @@ export function exitOpen(world: World): boolean {
   if (!run || !beat) return false;
   if (beat.next.length === 0) return false;
   if (run.locksDone < lockCount(beat)) return false;
-  return run.workers.every((w) => w.state !== WorkerState.Bound);
+  if (!run.workers.every((w) => w.state !== WorkerState.Bound)) return false;
+  // M28: nobody is left bound and the research record is never left behind.
+  const o = world.objectives;
+  if (o && isArenaBeat(beat)) {
+    if (o.units.some((u) => u.phase === UnitPhase.Captive)) return false;
+    if (o.cases.some((c) => c.state === CaseState.Present)) return false;
+  }
+  return true;
 }
 
 function startLock(world: World, n: number): void {
@@ -608,7 +758,7 @@ function startLock(world: World, n: number): void {
 
 function clearLock(world: World, beat: BeatDef): void {
   const run = world.run!;
-  const room = isRoomBeat(beat);
+  const room = isRoomBeat(beat) || isArenaBeat(beat);
   const lock = room ? undefined : beat.locks[run.locksDone]!;
   run.locksDone += 1;
   run.phase = RunPhase.Walk;
@@ -626,6 +776,13 @@ function clearLock(world: World, beat: BeatDef): void {
       scorchStops: boss.scorchStops,
       intercept: boss.intercept,
     };
+  // M28: Garran's winch redirects, and the beat's story moment once it is cleared.
+  const j = run.journey;
+  if (j && boss) j.redirects = boss.redirects ?? 0;
+  if (j && beat.storyClear && !j.storyClear.includes(run.beat)) {
+    j.storyClear.push(run.beat);
+    event(world, RunEvent.Story, 1);
+  }
   // An encounter boundary: a downed hero nobody revived stands up again (D8).
   const def = STAGES[run.stage]!;
   for (const h of heroes(world))
@@ -683,6 +840,7 @@ export function stepRunLate(world: World): void {
     event(world, RunEvent.Food, h.slot);
   }
   stepWorkers(world);
+  recordObjectives(world, false);
   countOutcomes(world);
   if (run.phase === RunPhase.Defeat || run.phase === RunPhase.Complete) return;
   for (const h of all)
@@ -939,6 +1097,22 @@ export interface StageResults {
   capture: RunCapture | null;
   /** M20: the epilogue cards this run shows, in order (keys under epilogue.<stage>.). */
   epilogue: string[];
+  /** M28: the journey record (Stage 3: rescues, research record, story, horses, winch). */
+  journey?: JourneyResult | null;
+}
+
+/** M28: what a journey stage's results show. */
+export interface JourneyResult {
+  rescues: RescueResult[];
+  /** Research record outcome: documented, recovered, disturbed or missing. */
+  record: string;
+  /** Story moments reached (ids). */
+  story: string[];
+  storyClear: string[];
+  /** Horse Stability breaks over every corridor ridden. */
+  breaks: number;
+  /** Winch loads redirected into Garran. */
+  redirects: number;
 }
 
 export interface PreservationResult {
@@ -1000,7 +1174,97 @@ function measure(
       const pct = stageResponse(run)?.percent ?? 100;
       return { pct, value: `${pct}%` };
     }
+    // --- M28 (Stage 3 §22.2) ---
+    case 'rescues': {
+      const list = journeyRescues(run, def).filter((r) => !r.branch);
+      const total = def.beats.reduce(
+        (n, b) => n + (isArenaBeat(b) && !b.branch ? rescueUnits(b).length : 0),
+        0,
+      );
+      const got = list.reduce((n, r) => n + r.share, 0);
+      const pct = total === 0 ? 100 : Math.trunc(got / total);
+      const secure = list.filter((r) => r.state === 0).length;
+      return { pct, value: `${secure}/${total}` };
+    }
+    case 'record': {
+      const rec = journeyRecord(run, def);
+      return { pct: rec.share, value: rec.outcome };
+    }
+    case 'capture': {
+      const c = run.capture;
+      const route = !c ? 0 : c.route === 1 ? 40 : 25;
+      const disarm = !c ? 0 : c.gunLost === 1 ? 35 : c.gunLost === 2 ? 25 : 0;
+      const redirect = (run.journey?.redirects ?? 0) > 0 ? 25 : 0;
+      return { pct: route + disarm + redirect, value: `${route + disarm + redirect}%` };
+    }
+    case 'combat': {
+      const pct = Math.max(0, 100 - 20 * run.continuesUsed - 5 * s.downs);
+      return { pct, value: `${pct}%` };
+    }
+    case 'branches': {
+      const all = def.beats.filter((b) => b.branch).length;
+      const done = run.branches.filter((b) => b === BranchOutcome.Completed).length;
+      return { pct: ratio(done, all), value: `${done}/${all}` };
+    }
   }
+}
+
+/** M28: the protected units of an arena beat (rescue ladder), as authored. */
+function rescueUnits(b: BeatDef) {
+  return (ARENAS[b.arena]?.objectives?.units ?? []).filter((u) => u.ladder === 'rescue');
+}
+
+/** M28: one rescued person in the results. */
+export interface RescueResult {
+  /** The unit's authored id (e.g. `gao-wen`) and the beat it was freed in. */
+  id: string;
+  beat: number;
+  /** Ladder state index (0 Secure, 1 Strained, 2 Critical) and its id. */
+  state: number;
+  stateId: string;
+  /** Grade share of that state (0–100). */
+  share: number;
+  /** Rescued in an optional branch (Wei Shan): not one of the stage's rescue groups. */
+  branch: boolean;
+}
+
+/** M28: every person the run took to safety, in the order they were rescued. */
+export function journeyRescues(run: StageRun, def: StageDef): RescueResult[] {
+  const j = run.journey;
+  if (!j) return [];
+  return j.rescues.flatMap((r) => {
+    const b = def.beats[r.beat];
+    const u = b ? ARENAS[b.arena]?.objectives?.units[r.unit] : undefined;
+    if (!b || !u) return [];
+    const states = ladderOf(u.ladder).states;
+    let state = 0;
+    states.forEach((x, i) => {
+      if (r.count >= x.at) state = i;
+    });
+    const st = states[state]!;
+    return [{ id: u.id, beat: r.beat, state, stateId: st.id, share: st.share, branch: !!b.branch }];
+  });
+}
+
+/** M28: the research record over the stage's cases (the worst case decides). */
+export function journeyRecord(run: StageRun, def: StageDef): { outcome: string; share: number } {
+  const order = ['documented', 'recovered', 'disturbed', 'missing'] as const;
+  let worst = -1;
+  let share = 100;
+  for (const [bi, b] of def.beats.entries()) {
+    if (!isArenaBeat(b)) continue;
+    const cases = ARENAS[b.arena]?.objectives?.cases ?? [];
+    cases.forEach((d, ci) => {
+      const rec = run.journey?.cases.find((c) => c.beat === bi && c.case === ci);
+      const o = rec ? caseOutcome({ state: rec.state, disturbed: rec.disturbed }) : 'missing';
+      const i = order.indexOf(o);
+      if (i > worst) {
+        worst = i;
+        share = outcomeOf(d.outcome)[o];
+      }
+    });
+  }
+  return worst < 0 ? { outcome: 'documented', share: 100 } : { outcome: order[worst]!, share };
 }
 
 /** Weighted condition percent of some recorded assets (Lost counts 0; none: 100). */
@@ -1067,6 +1331,12 @@ export function epilogueCards(run: StageRun, def: StageDef): string[] {
         );
       case 'preservation':
         return pres ? [`${card.id}.${pres.grade}`] : [];
+      case 'rescues':
+        return journeyRescues(run, def)
+          .filter((r) => !r.branch)
+          .map((r) => `${card.id}.${r.id}.${r.stateId}`);
+      case 'record':
+        return run.journey ? [`${card.id}.${journeyRecord(run, def).outcome}`] : [];
       default:
         return [card.id];
     }
@@ -1091,7 +1361,9 @@ export function runScore(run: StageRun, def: StageDef): number {
     // M20: completed branches, Marek's capture route and the Preservation percent.
     run.branches.filter((b) => b === BranchOutcome.Completed).length * t.branch +
     (run.capture ? (run.capture.route === 1 ? t.resolve : t.forced) : 0) +
-    (stagePreservation(run)?.percent ?? 0) * t.preservation;
+    (stagePreservation(run)?.percent ?? 0) * t.preservation +
+    // M28: every person taken to safety counts like a freed worker.
+    (run.journey?.rescues.length ?? 0) * t.worker;
   return Math.max(0, Math.trunc((raw * (t.difficulty[run.difficulty] ?? 100)) / 100));
 }
 
@@ -1110,7 +1382,15 @@ export function stageResults(world: World): StageResults | null {
   });
   // M25: the shared 100-point grade module (caps; Stage 3 adds condition caps and no grade
   // for Cheat-Assisted runs, which Stages 1 and 2 do not use).
-  const result = grade100(g, inputs, [], g.cheat === 'none' && world.cheats.marked);
+  // M28: a rescue group in a capped ladder state lowers the rank (Stage 3 §22.2).
+  const rescues = journeyRescues(run, def).filter((r) => !r.branch);
+  const conditions = g.conditionCaps.flatMap((cap) => {
+    const at = ladderOf(cap.ladder).states.findIndex((x) => x.id === cap.state);
+    return rescues.some((r) => r.state >= at)
+      ? [{ reason: `${cap.ladder}.${cap.state}`, rank: cap.rank }]
+      : [];
+  });
+  const result = grade100(g, inputs, conditions, g.cheat === 'none' && world.cheats.marked);
   const grades: Grade[] = result.lines;
   const { points, overall, capped } = result;
   const standard = world.playerHero.every((h, slot) => {
@@ -1145,6 +1425,16 @@ export function stageResults(world: World): StageResults | null {
     ),
     capture: run.capture ? { ...run.capture } : null,
     epilogue: epilogueCards(run, def),
+    journey: run.journey
+      ? {
+          rescues: journeyRescues(run, def),
+          record: journeyRecord(run, def).outcome,
+          story: run.journey.story.map((b) => def.beats[b]!.story),
+          storyClear: run.journey.storyClear.map((b) => def.beats[b]!.storyClear),
+          breaks: run.journey.breaks,
+          redirects: run.journey.redirects,
+        }
+      : null,
   };
 }
 

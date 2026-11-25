@@ -16,6 +16,9 @@ import {
   STAGE2_BRIEF_STILLS,
   STAGE2_ENDING,
   STAGE2_INTRO,
+  STAGE3_BRIEF_STILLS,
+  STAGE3_ENDING,
+  STAGE3_INTRO,
   type StoryState,
   campaignList,
 } from '@ffp/platform';
@@ -434,11 +437,12 @@ export function Chapters({
 export function IntroScreen({ shell }: { shell: Shell }) {
   void locale.value;
   const s = shell.active.value?.settings;
-  if (shell.stagePick.value.stage === 'stage2')
+  const intro = shell.stagePick.value.stage;
+  if (intro === 'stage2' || intro === 'stage3')
     return (
       <Chapters
         shell={shell}
-        defs={STAGE2_INTRO}
+        defs={intro === 'stage3' ? STAGE3_INTRO : STAGE2_INTRO}
         testId="intro"
         onDone={() => shell.go('briefing')}
       />
@@ -467,10 +471,10 @@ export function EndingScreen({ shell }: { shell: Shell }) {
   if (!state) return null;
   return (
     <div class="ffp-shell" style={{ pointerEvents: 'auto', zIndex: 40 }}>
-      {state.stage === 'stage2' ? (
+      {state.stage === 'stage2' || state.stage === 'stage3' ? (
         <Chapters
           shell={shell}
-          defs={STAGE2_ENDING}
+          defs={state.stage === 'stage3' ? STAGE3_ENDING : STAGE2_ENDING}
           state={state}
           testId="ending"
           onDone={() => (shell.ending.value = null)}
@@ -494,6 +498,7 @@ export function EndingScreen({ shell }: { shell: Shell }) {
 const BRIEF = [1, 2, 3, 4, 5] as const;
 /** The briefing lines of a stage (M21: Stage 2 has its own). */
 function briefKey(stage: string, n: (typeof BRIEF)[number]): TextId {
+  if (stage === 'stage3') return `m28.brief.${n}`;
   return stage === 'stage2' ? `m21.brief.stage2.${n}` : `brief.${n}`;
 }
 /** Elder briefing pose (cell of the 3 × 2 sheet) for each line. */
@@ -560,8 +565,13 @@ export function BriefingScreen({ shell }: { shell: Shell }) {
   const pose = POSE[Math.min(line, BRIEF.length - 1)]!;
   const stage = shell.stagePick.value.stage;
   // M22: the Stage 2 briefing over its own stills (the room, then the perimeter at night).
+  const at = Math.min(line, BRIEF.length - 1);
   const bg =
-    stage === 'stage2' ? STAGE2_BRIEF_STILLS[Math.min(line, BRIEF.length - 1)]! : 's1-brief-01';
+    stage === 'stage3'
+      ? STAGE3_BRIEF_STILLS[at]!
+      : stage === 'stage2'
+        ? STAGE2_BRIEF_STILLS[at]!
+        : 's1-brief-01';
   return (
     <Screen bg={ART(bg)} testId="briefing">
       <div
@@ -607,7 +617,13 @@ export function BriefingScreen({ shell }: { shell: Shell }) {
             <h1 class="ffp-title">{t('play.briefingTitle')}</h1>
             <h3>{t('play.objective')}</h3>
             <p data-testid="briefing-objective">
-              {t(stage === 'stage2' ? 'm21.brief.stage2.objective' : 'brief.objective')}
+              {t(
+                stage === 'stage3'
+                  ? 'm28.brief.objective'
+                  : stage === 'stage2'
+                    ? 'm21.brief.stage2.objective'
+                    : 'brief.objective',
+              )}
             </p>
             <h3>{t('play.loadout')}</h3>
             {heroes.map((h, slot) => (

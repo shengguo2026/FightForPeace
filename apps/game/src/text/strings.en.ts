@@ -14,6 +14,7 @@ import { M24_EN } from './strings.m24';
 import { M25_EN } from './strings.m25';
 import { M26_EN } from './strings.m26';
 import { M27_EN } from './strings.m27';
+import { M28_EN } from './strings.m28';
 import { MOVES_EN } from './strings.moves';
 import { LABELS_EN } from './strings.labels';
 
@@ -333,6 +334,7 @@ export const EN = {
   ...M25_EN,
   ...M26_EN,
   ...M27_EN,
+  ...M28_EN,
   ...MOVES_EN,
   ...LABELS_EN,
   ...prefixed('prompt.', TEXT),

@@ -219,10 +219,16 @@ export function markViewed(p: Profile, id: string): void {
 export function dossierView(p: Profile): {
   facts: DossierEntryDef[];
   theory: DossierEntryDef | null;
+  /** M28: documents to open (the damaged invoice), newest first. */
+  pages: DossierEntryDef[];
 } {
   const open = DOSSIER.filter((d) => entryState(p, d, p.sponsorDossier.unlocked) === 'unlocked');
   const theories = open.filter((d) => d.kind === 'theory');
-  return { facts: open.filter((d) => d.kind === 'fact'), theory: theories.at(-1) ?? null };
+  return {
+    facts: open.filter((d) => d.kind === 'fact'),
+    theory: theories.at(-1) ?? null,
+    pages: open.filter((d) => d.kind === 'page').reverse(),
+  };
 }
 
 /** Formula research: milestones (complete or not) and the recorded inputs, for open stages. */

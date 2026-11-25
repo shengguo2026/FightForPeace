@@ -20,6 +20,9 @@ const SAME_EVERYWHERE = [
   /^museum\.picture\.portrait-tomas\.name$/,
   /^m22\.voice\.(en|zh-CN|de)$/, // M22: each voice language is named in its own language
   /^m26\.cast\./, // M26: the Chronicles' people's names (Liang Zhen, Chen Yue)
+  /^speaker\.(garran|renxia|luofen|mountain|river)$/, // M28: people and hero names as speakers
+  /^m25\.unit\.(gao-wen|tao-min|an-bo|ren-xia|wei-shan)$/, // M28: the rescued people's names
+  /^m21\.whatsNew\.garran\.title$/, // M28: Garran Voss
 ];
 
 /** Words that may stand alone in Chinese or German text (names of formats and products). */

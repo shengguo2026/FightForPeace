@@ -253,9 +253,10 @@ export class Academy {
     const drill = def.drill;
     const s = this.shell.session;
     s.partnerPilot = null;
-    if (drill?.room || drill?.corridor) {
-      // M21 drill: a Stage 2 test room or corridor on Easy with the lesson's hero.
-      s.startArena(drill.room ?? drill.corridor, 'easy', 0, {
+    if (drill?.room || drill?.corridor || drill?.arena) {
+      // M21 drill: a Stage 2 test room or corridor on Easy with the lesson's hero (M28: or
+      // a Stage 3 arena).
+      s.startArena(drill.room ?? drill.corridor ?? drill.arena!, 'easy', 0, {
         heroes: [this.hero],
         loadouts: this.shell.loadoutsFor([this.hero]),
       });

@@ -51,6 +51,9 @@ function m24Measure(c: GradeCategoryDef, run: StageRun, def: StageDef) {
       const pct = stageResponse(run)?.percent ?? 100;
       return { pct, value: `${pct}%` };
     }
+    default:
+      // M28 Stage 3 measures have no M24 reference (Stages 1 and 2 never use them).
+      throw new Error(`no M24 reference for measure ${c.measure}`);
   }
 }
 function m24Results(w: World) {
@@ -96,7 +99,8 @@ function lcg(seed: number) {
 
 describe('M25: Stage 1 and Stage 2 grades on the shared module', () => {
   test('both stages keep their M24 grade data; no condition caps, Cheat-Assisted runs graded', () => {
-    for (const s of STAGES) expect(s.grade.cheat).toBe('grade');
+    // M28: Stage 3 grades no Cheat-Assisted run (spec §22.2).
+    for (const s of STAGES.filter((x) => x.id !== 'stage3')) expect(s.grade.cheat).toBe('grade');
   });
 
   test.each(['stage1', 'stage2'])('%s: synthetic records grade exactly as in M24', (stage) => {

@@ -7,6 +7,7 @@ import {
   SfxMixer,
   STAGE1_MUSIC,
   STAGE2_MUSIC,
+  STAGE3_MUSIC,
 } from '@ffp/platform';
 import { synthAmbience, synthMusic, synthSfx } from './synth';
 
@@ -30,7 +31,7 @@ export interface Volumes {
  * user gesture (browsers block audio before it). Presentation only.
  */
 export class AudioEngine {
-  readonly director = new MusicDirector([...STAGE1_MUSIC, ...STAGE2_MUSIC]);
+  readonly director = new MusicDirector([...STAGE1_MUSIC, ...STAGE2_MUSIC, ...STAGE3_MUSIC]);
   readonly mixer = new SfxMixer();
   private ctx: AudioContext | null = null;
   private buses: Record<

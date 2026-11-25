@@ -952,6 +952,454 @@
         "tool": "Codex image generation"
       }
     },
+    "bg.stage3.basin.far": {
+      "url": "art/bg-s3-basin-far.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 0,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-BASIN-FAR.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.basin.fg": {
+      "url": "art/bg-s3-basin-fg.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 799,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-BASIN-FG.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.basin.floor": {
+      "url": "art/bg-s3-basin-floor.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 0,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-BASIN-FLOOR.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.basin.mid": {
+      "url": "art/bg-s3-basin-mid.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 327,
+        "bottom": 683,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-BASIN-MID.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.camp.far": {
+      "url": "art/bg-s3-camp-far.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 0,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-CAMP-FAR.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.camp.fg": {
+      "url": "art/bg-s3-camp-fg.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 798,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-CAMP-FG.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.camp.floor": {
+      "url": "art/bg-s3-camp-floor.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 0,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-CAMP-FLOOR.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.camp.mid": {
+      "url": "art/bg-s3-camp-mid.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 275,
+        "bottom": 673,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-CAMP-MID.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.qinglan.far": {
+      "url": "art/bg-s3-qinglan-far.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 0,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-QINGLAN-FAR.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.qinglan.fg": {
+      "url": "art/bg-s3-qinglan-fg.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 809,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-QINGLAN-FG.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.qinglan.floor": {
+      "url": "art/bg-s3-qinglan-floor.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 0,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-QINGLAN-FLOOR.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.qinglan.mid": {
+      "url": "art/bg-s3-qinglan-mid.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 138,
+        "bottom": 689,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-QINGLAN-MID.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.quarry.far": {
+      "url": "art/bg-s3-quarry-far.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 0,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-QUARRY-FAR.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.quarry.fg": {
+      "url": "art/bg-s3-quarry-fg.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 784,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-QUARRY-FG.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.quarry.floor": {
+      "url": "art/bg-s3-quarry-floor.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 0,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-QUARRY-FLOOR.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.quarry.mid": {
+      "url": "art/bg-s3-quarry-mid.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 106,
+        "bottom": 653,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-QUARRY-MID.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.shelter.far": {
+      "url": "art/bg-s3-shelter-far.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 0,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-SHELTER-FAR.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.shelter.fg": {
+      "url": "art/bg-s3-shelter-fg.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 761,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-SHELTER-FG.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.shelter.floor": {
+      "url": "art/bg-s3-shelter-floor.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 0,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-SHELTER-FLOOR.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.shelter.mid": {
+      "url": "art/bg-s3-shelter-mid.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 232,
+        "bottom": 730,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-SHELTER-MID.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.signalhut.far": {
+      "url": "art/bg-s3-signalhut-far.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 0,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-SIGNALHUT-FAR.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.signalhut.fg": {
+      "url": "art/bg-s3-signalhut-fg.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 809,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-SIGNALHUT-FG.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.signalhut.floor": {
+      "url": "art/bg-s3-signalhut-floor.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 0,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-SIGNALHUT-FLOOR.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.signalhut.mid": {
+      "url": "art/bg-s3-signalhut-mid.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 6,
+        "bottom": 776,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-SIGNALHUT-MID.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.switchback.far": {
+      "url": "art/bg-s3-switchback-far.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 0,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-SWITCHBACK-FAR.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.switchback.fg": {
+      "url": "art/bg-s3-switchback-fg.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 746,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-SWITCHBACK-FG.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.switchback.floor": {
+      "url": "art/bg-s3-switchback-floor.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 0,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-SWITCHBACK-FLOOR.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.switchback.mid": {
+      "url": "art/bg-s3-switchback-mid.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 334,
+        "bottom": 768,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-SWITCHBACK-MID.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.terrace.far": {
+      "url": "art/bg-s3-terrace-far.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 0,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-TERRACE-FAR.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.terrace.fg": {
+      "url": "art/bg-s3-terrace-fg.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 794,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-TERRACE-FG.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.terrace.floor": {
+      "url": "art/bg-s3-terrace-floor.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 0,
+        "bottom": 1024,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-TERRACE-FLOOR.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "bg.stage3.terrace.mid": {
+      "url": "art/bg-s3-terrace-mid.webp",
+      "layer": {
+        "w": 1536,
+        "h": 1024,
+        "top": 259,
+        "bottom": 730,
+        "tiled": false
+      },
+      "provenance": {
+        "source": "environments/stage3/ENV-TERRACE-MID.png",
+        "tool": "Codex image generation"
+      }
+    },
     "cine.stage1.end.01": {
       "url": "media/cine/s1-end-01.webm",
       "video": {
@@ -1605,6 +2053,21 @@
         "source": "story/stage2/FLOW-S2-TITLE-LOOP_seamless.mp4",
         "tool": "Google Flow (Veo)",
         "edits": "end crossfaded into the start (seamless loop); audio track removed; 960 px H.264 CRF 30"
+      }
+    },
+    "cine.stage3.title-loop": {
+      "url": "media/cine/s3-title-loop.mp4",
+      "video": {
+        "mp4": "media/cine/s3-title-loop.mp4",
+        "ms": 7917,
+        "w": 960,
+        "h": 540,
+        "audio": false
+      },
+      "provenance": {
+        "source": "story/stage3/F01-silvermist-title-loop-v1.mp4",
+        "tool": "Google Flow (Veo)",
+        "edits": "audio track removed; 960 px H.264 CRF 30"
       }
     },
     "enemy.ambusher.sheet.attack": {
@@ -26829,6 +27292,259 @@
         "edits": "section from 60.035 s, faded out; -1.3 dB to -16 LUFS; MP3 160 kbps"
       }
     },
+    "mus.stage3.captives-in-the-high-camp.danger": {
+      "url": "media/music/s3-captives-in-the-high-camp-danger.mp3",
+      "audio": {
+        "ms": 64006
+      },
+      "provenance": {
+        "source": "music/stage3/05_Captives in the High Camp.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "32 bars from 12.016 s, the bar before blended into the last bar; -0.5 dB to -16 LUFS; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.chief-of-the-broken-ridge.capture": {
+      "url": "media/music/s3-chief-of-the-broken-ridge-capture.mp3",
+      "audio": {
+        "ms": 59313
+      },
+      "provenance": {
+        "source": "music/stage3/06D_Capture.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "section from 60.047 s, faded out; -0.5 dB to -16 LUFS; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.chief-of-the-broken-ridge.clinch": {
+      "url": "media/music/s3-chief-of-the-broken-ridge-clinch.mp3",
+      "audio": {
+        "ms": 64006
+      },
+      "provenance": {
+        "source": "music/stage3/06B_Clinch and Cast.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "32 bars from 20.027 s, the bar before blended into the last bar; -0.8 dB to -16 LUFS; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.chief-of-the-broken-ridge.hookstaff": {
+      "url": "media/music/s3-chief-of-the-broken-ridge-hookstaff.mp3",
+      "audio": {
+        "ms": 64006
+      },
+      "provenance": {
+        "source": "music/stage3/06A_Hookstaff Control.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "32 bars from 20.05 s, the bar before blended into the last bar; -2.0 dB to -16 LUFS; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.chief-of-the-broken-ridge.sting-capture": {
+      "url": "media/music/s3-chief-of-the-broken-ridge-sting-capture.mp3",
+      "audio": {
+        "ms": 4000
+      },
+      "provenance": {
+        "source": "music/stage3/06D_Capture.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "two bars at 120.0 BPM from the onset at 64.041 s, faded out; -0.5 dB to -16 LUFS; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.chief-of-the-broken-ridge.sting-clinch": {
+      "url": "media/music/s3-chief-of-the-broken-ridge-sting-clinch.mp3",
+      "audio": {
+        "ms": 4000
+      },
+      "provenance": {
+        "source": "music/stage3/06B_Clinch and Cast.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "two bars at 120.0 BPM from the onset at 24.044 s, faded out; -0.8 dB to -16 LUFS; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.chief-of-the-broken-ridge.sting-winch": {
+      "url": "media/music/s3-chief-of-the-broken-ridge-sting-winch.mp3",
+      "audio": {
+        "ms": 4000
+      },
+      "provenance": {
+        "source": "music/stage3/06C_Winch Pressure.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "two bars at 120.0 BPM from the onset at 26.053 s, faded out; -0.7 dB to -16 LUFS; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.chief-of-the-broken-ridge.winch": {
+      "url": "media/music/s3-chief-of-the-broken-ridge-winch.mp3",
+      "audio": {
+        "ms": 64006
+      },
+      "provenance": {
+        "source": "music/stage3/06C_Winch Pressure.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "32 bars from 20.05 s, the bar before blended into the last bar; -0.7 dB to -16 LUFS; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.highland-bed.bed": {
+      "url": "media/music/s3-highland-bed-bed.mp3",
+      "audio": {
+        "ms": 50596
+      },
+      "provenance": {
+        "source": "music/stage3/09_Highland Bed.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "16 bars from 50.538 s, the bar before blended into the last bar; -0.3 dB to -16 LUFS; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.hooves-above-the-ravine.ride": {
+      "url": "media/music/s3-hooves-above-the-ravine-ride.mp3",
+      "audio": {
+        "ms": 61428
+      },
+      "provenance": {
+        "source": "music/stage3/03_Hooves above the Ravine.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "32 bars from 12.051 s, the bar before blended into the last bar; -0.5 dB to -16 LUFS; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.paths-through-the-mist.coda": {
+      "url": "media/music/s3-paths-through-the-mist-coda.mp3",
+      "audio": {
+        "ms": 180885
+      },
+      "provenance": {
+        "source": "music/stage3/07_Paths through the Mist.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "section from 0.0 s, faded out; -2.2 dB to -16 LUFS; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.paths-through-the-mist.ending": {
+      "url": "media/music/s3-paths-through-the-mist-ending.mp3",
+      "audio": {
+        "ms": 48007
+      },
+      "provenance": {
+        "source": "music/stage3/07_Paths through the Mist.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "16 bars from 8.29 s, the bar before blended into the last bar; -2.2 dB to -16 LUFS; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.paths-through-the-mist.victory": {
+      "url": "media/music/s3-paths-through-the-mist-victory.mp3",
+      "audio": {
+        "ms": 24149
+      },
+      "provenance": {
+        "source": "music/stage3/07_Paths through the Mist.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "section from 60.047 s, faded out; -2.2 dB to -16 LUFS; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.quarry-of-echoes.combat": {
+      "url": "media/music/s3-quarry-of-echoes-combat.mp3",
+      "audio": {
+        "ms": 63994
+      },
+      "provenance": {
+        "source": "music/stage3/04_Quarry of Echoes.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "32 bars from 12.051 s, the bar before blended into the last bar; -0.5 dB to -16 LUFS; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.silver-veins-in-morning-mist.intro": {
+      "url": "media/music/s3-silver-veins-in-morning-mist-intro.mp3",
+      "audio": {
+        "ms": 150037
+      },
+      "provenance": {
+        "source": "music/stage3/01_Silver Veins in Morning Mist.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "section from 0.0 s, faded out; -1.8 dB to -16 LUFS; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.silver-veins-in-morning-mist.title": {
+      "url": "media/music/s3-silver-veins-in-morning-mist-title.mp3",
+      "audio": {
+        "ms": 50527
+      },
+      "provenance": {
+        "source": "music/stage3/01_Silver Veins in Morning Mist.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "16 bars from 8.707 s, the bar before blended into the last bar; -1.8 dB to -16 LUFS; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.sting.branch-complete": {
+      "url": "media/music/s3-sting-branch-complete.mp3",
+      "audio": {
+        "ms": 5042
+      },
+      "provenance": {
+        "source": "music/stage3/stingers/08-4_Branch complete.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "cut, faded and normalized at approval; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.sting.checkpoint": {
+      "url": "media/music/s3-sting-checkpoint.mp3",
+      "audio": {
+        "ms": 5042
+      },
+      "provenance": {
+        "source": "music/stage3/stingers/08-1_Checkpoint.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "cut, faded and normalized at approval; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.sting.evidence-found": {
+      "url": "media/music/s3-sting-evidence-found.mp3",
+      "audio": {
+        "ms": 5042
+      },
+      "provenance": {
+        "source": "music/stage3/stingers/08-5_Evidence found.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "cut, faded and normalized at approval; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.sting.horse-calmed": {
+      "url": "media/music/s3-sting-horse-calmed.mp3",
+      "audio": {
+        "ms": 5042
+      },
+      "provenance": {
+        "source": "music/stage3/stingers/08-6_Horse calmed.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "cut, faded and normalized at approval; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.sting.person-freed": {
+      "url": "media/music/s3-sting-person-freed.mp3",
+      "audio": {
+        "ms": 5042
+      },
+      "provenance": {
+        "source": "music/stage3/stingers/08-2_Person freed.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "cut, faded and normalized at approval; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.sting.person-sheltered": {
+      "url": "media/music/s3-sting-person-sheltered.mp3",
+      "audio": {
+        "ms": 5042
+      },
+      "provenance": {
+        "source": "music/stage3/stingers/08-3_Person sheltered.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "cut, faded and normalized at approval; MP3 160 kbps"
+      }
+    },
+    "mus.stage3.the-empty-gathering-trail.explore": {
+      "url": "media/music/s3-the-empty-gathering-trail-explore.mp3",
+      "audio": {
+        "ms": 77833
+      },
+      "provenance": {
+        "source": "music/stage3/02_The Empty Gathering Trail.mp3",
+        "tool": "Google Flow Music (Lyria)",
+        "edits": "24 bars from 13.41 s, the bar before blended into the last bar; -0.5 dB to -16 LUFS; MP3 160 kbps"
+      }
+    },
     "npc.s2-clinician.sheet": {
       "url": "art/npc-s2-clinician.webp",
       "sheet": {
@@ -27243,6 +27959,748 @@
       },
       "provenance": {
         "source": "npcs/NPC-S2-WORKER-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "npc.s3-an-bo.sheet": {
+      "url": "art/npc-s3-an-bo.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 370,
+        "cells": [
+          {
+            "x0": 119,
+            "y0": 113,
+            "x1": 309,
+            "foot": 370
+          },
+          {
+            "x0": 121,
+            "y0": 10,
+            "x1": 257,
+            "foot": 372
+          },
+          {
+            "x0": 92,
+            "y0": 11,
+            "x1": 263,
+            "foot": 373
+          },
+          {
+            "x0": 125,
+            "y0": 129,
+            "x1": 307,
+            "foot": 370
+          },
+          {
+            "x0": 83,
+            "y0": 8,
+            "x1": 281,
+            "foot": 369
+          },
+          {
+            "x0": 50,
+            "y0": 9,
+            "x1": 347,
+            "foot": 370
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "npcs/NPC-S3-ANBO.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "npc.s3-an-bo.walk": {
+      "url": "art/npc-s3-an-bo-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 370,
+        "cells": [
+          {
+            "x0": 99,
+            "y0": 14,
+            "x1": 302,
+            "foot": 369
+          },
+          {
+            "x0": 102,
+            "y0": 21,
+            "x1": 267,
+            "foot": 369
+          },
+          {
+            "x0": 121,
+            "y0": 6,
+            "x1": 258,
+            "foot": 370
+          },
+          {
+            "x0": 93,
+            "y0": 14,
+            "x1": 314,
+            "foot": 370
+          },
+          {
+            "x0": 104,
+            "y0": 20,
+            "x1": 271,
+            "foot": 369
+          },
+          {
+            "x0": 117,
+            "y0": 6,
+            "x1": 287,
+            "foot": 370
+          }
+        ],
+        "scale": 0.84
+      },
+      "provenance": {
+        "source": "npcs/NPC-S3-ANBO-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "npc.s3-gao-wen.sheet": {
+      "url": "art/npc-s3-gao-wen.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 367,
+        "cells": [
+          {
+            "x0": 122,
+            "y0": 96,
+            "x1": 309,
+            "foot": 366
+          },
+          {
+            "x0": 125,
+            "y0": 9,
+            "x1": 258,
+            "foot": 367
+          },
+          {
+            "x0": 102,
+            "y0": 9,
+            "x1": 280,
+            "foot": 367
+          },
+          {
+            "x0": 103,
+            "y0": 90,
+            "x1": 314,
+            "foot": 368
+          },
+          {
+            "x0": 36,
+            "y0": 82,
+            "x1": 333,
+            "foot": 366
+          },
+          {
+            "x0": 83,
+            "y0": 6,
+            "x1": 297,
+            "foot": 368
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "npcs/NPC-S3-GAOWEN.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "npc.s3-gao-wen.walk": {
+      "url": "art/npc-s3-gao-wen-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 366,
+        "cells": [
+          {
+            "x0": 90,
+            "y0": 11,
+            "x1": 276,
+            "foot": 366
+          },
+          {
+            "x0": 111,
+            "y0": 10,
+            "x1": 270,
+            "foot": 366
+          },
+          {
+            "x0": 113,
+            "y0": 8,
+            "x1": 276,
+            "foot": 366
+          },
+          {
+            "x0": 89,
+            "y0": 10,
+            "x1": 290,
+            "foot": 366
+          },
+          {
+            "x0": 101,
+            "y0": 9,
+            "x1": 259,
+            "foot": 367
+          },
+          {
+            "x0": 95,
+            "y0": 6,
+            "x1": 280,
+            "foot": 368
+          }
+        ],
+        "scale": 0.84
+      },
+      "provenance": {
+        "source": "npcs/NPC-S3-GAOWEN-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "npc.s3-luo-deng.sheet": {
+      "url": "art/npc-s3-luo-deng.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 376,
+        "cells": [
+          {
+            "x0": 120,
+            "y0": 14,
+            "x1": 270,
+            "foot": 376
+          },
+          {
+            "x0": 106,
+            "y0": 14,
+            "x1": 253,
+            "foot": 376
+          },
+          {
+            "x0": 73,
+            "y0": 14,
+            "x1": 290,
+            "foot": 376
+          },
+          {
+            "x0": 133,
+            "y0": 9,
+            "x1": 265,
+            "foot": 373
+          },
+          {
+            "x0": 118,
+            "y0": 9,
+            "x1": 299,
+            "foot": 372
+          },
+          {
+            "x0": 85,
+            "y0": 50,
+            "x1": 279,
+            "foot": 371
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "npcs/NPC-S3-LUO-DENG.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "npc.s3-qinglan.sheet": {
+      "url": "art/npc-s3-qinglan.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 375,
+        "cells": [
+          {
+            "x0": 160,
+            "y0": 12,
+            "x1": 300,
+            "foot": 376
+          },
+          {
+            "x0": 119,
+            "y0": 12,
+            "x1": 271,
+            "foot": 375
+          },
+          {
+            "x0": 93,
+            "y0": 9,
+            "x1": 241,
+            "foot": 375
+          },
+          {
+            "x0": 149,
+            "y0": 6,
+            "x1": 288,
+            "foot": 376
+          },
+          {
+            "x0": 120,
+            "y0": 4,
+            "x1": 251,
+            "foot": 374
+          },
+          {
+            "x0": 98,
+            "y0": 4,
+            "x1": 250,
+            "foot": 374
+          }
+        ],
+        "scale": 0.83
+      },
+      "provenance": {
+        "source": "npcs/NPC-S3-QINGLAN-IDLE.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "npc.s3-ren-xia.sheet": {
+      "url": "art/npc-s3-ren-xia.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 377,
+        "cells": [
+          {
+            "x0": 137,
+            "y0": 42,
+            "x1": 293,
+            "foot": 377
+          },
+          {
+            "x0": 131,
+            "y0": 12,
+            "x1": 246,
+            "foot": 377
+          },
+          {
+            "x0": 127,
+            "y0": 12,
+            "x1": 267,
+            "foot": 377
+          },
+          {
+            "x0": 113,
+            "y0": 103,
+            "x1": 306,
+            "foot": 368
+          },
+          {
+            "x0": 35,
+            "y0": 94,
+            "x1": 332,
+            "foot": 367
+          },
+          {
+            "x0": 66,
+            "y0": 11,
+            "x1": 294,
+            "foot": 370
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "npcs/NPC-S3-RENXIA.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "npc.s3-ren-xia.walk": {
+      "url": "art/npc-s3-ren-xia-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 375,
+        "cells": [
+          {
+            "x0": 101,
+            "y0": 13,
+            "x1": 328,
+            "foot": 375
+          },
+          {
+            "x0": 108,
+            "y0": 20,
+            "x1": 258,
+            "foot": 375
+          },
+          {
+            "x0": 114,
+            "y0": 10,
+            "x1": 240,
+            "foot": 374
+          },
+          {
+            "x0": 96,
+            "y0": 13,
+            "x1": 332,
+            "foot": 374
+          },
+          {
+            "x0": 110,
+            "y0": 20,
+            "x1": 259,
+            "foot": 375
+          },
+          {
+            "x0": 104,
+            "y0": 9,
+            "x1": 265,
+            "foot": 374
+          }
+        ],
+        "scale": 0.84
+      },
+      "provenance": {
+        "source": "npcs/NPC-S3-RENXIA-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "npc.s3-tao-min.sheet": {
+      "url": "art/npc-s3-tao-min.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 370,
+        "cells": [
+          {
+            "x0": 122,
+            "y0": 120,
+            "x1": 303,
+            "foot": 370
+          },
+          {
+            "x0": 126,
+            "y0": 15,
+            "x1": 246,
+            "foot": 370
+          },
+          {
+            "x0": 109,
+            "y0": 15,
+            "x1": 241,
+            "foot": 370
+          },
+          {
+            "x0": 113,
+            "y0": 106,
+            "x1": 297,
+            "foot": 362
+          },
+          {
+            "x0": 45,
+            "y0": 85,
+            "x1": 321,
+            "foot": 360
+          },
+          {
+            "x0": 82,
+            "y0": 12,
+            "x1": 290,
+            "foot": 359
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "npcs/NPC-S3-TAOMIN.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "npc.s3-tao-min.walk": {
+      "url": "art/npc-s3-tao-min-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 365,
+        "cells": [
+          {
+            "x0": 83,
+            "y0": 18,
+            "x1": 286,
+            "foot": 366
+          },
+          {
+            "x0": 108,
+            "y0": 21,
+            "x1": 259,
+            "foot": 364
+          },
+          {
+            "x0": 113,
+            "y0": 14,
+            "x1": 266,
+            "foot": 363
+          },
+          {
+            "x0": 87,
+            "y0": 19,
+            "x1": 298,
+            "foot": 365
+          },
+          {
+            "x0": 96,
+            "y0": 20,
+            "x1": 253,
+            "foot": 365
+          },
+          {
+            "x0": 104,
+            "y0": 12,
+            "x1": 303,
+            "foot": 363
+          }
+        ],
+        "scale": 0.87
+      },
+      "provenance": {
+        "source": "npcs/NPC-S3-TAOMIN-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "npc.s3-tomas.sheet": {
+      "url": "art/npc-s3-tomas.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 368,
+        "cells": [
+          {
+            "x0": 114,
+            "y0": 26,
+            "x1": 320,
+            "foot": 367
+          },
+          {
+            "x0": 131,
+            "y0": 7,
+            "x1": 249,
+            "foot": 367
+          },
+          {
+            "x0": 98,
+            "y0": 7,
+            "x1": 225,
+            "foot": 367
+          },
+          {
+            "x0": 132,
+            "y0": 6,
+            "x1": 283,
+            "foot": 369
+          },
+          {
+            "x0": 114,
+            "y0": 10,
+            "x1": 239,
+            "foot": 368
+          },
+          {
+            "x0": 32,
+            "y0": 50,
+            "x1": 306,
+            "foot": 369
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "npcs/NPC-TOMAS-S3-POSES.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "npc.s3-tomas.walk": {
+      "url": "art/npc-s3-tomas-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 373,
+        "cells": [
+          {
+            "x0": 99,
+            "y0": 14,
+            "x1": 309,
+            "foot": 376
+          },
+          {
+            "x0": 120,
+            "y0": 14,
+            "x1": 259,
+            "foot": 373
+          },
+          {
+            "x0": 106,
+            "y0": 7,
+            "x1": 238,
+            "foot": 373
+          },
+          {
+            "x0": 81,
+            "y0": 16,
+            "x1": 304,
+            "foot": 375
+          },
+          {
+            "x0": 108,
+            "y0": 17,
+            "x1": 259,
+            "foot": 373
+          },
+          {
+            "x0": 100,
+            "y0": 10,
+            "x1": 294,
+            "foot": 372
+          }
+        ],
+        "scale": 0.84
+      },
+      "provenance": {
+        "source": "npcs/NPC-TOMAS-S3-WALK.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "npc.s3-wei-shan.sheet": {
+      "url": "art/npc-s3-wei-shan.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 362,
+        "cells": [
+          {
+            "x0": 103,
+            "y0": 106,
+            "x1": 358,
+            "foot": 360
+          },
+          {
+            "x0": 120,
+            "y0": 6,
+            "x1": 257,
+            "foot": 362
+          },
+          {
+            "x0": 88,
+            "y0": 84,
+            "x1": 256,
+            "foot": 362
+          },
+          {
+            "x0": 149,
+            "y0": 5,
+            "x1": 274,
+            "foot": 362
+          },
+          {
+            "x0": 114,
+            "y0": 6,
+            "x1": 250,
+            "foot": 363
+          },
+          {
+            "x0": 95,
+            "y0": 6,
+            "x1": 315,
+            "foot": 364
+          }
+        ],
+        "scale": 0.85
+      },
+      "provenance": {
+        "source": "npcs/NPC-S3-WEISHAN.png",
+        "tool": "Codex image generation",
+        "edits": "75 %"
+      }
+    },
+    "npc.s3-wei-shan.walk": {
+      "url": "art/npc-s3-wei-shan-walk.webp",
+      "sheet": {
+        "cols": 3,
+        "rows": 2,
+        "cell": 384,
+        "ground": 376,
+        "cells": [
+          {
+            "x0": 100,
+            "y0": 18,
+            "x1": 312,
+            "foot": 376
+          },
+          {
+            "x0": 113,
+            "y0": 25,
+            "x1": 274,
+            "foot": 376
+          },
+          {
+            "x0": 95,
+            "y0": 9,
+            "x1": 243,
+            "foot": 376
+          },
+          {
+            "x0": 101,
+            "y0": 16,
+            "x1": 323,
+            "foot": 372
+          },
+          {
+            "x0": 115,
+            "y0": 23,
+            "x1": 280,
+            "foot": 372
+          },
+          {
+            "x0": 90,
+            "y0": 10,
+            "x1": 295,
+            "foot": 372
+          }
+        ],
+        "scale": 0.83
+      },
+      "provenance": {
+        "source": "npcs/NPC-S3-WEISHAN-WALK.png",
         "tool": "Codex image generation",
         "edits": "75 %"
       }
@@ -29175,6 +30633,244 @@
       "url": "art/shell/s2-title-loop.webp",
       "provenance": {
         "source": "story/stage2/STORY-S2-TITLE-LOOP.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.brief-01": {
+      "url": "art/shell/s3-brief-01.webp",
+      "provenance": {
+        "source": "story/stage3/S3-BRIEF-01-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.brief-02": {
+      "url": "art/shell/s3-brief-02.webp",
+      "provenance": {
+        "source": "story/stage3/S3-BRIEF-02-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.e01": {
+      "url": "art/shell/s3-e01.webp",
+      "provenance": {
+        "source": "story/stage3/E01-garran-restrained-start-v2.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.e01-end": {
+      "url": "art/shell/s3-e01-end.webp",
+      "provenance": {
+        "source": "story/stage3/E01-garran-restrained-end-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.e02": {
+      "url": "art/shell/s3-e02.webp",
+      "provenance": {
+        "source": "story/stage3/E02-the-private-case-start-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.e02-end": {
+      "url": "art/shell/s3-e02-end.webp",
+      "provenance": {
+        "source": "story/stage3/E02-the-private-case-end-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.e03": {
+      "url": "art/shell/s3-e03.webp",
+      "provenance": {
+        "source": "story/stage3/E03-reunion-at-qinglan-start-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.e03-critical": {
+      "url": "art/shell/s3-e03-critical.webp",
+      "provenance": {
+        "source": "story/stage3/E03-CRITICAL-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.e03-end": {
+      "url": "art/shell/s3-e03-end.webp",
+      "provenance": {
+        "source": "story/stage3/E03-reunion-at-qinglan-end-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.e03-secure": {
+      "url": "art/shell/s3-e03-secure.webp",
+      "provenance": {
+        "source": "story/stage3/E03-SECURE-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.e04": {
+      "url": "art/shell/s3-e04.webp",
+      "provenance": {
+        "source": "story/stage3/E04-seals-compared-start-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.e04-end": {
+      "url": "art/shell/s3-e04-end.webp",
+      "provenance": {
+        "source": "story/stage3/E04-seals-compared-end-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.e05": {
+      "url": "art/shell/s3-e05.webp",
+      "provenance": {
+        "source": "story/stage3/E05-the-lowland-shelter-start-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.e05-end": {
+      "url": "art/shell/s3-e05-end.webp",
+      "provenance": {
+        "source": "story/stage3/E05-the-lowland-shelter-end-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.e06": {
+      "url": "art/shell/s3-e06.webp",
+      "provenance": {
+        "source": "story/stage3/E06-paths-through-the-mist-start-v2.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.e06-end": {
+      "url": "art/shell/s3-e06-end.webp",
+      "provenance": {
+        "source": "story/stage3/E06-paths-through-the-mist-end-v2.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.h01": {
+      "url": "art/shell/s3-h01.webp",
+      "provenance": {
+        "source": "story/stage3/H01-research-update-start-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.h01-end": {
+      "url": "art/shell/s3-h01-end.webp",
+      "provenance": {
+        "source": "story/stage3/H01-research-update-end-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.h02": {
+      "url": "art/shell/s3-h02.webp",
+      "provenance": {
+        "source": "story/stage3/H02-qinglan-partnership-start-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.h02-end": {
+      "url": "art/shell/s3-h02-end.webp",
+      "provenance": {
+        "source": "story/stage3/H02-qinglan-partnership-end-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.h03": {
+      "url": "art/shell/s3-h03.webp",
+      "provenance": {
+        "source": "story/stage3/H03-gathering-at-the-ledge-start-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.h03-end": {
+      "url": "art/shell/s3-h03-end.webp",
+      "provenance": {
+        "source": "story/stage3/H03-gathering-at-the-ledge-end-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.h04": {
+      "url": "art/shell/s3-h04.webp",
+      "provenance": {
+        "source": "story/stage3/H04-return-with-the-demand-start-v2.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.h04-end": {
+      "url": "art/shell/s3-h04-end.webp",
+      "provenance": {
+        "source": "story/stage3/H04-return-with-the-demand-end-v2.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.h05": {
+      "url": "art/shell/s3-h05.webp",
+      "provenance": {
+        "source": "story/stage3/H05-departure-at-dawn-start-v2.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.h05-end": {
+      "url": "art/shell/s3-h05-end.webp",
+      "provenance": {
+        "source": "story/stage3/H05-departure-at-dawn-end-v2.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.invoice": {
+      "url": "art/shell/s3-invoice.webp",
+      "provenance": {
+        "source": "story/stage3/S3-INVOICE-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.t01": {
+      "url": "art/shell/s3-t01.webp",
+      "provenance": {
+        "source": "story/stage3/T01-radio-intercept-start-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.t01-end": {
+      "url": "art/shell/s3-t01-end.webp",
+      "provenance": {
+        "source": "story/stage3/T01-radio-intercept-end-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.t02": {
+      "url": "art/shell/s3-t02.webp",
+      "provenance": {
+        "source": "story/stage3/T02-the-planning-cabin-start-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.t02-end": {
+      "url": "art/shell/s3-t02-end.webp",
+      "provenance": {
+        "source": "story/stage3/T02-the-planning-cabin-end-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.t03": {
+      "url": "art/shell/s3-t03.webp",
+      "provenance": {
+        "source": "story/stage3/T03-the-prepared-route-start-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.t03-end": {
+      "url": "art/shell/s3-t03-end.webp",
+      "provenance": {
+        "source": "story/stage3/T03-the-prepared-route-end-v1.png",
+        "tool": "Codex image generation"
+      }
+    },
+    "story.stage3.title-loop": {
+      "url": "art/shell/s3-title-loop.webp",
+      "provenance": {
+        "source": "story/stage3/F01-silvermist-title-loop-start-v2.png",
         "tool": "Codex image generation"
       }
     },

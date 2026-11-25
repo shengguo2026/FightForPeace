@@ -46506,6 +46506,2283 @@ export const ARENA_DATA: readonly ArenaDef[] = [
     },
     "objectives": null,
     "grade": null
+  },
+  {
+    "id": "s3-hoofprints",
+    "name": "Hoofprints in the Mud",
+    "area": "switchback",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 300,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "ambusher",
+            "x": 2100,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2300,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 300,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      },
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "bruiser",
+            "x": 2500,
+            "z": 820,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2600,
+            "z": 720,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "stalker",
+            "x": 2650,
+            "z": 900,
+            "minDifficulty": 3,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "hiking-staff",
+          "x": 800,
+          "z": 780
+        },
+        {
+          "weapon": "hiking-staff",
+          "x": 900,
+          "z": 920,
+          "max": 2
+        },
+        {
+          "weapon": "trail-rice",
+          "x": 1300,
+          "z": 940
+        },
+        {
+          "weapon": "trail-rice",
+          "x": 1400,
+          "z": 720,
+          "max": 0
+        }
+      ],
+      "surfaces": [],
+      "breakables": [
+        {
+          "x": 1700,
+          "z": 650,
+          "hw": 50,
+          "hd": 30,
+          "h": 180,
+          "thresholds": [
+            60,
+            120,
+            180
+          ],
+          "fragment": "",
+          "tags": [
+            "timber"
+          ],
+          "property": 0,
+          "cluster": 0
+        }
+      ],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "s3-rope-trail",
+    "name": "Rope across the Trail",
+    "area": "switchback",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 300,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "trapper",
+            "x": 2100,
+            "z": 780,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2300,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2500,
+            "z": 720,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "captain",
+            "x": 2700,
+            "z": 820,
+            "minDifficulty": 4,
+            "coop": false
+          },
+          {
+            "kit": "trapper",
+            "x": 300,
+            "z": 860,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "seed-cake",
+          "x": 1100,
+          "z": 920
+        }
+      ],
+      "surfaces": [],
+      "breakables": [
+        {
+          "x": 1500,
+          "z": 975,
+          "hw": 40,
+          "hd": 30,
+          "h": 70,
+          "thresholds": [
+            30,
+            60,
+            90
+          ],
+          "fragment": "",
+          "tags": [
+            "stone"
+          ],
+          "property": 0,
+          "cluster": 0
+        }
+      ],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "s3-drying-racks",
+    "name": "Empty Drying Racks",
+    "area": "qinglan",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 300,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "ambusher",
+            "x": 2000,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "bruiser",
+            "x": 2300,
+            "z": 880,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 300,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      },
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "ambusher",
+            "x": 2500,
+            "z": 720,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "trapper",
+            "x": 2600,
+            "z": 900,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "stalker",
+            "x": 2700,
+            "z": 800,
+            "minDifficulty": 3,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "vegetable-broth",
+          "x": 1200,
+          "z": 930
+        },
+        {
+          "weapon": "trail-rice",
+          "x": 1250,
+          "z": 720,
+          "max": 0
+        }
+      ],
+      "surfaces": [],
+      "breakables": [
+        {
+          "x": 1600,
+          "z": 650,
+          "hw": 60,
+          "hd": 30,
+          "h": 200,
+          "thresholds": [
+            60,
+            120,
+            180
+          ],
+          "fragment": "",
+          "tags": [
+            "timber"
+          ],
+          "property": 0,
+          "cluster": 0
+        },
+        {
+          "x": 2200,
+          "z": 975,
+          "hw": 60,
+          "hd": 30,
+          "h": 200,
+          "thresholds": [
+            60,
+            120,
+            180
+          ],
+          "fragment": "",
+          "tags": [
+            "timber"
+          ],
+          "property": 0,
+          "cluster": 0
+        }
+      ],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "s3-signal-hut",
+    "name": "The Silent Antenna",
+    "area": "signalhut",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 300,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "ambusher",
+            "x": 2000,
+            "z": 800,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "trapper",
+            "x": 2300,
+            "z": 900,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2600,
+            "z": 700,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 300,
+            "z": 860,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "seed-cake",
+          "x": 900,
+          "z": 920
+        }
+      ],
+      "surfaces": [],
+      "breakables": [],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": {
+      "units": [
+        {
+          "id": "wei-shan",
+          "ladder": "rescue",
+          "x": 2450,
+          "z": 760,
+          "hw": 300,
+          "hd": 170,
+          "free": 60,
+          "cheer": 40,
+          "speed": 5,
+          "route": [
+            {
+              "x": 1900,
+              "z": 960,
+              "wait": true
+            },
+            {
+              "x": 120,
+              "z": 960,
+              "wait": false
+            }
+          ]
+        }
+      ],
+      "cases": [],
+      "channels": [
+        {
+          "unit": true,
+          "target": 0,
+          "kind": "rope",
+          "x": 2300,
+          "z": 700,
+          "tell": 180,
+          "start": 300,
+          "cooldown": 360,
+          "kits": []
+        },
+        {
+          "unit": true,
+          "target": 0,
+          "kind": "lantern",
+          "x": 2600,
+          "z": 840,
+          "tell": 180,
+          "start": 720,
+          "cooldown": 360,
+          "kits": []
+        }
+      ]
+    },
+    "grade": null
+  },
+  {
+    "id": "s3-watch-path",
+    "name": "The Watch Path",
+    "area": "qinglan",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 300,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "ambusher",
+            "x": 2100,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "bruiser",
+            "x": 2300,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 300,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      },
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "raider",
+            "x": 2700,
+            "z": 820,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "captain",
+            "x": 2650,
+            "z": 700,
+            "minDifficulty": 4,
+            "coop": false
+          },
+          {
+            "kit": "stalker",
+            "x": 2600,
+            "z": 920,
+            "minDifficulty": 3,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "wood-axe",
+          "x": 800,
+          "z": 780
+        },
+        {
+          "weapon": "trail-rice",
+          "x": 1200,
+          "z": 930
+        }
+      ],
+      "surfaces": [
+        {
+          "x": 2740,
+          "z": 660,
+          "hw": 30,
+          "hd": 50,
+          "h": 240
+        }
+      ],
+      "breakables": [],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "s3-mist-beds",
+    "name": "Mist over the Beds",
+    "area": "basin",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 300,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "ambusher",
+            "x": 2100,
+            "z": 720,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "trapper",
+            "x": 2400,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2600,
+            "z": 820,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "stalker",
+            "x": 2700,
+            "z": 720,
+            "minDifficulty": 3,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 300,
+            "z": 860,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "vegetable-broth",
+          "x": 1000,
+          "z": 920
+        },
+        {
+          "weapon": "seed-cake",
+          "x": 1050,
+          "z": 720,
+          "max": 1
+        }
+      ],
+      "surfaces": [],
+      "breakables": [],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": {
+      "units": [],
+      "cases": [
+        {
+          "id": "sample-case",
+          "outcome": "record",
+          "x": 2200,
+          "z": 820,
+          "collect": 60,
+          "seal": 90,
+          "recover": 60
+        }
+      ],
+      "channels": [
+        {
+          "unit": false,
+          "target": 0,
+          "kind": "case",
+          "x": 2340,
+          "z": 760,
+          "tell": 240,
+          "start": 360,
+          "cooldown": 360,
+          "kits": []
+        }
+      ]
+    },
+    "grade": null
+  },
+  {
+    "id": "s3-two-voices",
+    "name": "Two Voices in the Mist",
+    "area": "basin",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 300,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "trapper",
+            "x": 2200,
+            "z": 780,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2400,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "bruiser",
+            "x": 2600,
+            "z": 760,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 300,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      },
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "ambusher",
+            "x": 2750,
+            "z": 820,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "captain",
+            "x": 2700,
+            "z": 700,
+            "minDifficulty": 4,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "trail-rice",
+          "x": 1100,
+          "z": 930
+        }
+      ],
+      "surfaces": [],
+      "breakables": [],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": {
+      "units": [
+        {
+          "id": "gao-wen",
+          "ladder": "rescue",
+          "x": 2450,
+          "z": 740,
+          "hw": 300,
+          "hd": 170,
+          "free": 60,
+          "cheer": 40,
+          "speed": 3,
+          "route": [
+            {
+              "x": 1800,
+              "z": 960,
+              "wait": true
+            },
+            {
+              "x": 120,
+              "z": 960,
+              "wait": false
+            }
+          ]
+        },
+        {
+          "id": "tao-min",
+          "ladder": "rescue",
+          "x": 2600,
+          "z": 880,
+          "hw": 300,
+          "hd": 170,
+          "free": 60,
+          "cheer": 40,
+          "speed": 5,
+          "route": [
+            {
+              "x": 1900,
+              "z": 960,
+              "wait": true
+            },
+            {
+              "x": 160,
+              "z": 960,
+              "wait": false
+            }
+          ]
+        }
+      ],
+      "cases": [],
+      "channels": [
+        {
+          "unit": true,
+          "target": 0,
+          "kind": "rope",
+          "x": 2300,
+          "z": 700,
+          "tell": 180,
+          "start": 300,
+          "cooldown": 360,
+          "kits": []
+        },
+        {
+          "unit": true,
+          "target": 1,
+          "kind": "lantern",
+          "x": 2750,
+          "z": 900,
+          "tell": 180,
+          "start": 540,
+          "cooldown": 360,
+          "kits": []
+        },
+        {
+          "unit": true,
+          "target": 0,
+          "kind": "crate",
+          "x": 2550,
+          "z": 680,
+          "tell": 240,
+          "start": 900,
+          "cooldown": 420,
+          "kits": []
+        }
+      ]
+    },
+    "grade": null
+  },
+  {
+    "id": "s3-loose-scaffold",
+    "name": "Loose Scaffold",
+    "area": "quarry",
+    "backdrop": "layers",
+    "width": 3360,
+    "heroX": 300,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "ambusher",
+            "x": 2100,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2400,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "bruiser",
+            "x": 2600,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 300,
+            "z": 860,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      },
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "trapper",
+            "x": 2900,
+            "z": 760,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "bruiser",
+            "x": 3000,
+            "z": 900,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "stalker",
+            "x": 3100,
+            "z": 820,
+            "minDifficulty": 3,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "quarry-hammer",
+          "x": 800,
+          "z": 780
+        },
+        {
+          "weapon": "quarry-hammer",
+          "x": 880,
+          "z": 920,
+          "max": 0
+        },
+        {
+          "weapon": "trail-rice",
+          "x": 1200,
+          "z": 940,
+          "max": 0
+        }
+      ],
+      "surfaces": [
+        {
+          "x": 3200,
+          "z": 660,
+          "hw": 30,
+          "hd": 50,
+          "h": 240
+        }
+      ],
+      "breakables": [
+        {
+          "x": 1700,
+          "z": 650,
+          "hw": 70,
+          "hd": 30,
+          "h": 280,
+          "thresholds": [
+            80,
+            160,
+            240
+          ],
+          "fragment": "",
+          "tags": [
+            "scaffold"
+          ],
+          "property": 0,
+          "cluster": 0
+        },
+        {
+          "x": 2300,
+          "z": 650,
+          "hw": 70,
+          "hd": 30,
+          "h": 280,
+          "thresholds": [
+            80,
+            160,
+            240
+          ],
+          "fragment": "",
+          "tags": [
+            "scaffold"
+          ],
+          "property": 0,
+          "cluster": 0
+        },
+        {
+          "x": 2000,
+          "z": 975,
+          "hw": 40,
+          "hd": 30,
+          "h": 70,
+          "thresholds": [
+            30,
+            60,
+            90
+          ],
+          "fragment": "",
+          "tags": [
+            "stone"
+          ],
+          "property": 0,
+          "cluster": 0
+        }
+      ],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "s3-herbalist-shelter",
+    "name": "Baskets Left Behind",
+    "area": "shelter",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 300,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "ambusher",
+            "x": 2000,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "bruiser",
+            "x": 2300,
+            "z": 880,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "trapper",
+            "x": 2500,
+            "z": 720,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 300,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "camp-meal",
+          "x": 2500,
+          "z": 900
+        },
+        {
+          "weapon": "vegetable-broth",
+          "x": 1000,
+          "z": 920,
+          "max": 0
+        }
+      ],
+      "surfaces": [],
+      "breakables": [
+        {
+          "x": 1800,
+          "z": 975,
+          "hw": 60,
+          "hd": 30,
+          "h": 200,
+          "thresholds": [
+            60,
+            120,
+            180
+          ],
+          "fragment": "",
+          "tags": [
+            "timber"
+          ],
+          "property": 0,
+          "cluster": 0
+        }
+      ],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "s3-hammer-line",
+    "name": "Hammer Line",
+    "area": "quarry",
+    "backdrop": "layers",
+    "width": 3360,
+    "heroX": 300,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "bruiser",
+            "x": 2100,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "bruiser",
+            "x": 2300,
+            "z": 920,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "trapper",
+            "x": 2600,
+            "z": 820,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "captain",
+            "x": 2900,
+            "z": 800,
+            "minDifficulty": 4,
+            "coop": false
+          },
+          {
+            "kit": "bruiser",
+            "x": 300,
+            "z": 860,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "quarry-hammer",
+          "x": 800,
+          "z": 780
+        },
+        {
+          "weapon": "vegetable-broth",
+          "x": 1100,
+          "z": 940
+        }
+      ],
+      "surfaces": [
+        {
+          "x": 3200,
+          "z": 660,
+          "hw": 30,
+          "hd": 50,
+          "h": 240
+        }
+      ],
+      "breakables": [
+        {
+          "x": 1900,
+          "z": 650,
+          "hw": 70,
+          "hd": 30,
+          "h": 280,
+          "thresholds": [
+            80,
+            160,
+            240
+          ],
+          "fragment": "",
+          "tags": [
+            "scaffold"
+          ],
+          "property": 0,
+          "cluster": 0
+        },
+        {
+          "x": 2600,
+          "z": 975,
+          "hw": 40,
+          "hd": 30,
+          "h": 70,
+          "thresholds": [
+            30,
+            60,
+            90
+          ],
+          "fragment": "",
+          "tags": [
+            "stone"
+          ],
+          "property": 0,
+          "cluster": 0
+        }
+      ],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "s3-cart-rails",
+    "name": "Cart Rails",
+    "area": "quarry",
+    "backdrop": "layers",
+    "width": 3360,
+    "heroX": 300,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "ambusher",
+            "x": 2200,
+            "z": 780,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2400,
+            "z": 860,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "raider",
+            "x": 2900,
+            "z": 760,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "stalker",
+            "x": 3000,
+            "z": 900,
+            "minDifficulty": 3,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 300,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "trail-rice",
+          "x": 1200,
+          "z": 940
+        }
+      ],
+      "surfaces": [],
+      "breakables": [],
+      "hazards": [],
+      "movers": [
+        {
+          "x0": 200,
+          "z0": 720,
+          "x1": 3100,
+          "z1": 720,
+          "hw": 60,
+          "hd": 40,
+          "h": 90,
+          "start": 240,
+          "rest": 360,
+          "warn": 80,
+          "active": 100,
+          "damage": 60,
+          "redirect": "any",
+          "cycles": 0,
+          "tags": [
+            "cart"
+          ]
+        }
+      ],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": {
+      "units": [
+        {
+          "id": "an-bo",
+          "ladder": "rescue",
+          "x": 2900,
+          "z": 880,
+          "hw": 320,
+          "hd": 170,
+          "free": 60,
+          "cheer": 40,
+          "speed": 5,
+          "route": [
+            {
+              "x": 2200,
+              "z": 960,
+              "wait": true
+            },
+            {
+              "x": 120,
+              "z": 960,
+              "wait": false
+            }
+          ]
+        }
+      ],
+      "cases": [],
+      "channels": [
+        {
+          "unit": true,
+          "target": 0,
+          "kind": "crate",
+          "x": 2750,
+          "z": 780,
+          "tell": 240,
+          "start": 360,
+          "cooldown": 360,
+          "kits": []
+        },
+        {
+          "unit": true,
+          "target": 0,
+          "kind": "rope",
+          "x": 3050,
+          "z": 940,
+          "tell": 180,
+          "start": 780,
+          "cooldown": 360,
+          "kits": []
+        }
+      ]
+    },
+    "grade": null
+  },
+  {
+    "id": "s3-outer-fence",
+    "name": "Outer Fence",
+    "area": "camp",
+    "backdrop": "layers",
+    "width": 3360,
+    "heroX": 300,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "ambusher",
+            "x": 2100,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "bruiser",
+            "x": 2300,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "trapper",
+            "x": 2500,
+            "z": 820,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "stalker",
+            "x": 2700,
+            "z": 740,
+            "minDifficulty": 3,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 300,
+            "z": 860,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      },
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "raider",
+            "x": 3100,
+            "z": 820,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2800,
+            "z": 900,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "captain",
+            "x": 3000,
+            "z": 700,
+            "minDifficulty": 4,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "hiking-staff",
+          "x": 800,
+          "z": 920,
+          "max": 0
+        },
+        {
+          "weapon": "seed-cake",
+          "x": 1100,
+          "z": 940
+        }
+      ],
+      "surfaces": [],
+      "breakables": [
+        {
+          "x": 1600,
+          "z": 650,
+          "hw": 50,
+          "hd": 30,
+          "h": 180,
+          "thresholds": [
+            60,
+            120,
+            180
+          ],
+          "fragment": "",
+          "tags": [
+            "timber"
+          ],
+          "property": 0,
+          "cluster": 0
+        },
+        {
+          "x": 1600,
+          "z": 975,
+          "hw": 50,
+          "hd": 30,
+          "h": 180,
+          "thresholds": [
+            60,
+            120,
+            180
+          ],
+          "fragment": "",
+          "tags": [
+            "timber"
+          ],
+          "property": 0,
+          "cluster": 0
+        }
+      ],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "s3-lantern-row",
+    "name": "Lantern Row",
+    "area": "camp",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 300,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "bruiser",
+            "x": 2100,
+            "z": 780,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2300,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "trapper",
+            "x": 2500,
+            "z": 720,
+            "minDifficulty": 2,
+            "coop": false
+          },
+          {
+            "kit": "stalker",
+            "x": 2600,
+            "z": 820,
+            "minDifficulty": 3,
+            "coop": false
+          },
+          {
+            "kit": "bruiser",
+            "x": 300,
+            "z": 860,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "bandit-revolver",
+          "x": 1300,
+          "z": 760
+        },
+        {
+          "weapon": "trail-rice",
+          "x": 1000,
+          "z": 930
+        },
+        {
+          "weapon": "vegetable-broth",
+          "x": 1050,
+          "z": 720,
+          "max": 0
+        }
+      ],
+      "surfaces": [],
+      "breakables": [
+        {
+          "x": 2000,
+          "z": 650,
+          "hw": 50,
+          "hd": 30,
+          "h": 180,
+          "thresholds": [
+            60,
+            120,
+            180
+          ],
+          "fragment": "",
+          "tags": [
+            "timber"
+          ],
+          "property": 0,
+          "cluster": 0
+        }
+      ],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "s3-ren-enclosure",
+    "name": "Ren Xia's Enclosure",
+    "area": "camp",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 300,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "trapper",
+            "x": 2100,
+            "z": 760,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "bruiser",
+            "x": 2300,
+            "z": 900,
+            "minDifficulty": 0,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 2600,
+            "z": 700,
+            "minDifficulty": 1,
+            "coop": false
+          },
+          {
+            "kit": "ambusher",
+            "x": 300,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": true
+          }
+        ]
+      },
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "stalker",
+            "x": 2700,
+            "z": 820,
+            "minDifficulty": 3,
+            "coop": false
+          },
+          {
+            "kit": "captain",
+            "x": 2750,
+            "z": 940,
+            "minDifficulty": 4,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "seed-cake",
+          "x": 1000,
+          "z": 920
+        }
+      ],
+      "surfaces": [],
+      "breakables": [
+        {
+          "x": 1900,
+          "z": 975,
+          "hw": 50,
+          "hd": 30,
+          "h": 180,
+          "thresholds": [
+            60,
+            120,
+            180
+          ],
+          "fragment": "",
+          "tags": [
+            "timber"
+          ],
+          "property": 0,
+          "cluster": 0
+        }
+      ],
+      "hazards": [],
+      "movers": [],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": {
+      "units": [
+        {
+          "id": "ren-xia",
+          "ladder": "rescue",
+          "x": 2500,
+          "z": 780,
+          "hw": 300,
+          "hd": 170,
+          "free": 60,
+          "cheer": 40,
+          "speed": 4,
+          "route": [
+            {
+              "x": 1900,
+              "z": 960,
+              "wait": true
+            },
+            {
+              "x": 120,
+              "z": 960,
+              "wait": false
+            }
+          ]
+        }
+      ],
+      "cases": [],
+      "channels": [
+        {
+          "unit": true,
+          "target": 0,
+          "kind": "crate",
+          "x": 2350,
+          "z": 720,
+          "tell": 240,
+          "start": 300,
+          "cooldown": 360,
+          "kits": []
+        },
+        {
+          "unit": true,
+          "target": 0,
+          "kind": "lantern",
+          "x": 2650,
+          "z": 880,
+          "tell": 180,
+          "start": 660,
+          "cooldown": 360,
+          "kits": []
+        }
+      ]
+    },
+    "grade": null
+  },
+  {
+    "id": "s3-terrace",
+    "name": "Chief of the Broken Ridge",
+    "area": "terrace",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [
+      {
+        "kind": "winch",
+        "x": 2500,
+        "z": 680,
+        "count": 1
+      }
+    ],
+    "surge": null,
+    "waves": [
+      {
+        "next": 0,
+        "enemies": [
+          {
+            "kit": "garran",
+            "x": 1900,
+            "z": 820,
+            "minDifficulty": 0,
+            "coop": false
+          }
+        ]
+      }
+    ],
+    "substitutions": [],
+    "reserve": [],
+    "stage": false,
+    "scenery": {
+      "items": [
+        {
+          "weapon": "hiking-staff",
+          "x": 700,
+          "z": 760
+        },
+        {
+          "weapon": "trail-rice",
+          "x": 400,
+          "z": 900
+        },
+        {
+          "weapon": "vegetable-broth",
+          "x": 450,
+          "z": 700,
+          "max": 2
+        }
+      ],
+      "surfaces": [
+        {
+          "x": 2780,
+          "z": 660,
+          "hw": 30,
+          "hd": 50,
+          "h": 240
+        }
+      ],
+      "breakables": [
+        {
+          "x": 1300,
+          "z": 650,
+          "hw": 70,
+          "hd": 30,
+          "h": 280,
+          "thresholds": [
+            80,
+            160,
+            240
+          ],
+          "fragment": "",
+          "tags": [
+            "scaffold"
+          ],
+          "property": 0,
+          "cluster": 0
+        }
+      ],
+      "hazards": [],
+      "movers": [
+        {
+          "x0": 700,
+          "z0": 720,
+          "x1": 2300,
+          "z1": 720,
+          "hw": 70,
+          "hd": 50,
+          "h": 160,
+          "start": 0,
+          "rest": 0,
+          "warn": 80,
+          "active": 70,
+          "damage": 70,
+          "redirect": "any",
+          "cycles": 0,
+          "tags": [
+            "cargo"
+          ],
+          "trigger": "winch"
+        },
+        {
+          "x0": 2300,
+          "z0": 900,
+          "x1": 700,
+          "z1": 900,
+          "hw": 40,
+          "hd": 70,
+          "h": 180,
+          "start": 0,
+          "rest": 0,
+          "warn": 80,
+          "active": 70,
+          "damage": 60,
+          "redirect": "any",
+          "cycles": 0,
+          "tags": [
+            "cover"
+          ],
+          "trigger": "winch"
+        },
+        {
+          "x0": 1500,
+          "z0": 640,
+          "x1": 1500,
+          "z1": 960,
+          "hw": 70,
+          "hd": 50,
+          "h": 160,
+          "start": 0,
+          "rest": 0,
+          "warn": 80,
+          "active": 50,
+          "damage": 70,
+          "redirect": "any",
+          "cycles": 0,
+          "tags": [
+            "cargo"
+          ],
+          "trigger": "winch"
+        }
+      ],
+      "platforms": [],
+      "stations": []
+    },
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "stage3.switchback-ride",
+    "name": "Lower Switchback",
+    "area": "switchback",
+    "backdrop": "layers",
+    "width": 1920,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "stage3.hoofprints",
+    "name": "Hoofprints in the Mud",
+    "area": "switchback",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "stage3.rope-trail",
+    "name": "Rope across the Trail",
+    "area": "switchback",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "stage3.drying-racks",
+    "name": "Empty Drying Racks",
+    "area": "qinglan",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "stage3.signal-hut",
+    "name": "The Silent Antenna",
+    "area": "signalhut",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "stage3.watch-path",
+    "name": "The Watch Path",
+    "area": "qinglan",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "stage3.mist-beds",
+    "name": "Mist over the Beds",
+    "area": "basin",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "stage3.two-voices",
+    "name": "Two Voices in the Mist",
+    "area": "basin",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "stage3.loose-scaffold",
+    "name": "Loose Scaffold",
+    "area": "quarry",
+    "backdrop": "layers",
+    "width": 3360,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "stage3.herbalist-shelter",
+    "name": "Baskets Left Behind",
+    "area": "shelter",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "stage3.hammer-line",
+    "name": "Hammer Line",
+    "area": "quarry",
+    "backdrop": "layers",
+    "width": 3360,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "stage3.cart-rails",
+    "name": "Cart Rails",
+    "area": "quarry",
+    "backdrop": "layers",
+    "width": 3360,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "stage3.ridge-ride",
+    "name": "Ridge Road",
+    "area": "camp",
+    "backdrop": "layers",
+    "width": 1920,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "stage3.outer-fence",
+    "name": "Outer Fence",
+    "area": "camp",
+    "backdrop": "layers",
+    "width": 3360,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "stage3.lantern-row",
+    "name": "Lantern Row",
+    "area": "camp",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "stage3.ren-enclosure",
+    "name": "Ren Xia's Enclosure",
+    "area": "camp",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
+  },
+  {
+    "id": "stage3.terrace",
+    "name": "High Winch Terrace",
+    "area": "terrace",
+    "backdrop": "layers",
+    "width": 2880,
+    "heroX": 500,
+    "minDifficulty": 0,
+    "layout": "",
+    "weaponSpot": null,
+    "devices": [],
+    "surge": null,
+    "waves": [],
+    "substitutions": [],
+    "reserve": [],
+    "stage": true,
+    "scenery": null,
+    "objectives": null,
+    "grade": null
   }
 ];
 
@@ -46747,7 +49024,8 @@ export const STAGE_DATA: readonly StageDef[] = [
           "rank": "A"
         }
       ],
-      "cheat": "grade"
+      "cheat": "grade",
+      "conditionCaps": []
     },
     "score": {
       "surrendered": 150,
@@ -46810,6 +49088,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 0,
         "branch": null,
         "next": [
@@ -46849,6 +49130,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 0,
         "branch": null,
         "next": [
@@ -46912,6 +49196,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 0,
         "branch": null,
         "next": [
@@ -46951,6 +49238,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 0,
         "branch": null,
         "next": [
@@ -46988,6 +49278,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 0,
         "branch": null,
         "next": [
@@ -47027,6 +49320,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 0,
         "branch": null,
         "next": [
@@ -47066,6 +49362,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 0,
         "branch": null,
         "next": [
@@ -47102,6 +49401,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         },
         "corridor": "",
         "room": "",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 0,
         "branch": null,
         "next": []
@@ -47175,7 +49477,8 @@ export const STAGE_DATA: readonly StageDef[] = [
         55
       ],
       "caps": [],
-      "cheat": "grade"
+      "cheat": "grade",
+      "conditionCaps": []
     },
     "score": {
       "surrendered": 150,
@@ -47220,6 +49523,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "perimeter-pursuit",
         "room": "",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 1,
         "branch": null,
         "next": [
@@ -47246,6 +49552,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "beat-loading-yard",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 2,
         "branch": null,
         "next": [
@@ -47272,6 +49581,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "s2-aquaculture-hall",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 2,
         "branch": null,
         "next": [
@@ -47305,6 +49617,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "s2-aeration-annex",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 2,
         "branch": {
           "id": "aeration",
@@ -47313,6 +49628,7 @@ export const STAGE_DATA: readonly StageDef[] = [
           "artifactName": "Early Aerator Impeller",
           "workers": true,
           "clue": false,
+          "units": false,
           "assets": [
             "backup-aeration"
           ],
@@ -47342,6 +49658,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "s2-hygiene-vestibule",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 2,
         "branch": null,
         "next": [
@@ -47368,6 +49687,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "s2-crop-channels",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 3,
         "branch": null,
         "next": [
@@ -47395,6 +49717,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "s2-seed-reserve-bay",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 3,
         "branch": {
           "id": "seed",
@@ -47403,6 +49728,7 @@ export const STAGE_DATA: readonly StageDef[] = [
           "artifactName": "First-Harvest Seed Tin",
           "workers": false,
           "clue": false,
+          "units": false,
           "assets": [
             "seed-west",
             "seed-east"
@@ -47433,6 +49759,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "s2-medicinal-wing",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 3,
         "branch": null,
         "next": [
@@ -47470,6 +49799,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "s2-medicinal-prep-room",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 3,
         "branch": {
           "id": "medicinal",
@@ -47478,6 +49810,7 @@ export const STAGE_DATA: readonly StageDef[] = [
           "artifactName": "Medicinal Cooperative Field Card",
           "workers": true,
           "clue": true,
+          "units": false,
           "assets": [],
           "keep": 1
         },
@@ -47505,6 +49838,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "beat-filtration",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 3,
         "branch": null,
         "next": [
@@ -47531,6 +49867,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "s2-production-hall",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 4,
         "branch": null,
         "next": [
@@ -47557,6 +49896,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "",
         "room": "s2-recovery-bay",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 4,
         "branch": null,
         "next": [
@@ -47583,6 +49925,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         "evidence": null,
         "corridor": "marek-intercept",
         "room": "",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 4,
         "branch": null,
         "next": [
@@ -47613,6 +49958,9 @@ export const STAGE_DATA: readonly StageDef[] = [
         },
         "corridor": "",
         "room": "boss-marek",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
         "segment": 4,
         "branch": null,
         "next": []
@@ -47653,6 +50001,667 @@ export const STAGE_DATA: readonly StageDef[] = [
       },
       {
         "id": "depot",
+        "by": ""
+      }
+    ]
+  },
+  {
+    "id": "stage3",
+    "name": "Shadows over the Herb Mountain",
+    "continues": [
+      5,
+      3,
+      2,
+      1,
+      0
+    ],
+    "rules": {
+      "reviveFrames": 120,
+      "revivePercent": 40,
+      "rejoinPercent": 30,
+      "continuePercent": 100,
+      "reachX": 150,
+      "reachZ": 70,
+      "workerFrames": 45,
+      "clueFrames": 40,
+      "evidenceFrames": 60,
+      "pickupReachX": 70,
+      "pickupReachZ": 45,
+      "defeatHold": 120,
+      "transition": 40,
+      "exitMargin": 200
+    },
+    "roster": [],
+    "guests": [],
+    "timePar": [
+      1800,
+      2400,
+      3000
+    ],
+    "grade": {
+      "categories": [
+        {
+          "id": "rescue",
+          "measure": "rescues",
+          "weight": 35,
+          "allowance": 3
+        },
+        {
+          "id": "record",
+          "measure": "record",
+          "weight": 15,
+          "allowance": 3
+        },
+        {
+          "id": "capture",
+          "measure": "capture",
+          "weight": 20,
+          "allowance": 3
+        },
+        {
+          "id": "combat",
+          "measure": "combat",
+          "weight": 20,
+          "allowance": 3
+        },
+        {
+          "id": "branches",
+          "measure": "branches",
+          "weight": 10,
+          "allowance": 3
+        }
+      ],
+      "ranks": [
+        90,
+        75,
+        55
+      ],
+      "caps": [],
+      "cheat": "none",
+      "conditionCaps": [
+        {
+          "ladder": "rescue",
+          "state": "critical",
+          "rank": "A"
+        }
+      ]
+    },
+    "score": {
+      "surrendered": 150,
+      "defeated": 100,
+      "fled": 50,
+      "worker": 600,
+      "clue": 300,
+      "evidence": 1500,
+      "comboHit": 40,
+      "timeBonus": 3,
+      "continuePenalty": 1000,
+      "branch": 1500,
+      "resolve": 1500,
+      "forced": 800,
+      "difficulty": [
+        80,
+        100,
+        125,
+        150,
+        175
+      ],
+      "preservation": 0
+    },
+    "beats": [
+      {
+        "id": "switchback-ride",
+        "name": "Lower Switchback",
+        "area": "switchback",
+        "backdrop": "layers",
+        "width": 1920,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": true,
+        "objective": "Ride the switchbacks on the bandits' trail",
+        "base": 99,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "s3-switchback-ride",
+        "room": "",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
+        "segment": 1,
+        "branch": null,
+        "next": [
+          1
+        ]
+      },
+      {
+        "id": "hoofprints",
+        "name": "Hoofprints in the Mud",
+        "area": "switchback",
+        "backdrop": "layers",
+        "width": 2880,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Drive off the ambushers and read the trail",
+        "base": 100,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": {
+          "x": 1500,
+          "z": 720,
+          "text": "A dropped gathering basket and fresh hoofprints: the captives were taken up the switchbacks toward the quarry road."
+        },
+        "evidence": null,
+        "corridor": "",
+        "room": "",
+        "arena": 84,
+        "story": "",
+        "storyClear": "",
+        "segment": 1,
+        "branch": null,
+        "next": [
+          2
+        ]
+      },
+      {
+        "id": "rope-trail",
+        "name": "Rope across the Trail",
+        "area": "switchback",
+        "backdrop": "layers",
+        "width": 2880,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Clear the rope trap across the trail",
+        "base": 101,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "",
+        "arena": 85,
+        "story": "",
+        "storyClear": "",
+        "segment": 1,
+        "branch": null,
+        "next": [
+          3
+        ]
+      },
+      {
+        "id": "drying-racks",
+        "name": "Empty Drying Racks",
+        "area": "qinglan",
+        "backdrop": "layers",
+        "width": 2880,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": true,
+        "objective": "Clear the bandits from the hamlet's drying racks",
+        "base": 102,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "",
+        "arena": 86,
+        "story": "",
+        "storyClear": "",
+        "segment": 2,
+        "branch": null,
+        "next": [
+          4,
+          5
+        ]
+      },
+      {
+        "id": "signal-hut",
+        "name": "The Silent Antenna",
+        "area": "signalhut",
+        "backdrop": "layers",
+        "width": 2880,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Free Wei Shan and repair the radio at the Signal Hut",
+        "base": 103,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": {
+          "x": 1200,
+          "z": 720,
+          "text": "The radio set is working again: Qinglan can call the village and the clinic."
+        },
+        "evidence": null,
+        "corridor": "",
+        "room": "",
+        "arena": 87,
+        "story": "",
+        "storyClear": "",
+        "segment": 2,
+        "branch": {
+          "id": "signal-hut",
+          "name": "Signal Hut",
+          "artifact": "qinglan-rescue-bell",
+          "artifactName": "Qinglan Rescue Bell",
+          "workers": false,
+          "clue": true,
+          "units": true,
+          "assets": [],
+          "keep": 1
+        },
+        "next": [
+          5
+        ]
+      },
+      {
+        "id": "watch-path",
+        "name": "The Watch Path",
+        "area": "qinglan",
+        "backdrop": "layers",
+        "width": 2880,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Take the watch path toward Moonbell Basin",
+        "base": 104,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "",
+        "arena": 88,
+        "story": "",
+        "storyClear": "",
+        "segment": 2,
+        "branch": null,
+        "next": [
+          6
+        ]
+      },
+      {
+        "id": "mist-beds",
+        "name": "Mist over the Beds",
+        "area": "basin",
+        "backdrop": "layers",
+        "width": 2880,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Protect the Moonbell beds and secure the documented samples",
+        "base": 105,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "",
+        "arena": 89,
+        "story": "radio",
+        "storyClear": "",
+        "segment": 3,
+        "branch": null,
+        "next": [
+          7
+        ]
+      },
+      {
+        "id": "two-voices",
+        "name": "Two Voices in the Mist",
+        "area": "basin",
+        "backdrop": "layers",
+        "width": 2880,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Free Gao Wen and Tao Min",
+        "base": 106,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "",
+        "arena": 90,
+        "story": "",
+        "storyClear": "",
+        "segment": 3,
+        "branch": null,
+        "next": [
+          8
+        ]
+      },
+      {
+        "id": "loose-scaffold",
+        "name": "Loose Scaffold",
+        "area": "quarry",
+        "backdrop": "layers",
+        "width": 3360,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": true,
+        "objective": "Cross the quarry under the loose scaffold",
+        "base": 107,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "",
+        "arena": 91,
+        "story": "",
+        "storyClear": "",
+        "segment": 4,
+        "branch": null,
+        "next": [
+          9,
+          10
+        ]
+      },
+      {
+        "id": "herbalist-shelter",
+        "name": "Baskets Left Behind",
+        "area": "shelter",
+        "backdrop": "layers",
+        "width": 2880,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Recover the gathering equipment from the Herbalist Shelter",
+        "base": 108,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": {
+          "x": 1500,
+          "z": 720,
+          "text": "The expedition's baskets, tags and field notebooks, left behind in the shelter: Gao Wen's trail ledger is among them."
+        },
+        "evidence": null,
+        "corridor": "",
+        "room": "",
+        "arena": 92,
+        "story": "",
+        "storyClear": "",
+        "segment": 4,
+        "branch": {
+          "id": "herbalist-shelter",
+          "name": "Herbalist Shelter",
+          "artifact": "gao-wen-trail-ledger",
+          "artifactName": "Gao Wen's Trail Ledger",
+          "workers": false,
+          "clue": true,
+          "units": false,
+          "assets": [],
+          "keep": 1
+        },
+        "next": [
+          10
+        ]
+      },
+      {
+        "id": "hammer-line",
+        "name": "Hammer Line",
+        "area": "quarry",
+        "backdrop": "layers",
+        "width": 3360,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Break the hammer line",
+        "base": 109,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "",
+        "arena": 93,
+        "story": "",
+        "storyClear": "",
+        "segment": 4,
+        "branch": null,
+        "next": [
+          11
+        ]
+      },
+      {
+        "id": "cart-rails",
+        "name": "Cart Rails",
+        "area": "quarry",
+        "backdrop": "layers",
+        "width": 3360,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Free An Bo at the cart rails",
+        "base": 110,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "",
+        "arena": 94,
+        "story": "",
+        "storyClear": "",
+        "segment": 4,
+        "branch": null,
+        "next": [
+          12
+        ]
+      },
+      {
+        "id": "ridge-ride",
+        "name": "Ridge Road",
+        "area": "camp",
+        "backdrop": "layers",
+        "width": 1920,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": true,
+        "objective": "Ride the ridge road to Broken Ridge Camp",
+        "base": 111,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "s3-ridge-pursuit",
+        "room": "",
+        "arena": -1,
+        "story": "",
+        "storyClear": "",
+        "segment": 5,
+        "branch": null,
+        "next": [
+          13
+        ]
+      },
+      {
+        "id": "outer-fence",
+        "name": "Outer Fence",
+        "area": "camp",
+        "backdrop": "layers",
+        "width": 3360,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Break through the camp's outer fence",
+        "base": 112,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "",
+        "arena": 95,
+        "story": "",
+        "storyClear": "",
+        "segment": 5,
+        "branch": null,
+        "next": [
+          14
+        ]
+      },
+      {
+        "id": "lantern-row",
+        "name": "Lantern Row",
+        "area": "camp",
+        "backdrop": "layers",
+        "width": 2880,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Clear the lantern row",
+        "base": 113,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "",
+        "arena": 96,
+        "story": "",
+        "storyClear": "",
+        "segment": 5,
+        "branch": null,
+        "next": [
+          15
+        ]
+      },
+      {
+        "id": "ren-enclosure",
+        "name": "Ren Xia's Enclosure",
+        "area": "camp",
+        "backdrop": "layers",
+        "width": 2880,
+        "heroX": 300,
+        "layout": "",
+        "checkpoint": false,
+        "objective": "Free Ren Xia",
+        "base": 114,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": null,
+        "corridor": "",
+        "room": "",
+        "arena": 97,
+        "story": "cabin",
+        "storyClear": "escape",
+        "segment": 5,
+        "branch": null,
+        "next": [
+          16
+        ]
+      },
+      {
+        "id": "terrace",
+        "name": "High Winch Terrace",
+        "area": "terrace",
+        "backdrop": "layers",
+        "width": 2880,
+        "heroX": 500,
+        "layout": "",
+        "checkpoint": true,
+        "objective": "Capture Garran Voss alive",
+        "base": 115,
+        "locks": [],
+        "pickups": [],
+        "workers": [],
+        "pen": null,
+        "cache": null,
+        "clue": null,
+        "evidence": {
+          "x": 2300,
+          "z": 760,
+          "text": "Garran's private case: a damaged invoice he kept as leverage against Tomas. Its batch reference matches the procurement route behind the brass gears and the weapon crate."
+        },
+        "corridor": "",
+        "room": "",
+        "arena": 98,
+        "story": "",
+        "storyClear": "",
+        "segment": 6,
+        "branch": null,
+        "next": []
+      }
+    ],
+    "epilogue": [
+      {
+        "id": "capture",
+        "by": "capture"
+      },
+      {
+        "id": "rescue",
+        "by": "rescues"
+      },
+      {
+        "id": "record",
+        "by": "record"
+      },
+      {
+        "id": "branch",
+        "by": "branches"
+      },
+      {
+        "id": "invoice",
+        "by": ""
+      },
+      {
+        "id": "lowland",
         "by": ""
       }
     ]
@@ -47715,7 +50724,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": null,
       "requires": null,
-      "mastery": 3
+      "mastery": 3,
+      "soon": false
     },
     {
       "id": "store.technique.mountain.still-mountain",
@@ -47730,7 +50740,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": "story.stage1.broken-water-pact",
       "revealStage": null,
       "requires": null,
-      "mastery": 5
+      "mastery": 5,
+      "soon": false
     },
     {
       "id": "store.technique.river.waterspout-rise",
@@ -47745,7 +50756,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": null,
       "requires": null,
-      "mastery": 3
+      "mastery": 3,
+      "soon": false
     },
     {
       "id": "store.technique.river.floodline-passage",
@@ -47760,7 +50772,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": "story.stage1.broken-water-pact",
       "revealStage": null,
       "requires": null,
-      "mastery": 5
+      "mastery": 5,
+      "soon": false
     },
     {
       "id": "store.wardrobe.mountain.millwright",
@@ -47775,7 +50788,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": null,
       "requires": null,
-      "mastery": 0
+      "mastery": 0,
+      "soon": false
     },
     {
       "id": "store.wardrobe.river.reed-courier",
@@ -47790,7 +50804,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": null,
       "requires": null,
-      "mastery": 0
+      "mastery": 0,
+      "soon": false
     },
     {
       "id": "store.collection.badge.village-lantern",
@@ -47805,7 +50820,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": null,
       "requires": null,
-      "mastery": 0
+      "mastery": 0,
+      "soon": false
     },
     {
       "id": "store.collection.badge.open-sluice",
@@ -47820,7 +50836,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": null,
       "requires": "ach.stage1.river-flows",
-      "mastery": 0
+      "mastery": 0,
+      "soon": false
     },
     {
       "id": "store.wardrobe.mountain.greenhouse-builder",
@@ -47835,7 +50852,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": "stage2",
       "requires": null,
-      "mastery": 0
+      "mastery": 0,
+      "soon": false
     },
     {
       "id": "store.wardrobe.mountain.harvest-heritage",
@@ -47850,7 +50868,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": "stage2",
       "requires": null,
-      "mastery": 0
+      "mastery": 0,
+      "soon": false
     },
     {
       "id": "store.wardrobe.river.channel-patrol",
@@ -47865,7 +50884,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": "stage2",
       "requires": null,
-      "mastery": 0
+      "mastery": 0,
+      "soon": false
     },
     {
       "id": "store.wardrobe.river.lantern-festival",
@@ -47880,7 +50900,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": "stage2",
       "requires": null,
-      "mastery": 0
+      "mastery": 0,
+      "soon": false
     },
     {
       "id": "store.wardrobe.wind.greenhouse-response",
@@ -47895,7 +50916,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": "stage2",
       "requires": null,
-      "mastery": 0
+      "mastery": 0,
+      "soon": false
     },
     {
       "id": "store.wardrobe.wind.prosperity-festival",
@@ -47910,7 +50932,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": "stage2",
       "requires": null,
-      "mastery": 0
+      "mastery": 0,
+      "soon": false
     },
     {
       "id": "store.wardrobe.fire.pump-house-response",
@@ -47925,7 +50948,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": "stage2",
       "requires": null,
-      "mastery": 0
+      "mastery": 0,
+      "soon": false
     },
     {
       "id": "store.wardrobe.fire.ember-heritage",
@@ -47940,7 +50964,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": "stage2",
       "requires": null,
-      "mastery": 0
+      "mastery": 0,
+      "soon": false
     },
     {
       "id": "store.technique.wind.crosswind-arc",
@@ -47955,7 +50980,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": null,
       "requires": null,
-      "mastery": 3
+      "mastery": 3,
+      "soon": false
     },
     {
       "id": "store.technique.wind.low-gust-sweep",
@@ -47970,7 +50996,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": "stage2",
       "requires": null,
-      "mastery": 4
+      "mastery": 4,
+      "soon": false
     },
     {
       "id": "store.technique.wind.eye-of-the-storm",
@@ -47985,7 +51012,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": "stage2",
       "requires": null,
-      "mastery": 5
+      "mastery": 5,
+      "soon": false
     },
     {
       "id": "store.technique.fire.kindling-uppercut",
@@ -48000,7 +51028,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": null,
       "requires": null,
-      "mastery": 3
+      "mastery": 3,
+      "soon": false
     },
     {
       "id": "store.technique.fire.hearth-sweep",
@@ -48015,7 +51044,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": "stage2",
       "requires": null,
-      "mastery": 4
+      "mastery": 4,
+      "soon": false
     },
     {
       "id": "store.technique.fire.banked-coals",
@@ -48030,7 +51060,136 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "reveal": null,
       "revealStage": "stage2",
       "requires": null,
-      "mastery": 5
+      "mastery": 5,
+      "soon": false
+    },
+    {
+      "id": "store.wardrobe.mountain.mountain-rescue",
+      "group": "wardrobe",
+      "hero": "mountain",
+      "kind": "outfit",
+      "action": null,
+      "name": "Mountain Rescue Outfit",
+      "tint": "#7c8fa6",
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage3",
+      "requires": null,
+      "mastery": 0,
+      "soon": true
+    },
+    {
+      "id": "store.wardrobe.mountain.highland-festival",
+      "group": "wardrobe",
+      "hero": "mountain",
+      "kind": "outfit",
+      "action": null,
+      "name": "Highland Gathering Festival Attire",
+      "tint": "#b98a4a",
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage3",
+      "requires": null,
+      "mastery": 0,
+      "soon": true
+    },
+    {
+      "id": "store.wardrobe.river.mountain-rescue",
+      "group": "wardrobe",
+      "hero": "river",
+      "kind": "outfit",
+      "action": null,
+      "name": "Mountain Rescue Outfit",
+      "tint": "#4f9a94",
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage3",
+      "requires": null,
+      "mastery": 0,
+      "soon": true
+    },
+    {
+      "id": "store.wardrobe.river.highland-festival",
+      "group": "wardrobe",
+      "hero": "river",
+      "kind": "outfit",
+      "action": null,
+      "name": "Highland Gathering Festival Attire",
+      "tint": "#d1b36a",
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage3",
+      "requires": null,
+      "mastery": 0,
+      "soon": true
+    },
+    {
+      "id": "store.wardrobe.wind.mountain-rescue",
+      "group": "wardrobe",
+      "hero": "wind",
+      "kind": "outfit",
+      "action": null,
+      "name": "Mountain Rescue Outfit",
+      "tint": "#8a96a0",
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage3",
+      "requires": null,
+      "mastery": 0,
+      "soon": true
+    },
+    {
+      "id": "store.wardrobe.wind.highland-festival",
+      "group": "wardrobe",
+      "hero": "wind",
+      "kind": "outfit",
+      "action": null,
+      "name": "Highland Gathering Festival Attire",
+      "tint": "#c9b37a",
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage3",
+      "requires": null,
+      "mastery": 0,
+      "soon": true
+    },
+    {
+      "id": "store.wardrobe.fire.mountain-rescue",
+      "group": "wardrobe",
+      "hero": "fire",
+      "kind": "outfit",
+      "action": null,
+      "name": "Mountain Rescue Outfit",
+      "tint": "#b8483c",
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage3",
+      "requires": null,
+      "mastery": 0,
+      "soon": true
+    },
+    {
+      "id": "store.wardrobe.fire.highland-festival",
+      "group": "wardrobe",
+      "hero": "fire",
+      "kind": "outfit",
+      "action": null,
+      "name": "Highland Gathering Festival Attire",
+      "tint": "#a3523a",
+      "price": 800,
+      "band": "medium",
+      "reveal": null,
+      "revealStage": "stage3",
+      "requires": null,
+      "mastery": 0,
+      "soon": true
     }
   ],
   "achievements": [
@@ -48057,7 +51216,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": null
+        "branch": null,
+        "entry": null
       }
     },
     {
@@ -48083,7 +51243,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": null
+        "branch": null,
+        "entry": null
       }
     },
     {
@@ -48109,7 +51270,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": null
+        "branch": null,
+        "entry": null
       }
     },
     {
@@ -48135,7 +51297,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": null
+        "branch": null,
+        "entry": null
       }
     },
     {
@@ -48161,7 +51324,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": null
+        "branch": null,
+        "entry": null
       }
     },
     {
@@ -48187,7 +51351,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": null
+        "branch": null,
+        "entry": null
       }
     },
     {
@@ -48213,7 +51378,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": null
+        "branch": null,
+        "entry": null
       }
     },
     {
@@ -48239,7 +51405,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": null
+        "branch": null,
+        "entry": null
       }
     },
     {
@@ -48265,7 +51432,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": null
+        "branch": null,
+        "entry": null
       }
     },
     {
@@ -48291,7 +51459,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": null
+        "branch": null,
+        "entry": null
       }
     },
     {
@@ -48317,7 +51486,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": null
+        "branch": null,
+        "entry": null
       }
     },
     {
@@ -48354,7 +51524,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": null
+        "branch": null,
+        "entry": null
       }
     },
     {
@@ -48396,7 +51567,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": null
+        "branch": null,
+        "entry": null
       }
     },
     {
@@ -48422,7 +51594,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": "disarmed",
         "rounds": 1,
         "scorch": true,
-        "branch": null
+        "branch": null,
+        "entry": null
       }
     },
     {
@@ -48448,7 +51621,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": false,
-        "branch": null
+        "branch": null,
+        "entry": null
       }
     },
     {
@@ -48485,7 +51659,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": null
+        "branch": null,
+        "entry": null
       }
     },
     {
@@ -48511,7 +51686,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": "aeration"
+        "branch": "aeration",
+        "entry": null
       }
     },
     {
@@ -48537,7 +51713,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": "seed"
+        "branch": "seed",
+        "entry": null
       }
     },
     {
@@ -48563,7 +51740,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": "medicinal"
+        "branch": "medicinal",
+        "entry": null
       }
     },
     {
@@ -48589,7 +51767,224 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "gun": null,
         "rounds": 0,
         "scorch": true,
-        "branch": null
+        "branch": null,
+        "entry": null
+      }
+    },
+    {
+      "id": "ach.stage3.mist-lifts",
+      "group": "story",
+      "name": "Mist Lifts",
+      "credits": 150,
+      "narrative": true,
+      "rule": {
+        "kind": "clear",
+        "content": "story.stage3.herb-mountain",
+        "rank": null,
+        "difficulty": null,
+        "count": 1,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null,
+        "entry": null
+      }
+    },
+    {
+      "id": "ach.stage3.every-voice-home",
+      "group": "stageMastery",
+      "name": "Every Voice Home",
+      "credits": 300,
+      "narrative": false,
+      "rule": {
+        "kind": "rescues",
+        "content": "story.stage3.herb-mountain",
+        "rank": null,
+        "difficulty": null,
+        "count": 4,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null,
+        "entry": null
+      }
+    },
+    {
+      "id": "ach.stage3.signal-restored",
+      "group": "discovery",
+      "name": "Signal Restored",
+      "credits": 150,
+      "narrative": false,
+      "rule": {
+        "kind": "branch",
+        "content": "story.stage3.herb-mountain",
+        "rank": null,
+        "difficulty": null,
+        "count": 1,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": "signal-hut",
+        "entry": null
+      }
+    },
+    {
+      "id": "ach.stage3.shelter-remembered",
+      "group": "discovery",
+      "name": "Shelter Remembered",
+      "credits": 150,
+      "narrative": false,
+      "rule": {
+        "kind": "branch",
+        "content": "story.stage3.herb-mountain",
+        "rank": null,
+        "difficulty": null,
+        "count": 1,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": "herbalist-shelter",
+        "entry": null
+      }
+    },
+    {
+      "id": "ach.stage3.both-paths-walked",
+      "group": "discovery",
+      "name": "Both Paths Walked",
+      "credits": 250,
+      "narrative": false,
+      "rule": {
+        "kind": "branches",
+        "content": "story.stage3.herb-mountain",
+        "rank": null,
+        "difficulty": null,
+        "count": 2,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null,
+        "entry": null
+      }
+    },
+    {
+      "id": "ach.stage3.steady-on-the-switchback",
+      "group": "difficulty",
+      "name": "Steady on the Switchback",
+      "credits": 250,
+      "narrative": false,
+      "rule": {
+        "kind": "steady",
+        "content": "story.stage3.herb-mountain",
+        "rank": null,
+        "difficulty": "medium",
+        "count": 1,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null,
+        "entry": null
+      }
+    },
+    {
+      "id": "ach.stage3.hook-unhooked",
+      "group": "combatTechnique",
+      "name": "Hook Unhooked",
+      "credits": 200,
+      "narrative": false,
+      "rule": {
+        "kind": "capture",
+        "content": "story.stage3.herb-mountain",
+        "rank": null,
+        "difficulty": null,
+        "count": 1,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": "disarmed",
+        "rounds": 0,
+        "scorch": true,
+        "branch": null,
+        "entry": null
+      }
+    },
+    {
+      "id": "ach.stage3.paper-trail",
+      "group": "discovery",
+      "name": "Paper Trail",
+      "credits": 150,
+      "narrative": true,
+      "rule": {
+        "kind": "dossier",
+        "content": "story.stage3.herb-mountain",
+        "rank": null,
+        "difficulty": null,
+        "count": 1,
+        "stat": null,
+        "min": 1,
+        "coop": false,
+        "state": null,
+        "all": [],
+        "grade": null,
+        "rewinds": null,
+        "route": null,
+        "gun": null,
+        "rounds": 0,
+        "scorch": true,
+        "branch": null,
+        "entry": "page.damaged-invoice"
       }
     }
   ],
@@ -48791,7 +52186,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
           "drill": {
             "room": null,
             "corridor": null,
-            "showcase": "crosswind-temper"
+            "showcase": "crosswind-temper",
+            "arena": null
           },
           "guided": [
             "reciprocal"
@@ -48823,7 +52219,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
           "drill": {
             "room": null,
             "corridor": null,
-            "showcase": "horizon-accord"
+            "showcase": "horizon-accord",
+            "arena": null
           },
           "guided": [
             "teamFinisher"
@@ -48855,7 +52252,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
           "drill": {
             "room": null,
             "corridor": "perimeter-pursuit",
-            "showcase": null
+            "showcase": null,
+            "arena": null
           },
           "guided": [
             "pursuitControl"
@@ -48887,7 +52285,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
           "drill": {
             "room": "trial-marauder",
             "corridor": null,
-            "showcase": null
+            "showcase": null,
+            "arena": null
           },
           "guided": [
             "firearmShot"
@@ -48919,7 +52318,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
           "drill": {
             "room": "beat-filtration",
             "corridor": null,
-            "showcase": null
+            "showcase": null,
+            "arena": null
           },
           "guided": [
             "grenadeReturn"
@@ -48951,7 +52351,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
           "drill": {
             "room": "boss-marek",
             "corridor": null,
-            "showcase": null
+            "showcase": null,
+            "arena": null
           },
           "guided": [
             "disarm"
@@ -48983,7 +52384,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
           "drill": {
             "room": "greenhouse-test-room",
             "corridor": null,
-            "showcase": null
+            "showcase": null,
+            "arena": null
           },
           "guided": [
             "repair"
@@ -49015,7 +52417,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
           "drill": {
             "room": "trial-claimhand",
             "corridor": null,
-            "showcase": null
+            "showcase": null,
+            "arena": null
           },
           "guided": [
             "containerOpen"
@@ -49047,7 +52450,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
           "drill": {
             "room": "trial-signalman",
             "corridor": null,
-            "showcase": null
+            "showcase": null,
+            "arena": null
           },
           "guided": [
             "callBreak"
@@ -49079,7 +52483,8 @@ export const PROGRESSION_DATA: ProgressionDef = {
           "drill": {
             "room": "trial-saboteur",
             "corridor": null,
-            "showcase": null
+            "showcase": null,
+            "arena": null
           },
           "guided": [
             "breachStop"
@@ -49094,6 +52499,177 @@ export const PROGRESSION_DATA: ProgressionDef = {
           "mastery": {
             "goals": [
               "breachStop"
+            ],
+            "count": 2,
+            "frames": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "academy.stage3",
+      "name": "Stage 3 Academy",
+      "lessons": [
+        {
+          "id": "academy.stage3.mounted",
+          "course": "specialization",
+          "name": "The mountain horse on the switchbacks",
+          "demo": null,
+          "recipe": null,
+          "trainer": false,
+          "meter": 0,
+          "hero": null,
+          "drill": {
+            "room": null,
+            "corridor": "s3-switchback-ride",
+            "showcase": null,
+            "arena": null
+          },
+          "guided": [
+            "pursuitControl"
+          ],
+          "trial": {
+            "goals": [
+              "pursuitControl"
+            ],
+            "count": 2,
+            "frames": 0
+          },
+          "mastery": {
+            "goals": [
+              "pursuitSave"
+            ],
+            "count": 1,
+            "frames": 0
+          }
+        },
+        {
+          "id": "academy.stage3.rescue",
+          "course": "resources",
+          "name": "Free the captives under pressure",
+          "demo": null,
+          "recipe": null,
+          "trainer": false,
+          "meter": 0,
+          "hero": null,
+          "drill": {
+            "room": null,
+            "corridor": null,
+            "showcase": null,
+            "arena": "s3-two-voices"
+          },
+          "guided": [
+            "rescue"
+          ],
+          "trial": {
+            "goals": [
+              "rescue"
+            ],
+            "count": 1,
+            "frames": 0
+          },
+          "mastery": {
+            "goals": [
+              "rescue"
+            ],
+            "count": 2,
+            "frames": 3600
+          }
+        },
+        {
+          "id": "academy.stage3.stalker",
+          "course": "defense",
+          "name": "New roles: the Ridge Stalker",
+          "demo": null,
+          "recipe": null,
+          "trainer": false,
+          "meter": 0,
+          "hero": null,
+          "drill": {
+            "room": null,
+            "corridor": null,
+            "showcase": null,
+            "arena": "lab-m27-stalker"
+          },
+          "guided": [
+            "guard"
+          ],
+          "trial": {
+            "goals": [
+              "exact"
+            ],
+            "count": 1,
+            "frames": 0
+          },
+          "mastery": {
+            "goals": [
+              "counter"
+            ],
+            "count": 1,
+            "frames": 0
+          }
+        },
+        {
+          "id": "academy.stage3.hookstaff",
+          "course": "mastery",
+          "name": "Take the Hookstaff",
+          "demo": null,
+          "recipe": null,
+          "trainer": false,
+          "meter": 0,
+          "hero": null,
+          "drill": {
+            "room": null,
+            "corridor": null,
+            "showcase": null,
+            "arena": "lab-m27-garran-hook"
+          },
+          "guided": [
+            "disarm"
+          ],
+          "trial": {
+            "goals": [
+              "disarm"
+            ],
+            "count": 1,
+            "frames": 0
+          },
+          "mastery": {
+            "goals": [
+              "disarm"
+            ],
+            "count": 1,
+            "frames": 3600
+          }
+        },
+        {
+          "id": "academy.stage3.winch",
+          "course": "mastery",
+          "name": "Turn the winch against him",
+          "demo": null,
+          "recipe": null,
+          "trainer": false,
+          "meter": 0,
+          "hero": null,
+          "drill": {
+            "room": null,
+            "corridor": null,
+            "showcase": null,
+            "arena": "lab-m27-garran-winch"
+          },
+          "guided": [
+            "redirect"
+          ],
+          "trial": {
+            "goals": [
+              "redirect"
+            ],
+            "count": 1,
+            "frames": 0
+          },
+          "mastery": {
+            "goals": [
+              "redirect"
             ],
             "count": 2,
             "frames": 0
@@ -49136,6 +52712,28 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "menuBg": "menu-bg-s2",
         "music": {
           "cue": "mus.stage2.what-we-protected",
+          "state": "ending"
+        }
+      }
+    },
+    {
+      "id": "stage3",
+      "content": "story.stage3.herb-mountain",
+      "opens": "stage2",
+      "whatsNew": [
+        "horses",
+        "rescues",
+        "record",
+        "highland-weapons",
+        "bandits",
+        "garran"
+      ],
+      "titleScreen": {
+        "clip": "cine.stage3.title-loop",
+        "still": "story.stage3.title-loop",
+        "menuBg": "menu-bg-s3",
+        "music": {
+          "cue": "mus.stage3.paths-through-the-mist",
           "state": "ending"
         }
       }
@@ -49691,6 +53289,236 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "kind": "complete",
         "branch": null
       }
+    },
+    {
+      "id": "picture.keyart-s3",
+      "section": "picture",
+      "stage": "stage3",
+      "asset": "keyart-s3",
+      "unlock": {
+        "kind": "always",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s3-h02",
+      "section": "picture",
+      "stage": "stage3",
+      "asset": "s3-h02",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s3-h03",
+      "section": "picture",
+      "stage": "stage3",
+      "asset": "s3-h03",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s3-h05",
+      "section": "picture",
+      "stage": "stage3",
+      "asset": "s3-h05",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s3-brief-01",
+      "section": "picture",
+      "stage": "stage3",
+      "asset": "s3-brief-01",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s3-t02",
+      "section": "picture",
+      "stage": "stage3",
+      "asset": "s3-t02",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s3-e03",
+      "section": "picture",
+      "stage": "stage3",
+      "asset": "s3-e03",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.s3-e06",
+      "section": "picture",
+      "stage": "stage3",
+      "asset": "s3-e06",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "picture.portrait-garran",
+      "section": "picture",
+      "stage": "stage3",
+      "asset": "portrait-garran",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "cinema.stage3.silvermist",
+      "section": "cinema",
+      "stage": "stage3",
+      "asset": "cine.stage3.silvermist",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "cinema.stage3.prepared-route",
+      "section": "cinema",
+      "stage": "stage3",
+      "asset": "cine.stage3.prepared-route",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "cinema.stage3.paths",
+      "section": "cinema",
+      "stage": "stage3",
+      "asset": "cine.stage3.paths",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage3.silver-veins-in-morning-mist",
+      "section": "music",
+      "stage": "stage3",
+      "asset": "mus.stage3.silver-veins-in-morning-mist:title",
+      "unlock": {
+        "kind": "always",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage3.the-empty-gathering-trail",
+      "section": "music",
+      "stage": "stage3",
+      "asset": "mus.stage3.the-empty-gathering-trail:explore",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage3.hooves-above-the-ravine",
+      "section": "music",
+      "stage": "stage3",
+      "asset": "mus.stage3.hooves-above-the-ravine:ride",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage3.quarry-of-echoes",
+      "section": "music",
+      "stage": "stage3",
+      "asset": "mus.stage3.quarry-of-echoes:combat",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage3.captives-in-the-high-camp",
+      "section": "music",
+      "stage": "stage3",
+      "asset": "mus.stage3.captives-in-the-high-camp:danger",
+      "unlock": {
+        "kind": "start",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage3.chief-of-the-broken-ridge",
+      "section": "music",
+      "stage": "stage3",
+      "asset": "mus.stage3.chief-of-the-broken-ridge:hookstaff",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "music.stage3.paths-through-the-mist",
+      "section": "music",
+      "stage": "stage3",
+      "asset": "mus.stage3.paths-through-the-mist:ending",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "collection.silvermist-ecology-folio",
+      "section": "collection",
+      "stage": "stage3",
+      "asset": "silvermist-ecology-folio",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "collection.qinglan-rescue-bell",
+      "section": "collection",
+      "stage": "stage3",
+      "asset": "qinglan-rescue-bell",
+      "unlock": {
+        "kind": "branch",
+        "branch": "signal-hut"
+      }
+    },
+    {
+      "id": "collection.gao-wen-trail-ledger",
+      "section": "collection",
+      "stage": "stage3",
+      "asset": "gao-wen-trail-ledger",
+      "unlock": {
+        "kind": "branch",
+        "branch": "herbalist-shelter"
+      }
+    },
+    {
+      "id": "collection.broken-hookstaff",
+      "section": "collection",
+      "stage": "stage3",
+      "asset": "broken-hookstaff",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
     }
   ],
   "dossier": [
@@ -49698,6 +53526,7 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "id": "fact.brass-gears",
       "kind": "fact",
       "stage": "stage1",
+      "asset": null,
       "unlock": {
         "kind": "complete",
         "branch": null
@@ -49707,6 +53536,7 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "id": "theory.outside-hand",
       "kind": "theory",
       "stage": "stage1",
+      "asset": null,
       "unlock": {
         "kind": "complete",
         "branch": null
@@ -49716,6 +53546,7 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "id": "fact.crate-seal",
       "kind": "fact",
       "stage": "stage2",
+      "asset": null,
       "unlock": {
         "kind": "complete",
         "branch": null
@@ -49725,6 +53556,7 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "id": "fact.order-code",
       "kind": "fact",
       "stage": "stage2",
+      "asset": null,
       "unlock": {
         "kind": "complete",
         "branch": null
@@ -49734,6 +53566,47 @@ export const PROGRESSION_DATA: ProgressionDef = {
       "id": "theory.one-supplier",
       "kind": "theory",
       "stage": "stage2",
+      "asset": null,
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "page.damaged-invoice",
+      "kind": "page",
+      "stage": "stage3",
+      "asset": "s3-invoice",
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "fact.invoice-batch",
+      "kind": "fact",
+      "stage": "stage3",
+      "asset": null,
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "fact.prepared-route",
+      "kind": "fact",
+      "stage": "stage3",
+      "asset": null,
+      "unlock": {
+        "kind": "complete",
+        "branch": null
+      }
+    },
+    {
+      "id": "theory.paid-route",
+      "kind": "theory",
+      "stage": "stage3",
+      "asset": null,
       "unlock": {
         "kind": "complete",
         "branch": null
@@ -49776,6 +53649,24 @@ export const PROGRESSION_DATA: ProgressionDef = {
         "unlock": {
           "kind": "branch",
           "branch": "medicinal"
+        }
+      },
+      {
+        "id": "field-samples",
+        "milestone": "independent-replication",
+        "stage": "stage3",
+        "unlock": {
+          "kind": "complete",
+          "branch": null
+        }
+      },
+      {
+        "id": "trail-ledger",
+        "milestone": "independent-replication",
+        "stage": "stage3",
+        "unlock": {
+          "kind": "branch",
+          "branch": "herbalist-shelter"
         }
       }
     ]
@@ -51408,6 +55299,336 @@ export const MOUNTED_DATA: MountedDef | null = {
           "riders": [
             {
               "from": 0,
+              "lane": 2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s3-switchback-ride",
+      "name": "Lower Switchback",
+      "goal": "Ride up the switchbacks on the bandits' trail",
+      "mount": 1,
+      "start": 76800,
+      "finish": 2406400,
+      "length": 2611200,
+      "road": [
+        {
+          "at": 0,
+          "top": 163840,
+          "bottom": 250880
+        },
+        {
+          "at": 665600,
+          "top": 163840,
+          "bottom": 250880
+        },
+        {
+          "at": 819200,
+          "top": 179200,
+          "bottom": 238080
+        },
+        {
+          "at": 1280000,
+          "top": 179200,
+          "bottom": 238080
+        },
+        {
+          "at": 1433600,
+          "top": 158720,
+          "bottom": 230400
+        },
+        {
+          "at": 1945600,
+          "top": 158720,
+          "bottom": 230400
+        },
+        {
+          "at": 2099200,
+          "top": 163840,
+          "bottom": 250880
+        },
+        {
+          "at": 2611200,
+          "top": 163840,
+          "bottom": 250880
+        }
+      ],
+      "obstacles": [
+        {
+          "at": 768000,
+          "z": 207360,
+          "kind": 0,
+          "hw": 7680,
+          "hd": 10240
+        },
+        {
+          "at": 1075200,
+          "z": 208640,
+          "kind": 2,
+          "hw": 20480,
+          "hd": 14080
+        },
+        {
+          "at": 1587200,
+          "z": 176640,
+          "kind": 0,
+          "hw": 7680,
+          "hd": 10240
+        },
+        {
+          "at": 1587200,
+          "z": 220160,
+          "kind": 0,
+          "hw": 7680,
+          "hd": 10240
+        },
+        {
+          "at": 2201600,
+          "z": 230400,
+          "kind": 2,
+          "hw": 20480,
+          "hd": 14080
+        }
+      ],
+      "equipment": [],
+      "checkpoints": [
+        1177600
+      ],
+      "boss": null,
+      "waves": [
+        {
+          "at": 921600,
+          "min": 0,
+          "target": -1,
+          "riders": [
+            {
+              "from": 0,
+              "lane": 2
+            }
+          ]
+        },
+        {
+          "at": 1484800,
+          "min": 1,
+          "target": -1,
+          "riders": [
+            {
+              "from": 1,
+              "lane": 0
+            }
+          ]
+        },
+        {
+          "at": 1843200,
+          "min": 0,
+          "target": -1,
+          "riders": [
+            {
+              "from": 0,
+              "lane": 1
+            }
+          ]
+        },
+        {
+          "at": 1843200,
+          "min": 2,
+          "target": -1,
+          "riders": [
+            {
+              "from": 1,
+              "lane": 2
+            }
+          ]
+        },
+        {
+          "at": 2150400,
+          "min": 3,
+          "target": -1,
+          "riders": [
+            {
+              "from": 0,
+              "lane": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "s3-ridge-pursuit",
+      "name": "Ridge Road",
+      "goal": "Ride up the ridge road to the bandit camp",
+      "mount": 1,
+      "start": 76800,
+      "finish": 2918400,
+      "length": 3123200,
+      "road": [
+        {
+          "at": 0,
+          "top": 163840,
+          "bottom": 250880
+        },
+        {
+          "at": 614400,
+          "top": 163840,
+          "bottom": 250880
+        },
+        {
+          "at": 768000,
+          "top": 174080,
+          "bottom": 245760
+        },
+        {
+          "at": 1382400,
+          "top": 174080,
+          "bottom": 245760
+        },
+        {
+          "at": 1536000,
+          "top": 158720,
+          "bottom": 230400
+        },
+        {
+          "at": 2150400,
+          "top": 158720,
+          "bottom": 230400
+        },
+        {
+          "at": 2304000,
+          "top": 163840,
+          "bottom": 250880
+        },
+        {
+          "at": 3123200,
+          "top": 163840,
+          "bottom": 250880
+        }
+      ],
+      "obstacles": [
+        {
+          "at": 460800,
+          "z": 184320,
+          "kind": 0,
+          "hw": 7680,
+          "hd": 10240
+        },
+        {
+          "at": 460800,
+          "z": 230400,
+          "kind": 0,
+          "hw": 7680,
+          "hd": 10240
+        },
+        {
+          "at": 972800,
+          "z": 208640,
+          "kind": 2,
+          "hw": 20480,
+          "hd": 14080
+        },
+        {
+          "at": 1689600,
+          "z": 176640,
+          "kind": 1,
+          "hw": 10240,
+          "hd": 10240
+        },
+        {
+          "at": 1689600,
+          "z": 220160,
+          "kind": 1,
+          "hw": 10240,
+          "hd": 10240
+        },
+        {
+          "at": 2508800,
+          "z": 184320,
+          "kind": 0,
+          "hw": 7680,
+          "hd": 10240
+        },
+        {
+          "at": 2508800,
+          "z": 230400,
+          "kind": 0,
+          "hw": 7680,
+          "hd": 10240
+        }
+      ],
+      "equipment": [],
+      "checkpoints": [
+        1126400,
+        2048000
+      ],
+      "boss": null,
+      "waves": [
+        {
+          "at": 563200,
+          "min": 0,
+          "target": -1,
+          "riders": [
+            {
+              "from": 0,
+              "lane": 2
+            }
+          ]
+        },
+        {
+          "at": 1228800,
+          "min": 0,
+          "target": -1,
+          "riders": [
+            {
+              "from": 1,
+              "lane": 0
+            }
+          ]
+        },
+        {
+          "at": 1228800,
+          "min": 1,
+          "target": -1,
+          "riders": [
+            {
+              "from": 0,
+              "lane": 2
+            }
+          ]
+        },
+        {
+          "at": 2099200,
+          "min": 1,
+          "target": -1,
+          "riders": [
+            {
+              "from": 0,
+              "lane": 1
+            }
+          ]
+        },
+        {
+          "at": 2099200,
+          "min": 2,
+          "target": -1,
+          "riders": [
+            {
+              "from": 1,
+              "lane": 2
+            }
+          ]
+        },
+        {
+          "at": 2611200,
+          "min": 3,
+          "target": -1,
+          "riders": [
+            {
+              "from": 0,
+              "lane": 0
+            },
+            {
+              "from": 1,
               "lane": 2
             }
           ]

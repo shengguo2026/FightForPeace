@@ -174,6 +174,8 @@ export interface MuseumRecord {
 
 export interface DossierRecord {
   unlocked: Record<string, number>;
+  /** M28: Dossier pages the player opened (Paper Trail). */
+  opened?: string[];
 }
 
 /** M21 formula research: completed milestones and recorded inputs (when). */
@@ -266,7 +268,7 @@ export function createProfile(name: string, locale: Locale, now = Date.now()): P
     chronicles: {},
     campaign: emptyCampaign(),
     museum: { unlocked: {}, viewed: [] },
-    sponsorDossier: { unlocked: {} },
+    sponsorDossier: { unlocked: {}, opened: [] },
     research: { milestones: {}, inputs: {} },
     cheats: { registryVersion: 1, enabled: [], heroPrefs: {} },
     progress: emptyProgress(),
@@ -440,6 +442,7 @@ export function normalizeProfile(raw: unknown): Profile {
     },
     sponsorDossier: {
       unlocked: stamps(isObj(raw.sponsorDossier) ? raw.sponsorDossier.unlocked : null),
+      opened: strings(isObj(raw.sponsorDossier) ? raw.sponsorDossier.opened : null, 100),
     },
     research: {
       milestones: stamps(isObj(raw.research) ? raw.research.milestones : null),

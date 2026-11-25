@@ -786,6 +786,12 @@ export interface BeatDef {
   corridor: string;
   /** M20: a greenhouse room beat (ROOMS id), or ''. */
   room: string;
+  /** M28: an arena beat (ARENAS index; -1 = none): its waves, scenery and objectives. */
+  arena: number;
+  /** M28: story moment shown when the beat starts (its id is the run's story flag), or ''. */
+  story: string;
+  /** M28: story moment shown when the beat's encounter is cleared, or ''. */
+  storyClear: string;
   /** M20: the route segment (1–4; 0 = none). */
   segment: number;
   /** M20: an optional branch beat: its goal and Museum artifact (null = on the spine). */
@@ -802,6 +808,8 @@ export interface BranchDef {
   workers: boolean;
   /** The beat's clue (a record) must be found. */
   clue: boolean;
+  /** M28: every protected unit of the beat's arena must be safe. */
+  units: boolean;
   /** These room assets (authored names) must end at `keep` or better. */
   assets: readonly string[];
   /** Worst allowed asset state (AssetState): 1 damaged, 2 critical. */
@@ -854,12 +862,23 @@ export interface StageDef {
 
 export interface EpilogueCardDef {
   id: string;
-  by: '' | 'capture' | 'categories' | 'branches' | 'preservation';
+  by: '' | 'capture' | 'categories' | 'branches' | 'preservation' | 'rescues' | 'record';
 }
 
 export interface GradeCategoryDef {
   id: string;
-  measure: 'workers' | 'clues' | 'continues' | 'time' | 'preservation' | 'response';
+  measure:
+    | 'workers'
+    | 'clues'
+    | 'continues'
+    | 'time'
+    | 'preservation'
+    | 'response'
+    | 'rescues'
+    | 'record'
+    | 'capture'
+    | 'combat'
+    | 'branches';
   weight: number;
   /** continues: points reach zero at this many continues used. */
   allowance: number;
@@ -873,6 +892,8 @@ export interface StageGradeDef {
   caps: readonly { category: string; below: number; rank: string }[];
   /** M25: 'none' gives a Cheat-Assisted run no grade (Stage 3 §22.2). */
   cheat: 'grade' | 'none';
+  /** M28: a rescued person ending in this ladder state caps the rank (Stage 3 §22.2). */
+  conditionCaps: readonly { ladder: string; state: string; rank: string }[];
 }
 
 export interface StageScoreDef {
@@ -978,6 +999,8 @@ export interface StoreItemDef {
   requires: string | null;
   /** Hero Mastery level that grants a technique without Credits (0: no such path). */
   mastery: number;
+  /** M28: a Coming-soon preview (Stage 3 DLC outfits): never buyable, no price shown. */
+  soon?: boolean;
 }
 
 export type AchievementGroup =
@@ -1008,7 +1031,10 @@ export interface AchievementDef {
       | 'stats'
       | 'capture'
       | 'branch'
-      | 'branches';
+      | 'branches'
+      | 'rescues'
+      | 'steady'
+      | 'dossier';
     content: string | null;
     rank: string | null;
     difficulty: string | null;
@@ -1030,6 +1056,8 @@ export interface AchievementDef {
     scorch?: boolean;
     /** M21: branch id (kind branch). */
     branch?: string | null;
+    /** M28: Sponsor Dossier page id (kind dossier). */
+    entry?: string | null;
   };
 }
 
@@ -1068,7 +1096,10 @@ export type LessonGoal =
   | 'repair'
   | 'containerOpen'
   | 'callBreak'
-  | 'breachStop';
+  | 'breachStop'
+  // M28 Stage 3 drill goals.
+  | 'rescue'
+  | 'redirect';
 
 export interface LessonPhaseDef {
   goals: readonly LessonGoal[];
@@ -1091,7 +1122,13 @@ export interface LessonDef {
   /** M21: the lesson's fixed hero (null: the hero chosen in the Academy). */
   hero?: string | null;
   /** M21 drill: a test room, corridor, or pair showcase with its partner (null: the yard). */
-  drill?: { room: string | null; corridor: string | null; showcase: string | null } | null;
+  drill?: {
+    room: string | null;
+    corridor: string | null;
+    showcase: string | null;
+    /** M28: an arena drill (a Stage 3 encounter or a Combat Lab room). */
+    arena?: string | null;
+  } | null;
   guided: readonly LessonGoal[];
   trial: LessonPhaseDef;
   mastery: LessonPhaseDef;
@@ -1168,8 +1205,10 @@ export interface MuseumEntryDef {
 
 export interface DossierEntryDef {
   id: string;
-  kind: 'fact' | 'theory' | string;
+  kind: 'fact' | 'theory' | 'page' | string;
   stage: string;
+  /** M28: the picture of a `page` entry (null: none). */
+  asset: string | null;
   unlock: UnlockDef;
 }
 

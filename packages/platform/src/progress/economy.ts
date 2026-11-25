@@ -11,7 +11,7 @@ import {
 } from '@ffp/sim';
 import type { Profile } from '../save/schema';
 import type { LessonState, ProgressRecord, StageRecord } from '../save/progress';
-import { stageOpen } from './campaign';
+import { stageCompleted, stageOfContent, stageOpen } from './campaign';
 
 export { contentIdOf } from './campaign';
 
@@ -255,6 +255,15 @@ export function achievementMet(p: Profile, a: AchievementDef, report: RunReport 
   const pr = p.progress;
   const rule = a.rule;
   if (rule.kind === 'academy') return lessonsAtLeast(pr, rule.state ?? 'certified') >= rule.count;
+  // M28 Paper Trail: the stage was completed (the invoice examined) and its page opened.
+  if (rule.kind === 'dossier') {
+    const stage = rule.content ? stageOfContent(rule.content) : null;
+    return (
+      !!rule.entry &&
+      (p.sponsorDossier.opened ?? []).includes(rule.entry) &&
+      (!stage || stageCompleted(p, stage))
+    );
+  }
   if (!report || (rule.content && rule.content !== report.contentId)) return false;
   const r = report.results;
   if (r.startBeat > 0) return false;
@@ -307,6 +316,15 @@ export function achievementMet(p: Profile, a: AchievementDef, report: RunReport 
       return r.branches.some((b) => b.id === rule.branch && b.outcome === 1);
     case 'branches':
       return r.branches.filter((b) => b.outcome === 1).length >= rule.count;
+    // --- M28 Stage 3 rules (spec §22.3) ---
+    case 'rescues': {
+      // Every rescue group of the main route Secure in this run (branch rescues aside).
+      const spine = (r.journey?.rescues ?? []).filter((x) => !x.branch);
+      return spine.length >= rule.count && spine.every((x) => x.stateId === 'secure');
+    }
+    case 'steady':
+      if (rule.difficulty && r.difficulty < DIFF_IDS.indexOf(rule.difficulty)) return false;
+      return !!r.journey && r.journey.breaks === 0;
     default:
       return false;
   }
@@ -386,9 +404,28 @@ export function advanceLesson(
   return out;
 }
 
+/**
+ * M28: the player opened a Sponsor Dossier page (the damaged invoice): remembered on the
+ * profile, and any `dossier` achievement it completes is awarded with its Credits.
+ */
+export function openDossierPage(p: Profile, entry: string, now = Date.now()): string[] {
+  const d = p.sponsorDossier;
+  d.opened ??= [];
+  if (!d.opened.includes(entry)) d.opened.push(entry);
+  const out: string[] = [];
+  for (const a of ACHIEVEMENTS) {
+    if (a.rule.kind !== 'dossier' || p.progress.achievements[a.id] !== undefined) continue;
+    if (!achievementMet(p, a, null)) continue;
+    p.progress.achievements[a.id] = now;
+    out.push(a.id);
+    pay(p.progress, 'achievement', a.credits, a.id, now);
+  }
+  return out;
+}
+
 // --- store --------------------------------------------------------------------------------
 
-export type StoreStatus = 'owned' | 'available' | 'locked' | 'hidden';
+export type StoreStatus = 'owned' | 'available' | 'locked' | 'hidden' | 'soon';
 
 /** Revealed (visible) entries have met their reveal condition. */
 export function revealed(p: Profile, item: StoreItemDef): boolean {
@@ -408,11 +445,14 @@ export function revealed(p: Profile, item: StoreItemDef): boolean {
 export function storeStatus(p: Profile, item: StoreItemDef): StoreStatus {
   if (p.progress.owned.includes(item.id)) return 'owned';
   if (!revealed(p, item)) return 'hidden';
+  // M28: Coming-soon previews are shown but cannot be bought (decision 2026-11-17).
+  if (item.soon) return 'soon';
   if (item.requires && p.progress.achievements[item.requires] === undefined) return 'locked';
   return 'available';
 }
 
-export type BuyResult = 'ok' | 'owned' | 'hidden' | 'locked' | 'credits' | 'guest' | 'unknown';
+export type BuyResult =
+  'ok' | 'owned' | 'hidden' | 'locked' | 'soon' | 'credits' | 'guest' | 'unknown';
 
 /** Buys an entry for its published price. Purchases are explicit and deterministic. */
 export function buy(p: Profile, id: string, now = Date.now()): BuyResult {

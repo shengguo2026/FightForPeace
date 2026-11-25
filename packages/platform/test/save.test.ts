@@ -56,7 +56,7 @@ test('the schema has the guardrail records from the start', () => {
   expect(p.runArchive).toEqual([]);
   // M21 (save version 3): the reserved slots are typed records.
   expect(p.museum).toEqual({ unlocked: {}, viewed: [] });
-  expect(p.sponsorDossier).toEqual({ unlocked: {} });
+  expect(p.sponsorDossier).toEqual({ unlocked: {}, opened: [] });
   expect(p.research).toEqual({ milestones: {}, inputs: {} });
   expect(p.campaign).toEqual({ completed: [], started: [], whatsNewSeen: [] });
   expect(p.cheats.registryVersion).toBe(1);
