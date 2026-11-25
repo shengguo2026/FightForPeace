@@ -534,6 +534,9 @@ describe('mounted system (M17)', () => {
       'pursuit-m24-mounts',
       // M27: appended (corridor indices are encoded).
       'horse-test-track',
+      // M28: the Stage 3 horse corridors.
+      's3-switchback-ride',
+      's3-ridge-pursuit',
     ]);
   });
 

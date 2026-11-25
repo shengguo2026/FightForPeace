@@ -638,3 +638,77 @@ corridors:
       - { at: 8400, min: hard, riders: [{ from: ahead, lane: 2 }] }
       - { at: 10600, min: medium, riders: [{ from: behind, lane: 0 }, { from: ahead, lane: 2 }] }
       - { at: 10600, min: extreme, riders: [{ from: behind, lane: 2 }] }
+
+  # --- M28 · the Stage 3 journey's two rides (Stage 3 spec §5, §9) ---------------------------
+  # Appended after the test track (corridor indices are encoded; lesson G1). One mountain
+  # horse per active hero; a horse at zero Stability disengages safely and its hero
+  # finishes the ride on foot.
+  #
+  # Lower Switchback: the safe introduction. A quiet first stretch to learn the horse, then
+  # a few bandit riders and the pursuit evidence on the trail.
+  - id: s3-switchback-ride
+    name: Lower Switchback
+    goal: Ride up the switchbacks on the bandits' trail
+    mount: mountain-horse
+    start: 300
+    finish: 9400
+    length: 10200
+    road:
+      - { at: 0, top: 640, bottom: 980 }
+      - { at: 2600, top: 640, bottom: 980 }
+      - { at: 3200, top: 700, bottom: 930 }
+      - { at: 5000, top: 700, bottom: 930 }
+      - { at: 5600, top: 620, bottom: 900 }
+      - { at: 7600, top: 620, bottom: 900 }
+      - { at: 8200, top: 640, bottom: 980 }
+      - { at: 10200, top: 640, bottom: 980 }
+    obstacles:
+      - { at: 3000, z: 810, kind: barrier }
+      - { at: 4200, z: 815, kind: ramp }
+      - { at: 6200, z: 690, kind: barrier }
+      - { at: 6200, z: 860, kind: barrier }
+      - { at: 8600, z: 900, kind: ramp }
+    equipment: []
+    checkpoints: [4600]
+    waves:
+      - { at: 3600, min: easy, riders: [{ from: behind, lane: 2 }] }
+      - { at: 5800, min: medium, riders: [{ from: ahead, lane: 0 }] }
+      - { at: 7200, min: easy, riders: [{ from: behind, lane: 1 }] }
+      - { at: 7200, min: hard, riders: [{ from: ahead, lane: 2 }] }
+      - { at: 8400, min: extreme, riders: [{ from: behind, lane: 0 }] }
+
+  # Echo Quarry to Broken Ridge Camp: after An Bo is free, replacement horses carry the
+  # heroes up the ridge road under bandit riders.
+  - id: s3-ridge-pursuit
+    name: Ridge Road
+    goal: Ride up the ridge road to the bandit camp
+    mount: mountain-horse
+    start: 300
+    finish: 11400
+    length: 12200
+    road:
+      - { at: 0, top: 640, bottom: 980 }
+      - { at: 2400, top: 640, bottom: 980 }
+      - { at: 3000, top: 680, bottom: 960 }
+      - { at: 5400, top: 680, bottom: 960 }
+      - { at: 6000, top: 620, bottom: 900 }
+      - { at: 8400, top: 620, bottom: 900 }
+      - { at: 9000, top: 640, bottom: 980 }
+      - { at: 12200, top: 640, bottom: 980 }
+    obstacles:
+      - { at: 1800, z: 720, kind: barrier }
+      - { at: 1800, z: 900, kind: barrier }
+      - { at: 3800, z: 815, kind: ramp }
+      - { at: 6600, z: 690, kind: gate }
+      - { at: 6600, z: 860, kind: gate }
+      - { at: 9800, z: 720, kind: barrier }
+      - { at: 9800, z: 900, kind: barrier }
+    equipment: []
+    checkpoints: [4400, 8000]
+    waves:
+      - { at: 2200, min: easy, riders: [{ from: behind, lane: 2 }] }
+      - { at: 4800, min: easy, riders: [{ from: ahead, lane: 0 }] }
+      - { at: 4800, min: medium, riders: [{ from: behind, lane: 2 }] }
+      - { at: 8200, min: medium, riders: [{ from: behind, lane: 1 }] }
+      - { at: 8200, min: hard, riders: [{ from: ahead, lane: 2 }] }
+      - { at: 10200, min: extreme, riders: [{ from: behind, lane: 0 }, { from: ahead, lane: 2 }] }

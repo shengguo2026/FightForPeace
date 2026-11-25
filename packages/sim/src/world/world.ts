@@ -75,6 +75,7 @@ import {
   type World,
   type ComboContext,
   type RunCheckpoint,
+  type RunJourney,
   type RunStats,
   type TrainerSettings,
 } from './types';
@@ -1003,6 +1004,29 @@ function encodeRun(w: ByteWriter, world: World): void {
   w.u8(r.resume);
   w.u8(cp ? 1 : 0);
   if (cp) encodeRecords(w, cp);
+  // M28: the journey record (Stage 3 only; absent records write nothing, so Stage 1 and 2
+  // replays keep their hashes).
+  if (r.journey) encodeJourney(w, r.journey);
+  if (cp?.journey) encodeJourney(w, cp.journey);
+}
+
+function encodeJourney(w: ByteWriter, j: RunJourney): void {
+  w.u8(0x28);
+  w.u32(j.rescues.length);
+  for (const r of j.rescues) for (const v of [r.beat, r.unit, r.count]) w.i32(v);
+  w.u32(j.cases.length);
+  for (const c of j.cases) {
+    w.i32(c.beat);
+    w.i32(c.case);
+    w.u8(c.state);
+    w.u8(c.disturbed ? 1 : 0);
+  }
+  w.u32(j.story.length);
+  for (const b of j.story) w.u32(b);
+  w.u32(j.storyClear.length);
+  for (const b of j.storyClear) w.u32(b);
+  w.u32(j.breaks);
+  w.u32(j.redirects);
 }
 
 function encodeRecords(

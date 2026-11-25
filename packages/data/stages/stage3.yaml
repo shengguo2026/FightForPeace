@@ -1,0 +1,270 @@
+# Stage 3 · Shadows over the Herb Mountain (Stage 3 spec §5, §7, §12, §14, §22). The route as
+# data: six areas and two optional branches, seventeen beats.
+#
+#   Lower Switchback   the switchback ride (horse corridor, Checkpoint 1 at the start),
+#                      1 Hoofprints in the Mud (pursuit evidence), 2 Rope across the Trail
+#   Qinglan Hamlet     3 Empty Drying Racks (Checkpoint 2 after the mounted introduction),
+#                      optional Signal Hut (Wei Shan, the radio), 4 The Watch Path
+#   Moonbell Basin     5 Mist over the Beds (the research record; Tomas on the open radio),
+#                      6 Two Voices in the Mist (Gao Wen and Tao Min)
+#   Echo Quarry        7 Loose Scaffold (Checkpoint 3 after the basin rescue), optional
+#                      Herbalist Shelter (gathering equipment, the camp meal), 8 Hammer Line,
+#                      9 Cart Rails (An Bo)
+#   Broken Ridge Camp  the ridge ride on replacement horses (Checkpoint 4 after An Bo),
+#                      10 Outer Fence, 11 Lantern Row, 12 Ren Xia's Enclosure (Tomas seen in
+#                      the cabin; when Ren is safe he is already gone)
+#   High Winch Terrace Garran Voss (Checkpoint 5 after Ren; the boss retry), then his
+#                      private case and the damaged invoice, which ends the stage
+#
+# M28 arena beats (`arena:`) run an arena of encounters/stage3.yaml (waves, scenery, food,
+# captives, the record case and the hostile actions); `width` equals the arena's. Corridor
+# beats ride a mounted.yaml corridor on the mountain horse. Branches are chosen by the exit
+# lane as in Stage 2 (upper half: the branch). `story:` and `storyClear:` name story moments
+# the game shows over the fight (never an objective: there is no chase for Tomas). Every
+# number is a Combat Lab candidate.
+id: stage3
+name: 'Shadows over the Herb Mountain'
+continues: { easy: 5, medium: 3, hard: 2, extreme: 1, ultimate: 0 }
+rules:
+  reviveFrames: 120
+  revivePercent: 40
+  rejoinPercent: 30
+  continuePercent: 100
+  reachX: 150
+  reachZ: 70
+  workerFrames: 45
+  clueFrames: 40
+  evidenceFrames: 60
+  pickupReachX: 70
+  pickupReachZ: 45
+  defeatHold: 120
+  transition: 40
+  exitMargin: 200
+# Clear time in seconds (first clear 40–50 minutes, replay 25–35, spec §5). Time is not a
+# Stage 3 grade category; it only adds to the score.
+timePar: [1800, 2400, 3000]
+# Stage 3 §22.2, on the shared grade module (M25): rescue condition 35 (per group: Secure
+# full, Strained half, Critical none), research record 15 (Documented full, Recovered two
+# thirds, Disturbed one third), Garran's capture and counterplay 20 (live capture, disarm,
+# winch redirects), combat quality 20 (continues and downs), branches 10 (5 each). Any group
+# Critical caps the rank at A; a Cheat-Assisted run receives no grade.
+grade:
+  categories:
+    - { id: rescue, measure: rescues, weight: 35 }
+    - { id: record, measure: record, weight: 15 }
+    - { id: capture, measure: capture, weight: 20 }
+    - { id: combat, measure: combat, weight: 20 }
+    - { id: branches, measure: branches, weight: 10 }
+  ranks: { S: 90, A: 75, B: 55 }
+  conditionCaps:
+    - { ladder: rescue, state: critical, rank: A }
+  cheat: none
+score:
+  surrendered: 150
+  defeated: 100
+  fled: 50
+  worker: 600
+  clue: 300
+  evidence: 1500
+  comboHit: 40
+  timeBonus: 3
+  continuePenalty: 1000
+  branch: 1500
+  resolve: 1500
+  forced: 800
+  difficulty: [80, 100, 125, 150, 175]
+# The epilogue before the ending chapters: Garran's capture, each rescue by its condition,
+# the research record, each completed branch, the invoice and Tomas reaching the lowland
+# shelter. Text: epilogue.stage3.<card> in the game's EN/ZH/DE catalogues.
+epilogue:
+  - { id: capture, by: capture }
+  - { id: rescue, by: rescues }
+  - { id: record, by: record }
+  - { id: branch, by: branches }
+  - { id: invoice }
+  - { id: lowland }
+beats:
+  # --- Lower Switchback ---------------------------------------------------------------------
+  - id: switchback-ride
+    name: 'Lower Switchback'
+    area: switchback
+    width: 1920
+    segment: 1
+    checkpoint: true
+    corridor: s3-switchback-ride
+    objective: "Ride the switchbacks on the bandits' trail"
+
+  - id: hoofprints
+    name: 'Hoofprints in the Mud'
+    area: switchback
+    width: 2880
+    segment: 1
+    arena: s3-hoofprints
+    objective: 'Drive off the ambushers and read the trail'
+    clue:
+      x: 1500
+      z: 720
+      text: 'A dropped gathering basket and fresh hoofprints: the captives were taken up the switchbacks toward the quarry road.'
+
+  - id: rope-trail
+    name: 'Rope across the Trail'
+    area: switchback
+    width: 2880
+    segment: 1
+    arena: s3-rope-trail
+    objective: 'Clear the rope trap across the trail'
+
+  # --- Qinglan Hamlet -----------------------------------------------------------------------
+  - id: drying-racks
+    name: 'Empty Drying Racks'
+    area: qinglan
+    width: 2880
+    segment: 2
+    checkpoint: true
+    arena: s3-drying-racks
+    objective: "Clear the bandits from the hamlet's drying racks"
+    next: [signal-hut, watch-path]
+
+  - id: signal-hut
+    name: 'The Silent Antenna'
+    area: signalhut
+    width: 2880
+    segment: 2
+    arena: s3-signal-hut
+    objective: 'Free Wei Shan and repair the radio at the Signal Hut'
+    clue:
+      x: 1200
+      z: 720
+      text: 'The radio set is working again: Qinglan can call the village and the clinic.'
+    branch:
+      id: signal-hut
+      name: 'Signal Hut'
+      artifact: qinglan-rescue-bell
+      artifactName: 'Qinglan Rescue Bell'
+      units: true
+      clue: true
+    next: [watch-path]
+
+  - id: watch-path
+    name: 'The Watch Path'
+    area: qinglan
+    width: 2880
+    segment: 2
+    arena: s3-watch-path
+    objective: 'Take the watch path toward Moonbell Basin'
+
+  # --- Moonbell Basin -----------------------------------------------------------------------
+  - id: mist-beds
+    name: 'Mist over the Beds'
+    area: basin
+    width: 2880
+    segment: 3
+    arena: s3-mist-beds
+    story: radio
+    objective: 'Protect the Moonbell beds and secure the documented samples'
+
+  - id: two-voices
+    name: 'Two Voices in the Mist'
+    area: basin
+    width: 2880
+    segment: 3
+    arena: s3-two-voices
+    objective: 'Free Gao Wen and Tao Min'
+
+  # --- Echo Quarry --------------------------------------------------------------------------
+  - id: loose-scaffold
+    name: 'Loose Scaffold'
+    area: quarry
+    width: 3360
+    segment: 4
+    checkpoint: true
+    arena: s3-loose-scaffold
+    objective: 'Cross the quarry under the loose scaffold'
+    next: [herbalist-shelter, hammer-line]
+
+  - id: herbalist-shelter
+    name: 'Baskets Left Behind'
+    area: shelter
+    width: 2880
+    segment: 4
+    arena: s3-herbalist-shelter
+    objective: 'Recover the gathering equipment from the Herbalist Shelter'
+    clue:
+      x: 1500
+      z: 720
+      text: "The expedition's baskets, tags and field notebooks, left behind in the shelter: Gao Wen's trail ledger is among them."
+    branch:
+      id: herbalist-shelter
+      name: 'Herbalist Shelter'
+      artifact: gao-wen-trail-ledger
+      artifactName: "Gao Wen's Trail Ledger"
+      clue: true
+    next: [hammer-line]
+
+  - id: hammer-line
+    name: 'Hammer Line'
+    area: quarry
+    width: 3360
+    segment: 4
+    arena: s3-hammer-line
+    objective: 'Break the hammer line'
+
+  - id: cart-rails
+    name: 'Cart Rails'
+    area: quarry
+    width: 3360
+    segment: 4
+    arena: s3-cart-rails
+    objective: 'Free An Bo at the cart rails'
+
+  # --- Broken Ridge Camp --------------------------------------------------------------------
+  - id: ridge-ride
+    name: 'Ridge Road'
+    area: camp
+    width: 1920
+    segment: 5
+    checkpoint: true
+    corridor: s3-ridge-pursuit
+    objective: 'Ride the ridge road to Broken Ridge Camp'
+
+  - id: outer-fence
+    name: 'Outer Fence'
+    area: camp
+    width: 3360
+    segment: 5
+    arena: s3-outer-fence
+    objective: "Break through the camp's outer fence"
+
+  - id: lantern-row
+    name: 'Lantern Row'
+    area: camp
+    width: 2880
+    segment: 5
+    arena: s3-lantern-row
+    objective: 'Clear the lantern row'
+
+  - id: ren-enclosure
+    name: "Ren Xia's Enclosure"
+    area: camp
+    width: 2880
+    segment: 5
+    arena: s3-ren-enclosure
+    story: cabin
+    storyClear: escape
+    objective: 'Free Ren Xia'
+
+  # --- High Winch Terrace -------------------------------------------------------------------
+  - id: terrace
+    name: 'High Winch Terrace'
+    area: terrace
+    width: 2880
+    heroX: 500
+    segment: 6
+    checkpoint: true
+    arena: s3-terrace
+    objective: 'Capture Garran Voss alive'
+    # Appears when Garran is captured; examining it ends the stage.
+    evidence:
+      x: 2300
+      z: 760
+      text: "Garran's private case: a damaged invoice he kept as leverage against Tomas. Its batch reference matches the procurement route behind the brass gears and the weapon crate."

@@ -1108,6 +1108,10 @@ export const RunEvent = {
   EvidenceReady: 18,
   /** M20: an optional branch ended (detail: its outcome, BranchOutcome). */
   BranchEnd: 19,
+  /** M28: a protected person reached shelter (detail: the unit index). */
+  Rescued: 20,
+  /** M28: a story moment of the beat (detail 0: at its start, 1: when cleared). */
+  Story: 21,
 } as const;
 
 /** M20 optional branch outcomes. Numbers are encoded; never renumber. */
@@ -1140,6 +1144,40 @@ export interface RunCapture {
   scorch: number;
   scorchStops: number;
   intercept: number;
+}
+
+/** M28: a protected person of an arena beat as the run recorded them once safe. */
+export interface RunRescue {
+  /** Beat index and the unit's index in the beat arena's objectives. */
+  beat: number;
+  unit: number;
+  /** Completed hostile actions (the condition on the unit's ladder). */
+  count: number;
+}
+
+/** M28: an evidence case of an arena beat as the run recorded it (CaseState). */
+export interface RunCase {
+  beat: number;
+  case: number;
+  state: number;
+  disturbed: boolean;
+}
+
+/**
+ * M28: the journey record of a stage with arena beats (Stage 3): rescues and cases as they
+ * locked, the story moments reached, horse Stability breaks and Garran's counterplay.
+ * Absent on Stage 1 and 2 runs, so their encoding (and every replay hash) is unchanged.
+ */
+export interface RunJourney {
+  rescues: RunRescue[];
+  cases: RunCase[];
+  /** Beat indices whose start story moment was reached, and whose clear moment was. */
+  story: number[];
+  storyClear: number[];
+  /** Horse Stability breaks (crashes) over every corridor ridden. */
+  breaks: number;
+  /** Winch loads redirected into the boss. */
+  redirects: number;
 }
 
 /** M20: a weapon a hero carries from one beat into the next (exact Integrity and rounds). */
@@ -1216,6 +1254,8 @@ export interface RunCheckpoint {
   branches: number[];
   intercept: number;
   carry: (RunCarry | null)[];
+  /** M28: the journey record as the checkpoint found it (copy; Stage 3). */
+  journey?: RunJourney;
 }
 
 export interface StageRun {
@@ -1270,4 +1310,6 @@ export interface StageRun {
   assist: boolean;
   /** M20: the phase the beat continues in once the fade ends (Walk, or a room's Locked). */
   resume: number;
+  /** M28: the journey record (stages with arena beats only). */
+  journey?: RunJourney;
 }

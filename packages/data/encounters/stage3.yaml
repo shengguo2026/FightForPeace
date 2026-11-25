@@ -1,0 +1,480 @@
+# M28 · Stage 3 *Shadows over the Herb Mountain*: the journey's encounters (Stage 3 spec
+# §5, §7, §10, §11, §13, §22.4). Each arena is one arena beat of stages/stage3.yaml: its
+# waves are the beat's encounter, with its weapons, food, breakables, carts, winch, and the
+# M25 objectives (captives on the `rescue` ladder, the research record case on the `record`
+# outcome, and the visible hostile actions against them). Loaded after every Lab file
+# (arena indices only ever append, lesson G1). Pixels and frames at 60 Hz; every number is
+# a Combat Lab candidate.
+#
+# Population (§11.3): Medium about 30 ordinary enemies over the twelve encounters, Easy
+# about 22, Hard and above more objective pressure; Ridge Stalkers from Extreme, Pack
+# Captains at Ultimate; co-op adds about a third (`coop: true`).
+# Weapons (§10.1): two Hiking Staffs, one Wood Axe, two Quarry Hammers, one revolver with
+# five rounds; Easy adds a staff and a hammer, Extreme and Ultimate drop the second staff.
+# Food (§10.2): three rice parcels, two broths, two seed cakes; the camp meal only in the
+# Herbalist Shelter. Easy adds three common items; Hard and above drop some.
+#
+# Captives sit behind the bandits; freed, they walk back along the trail to shelter at the
+# left edge, waiting at a hand-off point while a bandit is in their zone. Hostile actions
+# (a rope pulled taut, a lantern kicked over, a crate dragged against the enclosure) are
+# visible, interruptible and count once each: none Secure, one Strained, two or more
+# Critical. Nothing depends on time (spec §7.2).
+arenas:
+  # --- Lower Switchback ---------------------------------------------------------------------
+  - id: s3-hoofprints
+    name: 'Hoofprints in the Mud'
+    area: switchback
+    width: 2880
+    heroX: 300
+    scenery:
+      items:
+        - { weapon: hiking-staff, x: 800, z: 780 }
+        - { weapon: hiking-staff, x: 900, z: 920, maxDifficulty: hard }
+        - { weapon: trail-rice, x: 1300, z: 940 }
+        - { weapon: trail-rice, x: 1400, z: 720, maxDifficulty: easy }
+      breakables:
+        - { x: 1700, z: 650, hw: 50, hd: 30, h: 180, thresholds: [60, 120, 180], tags: [timber] }
+    waves:
+      - enemies:
+          - { kit: ambusher, x: 2100, z: 760 }
+          - { kit: ambusher, x: 2300, z: 900 }
+          - { kit: ambusher, x: 300, z: 820, coop: true }
+        next: 0
+      - enemies:
+          - { kit: bruiser, x: 2500, z: 820, minDifficulty: hard }
+          - { kit: ambusher, x: 2600, z: 720 }
+          - { kit: stalker, x: 2650, z: 900, minDifficulty: extreme }
+
+  - id: s3-rope-trail
+    name: 'Rope across the Trail'
+    area: switchback
+    width: 2880
+    heroX: 300
+    scenery:
+      items:
+        - { weapon: seed-cake, x: 1100, z: 920 }
+      breakables:
+        - { x: 1500, z: 975, hw: 40, hd: 30, h: 70, thresholds: [30, 60, 90], tags: [stone] }
+    waves:
+      - enemies:
+          - { kit: trapper, x: 2100, z: 780 }
+          - { kit: ambusher, x: 2300, z: 900 }
+          - { kit: ambusher, x: 2500, z: 720, minDifficulty: medium }
+          - { kit: captain, x: 2700, z: 820, minDifficulty: ultimate }
+          - { kit: trapper, x: 300, z: 860, coop: true }
+
+  # --- Qinglan Hamlet -----------------------------------------------------------------------
+  - id: s3-drying-racks
+    name: 'Empty Drying Racks'
+    area: qinglan
+    width: 2880
+    heroX: 300
+    scenery:
+      items:
+        - { weapon: vegetable-broth, x: 1200, z: 930 }
+        - { weapon: trail-rice, x: 1250, z: 720, maxDifficulty: easy }
+      breakables:
+        - { x: 1600, z: 650, hw: 60, hd: 30, h: 200, thresholds: [60, 120, 180], tags: [timber] }
+        - { x: 2200, z: 975, hw: 60, hd: 30, h: 200, thresholds: [60, 120, 180], tags: [timber] }
+    waves:
+      - enemies:
+          - { kit: ambusher, x: 2000, z: 760 }
+          - { kit: bruiser, x: 2300, z: 880 }
+          - { kit: ambusher, x: 300, z: 820, coop: true }
+        next: 0
+      - enemies:
+          - { kit: ambusher, x: 2500, z: 720, minDifficulty: medium }
+          - { kit: trapper, x: 2600, z: 900, minDifficulty: hard }
+          - { kit: stalker, x: 2700, z: 800, minDifficulty: extreme }
+
+  # Branch: the Signal Hut. Wei Shan, Qinglan's radio keeper, is held at the damaged hut;
+  # the radio set is repaired by holding Interact on it (the beat's record).
+  - id: s3-signal-hut
+    name: 'The Silent Antenna'
+    area: signalhut
+    width: 2880
+    heroX: 300
+    scenery:
+      items:
+        - { weapon: seed-cake, x: 900, z: 920 }
+    objectives:
+      units:
+        - id: wei-shan
+          ladder: rescue
+          x: 2450
+          z: 760
+          zone: [300, 170]
+          free: 60
+          cheer: 40
+          speed: 5
+          route:
+            - { x: 1900, z: 960, wait: true }
+            - { x: 120, z: 960 }
+      channels:
+        - { target: wei-shan, kind: rope, x: 2300, z: 700, tell: 180, start: 300, cooldown: 360 }
+        - { target: wei-shan, kind: lantern, x: 2600, z: 840, tell: 180, start: 720, cooldown: 360 }
+    waves:
+      - enemies:
+          - { kit: ambusher, x: 2000, z: 800 }
+          - { kit: trapper, x: 2300, z: 900, minDifficulty: medium }
+          - { kit: ambusher, x: 2600, z: 700, minDifficulty: hard }
+          - { kit: ambusher, x: 300, z: 860, coop: true }
+
+  - id: s3-watch-path
+    name: 'The Watch Path'
+    area: qinglan
+    width: 2880
+    heroX: 300
+    scenery:
+      items:
+        - { weapon: wood-axe, x: 800, z: 780 }
+        - { weapon: trail-rice, x: 1200, z: 930 }
+      surfaces:
+        - { x: 2740, z: 660, hw: 30, hd: 50, h: 240 }
+    waves:
+      - enemies:
+          - { kit: ambusher, x: 2100, z: 760 }
+          - { kit: bruiser, x: 2300, z: 900 }
+          - { kit: ambusher, x: 300, z: 820, coop: true }
+        next: 0
+      - enemies:
+          - { kit: raider, x: 2700, z: 820, minDifficulty: hard }
+          - { kit: captain, x: 2650, z: 700, minDifficulty: ultimate }
+          - { kit: stalker, x: 2600, z: 920, minDifficulty: extreme }
+
+  # --- Moonbell Basin -----------------------------------------------------------------------
+  # The documented sample case lies in the protected beds; a bandit kicking it open disturbs
+  # it (it can then be recovered). Collecting it is required to move on (spec §6: the
+  # minimum research continuity is secured on the main route).
+  - id: s3-mist-beds
+    name: 'Mist over the Beds'
+    area: basin
+    width: 2880
+    heroX: 300
+    scenery:
+      items:
+        - { weapon: vegetable-broth, x: 1000, z: 920 }
+        - { weapon: seed-cake, x: 1050, z: 720, maxDifficulty: medium }
+    objectives:
+      cases:
+        - { id: sample-case, outcome: record, x: 2200, z: 820, collect: 60, seal: 90, recover: 60 }
+      channels:
+        - { target: sample-case, kind: case, x: 2340, z: 760, tell: 240, start: 360, cooldown: 360 }
+    waves:
+      - enemies:
+          - { kit: ambusher, x: 2100, z: 720 }
+          - { kit: trapper, x: 2400, z: 900 }
+          - { kit: ambusher, x: 2600, z: 820, minDifficulty: hard }
+          - { kit: stalker, x: 2700, z: 720, minDifficulty: extreme }
+          - { kit: ambusher, x: 300, z: 860, coop: true }
+
+  - id: s3-two-voices
+    name: 'Two Voices in the Mist'
+    area: basin
+    width: 2880
+    heroX: 300
+    scenery:
+      items:
+        - { weapon: trail-rice, x: 1100, z: 930 }
+    objectives:
+      units:
+        - id: gao-wen
+          ladder: rescue
+          x: 2450
+          z: 740
+          zone: [300, 170]
+          free: 60
+          cheer: 40
+          speed: 3
+          route:
+            - { x: 1800, z: 960, wait: true }
+            - { x: 120, z: 960 }
+        - id: tao-min
+          ladder: rescue
+          x: 2600
+          z: 880
+          zone: [300, 170]
+          free: 60
+          cheer: 40
+          speed: 5
+          route:
+            - { x: 1900, z: 960, wait: true }
+            - { x: 160, z: 960 }
+      channels:
+        - { target: gao-wen, kind: rope, x: 2300, z: 700, tell: 180, start: 300, cooldown: 360 }
+        - { target: tao-min, kind: lantern, x: 2750, z: 900, tell: 180, start: 540, cooldown: 360 }
+        - { target: gao-wen, kind: crate, x: 2550, z: 680, tell: 240, start: 900, cooldown: 420 }
+    waves:
+      - enemies:
+          - { kit: trapper, x: 2200, z: 780 }
+          - { kit: ambusher, x: 2400, z: 900 }
+          - { kit: bruiser, x: 2600, z: 760, minDifficulty: medium }
+          - { kit: ambusher, x: 300, z: 820, coop: true }
+        next: 0
+      - enemies:
+          - { kit: ambusher, x: 2750, z: 820, minDifficulty: hard }
+          - { kit: captain, x: 2700, z: 700, minDifficulty: ultimate }
+
+  # --- Echo Quarry --------------------------------------------------------------------------
+  - id: s3-loose-scaffold
+    name: 'Loose Scaffold'
+    area: quarry
+    width: 3360
+    heroX: 300
+    scenery:
+      items:
+        - { weapon: quarry-hammer, x: 800, z: 780 }
+        - { weapon: quarry-hammer, x: 880, z: 920, maxDifficulty: easy }
+        - { weapon: trail-rice, x: 1200, z: 940, maxDifficulty: easy }
+      breakables:
+        - { x: 1700, z: 650, hw: 70, hd: 30, h: 280, thresholds: [80, 160, 240], tags: [scaffold] }
+        - { x: 2300, z: 650, hw: 70, hd: 30, h: 280, thresholds: [80, 160, 240], tags: [scaffold] }
+        - { x: 2000, z: 975, hw: 40, hd: 30, h: 70, thresholds: [30, 60, 90], tags: [stone] }
+      surfaces:
+        - { x: 3200, z: 660, hw: 30, hd: 50, h: 240 }
+    waves:
+      - enemies:
+          - { kit: ambusher, x: 2100, z: 760 }
+          - { kit: ambusher, x: 2400, z: 900 }
+          - { kit: bruiser, x: 2600, z: 820 }
+          - { kit: ambusher, x: 300, z: 860, coop: true }
+        next: 0
+      - enemies:
+          - { kit: trapper, x: 2900, z: 760, minDifficulty: hard }
+          - { kit: bruiser, x: 3000, z: 900, minDifficulty: medium }
+          - { kit: stalker, x: 3100, z: 820, minDifficulty: extreme }
+
+  # Branch: the Herbalist Shelter. The missing gathering equipment (the beat's record) and
+  # the rare Mountain Camp Meal, at every difficulty.
+  - id: s3-herbalist-shelter
+    name: 'Baskets Left Behind'
+    area: shelter
+    width: 2880
+    heroX: 300
+    scenery:
+      items:
+        - { weapon: camp-meal, x: 2500, z: 900 }
+        - { weapon: vegetable-broth, x: 1000, z: 920, maxDifficulty: easy }
+      breakables:
+        - { x: 1800, z: 975, hw: 60, hd: 30, h: 200, thresholds: [60, 120, 180], tags: [timber] }
+    waves:
+      - enemies:
+          - { kit: ambusher, x: 2000, z: 760 }
+          - { kit: bruiser, x: 2300, z: 880, minDifficulty: medium }
+          - { kit: trapper, x: 2500, z: 720, minDifficulty: hard }
+          - { kit: ambusher, x: 300, z: 820, coop: true }
+
+  - id: s3-hammer-line
+    name: 'Hammer Line'
+    area: quarry
+    width: 3360
+    heroX: 300
+    scenery:
+      items:
+        - { weapon: quarry-hammer, x: 800, z: 780 }
+        - { weapon: vegetable-broth, x: 1100, z: 940 }
+      breakables:
+        - { x: 1900, z: 650, hw: 70, hd: 30, h: 280, thresholds: [80, 160, 240], tags: [scaffold] }
+        - { x: 2600, z: 975, hw: 40, hd: 30, h: 70, thresholds: [30, 60, 90], tags: [stone] }
+      surfaces:
+        - { x: 3200, z: 660, hw: 30, hd: 50, h: 240 }
+    waves:
+      - enemies:
+          - { kit: bruiser, x: 2100, z: 760 }
+          - { kit: bruiser, x: 2300, z: 920 }
+          - { kit: trapper, x: 2600, z: 820, minDifficulty: hard }
+          - { kit: captain, x: 2900, z: 800, minDifficulty: ultimate }
+          - { kit: bruiser, x: 300, z: 860, coop: true }
+
+  # An Bo works the captured horses at the cart line; carts on the rails can be redirected.
+  - id: s3-cart-rails
+    name: 'Cart Rails'
+    area: quarry
+    width: 3360
+    heroX: 300
+    scenery:
+      items:
+        - { weapon: trail-rice, x: 1200, z: 940 }
+      movers:
+        - {
+            from: [200, 720],
+            to: [3100, 720],
+            size: [60, 40, 90],
+            start: 240,
+            rest: 360,
+            warn: 80,
+            active: 100,
+            damage: 60,
+            redirect: any,
+            tags: [cart],
+          }
+    objectives:
+      units:
+        - id: an-bo
+          ladder: rescue
+          x: 2900
+          z: 880
+          zone: [320, 170]
+          free: 60
+          cheer: 40
+          speed: 5
+          route:
+            - { x: 2200, z: 960, wait: true }
+            - { x: 120, z: 960 }
+      channels:
+        - { target: an-bo, kind: crate, x: 2750, z: 780, tell: 240, start: 360, cooldown: 360 }
+        - { target: an-bo, kind: rope, x: 3050, z: 940, tell: 180, start: 780, cooldown: 360 }
+    waves:
+      - enemies:
+          - { kit: ambusher, x: 2200, z: 780 }
+          - { kit: ambusher, x: 2400, z: 860 }
+          - { kit: raider, x: 2900, z: 760, minDifficulty: medium }
+          - { kit: stalker, x: 3000, z: 900, minDifficulty: extreme }
+          - { kit: ambusher, x: 300, z: 820, coop: true }
+
+  # --- Broken Ridge Camp --------------------------------------------------------------------
+  - id: s3-outer-fence
+    name: 'Outer Fence'
+    area: camp
+    width: 3360
+    heroX: 300
+    scenery:
+      items:
+        - { weapon: hiking-staff, x: 800, z: 920, maxDifficulty: easy }
+        - { weapon: seed-cake, x: 1100, z: 940 }
+      breakables:
+        - { x: 1600, z: 650, hw: 50, hd: 30, h: 180, thresholds: [60, 120, 180], tags: [timber] }
+        - { x: 1600, z: 975, hw: 50, hd: 30, h: 180, thresholds: [60, 120, 180], tags: [timber] }
+    waves:
+      - enemies:
+          - { kit: ambusher, x: 2100, z: 760 }
+          - { kit: bruiser, x: 2300, z: 900 }
+          - { kit: trapper, x: 2500, z: 820, minDifficulty: medium }
+          - { kit: stalker, x: 2700, z: 740, minDifficulty: extreme }
+          - { kit: ambusher, x: 300, z: 860, coop: true }
+        next: 0
+      - enemies:
+          - { kit: raider, x: 3100, z: 820, minDifficulty: hard }
+          - { kit: ambusher, x: 2800, z: 900, minDifficulty: medium }
+          - { kit: captain, x: 3000, z: 700, minDifficulty: ultimate }
+
+  # The bandit revolver lies by the lantern row with exactly five rounds.
+  - id: s3-lantern-row
+    name: 'Lantern Row'
+    area: camp
+    width: 2880
+    heroX: 300
+    scenery:
+      items:
+        - { weapon: bandit-revolver, x: 1300, z: 760 }
+        - { weapon: trail-rice, x: 1000, z: 930 }
+        - { weapon: vegetable-broth, x: 1050, z: 720, maxDifficulty: easy }
+      breakables:
+        - { x: 2000, z: 650, hw: 50, hd: 30, h: 180, thresholds: [60, 120, 180], tags: [timber] }
+    waves:
+      - enemies:
+          - { kit: bruiser, x: 2100, z: 780 }
+          - { kit: ambusher, x: 2300, z: 900 }
+          - { kit: trapper, x: 2500, z: 720, minDifficulty: hard }
+          - { kit: stalker, x: 2600, z: 820, minDifficulty: extreme }
+          - { kit: bruiser, x: 300, z: 860, coop: true }
+
+  # Ren Xia in her separate enclosure below the planning cabin (Tomas is seen there; the
+  # route leads to Ren, never after him).
+  - id: s3-ren-enclosure
+    name: "Ren Xia's Enclosure"
+    area: camp
+    width: 2880
+    heroX: 300
+    scenery:
+      items:
+        - { weapon: seed-cake, x: 1000, z: 920 }
+      breakables:
+        - { x: 1900, z: 975, hw: 50, hd: 30, h: 180, thresholds: [60, 120, 180], tags: [timber] }
+    objectives:
+      units:
+        - id: ren-xia
+          ladder: rescue
+          x: 2500
+          z: 780
+          zone: [300, 170]
+          free: 60
+          cheer: 40
+          speed: 4
+          route:
+            - { x: 1900, z: 960, wait: true }
+            - { x: 120, z: 960 }
+      channels:
+        - { target: ren-xia, kind: crate, x: 2350, z: 720, tell: 240, start: 300, cooldown: 360 }
+        - { target: ren-xia, kind: lantern, x: 2650, z: 880, tell: 180, start: 660, cooldown: 360 }
+    waves:
+      - enemies:
+          - { kit: trapper, x: 2100, z: 760 }
+          - { kit: bruiser, x: 2300, z: 900 }
+          - { kit: ambusher, x: 2600, z: 700, minDifficulty: medium }
+          - { kit: ambusher, x: 300, z: 820, coop: true }
+        next: 0
+      - enemies:
+          - { kit: stalker, x: 2700, z: 820, minDifficulty: extreme }
+          - { kit: captain, x: 2750, z: 940, minDifficulty: ultimate }
+
+  # --- High Winch Terrace -------------------------------------------------------------------
+  # Garran Voss with the Quarry Hookstaff; at Winch Pressure every completed crank releases
+  # the next warned cargo or cover (a strike in the warning redirects it; a redirected load
+  # that strikes him costs Resolve). His capture opens the private case.
+  - id: s3-terrace
+    name: 'Chief of the Broken Ridge'
+    area: terrace
+    width: 2880
+    heroX: 500
+    devices:
+      - { kind: winch, x: 2500, z: 680, count: 1 }
+    scenery:
+      items:
+        - { weapon: hiking-staff, x: 700, z: 760 }
+        - { weapon: trail-rice, x: 400, z: 900 }
+        - { weapon: vegetable-broth, x: 450, z: 700, maxDifficulty: hard }
+      breakables:
+        - { x: 1300, z: 650, hw: 70, hd: 30, h: 280, thresholds: [80, 160, 240], tags: [scaffold] }
+      surfaces:
+        - { x: 2780, z: 660, hw: 30, hd: 50, h: 240 }
+      movers:
+        - {
+            from: [700, 720],
+            to: [2300, 720],
+            size: [70, 50, 160],
+            rest: 0,
+            warn: 80,
+            active: 70,
+            damage: 70,
+            redirect: any,
+            tags: [cargo],
+            trigger: winch,
+          }
+        - {
+            from: [2300, 900],
+            to: [700, 900],
+            size: [40, 70, 180],
+            rest: 0,
+            warn: 80,
+            active: 70,
+            damage: 60,
+            redirect: any,
+            tags: [cover],
+            trigger: winch,
+          }
+        - {
+            from: [1500, 640],
+            to: [1500, 960],
+            size: [70, 50, 160],
+            rest: 0,
+            warn: 80,
+            active: 50,
+            damage: 70,
+            redirect: any,
+            tags: [cargo],
+            trigger: winch,
+          }
+    waves:
+      - enemies:
+          - { kit: garran, x: 1900, z: 820 }

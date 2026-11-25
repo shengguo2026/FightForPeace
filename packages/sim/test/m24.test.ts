@@ -66,7 +66,7 @@ describe('M24 registry order and data (rule 2)', () => {
     // The Lab scenes are the last arenas (after every stage and greenhouse arena).
     // (M25 appends its test room after them, M27 its Stage 3 rooms.)
     const lab = ARENAS.findIndex((a) => a.id.startsWith('lab-m24-'));
-    const after = ARENAS.slice(lab).filter((a) => !/^lab-m2[57]-/.test(a.id));
+    const after = ARENAS.slice(lab).filter((a) => !/^(lab-m2[57]-|s3-|stage3\.)/.test(a.id));
     expect(after.every((a) => a.id.startsWith('lab-m24-'))).toBe(true);
     expect(after.length).toBe(9);
   });

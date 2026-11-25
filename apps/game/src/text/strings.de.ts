@@ -14,6 +14,7 @@ import { M24_DE } from './strings.m24';
 import { M25_DE } from './strings.m25';
 import { M26_DE } from './strings.m26';
 import { M27_DE } from './strings.m27';
+import { M28_DE } from './strings.m28';
 import { MOVES_DE } from './strings.moves';
 import { LABELS_DE } from './strings.labels';
 
@@ -651,5 +652,6 @@ export const DE: Catalog = {
   ...M25_DE,
   ...M26_DE,
   ...M27_DE,
+  ...M28_DE,
   ...MOVES_DE,
 };

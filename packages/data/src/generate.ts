@@ -1229,6 +1229,15 @@ const AreaId = T.Union([
   T.Literal('canal'),
   T.Literal('courtyard'),
   T.Literal('sluice'),
+  // M28: Stage 3 areas (environments/stage3), drawn as bg.stage3.<area>.<layer>.
+  T.Literal('switchback'),
+  T.Literal('qinglan'),
+  T.Literal('basin'),
+  T.Literal('quarry'),
+  T.Literal('camp'),
+  T.Literal('terrace'),
+  T.Literal('signalhut'),
+  T.Literal('shelter'),
 ]);
 const Backdrop = T.Union([T.Literal('layers'), T.Literal('plate')]);
 const Spot = T.Object({ x: T.Integer(), z: T.Integer() }, { additionalProperties: false });
@@ -1297,7 +1306,14 @@ const Scenery = T.Object(
     items: T.Optional(
       T.Array(
         T.Object(
-          { weapon: T.String({ pattern: '^[a-z][a-z0-9-]*$' }), x: PxI, z: PxI },
+          {
+            weapon: T.String({ pattern: '^[a-z][a-z0-9-]*$' }),
+            x: PxI,
+            z: PxI,
+            // M28 (Stage 3 §10): an item only from / up to a difficulty (stage arena beats).
+            minDifficulty: T.Optional(DifficultyId),
+            maxDifficulty: T.Optional(DifficultyId),
+          },
           { additionalProperties: false },
         ),
         { maxItems: 16 },
@@ -1433,7 +1449,13 @@ const INTERVENTION_CODE = { cover: 0, delay: 1, interfere: 2 } as const;
 /** Converts validated scenery into the simulation's StageLayout shape (pixels). */
 function convertScenery(sc: Static<typeof Scenery>): unknown {
   return {
-    items: sc.items ?? [],
+    items: (sc.items ?? []).map((i) => ({
+      weapon: i.weapon,
+      x: i.x,
+      z: i.z,
+      ...(i.minDifficulty ? { min: DIFFICULTY_ORDER.indexOf(i.minDifficulty as never) } : {}),
+      ...(i.maxDifficulty ? { max: DIFFICULTY_ORDER.indexOf(i.maxDifficulty as never) } : {}),
+    })),
     surfaces: sc.surfaces ?? [],
     breakables: (sc.breakables ?? []).map((b) => ({
       x: b.x,
@@ -2050,6 +2072,13 @@ export const StageSchema = T.Object(
                 T.Literal('time'),
                 T.Literal('preservation'),
                 T.Literal('response'),
+                // M28 (Stage 3 §22.2): rescue condition, research record, Garran's capture
+                // and counterplay, combat quality and completed branches.
+                T.Literal('rescues'),
+                T.Literal('record'),
+                T.Literal('capture'),
+                T.Literal('combat'),
+                T.Literal('branches'),
               ]),
               weight: T.Integer({ minimum: 1, maximum: 100 }),
               allowance: T.Optional(T.Integer({ minimum: 1, maximum: 9 })),
@@ -2073,6 +2102,19 @@ export const StageSchema = T.Object(
         ),
         /** M25: 'none' gives a Cheat-Assisted run no grade (Stage 3 §22.2); default 'grade'. */
         cheat: T.Optional(T.Union([T.Literal('grade'), T.Literal('none')])),
+        /** M28: a rescued person in this ladder state (or worse) caps the rank. */
+        conditionCaps: T.Optional(
+          T.Array(
+            T.Object(
+              {
+                ladder: ObjId,
+                state: ObjId,
+                rank: T.Union([T.Literal('A'), T.Literal('B'), T.Literal('C')]),
+              },
+              { additionalProperties: false },
+            ),
+          ),
+        ),
       },
       { additionalProperties: false },
     ),
@@ -2153,6 +2195,13 @@ export const StageSchema = T.Object(
           // the route segment, and an optional branch's goal and artifact.
           corridor: T.Optional(KitId),
           room: T.Optional(KitId),
+          // M28: an arena beat (an arena id): its waves are the beat's one encounter, with
+          // the arena's scenery, weapons, food, devices and M25 objectives.
+          arena: T.Optional(KitId),
+          // M28: a story moment shown when the beat starts (and its flag in the run record).
+          story: T.Optional(KitId),
+          // M28: a story moment shown when the beat's encounter is cleared.
+          storyClear: T.Optional(KitId),
           segment: T.Optional(T.Integer({ minimum: 1, maximum: 9 })),
           branch: T.Optional(
             T.Object(
@@ -2163,6 +2212,8 @@ export const StageSchema = T.Object(
                 artifactName: T.String({ minLength: 1 }),
                 workers: T.Optional(T.Boolean()),
                 clue: T.Optional(T.Boolean()),
+                // M28: every protected unit of the beat's arena must be safe.
+                units: T.Optional(T.Boolean()),
                 assets: T.Optional(T.Array(KitId, { maxItems: 4 })),
                 keep: T.Optional(T.Union([T.Literal('damaged'), T.Literal('critical')])),
               },
@@ -2186,6 +2237,9 @@ export const StageSchema = T.Object(
                 T.Literal('categories'),
                 T.Literal('branches'),
                 T.Literal('preservation'),
+                // M28: one card per rescued person by condition; the research record.
+                T.Literal('rescues'),
+                T.Literal('record'),
               ]),
             ),
           },
@@ -2343,6 +2397,8 @@ export function loadStage(
   firstArena: number,
   file = 'stage.yaml',
   heroes: readonly string[] = [],
+  /** M28: ids of every arena loaded before this stage (arena beats name one). */
+  arenaIds: readonly string[] = [],
 ): { stage: unknown; arenas: unknown[] } {
   const d = validate(StageSchema, source, file) as Static<typeof StageSchema>;
   const problems: string[] = [];
@@ -2390,7 +2446,14 @@ export function loadStage(
       problems.push(`${b.id}: a pen or cache needs workers`);
     if (b.clue) inside('the clue', b.clue.x);
     if (b.evidence) inside('the evidence', b.evidence.x);
-    if (b.corridor && b.room) problems.push(`${b.id}: a beat is a corridor or a room, not both`);
+    if ([b.corridor, b.room, b.arena].filter(Boolean).length > 1)
+      problems.push(`${b.id}: a corridor or a room, not both (M28: nor an arena)`);
+    const arenaBeat = b.arena ? arenaIds.indexOf(b.arena) : -1;
+    if (b.arena && arenaBeat < 0) problems.push(`${b.id}: unknown arena "${b.arena}"`);
+    if (b.arena && (b.locks ?? []).length > 0)
+      problems.push(`${b.id}: an arena beat has no camera locks (the arena has waves)`);
+    if (b.branch?.units && !b.arena)
+      problems.push(`${b.id}: only an arena beat has protected units`);
     if ((b.corridor || b.room) && (b.locks ?? []).length > 0)
       problems.push(`${b.id}: a corridor or room beat has no camera locks (the room has waves)`);
     if (b.corridor && ((b.workers ?? []).length > 0 || b.clue || b.evidence || b.pickups?.length))
@@ -2421,6 +2484,9 @@ export function loadStage(
       evidence: b.evidence ?? null,
       corridor: b.corridor ?? '',
       room: b.room ?? '',
+      arena: arenaBeat,
+      story: b.story ?? '',
+      storyClear: b.storyClear ?? '',
       segment: b.segment ?? 0,
       branch: b.branch
         ? {
@@ -2430,6 +2496,7 @@ export function loadStage(
             artifactName: b.branch.artifactName,
             workers: b.branch.workers ?? false,
             clue: b.branch.clue ?? false,
+            units: b.branch.units ?? false,
             assets: b.branch.assets ?? [],
             keep: b.branch.keep === 'critical' ? 2 : 1,
           }
@@ -2492,6 +2559,7 @@ export function loadStage(
         ranks: [d.grade.ranks.S, d.grade.ranks.A, d.grade.ranks.B],
         caps: (d.grade.caps ?? []).map((c) => ({ ...c })),
         cheat: d.grade.cheat ?? 'grade',
+        conditionCaps: (d.grade.conditionCaps ?? []).map((c) => ({ ...c })),
       },
       score: {
         ...d.score,
@@ -3004,6 +3072,9 @@ const GOAL_NAMES = [
   'containerOpen',
   'callBreak',
   'breachStop',
+  // M28 Stage 3 drill goals.
+  'rescue',
+  'redirect',
 ] as const;
 const GoalName = T.Union(GOAL_NAMES.map((g) => T.Literal(g)));
 const StageRef = T.String({ pattern: '^stage[0-9]+$' });
@@ -3110,6 +3181,8 @@ const ProgressionYaml = T.Object(
             T.Object({ achievement: ContentId }, { additionalProperties: false }),
           ),
           mastery: T.Optional(T.Integer({ minimum: 1, maximum: 100 })),
+          /** M28: a Coming-soon preview (the DLC outfits): shown with its art, no price. */
+          soon: T.Optional(T.Boolean()),
         },
         { additionalProperties: false },
       ),
@@ -3148,6 +3221,10 @@ const ProgressionYaml = T.Object(
                   'capture',
                   'branch',
                   'branches',
+                  // M28 Stage 3 rules (spec §22.3).
+                  'rescues',
+                  'steady',
+                  'dossier',
                 ].map((k) => T.Literal(k)),
               ),
               content: T.Optional(ContentId),
@@ -3183,6 +3260,8 @@ const ProgressionYaml = T.Object(
               scorch: T.Optional(T.Boolean()),
               /** M21: branch id (kind branch). */
               branch: T.Optional(KitId),
+              /** M28: Sponsor Dossier page that must be opened (kind dossier). */
+              entry: T.Optional(ContentId),
               min: T.Optional(T.Integer({ minimum: 1, maximum: 100000 })),
               coop: T.Optional(T.Boolean()),
               state: T.Optional(T.Union([T.Literal('certified'), T.Literal('mastered')])),
@@ -3227,6 +3306,8 @@ const ProgressionYaml = T.Object(
                       room: T.Optional(KitId),
                       corridor: T.Optional(KitId),
                       showcase: T.Optional(KitId),
+                      /** M28: an arena (a Stage 3 encounter or a Combat Lab room). */
+                      arena: T.Optional(KitId),
                     },
                     { additionalProperties: false },
                   ),
@@ -3285,8 +3366,10 @@ const ProgressionYaml = T.Object(
       T.Object(
         {
           id: T.String({ pattern: '^[a-z]+\\.[a-z0-9-]+$' }),
-          kind: T.Union([T.Literal('fact'), T.Literal('theory')]),
+          /** M28: a `page` is a document the player opens (its picture and text). */
+          kind: T.Union([T.Literal('fact'), T.Literal('theory'), T.Literal('page')]),
           stage: StageRef,
+          asset: T.Optional(T.String({ minLength: 1 })),
           unlock: MuseumUnlock,
         },
         { additionalProperties: false },
@@ -3422,6 +3505,7 @@ export function loadProgression(
       revealStage: e.reveal !== 'always' && 'open' in e.reveal ? e.reveal.open : null,
       requires: e.requires?.achievement ?? null,
       mastery: e.mastery ?? 0,
+      soon: e.soon ?? false,
     })),
     achievements: d.achievements.map((a) => ({
       id: a.id,
@@ -3451,6 +3535,7 @@ export function loadProgression(
         rounds: a.rule.rounds ?? 0,
         scorch: a.rule.scorch ?? true,
         branch: a.rule.branch ?? null,
+        entry: a.rule.entry ?? null,
       },
     })),
     academy: d.academy.map((r) => ({
@@ -3470,6 +3555,7 @@ export function loadProgression(
               room: l.drill.room ?? null,
               corridor: l.drill.corridor ?? null,
               showcase: l.drill.showcase ?? null,
+              arena: l.drill.arena ?? null,
             }
           : null,
         guided: [...l.guided],
@@ -3495,6 +3581,7 @@ export function loadProgression(
       id: m.id,
       kind: m.kind,
       stage: m.stage,
+      asset: m.asset ?? null,
       unlock: unlockOf(m.unlock),
     })),
     research: {
@@ -4524,6 +4611,9 @@ const WEAPONS_DIR = fileURLToPath(new URL('../weapons/', import.meta.url));
  * to M23 is frozen here; files added later follow by file name. Never reorder or remove an
  * entry, and never delete a listed file (retire its content instead).
  */
+/** M28: stage files whose arenas load before the greenhouse and Lab arenas (frozen). */
+export const FROZEN_STAGES = ['stage1.yaml', 'stage2.yaml'] as const;
+
 export const FROZEN_WEAPONS = [
   'workstaff.yaml',
   'handwheel.yaml',
@@ -4747,7 +4837,11 @@ export function generate(
       )
     : [];
   const stages: unknown[] = [];
-  for (const f of stageFiles) {
+  // Stage 1 and 2 arenas sit here, before the greenhouse and Lab arenas; stage files added
+  // since M28 load after every arena file (arena indices only ever append, lesson G1).
+  const early = stageFiles.filter((f) => FROZEN_STAGES.includes(basename(f) as never));
+  const late = stageFiles.filter((f) => !FROZEN_STAGES.includes(basename(f) as never));
+  for (const f of early) {
     const out = loadStage(readFileSync(f, 'utf8'), kitIds, arenas.length, basename(f), heroIds);
     stages.push(out.stage);
     arenas.push(...out.arenas);
@@ -4818,6 +4912,31 @@ export function generate(
         weaponYaml.map((w) => w.id),
       ),
     );
+  // M28 Stage 3 arenas (the journey's encounters, named by its arena beats), then the
+  // stage files after Stage 2 (append only, lesson G1).
+  const s3 = encounters ? join(encounters, 'stage3.yaml') : null;
+  if (s3 && existsSync(s3))
+    arenas.push(
+      ...loadArenas(
+        readFileSync(s3, 'utf8'),
+        kitIds,
+        'stage3.yaml',
+        weaponYaml.map((w) => w.id),
+      ),
+    );
+  for (const f of late) {
+    const ids = (arenas as { id: string }[]).map((a) => a.id);
+    const out = loadStage(
+      readFileSync(f, 'utf8'),
+      kitIds,
+      arenas.length,
+      basename(f),
+      heroIds,
+      ids,
+    );
+    stages.push(out.stage);
+    arenas.push(...out.arenas);
+  }
   // M25: ladders and evidence outcomes shared by stages; arenas name known ones.
   const objectives = (
     objectivesFile
@@ -4859,6 +4978,7 @@ export function generate(
     id: string;
     corridor: string;
     room: string;
+    arena: number;
     width: number;
     branch: { assets: string[] } | null;
   };
@@ -4866,6 +4986,12 @@ export function generate(
     for (const b of st.beats) {
       if (b.corridor && !corridorIds.has(b.corridor))
         stageProblems.push(`${st.id}.${b.id}: unknown corridor "${b.corridor}"`);
+      // M28: an arena beat is as wide as its arena (the exit is at the arena's right edge).
+      const ar = (arenas as { id: string; width: number }[])[b.arena];
+      if (b.arena >= 0 && ar && ar.width !== b.width)
+        stageProblems.push(
+          `${st.id}.${b.id}: width ${b.width} differs from arena "${ar.id}" (${ar.width})`,
+        );
       if (b.room) {
         const r = rooms.find((x) => x.id === b.room);
         if (!r) stageProblems.push(`${st.id}.${b.id}: unknown room "${b.room}"`);
@@ -4881,7 +5007,12 @@ export function generate(
       }
     }
   // M21: Academy drills name a known room, corridor or showcase of the lesson's hero.
-  type Drill = { room: string | null; corridor: string | null; showcase: string | null };
+  type Drill = {
+    room: string | null;
+    corridor: string | null;
+    showcase: string | null;
+    arena: string | null;
+  };
   const routes =
     (
       progression as {
@@ -4905,7 +5036,9 @@ export function generate(
             `progression.yaml: ${l.id}: "${d.showcase}" is not a pair showcase of the lesson's hero`,
           );
       }
-      if ([d.room, d.corridor, d.showcase].filter(Boolean).length !== 1)
+      if (d.arena && !(arenas as { id: string }[]).some((x) => x.id === d.arena))
+        stageProblems.push(`progression.yaml: ${l.id}: unknown arena "${d.arena}"`);
+      if ([d.room, d.corridor, d.showcase, d.arena].filter(Boolean).length !== 1)
         stageProblems.push(
           `progression.yaml: ${l.id}: a drill names one room, corridor or showcase`,
         );

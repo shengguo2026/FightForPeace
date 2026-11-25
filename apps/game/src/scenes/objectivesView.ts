@@ -8,6 +8,7 @@ import {
   caseOutcome,
   fxToPixels,
 } from '@ffp/sim';
+import type { AssetRegistry } from '@ffp/platform';
 import { t, type TextId } from '../text/i18n';
 import type { ObjectivesSnapshot } from '../game';
 import { TextPool } from './pursuitView';
@@ -16,6 +17,19 @@ const px = fxToPixels;
 /** Condition icons beside the text (never colour alone): full, half and empty shields. */
 const CONDITION_ICON = ['◆', '◈', '◇'];
 const CONDITION_COLOR = ['#9be8b0', '#ffd27a', '#ff9a8a'];
+/**
+ * M28: the Stage 3 rescued people's pose cells (npc.s3-<id>.sheet, 3 x 2): bound, freed,
+ * then Secure / Strained / Critical once safe; walking uses their walk sheet. An Bo has no
+ * Critical pose (his sheet calms the horses instead) and Wei Shan waves when safe.
+ */
+const S3_POSES: Record<string, { safe: [number, number, number] }> = {
+  'gao-wen': { safe: [2, 3, 4] },
+  'tao-min': { safe: [2, 3, 4] },
+  'an-bo': { safe: [2, 3, 3] },
+  'ren-xia': { safe: [2, 3, 4] },
+  'wei-shan': { safe: [4, 4, 4] },
+};
+
 /** Objective events with a caption line (ObjEvent numbers). */
 const EVENT_TEXT: readonly number[] = [1, 2, 4, 6, 7, 8, 9, 10, 11, 12, 13];
 
@@ -32,8 +46,64 @@ export class ObjectivesView {
   private words!: TextPool;
   private hud!: TextPool;
   private panel!: Phaser.GameObjects.Graphics;
+  /** M28: the rescued people's sprites, by unit index. */
+  private readonly people = new Map<number, Phaser.GameObjects.Sprite>();
 
-  constructor(private readonly scene: Phaser.Scene) {}
+  constructor(
+    private readonly scene: Phaser.Scene,
+    private readonly assets?: AssetRegistry,
+  ) {}
+
+  /** M28: draws a Stage 3 person on their own sheet; false when there is no art for them. */
+  private person(
+    i: number,
+    id: string,
+    phase: number,
+    cond: number,
+    x: number,
+    z: number,
+    toLeft: boolean,
+    frame: number,
+  ): boolean {
+    const poses = S3_POSES[id];
+    if (!poses || !this.assets) return false;
+    const base = `npc.s3-${id}.sheet`;
+    const walkId = `npc.s3-${id}.walk`;
+    const walking = phase === UnitPhase.Moving && this.scene.textures.exists(walkId);
+    const sheet = walking ? walkId : base;
+    const meta = this.assets.sheet(sheet)?.sheet;
+    if (!meta || !this.scene.textures.exists(sheet)) return false;
+    const cell = walking
+      ? Math.floor(frame / 9) % meta.cells.length
+      : phase === UnitPhase.Captive
+        ? 0
+        : phase === UnitPhase.Safe
+          ? poses.safe[Math.min(cond, 2)]!
+          : phase === UnitPhase.Moving
+            ? 5
+            : 1;
+    let sp = this.people.get(i);
+    if (!sp) {
+      sp = this.scene.add.sprite(x, z, sheet, cell);
+      this.people.set(i, sp);
+    }
+    sp.setVisible(true);
+    sp.setTexture(sheet, cell);
+    sp.setOrigin(0.5, meta.ground / meta.cell);
+    sp.setScale(0.95 * (meta.scale ?? 1));
+    sp.setPosition(x, z);
+    sp.setDepth(1 + z / 2000);
+    sp.setFlipX(phase === UnitPhase.Moving && toLeft);
+    return true;
+  }
+
+  private dropPeople(keep: Set<number>): void {
+    for (const [i, sp] of this.people) {
+      if (keep.has(i)) continue;
+      sp.destroy();
+      this.people.delete(i);
+    }
+  }
 
   create(): void {
     this.g = this.scene.add.graphics().setDepth(2.4);
@@ -43,6 +113,7 @@ export class ObjectivesView {
   }
 
   hide(): void {
+    this.dropPeople(new Set());
     this.g.clear();
     this.panel.clear();
     for (const p of [this.words, this.hud]) {
@@ -63,6 +134,7 @@ export class ObjectivesView {
     const label = (x: number, y: number, text: string, color = '#ffffff', size = 18) =>
       this.words.put(x, y, text, size, color);
     const { state, defs } = o;
+    const drawn = new Set<number>();
 
     defs.units.forEach((d, i) => {
       const u = state.units[i]!;
@@ -93,16 +165,24 @@ export class ObjectivesView {
         if (last) label(p.x, p.z + 50, say('m25.shelter'), '#9be8b0', 16);
         else if (p.wait) label(p.x, p.z + 40, say('m25.handoff'), '#ffd27a', 16);
       });
-      // The person: a placeholder figure box, bound (crossed) while captive.
+      // The person: their own pose sheet (M28), else a placeholder figure box, bound
+      // (crossed) while captive.
       const [x, z] = [px(u.x), px(u.z)];
-      g.fillStyle(0x6b5b8a, 0.95);
-      g.fillRect(x - 34, z - 230, 68, 230);
-      g.lineStyle(3, 0x000000, 0.8);
-      g.strokeRect(x - 34, z - 230, 68, 230);
-      if (u.phase === UnitPhase.Captive) {
-        g.lineStyle(5, 0xd8c7a0, 1);
-        g.lineBetween(x - 34, z - 170, x + 34, z - 90);
-        g.lineBetween(x + 34, z - 170, x - 34, z - 90);
+      const shelter = d.route[d.route.length - 1];
+      if (this.person(i, d.id, u.phase, cond, x, z, !!shelter && shelter.x < x, frame)) {
+        drawn.add(i);
+        g.fillStyle(0x000000, 0.3);
+        g.fillEllipse(x, z, 110, 20);
+      } else {
+        g.fillStyle(0x6b5b8a, 0.95);
+        g.fillRect(x - 34, z - 230, 68, 230);
+        g.lineStyle(3, 0x000000, 0.8);
+        g.strokeRect(x - 34, z - 230, 68, 230);
+        if (u.phase === UnitPhase.Captive) {
+          g.lineStyle(5, 0xd8c7a0, 1);
+          g.lineBetween(x - 34, z - 170, x + 34, z - 90);
+          g.lineBetween(x + 34, z - 170, x - 34, z - 90);
+        }
       }
       const color = CONDITION_COLOR[Math.min(cond, 2)]!;
       label(x, z - 320, say(`m25.unit.${d.id}`), '#ffffff', 20);
@@ -116,6 +196,8 @@ export class ObjectivesView {
         16,
       );
     });
+
+    this.dropPeople(drawn);
 
     defs.cases.forEach((d, i) => {
       const c = state.cases[i]!;

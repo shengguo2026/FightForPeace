@@ -214,6 +214,83 @@ store:
     reveal: { open: stage2 }
     mastery: 5
 
+  # --- M28 · Stage 3 (Stage 3 spec §14.4; decision 2026-11-17) ----------------------------
+  # The Mountain Rescue Outfit and the Highland Gathering Festival Attire per hero: shown
+  # with their renders as Coming-soon previews, without a price (`soon`), until the DLC
+  # unlock. The free default evolution is the Stage 3 outfit every hero wears in Stage 3.
+  - id: store.wardrobe.mountain.mountain-rescue
+    group: wardrobe
+    hero: mountain
+    kind: outfit
+    name: Mountain Rescue Outfit
+    tint: '#7c8fa6'
+    band: medium
+    reveal: { open: stage3 }
+    soon: true
+  - id: store.wardrobe.mountain.highland-festival
+    group: wardrobe
+    hero: mountain
+    kind: outfit
+    name: Highland Gathering Festival Attire
+    tint: '#b98a4a'
+    band: medium
+    reveal: { open: stage3 }
+    soon: true
+  - id: store.wardrobe.river.mountain-rescue
+    group: wardrobe
+    hero: river
+    kind: outfit
+    name: Mountain Rescue Outfit
+    tint: '#4f9a94'
+    band: medium
+    reveal: { open: stage3 }
+    soon: true
+  - id: store.wardrobe.river.highland-festival
+    group: wardrobe
+    hero: river
+    kind: outfit
+    name: Highland Gathering Festival Attire
+    tint: '#d1b36a'
+    band: medium
+    reveal: { open: stage3 }
+    soon: true
+  - id: store.wardrobe.wind.mountain-rescue
+    group: wardrobe
+    hero: wind
+    kind: outfit
+    name: Mountain Rescue Outfit
+    tint: '#8a96a0'
+    band: medium
+    reveal: { open: stage3 }
+    soon: true
+  - id: store.wardrobe.wind.highland-festival
+    group: wardrobe
+    hero: wind
+    kind: outfit
+    name: Highland Gathering Festival Attire
+    tint: '#c9b37a'
+    band: medium
+    reveal: { open: stage3 }
+    soon: true
+  - id: store.wardrobe.fire.mountain-rescue
+    group: wardrobe
+    hero: fire
+    kind: outfit
+    name: Mountain Rescue Outfit
+    tint: '#b8483c'
+    band: medium
+    reveal: { open: stage3 }
+    soon: true
+  - id: store.wardrobe.fire.highland-festival
+    group: wardrobe
+    hero: fire
+    kind: outfit
+    name: Highland Gathering Festival Attire
+    tint: '#a3523a'
+    band: medium
+    reveal: { open: stage3 }
+    soon: true
+
 # Achievement foundation: data-defined tracks by group, keyed by content ID. Only
 # `narrative` achievements can be earned in a Cheat-Assisted run, and then without Credits.
 achievements:
@@ -342,6 +419,52 @@ achievements:
     name: Guardian of Every Wing
     credits: 300
     rule: { kind: branches, content: story.stage2.prosperity-under-siege, count: 3 }
+
+  # --- M28 · the eight Stage 3 achievements (Stage 3 spec §22.3) --------------------------
+  # Credit rewards are candidates (spec §14.3: deferred). Only the clear and the Dossier page
+  # are narrative.
+  - id: ach.stage3.mist-lifts
+    group: story
+    name: Mist Lifts
+    credits: 150
+    narrative: true
+    rule: { kind: clear, content: story.stage3.herb-mountain }
+  - id: ach.stage3.every-voice-home
+    group: stageMastery
+    name: Every Voice Home
+    credits: 300
+    rule: { kind: rescues, content: story.stage3.herb-mountain, count: 4 }
+  - id: ach.stage3.signal-restored
+    group: discovery
+    name: Signal Restored
+    credits: 150
+    rule: { kind: branch, content: story.stage3.herb-mountain, branch: signal-hut }
+  - id: ach.stage3.shelter-remembered
+    group: discovery
+    name: Shelter Remembered
+    credits: 150
+    rule: { kind: branch, content: story.stage3.herb-mountain, branch: herbalist-shelter }
+  - id: ach.stage3.both-paths-walked
+    group: discovery
+    name: Both Paths Walked
+    credits: 250
+    rule: { kind: branches, content: story.stage3.herb-mountain, count: 2 }
+  - id: ach.stage3.steady-on-the-switchback
+    group: difficulty
+    name: Steady on the Switchback
+    credits: 250
+    rule: { kind: steady, content: story.stage3.herb-mountain, difficulty: medium }
+  - id: ach.stage3.hook-unhooked
+    group: combatTechnique
+    name: Hook Unhooked
+    credits: 200
+    rule: { kind: capture, content: story.stage3.herb-mountain, gun: disarmed }
+  - id: ach.stage3.paper-trail
+    group: discovery
+    name: Paper Trail
+    credits: 150
+    narrative: true
+    rule: { kind: dossier, content: story.stage3.herb-mountain, entry: page.damaged-invoice }
 
 # One representative Academy route (spec §14.2): every lesson runs Demonstration, Guided
 # Practice, Independent Trial and an optional Mastery Goal. Goals: walk, jump, dash,
@@ -479,6 +602,47 @@ academy:
         trial: { goals: [breachStop], count: 1, frames: 0 }
         mastery: { goals: [breachStop], count: 2, frames: 0 }
 
+  # --- M28 · Stage 3 Academy (Stage 3 spec §15) -------------------------------------------
+  # Drills open a Stage 3 arena or an M27 Combat Lab room (`arena`) on Easy.
+  - id: academy.stage3
+    name: Stage 3 Academy
+    lessons:
+      - id: academy.stage3.mounted
+        course: specialization
+        name: The mountain horse on the switchbacks
+        drill: { corridor: s3-switchback-ride }
+        guided: [pursuitControl]
+        trial: { goals: [pursuitControl], count: 2, frames: 0 }
+        mastery: { goals: [pursuitSave], count: 1, frames: 0 }
+      - id: academy.stage3.rescue
+        course: resources
+        name: Free the captives under pressure
+        drill: { arena: s3-two-voices }
+        guided: [rescue]
+        trial: { goals: [rescue], count: 1, frames: 0 }
+        mastery: { goals: [rescue], count: 2, frames: 3600 }
+      - id: academy.stage3.stalker
+        course: defense
+        name: 'New roles: the Ridge Stalker'
+        drill: { arena: lab-m27-stalker }
+        guided: [guard]
+        trial: { goals: [exact], count: 1, frames: 0 }
+        mastery: { goals: [counter], count: 1, frames: 0 }
+      - id: academy.stage3.hookstaff
+        course: mastery
+        name: Take the Hookstaff
+        drill: { arena: lab-m27-garran-hook }
+        guided: [disarm]
+        trial: { goals: [disarm], count: 1, frames: 0 }
+        mastery: { goals: [disarm], count: 1, frames: 3600 }
+      - id: academy.stage3.winch
+        course: mastery
+        name: Turn the winch against him
+        drill: { arena: lab-m27-garran-winch }
+        guided: [redirect]
+        trial: { goals: [redirect], count: 1, frames: 0 }
+        mastery: { goals: [redirect], count: 2, frames: 0 }
+
 # --- M21 campaign layer (roadmap Stage 2 decision 2) --------------------------------------
 # The stage list in Story Mode order. A stage opens when the stage it names was completed
 # once on the profile (any full run, Cheat-Assisted included: story progress is narrative).
@@ -504,6 +668,15 @@ campaign:
       still: story.stage2.title-loop
       menuBg: menu-bg-s2
       music: { cue: mus.stage2.what-we-protected, state: ending }
+  - id: stage3
+    content: story.stage3.herb-mountain
+    opens: { complete: stage2 }
+    whatsNew: [horses, rescues, record, highland-weapons, bandits, garran]
+    titleScreen:
+      clip: cine.stage3.title-loop
+      still: story.stage3.title-loop
+      menuBg: menu-bg-s3
+      music: { cue: mus.stage3.paths-through-the-mist, state: ending }
 
 # --- M21 Village Museum and Archive (Stage 2 spec §14.2, F&D §9.1) ------------------------
 # Every entry has a stable ID, a section, the stage whose pages it belongs to (pages of a
@@ -772,6 +945,121 @@ museum:
       asset: sealed-weapon-crate,
       unlock: complete,
     }
+  # M28: Stage 3 pictures, the three story chapters, the Mist and Resolve score, the
+  # Silvermist Ecology Folio (upgraded once both branches were completed) and the artifacts.
+  - { id: picture.keyart-s3, section: picture, stage: stage3, asset: keyart-s3, unlock: always }
+  - { id: picture.s3-h02, section: picture, stage: stage3, asset: s3-h02, unlock: start }
+  - { id: picture.s3-h03, section: picture, stage: stage3, asset: s3-h03, unlock: start }
+  - { id: picture.s3-h05, section: picture, stage: stage3, asset: s3-h05, unlock: start }
+  - { id: picture.s3-brief-01, section: picture, stage: stage3, asset: s3-brief-01, unlock: start }
+  - { id: picture.s3-t02, section: picture, stage: stage3, asset: s3-t02, unlock: complete }
+  - { id: picture.s3-e03, section: picture, stage: stage3, asset: s3-e03, unlock: complete }
+  - { id: picture.s3-e06, section: picture, stage: stage3, asset: s3-e06, unlock: complete }
+  - {
+      id: picture.portrait-garran,
+      section: picture,
+      stage: stage3,
+      asset: portrait-garran,
+      unlock: complete,
+    }
+  - {
+      id: cinema.stage3.silvermist,
+      section: cinema,
+      stage: stage3,
+      asset: cine.stage3.silvermist,
+      unlock: start,
+    }
+  - {
+      id: cinema.stage3.prepared-route,
+      section: cinema,
+      stage: stage3,
+      asset: cine.stage3.prepared-route,
+      unlock: complete,
+    }
+  - {
+      id: cinema.stage3.paths,
+      section: cinema,
+      stage: stage3,
+      asset: cine.stage3.paths,
+      unlock: complete,
+    }
+  - {
+      id: music.stage3.silver-veins-in-morning-mist,
+      section: music,
+      stage: stage3,
+      asset: 'mus.stage3.silver-veins-in-morning-mist:title',
+      unlock: always,
+    }
+  - {
+      id: music.stage3.the-empty-gathering-trail,
+      section: music,
+      stage: stage3,
+      asset: 'mus.stage3.the-empty-gathering-trail:explore',
+      unlock: start,
+    }
+  - {
+      id: music.stage3.hooves-above-the-ravine,
+      section: music,
+      stage: stage3,
+      asset: 'mus.stage3.hooves-above-the-ravine:ride',
+      unlock: start,
+    }
+  - {
+      id: music.stage3.quarry-of-echoes,
+      section: music,
+      stage: stage3,
+      asset: 'mus.stage3.quarry-of-echoes:combat',
+      unlock: start,
+    }
+  - {
+      id: music.stage3.captives-in-the-high-camp,
+      section: music,
+      stage: stage3,
+      asset: 'mus.stage3.captives-in-the-high-camp:danger',
+      unlock: start,
+    }
+  - {
+      id: music.stage3.chief-of-the-broken-ridge,
+      section: music,
+      stage: stage3,
+      asset: 'mus.stage3.chief-of-the-broken-ridge:hookstaff',
+      unlock: complete,
+    }
+  - {
+      id: music.stage3.paths-through-the-mist,
+      section: music,
+      stage: stage3,
+      asset: 'mus.stage3.paths-through-the-mist:ending',
+      unlock: complete,
+    }
+  - {
+      id: collection.silvermist-ecology-folio,
+      section: collection,
+      stage: stage3,
+      asset: silvermist-ecology-folio,
+      unlock: complete,
+    }
+  - {
+      id: collection.qinglan-rescue-bell,
+      section: collection,
+      stage: stage3,
+      asset: qinglan-rescue-bell,
+      unlock: { branch: signal-hut },
+    }
+  - {
+      id: collection.gao-wen-trail-ledger,
+      section: collection,
+      stage: stage3,
+      asset: gao-wen-trail-ledger,
+      unlock: { branch: herbalist-shelter },
+    }
+  - {
+      id: collection.broken-hookstaff,
+      section: collection,
+      stage: stage3,
+      asset: broken-hookstaff,
+      unlock: complete,
+    }
 
 # Sponsor Dossier (Investigation): confirmed facts and the current theory (the newest
 # unlocked theory replaces the older ones). No empty slots, no counts (F&D §9.1).
@@ -781,6 +1069,12 @@ dossier:
   - { id: fact.crate-seal, kind: fact, stage: stage2, unlock: complete }
   - { id: fact.order-code, kind: fact, stage: stage2, unlock: complete }
   - { id: theory.one-supplier, kind: theory, stage: stage2, unlock: complete }
+  # M28 (spec §22.1 dossier.stage3.damaged_invoice): the damaged invoice from Garran's private
+  # case as a page the player opens (Paper Trail), its confirmed facts and the new theory.
+  - { id: page.damaged-invoice, kind: page, stage: stage3, asset: s3-invoice, unlock: complete }
+  - { id: fact.invoice-batch, kind: fact, stage: stage3, unlock: complete }
+  - { id: fact.prepared-route, kind: fact, stage: stage3, unlock: complete }
+  - { id: theory.paid-route, kind: theory, stage: stage3, unlock: complete }
 
 # Formula research (Stage 2 spec §14.4): four milestones; Stage 2 completes the first and
 # records inputs for the second. Fictional and non-actionable text only.
@@ -797,4 +1091,12 @@ research:
         milestone: independent-replication,
         stage: stage2,
         unlock: { branch: medicinal },
+      }
+    # M28: Stage 3 records more inputs for the second milestone (the research record).
+    - { id: field-samples, milestone: independent-replication, stage: stage3, unlock: complete }
+    - {
+        id: trail-ledger,
+        milestone: independent-replication,
+        stage: stage3,
+        unlock: { branch: herbalist-shelter },
       }

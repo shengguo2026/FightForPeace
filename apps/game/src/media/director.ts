@@ -1,11 +1,25 @@
 import {
+  GARRAN_CUE,
   JACKAL_CUE,
   STAGE1_BEAT_MUSIC,
   STAGE2_AMBIENCE,
   STAGE2_BEAT_MUSIC,
   STAGE2_ROOM_AREA,
+  STAGE3_AMBIENCE,
+  STAGE3_BEAT_MUSIC,
+  STAGE3_ROOM_AREA,
 } from '@ffp/platform';
-import { AssetState, CORRIDORS, MoveState, ROOMS, RunPhase, STAGES, type World } from '@ffp/sim';
+import {
+  ARENAS,
+  AssetState,
+  ChannelPhase,
+  CORRIDORS,
+  MoveState,
+  ROOMS,
+  RunPhase,
+  STAGES,
+  type World,
+} from '@ffp/sim';
 import type { Screen } from '../shell/shell';
 import { activeCinematic } from './Cinematic';
 import { audio } from './audio';
@@ -62,6 +76,38 @@ function stage2Music(c: MusicContext, beatId: string): { cue: string; state: str
   return danger && m.danger ? m.danger : m.combat;
 }
 
+/** M28: the Stage 3 area of the arena or horse corridor the world is in (null: none). */
+export function stage3Area(world: World): string | null {
+  const arena = world.encounter ? ARENAS[world.encounter.arena]?.id : undefined;
+  const corridor = world.pursuit ? CORRIDORS[world.pursuit.corridor]?.id : undefined;
+  const id = corridor ?? arena;
+  return id ? (STAGE3_ROOM_AREA[id] ?? null) : null;
+}
+
+/**
+ * M28: Stage 3's Mist and Resolve. On the terrace Garran's cue follows his phase
+ * (Hookstaff Control, Clinch and Cast, Winch Pressure) and his capture; the horse corridors
+ * ride Hooves above the Ravine; elsewhere each beat has an explore and a combat cue, and
+ * Captives in the High Camp while a hostile action is under way against someone.
+ */
+function stage3Music(c: MusicContext, beatId: string): { cue: string; state: string } | null {
+  const w = c.world;
+  const run = w.run!;
+  if (c.results) return { cue: 'mus.stage3.paths-through-the-mist', state: 'victory' };
+  const boss = w.encounter?.boss;
+  if (beatId === 'terrace') {
+    if (!boss || boss.capture > 0 || run.phase === RunPhase.Complete)
+      return boss ? { cue: GARRAN_CUE, state: 'capture' } : null;
+    return { cue: GARRAN_CUE, state: ['hookstaff', 'clinch', 'winch'][boss.phase] ?? 'winch' };
+  }
+  const m = STAGE3_BEAT_MUSIC[beatId];
+  if (!m) return null;
+  const fighting = run.phase === RunPhase.Locked || w.pursuit !== null;
+  if (!fighting) return m.explore;
+  const danger = w.objectives?.channels.some((x) => x.phase === ChannelPhase.Working) ?? false;
+  return danger && m.danger ? m.danger : m.combat;
+}
+
 /**
  * M13: which cue and state of the Stage 1 score plays now. Menus play the title state;
  * cinematics play their own (or nothing, when the clips carry their own sound); in the
@@ -81,6 +127,7 @@ export function musicFor(c: MusicContext): { cue: string; state: string } | null
   if (!run) return null;
   const beat = STAGES[run.stage]?.beats[run.beat];
   if (STAGES[run.stage]?.id === 'stage2') return beat ? stage2Music(c, beat.id) : null;
+  if (STAGES[run.stage]?.id === 'stage3') return beat ? stage3Music(c, beat.id) : null;
   if (c.results) return { cue: 'mus.stage1.river-returned', state: 'victory' };
   const m = beat ? STAGE1_BEAT_MUSIC[beat.id] : undefined;
   if (!m) return null;
@@ -100,7 +147,9 @@ export function ambienceFor(c: MusicContext): string | null {
   const screen = c.screen === 'settings' ? c.settingsFrom : c.screen;
   if (screen !== 'game' && screen !== 'lab') return null;
   const area = stage2Area(c.world);
-  return area ? (STAGE2_AMBIENCE[area] ?? null) : null;
+  if (area) return STAGE2_AMBIENCE[area] ?? null;
+  const s3 = stage3Area(c.world);
+  return s3 ? (STAGE3_AMBIENCE[s3] ?? null) : null;
 }
 
 /** Called every animation frame from the main loop. */

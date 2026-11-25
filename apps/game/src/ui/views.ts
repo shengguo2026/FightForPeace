@@ -61,6 +61,7 @@ import {
   mountedKit,
   responseRecord,
   type StageResults,
+  type World,
   lockCount,
 } from '@ffp/sim';
 import {
@@ -69,6 +70,8 @@ import {
   type PromptContext,
   promptText,
   resolvePrompt,
+  S3_PREPARED_ROUTE,
+  STAGE3_STORY_SHOTS,
 } from '@ffp/platform';
 import type { GameSession } from '../game';
 import {
@@ -805,8 +808,10 @@ export function refreshStage(session: GameSession, lab: LabState): void {
     [RunEvent.Rejoined]: t('run.rejoined', { n: e.detail + 1 }),
     [RunEvent.Downed]: t('run.downed', { n: e.detail + 1 }),
   };
+  notices[RunEvent.Rescued] = t('m28.rescued');
   const notice = age < NOTICE_FRAMES ? (notices[e.kind] ?? '') : '';
-  const next: StageHudView = { active: true, prompts, story, notice };
+  const pip = storyPip(world);
+  const next: StageHudView = { active: true, prompts, story, notice, ...(pip ? { pip } : {}) };
   const prev = lab.stage.value;
   if (JSON.stringify(prev) !== JSON.stringify(next)) lab.stage.value = next;
   const done = run.phase === RunPhase.Complete && world.frame - run.phaseFrame >= RESULTS_DELAY;
@@ -851,8 +856,53 @@ export function refreshStage(session: GameSession, lab: LabState): void {
   lab.results.value = view;
 }
 
+/** M28: per world, the story moments already seen and the one on screen (from its frame). */
+const PIP = new WeakMap<World, { seen: number; shot: string; at: number }>();
+
+/**
+ * M28: the Prepared Route's moment over the fight once the run reaches it (the radio, the
+ * cabin, the escape). A world that already holds a moment (a continue) does not replay it.
+ */
+function storyPip(world: World): { shot: string; ms: number } | null {
+  const run = world.run;
+  const j = run?.journey;
+  if (!run || !j) return null;
+  const def = STAGES[run.stage]!;
+  const flags = [
+    ...j.story.map((b) => def.beats[b]?.story ?? ''),
+    ...j.storyClear.map((b) => def.beats[b]?.storyClear ?? ''),
+  ];
+  let s = PIP.get(world);
+  if (!s) PIP.set(world, (s = { seen: flags.length, shot: '', at: 0 }));
+  if (flags.length > s.seen) {
+    s.seen = flags.length;
+    s.shot = STAGE3_STORY_SHOTS[flags.at(-1)!] ?? '';
+    s.at = world.frame;
+  }
+  const shot = S3_PREPARED_ROUTE.shots.find((x) => !('motif' in x) && x.id === s.shot);
+  const ms = Math.round(((world.frame - s.at) * 1000) / 60);
+  if (!shot || 'motif' in shot || ms >= shot.ms) return null;
+  return { shot: s.shot, ms };
+}
+
+/** M28 results lines: each rescue's condition, the research record, horses, Garran. */
+function stage3Lines(r: StageResults): string[] {
+  const j = r.journey;
+  if (!j) return [];
+  const out: string[] = [];
+  out.push(t('m28.recordLine', { state: t(`objective.case.${j.record}` as TextId) }));
+  out.push(t('m28.horsesLine', { n: j.breaks }));
+  const c = r.capture;
+  if (c)
+    out.push(
+      `${t(`m28.capture.${c.route}` as TextId)} · ${t(`m28.hook.${c.gunLost}` as TextId)} · ${t('m28.redirects', { n: j.redirects })}`,
+    );
+  return out;
+}
+
 /** M20 results lines: Preservation, Civil-Protection Response and Marek's capture. */
 function stage2Lines(r: StageResults): string[] {
+  if (r.journey) return stage3Lines(r);
   const out: string[] = [];
   const p = r.preservation;
   if (p) {
@@ -886,6 +936,16 @@ function stage2Lines(r: StageResults): string[] {
 function stage2Sections(r: StageResults): { title: string; lines: string[] }[] {
   const out: { title: string; lines: string[] }[] = [];
   const def = STAGES.find((s) => s.id === r.stage)!;
+  // M28: every rescued person's condition (the branch's operator marked).
+  if (r.journey && r.journey.rescues.length > 0)
+    out.push({
+      title: t('m28.rescuesTitle'),
+      lines: r.journey.rescues.map(
+        (x) =>
+          `${t(`m25.unit.${x.id}` as TextId)}: ${t(`objective.ladder.rescue.${x.stateId}` as TextId)}` +
+          (x.branch ? ` · ${t('m28.branchRescue')}` : ''),
+      ),
+    });
   if (r.branches.length > 0)
     out.push({
       title: t('m20.branchesTitle'),

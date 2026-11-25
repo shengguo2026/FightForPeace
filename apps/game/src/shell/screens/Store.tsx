@@ -86,6 +86,7 @@ export function StoreScreen({ shell }: { shell: Shell }) {
     const st = storeStatus(p, item);
     if (st === 'owned') return equipped(p, item) ? t('store.equipped') : t('store.owned');
     if (st === 'locked') return t('store.locked');
+    if (st === 'soon') return t('m28.comingSoon');
     return t('store.price', { n: item.price });
   };
 
@@ -127,6 +128,11 @@ export function StoreScreen({ shell }: { shell: Shell }) {
             />
           ))}
           {hidden > 0 ? <p class="ffp-hint">{t('store.hiddenMore', { n: hidden })}</p> : null}
+          {group === 'wardrobe' && visible.some((s) => s.soon) ? (
+            <p class="ffp-hint" data-testid="store-evolution">
+              {t('m28.defaultEvolution')}
+            </p>
+          ) : null}
           {p.guest ? <p class="ffp-hint">{t('store.guest')}</p> : null}
           <Button label={t('common.back')} onPress={() => shell.go('village')} />
         </Panel>
@@ -193,7 +199,7 @@ function StoreDetail({
           style={{ display: 'block', height: '240px', margin: '6px 0' }}
         />
       ) : null}
-      {item.kind === 'outfit' && item.hero && item.tint ? (
+      {item.kind === 'outfit' && item.hero && item.tint && !item.soon ? (
         <OutfitPreview hero={item.hero} tint={item.tint} />
       ) : null}
       {item.kind === 'badge' ? <p>{t('store.kind.badge')}</p> : null}
@@ -214,7 +220,11 @@ function StoreDetail({
           </div>
         </div>
       ) : null}
-      <p>{t('store.price', { n: item.price })}</p>
+      {st === 'soon' ? (
+        <p data-testid="store-soon">{t('m28.soonNote')}</p>
+      ) : (
+        <p>{t('store.price', { n: item.price })}</p>
+      )}
       {item.mastery > 0 && item.hero ? (
         <p class="ffp-hint">
           {t('store.masteryPath', { level: item.mastery, hero: heroName(item.hero), now: lvl })}
@@ -269,6 +279,11 @@ const OUTFIT_ART: ReadonlySet<string> = new Set(
     'mountain.harvest-heritage',
     'river.channel-patrol',
     'river.lantern-festival',
+    // M28: the Stage 3 Coming-soon outfits (their renders only).
+    ...['mountain', 'river', 'wind', 'fire'].flatMap((h) => [
+      `${h}.mountain-rescue`,
+      `${h}.highland-festival`,
+    ]),
   ].map((o) => `store.wardrobe.${o}`),
 );
 

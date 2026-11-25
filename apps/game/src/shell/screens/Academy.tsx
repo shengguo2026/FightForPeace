@@ -11,7 +11,7 @@ import {
 import type { PromptContext } from '@ffp/platform';
 import { PromptText } from '../../ui/InputPrompt';
 import { moveInputText } from '../../text/en';
-import { dt, heroName, locale, t, type TextId } from '../../text/i18n';
+import { dt, heroName, locale, stageName, t, type TextId } from '../../text/i18n';
 import { lessonDef } from '../../academy/runner';
 import type { Shell } from '../shell';
 import { HERO_ROSTER } from '../shell';
@@ -86,6 +86,10 @@ export function AcademyScreen({ shell }: { shell: Shell }) {
   const def = focus ? lessonDef(focus) : undefined;
   const me = shell.active.value;
   const stage2 = !!me && stageOpen(me, 'stage2');
+  // M28: the Stage 3 drills open with Stage 3.
+  const stage3 = !!me && stageOpen(me, 'stage3');
+  const locked = (id: string) =>
+    (id === 'academy.stage2' && !stage2) || (id === 'academy.stage3' && !stage3);
   return (
     <Screen bg={ART('menu-bg')} dim align="start" testId="academy">
       <div class="ffp-row" style={{ width: '88vw', alignItems: 'flex-start' }}>
@@ -101,12 +105,12 @@ export function AcademyScreen({ shell }: { shell: Shell }) {
           {ACADEMY_ROUTES.map((r) => (
             <>
               <h2 style={{ margin: '12px 0 4px' }}>{dt(`${r.id}.name`, r.name)}</h2>
-              {r.id === 'academy.stage2' && !stage2 ? (
-                <p class="ffp-hint" data-testid="academy-stage2-locked">
+              {locked(r.id) ? (
+                <p class="ffp-hint" data-testid={`academy-${r.id.split('.').pop()}-locked`}>
                   {t('m21.academyLocked')}
                 </p>
               ) : null}
-              {(r.id === 'academy.stage2' && !stage2 ? [] : r.lessons).map((l, i) => (
+              {(locked(r.id) ? [] : r.lessons).map((l, i) => (
                 <Button
                   label={`${i + 1}. ${dt(`${l.id}.name`, l.name)}`}
                   detail={l.hero ? heroName(l.hero) : undefined}
@@ -134,6 +138,15 @@ export function AcademyScreen({ shell }: { shell: Shell }) {
               testId="academy-whats-new"
               onFocus={() => setFocus(null)}
               onPress={() => shell.openWhatsNew('stage2', 'academy', true)}
+            />
+          ) : null}
+          {stage3 ? (
+            <Button
+              label={`${t('m21.whatsNewTitle')} · ${stageName('stage3')}`}
+              detail={t('m28.whatsNewDetail')}
+              testId="academy-whats-new-s3"
+              onFocus={() => setFocus(null)}
+              onPress={() => shell.openWhatsNew('stage3', 'academy', true)}
             />
           ) : null}
           <Button
@@ -206,6 +219,8 @@ const GOAL_KEY: Record<LessonGoal, TextId> = {
   containerOpen: 'm21.goal.containerOpen',
   callBreak: 'm21.goal.callBreak',
   breachStop: 'm21.goal.breachStop',
+  rescue: 'm28.goal.rescue',
+  redirect: 'm28.goal.redirect',
 };
 
 const PHASE_KEY: Record<string, TextId> = {

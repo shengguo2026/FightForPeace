@@ -1968,3 +1968,59 @@ pnpm dev
 5. **Pursuit:** open the Perimeter Pursuit: the bike and rider are drawn and moving after a few seconds.
 6. **Player 2:** press Num 4 to join Player 2: a short pause, then they appear with their art and can move.
 7. **Online (if you can run two games):** on the Wi-Fi screen, Host and Connect show "Loading art…" for several seconds, then become usable. The match then plays in step, with every fighter drawn.
+
+## M28 · Stage 3 journey: Shadows over the Herb Mountain (0.28.0)
+
+What's new: **Stage 3 is playable from Play.** Seventeen beats over six areas (Lower Switchback, Qinglan Hamlet, Moonbell Basin, Echo Quarry, Broken Ridge Camp, High Winch Terrace) and two optional branches (Signal Hut: *The Silent Antenna*; Herbalist Shelter: *Baskets Left Behind*), five checkpoints, two horse rides. Free **Gao Wen, Tao Min, An Bo and Ren Xia** (and **Wei Shan** in the Signal Hut): bandits near a captive start visible hostile actions; interrupt them, and each group ends **Secure, Strained or Critical**. Collect and seal the **research record** case at Mist over the Beds. **Tomas** is heard on the radio (Moonbell Basin), seen in the cabin and leaves by the quarry while you free Ren Xia (a small picture over the fight; there is no chase). Capture **Garran Voss**, open his private case: the **damaged invoice**. Then the epilogue, *Paths through the Mist* and the results (grade: rescues 35, research record 15, Garran 20, combat 20, branches 10; a Critical group caps at A; cheats give no grade). The story chapters are still pictures with a slow zoom and a cross-fade; the title loop is a short silent clip; the *Mist and Resolve* score plays throughout. **Progression:** Silvermist Ecology Folio and three artifacts in the Museum, the invoice as a Sponsor Dossier page (open it for *Paper Trail*), eight achievements, the Stage 3 outfits as **Coming soon** in the Store, What's New and the Stage 3 Academy. Everything in English, 简体中文 and Deutsch.
+
+### Get and start the build
+
+To test the branch before it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin claude/project-thread-vwjw61
+git checkout claude/project-thread-vwjw61
+git pull origin claude/project-thread-vwjw61
+pnpm install
+pnpm dev
+```
+
+After it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+If Vite prints another port than 5173, use that one. Stop the server with `Ctrl+C`.
+
+### Test steps
+
+Stage 3 opens once Stage 2 is completed. If your profile has not cleared Stage 2, use a temporary profile: `http://localhost:5173/?hublab=stage2` (Stages 1 and 2 completed, nothing is saved), go back to the village and press **Play**. Single beats also start directly: `http://localhost:5173/?stage=3&beat=N` (N from 1 to 17, e.g. 8 for Two Voices in the Mist, 17 for Garran). Keys: move **W A S D**, attack **T**, jump **Y** (Z on QWERTZ), guard **G**, grab / pick up / hold to free or seal **J**. Player 2 joins with **Num 4**.
+
+1. **Start:** Play → Solo → Stage 3 *Shadows over the Herb Mountain* on Medium. The six What's New cards (Mountain horses, Rescue condition, The research record, Highland weapons and food, Highland bandits, Garran Voss) show once.
+2. **Silvermist:** five scenes, each a picture that slowly zooms and cross-fades to its end picture, with subtitles (narrator, Ren Xia, the elder, Luo Fen) and the opening music. Skip and Skip all work. Then the elder's briefing (five lines over the expedition map and the hamlet) and the loadout.
+3. **Lower Switchback:** the mountain horse ride; then *Hoofprints in the Mud* (the clue: a dropped basket and hoofprints) and *Rope across the Trail*. Each arena has its area backdrop.
+4. **Qinglan Hamlet:** *Empty Drying Racks* (checkpoint). At its exit, the **upper half** leads to the Signal Hut (*The Silent Antenna*): free Wei Shan (hold **J** beside her; the villager sprite sits tied, stands up when freed, walks to shelter) and read the radio clue. The lower half skips the branch.
+5. **Moonbell Basin:** *Mist over the Beds*: a small picture appears top right (Tomas on the radio) while you fight. Pick up the **research record case** and hold **J** to seal it; a bandit may try to knock it over (watch its tell and interrupt). *Two Voices in the Mist*: free Gao Wen and Tao Min; let one bandit finish an action near them once to see the condition change from Secure to Strained (text and icon).
+6. **Echo Quarry:** *Loose Scaffold* (checkpoint), upper half to the Herbalist Shelter (*Baskets Left Behind*: the gathering equipment clue, the camp meal), *Hammer Line*, *Cart Rails* (An Bo).
+7. **Broken Ridge Camp:** the ridge ride, *Outer Fence*, *Lantern Row*, *Ren Xia's Enclosure*: the small picture shows Tomas in the cabin; when Ren is free, a second one shows him leaving by the quarry. Nothing asks you to chase him.
+8. **High Winch Terrace:** *Chief of the Broken Ridge*. The music follows his phases. Capture him; then examine his **private case**: the stage ends.
+9. **Ending:** the epilogue cards (Garran's capture, each rescue with its condition, the research record, each branch you walked, the invoice, Tomas in the lowlands), then *Paths through the Mist* (the reunion at Qinglan shows the Secure picture, or the Critical one if any group ended Critical), then the results: rescue conditions, the research record, horse Stability breaks, Garran's capture, hookstaff and winch redirects, the branches and the grade.
+10. **Continue and checkpoints:** lose all Health once at a later beat and continue: the rescues you already made stay as they were.
+11. **Co-op:** play a few beats with Player 2 (Num 4): both can free captives and seal the case.
+12. **Museum:** Collection and Records → Museum: the Stage 3 pictures, the three chapters in Cinema (*Silvermist*, *The Prepared Route*, *Paths through the Mist*), seven Stage 3 music entries, the **Silvermist Ecology Folio** (first edition; complete edition after both branches in one run), the **Qinglan Rescue Bell**, **Gao Wen's Trail Ledger** and **The Broken Hookstaff**.
+13. **Sponsor Dossier:** Investigation shows **The Damaged Invoice** as a page: open it (the invoice picture and its text). The achievement *Paper Trail* is earned with a message.
+14. **Achievements:** Collection and Records lists the eight Stage 3 achievements (*Mist Lifts*, *Every Voice Home*, *Signal Restored*, *Shelter Remembered*, *Both Paths Walked*, *Steady on the Switchback*, *Hook Unhooked*, *Paper Trail*).
+15. **Store:** Wardrobe shows each hero's *Mountain Rescue Outfit* and *Highland Gathering Festival Attire* as **Coming soon** (preview picture, no price, cannot be bought) and a note about the free default evolution the heroes already wear in Stage 3.
+16. **Academy:** the Stage 3 What's New cards any time, and five Stage 3 lessons (the mountain horse, freeing captives, the Ridge Stalker, taking the hookstaff, turning the winch).
+17. **Title screen:** after clearing Stage 3, the title shows the Silvermist loop and the Stage 3 menu background.
+18. **Languages:** switch to 简体中文 and Deutsch: the encounter names (泥中蹄印 … 断脊之首; *Hufspuren im Schlamm* … *Der Anführer vom Gebrochenen Grat*), achievements (雾散山明 …; *Der Nebel lichtet sich* …), outfits, folio and artifacts follow the agreed names; the chapters, briefing and epilogue are translated.
+19. **Stage 1 and 2 unchanged:** play the Stage 1 courtyard and the Stage 2 Loading Yard (`?stage=2&beat=2`) on Medium: nothing should feel different from 0.27.0.
+
+Write down any beat that feels too long or too hard, any villager sprite that looks too big or too small, any subtitle that does not fit its picture, and any music change that feels abrupt.

@@ -419,3 +419,22 @@ Run this for Stage 4 onwards, each Curated Mission and every other mode. Stage 4
 21. Every condition ladder, evidence outcome and stage grade of the stage is data on the M25 modules (`objectives.yaml`, the stage's `grade`), with a test that the condition never changes without a visible hostile action (H3).
 22. Every new mission, Chronicle, Remix or operation is a package in `packages/data/missions/missions.yaml` with its stable kebab-case ID, version, canon label, story gate and hero rule; the spec names that ID (I1).
 23. The stage's sound effects are coded recipes in `packages/platform/src/media/` (one per sound the stage plays, its own Lab group), Guo has listened to them in the Lab, and the prompt files list no sound effects for an outside generator (J1).
+
+## N · Found while building the Stage 3 journey (M28)
+
+### N1 · A scenery surface across the whole floor depth walls off an arena exit
+
+- **What happened:** the first bot run through Stage 3 stopped for good in three quarry and camp arenas. Each had a surface at the right edge authored as `z: 800, hd: 200`, which covers the floor from top to bottom, so nobody could reach the exit.
+- **Fix:** those surfaces are short posts (`z: 660, hd: 50`), and the Stage 3 bot steps round anything that holds it still for half a second.
+- **Rule:** every stage arena is cleared end to end by the bot in a test (`packages/sim/test/m28.test.ts`), solo and in co-op, before the stage is accepted; a Lab room that only tests one fight does not show a blocked exit.
+
+### N2 · A new story stage needs its intro route, not only its chapters
+
+- **What happened:** the Stage 3 chapters were built and listed, but the shell sent every stage after Stage 2 from What's New straight to the briefing, so *Silvermist* never played. Only the browser test that walks Play → Stage 3 caught it.
+- **Fix:** Stage 3 goes What's New → intro → briefing like Stage 2.
+- **Rule:** each story stage has one browser test that walks the real Play flow from the village to the results, not only debug hooks.
+
+### N3 · Data names need their Chinese and German in the same milestone
+
+- **What happened:** the English stage, beat, arena, corridor, achievement, Store and Academy names come from the data files and are complete at once; their Chinese and German live in the milestone's strings file and are easy to forget. The catalogue test (`tests/lint/catalogues.test.ts`) lists every missing key.
+- **Rule:** run the catalogue test right after the data is in, and take every agreed name from the spec's name tables (Stage 3 §22.3–§22.5) exactly.

@@ -40,6 +40,9 @@ export function drillCounters(world: World): Record<string, number> {
     repair: gh?.record.repairs ?? 0,
     containerOpen: gh?.record.opened ?? 0,
     disarm: world.encounter?.boss?.gunLost === GunLost.Disarmed ? 1 : 0,
+    // M28: people brought to safety, Garran's winch loads redirected.
+    rescue: world.objectives?.units.filter((u) => u.locked).length ?? 0,
+    redirect: world.encounter?.boss?.redirects ?? 0,
   };
 }
 

@@ -45,6 +45,11 @@ export interface ShotDef {
   clip?: string;
   /** Logical asset id of the still fallback (`story.…`); always present. */
   still: string;
+  /**
+   * M28 still sequence (lesson C3): the shot's end picture. The start still shows with a
+   * slow zoom and cross-fades to this one over a second in the middle of the shot.
+   */
+  end?: string;
   /** Shot length in ms (the clip's length). */
   ms: number;
   cues: readonly SubtitleCue[];
@@ -65,6 +70,24 @@ export interface CinematicDef {
   /** Music to play underneath: cue and state of the score (presentation only). */
   music?: { cue: string; state: string };
   shots: readonly ShotEntry[];
+}
+
+/** M28: the cross-fade of a still sequence lasts a second. */
+export const STILL_FADE_MS = 1000;
+/** M28: how far a still sequence zooms in over its shot (1.06 = 6 %). */
+export const STILL_ZOOM = 1.06;
+
+/**
+ * M28 still sequence at `time` ms into its shot: the zoom of both pictures (1 → STILL_ZOOM
+ * over the shot) and the end picture's opacity (0 before the cross-fade, 1 after it; the
+ * fade is centred in the shot). A shot without an end picture only zooms.
+ */
+export function stillMix(shot: ShotDef, time: number): { zoom: number; end: number } {
+  const t = Math.max(0, Math.min(shot.ms, time));
+  const zoom = 1 + ((STILL_ZOOM - 1) * t) / Math.max(1, shot.ms);
+  if (!shot.end) return { zoom, end: 0 };
+  const from = shot.ms / 2 - STILL_FADE_MS / 2;
+  return { zoom, end: Math.max(0, Math.min(1, (t - from) / STILL_FADE_MS)) };
 }
 
 export function holds(c: Condition, s: StoryState): boolean {

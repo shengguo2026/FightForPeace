@@ -75,8 +75,13 @@ describe('M27 registry order and data', () => {
       expect(kits.indexOf(id), id).toBeGreaterThan(last24);
     // Arena rooms are appended after the M25 rooms.
     const arenas = ARENAS.map((a) => a.id);
-    expect(arenas.slice(-14)[0]).toBe('lab-m27-ambusher');
-    expect(arenas.at(-1)).toBe('lab-m27-garran');
+    // M28 appends Stage 3's arenas after the M27 rooms.
+    const m27 = arenas.filter((a) => !/^(s3-|stage3\.)/.test(a));
+    expect(m27.slice(-14)[0]).toBe('lab-m27-ambusher');
+    expect(m27.at(-1)).toBe('lab-m27-garran');
+    expect(
+      arenas.slice(arenas.indexOf('lab-m27-garran') + 1).every((a) => /^(s3-|stage3\.)/.test(a)),
+    ).toBe(true);
   });
 
   test("roles, difficulty gates and Garran's three phases", () => {

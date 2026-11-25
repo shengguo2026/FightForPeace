@@ -110,14 +110,14 @@ const earned = (p: Profile, r: StageResults, over: Partial<RunReport> = {}) =>
 
 describe('the campaign layer', () => {
   test('stage content IDs and order come from the data', () => {
-    expect(CAMPAIGN.map((c) => c.id)).toEqual(['stage1', 'stage2']);
+    expect(CAMPAIGN.map((c) => c.id)).toEqual(['stage1', 'stage2', 'stage3']);
     expect(contentIdOf('stage1')).toBe(STORY_STAGE1);
     expect(contentIdOf('stage2')).toBe(STAGE2);
   });
 
   test('Stage 2 is locked until Stage 1 was completed once (Cheat-Assisted counts)', () => {
     const p = createProfile('Guo', 'en');
-    expect(campaignList(p).map((c) => c.open)).toEqual([true, false]);
+    expect(campaignList(p).map((c) => c.open)).toEqual([true, false, false]);
     const c = completeStage(p, 'stage1', results({ stage: 'stage1', cheatAssisted: true }), 5);
     expect(c.first).toBe(true);
     expect(c.opened).toEqual(['stage2']);

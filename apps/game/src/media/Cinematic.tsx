@@ -8,16 +8,86 @@ import {
   CinematicPlayer,
   type Locale,
   MOTIFS,
+  type ShotDef,
   type StoryState,
   resolveCinematic,
+  stillMix,
 } from '@ffp/platform';
-import { locale, t, tIn } from '../text/i18n';
+import { locale, t, tIn, type TextId } from '../text/i18n';
 import { useNav } from '../shell/hooks';
 import { PromptText } from '../ui/InputPrompt';
 import { audio } from './audio';
 import { hush, narrate, type VoiceSettings } from './narration';
 
 const assets = new AssetRegistry();
+
+/**
+ * M28: a story moment as a picture-in-picture over the fight (The Prepared Route): the
+ * still sequence of its shot at `ms` (game time) with its subtitle. The fight never stops,
+ * so co-op and Wi-Fi stay in step; it never takes input.
+ */
+export function StoryPip({ shot, ms }: { shot: ShotDef; ms: number }) {
+  const mix = stillMix(shot, ms);
+  const start = assets.url(shot.still);
+  const end = shot.end ? assets.url(shot.end) : undefined;
+  const cue = shot.cues.find((c) => ms >= c.at && ms < c.until);
+  const fade = Math.min(1, ms / 300, (shot.ms - ms) / 300);
+  const pic = (url: string | undefined, opacity: number, id: string) =>
+    url ? (
+      <img
+        src={url}
+        alt=""
+        data-testid={id}
+        style={{
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          opacity,
+          transform: `scale(${mix.zoom.toFixed(4)})`,
+        }}
+      />
+    ) : null;
+  return (
+    <div
+      data-testid="story-pip"
+      data-shot={shot.id}
+      style={{
+        position: 'absolute',
+        right: '16px',
+        top: '120px',
+        width: 'min(34vw, 520px)',
+        opacity: Math.max(0, fade),
+        pointerEvents: 'none',
+      }}
+    >
+      <div
+        style={{
+          position: 'relative',
+          aspectRatio: '16 / 9',
+          overflow: 'hidden',
+          borderRadius: '6px',
+          border: '2px solid rgba(255,255,255,0.5)',
+          background: '#000',
+        }}
+      >
+        {pic(start, 1, 'story-pip-start')}
+        {pic(end, mix.end, 'story-pip-end')}
+      </div>
+      {cue ? (
+        <div
+          class="ffp-caption"
+          data-testid="story-pip-line"
+          style={{ marginTop: '6px', fontSize: '17px', textAlign: 'left' }}
+        >
+          {cue.speaker ? <b>{t(cue.speaker as TextId)}: </b> : null}
+          {t(cue.text as TextId)}
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 /** The cinematic on screen (music and tests read it), or null. */
 export const activeCinematic = signal<{
@@ -144,6 +214,10 @@ export function Cinematic({
   useEffect(() => () => hush(), [player]);
   if (!frame || !shot) return null;
   const still = assets.url(shot.still);
+  // M28 still sequence: a slow zoom over the shot and the end picture fading in midway.
+  const endUrl = !clip && shot.end ? assets.url(shot.end) : undefined;
+  const mix = stillMix(shot, frame.time);
+  const zoom = clip ? 1 : mix.zoom;
   return (
     <div
       class="ffp-screen"
@@ -152,7 +226,11 @@ export function Cinematic({
       data-shot={shot.id}
       data-mode={clip ? 'video' : 'still'}
       data-paused={frame.paused ? 'true' : 'false'}
-      style={{ backgroundImage: still ? `url(${still})` : undefined, background: '#000' }}
+      style={{
+        backgroundImage: still ? `url(${still})` : undefined,
+        background: '#000',
+        overflow: 'hidden',
+      }}
     >
       {still ? (
         <img
@@ -165,6 +243,24 @@ export function Cinematic({
             width: '100%',
             height: '100%',
             objectFit: 'cover',
+            transform: `scale(${zoom.toFixed(4)})`,
+          }}
+        />
+      ) : null}
+      {endUrl ? (
+        <img
+          src={endUrl}
+          alt=""
+          data-testid={`${testId}-end`}
+          data-mix={mix.end.toFixed(2)}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            opacity: mix.end,
+            transform: `scale(${zoom.toFixed(4)})`,
           }}
         />
       ) : null}

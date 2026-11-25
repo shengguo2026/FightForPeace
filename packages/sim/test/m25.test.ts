@@ -71,7 +71,8 @@ describe('M25 data', () => {
   test('the test room is the last arena (append only, lesson G1)', () => {
     // M27 appends its Stage 3 rooms after it.
     const after = ARENAS.slice(ARENAS.findIndex((a) => a.id === ROOM) + 1);
-    expect(after.every((a) => a.id.startsWith('lab-m27-'))).toBe(true);
+    // M28 then appends Stage 3's arenas (encounters/stage3.yaml and the stage's own).
+    expect(after.every((a) => /^(lab-m27-|s3-|stage3\.)/.test(a.id))).toBe(true);
     const d = def();
     expect(d.units.map((u) => u.id)).toEqual(['captive']);
     expect(d.cases.map((c) => c.id)).toEqual(['case']);
