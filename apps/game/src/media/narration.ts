@@ -67,6 +67,17 @@ export function narrate(textId: string, textLocale: Locale, s: VoiceSettings): v
   narrationLog.push(`none:${textId}`);
 }
 
+/** M28: a line is still being spoken (a voice file or the system voice). */
+export function speaking(): boolean {
+  if (audio.voicePlaying()) return true;
+  try {
+    const tts = synth();
+    return !!tts && (tts.speaking || tts.pending);
+  } catch {
+    return false;
+  }
+}
+
 /** Stops any line being spoken (a skipped shot or a closed cinematic). */
 export function hush(): void {
   audio.stopVoice();

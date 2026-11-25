@@ -10,6 +10,7 @@ import {
   MOTIFS,
   type ShotDef,
   type StoryState,
+  narrationStep,
   resolveCinematic,
   stillMix,
 } from '@ffp/platform';
@@ -17,7 +18,7 @@ import { locale, t, tIn, type TextId } from '../text/i18n';
 import { useNav } from '../shell/hooks';
 import { PromptText } from '../ui/InputPrompt';
 import { audio } from './audio';
-import { hush, narrate, type VoiceSettings } from './narration';
+import { hush, narrate, speaking, type VoiceSettings } from './narration';
 
 const assets = new AssetRegistry();
 
@@ -159,9 +160,25 @@ export function Cinematic({
   useLayoutEffect(() => {
     let last = performance.now();
     let id = 0;
+    let waited = 0;
+    let waitKey = '';
     const loop = (now: number) => {
-      player.advance(Math.min(100, now - last));
+      const dt = Math.min(100, now - last);
       last = now;
+      // M28: a still picture waits for its line to be spoken to the end (a clip keeps its
+      // own clock, and paused or skipped shots are not held).
+      const f = player.frame();
+      const cue = voice && f && !f.paused && !f.shot.clip ? player.subtitle(locale.value) : null;
+      const key = cue && f ? `${f.index}:${cue.cue.at}` : '';
+      if (key !== waitKey) {
+        waitKey = key;
+        waited = 0;
+      }
+      const step = f
+        ? narrationStep(dt, f.time, cue ? cue.cue.until : null, speaking(), waited)
+        : dt;
+      if (step < dt) waited += dt - step;
+      player.advance(step);
       if (player.done) {
         finish();
         return;

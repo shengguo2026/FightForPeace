@@ -1,4 +1,12 @@
-import type { StageResults } from '@ffp/sim';
+import {
+  MoveState,
+  claim,
+  createWorld,
+  heroOf,
+  spawnItem,
+  weaponIndex,
+  type StageResults,
+} from '@ffp/sim';
 import {
   ACHIEVEMENTS,
   CAMPAIGN,
@@ -9,12 +17,14 @@ import {
   STAGE3_TITLE_LOOP,
   STORE,
   achievementMet,
+  NARRATION_WAIT_MS,
   buy,
   completeStage,
   contentIdOf,
   createProfile,
   dossierView,
   museumSection,
+  narrationStep,
   openDossierPage,
   resolveCinematic,
   stage3MediaIds,
@@ -27,6 +37,7 @@ import {
   type RunReport,
 } from '../src/index';
 import { AssetRegistry } from '../src/assets/registry';
+import { SpritePicker } from '../src/assets/sprites';
 
 const reg = new AssetRegistry();
 const STAGE3 = 'story.stage3.herb-mountain';
@@ -254,5 +265,38 @@ describe('M28 Store, Museum and media', () => {
         expect(!!reg.url(`bg.stage3.${area}.${layer}`), `${area}.${layer}`).toBe(true);
     for (const id of ['gao-wen', 'tao-min', 'an-bo', 'ren-xia', 'wei-shan'])
       expect(reg.sheet(`npc.s3-${id}.sheet`), id).toBeDefined();
+  });
+});
+
+describe('M28 playtest fixes', () => {
+  test('a still picture waits for its line to be spoken to the end', () => {
+    // Nobody speaking, or no line on screen: the clock runs.
+    expect(narrationStep(16, 3000, 4450, false, 0)).toBe(16);
+    expect(narrationStep(16, 3000, null, true, 0)).toBe(16);
+    // Before the cue ends the clock runs; at its end it holds while the voice speaks.
+    expect(narrationStep(16, 3000, 4450, true, 0)).toBe(16);
+    expect(narrationStep(16, 4440, 4450, true, 0)).toBe(9);
+    expect(narrationStep(16, 4449, 4450, true, 500)).toBe(0);
+    // A stuck system voice never holds the picture for good.
+    expect(narrationStep(16, 4449, 4450, true, NARRATION_WAIT_MS)).toBe(16);
+  });
+
+  test('carried Stage 3 food keeps the plain pose and is drawn in hand, not as the wheel', () => {
+    const pick = new SpritePicker(reg);
+    for (const food of ['trail-rice', 'vegetable-broth', 'seed-cake', 'camp-meal']) {
+      const w = createWorld(1, { heroes: ['fire', 'river'] });
+      const f = heroOf(w, 0)!;
+      const plain = (state: number, frame: number) => {
+        f.state = state;
+        return pick.fighter(f, frame)!.sheet;
+      };
+      const idle = plain(MoveState.Idle, 0);
+      const walk = plain(MoveState.Walk, 10);
+      claim(w, f, spawnItem(w, weaponIndex(food), f.x, f.z));
+      expect(plain(MoveState.Idle, 0), food).toBe(idle);
+      expect(plain(MoveState.Walk, 10), food).toBe(walk);
+      expect(pick.fighter(f, 10)!.sheet, food).not.toMatch(/wheel/);
+      expect(pick.heldProp(f), food).toMatchObject({ sheet: 'prop.s3-food' });
+    }
   });
 });

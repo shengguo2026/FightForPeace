@@ -80,6 +80,10 @@ export const M28_EN = {
 
   // In play and results.
   'm28.rescued': 'Rescued: on the way to shelter',
+  'm28.hold.1': 'Hold {action:Interact} to free them',
+  'm28.hold.2': 'Hold {action:Interact} to collect the record',
+  'm28.hold.3': 'Hold {action:Interact} to seal the record',
+  'm28.hold.4': 'Hold {action:Interact} to recover the record',
   'm28.recordLine': 'Research record: {state}',
   'm28.horsesLine': 'Horse Stability breaks: {n}',
   'm28.capture.1': 'Garran Voss: Resolve surrender',
@@ -280,6 +284,10 @@ export const M28_ZH: Catalog = {
   'm28.brief.objective': '救出四名人质，保护研究记录，活捉加兰·沃斯。',
 
   'm28.rescued': '已救出：正前往避难处',
+  'm28.hold.1': '长按 {action:Interact} 解救',
+  'm28.hold.2': '长按 {action:Interact} 收集记录',
+  'm28.hold.3': '长按 {action:Interact} 封存记录',
+  'm28.hold.4': '长按 {action:Interact} 寻回记录',
   'm28.recordLine': '研究记录：{state}',
   'm28.horsesLine': '马匹稳定度崩溃：{n}',
   'm28.capture.1': '加兰·沃斯：意志崩溃投降',
@@ -565,6 +573,10 @@ export const M28_DE: Catalog = {
     'Befreit die vier Gefangenen, schützt die Forschungsaufzeichnung und fangt Garran Voss lebend.',
 
   'm28.rescued': 'Befreit: auf dem Weg in Sicherheit',
+  'm28.hold.1': '{action:Interact} halten, um sie zu befreien',
+  'm28.hold.2': '{action:Interact} halten, um die Aufzeichnung zu sichern',
+  'm28.hold.3': '{action:Interact} halten, um die Aufzeichnung zu versiegeln',
+  'm28.hold.4': '{action:Interact} halten, um die Aufzeichnung zu bergen',
   'm28.recordLine': 'Forschungsaufzeichnung: {state}',
   'm28.horsesLine': 'Stabilitätsbrüche der Pferde: {n}',
   'm28.capture.1': 'Garran Voss: ergibt sich mit gebrochener Entschlossenheit',

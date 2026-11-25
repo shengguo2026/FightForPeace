@@ -138,6 +138,25 @@ export interface ShownCue<L extends string = string> {
   locale: L;
 }
 
+/** The longest a still picture waits for a line to finish (a stuck system voice). */
+export const NARRATION_WAIT_MS = 12_000;
+
+/**
+ * M28: how far a still sequence's clock may move this frame. A line still being spoken
+ * holds its subtitle and picture at the end of the cue until the voice finishes (at most
+ * NARRATION_WAIT_MS), so the next line or picture never cuts it off.
+ */
+export function narrationStep(
+  dt: number,
+  time: number,
+  cueUntil: number | null,
+  talking: boolean,
+  waited: number,
+): number {
+  if (cueUntil === null || !talking || waited >= NARRATION_WAIT_MS) return dt;
+  return Math.max(0, Math.min(dt, cueUntil - 1 - time));
+}
+
 export class CinematicPlayer<L extends string = string> {
   private index = 0;
   private time = 0;

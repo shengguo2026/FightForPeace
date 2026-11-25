@@ -2024,3 +2024,42 @@ Stage 3 opens once Stage 2 is completed. If your profile has not cleared Stage 2
 19. **Stage 1 and 2 unchanged:** play the Stage 1 courtyard and the Stage 2 Loading Yard (`?stage=2&beat=2`) on Medium: nothing should feel different from 0.27.0.
 
 Write down any beat that feels too long or too hard, any villager sprite that looks too big or too small, any subtitle that does not fit its picture, and any music change that feels abrupt.
+
+## M28 playtest fixes (0.28.0)
+
+Fixes for the four findings from the first Stage 3 playtest.
+
+### Commands (Windows PowerShell)
+
+Before it is merged, from branch `claude/project-thread-vwjw61`:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout claude/project-thread-vwjw61
+git pull origin claude/project-thread-vwjw61
+pnpm install
+pnpm dev
+```
+
+After it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+Open `http://localhost:5173/` (or the port Vite prints). Stop the server with `Ctrl+C`.
+
+### Test steps
+
+1. **Narration:** in Settings, turn the system voice on. Start Stage 3 (or open *Silvermist* from the Museum's Cinema). Each picture now stays on screen, with its subtitle, until the narrator has finished the line; only then does the next line or picture come. Enter still skips ahead at once.
+2. **Carried food:** on `http://localhost:5173/?stage=3&beat=7&difficulty=easy` (Mist over the Beds), pick up the green parcel (seed cake) and the broth pot with **J**. The hero keeps the normal stance and walk with the food in hand; no handwheel. Throw it away and pick it up again: same. Try the trail rice and the camp meal in later beats too.
+3. **HUD:** the dark strip that stuck out to the right of the Attack bar is gone. Objective messages such as *Evidence collected* now show below the player HUD.
+4. **Research record:** in Mist over the Beds, defeat or make the bandits surrender, walk to the **research record case** and stand still beside it. A prompt at the bottom says **Hold J to collect the record**. Keep **J** pressed (about one second, a progress bar fills): the label above the case changes to *Collected*. Walk right through the exit: the next beat (*Two Voices in the Mist*) starts. A short tap of J does nothing; it has to be held.
+5. **Captives:** in *Two Voices in the Mist* (`?stage=3&beat=8`), the prompt beside Gao Wen and Tao Min says **Hold J to free them**, with a progress bar.
+6. **Languages:** in 简体中文 the prompt reads 长按 J 收集记录, in Deutsch *J halten, um die Aufzeichnung zu sichern*.

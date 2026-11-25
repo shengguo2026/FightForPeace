@@ -300,11 +300,15 @@ export class ObjectivesView {
     const ev = o.state.log;
     if (EVENT_TEXT.includes(ev.kind) && frame - ev.frame < 180)
       lines.push([say(`m25.event.${ev.kind}`), '#9be8b0']);
-    const x = 24;
-    const y = 120;
-    p.fillStyle(0x000000, 0.6);
-    p.fillRect(x - 10, y - 18, 470, lines.length * 28 + 16);
-    lines.forEach(([text, color], i) => hud.put(x, y + i * 28, text, 20, color, 0));
+    // M28: nothing to say draws no panel (an empty one showed as a dark strip beside the
+    // player HUD), and in a stage run the panel sits below the HUD and its notices.
+    if (lines.length > 0) {
+      const x = 24;
+      const y = o.inRun ? 330 : 120;
+      p.fillStyle(0x000000, 0.6);
+      p.fillRect(x - 10, y - 18, 470, lines.length * 28 + 16);
+      lines.forEach(([text, color], i) => hud.put(x, y + i * 28, text, 20, color, 0));
+    }
     hud.end();
   }
 }

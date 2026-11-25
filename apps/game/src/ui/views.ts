@@ -49,6 +49,7 @@ import {
   beatOf,
   clock,
   interactionFor,
+  objectiveHint,
   isDowned,
   stageResults,
   CORRIDORS,
@@ -784,6 +785,21 @@ export function refreshStage(session: GameSession, lab: LabState): void {
         text: holdText(c.kind),
         progress: c.progress / Math.max(1, c.need),
       });
+      continue;
+    }
+    // M28: a captive or the research record, named with the player's own Interact key.
+    const hold = world.objectives?.hold[slot];
+    if (h.state === MoveState.Channel && hold && hold.kind !== 0) {
+      prompts.push({
+        slot,
+        text: t(`m28.hold.${hold.kind}` as TextId),
+        progress: hold.progress / Math.max(1, hold.need),
+      });
+      continue;
+    }
+    const goal = objectiveHint(world, h);
+    if (goal !== 0) {
+      prompts.push({ slot, text: t(`m28.hold.${goal}` as TextId), progress: -1 });
       continue;
     }
     const kind = interactionFor(world, h);

@@ -160,6 +160,17 @@ const WEAPON_STANCE: Record<string, { sheet: string; cell: number; walk: string 
 };
 
 /** M22: how a Stage 2 weapon is carried when no pose art shows it (see heldProp). */
+/** M28: Stage 3 food carried in hand (prop.s3-food cells), drawn over the plain poses. */
+const S3_FOOD_HELD: Record<
+  string,
+  SpriteFrame & { scale: number; angle: number; dx: number; dy: number }
+> = {
+  'trail-rice': { sheet: 'prop.s3-food', cell: 0, scale: 0.32, angle: 0, dx: 48, dy: 165 },
+  'vegetable-broth': { sheet: 'prop.s3-food', cell: 1, scale: 0.32, angle: 0, dx: 48, dy: 165 },
+  'seed-cake': { sheet: 'prop.s3-food', cell: 2, scale: 0.32, angle: 0, dx: 48, dy: 165 },
+  'camp-meal': { sheet: 'prop.s3-food', cell: 3, scale: 0.32, angle: 0, dx: 48, dy: 165 },
+};
+
 const S2_HELD: Record<
   string,
   SpriteFrame & { scale: number; angle: number; dx: number; dy: number; mirror?: boolean }
@@ -620,7 +631,9 @@ export class SpritePicker {
     const weapon = f.wkit >= 0 ? WEAPONS[f.wkit] : undefined;
     const stance = weapon ? WEAPON_STANCE[weapon.id] : undefined;
     const staff = weapon?.melee === true && weapon.id !== 'service-lance';
-    const wheel = weapon !== undefined && !staff && !stance;
+    // M28: carried food keeps the plain stance and walk (the parcel is drawn in hand by
+    // heldProp); only the Stage 1 handwheel and other two-handed loads use the wheel carry.
+    const wheel = weapon !== undefined && !staff && !stance && weapon.class !== 'provision';
     switch (f.state) {
       case MoveState.Attack: {
         const a = f.action >= 0 ? kitOf(f)?.actions[f.action] : undefined;
@@ -968,6 +981,9 @@ export class SpritePicker {
       return { sheet: 'prop.workstaff', cell: 1, scale: 0.9, angle: 0.5, dx: 30, dy: 170 };
     if (weapon.id === 'handwheel' && !this.has(`${base}.handwheel`) && this.has('prop.handwheel'))
       return { sheet: 'prop.handwheel', cell: 1, scale: 0.3, angle: 0, dx: 55, dy: 185 };
+    // M28: Stage 3 food is held in front of the chest on the plain poses.
+    const food = S3_FOOD_HELD[weapon.id];
+    if (food && this.has(food.sheet)) return food;
     // M22: a Stage 2 weapon while walking (no armed walk sheets yet), or always for a hero
     // without that weapon's stance sheet. The firearm pictures point left (mirror).
     const stance = WEAPON_STANCE[weapon.id];
