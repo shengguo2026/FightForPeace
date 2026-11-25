@@ -12370,7 +12370,7 @@
             "foot": 363
           }
         ],
-        "scale": 0.88
+        "scale": 0.895
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-S3-REVOLVER-WALK.png",
@@ -12578,7 +12578,7 @@
             "foot": 369
           }
         ],
-        "scale": 0.872
+        "scale": 0.975
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-S3-STAFF-WALK.png",
@@ -12677,7 +12677,7 @@
             "foot": 361
           }
         ],
-        "scale": 0.9
+        "scale": 0.959
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-S3-WALK.png",
@@ -12780,7 +12780,7 @@
             "foot": 372
           }
         ],
-        "scale": 0.84
+        "scale": 0.92
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-AXE-WALK.png",
@@ -13065,7 +13065,7 @@
             "foot": 348
           }
         ],
-        "scale": 1.105
+        "scale": 1.01
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-HAMMER.png",
@@ -13117,7 +13117,7 @@
             "foot": 366
           }
         ],
-        "scale": 0.86
+        "scale": 0.95
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-HAMMER-WALK.png",
@@ -13417,7 +13417,7 @@
             "foot": 368
           }
         ],
-        "scale": 0.85
+        "scale": 0.9
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-STAFF-WALK-v2.png",
@@ -13521,7 +13521,7 @@
             "foot": 362
           }
         ],
-        "scale": 0.912
+        "scale": 0.93
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-HOOKSTAFF-WALK.png",
@@ -14497,7 +14497,7 @@
             "foot": 359
           }
         ],
-        "scale": 0.88
+        "scale": 0.895
       },
       "provenance": {
         "source": "heroes/fire/HERO-FIR-REVOLVER-WALK.png",
@@ -14698,7 +14698,7 @@
             "foot": 369
           }
         ],
-        "scale": 0.88
+        "scale": 0.96
       }
     },
     "hero.fire.sheet.team-attack": {
@@ -14788,7 +14788,7 @@
             "foot": 361
           }
         ],
-        "scale": 0.9
+        "scale": 0.915
       }
     },
     "hero.mountain.pose.aerial.cornerstone-sweep": {

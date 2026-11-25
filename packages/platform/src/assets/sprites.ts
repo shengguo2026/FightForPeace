@@ -850,6 +850,8 @@ export class SpritePicker {
     if (isBoss && boss.shift > 0 && art === 'garran') {
       // M27: Garran casts the Hookstaff aside, then points up to the winch and braces.
       const half = boss.shift > boss.shiftFrames / 2;
+      // Guo 2026-11-25: when a hero took the Hookstaff, he must not cast aside a second one.
+      if (boss.phase === 0 && f.item === 0) return s('defense', half ? 5 : 4);
       return boss.phase === 0
         ? s('hook-b', half ? 4 : 5)
         : (s('winch', half ? 3 : 4) ?? s(idle.sheet, 0));
@@ -932,6 +934,10 @@ export class SpritePicker {
         const a = f.action >= 0 ? kitOf(f)?.actions[f.action] : undefined;
         const p = a ? phase(f, a) : 1;
         const own = a ? ENEMY_POSES[art]?.[a.id] : undefined;
+        // Guo 2026-11-25: Garran without the Hookstaff parries with his forearms (the
+        // DEFENSE cells 0 to 3 show him holding it); a hero may be holding the only one.
+        if (own && art === 'garran' && f.item === 0 && a?.id === 'ridge-parry')
+          return s('defense', [4, 5, 5][p]!);
         if (own) {
           // The lookout loads the sling before it aims (the warning pose).
           if (a?.id === 'sling-shot' && p === 0 && f.stateFrame < 12) return s('attack', 0);
