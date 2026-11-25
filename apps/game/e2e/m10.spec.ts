@@ -123,6 +123,23 @@ test('the play flow runs mode, lobby, stage, heroes, intro, briefing and readine
           active:
             (document.activeElement as HTMLElement | null)?.dataset?.testid ??
             document.activeElement?.tagName,
+          box: (() => {
+            const el = document.querySelector('[data-testid="pause-village"]')!;
+            const b = el.getBoundingClientRect();
+            const hit = document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2);
+            const chain: string[] = [];
+            for (let e = hit as HTMLElement | null; e && chain.length < 6; e = e.parentElement)
+              chain.push(`${e.tagName}.${e.className}#${e.dataset?.testid ?? ''}`);
+            return {
+              x: b.x,
+              y: b.y,
+              w: b.width,
+              h: b.height,
+              vw: innerWidth,
+              vh: innerHeight,
+              chain,
+            };
+          })(),
         })),
       ),
     );
