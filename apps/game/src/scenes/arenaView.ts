@@ -569,10 +569,13 @@ ${run.continues > 0 ? S('continueLeft').replace('{n}', String(run.continues)) : 
     g.fillRect(x - 4, y - 4, width + 8, 46);
     g.fillStyle(0x3a1d1d, 1);
     g.fillRect(x, y, width, 22);
+    // M28: a boss who surrendered (Resolve broken at the surrender line) is beaten: his
+    // Health bar empties instead of keeping the Health he had left (Guo 2026-11-25).
+    const health = b.capture > 0 ? 0 : f.health;
     g.fillStyle(0xd94b4b, 1);
-    g.fillRect(x, y, (width * f.health) / f.maxHealth, 22);
+    g.fillRect(x, y, (width * health) / f.maxHealth, 22);
     // Stored carryover (damage past the phase floor, applied when the next phase starts).
-    if (b.carry > 0) {
+    if (b.carry > 0 && b.capture === 0) {
       g.fillStyle(0xffb3b3, 0.8);
       const at = (width * f.health) / f.maxHealth;
       g.fillRect(x + at - (width * b.carry) / f.maxHealth, y, (width * b.carry) / f.maxHealth, 22);

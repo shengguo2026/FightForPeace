@@ -80,7 +80,6 @@ export const M28_EN = {
 
   // In play and results.
   'm28.rescued': 'Rescued: on the way to shelter',
-  'm28.eat': '{dir:Up}+{action:Interact} eat (heals) · {dir:Down}+{action:Interact} put down',
   'm28.resultsTitle': 'Stage 3 complete · Shadows over the Herb Mountain',
   'm28.sponsorHook':
     'The damaged invoice names a paid route over the mountain: whoever paid for it is still out of sight.',
@@ -293,7 +292,6 @@ export const M28_ZH: Catalog = {
   'm28.brief.objective': '救出四名人质，保护研究记录，活捉加兰·沃斯。',
 
   'm28.rescued': '已救出：正前往避难处',
-  'm28.eat': '{dir:Up}+{action:Interact} 吃掉（恢复生命）·{dir:Down}+{action:Interact} 放下',
   'm28.resultsTitle': '第三章完成 · 药山阴影',
   'm28.sponsorHook': '残损的发票指向一条付钱买下的山路：出钱的人仍在暗处。',
   'm28.grade.rescue': '救援（解救的被困者）',
@@ -590,7 +588,6 @@ export const M28_DE: Catalog = {
     'Befreit die vier Gefangenen, schützt die Forschungsaufzeichnung und fangt Garran Voss lebend.',
 
   'm28.rescued': 'Befreit: auf dem Weg in Sicherheit',
-  'm28.eat': '{dir:Up}+{action:Interact} essen (heilt) · {dir:Down}+{action:Interact} ablegen',
   'm28.resultsTitle': 'Kapitel 3 geschafft · Schatten über dem Kräuterberg',
   'm28.sponsorHook':
     'Die beschädigte Rechnung nennt eine bezahlte Route über den Berg: Wer sie bezahlt hat, bleibt im Verborgenen.',

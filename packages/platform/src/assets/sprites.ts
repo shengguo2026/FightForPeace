@@ -216,13 +216,15 @@ const S2_HELD: Record<string, HeldProp> = {
   // M27: the Stage 3 weapon pictures (prop.s3-weapons: 0 staff, 1 axe, 2 hammer, 3 revolver,
   // 4 hookstaff), for a hero without the weapon's sheet.
   'hiking-staff': { sheet: 'prop.s3-weapons', cell: 0, scale: 0.8, angle: 0.4, dx: 30, dy: 180 },
+  // M28: gripped at the fists of the guard pose (hook forward and up), lower in the walk.
   'quarry-hookstaff': {
     sheet: 'prop.s3-weapons',
     cell: 4,
-    scale: 0.8,
-    angle: 0.4,
-    dx: 30,
-    dy: 180,
+    scale: 0.75,
+    angle: -0.35,
+    dx: 40,
+    dy: 215,
+    walk: { dx: 30, dy: 160, angle: -0.2 },
   },
   'wood-axe': { sheet: 'prop.s3-weapons', cell: 1, scale: 0.6, angle: 0.3, dx: 40, dy: 180 },
   'quarry-hammer': { sheet: 'prop.s3-weapons', cell: 2, scale: 0.7, angle: 0.3, dx: 40, dy: 175 },
@@ -1045,9 +1047,11 @@ export class SpritePicker {
     };
     const s2 = S2_ITEM[def.id];
     if (s2 && this.has(s2.sheet)) return s2;
-    // M27 Stage 3 weapons (the broken staff and cracked axe share cell 5) and recovery food.
+    // M27 Stage 3 weapons and recovery food. Cell 5 pictures a broken staff together with a
+    // cracked axe, so a worn hiking staff on the ground looked like two weapons (Guo
+    // 2026-11-25): the staff keeps its own picture in every condition.
     const S3_ITEM: Partial<Record<string, SpriteFrame>> = {
-      'hiking-staff': { sheet: 'prop.s3-weapons', cell: cond === 2 && !flying ? 5 : 0 },
+      'hiking-staff': { sheet: 'prop.s3-weapons', cell: 0 },
       'wood-axe': { sheet: 'prop.s3-weapons', cell: 1 },
       'quarry-hammer': { sheet: 'prop.s3-weapons', cell: 2 },
       'bandit-revolver': { sheet: 'prop.s3-weapons', cell: 3 },

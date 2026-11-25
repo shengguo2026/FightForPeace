@@ -135,6 +135,10 @@ export function resolvePickups(world: World): void {
     const reclaim = item.reserveFor === win!.fighter.id && world.frame < item.reserveUntil;
     claim(world, win!.fighter, item);
     logWeapon(world, win!.fighter, reclaim ? WeaponEvent.Reclaim : WeaponEvent.Pickup, item.id);
+    // M28: in a stage run, food is eaten the moment it is picked up, as the Stage 1 and 2
+    // recovery food is (carrying a meal into a fight read as odd, Guo 2026-11-25).
+    if (world.run && WEAPONS[item.def]!.provision && eatProvision(world, win!.fighter))
+      world.run.stats.food += 1;
     for (const r of lose) {
       enter(r.fighter, MoveState.Idle, 0);
       logWeapon(world, r.fighter, WeaponEvent.Contested, item.id);

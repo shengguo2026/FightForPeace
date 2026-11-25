@@ -57,6 +57,12 @@ export function narrate(textId: string, textLocale: Locale, s: VoiceSettings): v
       if (voice) u.voice = voice;
       u.volume = Math.max(0, Math.min(1, (s.volumeMaster / 100) * (s.volumeVoice / 100)));
       u.rate = 0.95;
+      // Speaking counts only once the voice really started: a system without a voice
+      // engine queues the line forever and must never hold a picture (seen in Firefox).
+      u.onstart = () => (spoken = u);
+      u.onend = u.onerror = () => {
+        if (spoken === u) spoken = null;
+      };
       tts.speak(u);
       audio.duck(0.6, 2500);
     } catch {
@@ -67,19 +73,17 @@ export function narrate(textId: string, textLocale: Locale, s: VoiceSettings): v
   narrationLog.push(`none:${textId}`);
 }
 
+/** M28: the system-voice line being spoken now (set when it starts, cleared at its end). */
+let spoken: SpeechSynthesisUtterance | null = null;
+
 /** M28: a line is still being spoken (a voice file or the system voice). */
 export function speaking(): boolean {
-  if (audio.voicePlaying()) return true;
-  try {
-    const tts = synth();
-    return !!tts && (tts.speaking || tts.pending);
-  } catch {
-    return false;
-  }
+  return audio.voicePlaying() || spoken !== null;
 }
 
 /** Stops any line being spoken (a skipped shot or a closed cinematic). */
 export function hush(): void {
+  spoken = null;
   audio.stopVoice();
   try {
     synth()?.cancel();

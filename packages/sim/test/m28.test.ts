@@ -5,6 +5,9 @@ import { RunPhase, type World } from '../src/world/types';
 import { createWorld, hashWorld, step } from '../src/world/world';
 import { snapshotWorld, restoreWorld } from '../src/net/snapshot';
 import { stage3BotInput } from './stage3Bot';
+import { ActionBit } from '../src/input/bits';
+import { heroOf } from '../src/world/world';
+import { WEAPONS } from '../src/combat/armory';
 
 /**
  * M28 Stage 3 · Shadows over the Herb Mountain: the route as data (spec §5, §22.4), the
@@ -191,5 +194,30 @@ describe('M28 Stage 3 journey', () => {
       step(c, [stage3BotInput(c, 0, { branches: true })]);
     }
     expect(hashWorld(c)).toBe(hashWorld(a));
+  });
+});
+
+describe('M28 food', () => {
+  test('in a stage run, food is eaten the moment it is picked up', () => {
+    const w = createWorld(3, {
+      stage: 'stage3',
+      difficulty: 'easy',
+      heroes: ['wind'],
+      beat: 6,
+    } as never);
+    expect(w.run!.beat).toBe(6);
+    const h = heroOf(w, 0)!;
+    const broth = w.items.find((i) => WEAPONS[i.def]!.id === 'vegetable-broth')!;
+    h.x = broth.x;
+    h.z = broth.z;
+    h.defense = 20;
+    const idle = { moveX: 0, moveZ: 0, pressed: 0, held: 0, dirPressed: 0 } as const;
+    step(w, [{ ...idle, pressed: ActionBit.Interact, held: ActionBit.Interact }]);
+    for (let i = 0; i < 5; i += 1) step(w, [idle]);
+    // The broth restores Defense (trail rice Health, seed cake the Attack meter).
+    expect(h.defense).toBe(70);
+    expect(h.item).toBe(0);
+    expect(broth.state).toBe(4);
+    expect(w.run!.stats.food).toBe(1);
   });
 });

@@ -2068,7 +2068,14 @@ Open `http://localhost:5173/` (or the port Vite prints). Stop the server with `C
 
 7. **Horse ride:** on the switchback ride (`?stage=3&beat=1`), steer up and down while riding. The horse keeps galloping while it changes lanes; it no longer stands still in the turn picture.
 8. **Narration pictures:** with the system voice on, each scene shows only its start picture while the first line is spoken; the end picture fades in quickly when the second line starts. Two pictures should never stay blended on screen, also in *Paths through the Mist*.
-9. **Food:** carrying a food parcel shows a prompt at the bottom: **W + J** eats it (restores Health), **S + J** puts it down, **J** alone throws it. The parcel sits in the hero's hands, lower while walking. The revolver also stays in the hand while walking.
+9. **Food:** see step 13 (food is now eaten on pickup).
 10. **Story pictures during the fight:** the small picture at the top right (Tomas on the radio, Tomas in the cabin, Tomas leaving) is intended: it plays over the fight without stopping it.
 11. **Results:** after Garran, the results title reads *Stage 3 complete · Shadows over the Herb Mountain* (第三章完成 · 药山阴影), with the grade names *Rescue (captives freed)*, *Research record*, *Capture (Garran Voss)*, *Combat*, *Side paths*, and the record value translated.
 12. **Garran's hookstaff:** when Garran drops the Quarry Hookstaff and you pick it up, the hero holds the hookstaff (with its hook), not a plain hiking staff, while standing, walking and attacking.
+
+### Round 3 (third playtest)
+
+13. **Food:** in Stage 3, walk to a food item and press **J**: it is eaten at once, like the Stage 1 and 2 food. Trail rice and the camp meal restore Health, the vegetable broth restores Defense, the seed cake fills the Attack bar.
+14. **Garran:** when Garran surrenders (his Resolve breaks), his Health bar empties.
+15. **Hiking staff:** a hiking staff thrown at a bandit lies on the ground as a staff only (no axe beside it).
+16. **Hookstaff:** Garran's hookstaff is now held upright at the hero's side. It still has no fighting poses of its own (see the reply in the thread about new art).

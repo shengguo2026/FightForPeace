@@ -803,13 +803,7 @@ export function refreshStage(session: GameSession, lab: LabState): void {
       continue;
     }
     const kind = interactionFor(world, h);
-    if (kind !== ChannelKind.None) {
-      prompts.push({ slot, text: holdText(kind), progress: -1 });
-      continue;
-    }
-    // M28: carried food heals only when eaten; say how (Guo 2026-11-25).
-    if (h.item !== 0 && WEAPONS[h.wkit]?.provision && h.state !== MoveState.Attack)
-      prompts.push({ slot, text: t('m28.eat'), progress: -1 });
+    if (kind !== ChannelKind.None) prompts.push({ slot, text: holdText(kind), progress: -1 });
   }
   const e = run.event;
   const age = world.frame - e.frame;

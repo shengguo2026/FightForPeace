@@ -143,10 +143,13 @@ test('Mist over the Beds: the hold prompt names the key, holding it collects the
   );
   await page.keyboard.up('KeyJ');
   await page.screenshot({ path: 'test-results/m28-mist-collected.png' });
-  // Carried food says how to eat it.
-  await page.evaluate(() => window.__ffp!.placeAt(0, 1600, 820));
-  await page.evaluate(() => window.__ffp!.giveItem(0, 'trail-rice'));
-  await expect(prompt).toContainText('eat (heals)');
+  // Food is eaten the moment it is picked up (the broth lies at 1000, 920).
+  await page.evaluate(() => window.__ffp!.placeAt(0, 1000, 920));
+  await page.keyboard.press('KeyJ');
+  await page.waitForFunction(
+    () => (window.__ffp!.items().find((i) => i.weapon === 'vegetable-broth')?.state ?? 4) === 4,
+  );
+  expect(await page.evaluate(() => window.__ffp!.hero(0)!.weapon)).toBeNull();
   // Walking on through the open exit leaves for the next beat.
   await page.keyboard.down('KeyD');
   await page.waitForFunction(() => window.__ffp!.run()?.beat === 7, null, {
