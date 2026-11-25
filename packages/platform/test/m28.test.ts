@@ -1,9 +1,14 @@
 import {
+  HEROES,
   MoveState,
   claim,
   createWorld,
   heroOf,
+  kitOf,
+  ENEMIES,
+  spawnEnemy,
   spawnItem,
+  startAction,
   weaponIndex,
   type StageResults,
 } from '@ffp/sim';
@@ -308,19 +313,65 @@ describe('M28 playtest fixes', () => {
     }
   });
 
-  test("Garran's hookstaff in a hero's hands is the hookstaff, not the hiking staff", () => {
+  test('Garran without the Hookstaff never shows one (Guo 2026-11-25)', () => {
     const pick = new SpritePicker(reg);
-    const w = createWorld(1, { heroes: ['wind', 'river'] });
-    const f = heroOf(w, 0)!;
-    f.state = MoveState.Idle;
-    const idle = pick.fighter(f, 0)!.sheet;
-    f.state = MoveState.Walk;
-    const walk = pick.fighter(f, 10)!.sheet;
-    claim(w, f, spawnItem(w, weaponIndex('quarry-hookstaff'), f.x, f.z));
-    f.state = MoveState.Idle;
-    expect(pick.fighter(f, 0)!.sheet).toBe(idle);
-    f.state = MoveState.Walk;
-    expect(pick.fighter(f, 10)!.sheet).toBe(walk);
-    expect(pick.heldProp(f)).toMatchObject({ sheet: 'prop.s3-weapons', cell: 4 });
+    // Garran after a hero took the only Hookstaff from him: his hands are empty.
+    const w = createWorld(1, { arena: 'lab-m27-ambusher' });
+    const kit = ENEMIES.findIndex((k) => k.id === 'garran');
+    const g = spawnEnemy(w, kit, heroOf(w, 0)!.x + 400, heroOf(w, 0)!.z);
+    expect(g.item).toBe(0);
+    const view = { id: g.id, phase: 0, stagger: 0, shift: 0, shiftFrames: 60 };
+    // DEFENSE cells 0 to 3 and every HOOK-A and HOOK-B cell show the Hookstaff.
+    const withStaff = (sheet: string, cell: number) =>
+      /\.hook-[ab]$/.test(sheet) ||
+      /\.(idle-walk|walk)$/.test(sheet) ||
+      (sheet.endsWith('.defense') && cell <= 3);
+    const seen = (v: typeof view) => {
+      const sp = pick.fighter(g, 7, v)!;
+      expect(withStaff(sp.sheet, sp.cell), `${sp.sheet} ${sp.cell}`).toBe(false);
+    };
+    for (const state of [MoveState.Idle, MoveState.Walk, MoveState.Guard, MoveState.Blockstun]) {
+      g.state = state;
+      seen(view);
+    }
+    // The phase change after losing it: no second Hookstaff is cast aside.
+    for (const shift of [50, 10]) seen({ ...view, shift });
+    // The parry (every phase): forearms, not the Hookstaff.
+    const parry = kitOf(g)!.actions.findIndex((a) => a.id === 'ridge-parry');
+    expect(parry).toBeGreaterThanOrEqual(0);
+    for (const phase of [0, 1, 2]) {
+      startAction(g, parry);
+      for (const frame of [1, 12, 30]) {
+        g.stateFrame = frame;
+        seen({ ...view, phase });
+      }
+    }
+  });
+
+  test("Garran's hookstaff in a hero's hands is drawn by the hero's hookstaff sheets", () => {
+    for (const outfit of ['base', 's3'] as const) {
+      const pick = new SpritePicker(reg);
+      pick.setOutfit(outfit);
+      for (const h of HEROES) {
+        const w = createWorld(1, { heroes: [h.id, 'river'] });
+        const f = heroOf(w, 0)!;
+        claim(w, f, spawnItem(w, weaponIndex('quarry-hookstaff'), f.x, f.z));
+        f.state = MoveState.Idle;
+        expect(pick.fighter(f, 0)).toEqual({ sheet: `hero.${h.id}.sheet.hookstaff`, cell: 0 });
+        f.state = MoveState.Walk;
+        expect(pick.fighter(f, 10)!.sheet).toBe(`hero.${h.id}.sheet.hookstaff-walk`);
+        expect(pick.heldProp(f)).toBeNull();
+        // Every hookstaff attack uses the hookstaff sheet, never the hiking staff's.
+        let attacks = 0;
+        kitOf(f)!.actions.forEach((a, i) => {
+          if (!a.id.startsWith('hookstaff-') || a.id === 'hookstaff-throw') return;
+          attacks += 1;
+          startAction(f, i);
+          f.stateFrame = 1;
+          expect(pick.fighter(f, 0)!.sheet, a.id).toBe(`hero.${h.id}.sheet.hookstaff`);
+        });
+        expect(attacks).toBeGreaterThan(0);
+      }
+    }
   });
 });

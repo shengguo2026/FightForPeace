@@ -134,8 +134,8 @@ describe('M27 art', () => {
       claim(w, f, spawnItem(w, weaponIndex('wood-axe'), f.x, f.z));
       f.state = MoveState.Walk;
       expect(dressed(f, 10)).toBe(`hero.${h.id}.sheet.axe-walk`);
-      // The revolver: the S3 revolver poses; its Stage 2 walk is not redrawn, so the S3
-      // walk with the revolver drawn in hand.
+      // The revolver: the S3 revolver poses and, since 2026-11-25, the S3 revolver walk
+      // (the gun in the hero's hands, no prop drawn beside the body).
       const g = createWorld(1, { heroes: [h.id, 'river'] });
       const r = heroOf(g, 0)!;
       claim(g, r, spawnItem(g, weaponIndex('bandit-revolver'), r.x, r.z));
@@ -143,8 +143,8 @@ describe('M27 art', () => {
       if (reg.sheet(`hero.${h.id}.s3.sheet.revolver`))
         expect(dressed(r)).toBe(`hero.${h.id}.s3.sheet.revolver`);
       r.state = MoveState.Walk;
-      expect(dressed(r, 10)).toBe(`hero.${h.id}.s3.sheet.walk`);
-      expect(s3.heldProp(r)).not.toBeNull();
+      expect(dressed(r, 10)).toBe(`hero.${h.id}.s3.sheet.revolver-walk`);
+      expect(s3.heldProp(r)).toBeNull();
     }
   });
 

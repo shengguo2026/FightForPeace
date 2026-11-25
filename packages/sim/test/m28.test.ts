@@ -5,7 +5,6 @@ import { RunPhase, type World } from '../src/world/types';
 import { createWorld, hashWorld, step } from '../src/world/world';
 import { snapshotWorld, restoreWorld } from '../src/net/snapshot';
 import { stage3BotInput } from './stage3Bot';
-import { ActionBit } from '../src/input/bits';
 import { heroOf } from '../src/world/world';
 import { WEAPONS } from '../src/combat/armory';
 
@@ -198,7 +197,8 @@ describe('M28 Stage 3 journey', () => {
 });
 
 describe('M28 food', () => {
-  test('in a stage run, food is eaten the moment it is picked up', () => {
+  const idle = { moveX: 0, moveZ: 0, pressed: 0, held: 0, dirPressed: 0 } as const;
+  const atBroth = () => {
     const w = createWorld(3, {
       stage: 'stage3',
       difficulty: 'easy',
@@ -210,14 +210,31 @@ describe('M28 food', () => {
     const broth = w.items.find((i) => WEAPONS[i.def]!.id === 'vegetable-broth')!;
     h.x = broth.x;
     h.z = broth.z;
+    return { w, h, broth };
+  };
+
+  test('in a stage run, walking over food eats it, without Interact (Guo 2026-11-25)', () => {
+    const { w, h, broth } = atBroth();
     h.defense = 20;
-    const idle = { moveX: 0, moveZ: 0, pressed: 0, held: 0, dirPressed: 0 } as const;
-    step(w, [{ ...idle, pressed: ActionBit.Interact, held: ActionBit.Interact }]);
-    for (let i = 0; i < 5; i += 1) step(w, [idle]);
+    step(w, [idle]);
     // The broth restores Defense (trail rice Health, seed cake the Attack meter).
     expect(h.defense).toBe(70);
     expect(h.item).toBe(0);
     expect(broth.state).toBe(4);
+    expect(w.items).not.toContain(broth);
+    expect(w.run!.stats.food).toBe(1);
+  });
+
+  test('food stays on the ground while it would restore nothing, as in Stages 1 and 2', () => {
+    const { w, h, broth } = atBroth();
+    h.defense = 100;
+    for (let i = 0; i < 5; i += 1) step(w, [idle]);
+    expect(w.items).toContain(broth);
+    expect(w.run!.stats.food).toBe(0);
+    h.defense = 60;
+    step(w, [idle]);
+    expect(h.defense).toBe(100);
+    expect(w.items).not.toContain(broth);
     expect(w.run!.stats.food).toBe(1);
   });
 });

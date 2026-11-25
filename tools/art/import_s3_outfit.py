@@ -3,7 +3,10 @@
 
 Usage (from the repository root, with the pictures repository checked out beside it):
 
-    python3 tools/art/import_s3_outfit.py ../pictures/FightForPeace
+    python3 tools/art/import_s3_outfit.py ../pictures/FightForPeace [--new]
+
+`--new` imports only twins the manifest does not have yet (2026-11-25: the Stage 3 revolver,
+lance and support gun walks), leaving the approved ones as they are.
 
 The Stage 3 weapon and horse sheets were drawn in the Stage 3 outfit, so a Stage 3 room
 dresses every hero in it (SpritePicker.setOutfit('s3')). Each S3 sheet is a pose-for-pose
@@ -63,9 +66,11 @@ def stage1_source(hero: str, prefix: str, key: str) -> str:
 
 
 def main() -> None:
-    if len(sys.argv) != 2:
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    if len(args) != 1:
         raise SystemExit(__doc__)
-    base = Path(sys.argv[1]).resolve()
+    new_only = "--new" in sys.argv[1:]
+    base = Path(args[0]).resolve()
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     assets = manifest["assets"]
     import_art.REFIT.update(REFIT)
@@ -86,6 +91,8 @@ def main() -> None:
             if not twin_src.exists():
                 continue
             rest = key[len(f"hero.{hero}.") :]
+            if new_only and f"hero.{hero}.s3.{rest}" in assets:
+                continue
             name = f"{hero}-s3-{rest.split('.')[-1]}"
             twin = import_art.convert(twin_src, name)
             twin["sheet"]["scale"] = measured_scale(sheet, twin["sheet"])

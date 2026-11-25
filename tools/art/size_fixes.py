@@ -17,6 +17,20 @@ lance-a got on 2026-11-19 and Mountain's and River's on 2026-11-22).
 from __future__ import annotations
 
 SIZE_FIX: dict[str, float] = {
+    # The Fire Warden's walks against his stances, compared head to head by eye beside idle
+    # (Guo 2026-11-25: he shrank when he started walking with the hammer). His walk sheets
+    # were drawn about 10 % smaller than his other sheets.
+    "hero.fire.sheet.walk": 0.915,  # was 0.9
+    "hero.fire.sheet.hammer-walk": 0.95,  # was 0.86
+    "hero.fire.sheet.axe-walk": 0.92,  # was 0.84
+    "hero.fire.sheet.hike-walk": 0.9,  # was 0.85
+    "hero.fire.sheet.hookstaff-walk": 0.93,  # was 0.912
+    "hero.fire.sheet.lance-walk": 0.95,  # unchanged, listed with the other walks
+    "hero.fire.sheet.revolver-walk": 0.895,  # was 0.88
+    "hero.fire.sheet.staff-walk": 0.96,  # was 0.88
+    "hero.fire.s3.sheet.walk": 0.959,  # was 0.9
+    "hero.fire.s3.sheet.revolver-walk": 0.895,  # was 0.88
+    "hero.fire.s3.sheet.staff-walk": 0.975,  # was 0.872
     # The lance-a redraw (RD02), fitted into its cells at 0.96 (repack_cells.py): was 0.92.
     "hero.fire.sheet.lance-a": 1.0,
     # The lance redraw (RD03), fitted into its cells at 0.97 (repack_cells.py): was 0.9.
@@ -33,7 +47,9 @@ SIZE_FIX: dict[str, float] = {
     "hero.fire.s3.sheet.heavy": 0.839,  # was 0.914, head 1.09 x idle
     "hero.fire.sheet.exact-counter": 0.926,  # was 1.0, head 1.08 x idle
     "hero.fire.sheet.guard": 0.926,  # was 1.0, head 1.08 x idle
-    "hero.fire.sheet.hammer": 1.105,  # was 1.0, head 0.91 x idle
+    # 1.105 (head 0.91 x idle by template) drew him larger than idle and his hammer walk
+    # (Guo 2026-11-25); 1.01 puts the head at the idle size by eye.
+    "hero.fire.sheet.hammer": 1.01,
     # Mountain shrank for the dash before a run (Guo, 2026-11-22): set to the run's head size.
     "hero.mountain.sheet.dash": 0.91,  # was 0.82, head 0.78 x idle (run 0.85)
     "hero.mountain.s3.sheet.dash": 0.94,  # was 0.792, head 0.76 x idle (run 0.92)
@@ -43,6 +59,8 @@ SIZE_FIX: dict[str, float] = {
     "hero.river.sheet.axe": 0.845,  # was 0.93, head 1.10 x idle
     "hero.river.sheet.guard": 0.87,  # was 0.94, head 1.08 x idle
     "hero.river.sheet.hike": 0.909,  # was 1.0, head 1.10 x idle
+    # The S3 staff-b twin came out drawn small (2026-11-25 import): measured 1.406 by height.
+    "hero.river.s3.sheet.staff-b": 1.255,  # head 1.12 x idle at 1.406
     "hero.wind.pose.dash.windline-entry": 1.124,  # was 1.0, head 0.89 x idle
     "hero.wind.pose.standing.windmark-jab": 0.943,  # was 1.0, head 1.06 x idle
     "hero.wind.s3.pose.standing.crossline-reverse": 0.955,  # was 0.879, head 0.92 x idle

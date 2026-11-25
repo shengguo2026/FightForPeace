@@ -2079,3 +2079,48 @@ Open `http://localhost:5173/` (or the port Vite prints). Stop the server with `C
 14. **Garran:** when Garran surrenders (his Resolve breaks), his Health bar empties.
 15. **Hiking staff:** a hiking staff thrown at a bandit lies on the ground as a staff only (no axe beside it).
 16. **Hookstaff:** Garran's hookstaff is now held upright at the hero's side. It still has no fighting poses of its own (see the reply in the thread about new art).
+
+## Hookstaff art and Stage 3 outfit walks (0.28.0)
+
+Imports the 16 Quarry Hookstaff sheets (Pictures `codex_prompts_stage3_art_fixes.md`, SF01 to SF16) and the
+Stage 3 outfit twins that were missing from the game: the revolver, lance, support gun, handwheel and workstaff
+walks and poses. The `-BASE-` Hookstaff sheets stay in Pictures: the game always dresses the heroes in the Stage 3
+outfit in Stage 3 rooms, where the Hookstaff appears.
+
+### Commands (Windows, PowerShell)
+
+Before the merge:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout claude/project-thread-vwjw61
+git pull origin claude/project-thread-vwjw61
+pnpm install
+pnpm dev
+```
+
+After it is merged:
+
+```powershell
+cd C:\AI\Claude\FightForPeace
+git fetch origin
+git checkout main
+git pull origin main
+pnpm install
+pnpm dev
+```
+
+Open `http://localhost:5173/` (or the port Vite prints). Stop the server with `Ctrl+C`.
+
+### Test steps
+
+1. **Hookstaff stance and walk:** fight Garran (`?stage=3&beat=16&difficulty=easy` or play to him), make him drop the Quarry Hookstaff and pick it up with **J**. The hero holds it diagonally in both hands (hook up and forward) while standing, and walks with it in both hands. Nothing floats beside the body.
+2. **Hookstaff attacks:** attack with **T** and the other attack inputs: the hero sweeps low, thrusts with the iron end, pulls with the hook and raises it overhead. The hiking staff is never shown.
+3. **Hookstaff throw:** throw it (hold the throw input): the hero raises it overhead, then it flies as its own item.
+4. **All four heroes:** repeat steps 1 and 2 with Wind Sentinel, Fire Warden, Mountain Guardian and River Scout. Each is the same size with the Hookstaff as without it.
+5. **Revolver walk in Stage 3:** pick up a bandit revolver in a Stage 3 encounter (for example `?stage=3&beat=7&difficulty=easy` after a bandit drops one) and walk: the hero walks with the gun in the hands, in the Stage 3 outfit. The revolver no longer floats beside the body.
+6. **Other Stage 3 outfit walks:** in a Stage 3 room, a lance or support gun walk also shows the Stage 3 outfit with the weapon in hand (when one is available there).
+7. **Fire Warden's size:** with the Fire Warden, pick up the quarry hammer (or the axe, the hiking staff, the Hookstaff), stand still, then walk: he keeps the same size; he no longer grows while standing with the hammer and shrinks when he walks. His plain walk matches his idle size too.
+8. **Garran's Hookstaff:** in the Garran fight, take his Hookstaff from him in the first phase (Hookstaff Control). Through the phase change and the rest of the fight he never shows a second Hookstaff: he changes phase with empty hands, and his parry uses his forearms. There is only one Hookstaff in the fight, and he never picks it up again.
+9. **Stage 3 food by walking over it:** in Stage 3, take some damage (or spend Defense or the Attack meter), then walk over a bowl of broth, trail rice or seed cake without pressing J: the hero eats it on the spot, keeps walking, and the eat sound plays. At full Health, Defense and meter the food stays on the ground for later, exactly like the Stage 1 and 2 food.

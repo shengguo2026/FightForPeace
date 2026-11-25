@@ -3,7 +3,7 @@
 
 Usage (from the repository root, with the pictures repository checked out beside it):
 
-    python3 tools/art/import_stage3.py ../pictures/FightForPeace [--only enemies,heroes,props]
+    python3 tools/art/import_stage3.py ../pictures/FightForPeace [--only=enemies,heroes,hookstaff,props]
 
 What it does (APPROVED_VARIANTS.md "Use" files only, scales as recorded at approval):
   * enemies: Garran Voss (idle, hookstaff A and B, clinch, ground, winch, defense, hit,
@@ -90,9 +90,17 @@ HEROES = {
 # Weapon sheet key -> (sheet suffix, walk suffix). The Stage 3 staff walk is the -v2 file
 # (the Stage 2 STAFF-WALK stays the Workstaff's).
 WEAPONS = {"hike": ("STAFF", "STAFF-WALK-v2"), "axe": ("AXE", "AXE-WALK"), "hammer": ("HAMMER", "HAMMER-WALK")}
+# Garran's Quarry Hookstaff in the heroes' hands (2026-11-25, codex_prompts_stage3_art_fixes.md
+# SF01-SF16): imported with `--only=hookstaff`. Cells: 0 ready, 1 low sweep, 2 thrust,
+# 3 hook pull, 4 overhead guard, 5 throw release. The -BASE- twins wait for a mode that
+# dresses the heroes in their Stage 1 and 2 clothes in a Stage 3 room.
+HOOKSTAFF = {"hookstaff": ("HOOKSTAFF", "HOOKSTAFF-WALK")}
 # Draw scales recorded at approval (APPROVED_VARIANTS.md #187-#198 and #350-#361).
-WEAPON_SCALE = {"mountain-axe": 0.92, "river-axe": 0.93}
+# The hookstaff scales put the head at the idle size (fit_head_scale.py, 2026-11-25).
+WEAPON_SCALE = {"mountain-axe": 0.92, "river-axe": 0.93, "mountain-hookstaff": 0.943, "river-hookstaff": 0.877}
 WALK_SCALE = {
+    "mountain-hookstaff-walk": 0.852, "river-hookstaff-walk": 0.849,
+    "wind-hookstaff-walk": 0.994, "fire-hookstaff-walk": 0.912,
     "mountain-hike-walk": 0.83, "mountain-axe-walk": 0.82, "mountain-hammer-walk": 0.82,
     "river-hike-walk": 0.84, "river-axe-walk": 0.82, "river-hammer-walk": 0.85,
     "wind-hike-walk": 0.84, "wind-axe-walk": 0.84, "wind-hammer-walk": 0.84,
@@ -141,9 +149,10 @@ def main() -> None:
             assets[f"enemy.rider3.sheet.{key}"] = prov(
                 import_stage2.grid_sheet(base / rel, f"rider3-{key}", 2, 2, False), rel, edits="75 %"
             )
-    if want("heroes"):
+    weapons = {**(WEAPONS if want("heroes") else {}), **(HOOKSTAFF if want("hookstaff") else {})}
+    if weapons:
         for hero, (folder, prefix) in HEROES.items():
-            for key, (suffix, walk) in WEAPONS.items():
+            for key, (suffix, walk) in weapons.items():
                 p = import_art.source(base, folder, f"{prefix}-{suffix}")
                 if p is None:
                     missing.append(f"{prefix}-{suffix}")
@@ -158,7 +167,7 @@ def main() -> None:
                 entry = import_stage2.grid_sheet(w, f"{hero}-{key}-walk", 3, 2, False, clear=16)
                 entry["sheet"]["scale"] = WALK_SCALE[f"{hero}-{key}-walk"]
                 assets[f"hero.{hero}.sheet.{key}-walk"] = prov(entry, f"{folder}/{w.name}", edits="75 %")
-            for m in HORSE_SHEETS:
+            for m in HORSE_SHEETS if want("heroes") else []:
                 p = import_art.source(base, folder, f"{prefix}-HORSE-{m}")
                 if p is None:
                     missing.append(f"{prefix}-HORSE-{m}")
